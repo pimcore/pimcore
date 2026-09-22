@@ -274,9 +274,6 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Data\ManyToManyAssetRelation $mainDefinition
-     */
     public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
         parent::synchronizeWithMainDefinition($mainDefinition);

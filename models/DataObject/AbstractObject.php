@@ -269,7 +269,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         try {
             $object = new static();
-            $object->getDao()->getByPath($path);
+
+            Model\Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
         } catch (Model\Exception\NotFoundException $e) {
@@ -475,7 +479,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
-        $isDirtyDetectionDisabled = null;
+        $isDirtyDetectionDisabled = false;
         $updatedChildren = [];
         $differentOldPath = '';
         $hideUnpublishedBackup = false;
@@ -521,7 +525,20 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 // get the old path from the database before the update is done
                 $oldPath = null;
                 if ($isUpdate) {
-                    $oldPath = $this->getDao()->getCurrentFullPath();
+                    $parent = DataObject::getById($this->getParentId());
+
+                    // lock this object's and the new parent's row in a fixed order (ascending id) so that
+                    // two concurrent moves affecting the same pair of objects (e.g. A becomes a child of B
+                    // while B becomes a child of A) are serialized instead of racing past each other's check
+                    if ($parent && $this->getId() > $parent->getId()) {
+                        $parentFullPath = $parent->getDao()->getCurrentFullPathForUpdate();
+                        $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+                    } else {
+                        $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+                        $parentFullPath = $parent?->getDao()->getCurrentFullPathForUpdate();
+                    }
+
+                    $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
                 }
 
                 // if the old path is different from the new path, update all children
@@ -603,6 +620,18 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @throws Exception
+     */
+    protected function assertParentIsNotOwnDescendant(?string $currentFullPath, ?string $parentFullPath): void
+    {
+        if ($currentFullPath !== null && $parentFullPath !== null && str_starts_with($parentFullPath, $currentFullPath . '/')) {
+            throw new Exception('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+        }
+    }
+
+    /**
+     * @internal
+     *
      * @throws Exception|DuplicateFullPathException
      */
     protected function correctPath(): void
@@ -628,6 +657,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
             // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
+            $this->assertParentIsNotOwnDescendant($this->getDao()->getCurrentFullPath(), $parent->getDao()->getCurrentFullPath());
+
             $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath().'/'));
 
             if (strlen($this->getKey()) < 1) {

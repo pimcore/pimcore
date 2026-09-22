@@ -49,16 +49,28 @@ final class BlockNode extends Node
     private function getPhpCode(string $splitChars): string
     {
         $optionsString = $this->options->toString();
+        $varSuffix = hash('xxh3', $splitChars);
+        $blockVar = 'block_' . $varSuffix;
+        $prevBlockVar = 'prevBlock_' . $varSuffix;
+        $hadPrevBlockVar = 'hadPrevBlock_' . $varSuffix;
 
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
-        \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
-        foreach(\$block->getIterator() as \$key => \$index) {
-            \$block->setCurrent(\$key);
-            \$context['_block'] = \$block;
-            \$config = \$block->getConfig();
+        \${$hadPrevBlockVar} = array_key_exists('_block', \$context);
+        \${$prevBlockVar} = \$context['_block'] ?? null;
+        \${$blockVar} = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
+        foreach(\${$blockVar}->getIterator() as \$key => \$index) {
+            \${$blockVar}->setCurrent(\$key);
+            \$context['_block'] = \${$blockVar};
+            \$config = \${$blockVar}->getConfig();
             {$splitChars}
         }
+        if (\${$hadPrevBlockVar}) {
+            \$context['_block'] = \${$prevBlockVar};
+        } else {
+            unset(\$context['_block']);
+        }
+        unset(\${$blockVar}, \${$prevBlockVar}, \${$hadPrevBlockVar});
 PHP;
 
     }

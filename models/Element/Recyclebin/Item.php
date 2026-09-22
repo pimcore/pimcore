@@ -81,7 +81,7 @@ class Item extends Model\AbstractModel
     {
         $dummy = null;
         $raw = Storage::get('recycle_bin')->read($this->getStorageFile());
-        $element = Serialize::unserialize($raw);
+        $element = Serialize::unserialize($raw, true);
 
         // check for element with the same name
         if ($element instanceof Document) {

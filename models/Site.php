@@ -224,7 +224,7 @@ final class Site extends AbstractModel
     public function setDomains(array|string $domains): static
     {
         if (is_string($domains)) {
-            $domains = Serialize::unserialize($domains);
+            $domains = Serialize::unserialize($domains, false);
         }
         if (is_array($domains)) {
             $domains = array_filter($domains);
@@ -303,7 +303,7 @@ final class Site extends AbstractModel
     public function setLocalizedErrorDocuments(array|string $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
-            $localizedErrorDocuments = Serialize::unserialize($localizedErrorDocuments);
+            $localizedErrorDocuments = Serialize::unserialize($localizedErrorDocuments, false);
         }
         $this->localizedErrorDocuments = $localizedErrorDocuments;
 

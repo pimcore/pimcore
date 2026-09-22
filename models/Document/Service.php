@@ -307,7 +307,16 @@ class Service extends Model\Element\Service
             $document = new Document();
             // validate path
             if (self::isValidPath($path, 'document')) {
-                $document->getDao()->getByPath($path);
+                try {
+                    Element\Service::getByPathWithNfcFallback(
+                        fn (string $candidate) => $document->getDao()->getByExactPath($candidate),
+                        $path
+                    );
+                } catch (Model\Exception\NotFoundException) {
+                    // none of the exact-path candidates matched - fall back to a pretty URL
+                    // match against the original requested path only, same as getByPath()
+                    $document->getDao()->getByPrettyUrl($path);
+                }
 
                 return true;
             }

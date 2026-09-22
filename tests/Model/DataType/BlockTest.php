@@ -13,16 +13,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Carbon\CarbonPeriod;
+use DatePeriod;
 use Exception;
 use Pimcore\Cache;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
+use Pimcore\Model\DataObject\Data\Consent;
+use Pimcore\Model\DataObject\Data\ExternalImage;
+use Pimcore\Model\DataObject\Data\Geobounds;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
+use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -48,6 +58,7 @@ class BlockTest extends ModelTestCase
     protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Block();
+        $this->tester->setupPimcoreClass_RelationTest();
     }
 
     /**
@@ -94,6 +105,259 @@ class BlockTest extends ModelTestCase
         $hotspots[] = $hotspot2;
 
         return new Hotspotimage($image, $hotspots);
+    }
+
+    /**
+     * Every geo datatype must round-trip inside a Block. Geo values are stored fully normalized
+     * (plain arrays / JSON) and rebuilt by each sub-field's denormalize(), so they are the subset
+     * of block child types that survives even a restricted unserialize().
+     *
+     * @throws Exception
+     */
+    public function testGeoDataTypesInsideBlock(): void
+    {
+        $point = new GeoCoordinates(48.208174, 16.373819);
+        $bounds = new Geobounds(new GeoCoordinates(48.3, 16.5), new GeoCoordinates(48.1, 16.2));
+        $polygon = [
+            new GeoCoordinates(48.1, 16.1),
+            new GeoCoordinates(48.2, 16.2),
+            new GeoCoordinates(48.3, 16.3),
+        ];
+        $polyline = [
+            new GeoCoordinates(47.0, 15.0),
+            new GeoCoordinates(47.5, 15.5),
+        ];
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockgeopoint' => new BlockElement('blockgeopoint', 'geopoint', $point),
+                'blockgeobounds' => new BlockElement('blockgeobounds', 'geobounds', $bounds),
+                'blockgeopolygon' => new BlockElement('blockgeopolygon', 'geopolygon', $polygon),
+                'blockgeopolyline' => new BlockElement('blockgeopolyline', 'geopolyline', $polyline),
+            ],
+        ]);
+        $object->save();
+
+        // Force-reload from the database so the block goes through the resource unserialize path.
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $data = $reloaded->getTestblock()[0];
+
+        $loadedPoint = $data['blockgeopoint']->getData();
+        $this->assertInstanceOf(GeoCoordinates::class, $loadedPoint);
+        $this->assertEqualsWithDelta(48.208174, $loadedPoint->getLatitude(), 1e-6);
+        $this->assertEqualsWithDelta(16.373819, $loadedPoint->getLongitude(), 1e-6);
+
+        $loadedBounds = $data['blockgeobounds']->getData();
+        $this->assertInstanceOf(Geobounds::class, $loadedBounds);
+        $this->assertEqualsWithDelta(48.3, $loadedBounds->getNorthEast()->getLatitude(), 1e-6);
+        $this->assertEqualsWithDelta(16.2, $loadedBounds->getSouthWest()->getLongitude(), 1e-6);
+
+        $loadedPolygon = $data['blockgeopolygon']->getData();
+        $this->assertIsArray($loadedPolygon);
+        $this->assertCount(3, $loadedPolygon);
+        $this->assertContainsOnlyInstancesOf(GeoCoordinates::class, $loadedPolygon);
+        $this->assertEqualsWithDelta(48.3, $loadedPolygon[2]->getLatitude(), 1e-6);
+
+        $loadedPolyline = $data['blockgeopolyline']->getData();
+        $this->assertIsArray($loadedPolyline);
+        $this->assertCount(2, $loadedPolyline);
+        $this->assertContainsOnlyInstancesOf(GeoCoordinates::class, $loadedPolyline);
+        $this->assertEqualsWithDelta(15.5, $loadedPolyline[1]->getLongitude(), 1e-6);
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262.
+     *
+     * Unlike geo values, several block child types are stored as *live PHP objects* inside the
+     * block's serialized resource blob: their block marshaller rebuilds a value object before
+     * Serialize::serialize() (externalImage, consent, date, datetime, structuredTable), or their
+     * normalize() keeps one (dateRange -> Carbon, via CarbonPeriod::toArray()).
+     *
+     * Block::getDataFromResource() must therefore allow object deserialization. Restricting it
+     * silently dropped every value below to null, and the next save persisted that loss.
+     *
+     * @throws Exception
+     */
+    public function testObjectValueTypesInsideBlock(): void
+    {
+        $externalImage = new ExternalImage('https://example.com/image.png');
+        $consent = new Consent(true, null);
+        $date = new Carbon('2026-03-04 00:00:00');
+        $dateTime = new Carbon('2026-05-06 07:08:09');
+
+        $structuredTable = new StructuredTable();
+        $structuredTable->setData([
+            'row1' => ['col1' => 42, 'col2' => 'first'],
+            'row2' => ['col1' => 43, 'col2' => 'second'],
+        ]);
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockexternalImage' => new BlockElement('blockexternalImage', 'externalImage', $externalImage),
+                'blockconsent' => new BlockElement('blockconsent', 'consent', $consent),
+                'blockdate' => new BlockElement('blockdate', 'date', $date),
+                'blockdatetime' => new BlockElement('blockdatetime', 'datetime', $dateTime),
+                'blockstructuredTable' => new BlockElement('blockstructuredTable', 'structuredTable', $structuredTable),
+            ],
+        ]);
+        $object->save();
+
+        // Force-reload from the database so the block goes through the resource unserialize path.
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $data = $reloaded->getTestblock()[0];
+
+        $loadedExternalImage = $data['blockexternalImage']->getData();
+        $this->assertInstanceOf(ExternalImage::class, $loadedExternalImage);
+        $this->assertSame('https://example.com/image.png', $loadedExternalImage->getUrl());
+
+        $loadedConsent = $data['blockconsent']->getData();
+        $this->assertInstanceOf(Consent::class, $loadedConsent);
+        $this->assertTrue($loadedConsent->getConsent());
+
+        $loadedDate = $data['blockdate']->getData();
+        $this->assertInstanceOf(CarbonInterface::class, $loadedDate);
+        $this->assertSame($date->getTimestamp(), $loadedDate->getTimestamp());
+
+        $loadedDateTime = $data['blockdatetime']->getData();
+        $this->assertInstanceOf(CarbonInterface::class, $loadedDateTime);
+        $this->assertSame($dateTime->getTimestamp(), $loadedDateTime->getTimestamp());
+
+        $loadedStructuredTable = $data['blockstructuredTable']->getData();
+        $this->assertInstanceOf(StructuredTable::class, $loadedStructuredTable);
+        $this->assertSame('first', $loadedStructuredTable->getData()['row1']['col2']);
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262, kept separate because a dateRange fails
+     * louder than the rest: DateRange::normalize() returns CarbonPeriod::toArray(), i.e. an array
+     * of Carbon objects, and denormalize() feeds them straight back into CarbonPeriod::create().
+     * With object deserialization restricted, that threw InvalidPeriodParameterException during
+     * save instead of merely losing the value.
+     *
+     * @throws Exception
+     */
+    public function testDateRangeInsideBlock(): void
+    {
+        $dateRange = CarbonPeriod::create('2026-01-01', '2026-01-05');
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockdateRange' => new BlockElement('blockdateRange', 'dateRange', $dateRange),
+            ],
+        ]);
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockdateRange']->getData();
+
+        // The concrete class depends on the Carbon major, which is not pinned (^2.72 || ^3.10):
+        // Carbon 3's CarbonPeriod extends DatePeriod, so the deep copy on the load path runs
+        // myclabs/deep-copy's DatePeriodFilter and rebuilds it as a plain DatePeriod; Carbon 2's
+        // CarbonPeriod does not, so it stays a CarbonPeriod. Both are fine and neither is what this
+        // test is about - assert the period survived with its bounds instead.
+        $this->assertTrue(
+            $loaded instanceof DatePeriod || $loaded instanceof CarbonPeriod,
+            'expected a date period, got ' . get_debug_type($loaded)
+        );
+        $this->assertSame($dateRange->getStartDate()->getTimestamp(), $loaded->getStartDate()->getTimestamp());
+        $this->assertSame($dateRange->getEndDate()->getTimestamp(), $loaded->getEndDate()->getTimestamp());
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262, one nesting level deeper: a block inside
+     * localizedfields routes its children through BlockDataMarshaller\Localizedfields, which
+     * delegates to the same per-type block marshallers and therefore stores the same objects.
+     *
+     * @throws Exception
+     */
+    public function testObjectValueTypesInsideLocalizedBlock(): void
+    {
+        $externalImage = new ExternalImage('https://example.com/localized.png');
+        $date = new Carbon('2026-07-08 00:00:00');
+
+        $object = $this->createBlockObject();
+        $object->setLtestblock([
+            [
+                'lblockexternalImage' => new BlockElement('lblockexternalImage', 'externalImage', $externalImage),
+                'lblockdate' => new BlockElement('lblockdate', 'date', $date),
+            ],
+        ], 'en');
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $data = $reloaded->getLtestblock('en')[0];
+
+        $loadedExternalImage = $data['lblockexternalImage']->getData();
+        $this->assertInstanceOf(ExternalImage::class, $loadedExternalImage);
+        $this->assertSame('https://example.com/localized.png', $loadedExternalImage->getUrl());
+
+        $loadedDate = $data['lblockdate']->getData();
+        $this->assertInstanceOf(CarbonInterface::class, $loadedDate);
+        $this->assertSame($date->getTimestamp(), $loadedDate->getTimestamp());
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262 / #298.
+     *
+     * A hotspotimage has no block marshaller, so Block stores the raw normalize() output — which
+     * keeps the MarkerHotspotItem objects of its hotspot/marker metadata. Restricting the block
+     * unserialize left __PHP_Incomplete_Class instances buried inside the reconstructed value:
+     * denormalize() still returned a Hotspotimage, so the corruption stayed invisible until
+     * something accessed the metadata (see Document\Editable\Image::getCacheTags()).
+     *
+     * @throws Exception
+     */
+    public function testHotspotImageMetaDataInsideBlock(): void
+    {
+        $image = TestHelper::createImageAsset();
+
+        // Build it the way the editmode does: getDataFromEditmode() wraps each metadata entry in a
+        // MarkerHotspotItem, and those objects are what end up in the block's serialized blob.
+        $fieldDefinition = new DataObject\ClassDefinition\Data\Hotspotimage();
+        $fieldDefinition->setName('blockhotspotimage');
+        $hotspotImage = $fieldDefinition->getDataFromEditmode([
+            'id' => $image->getId(),
+            'hotspots' => [
+                [
+                    'name' => 'hotspot1',
+                    'width' => 10,
+                    'height' => 20,
+                    'top' => 30,
+                    'left' => 40,
+                    'data' => [
+                        ['name' => 'metaName', 'type' => 'text', 'value' => 'metaValue'],
+                    ],
+                ],
+            ],
+        ]);
+        $this->assertInstanceOf(Hotspotimage::class, $hotspotImage);
+        $this->assertInstanceOf(MarkerHotspotItem::class, $hotspotImage->getHotspots()[0]['data'][0]);
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockhotspotimage' => new BlockElement('blockhotspotimage', 'hotspotimage', $hotspotImage),
+            ],
+        ]);
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockhotspotimage']->getData();
+
+        $this->assertInstanceOf(Hotspotimage::class, $loaded);
+
+        $metaData = $loaded->getHotspots()[0]['data'][0];
+        $this->assertNotInstanceOf(
+            '__PHP_Incomplete_Class',
+            $metaData,
+            'hotspot metadata must not be neutralised by the block resource unserialize()'
+        );
+        // MarkerHotspotItem is ArrayAccess; array access is exactly what broke on the stripped object.
+        $this->assertSame('metaName', $metaData['name']);
+        $this->assertSame('metaValue', $metaData['value']);
     }
 
     /**
@@ -242,5 +506,82 @@ class BlockTest extends ModelTestCase
             Cache::disable();
             Cache::getHandler()->setHandleCli(false);
         }
+    }
+
+    /**
+     * Verifies that relations inside a Block are rewritten by Service::rewriteIds
+     * (used by "Paste recursive, updating references")
+     *
+     * @throws Exception
+     */
+    public function testRewriteIdsInsideBlock(): void
+    {
+        $oldTarget = $this->createRelationTestObject('rewrite-old-target');
+        $newTarget = $this->createRelationTestObject('rewrite-new-target');
+
+        $object = $this->createBlockObject();
+        $data = [
+            'blockinput' => new BlockElement('blockinput', 'input', 'test-input'),
+            'blockadvancedRelations' => new BlockElement(
+                'blockadvancedRelations',
+                'advancedManyToManyRelation',
+                [new DataObject\Data\ElementMetadata('blockadvancedRelations', [], $oldTarget)]
+            ),
+        ];
+        $object->setTestblock([$data]);
+        $object->save();
+
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        Service::rewriteIds($object, ['object' => [$oldTarget->getId() => $newTarget->getId()]]);
+
+        $rewritten = $object->getTestblock()[0]['blockadvancedRelations']->getData();
+        $this->assertEquals($newTarget->getId(), $rewritten[0]->getElement()->getId());
+
+        //rewritten reference should survive save & reload
+        $object->save();
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+
+        $reloaded = $object->getTestblock()[0]['blockadvancedRelations']->getData();
+        $this->assertEquals($newTarget->getId(), $reloaded[0]->getElement()->getId());
+    }
+
+    /**
+     * Verifies that relations inside a Block nested in Localizedfields are rewritten
+     * by Service::rewriteIds (used by "Paste recursive, updating references")
+     *
+     * @throws Exception
+     */
+    public function testRewriteIdsInsideLocalizedBlock(): void
+    {
+        $oldTarget = TestHelper::createEmptyObject();
+        $newTarget = TestHelper::createEmptyObject();
+
+        $object = $this->createBlockObject();
+        $data = [
+            'lblockadvancedRelations' => new BlockElement(
+                'lblockadvancedRelations',
+                'advancedManyToManyRelation',
+                [new DataObject\Data\ElementMetadata('lblockadvancedRelations', [], $oldTarget)]
+            ),
+        ];
+        $object->setLtestblock([$data], 'de');
+        $object->save();
+
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        Service::rewriteIds($object, ['object' => [$oldTarget->getId() => $newTarget->getId()]]);
+
+        $rewritten = $object->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
+        $this->assertEquals($newTarget->getId(), $rewritten[0]->getElement()->getId());
+    }
+
+    protected function createRelationTestObject(string $key): DataObject\RelationTest
+    {
+        $object = new DataObject\RelationTest();
+        $object->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $object->setKey($key);
+        $object->setPublished(true);
+        $object->save();
+
+        return $object;
     }
 }

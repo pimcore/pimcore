@@ -18,12 +18,15 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToProvideChecksum;
+use Normalizer;
 use Pimcore;
+use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
+use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Helper\MimeTypeHelper;
@@ -55,6 +58,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Throwable;
+use TypeError;
 
 /**
  * @method Dao getDao()
@@ -94,6 +98,8 @@ class Asset extends Element\AbstractElement
      * @var resource|null
      */
     protected $stream;
+
+    private bool $streamIsPlaceholder = false;
 
     /**
      * @internal
@@ -168,7 +174,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -217,7 +223,11 @@ class Asset extends Element\AbstractElement
 
         try {
             $asset = new static();
-            $asset->getDao()->getByPath($path);
+
+            Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById(
                 $asset->getId(),
@@ -354,6 +364,12 @@ class Asset extends Element\AbstractElement
                 unset($data['sourcePath']);
             }
 
+            $mimeType ??= 'application/octet-stream';
+            $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
+            $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
+            Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+            $mimeType = $mimeTypeEvent->getMimeType();
+
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
             // only check maxpixels if it is an image
             if ($type === 'image' && $mimeTypeGuessData) {
@@ -450,6 +466,30 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      */
+    public static function resolveMimeTypeFromMapping(string $detectedMimeType, string $filename): string
+    {
+        if ($detectedMimeType === 'directory') {
+            return $detectedMimeType;
+        }
+
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($extension === '') {
+            return $detectedMimeType;
+        }
+
+        $mappings = Config::getSystemConfiguration('assets')['mime_mappings'] ?? [];
+        if (isset($mappings[$extension])) {
+            return (string)$mappings[$extension];
+        }
+
+        return $detectedMimeType;
+    }
+
+    /**
+     *
+     *
+     * @internal
+     */
     public static function getTypeFromMimeMapping(string $mimeType, string $filename): string
     {
         if ($mimeType == 'directory') {
@@ -535,12 +575,7 @@ class Asset extends Element\AbstractElement
                     // finally move the actual assets themselves
                     // We do this last so that any prior errors don't require a rollback
                     // on potentially a remote service.
-                    try {
-                        $storage->move($oldPath, $this->getRealFullPath());
-                    } catch (UnableToMoveFile $e) {
-                        //update children, if unable to move parent
-                        $this->updateChildPaths($storage, $oldPath);
-                    }
+                    $this->moveDirectoryOnStorage($storage, $oldPath);
                 }
 
                 // lastly create a new version if necessary
@@ -548,6 +583,7 @@ class Asset extends Element\AbstractElement
                 // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                 if ($this->getType() != 'folder') {
                     $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
                 }
             },
             onCommit: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
@@ -691,15 +727,20 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
-                if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
+                $existingStream = $storage->fileExists($path) ? $storage->readStream($path) : null;
+                if (!$existingStream || !stream_is_local($existingStream)) {
                     // write stream directly if target file doesn't exist or if target is a remote storage
                     // this is because we don't have hardlinks there, so we don't need to consider them (see below)
+                    if (is_resource($existingStream)) {
+                        fclose($existingStream);
+                    }
                     $storage->writeStream($path, $src);
                 } else {
                     // We don't open a stream on existing files, because they could be possibly used by versions
                     // using hardlinks, so it's safer to write them to a temp file first, so the inode and therefore
                     // also the versioning information persists. Using the stream on the existing file would overwrite the
                     // contents of the inode and therefore leads to wrong version data
+                    fclose($existingStream);
                     $pathInfo = pathinfo($this->getFilename());
                     $tempFilePath = $this->getRealPath() . uniqid('temp_');
                     if ($pathInfo['extension'] ?? false) {
@@ -723,7 +764,24 @@ class Asset extends Element\AbstractElement
                 if (!is_resource($src)) {
                     $src = $this->getStream();
                 }
-                $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+
+                $mimeType = null;
+
+                try {
+                    $mimeType = $storage->mimeType($path);
+                } catch (FilesystemException $e) {
+                    // ignore, fallback
+                }
+
+                if (!$mimeType || $mimeType === 'application/octet-stream') {
+                    $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+                }
+
+                $mimeType = self::resolveMimeTypeFromMapping($mimeType, $this->getFilename());
+                $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this, !($params['isUpdate'] ?? false));
+                $this->dispatchEvent($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+                $mimeType = $mimeTypeEvent->getMimeType();
+
                 $this->setMimeType($mimeType);
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
@@ -791,19 +849,30 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
+     * with custom arguments that are passed on to the versioning events. It will become a regular
+     * method parameter in the next major version.
+     *
      * @param string|null $versionNote version note
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null /* , array $parameters = [] */): ?Version
     {
+        // TODO: promote $parameters to a regular signature parameter in the next major version (2027.1)
+        $parameters = 4 <= func_num_args() ? func_get_arg(3) : [];
+        if (!is_array($parameters)) {
+            throw new TypeError(sprintf('%s(): Argument #4 ($parameters) must be of type array, %s given', __METHOD__, get_debug_type($parameters)));
+        }
+        $coreParameters = ['saveVersionOnly' => true];
+        $eventParameters = array_merge($parameters, $coreParameters);
+
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, $eventParameters);
                 $this->dispatchEvent($event, AssetEvents::PRE_UPDATE);
+                $eventParameters = $event->getArguments();
             }
 
             // set date
@@ -830,18 +899,13 @@ class Asset extends Element\AbstractElement
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters));
                 $this->dispatchEvent($event, AssetEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $event = new AssetEvent($this, [
-                'saveVersionOnly' => true,
-                'exception' => $e,
-            ]);
+            $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters, ['exception' => $e]));
             $this->dispatchEvent($event, AssetEvents::POST_UPDATE_FAILURE);
 
             throw $e;
@@ -868,9 +932,15 @@ class Asset extends Element\AbstractElement
     public function getFrontendFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
-        $path = urlencode_ignore_slash($path);
 
         $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
+        if ($prefix !== '' && $prefix !== null) {
+            // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
+            // folder move is pending the bytes still live under the pre-move prefix
+            $path = Pimcore::getContainer()->get(FrontendPathResolver::class)->resolvePhysicalPath($path, $this->getModificationDate());
+        }
+
+        $path = urlencode_ignore_slash($path);
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
@@ -1103,12 +1173,25 @@ class Asset extends Element\AbstractElement
         if (!$this->stream && $this->getType() !== 'folder') {
             try {
                 $this->stream = Storage::get('asset')->readStream($this->getRealFullPath());
+                $this->streamIsPlaceholder = false;
             } catch (Exception $e) {
+                Logger::error('Unable to read the data of asset ' . $this->getRealFullPath() . ' from storage, returning an empty placeholder stream instead: ' . $e);
                 $this->stream = tmpfile();
+                $this->streamIsPlaceholder = true;
             }
         }
 
         return $this->stream;
+    }
+
+    /**
+     * Returns true if the stream returned by getStream() is an empty placeholder that was substituted
+     * because the asset's binary data could not be read from storage (e.g. the file is missing),
+     * false if the stream contains the asset's actual data.
+     */
+    public function isStreamPlaceholder(): bool
+    {
+        return $this->streamIsPlaceholder;
     }
 
     public function getChecksum(): string
@@ -1155,6 +1238,7 @@ class Asset extends Element\AbstractElement
             $this->setDataChanged();
             $this->setDataModificationDate(time());
             $this->stream = $stream;
+            $this->streamIsPlaceholder = false;
 
             $isRewindable = @rewind($this->stream);
 
@@ -1165,6 +1249,7 @@ class Asset extends Element\AbstractElement
             }
         } elseif (is_null($stream)) {
             $this->stream = null;
+            $this->streamIsPlaceholder = false;
         }
 
         return $this;
@@ -1176,6 +1261,7 @@ class Asset extends Element\AbstractElement
             @fclose($this->stream);
             $this->stream = null;
         }
+        $this->streamIsPlaceholder = false;
     }
 
     public function getDataChanged(): bool
@@ -1534,6 +1620,7 @@ class Asset extends Element\AbstractElement
         try {
             $bytes = Storage::get('asset')->fileSize($this->getRealFullPath());
         } catch (Exception $e) {
+            Logger::error('Unable to determine the file size of asset ' . $this->getRealFullPath() . ': ' . $e);
             $bytes = 0;
         }
 
@@ -1643,6 +1730,45 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Moves a directory (a folder's subtree) on the given storage: attempts the native
+     * move first (atomic and cheap where the adapter supports it, e.g. on the local
+     * filesystem) and falls back to relocating the contents file by file.
+     *
+     * Whether the fallback is needed is decided by what is actually left at the old
+     * path, never by the move() outcome alone: on some S3-compatible storages a
+     * directory is exposed as a copyable zero-byte object at its bare key, so move()
+     * reports success after relocating just that object while the entire subtree
+     * stays at the old prefix.
+     *
+     * @throws FilesystemException
+     */
+    private function moveDirectoryOnStorage(FilesystemOperator $storage, string $oldPath): void
+    {
+        try {
+            $storage->move($oldPath, $this->getRealFullPath());
+        } catch (UnableToMoveFile) {
+            // expected on storages without native directory rename - covered by the fallback below
+        }
+
+        if ($this->isStorageOperationQueueEnabled()) {
+            // the queue-aware adapter owns the move: a returned move() is either a real native
+            // rename or a queued operation whose source content must stay in place until the
+            // processor drains it - the fallback must not touch it
+            return;
+        }
+
+        if ($storage->directoryExists($oldPath)) {
+            //update children, if the parent move did not (fully) relocate them
+            $this->updateChildPaths($storage, $oldPath);
+        }
+    }
+
+    private function isStorageOperationQueueEnabled(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('assets')['storage_operation_queue']['enabled'] ?? false);
+    }
+
+    /**
      * @throws FilesystemException
      */
     private function updateChildPaths(
@@ -1658,30 +1784,31 @@ class Asset extends Element\AbstractElement
         try {
             $movedFiles = [];
             $children = $storage->listContents($oldPath, true);
-            $totalChildren = iterator_count($children);
+            $totalFiles = 0;
 
-            if ($totalChildren > 0) {
-                /** @var \League\Flysystem\StorageAttributes $child */
-                foreach ($children as $child) {
-                    if ($child instanceof \League\Flysystem\FileAttributes) {
-                        $src  = $child['path'];
-                        $dest = str_replace($oldPath, $newPath, '/' . $src);
+            /** @var \League\Flysystem\StorageAttributes $child */
+            foreach ($children as $child) {
+                if ($child instanceof \League\Flysystem\FileAttributes) {
+                    ++$totalFiles;
+                    $src  = $child['path'];
+                    $dest = $newPath . substr('/' . $src, strlen($oldPath));
 
-                        $storage->move($src, $dest);
-                        $movedFiles[$dest] = $src;
-                    }
+                    $storage->move($src, $dest);
+                    $movedFiles[$dest] = $src;
                 }
+            }
 
+            if ($totalFiles > 0) {
                 $movedCount = count($movedFiles);
 
-                if ($movedCount === $totalChildren) {
+                if ($movedCount === $totalFiles) {
                     $storage->deleteDirectory($oldPath);
                 } else {
                     \Pimcore\Logger::info(
                         sprintf(
                             'Moved %d/%d files from %s to %s. No exception was thrown for %d files,
                             so the source directory was not deleted.',
-                            $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
+                            $movedCount, $totalFiles, $oldPath, $newPath, $totalFiles - $movedCount
                         )
                     );
                 }
@@ -1730,17 +1857,74 @@ class Asset extends Element\AbstractElement
             $this->clearFolderThumbnails($this);
 
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
-                $storage = Storage::get($storageName);
-
-                try {
-                    $storage->move($oldThumbnailsPath, $newThumbnailsPath);
-                } catch (UnableToMoveFile $e) {
-                    //update children, if unable to move parent
-                    //if there is an error, we can ignore it
-                    $this->updateChildPaths($storage, $oldPath, null, true);
-                }
+                $this->moveThumbnailDirectoryOnStorage(Storage::get($storageName), $oldThumbnailsPath, $newThumbnailsPath);
             }
         }
+    }
+
+    /**
+     * Moves one asset's (or folder's) thumbnail directory on the given storage - same
+     * post-condition approach as moveDirectoryOnStorage(): the per-file fallback runs
+     * based on what is left at the old path, not on the move() outcome; with the storage
+     * operation queue enabled the adapter owns the operation instead.
+     *
+     * @throws FilesystemException
+     */
+    private function moveThumbnailDirectoryOnStorage(
+        FilesystemOperator $storage,
+        string $oldThumbnailsPath,
+        string $newThumbnailsPath
+    ): void {
+        try {
+            $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
+        } catch (UnableToMoveFile) {
+            // expected on storages without native directory rename - covered by the fallback below
+        }
+
+        if (!$this->isStorageOperationQueueEnabled() && $storage->directoryExists($oldThumbnailsPath)) {
+            //update children, if the parent move did not (fully) relocate them
+            //if there is an error, we can ignore it
+            $this->updateChildPaths($storage, $oldThumbnailsPath, $newThumbnailsPath, true);
+        }
+    }
+
+    /**
+     * Moves a thumbnail directory, checking alternate Unicode normalization forms of the
+     * source path if the literal one doesn't exist. This covers cases where the DB-stored
+     * path and the on-disk directory name ended up in different Unicode normalization forms
+     * - e.g. because the original folder/file name was created on a macOS client, which
+     * reports accented names in decomposed (NFD) form, while other parts of the stack
+     * normalize to precomposed (NFC).
+     *
+     * The existing source is established via directoryExists() before moving, rather than
+     * moving each candidate in turn and reacting to UnableToMoveFile: that exception also
+     * covers destination, permission and backend failures, not just a missing source, so
+     * catching it to decide "try the next Unicode form" could otherwise move an unrelated,
+     * coincidentally-present legacy-form directory into $newPath on an unrelated failure.
+     *
+     * @throws UnableToMoveFile
+     */
+    private function moveThumbnailPath(FilesystemOperator $storage, string $oldPath, string $newPath): void
+    {
+        $candidates = array_unique(array_filter([
+            $oldPath,
+            Normalizer::normalize($oldPath, Normalizer::FORM_C) ?: null,
+            Normalizer::normalize($oldPath, Normalizer::FORM_D) ?: null,
+        ]));
+
+        $source = $oldPath;
+        foreach ($candidates as $candidate) {
+            if ($storage->directoryExists($candidate)) {
+                $source = $candidate;
+
+                break;
+            }
+        }
+
+        // None of the Unicode-form candidates exist (e.g. no thumbnails were ever
+        // generated) - move the literal requested path so the caller sees the normal
+        // "nothing to move" failure rather than one masked by this fallback.
+        $storage->move($source, $newPath);
     }
 
     private function clearFolderThumbnails(Asset $asset): void

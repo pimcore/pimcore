@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Video;
 
 use Exception;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
@@ -46,6 +48,12 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     protected ?Image $imageAsset = null;
 
+    /**
+     * set when the path reference is delegated to a poster image asset's thumbnail,
+     * whose asset owns the thumbnail files and status cache entries
+     */
+    private ?Image $thumbnailStatusCacheOwner = null;
+
     public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config|null $config = null, ?int $timeOffset = null, ?Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -76,7 +84,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
     }
 
     /**
-     * @throws Exception|\League\Flysystem\FilesystemException|ThumbnailFormatNotSupportedException
+     * @throws Exception|FilesystemException|ThumbnailFormatNotSupportedException
      *
      * @internal
      */
@@ -85,7 +93,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
-        if ($this->asset && empty($this->pathReference)) {
+        if ($this->asset instanceof Model\Asset\Video && empty($this->pathReference)) {
 
             if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
                 throw new ThumbnailFormatNotSupportedException();
@@ -93,6 +101,8 @@ final class ImageThumbnail implements ImageThumbnailInterface
 
             $cs = $this->asset->getCustomSetting('image_thumbnail_time');
             $im = $this->asset->getCustomSetting('image_thumbnail_asset');
+
+            $this->thumbnailStatusCacheOwner = null;
 
             if ($im || $this->imageAsset) {
                 if ($this->imageAsset) {
@@ -104,6 +114,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 if ($im instanceof Image) {
                     $imageThumbnail = $im->getThumbnail($this->getConfig());
                     $this->pathReference = $imageThumbnail->getPathReference();
+                    $this->thumbnailStatusCacheOwner = $im;
                 }
             }
 
@@ -127,36 +138,33 @@ final class ImageThumbnail implements ImageThumbnailInterface
                     $timeOffset
                 );
 
-                if (!$storage->fileExists($cacheFilePath)) {
+                $imageAvailable = $storage->fileExists($cacheFilePath);
+                if (!$imageAvailable) {
                     $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
                     $lock->acquire(true);
 
-                    // after we got the lock, check again if the image exists in the meantime - if not - generate it
-                    if (!$storage->fileExists($cacheFilePath)) {
-                        $tempFile = File::getLocalTempFilePath('png');
-                        $converter = Video::getInstance();
-                        $converter->load($this->asset->getLocalFile());
-                        if (false === $converter->saveImage($tempFile, (int) $timeOffset)) {
-                            Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
-
-                            return;
+                    try {
+                        // after we got the lock, check again if the image exists in the meantime - if not - generate it
+                        $imageAvailable = $storage->fileExists($cacheFilePath);
+                        if (!$imageAvailable) {
+                            $generated = $this->writeOriginalImage(
+                                $this->asset,
+                                $storage,
+                                $cacheFilePath,
+                                (int) $timeOffset
+                            );
+                            $imageAvailable = $generated;
                         }
-                        $tempFileContent = file_get_contents($tempFile);
-                        if (false === $tempFileContent) {
-                            Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
-
-                            return;
-                        }
-                        $storage->write($cacheFilePath, $tempFileContent);
-                        $generated = true;
+                    } finally {
+                        $lock->release();
                     }
-
-                    $lock->release();
                 }
 
-                $cacheFileStream = $storage->readStream($cacheFilePath);
+                // if the original image could not be extracted from the video (e.g. no video adapter available or a
+                // broken/missing video file), don't bail out here, so that the error path reference below is used
+                if ($imageAvailable && $this->getConfig()) {
+                    $cacheFileStream = $storage->readStream($cacheFilePath);
 
-                if ($this->getConfig()) {
                     $this->getConfig()->setFilenameSuffix('time-' . $timeOffset);
 
                     try {
@@ -175,10 +183,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         }
 
         if (empty($this->pathReference)) {
-            $this->pathReference = [
-                'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-            ];
+            $this->pathReference = $this->getErrorPathReference();
         }
 
         $event = new GenericEvent($this, [
@@ -186,6 +191,54 @@ final class ImageThumbnail implements ImageThumbnailInterface
             'generated' => $generated,
         ]);
         Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
+    }
+
+    /**
+     * Extracts the frame at the given time offset from the video and writes it to the asset cache storage.
+     *
+     * @return bool whether the image has been written to the asset cache storage
+     *
+     * @throws Exception|FilesystemException
+     */
+    private function writeOriginalImage(
+        Model\Asset\Video $asset,
+        FilesystemOperator $storage,
+        string $cacheFilePath,
+        int $timeOffset
+    ): bool {
+        $tempFile = File::getLocalTempFilePath('png');
+        $converter = Video::newInstance();
+        if ($converter === null) {
+            Logger::error('No video adapter available to create image thumbnail for video ' . $asset->getRealFullPath() . '.');
+
+            return false;
+        }
+
+        $converter->load($asset->getLocalFile());
+        if (false === $converter->saveImage($tempFile, $timeOffset)) {
+            Logger::info('Creation of image thumbnail for video ' . $asset->getRealFullPath() . ' failed.');
+
+            return false;
+        }
+
+        $tempFileContent = file_get_contents($tempFile);
+        if (false === $tempFileContent) {
+            Logger::info('Could not read temporary image thumbnail file for video ' . $asset->getRealFullPath() . '.');
+
+            return false;
+        }
+
+        $storage->write($cacheFilePath, $tempFileContent);
+
+        return true;
+    }
+
+    /**
+     * @internal
+     */
+    protected function getThumbnailStatusCacheOwner(): ?Model\Asset
+    {
+        return $this->thumbnailStatusCacheOwner ?? $this->asset;
     }
 
     /**

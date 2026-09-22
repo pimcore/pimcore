@@ -45,6 +45,18 @@ class SessionStatus
             return false;
         }
 
+        // On a cache HIT (onKernelRequest), the session is only lazily initialized: the
+        // session id has been copied onto the Request from the cookie, but the session
+        // itself was never started, so $_SESSION below would always be empty. Start it
+        // explicitly whenever the request actually carries a previous session, so data
+        // written in an earlier request is visible here too.
+        if ($request->hasPreviousSession()) {
+            $session = $request->getSession();
+            if (!$session->isStarted()) {
+                $session->start();
+            }
+        }
+
         // we fall back to $_SESSION from here on as the session API does not expose a list of namespaces
         $sessionData = $_SESSION ?? null;
         if (!$sessionData) {

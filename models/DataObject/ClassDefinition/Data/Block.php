@@ -30,7 +30,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
     use DataObject\Traits\ClassSavedTrait;
     use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
@@ -170,7 +170,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }, $data);
             }
 
-            $unserializedData = Serialize::unserialize($data);
+            // A block's resource blob legitimately contains PHP objects, so object deserialization
+            // must stay enabled here. Child values are written by getDataForResource() through the
+            // per-fieldtype block marshallers, several of which rebuild a value object before
+            // serializing (externalImage, consent, date/datetime, structuredTable), while types
+            // without a marshaller store their raw normalize() output, which can keep objects too
+            // (hotspotimage/imageGallery -> MarkerHotspotItem, dateRange -> Carbon). The set is not
+            // enumerable: bundles may register further block marshallers and field definitions.
+            // Restricting this to `false` silently dropped those values to null and corrupted
+            // hotspot metadata - see pimcore/platform-version#262.
+            // Tightening this is tracked in pimcore/internal-improvements#24 and needs the write
+            // side to stop storing live objects first.
+            $unserializedData = Serialize::unserialize($data, true);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {
@@ -468,6 +479,49 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $value;
     }
 
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
+    {
+        $data = $this->getDataFromObjectParam($container, $params);
+
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                foreach ($this->getFieldDefinitions() as $fieldDefinition) {
+                    if (!$fieldDefinition instanceof IdRewriterInterface) {
+                        continue;
+                    }
+
+                    $blockElement = $item[$fieldDefinition->getName()] ?? null;
+                    if (!$blockElement instanceof DataObject\Data\BlockElement) {
+                        continue;
+                    }
+
+                    $blockElementData = $blockElement->getData();
+                    if ($blockElementData === null) {
+                        continue;
+                    }
+
+                    $blockElement->setData(
+                        $fieldDefinition->rewriteIds(
+                            $container,
+                            $idMapping,
+                            [
+                                ...$params,
+                                // \Pimcore\Model\DataObject\ClassDefinition\Data::getDataFromObjectParam() reads 'injectedData'
+                                'injectedData' => $blockElementData,
+                            ],
+                        ),
+                    );
+                }
+            }
+        }
+
+        return $data;
+    }
+
     /**
      * @param Model\DataObject\ClassDefinition\Data\Block $mainDefinition
      */
@@ -725,51 +779,107 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
     }
 
-    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): mixed
-    {
+    public function load(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []
+    ): mixed {
         $field = $this->getName();
         $db = Db::get();
         $data = null;
 
         if ($object instanceof DataObject\Concrete) {
-            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $object->getClassId() . ' where oo_id  = ' . $object->getId();
+
+            $objectDatastoreTable = 'object_store_' . $object->getClassId();
+            $qObjectDatastoreTable = $db->quoteIdentifier($objectDatastoreTable);
+
+            $query = 'SELECT ' . $db->quoteIdentifier($field)
+                . ' FROM ' . $qObjectDatastoreTable
+                . ' WHERE oo_id = ' . (int) $object->getId();
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
+
         } elseif ($object instanceof DataObject\Localizedfield) {
+
             $context = $params['context'];
             $object = $context['object'];
             $containerType = $context['containerType'] ?? null;
 
             if ($containerType === 'fieldcollection') {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
+
+                $table = 'object_collection_' . $context['containerKey']
+                    . '_localized_' . $object->getClassId();
+
+                $qTable = $db->quoteIdentifier($table);
+
+                $query = 'SELECT ' . $db->quoteIdentifier($field)
+                    . ' FROM ' . $qTable
+                    . ' WHERE language = ' . $db->quote($params['language'])
+                    . ' AND ooo_id = ' . (int) $object->getId()
+                    . ' AND fieldname = ' . $db->quote($context['fieldname'])
+                    . ' AND `index` = ' . (int) $context['index'];
+
             } elseif ($containerType === 'objectbrick') {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_brick_localized_' . $context['containerKey'] . '_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']);
+
+                $table = 'object_brick_localized_' . $context['containerKey']
+                    . '_' . $object->getClassId();
+
+                $qTable = $db->quoteIdentifier($table);
+
+                $query = 'SELECT ' . $db->quoteIdentifier($field)
+                    . ' FROM ' . $qTable
+                    . ' WHERE language = ' . $db->quote($params['language'])
+                    . ' AND ooo_id = ' . (int) $object->getId()
+                    . ' AND fieldname = ' . $db->quote($context['fieldname']);
+
             } else {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
+
+                $table = 'object_localized_data_' . $object->getClassId();
+                $qTable = $db->quoteIdentifier($table);
+
+                $query = 'SELECT ' . $db->quoteIdentifier($field)
+                    . ' FROM ' . $qTable
+                    . ' WHERE language = ' . $db->quote($params['language'])
+                    . ' AND ooo_id = ' . (int) $object->getId();
             }
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
+
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $context = $params['context'];
 
+            $context = $params['context'];
             $object = $context['object'];
-            $brickType = $context['containerKey'];
-            $brickField = $context['brickField'];
-            $fieldname = $context['fieldname'];
-            $query = 'select ' . $db->quoteIdentifier($brickField) . ' from object_brick_store_' . $brickType . '_' . $object->getClassId()
-                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
+
+            $table = 'object_brick_store_' . $context['containerKey']
+                . '_' . $object->getClassId();
+
+            $qTable = $db->quoteIdentifier($table);
+
+            $query = 'SELECT ' . $db->quoteIdentifier($context['brickField'])
+                . ' FROM ' . $qTable
+                . ' WHERE id = ' . (int) $object->getId()
+                . ' AND fieldname = ' . $db->quote($context['fieldname']);
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
+
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+
             $context = $params['context'];
-            $collectionType = $context['containerKey'];
             $object = $context['object'];
-            $fcField = $context['fieldname'];
 
-            //TODO index!!!!!!!!!!!!!!
+            $table = 'object_collection_' . $context['containerKey']
+                . '_' . $object->getClassId();
 
-            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
-                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
+            $qTable = $db->quoteIdentifier($table);
+
+            $query = 'SELECT ' . $db->quoteIdentifier($field)
+                . ' FROM ' . $qTable
+                . ' WHERE id = ' . (int) $object->getId()
+                . ' AND fieldname = ' . $db->quote($context['fieldname'])
+                . ' AND `index` = ' . (int) $context['index'];
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
         }

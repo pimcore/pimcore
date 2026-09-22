@@ -77,9 +77,11 @@ services:
             $allowedTags: '%pimcore.templating.twig.sandbox_security_policy.tags%'
             $allowedFilters: '%pimcore.templating.twig.sandbox_security_policy.filters%'
             $allowedFunctions: '%pimcore.templating.twig.sandbox_security_policy.functions%'
+            $blockedClasses: '%pimcore.templating.twig.sandbox_security_policy.blocked_classes%'
+            $allowedClasses: '%pimcore.templating.twig.sandbox_security_policy.allowed_classes%'
+            $blockedFunctions: '%pimcore.templating.twig.sandbox_security_policy.blocked_functions%'
+            $hardBlockedMethods: '%pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods%'
 
     Twig\Extension\SandboxExtension:
         arguments:
             $policy: '@Pimcore\Twig\Sandbox\SecurityPolicy'
-
-    Pimcore\Twig\Extension\AdminExtension: ~

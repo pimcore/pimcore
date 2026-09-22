@@ -153,18 +153,14 @@ class Video extends Model\Asset
      */
     public function getDurationFromBackend(?string $filePath = null): ?float
     {
-        if (\Pimcore\Video::isAvailable()) {
-            if (!$filePath) {
-                $filePath = $this->getLocalFile();
-            }
-
-            $converter = \Pimcore\Video::getInstance();
-            $converter->load($filePath, ['asset' => $this]);
-
-            return $converter->getDuration();
+        $converter = \Pimcore\Video::getInstance();
+        if ($converter === null) {
+            return null;
         }
 
-        return null;
+        $converter->load($filePath ?? $this->getLocalFile(), ['asset' => $this]);
+
+        return $converter->getDuration();
     }
 
     /**
@@ -173,14 +169,14 @@ class Video extends Model\Asset
      */
     public function getDimensionsFromBackend(): ?array
     {
-        if (\Pimcore\Video::isAvailable()) {
-            $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getLocalFile(), ['asset' => $this]);
-
-            return $converter->getDimensions();
+        $converter = \Pimcore\Video::getInstance();
+        if ($converter === null) {
+            return null;
         }
 
-        return null;
+        $converter->load($this->getLocalFile(), ['asset' => $this]);
+
+        return $converter->getDimensions();
     }
 
     /**

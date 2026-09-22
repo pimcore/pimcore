@@ -59,6 +59,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public string $calculatorClass;
 
     /**
+     * @internal
+     */
+    public ?string $calculatorData = null;
+
+    /**
      * Column length
      *
      * @internal
@@ -128,6 +133,16 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function setCalculatorExpression(?string $calculatorExpression): void
     {
         $this->calculatorExpression = $calculatorExpression;
+    }
+
+    public function getCalculatorData(): ?string
+    {
+        return $this->calculatorData;
+    }
+
+    public function setCalculatorData(?string $calculatorData): void
+    {
+        $this->calculatorData = $calculatorData;
     }
 
     /**

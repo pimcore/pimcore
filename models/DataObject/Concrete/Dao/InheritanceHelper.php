@@ -234,6 +234,15 @@ class InheritanceHelper
                 // create entries for children that don't have an entry yet
                 $originalEntry = Helper::quoteDataIdentifiers($this->db, $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]));
 
+                // the row is copied from the parent, so columns of field types which do not
+                // support inheritance must not carry the parent's value over to the child
+                foreach ($params['nonInheritableColumns'] ?? [] as $columnName) {
+                    $quotedColumnName = $this->db->quoteIdentifier($columnName);
+                    if (array_key_exists($quotedColumnName, $originalEntry)) {
+                        $originalEntry[$quotedColumnName] = null;
+                    }
+                }
+
                 foreach ($missingIds as $id) {
                     $originalEntry[$this->db->quoteIdentifier($this->idField)] = $id;
                     $this->db->insert($this->db->quoteIdentifier($this->querytable), $originalEntry);

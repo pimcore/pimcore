@@ -28,6 +28,9 @@ use Pimcore\HttpKernel\WebPathResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Translation;
+use Pimcore\Tool;
+use Pimcore\Translation\Translator;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
@@ -37,6 +40,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorBagInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -68,6 +73,11 @@ class EditableHandler implements LoggerAwareInterface
      */
     protected array $brickTemplateCache = [];
 
+    /**
+     * @var array<string, array<string, string>> areabrick labels resolved during this request, per locale
+     */
+    private array $translatedAreabrickLabels = [];
+
     protected EditmodeResolver $editmodeResolver;
 
     protected HttpKernelRuntime $httpKernelRuntime;
@@ -77,6 +87,13 @@ class EditableHandler implements LoggerAwareInterface
     protected RequestStack $requestStack;
 
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
+
+    /**
+     * Areabrick names and descriptions are labels of the editing UI, so they are resolved via the
+     * translation domain of the Studio UI when that domain is registered, instead of the website's
+     * default domain.
+     */
+    private const AREABRICK_LABEL_TRANSLATION_DOMAIN = 'studio';
 
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -143,8 +160,8 @@ class EditableHandler implements LoggerAwareInterface
                 : null;
 
             if ($this->editmodeResolver->isEditmode()) {
-                $name = $this->translator->trans($name);
-                $desc = $this->translator->trans($desc);
+                $name = $this->translateAreabrickLabel($name);
+                $desc = $this->translateAreabrickLabel($desc);
             }
 
             $areas[$brick->getId()] = [
@@ -160,6 +177,111 @@ class EditableHandler implements LoggerAwareInterface
         }
 
         return $areas;
+    }
+
+    private function translateAreabrickLabel(string $label): string
+    {
+        // the translator trims message ids as well
+        $label = trim($label);
+        if ($label === '') {
+            return $label;
+        }
+
+        // translating a label unknown to the Studio domain puts it into the in-memory catalogue as its own
+        // translation, so a label is resolved only once per locale to keep repeated occurrences consistent
+        $locale = $this->translator instanceof LocaleAwareInterface ? $this->translator->getLocale() : '';
+
+        return $this->translatedAreabrickLabels[$locale][$label] ??= $this->resolveAreabrickLabel($label);
+    }
+
+    private function resolveAreabrickLabel(string $label): string
+    {
+        if (!Translation::isAValidDomain(self::AREABRICK_LABEL_TRANSLATION_DOMAIN)) {
+            // without the Studio UI domain, the default domain is the only place to translate with
+            return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT);
+        }
+
+        // a label maintained in the Studio domain always wins, also when its translation equals the key
+        if ($this->hasTranslation($label, self::AREABRICK_LABEL_TRANSLATION_DOMAIN)) {
+            return $this->translator->trans($label, [], self::AREABRICK_LABEL_TRANSLATION_DOMAIN);
+        }
+
+        // translating creates the missing key in the Studio domain, where the label is meant to be maintained
+        $translated = $this->translator->trans($label, [], self::AREABRICK_LABEL_TRANSLATION_DOMAIN);
+        if ($translated !== $label) {
+            return $translated;
+        }
+
+        // labels that were translated in the default domain before must keep working, but they are
+        // only looked up there: translating via the default domain would auto-create the missing keys
+        return $this->getExistingDefaultDomainTranslation($label) ?? $label;
+    }
+
+    private function hasTranslation(string $label, string $domain): bool
+    {
+        $locale = $this->getTranslatorLocale();
+
+        return $locale !== null && $this->getCatalogueTranslation($label, $domain, $locale) !== null;
+    }
+
+    private function getExistingDefaultDomainTranslation(string $label): ?string
+    {
+        $locale = $this->getTranslatorLocale();
+        if ($locale === null) {
+            return null;
+        }
+
+        // same lookup order as the translator: the locale itself, then its configured fallback languages
+        foreach ([$locale, ...Tool::getFallbackLanguagesFor($locale)] as $lookupLocale) {
+            $translation = $this->getCatalogueTranslation($label, Translation::DOMAIN_DEFAULT, $lookupLocale);
+            if ($translation === null) {
+                continue;
+            }
+
+            if ($translation === $label) {
+                return $translation;
+            }
+
+            // the translator only creates keys that are unknown to the catalogue of the locale it translates
+            // in, so translating explicitly in the locale that knows the key is safe and yields the complete
+            // translator pipeline (link updates, disabled translations, ...) instead of the raw catalogue text
+            return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT, $lookupLocale);
+        }
+
+        return null;
+    }
+
+    private function getTranslatorLocale(): ?string
+    {
+        if ($this->translator instanceof TranslatorBagInterface && $this->translator instanceof LocaleAwareInterface) {
+            return $this->translator->getLocale();
+        }
+
+        return null;
+    }
+
+    /**
+     * Reads a translation from the catalogue without translating, so that no missing key gets created.
+     */
+    private function getCatalogueTranslation(string $label, string $domain, string $locale): ?string
+    {
+        if (!$this->translator instanceof TranslatorBagInterface) {
+            return null;
+        }
+
+        if ($this->translator instanceof Translator) {
+            // makes sure the database translations of the domain are part of the catalogue
+            $this->translator->lazyInitialize($domain, $locale);
+        }
+
+        $catalogue = $this->translator->getCatalogue($locale);
+        if (!$catalogue->has($label, $domain)) {
+            return null;
+        }
+
+        $translation = $catalogue->get($label, $domain);
+
+        return $translation !== '' ? $translation : null;
     }
 
     public function renderAreaFrontend(Info $info, array $templateParams = []): string
