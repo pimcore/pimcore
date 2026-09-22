@@ -120,14 +120,13 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
             }
 
             foreach ($visibleFieldsArray as $field) {
+                // the row's system columns (id, path, type, subtype, ...) and the relation's own metadata
+                // columns keep their values; every other visible field is an asset metadata key
                 if (array_key_exists($field, $row)) {
                     continue;
                 }
 
-                $getter = 'get' . ucfirst($field);
-                $row[$field] = method_exists($asset, $getter)
-                    ? $asset->{$getter}()
-                    : $asset->getMetadata($field);
+                $row[$field] = $asset->getMetadata($field);
             }
         }
         unset($row);
@@ -383,9 +382,15 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
 
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
-        if ($data instanceof Asset) {
+        if ($data instanceof Element\ElementInterface) {
+            if (!$data instanceof Asset) {
+                throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support assets, '.Element\Service::getElementType($data).' given.');
+            }
             $data = $data->getId();
         } elseif (is_array($data)) {
+            if (isset($data['type']) && $data['type'] !== 'asset') {
+                throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support assets, type "'.$data['type'].'" given.');
+            }
             $data = $data['id'] ?? null;
         }
 
