@@ -19,6 +19,7 @@ use Pimcore\Config;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\File;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -572,7 +573,11 @@ class Service extends Model\Element\Service
             // silently produces no file with GD; rename() fails visibly instead, so the
             // directory is recreated and the move retried. The bound keeps a directory
             // that genuinely cannot be written from turning into a loop.
-            $previewTmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.jpg';
+            //
+            // The temp path is unique per invocation, not per document: concurrent preview
+            // jobs for the same page would otherwise rename each other's render away (or
+            // publish it) while the other is still between save() and rename().
+            $previewTmpFile = File::getLocalTempFilePath('jpg');
             $im->save($previewTmpFile, 'jpeg', 85);
             unlink($tmpFile);
 

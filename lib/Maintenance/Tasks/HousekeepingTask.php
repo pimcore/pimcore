@@ -112,9 +112,19 @@ class HousekeepingTask implements TaskInterface
                 // removed, ctime when the inode changes (rename, chmod, link count). atime
                 // is not used, because on some stacks a plain readdir() bumps it and every
                 // directory this task walks would become immortal.
+                //
+                // dev/ino pin down *which* directory the time belongs to: the removal
+                // step below re-checks them, so a path that was removed and recreated by
+                // another process in the meantime is not mistaken for the stale one.
                 if (!array_key_exists($path, $dirTimes)) {
                     $stat = @stat($path);
-                    $dirTimes[$path] = $stat ? max($stat['mtime'], $stat['ctime']) : false;
+                    $dirTimes[$path] = $stat ? [
+                        'time' => max($stat['mtime'], $stat['ctime']),
+                        'dev' => $stat['dev'],
+                        'ino' => $stat['ino'],
+                        // set once this run deletes an entry from it
+                        'modified' => false,
+                    ] : false;
                 }
             }
 
@@ -130,24 +140,55 @@ class HousekeepingTask implements TaskInterface
         // up on the next run.
         $iterator = new RecursiveIteratorIterator($filter, $mode, RecursiveIteratorIterator::CATCH_GET_CHILD);
 
+        // Remember that this run changed a directory's contents, so the freshness
+        // re-check below can tell its own deletions apart from someone else's activity.
+        $markParentModified = static function (string $path) use (&$dirTimes): void {
+            $parent = dirname($path);
+            if (isset($dirTimes[$parent]) && is_array($dirTimes[$parent])) {
+                $dirTimes[$parent]['modified'] = true;
+            }
+        };
+
         foreach ($iterator as $entry) {
             $path = $entry->getPathname();
 
             if (array_key_exists($path, $dirTimes)) {
-                $dirTime = $dirTimes[$path];
+                $dir = $dirTimes[$path];
                 // Drop the entry as soon as it is consumed. CHILD_FIRST only yields a
                 // directory once its whole subtree has been walked, so the live set stays
                 // proportional to the tree depth instead of the tree size (~25MB at 95k
                 // directories).
                 unset($dirTimes[$path]);
 
-                if ($dirTime && $dirTime < $dirCutoff) {
-                    // rmdir() is atomic: the kernel checks emptiness and removes in one
-                    // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
-                    @rmdir($path);
+                if (!$dir || $dir['time'] >= $dirCutoff) {
+                    continue;
                 }
-            } else {
-                @unlink($path);
+
+                // The recorded time was read while filtering, and the whole subtree walk
+                // sits between that and this point. Another process may have removed and
+                // recreated the path in that window; rmdir()'ing the replacement would
+                // bypass the retention and reopen the mkdir-before-write race this
+                // retention exists to close. So re-stat immediately before removing and
+                // require the same inode. A time that has moved since the observation
+                // means something else touched the directory in the window and it is in
+                // use - unless the change was this run's own unlink()/rmdir() of its
+                // entries, which is exactly the case the pre-deletion capture is for.
+                clearstatcache(true, $path);
+                $fresh = @stat($path);
+                if (!$fresh || $fresh['dev'] !== $dir['dev'] || $fresh['ino'] !== $dir['ino']) {
+                    continue;
+                }
+                if (!$dir['modified'] && max($fresh['mtime'], $fresh['ctime']) >= $dirCutoff) {
+                    continue;
+                }
+
+                // rmdir() is atomic: the kernel checks emptiness and removes in one
+                // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
+                if (@rmdir($path)) {
+                    $markParentModified($path);
+                }
+            } elseif (@unlink($path)) {
+                $markParentModified($path);
             }
         }
     }
