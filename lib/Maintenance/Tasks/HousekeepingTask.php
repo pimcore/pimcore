@@ -122,8 +122,9 @@ class HousekeepingTask implements TaskInterface
                         'time' => max($stat['mtime'], $stat['ctime']),
                         'dev' => $stat['dev'],
                         'ino' => $stat['ino'],
-                        // set once this run deletes an entry from it
-                        'modified' => false,
+                        // max(mtime, ctime) as observed right after this run's own last
+                        // unlink()/rmdir() of an entry; null while this run has not touched it
+                        'selfTime' => null,
                     ] : false;
                 }
             }
@@ -140,12 +141,20 @@ class HousekeepingTask implements TaskInterface
         // up on the next run.
         $iterator = new RecursiveIteratorIterator($filter, $mode, RecursiveIteratorIterator::CATCH_GET_CHILD);
 
-        // Remember that this run changed a directory's contents, so the freshness
-        // re-check below can tell its own deletions apart from someone else's activity.
-        $markParentModified = static function (string $path) use (&$dirTimes): void {
+        // Record the parent's timestamp as it stands right after this run's own
+        // unlink()/rmdir() of one of its entries. The freshness re-check below waives
+        // exactly that value - and nothing later - so a change made by someone else
+        // after this run's last mutation still counts as activity. Overwritten on
+        // every mutation, so it always holds the last self-generated value.
+        $recordOwnChange = static function (string $path) use (&$dirTimes): void {
             $parent = dirname($path);
-            if (isset($dirTimes[$parent]) && is_array($dirTimes[$parent])) {
-                $dirTimes[$parent]['modified'] = true;
+            if (!isset($dirTimes[$parent]) || !is_array($dirTimes[$parent])) {
+                return;
+            }
+            clearstatcache(true, $parent);
+            $stat = @stat($parent);
+            if ($stat) {
+                $dirTimes[$parent]['selfTime'] = max($stat['mtime'], $stat['ctime']);
             }
         };
 
@@ -169,26 +178,40 @@ class HousekeepingTask implements TaskInterface
                 // recreated the path in that window; rmdir()'ing the replacement would
                 // bypass the retention and reopen the mkdir-before-write race this
                 // retention exists to close. So re-stat immediately before removing and
-                // require the same inode. A time that has moved since the observation
-                // means something else touched the directory in the window and it is in
-                // use - unless the change was this run's own unlink()/rmdir() of its
-                // entries, which is exactly the case the pre-deletion capture is for.
+                // require the same inode. Then re-apply the freshness rule:
+                //
+                //  - if this run never touched the directory (selfTime === null), it is
+                //    kept when its current time has reached the cutoff - something else
+                //    touched it in the window and it is in use;
+                //  - if this run did unlink()/rmdir() entries from it, the current time is
+                //    expected to be the one recorded right after the last of those, so
+                //    only a time *later* than that is treated as foreign activity. Waiving
+                //    the exact self-generated value rather than the whole check means a
+                //    chmod, or a create/remove pair, that lands after this run's last
+                //    mutation still keeps the directory.
+                //
+                // Limitation: timestamps are compared at the filesystem's granularity
+                // (one second on many filesystems), so a foreign change that lands in the
+                // same second as this run's own last mutation is indistinguishable from
+                // it and does not keep the directory. rmdir() still refuses a directory
+                // that is not empty, so only an empty directory can be lost to that.
                 clearstatcache(true, $path);
                 $fresh = @stat($path);
                 if (!$fresh || $fresh['dev'] !== $dir['dev'] || $fresh['ino'] !== $dir['ino']) {
                     continue;
                 }
-                if (!$dir['modified'] && max($fresh['mtime'], $fresh['ctime']) >= $dirCutoff) {
+                $freshTime = max($fresh['mtime'], $fresh['ctime']);
+                if ($dir['selfTime'] === null ? $freshTime >= $dirCutoff : $freshTime > $dir['selfTime']) {
                     continue;
                 }
 
                 // rmdir() is atomic: the kernel checks emptiness and removes in one
                 // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
                 if (@rmdir($path)) {
-                    $markParentModified($path);
+                    $recordOwnChange($path);
                 }
             } elseif (@unlink($path)) {
-                $markParentModified($path);
+                $recordOwnChange($path);
             }
         }
     }
