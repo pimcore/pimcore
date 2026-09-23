@@ -22,12 +22,10 @@ trait IdRewriterTrait
     public function rewriteIds(mixed $data, array $rewriteConfig, array $params = []): mixed
     {
         $elementType = $params['type'] ?? null;
-
-        $rewriteTargets = $rewriteConfig[$elementType] ?? [];
-        if (is_numeric($data) && $elementType !== null && array_key_exists((int) $data, $rewriteTargets)) {
-            return $rewriteTargets[(int) $data];
+        if ($elementType === null || !is_numeric($data)) {
+            return $data;
         }
 
-        return $data;
+        return $rewriteConfig[$elementType][(int) $data] ?? $data;
     }
 }

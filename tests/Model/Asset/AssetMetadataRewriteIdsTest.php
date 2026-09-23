@@ -77,6 +77,43 @@ class AssetMetadataRewriteIdsTest extends ModelTestCase
         $this->assertInstanceOf(Asset::class, $rewritten);
         $this->assertEquals($otherAsset->getId(), $rewritten->getId());
         $this->assertEquals('some text', $referencingAsset->getMetadata('label'));
+
+        // untouched metadata should survive save & reload
+        $referencingAsset->save();
+        $referencingAsset = Asset::getById($referencingAsset->getId(), ['force' => true]);
+
+        $reloaded = $referencingAsset->getMetadata('relatedImage');
+        $this->assertInstanceOf(Asset::class, $reloaded);
+        $this->assertEquals($otherAsset->getId(), $reloaded->getId());
+        $this->assertEquals('some text', $referencingAsset->getMetadata('label'));
+    }
+
+    public function testRewriteIdsUpdatesLocalizedAssetMetadataRelation(): void
+    {
+        $oldTarget = TestHelper::createImageAsset('rewrite-old-target-localized-');
+        $newTarget = TestHelper::createImageAsset('rewrite-new-target-localized-');
+
+        $referencingAsset = TestHelper::createImageAsset('rewrite-referencing-asset-localized-');
+        $referencingAsset->addMetadata('relatedImage', 'asset', $oldTarget, 'de');
+        $referencingAsset->save();
+
+        $referencingAsset = Asset::getById($referencingAsset->getId(), ['force' => true]);
+        AssetService::rewriteIds(
+            $referencingAsset,
+            ['asset' => [$oldTarget->getId() => $newTarget->getId()]]
+        );
+
+        $rewritten = $referencingAsset->getMetadata('relatedImage', 'de', true);
+        $this->assertInstanceOf(Asset::class, $rewritten);
+        $this->assertEquals($newTarget->getId(), $rewritten->getId());
+
+        // rewritten reference should survive save & reload
+        $referencingAsset->save();
+        $referencingAsset = Asset::getById($referencingAsset->getId(), ['force' => true]);
+
+        $reloaded = $referencingAsset->getMetadata('relatedImage', 'de', true);
+        $this->assertInstanceOf(Asset::class, $reloaded);
+        $this->assertEquals($newTarget->getId(), $reloaded->getId());
     }
 
     public function testRewriteIdsUpdatesDocumentMetadataRelation(): void
