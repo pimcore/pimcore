@@ -18,6 +18,8 @@ use Pimcore\Model\Element\Service;
 
 class DataObject extends Data implements IdRewriterInterface
 {
+    use IdRewriterTrait;
+
     public function normalize(mixed $value, array $params = []): mixed
     {
         $element = $value;
@@ -132,17 +134,5 @@ class DataObject extends Data implements IdRewriterInterface
         }
 
         return null;
-    }
-
-    public function rewriteIds(mixed $data, array $rewriteConfig, array $params = []): mixed
-    {
-        $elementType = $params['type'] ?? null;
-
-        $rewriteTargets = $rewriteConfig[$elementType] ?? [];
-        if (is_numeric($data) && $elementType !== null && array_key_exists((int) $data, $rewriteTargets)) {
-            return $rewriteTargets[(int) $data];
-        }
-
-        return $data;
     }
 }
