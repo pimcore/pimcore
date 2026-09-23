@@ -15,7 +15,7 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\Element\Service;
 
-class Asset extends Data
+class Asset extends Data implements IdRewriterInterface
 {
     public function normalize(mixed $value, array $params = []): mixed
     {
@@ -131,5 +131,17 @@ class Asset extends Data
         }
 
         return null;
+    }
+
+    public function rewriteIds(mixed $data, array $rewriteConfig, array $params = []): mixed
+    {
+        $elementType = $params['type'] ?? null;
+
+        $rewriteTargets = $rewriteConfig[$elementType] ?? [];
+        if (is_numeric($data) && $elementType !== null && array_key_exists((int) $data, $rewriteTargets)) {
+            return $rewriteTargets[(int) $data];
+        }
+
+        return $data;
     }
 }

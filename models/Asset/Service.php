@@ -24,6 +24,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
 use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
@@ -253,6 +254,27 @@ class Service extends Model\Element\Service
             $property->rewriteIds($rewriteConfig);
         }
         $asset->setProperties($properties);
+
+        // rewriting metadata relations (e.g. "asset", "document" or "object" metadata fields)
+        if ($asset->getHasMetaData()) {
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $metadata = $asset->getMetadata(null, null, false, true);
+
+            foreach ($metadata as &$item) {
+                try {
+                    /** @var Data $instance */
+                    $instance = $loader->build($item['type']);
+                } catch (UnsupportedException $e) {
+                    continue;
+                }
+
+                if ($instance instanceof IdRewriterInterface) {
+                    $item['data'] = $instance->rewriteIds($item['data'], $rewriteConfig, $item);
+                }
+            }
+
+            $asset->setMetadataRaw($metadata);
+        }
 
         return $asset;
     }
