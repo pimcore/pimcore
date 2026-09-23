@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -1125,7 +1126,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
