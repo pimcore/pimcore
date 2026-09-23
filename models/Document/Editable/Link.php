@@ -32,6 +32,16 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     protected ?array $data = null;
 
+    /**
+     * Data keys that carry the editable's own bookkeeping or are already rendered elsewhere
+     * (link text, parameters/anchor folded into the href, internal target reference) and must
+     * never be echoed back as a raw HTML attribute on the rendered <a> tag.
+     */
+    private const RESERVED_DATA_KEYS = [
+        'path', 'linktype', 'internal', 'internalId', 'internalType',
+        'text', 'parameters', 'anchor',
+    ];
+
     public function getType(): string
     {
         return 'link';
@@ -101,13 +111,19 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             // add attributes to link
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
+                if (!is_string($key) || !$this->isSafeAttributeName($key) || $this->isEventHandlerAttribute($key)
+                    || in_array($key, self::RESERVED_DATA_KEYS, true)) {
+                    continue;
+                }
+
                 if (is_string($value) || is_numeric($value)) {
+                    $attributeName = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
-                        $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
+                        $attribs[] = $attributeName.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
                     } elseif ($value) {
                         $attribs[] = (is_string($value)) ?
-                            $key . '="' . htmlspecialchars($value) . '"' :
-                            $key . '="' . $value . '"';
+                            $attributeName . '="' . htmlspecialchars($value) . '"' :
+                            $attributeName . '="' . $value . '"';
                     }
                 }
             }
@@ -194,13 +210,42 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     {
         $normalized = strtolower(preg_replace('/[\x00-\x20]+/', '', $url) ?? '');
 
-        foreach (['javascript:', 'vbscript:', 'data:'] as $scheme) {
+        foreach (['javascript:', 'vbscript:'] as $scheme) {
             if (str_starts_with($normalized, $scheme)) {
                 return true;
             }
         }
 
+        if (str_starts_with($normalized, 'data:')) {
+            // data:image/* covers the legitimate use case (e.g. a downloadable data-uri image);
+            // image/svg+xml can still embed and execute <script>, so it stays blocked
+            return !preg_match('/^data:image\/(?!svg\+xml)[a-z0-9.+-]+[;,]/', $normalized);
+        }
+
         return false;
+    }
+
+    /**
+     * Event handler attributes (onclick, onmouseover, onerror, ...) execute script regardless of
+     * how well the attribute value is escaped, and are not part of the documented attribute set
+     * for this editable (see doc/01_Documents/02_Templates/03_Editables/18_Link.md), so they are
+     * rejected outright rather than merely escaped.
+     */
+    private function isEventHandlerAttribute(string $key): bool
+    {
+        return (bool) preg_match('/^on[a-z]/i', $key);
+    }
+
+    /**
+     * HTML attribute names are delimited by raw whitespace, `"`, `'`, `=`, `<`, `>` and `/` — an
+     * HTML parser reads these characters before any entity decoding happens, so htmlspecialchars()
+     * on the key is not enough to stop a key containing them from being re-tokenized by the browser
+     * into a different attribute (or several) than the single PHP array key it came from. Only a
+     * conventional attribute-name shape (letters/digits/`-`/`_`/`:`/`.`) is accepted.
+     */
+    private function isSafeAttributeName(string $key): bool
+    {
+        return (bool) preg_match('/^[a-zA-Z_:][a-zA-Z0-9_:.-]*$/', $key);
     }
 
     private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void
