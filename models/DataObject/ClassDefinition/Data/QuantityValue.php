@@ -405,9 +405,14 @@ class QuantityValue extends AbstractQuantityValue
         if (!empty($params['brickPrefix'])) {
             $key = $params['brickPrefix'].$key;
         }
+
+        if (!in_array($operator, self::$validFilterOperators)) {
+            return '1 = 0';
+        }
+
         if (str_starts_with($name, 'cskey_')) {
-            if (!is_numeric($value[0][0]) || !in_array($operator, self::$validFilterOperators)) {
-                return '';
+            if (!is_numeric($value[0][0])) {
+                return '1 = 0';
             }
 
             return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . (float) $value[0][0] . ' ';

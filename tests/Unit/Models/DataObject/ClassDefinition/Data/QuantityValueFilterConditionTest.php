@@ -49,7 +49,7 @@ class QuantityValueFilterConditionTest extends TestCase
             ['name' => 'cskey_1-2']
         );
 
-        $this->assertSame('', $condition);
+        $this->assertSame('1 = 0', $condition);
         $this->assertStringNotContainsString('SELECT', $condition);
     }
 
@@ -63,6 +63,19 @@ class QuantityValueFilterConditionTest extends TestCase
             ['name' => 'cskey_1-2']
         );
 
-        $this->assertSame('', $condition);
+        $this->assertSame('1 = 0', $condition);
+    }
+
+    public function testNonAllowlistedOperatorIsRejectedOnNonClassificationStorePath(): void
+    {
+        $field = new QuantityValue();
+
+        $condition = $field->getFilterConditionExt(
+            '5',
+            '1=1; DROP TABLE users; --',
+            ['name' => 'myQuantityValue__value']
+        );
+
+        $this->assertSame('1 = 0', $condition);
     }
 }
