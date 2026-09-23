@@ -87,8 +87,12 @@ trait Dao
         }
     }
 
-    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null): void
+    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null, Data $field): void
     {
+        if ($field instanceof DataObject\ClassDefinition\Data\UserDefinedColumnTypeInterface) {
+            Data::validateColumnType($type);
+        }
+
         $existingColumns = $this->getValidTableColumns($table, false);
 
         $existingColName = null;

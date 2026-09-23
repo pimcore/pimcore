@@ -69,13 +69,13 @@ class Dao extends Model\Dao\AbstractDao
                 if (is_array($value->getColumnType())) {
                     // if a datafield requires more than one field
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                         $protectedColums[] = $key . '__' . $fkey;
                         $this->ensureForeignKeys($table, $key, $fkey, $value);
                     }
                 } else {
                     if ($value->getColumnType()) {
-                        $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
+                        $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL', $value);
                         $protectedColums[] = $key;
                     }
                 }
