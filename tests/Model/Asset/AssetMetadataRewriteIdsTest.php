@@ -15,6 +15,8 @@ namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Service as AssetService;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -75,5 +77,61 @@ class AssetMetadataRewriteIdsTest extends ModelTestCase
         $this->assertInstanceOf(Asset::class, $rewritten);
         $this->assertEquals($otherAsset->getId(), $rewritten->getId());
         $this->assertEquals('some text', $referencingAsset->getMetadata('label'));
+    }
+
+    public function testRewriteIdsUpdatesDocumentMetadataRelation(): void
+    {
+        $oldTarget = TestHelper::createEmptyDocumentPage('rewrite-old-target-doc-');
+        $newTarget = TestHelper::createEmptyDocumentPage('rewrite-new-target-doc-');
+
+        $referencingAsset = TestHelper::createImageAsset('rewrite-referencing-asset-doc-');
+        $referencingAsset->addMetadata('relatedDocument', 'document', $oldTarget);
+        $referencingAsset->save();
+
+        $referencingAsset = Asset::getById($referencingAsset->getId(), ['force' => true]);
+        AssetService::rewriteIds(
+            $referencingAsset,
+            ['document' => [$oldTarget->getId() => $newTarget->getId()]]
+        );
+
+        $rewritten = $referencingAsset->getMetadata('relatedDocument');
+        $this->assertInstanceOf(Document::class, $rewritten);
+        $this->assertEquals($newTarget->getId(), $rewritten->getId());
+
+        // rewritten reference should survive save & reload
+        $referencingAsset->save();
+        $referencingAsset = Asset::getById($referencingAsset->getId(), ['force' => true]);
+
+        $reloaded = $referencingAsset->getMetadata('relatedDocument');
+        $this->assertInstanceOf(Document::class, $reloaded);
+        $this->assertEquals($newTarget->getId(), $reloaded->getId());
+    }
+
+    public function testRewriteIdsUpdatesObjectMetadataRelation(): void
+    {
+        $oldTarget = TestHelper::createEmptyObject('rewrite-old-target-object-');
+        $newTarget = TestHelper::createEmptyObject('rewrite-new-target-object-');
+
+        $referencingAsset = TestHelper::createImageAsset('rewrite-referencing-asset-object-');
+        $referencingAsset->addMetadata('relatedObject', 'object', $oldTarget);
+        $referencingAsset->save();
+
+        $referencingAsset = Asset::getById($referencingAsset->getId(), ['force' => true]);
+        AssetService::rewriteIds(
+            $referencingAsset,
+            ['object' => [$oldTarget->getId() => $newTarget->getId()]]
+        );
+
+        $rewritten = $referencingAsset->getMetadata('relatedObject');
+        $this->assertInstanceOf(Concrete::class, $rewritten);
+        $this->assertEquals($newTarget->getId(), $rewritten->getId());
+
+        // rewritten reference should survive save & reload
+        $referencingAsset->save();
+        $referencingAsset = Asset::getById($referencingAsset->getId(), ['force' => true]);
+
+        $reloaded = $referencingAsset->getMetadata('relatedObject');
+        $this->assertInstanceOf(Concrete::class, $reloaded);
+        $this->assertEquals($newTarget->getId(), $reloaded->getId());
     }
 }
