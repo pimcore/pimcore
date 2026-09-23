@@ -696,7 +696,8 @@ class AssetTest extends ModelTestCase
     /**
      * Regression test for GHSA-4xrp-5ggg-fg5p: correctPath() must rename filenames that would be
      * served with an executable/active content-type (HTML, JS, and versioned PHP suffixes) to a
-     * harmless ".txt" extension, the same way it already does for plain ".php" and ".htaccess".
+     * harmless ".txt" extension, the same way it already does for plain ".php" and ".htaccess",
+     * when the asset is newly created.
      */
     public function testCorrectPathRewritesActiveContentTypeExtensions(): void
     {
@@ -704,6 +705,7 @@ class AssetTest extends ModelTestCase
             'xss.html',
             'xss.htm',
             'xss.xhtml',
+            'xss.shtml',
             'xss.js',
             'xss.mjs',
             'shell.php80',
@@ -725,6 +727,42 @@ class AssetTest extends ModelTestCase
                 "Filename '$filename' must be rewritten with a '.txt' suffix so it is never served as active content."
             );
         }
+    }
+
+    /**
+     * Regression test: correctPath() must NOT rename an already-stored HTML/JS asset just
+     * because it is saved again for an unrelated reason (metadata edit, move, workflow
+     * transition, ...). Only newly created assets are subject to the active-content-type
+     * denylist; otherwise every existing .html/.js asset would break on its next save.
+     *
+     * The legacy row is created with a safe filename first, then rewritten directly in the
+     * database - bypassing model validation - to simulate an asset that was already stored
+     * under a now-denylisted filename before this fix extended the denylist (same technique as
+     * testGetByPathResolvesLegacyNfdStoredKeyByExactMatch()).
+     */
+    public function testCorrectPathKeepsExistingActiveContentTypeFilenameOnUpdate(): void
+    {
+        $legacyFilename = uniqid() . '-legacy.html';
+
+        $asset = new Asset();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setFilename(uniqid() . '-placeholder.txt');
+        $asset->setData('<p>legitimate legacy content predating this fix</p>');
+        $asset->save();
+
+        Db::get()->update('assets', ['filename' => $legacyFilename], ['id' => $asset->getId()]);
+
+        $reloaded = Asset::getById($asset->getId(), ['force' => true]);
+        $reloaded->setUserModification(1);
+        $reloaded->save();
+
+        $this->assertSame(
+            $legacyFilename,
+            $reloaded->getFilename(),
+            'An already-stored .html asset must keep its filename when saved again.'
+        );
     }
 
     public function testCorrectPathKeepsLegitimateExtensionsUnchanged(): void

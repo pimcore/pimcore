@@ -659,9 +659,17 @@ class Asset extends Element\AbstractElement
             $this->setType('folder');
         }
 
-        // do not allow PHP, HTML/JS and .htaccess files, since they would be served with an
-        // executable/active content-type and can be used for stored XSS (e.g. via WebDAV uploads)
-        if (preg_match('@\.(ph(p(\d+(\.\d+)*)?|t(ml)?|ps|ar)|html?|xhtml|js|mjs)$@i', $this->getFilename()) || $this->getFilename() == '.htaccess') {
+        // do not allow PHP and .htaccess files
+        if (preg_match('@\.ph(p(\d+(\.\d+)*)?|t(ml)?|ps|ar)$@i', $this->getFilename()) || $this->getFilename() == '.htaccess') {
+            $this->setFilename($this->getFilename() . '.txt');
+        }
+
+        // for newly created assets, also block extensions that would be served with an
+        // executable/active content-type and can be used for stored XSS (e.g. via WebDAV
+        // uploads). This is intentionally not applied to existing assets on update, since that
+        // would silently rename (and break every reference to) any already-stored .html/.js
+        // asset the next time it is saved for an unrelated reason.
+        if (!$this->getId() && preg_match('@\.(html?|xhtml|shtml|js|mjs)$@i', $this->getFilename())) {
             $this->setFilename($this->getFilename() . '.txt');
         }
 

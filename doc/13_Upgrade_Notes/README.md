@@ -2,6 +2,9 @@
 
 ## Pimcore 2026.2.12
 
+### [Assets]
+- [Security] `Asset::correctPath()` now also renames newly **created** asset filenames ending in `.html`, `.htm`, `.xhtml`, `.shtml`, `.js` or `.mjs` by appending a `.txt` suffix, the same way it has always done for PHP-family extensions and `.htaccess` - these extensions would otherwise be served with an executable/active content-type (`text/html`, `application/javascript`, ...) and could be used for stored XSS, e.g. via a WebDAV upload from a user with only create permission on an asset folder (GHSA-4xrp-5ggg-fg5p). This only applies at creation time; an **existing** asset already stored under one of these extensions keeps its filename on subsequent saves (metadata edits, moves, workflow transitions, ...), so no existing installation loses access to already-referenced `.html`/`.js` assets. `.svg` is intentionally not covered by this change - see the PR description of the fix for GHSA-4xrp-5ggg-fg5p for why.
+
 ### [Documents]
 - [Areabricks] In editmode, areabrick names and descriptions are now translated via the `studio` translation domain whenever that domain is registered (i.e. Pimcore Studio is installed), so these UI labels show up in Studio's translations instead of the website's `messages` domain. Labels that were already translated in the `messages` domain keep working as a read-only fallback, but missing keys are no longer auto-created there - they are created in the `studio` domain instead. Installations without the `studio` domain keep translating them via `messages` as before.
 
