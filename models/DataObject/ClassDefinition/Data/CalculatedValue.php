@@ -17,6 +17,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -201,7 +202,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $key = $this->getName();
 
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '(): ' . $this->getReturnTypeDeclaration() . "\n";
@@ -227,7 +228,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     {
         $key = $this->getName();
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '(?string $language = null): ' . $this->getReturnTypeDeclaration() . "\n";
@@ -280,7 +281,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $key = $this->getName();
         $code = '';
         $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Set ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '(?string $language = null): ' . $this->getReturnTypeDeclaration() . "\n";
@@ -305,7 +306,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
         $code = '';
         $code .= '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '(): ' . $this->getReturnTypeDeclaration() . "\n";
