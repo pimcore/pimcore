@@ -164,6 +164,13 @@ class Sql extends AbstractAdapter
             }
         }
 
+        // Structural allowlist on top of the fragment denylist above: whatever gets embedded
+        // as a derived table in getColumns()/getBaseQuery() must itself be a single SELECT/WITH
+        // statement, independent of which forbidden keyword or primitive the denylist covers.
+        if (!preg_match('/^\s*(SELECT|WITH)\b/i', $sql)) {
+            throw new InvalidArgumentException('The composed report query must start with SELECT or WITH.');
+        }
+
         return $sql;
     }
 

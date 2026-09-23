@@ -51,7 +51,7 @@ final class SqlTest extends TestCase
         // an INTO OUTFILE statement reach Db::get()->fetchAssociative() in getColumns().
         $config = $this->configWith(
             'sql',
-            "* FROM (SELECT 0x3c3f70687020706870696e666f28293b203f3e AS shell) t "
+            '* FROM (SELECT 0x3c3f70687020706870696e666f28293b203f3e AS shell) t '
             . "INTO OUTFILE '/var/www/html/public/poc_shell.php'--"
         );
 
@@ -81,6 +81,17 @@ final class SqlTest extends TestCase
         // rejected: the appended ' LIMIT 0,1' would otherwise arm it as a comment
         // at execution time and truncate the intended query.
         $config = $this->configWith('where', 'id = 1--');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsLoadFileWithNewlineBeforeParen(): void
+    {
+        // The LOAD_FILE pattern's '\s*' between the function name and '(' matches a literal
+        // newline (PCRE's '\s' does so without needing the 's' modifier); assert that
+        // explicitly so a later refactor to '[ ]*' does not quietly reopen this bypass.
+        $config = $this->configWith('sql', "LOAD_FILE\n('/etc/passwd') AS secret");
 
         $this->expectException(InvalidArgumentException::class);
         $this->adapter()->exposedBuildQueryString($config);
