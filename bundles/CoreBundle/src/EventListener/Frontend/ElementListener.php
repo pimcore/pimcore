@@ -83,9 +83,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $user = $this->userLoader->getUser();
             }
 
-            if ($document && !$document->isPublished() && !$user) {
+            if ($document && !$document->isPublished() && (!$user || !$document->isAllowed('view', $user))) {
                 $this->logger->warning(
-                    "Denying access to document {$document->getFullPath()} as it is unpublished and there is no user in the session."
+                    "Denying access to document {$document->getFullPath()} as it is unpublished and the user may not view it."
                 );
 
                 throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
@@ -153,9 +153,20 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         // for version preview
         if ($request->query->has('pimcore_version')) {
             $versionId = ParameterBagHelper::getInt($request->query, 'pimcore_version');
-            // TODO there was a check with a registry flag here - check if the main request handling is sufficient
             $version = Version::getById($versionId);
-            if ($documentVersion = $version?->getData()) {
+
+            if (!$this->isVersionAccessAllowedForDocument($version, $document, $user)) {
+                $this->logger->warning('Denying access to {version} for document {document} from pimcore_version parameter', [
+                    'version' => $versionId,
+                    'document' => $document->getFullPath(),
+                ]);
+
+                throw new AccessDeniedHttpException(
+                    sprintf('Access denied for version %d of document %s', $versionId, $document->getFullPath())
+                );
+            }
+
+            if ($documentVersion = $version->getData()) {
                 $document = $documentVersion;
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
                     'version' => $version->getId(),
@@ -174,6 +185,19 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         return $document;
+    }
+
+    /**
+     * A version passed via pimcore_version must belong to the requested document and the
+     * requesting user must hold the "versions" permission on it - otherwise any backend
+     * user could read any document version by guessing its id (see GHSA-v36c-r89g-2226).
+     */
+    private function isVersionAccessAllowedForDocument(?Version $version, Document $document, User $user): bool
+    {
+        return $version !== null
+            && $version->getCtype() === 'document'
+            && $version->getCid() === $document->getId()
+            && $document->isAllowed('versions', $user);
     }
 
     protected function handleEditmode(
