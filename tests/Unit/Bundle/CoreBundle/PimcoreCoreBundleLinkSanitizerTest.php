@@ -28,6 +28,16 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
  */
 class PimcoreCoreBundleLinkSanitizerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // boot()'s behavior depends on AttributeSanitizer::isConfigured(), so every test needs a
+        // known clean starting state rather than relying on the previous test's tearDown having
+        // run - the full suite runs many test classes in one process, in an order these tests
+        // don't control
+        AttributeSanitizer::setInstance(null);
+    }
+
     protected function tearDown(): void
     {
         AttributeSanitizer::setInstance(null);
