@@ -46,4 +46,36 @@ class LinkSanitizerConfigurationTest extends TestCase
 
         $this->assertTrue($config['documents']['editables']['link_sanitizer']['strict']);
     }
+
+    /**
+     * @dataProvider quotedBooleanStringProvider
+     */
+    public function testLinkSanitizerStrictParsesQuotedBooleanStrings(string $value, bool $expected): void
+    {
+        $config = $this->process([[
+            'documents' => [
+                'editables' => [
+                    'link_sanitizer' => [
+                        'strict' => $value,
+                    ],
+                ],
+            ],
+        ]]);
+
+        $this->assertSame($expected, $config['documents']['editables']['link_sanitizer']['strict']);
+    }
+
+    public static function quotedBooleanStringProvider(): array
+    {
+        return [
+            'quoted false' => ['false', false],
+            'quoted no' => ['no', false],
+            'quoted off' => ['off', false],
+            'quoted 0' => ['0', false],
+            'quoted true' => ['true', true],
+            'quoted yes' => ['yes', true],
+            'quoted on' => ['on', true],
+            'quoted 1' => ['1', true],
+        ];
+    }
 }

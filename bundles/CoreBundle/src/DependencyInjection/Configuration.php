@@ -1034,7 +1034,13 @@ final class Configuration implements ConfigurationInterface
                                     ->beforeNormalization()
                                         ->ifString()
                                         ->then(function ($v) {
-                                            return (bool)$v;
+                                            // casting the string itself to bool would make "false"/"no"/"off"
+                                            // (any non-empty string) evaluate to true; parse recognized
+                                            // boolean strings and leave anything else for booleanNode's own
+                                            // type check to reject
+                                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                                            return $parsed ?? $v;
                                         })
                                     ->end()
                                     ->defaultFalse()
