@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
@@ -33,6 +34,7 @@ class DateRange extends Data implements
     CustomVersionMarshalInterface
 {
     use DataObject\Traits\DataWidthTrait;
+    use DateColumnTypeValidatorTrait;
 
     /**
      * @internal
@@ -354,9 +356,17 @@ class DateRange extends Data implements
 
     /**
      * @param string|string[] $columnType
+     *
+     * @throws InvalidArgumentException if $columnType is not a valid SQL type declaration
      */
     public function setColumnType(string|array $columnType): void
     {
+        foreach (is_array($columnType) ? $columnType : [$columnType] as $type) {
+            if (!self::isValidColumnType($type)) {
+                throw new InvalidArgumentException(sprintf('Invalid column type "%s" given for field type "dateRange"', $type));
+            }
+        }
+
         if (is_array($columnType)) {
             $this->columnType = $columnType;
         } else {
