@@ -732,8 +732,9 @@ class AssetTest extends ModelTestCase
     /**
      * Regression test: correctPath() must NOT rename an already-stored HTML/JS asset just
      * because it is saved again for an unrelated reason (metadata edit, move, workflow
-     * transition, ...). Only newly created assets are subject to the active-content-type
-     * denylist; otherwise every existing .html/.js asset would break on its next save.
+     * transition, ...) without its filename changing. Only a filename that is newly set or
+     * actually changed is subject to the active-content-type denylist; otherwise every existing
+     * .html/.js asset would break on its next unrelated save.
      *
      * The legacy row is created with a safe filename first, then rewritten directly in the
      * database - bypassing model validation - to simulate an asset that was already stored
@@ -761,7 +762,34 @@ class AssetTest extends ModelTestCase
         $this->assertSame(
             $legacyFilename,
             $reloaded->getFilename(),
-            'An already-stored .html asset must keep its filename when saved again.'
+            'An already-stored .html asset must keep its filename when saved again without changing.'
+        );
+    }
+
+    /**
+     * Regression test (Copilot review on PR #19447): an asset must not be able to bypass the
+     * active-content-type denylist by being created/uploaded under a harmless filename and then
+     * renamed to a dangerous one on a later save - e.g. via Asset\WebDAV\File::setName(), which
+     * calls Asset::setFilename() + save() on an asset that already has an id, so a denylist
+     * gated purely on "is this a new asset" (!$this->getId()) would never see the rename.
+     */
+    public function testCorrectPathRewritesFilenameRenamedToActiveContentTypeOnUpdate(): void
+    {
+        $asset = new Asset();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setFilename(uniqid() . '-placeholder.txt');
+        $asset->setData('<script>document.title="xss"</script>');
+        $asset->save();
+
+        $asset->setFilename(uniqid() . '-renamed.html');
+        $asset->save();
+
+        $this->assertStringEndsWith(
+            '.html.txt',
+            $asset->getFilename(),
+            'Renaming an existing asset to a dangerous extension must still be blocked, not just blocked at creation.'
         );
     }
 
