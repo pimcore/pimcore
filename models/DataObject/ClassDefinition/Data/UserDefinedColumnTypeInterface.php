@@ -17,8 +17,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
  * Marks field types whose columnType/queryColumnType is writable through a public setter
  * (e.g. via the class editor or a programmatically built class definition) rather than being
  * computed entirely from internal, already-validated state. Helper\Dao::addModifyColumn()
- * validates the type string against Data::validateColumnType() for these fields only, since
- * that allowlist is not guaranteed to match every built-in or custom field type's column type.
+ * validates the type string for these fields only, since that allowlist is not guaranteed to
+ * match every built-in or custom field type's column type.
+ *
+ * @internal this is an implementation detail of the DDL-injection guard in Helper\Dao, not a
+ *           supported extension point - do not implement it on custom field types.
  */
 interface UserDefinedColumnTypeInterface
 {

@@ -94,13 +94,44 @@ class DaoAddModifyColumnValidationTest extends TestCase
     }
 
     /**
-     * Creates a test double that exposes the trait's addModifyColumn() method.
+     * @dataProvider legitimateColumnTypeProvider
+     */
+    public function testValidateColumnTypeAcceptsLegitimateTypes(string $columnType): void
+    {
+        $this->createDaoWithDb($this->createMock(Connection::class))->callValidateColumnType($columnType);
+        $this->addToAssertionCount(1);
+    }
+
+    public static function legitimateColumnTypeProvider(): array
+    {
+        return [
+            'bigint with length' => ['bigint(20)'],
+            'plain date' => ['date'],
+            'plain datetime' => ['datetime'],
+            'datetime with precision' => ['datetime(6)'],
+            'decimal with precision and scale' => ['decimal(10,2)'],
+            'unsigned modifier' => ['int unsigned'],
+            'zerofill modifier' => ['int zerofill'],
+            'unsigned and zerofill combined' => ['bigint(20) unsigned zerofill'],
+        ];
+    }
+
+    public function testValidateColumnTypeRejectsInjectionPayload(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->createDaoWithDb($this->createMock(Connection::class))->callValidateColumnType(self::INJECTION_PAYLOAD);
+    }
+
+    /**
+     * Creates a test double that exposes the trait's addModifyColumn()/validateColumnType() methods.
      */
     private function createDaoWithDb(Connection $db): object
     {
         return new class($db) {
             use \Pimcore\Model\DataObject\ClassDefinition\Helper\Dao {
                 addModifyColumn as public callAddModifyColumn;
+                validateColumnType as public callValidateColumnType;
             }
 
             protected \Doctrine\DBAL\Connection $db;
