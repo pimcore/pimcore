@@ -415,7 +415,7 @@ class QuantityValue extends AbstractQuantityValue
                 return '1 = 0';
             }
 
-            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . (float) $value[0][0] . ' ';
+            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $db->quote((string) $value[0][0]) . ' ';
         }
 
         return $key . ' ' . $operator . ' ' . (is_string($value) ? $db->quote($value) : $value) . ' ';

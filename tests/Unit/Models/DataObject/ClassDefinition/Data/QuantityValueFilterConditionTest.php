@@ -78,4 +78,21 @@ class QuantityValueFilterConditionTest extends TestCase
 
         $this->assertSame('1 = 0', $condition);
     }
+
+    public function testHighPrecisionDecimalValueIsPreservedExactly(): void
+    {
+        $field = new QuantityValue();
+
+        $highPrecisionValue = '123456789012345678901234567890.123456789012345678901234567890';
+
+        $condition = $field->getFilterConditionExt(
+            [[$highPrecisionValue, '1']],
+            '=',
+            ['name' => 'cskey_1-2']
+        );
+
+        $this->assertStringContainsString($highPrecisionValue, $condition, 'casting to float must not truncate a DECIMAL(65, 30) value');
+        $this->assertStringNotContainsString('E+', $condition);
+        $this->assertStringNotContainsString('INF', $condition);
+    }
 }
