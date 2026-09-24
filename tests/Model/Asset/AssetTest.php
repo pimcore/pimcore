@@ -794,4 +794,171 @@ class AssetTest extends ModelTestCase
             'an empty file that exists in storage must not be reported as a placeholder'
         );
     }
+
+    /**
+     * Regression test for GHSA-4xrp-5ggg-fg5p: correctPath() must rename filenames that would be
+     * served with an executable/active content-type (HTML, JS, and versioned PHP suffixes) to a
+     * harmless ".txt" extension, the same way it already does for plain ".php" and ".htaccess",
+     * when the asset is newly created.
+     */
+    public function testCorrectPathRewritesActiveContentTypeExtensions(): void
+    {
+        $dangerousNames = [
+            'xss.html',
+            'xss.htm',
+            'xss.xhtml',
+            'xss.xht',
+            'xss.shtml',
+            'xss.js',
+            'xss.mjs',
+            'shell.php80',
+            'shell.php8.2',
+        ];
+
+        foreach ($dangerousNames as $filename) {
+            $asset = new Asset();
+            $asset->setParentId(1);
+            $asset->setUserOwner(1);
+            $asset->setUserModification(1);
+            $asset->setFilename(uniqid() . '-' . $filename);
+            $asset->setData('<script>document.title="xss"</script>');
+            $asset->save();
+
+            $this->assertStringEndsWith(
+                $filename . '.txt',
+                $asset->getFilename(),
+                "Filename '$filename' must be rewritten with a '.txt' suffix so it is never served as active content."
+            );
+        }
+    }
+
+    /**
+     * Regression test: correctPath() must NOT rename an already-stored HTML/JS asset just
+     * because it is saved again for an unrelated reason (metadata edit, move, workflow
+     * transition, ...) without its filename changing. Only a filename that is newly set or
+     * actually changed is subject to the active-content-type denylist; otherwise every existing
+     * .html/.js asset would break on its next unrelated save.
+     *
+     * The legacy row is created with a safe filename first, then rewritten directly in the
+     * database - bypassing model validation - to simulate an asset that was already stored
+     * under a now-denylisted filename before this fix extended the denylist (same technique as
+     * testGetByPathResolvesLegacyNfdStoredKeyByExactMatch()).
+     */
+    public function testCorrectPathKeepsExistingActiveContentTypeFilenameOnUpdate(): void
+    {
+        $legacyFilename = uniqid() . '-legacy.html';
+
+        $asset = new Asset();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setFilename(uniqid() . '-placeholder.txt');
+        $asset->setData('<p>legitimate legacy content predating this fix</p>');
+        $asset->save();
+
+        Db::get()->update('assets', ['filename' => $legacyFilename], ['id' => $asset->getId()]);
+
+        $reloaded = Asset::getById($asset->getId(), ['force' => true]);
+        $reloaded->setUserModification(1);
+        $reloaded->save();
+
+        $this->assertSame(
+            $legacyFilename,
+            $reloaded->getFilename(),
+            'An already-stored .html asset must keep its filename when saved again without changing.'
+        );
+    }
+
+    /**
+     * Regression test (Copilot review on PR #19447): an asset must not be able to bypass the
+     * active-content-type denylist by being created/uploaded under a harmless filename and then
+     * renamed to a dangerous one on a later save - e.g. via Asset\WebDAV\File::setName(), which
+     * calls Asset::setFilename() + save() on an asset that already has an id, so a denylist
+     * gated purely on "is this a new asset" (!$this->getId()) would never see the rename.
+     */
+    public function testCorrectPathRewritesFilenameRenamedToActiveContentTypeOnUpdate(): void
+    {
+        $asset = new Asset();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setFilename(uniqid() . '-placeholder.txt');
+        $asset->setData('<script>document.title="xss"</script>');
+        $asset->save();
+
+        $asset->setFilename(uniqid() . '-renamed.html');
+        $asset->save();
+
+        $this->assertStringEndsWith(
+            '.html.txt',
+            $asset->getFilename(),
+            'Renaming an existing asset to a dangerous extension must still be blocked, not just blocked at creation.'
+        );
+    }
+
+    /**
+     * Regression test (Copilot review on PR #19447): moving a legacy active-content-type asset
+     * to a different folder changes only its parentId/path, not its filename, so it must NOT be
+     * caught by the denylist - correctPath() only re-checks the denylist when the filename
+     * itself changes. This documents/pins the actual, intentional policy after the review
+     * pointed out the code comment and upgrade note previously overclaimed that a move alone
+     * would trigger the check.
+     */
+    public function testCorrectPathKeepsExistingActiveContentTypeFilenameOnMove(): void
+    {
+        $legacyFilename = uniqid() . '-legacy.html';
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename(uniqid() . '-target-folder');
+        $folder->save();
+
+        $asset = new Asset();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setFilename(uniqid() . '-placeholder.txt');
+        $asset->setData('<p>legitimate legacy content predating this fix</p>');
+        $asset->save();
+
+        Db::get()->update('assets', ['filename' => $legacyFilename], ['id' => $asset->getId()]);
+
+        $reloaded = Asset::getById($asset->getId(), ['force' => true]);
+        $reloaded->setUserModification(1);
+        $reloaded->setParentId($folder->getId());
+        $reloaded->save();
+
+        $this->assertSame(
+            $legacyFilename,
+            $reloaded->getFilename(),
+            'Moving an already-stored .html asset to a different folder must keep its filename unchanged.'
+        );
+    }
+
+    public function testCorrectPathKeepsLegitimateExtensionsUnchanged(): void
+    {
+        $safeNames = [
+            'picture.jpg',
+            'document.pdf',
+            'report.txt',
+            'vector.svg',
+        ];
+
+        foreach ($safeNames as $filename) {
+            $asset = new Asset();
+            $asset->setParentId(1);
+            $asset->setUserOwner(1);
+            $asset->setUserModification(1);
+            $uniqueFilename = uniqid() . '-' . $filename;
+            $asset->setFilename($uniqueFilename);
+            $asset->setData('some content');
+            $asset->save();
+
+            $this->assertSame(
+                $uniqueFilename,
+                $asset->getFilename(),
+                "Legitimate filename '$filename' must not be altered by correctPath()."
+            );
+        }
+    }
 }

@@ -98,12 +98,12 @@ class Dao extends Model\Dao\AbstractDao
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($tableStore, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $this->addModifyColumn($tableStore, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                             $protectedColumnsStore[] = $key . '__' . $fkey;
                             $this->ensureForeignKeys($tableStore, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
-                        $this->addModifyColumn($tableStore, $key, $value->getColumnType(), '', 'NULL');
+                        $this->addModifyColumn($tableStore, $key, $value->getColumnType(), '', 'NULL', $value);
                         $protectedColumnsStore[] = $key;
                     }
                 }
@@ -115,12 +115,12 @@ class Dao extends Model\Dao\AbstractDao
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($tableQuery, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $this->addModifyColumn($tableQuery, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                         $protectedColumnsQuery[] = $key . '__' . $fkey;
                         $this->ensureForeignKeys($tableQuery, $key, $fkey, $value);
                     }
                 } elseif ($value->getQueryColumnType()) {
-                    $this->addModifyColumn($tableQuery, $key, $value->getQueryColumnType(), '', 'NULL');
+                    $this->addModifyColumn($tableQuery, $key, $value->getQueryColumnType(), '', 'NULL', $value);
                     $protectedColumnsQuery[] = $key;
                 }
 

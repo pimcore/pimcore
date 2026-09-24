@@ -912,12 +912,12 @@ QUERY;
                         if (is_array($value->getColumnType())) {
                             // if a datafield requires more than one column
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
-                                $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                                $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                                 $protectedColumns[] = $key . '__' . $fkey;
                                 $this->ensureForeignKeys($table, $key, $fkey, $value);
                             }
                         } else {
-                            $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
+                            $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL', $value);
                             $protectedColumns[] = $key;
                         }
 
@@ -982,12 +982,12 @@ QUERY;
                         // if a datafield requires more than one column in the query table
                         if (is_array($value->getQueryColumnType())) {
                             foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                                $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
+                                $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL', $value);
                                 $protectedColumns[] = $key.'__'.$fkey;
                                 $this->ensureForeignKeys($queryTable, $key, $fkey, $value);
                             }
                         } elseif ($value->getQueryColumnType()) {
-                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL', $value);
                             $protectedColumns[] = $key;
                         }
 

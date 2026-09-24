@@ -12,6 +12,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+use InvalidArgumentException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
@@ -87,8 +88,26 @@ trait Dao
         }
     }
 
-    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null): void
+    /**
+     * Column/query column types (Date, Datetime, DateRange) are emitted verbatim into
+     * ALTER TABLE DDL, so they must be restricted to a plain SQL type expression instead
+     * of accepting arbitrary strings. Kept here rather than on Data - the documented
+     * extension base for custom field types - so a name collision in a third-party
+     * subclass can never turn this internal DDL guard into a BC break.
+     */
+    protected function validateColumnType(string $columnType): void
     {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_]*(\(\s*\d+\s*(,\s*\d+\s*)?\))?(\s+(?:unsigned|zerofill))*\z/i', $columnType)) {
+            throw new InvalidArgumentException(sprintf('Invalid column type "%s"', $columnType));
+        }
+    }
+
+    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null, Data $field): void
+    {
+        if ($field instanceof DataObject\ClassDefinition\Data\UserDefinedColumnTypeInterface) {
+            $this->validateColumnType($type);
+        }
+
         $existingColumns = $this->getValidTableColumns($table, false);
 
         $existingColName = null;
