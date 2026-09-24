@@ -705,6 +705,7 @@ class AssetTest extends ModelTestCase
             'xss.html',
             'xss.htm',
             'xss.xhtml',
+            'xss.xht',
             'xss.shtml',
             'xss.js',
             'xss.mjs',
@@ -790,6 +791,45 @@ class AssetTest extends ModelTestCase
             '.html.txt',
             $asset->getFilename(),
             'Renaming an existing asset to a dangerous extension must still be blocked, not just blocked at creation.'
+        );
+    }
+
+    /**
+     * Regression test (Copilot review on PR #19447): moving a legacy active-content-type asset
+     * to a different folder changes only its parentId/path, not its filename, so it must NOT be
+     * caught by the denylist - correctPath() only re-checks the denylist when the filename
+     * itself changes. This documents/pins the actual, intentional policy after the review
+     * pointed out the code comment and upgrade note previously overclaimed that a move alone
+     * would trigger the check.
+     */
+    public function testCorrectPathKeepsExistingActiveContentTypeFilenameOnMove(): void
+    {
+        $legacyFilename = uniqid() . '-legacy.html';
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename(uniqid() . '-target-folder');
+        $folder->save();
+
+        $asset = new Asset();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setFilename(uniqid() . '-placeholder.txt');
+        $asset->setData('<p>legitimate legacy content predating this fix</p>');
+        $asset->save();
+
+        Db::get()->update('assets', ['filename' => $legacyFilename], ['id' => $asset->getId()]);
+
+        $reloaded = Asset::getById($asset->getId(), ['force' => true]);
+        $reloaded->setUserModification(1);
+        $reloaded->setParentId($folder->getId());
+        $reloaded->save();
+
+        $this->assertSame(
+            $legacyFilename,
+            $reloaded->getFilename(),
+            'Moving an already-stored .html asset to a different folder must keep its filename unchanged.'
         );
     }
 
