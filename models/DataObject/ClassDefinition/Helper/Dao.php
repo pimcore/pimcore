@@ -118,7 +118,7 @@ trait Dao
         foreach ($columnsToRemove as $value) {
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+                $dropColumns[] = 'DROP COLUMN ' . $this->db->quoteIdentifier($value);
 
                 if (
                     str_ends_with(strtolower($value), '__unit') &&
@@ -138,7 +138,7 @@ trait Dao
         }
 
         if ($dropColumns) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
+            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ' . implode(', ', $dropColumns) . ';');
             $this->resetValidTableColumnsCache($table);
         }
     }
@@ -189,7 +189,7 @@ trait Dao
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $lowerCaseColumns) && $this->indexExists($table, 'u_index_', $value)) {
-                    $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                    $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' DROP INDEX ' . $this->db->quoteIdentifier('u_index_' . $value) . ';');
                 }
             }
             $this->resetValidTableColumnsCache($table);
