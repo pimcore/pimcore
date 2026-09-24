@@ -1,0 +1,116 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Model\Document\Editable\Link;
+
+/**
+ * Governs which URL schemes and which rendered HTML attribute keys the Link editable
+ * (\Pimcore\Model\Document\Editable\Link) is allowed to emit for editor-supplied ("direct" link
+ * path, or custom attribute) data.
+ *
+ * The default instance (getInstance() with nothing configured) is fully permissive: no scheme is
+ * rejected and no attribute key is rejected, matching this editable's behavior prior to
+ * GHSA-9g27-c28m-8xg5. strict() closes that advisory (rejects javascript:/vbscript:/script-
+ * executing data: URLs, and on*-shaped attribute keys the document editor could influence).
+ *
+ * To opt into the stricter policy, call setInstance(AttributeSanitizer::strict()) once during
+ * application bootstrap (e.g. a kernel.boot listener). Note that a document editor able to set an
+ * arbitrary "direct" link path or a custom Link attribute is, under the permissive default,
+ * able to store a stored-XSS payload that executes for every visitor who views or clicks the
+ * rendered link - see the advisory for the full impact.
+ */
+class AttributeSanitizer
+{
+    private static ?self $instance = null;
+
+    public function __construct(
+        private readonly bool $blockDangerousUrlSchemes = false,
+        private readonly bool $blockEditorSuppliedEventHandlerAttributes = false,
+        private readonly bool $requireConventionalAttributeNameShape = false,
+    ) {
+    }
+
+    public static function getInstance(): self
+    {
+        return self::$instance ??= new self();
+    }
+
+    /**
+     * @internal test seam - also usable by applications to install a custom policy at bootstrap
+     */
+    public static function setInstance(?self $sanitizer): void
+    {
+        self::$instance = $sanitizer;
+    }
+
+    /**
+     * The policy that closes GHSA-9g27-c28m-8xg5 (stored XSS via the Link editable). This is not
+     * the default - see the class docblock.
+     */
+    public static function strict(): self
+    {
+        return new self(
+            blockDangerousUrlSchemes: true,
+            blockEditorSuppliedEventHandlerAttributes: true,
+            requireConventionalAttributeNameShape: true,
+        );
+    }
+
+    public function isUrlAllowed(string $url): bool
+    {
+        if (!$this->blockDangerousUrlSchemes) {
+            return true;
+        }
+
+        // browsers ignore leading/trailing whitespace and embedded control characters (e.g.
+        // tabs, newlines) when parsing a URL scheme, so those are stripped before comparison to
+        // prevent bypasses such as "java\tscript:"
+        $normalized = strtolower(preg_replace('/[\x00-\x20]+/', '', $url) ?? '');
+
+        foreach (['javascript:', 'vbscript:'] as $scheme) {
+            if (str_starts_with($normalized, $scheme)) {
+                return false;
+            }
+        }
+
+        if (str_starts_with($normalized, 'data:')) {
+            // data:image/* covers the legitimate use case (e.g. a downloadable data-uri image);
+            // image/svg+xml can still embed and execute <script>, so it stays blocked
+            return (bool) preg_match('/^data:image\/(?!svg\+xml)[a-z0-9.+-]+[;,]/', $normalized);
+        }
+
+        return true;
+    }
+
+    public function isAttributeKeyAllowed(string $key, bool $editorControlled): bool
+    {
+        // HTML attribute names are delimited by raw whitespace, `"`, `'`, `=`, `<`, `>` and `/` -
+        // an HTML parser reads these characters before any entity decoding happens, so escaping
+        // the key is not enough to stop one containing them from being re-tokenized by the
+        // browser into a different attribute (or several) than the single source key it came from
+        if ($this->requireConventionalAttributeNameShape && !preg_match('/^[a-zA-Z_:][a-zA-Z0-9_:.-]*$/', $key)) {
+            return false;
+        }
+
+        // event handler attributes (onclick, onmouseover, onerror, ...) execute script
+        // regardless of how well the attribute value is escaped; only reject them once the
+        // document editor could have supplied or influenced the key - a template-configured
+        // handler the editor never touched is trusted
+        if ($this->blockEditorSuppliedEventHandlerAttributes && $editorControlled
+            && preg_match('/^on[a-z]/i', $key)) {
+            return false;
+        }
+
+        return true;
+    }
+}

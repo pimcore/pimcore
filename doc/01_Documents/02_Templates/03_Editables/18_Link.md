@@ -27,11 +27,39 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 | `allowedTargets`  | array          | You can limit the available targets for this editable by passing the allowed targets explicitly. If this option is not used, all targets are available. Valid targets are: ` ` (empty string), `_blank`, `_self`, `_top`, `_parent`                                             |
 | `disabledFields`  | array          | You can limit the available fields for this editable by passing the allowed fields explicitly. If this option is not used, all fields are available. Valid Fields are: `text`, `target`, `parameters`, `anchor`, `title`, `accesskey`, `rel`, `tabindex`, `class`, `attributes` |
 
+## Security policy (URL schemes and attribute keys)
+
+By default, the Link editable renders whatever the document editor enters: any URL scheme
+(including `javascript:`/`vbscript:`/`data:`) and any custom attribute key (including event
+handlers like `onclick`). This preserves this editable's historical behavior, but means a document
+editor (document-edit permission, not necessarily an administrator) can use it to store a
+persistent (stored) XSS payload that runs for every visitor who views or clicks the rendered link
+(GHSA-9g27-c28m-8xg5).
+
+To close this, install the stricter policy once during application bootstrap (e.g. a
+`kernel.boot`/`kernel.request` listener):
+
+```php
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
+
+AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+```
+
+This rejects `javascript:`/`vbscript:` paths and most `data:` URIs (`data:image/*` other than
+`data:image/svg+xml` is still allowed, e.g. for a downloadable data-uri image), and rejects
+editor-supplied attribute keys that look like an event handler (`on*`) or aren't shaped like a
+conventional HTML attribute name. A `target`/`title`/`class`/`data-*`/`aria-*`/... attribute, or an
+event handler passed only via the template call (e.g.
+`pimcore_link("x", {"onclick": "track()"})`), is unaffected either way.
+
+The strict policy is expected to become the default in the next major release; using it today
+without waiting is recommended for any site where document editors are not fully trusted.
+
 ## Methods
 
 | Name              | Return      | Description                          |
 |-------------------|-------------|--------------------------------------|
-| `getHref()`       | string      | Get the path of this link, already HTML-escaped and safe to embed in an HTML attribute (embedding it in an auto-escaping context, e.g. Twig, would double-encode it). Returns an empty string for a path with a rejected scheme (`javascript:`, `vbscript:`, most `data:` types), even if parameters or an anchor are set. |
+| `getHref()`       | string      | Get the path of this link, already HTML-escaped and safe to embed in an HTML attribute (embedding it in an auto-escaping context, e.g. Twig, would double-encode it). |
 | `getText()`       | string      | Get the text of the link             |
 | `getTarget()`     | string      | Get the target of the link           |
 | `getParameters()` | string      | Get the query params of the link     |

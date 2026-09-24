@@ -18,6 +18,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -109,19 +110,31 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $availableAttribs = array_merge($this->data, $this->config);
 
             // add attributes to link
+            $sanitizer = AttributeSanitizer::getInstance();
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
-                if (!is_string($key) || !$this->isSafeAttributeName($key) || in_array($key, self::RESERVED_DATA_KEYS, true)) {
+                if (!is_string($key) || in_array($key, self::RESERVED_DATA_KEYS, true)) {
                     continue;
                 }
 
-                // event handler attributes execute script regardless of value escaping; trust
-                // them only when they come exclusively from the (developer-authored) template
-                // configuration - reject the moment the document editor could have supplied or
-                // influenced the same key via $this->data, including a value that would merge
-                // with a trusted config value into a single attribute below
-                if ($this->isEventHandlerAttribute($key) && array_key_exists($key, $this->data)) {
+                // an editor-controlled key is one the document editor could have supplied or
+                // influenced via $this->data - including a value that would merge with a
+                // trusted config value into a single attribute below
+                $editorControlled = array_key_exists($key, $this->data);
+
+                if (!$sanitizer->isAttributeKeyAllowed($key, $editorControlled)) {
                     continue;
+                }
+
+                if ($editorControlled && !AttributeSanitizer::strict()->isAttributeKeyAllowed($key, true)) {
+                    trigger_deprecation(
+                        'pimcore/pimcore',
+                        '12.4',
+                        'Rendering a Link editable attribute key ("%s") that the stricter policy closing'
+                        .' GHSA-9g27-c28m-8xg5 would reject. Call AttributeSanitizer::setInstance(AttributeSanitizer::strict())'
+                        .' during application bootstrap to reject it now; this becomes the default in Pimcore 13.0.',
+                        $key
+                    );
                 }
 
                 if (is_string($value) || is_numeric($value)) {
@@ -195,19 +208,36 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      * Returns the link's target URL, already HTML-escaped and safe to embed directly in an HTML
      * attribute (e.g. href="..."), consistent with the parameters/anchor portions this method has
      * always pre-escaped. Escaping it again (e.g. via a Twig auto-escaping context) will double-
-     * encode it. A path with a rejected scheme (see hasDangerousUrlScheme()) returns an empty
-     * string, even if the link otherwise has parameters or an anchor set.
+     * encode it.
+     *
+     * Whether a path with a dangerous scheme (javascript:, vbscript:, most data: URIs) is rejected
+     * (returning an empty string, even if the link otherwise has parameters or an anchor set)
+     * depends on the active \Pimcore\Model\Document\Editable\Link\AttributeSanitizer policy - see
+     * that class.
      */
     public function getHref(): string
     {
         $this->updatePathFromInternal();
 
         $url = $this->data['path'] ?? '';
-        if ($this->hasDangerousUrlScheme($url)) {
+        $sanitizer = AttributeSanitizer::getInstance();
+
+        if (!$sanitizer->isUrlAllowed($url)) {
             // reject the link outright rather than letting parameters/anchor below reassemble
             // a non-empty (if otherwise harmless) href out of a rejected path
             return '';
         }
+
+        if ($url !== '' && !AttributeSanitizer::strict()->isUrlAllowed($url)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '12.4',
+                'Rendering a Link editable path with a URL scheme that the stricter policy closing'
+                .' GHSA-9g27-c28m-8xg5 would reject. Call AttributeSanitizer::setInstance(AttributeSanitizer::strict())'
+                .' during application bootstrap to reject it now; this becomes the default in Pimcore 13.0.'
+            );
+        }
+
         $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
@@ -220,55 +250,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
 
         return $url;
-    }
-
-    /**
-     * A `direct`-type link keeps the editor-supplied path verbatim (see setDataFromEditmode()),
-     * so the href value can carry a script-executing scheme even after HTML-escaping. Browsers
-     * ignore leading/trailing whitespace and embedded control characters (e.g. tabs, newlines)
-     * when parsing a URL scheme, so those are stripped before the comparison to prevent bypasses
-     * such as "java\tscript:".
-     */
-    private function hasDangerousUrlScheme(string $url): bool
-    {
-        $normalized = strtolower(preg_replace('/[\x00-\x20]+/', '', $url) ?? '');
-
-        foreach (['javascript:', 'vbscript:'] as $scheme) {
-            if (str_starts_with($normalized, $scheme)) {
-                return true;
-            }
-        }
-
-        if (str_starts_with($normalized, 'data:')) {
-            // data:image/* covers the legitimate use case (e.g. a downloadable data-uri image);
-            // image/svg+xml can still embed and execute <script>, so it stays blocked
-            return !preg_match('/^data:image\/(?!svg\+xml)[a-z0-9.+-]+[;,]/', $normalized);
-        }
-
-        return false;
-    }
-
-    /**
-     * Event handler attributes (onclick, onmouseover, onerror, ...) execute script regardless of
-     * how well the attribute value is escaped, and are not part of the documented attribute set
-     * for this editable (see doc/01_Documents/02_Templates/03_Editables/18_Link.md), so they are
-     * rejected outright rather than merely escaped.
-     */
-    private function isEventHandlerAttribute(string $key): bool
-    {
-        return (bool) preg_match('/^on[a-z]/i', $key);
-    }
-
-    /**
-     * HTML attribute names are delimited by raw whitespace, `"`, `'`, `=`, `<`, `>` and `/` — an
-     * HTML parser reads these characters before any entity decoding happens, so htmlspecialchars()
-     * on the key is not enough to stop a key containing them from being re-tokenized by the browser
-     * into a different attribute (or several) than the single PHP array key it came from. Only a
-     * conventional attribute-name shape (letters/digits/`-`/`_`/`:`/`.`) is accepted.
-     */
-    private function isSafeAttributeName(string $key): bool
-    {
-        return (bool) preg_match('/^[a-zA-Z_:][a-zA-Z0-9_:.-]*$/', $key);
     }
 
     private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void

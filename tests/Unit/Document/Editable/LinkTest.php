@@ -17,10 +17,28 @@ namespace Pimcore\Tests\Unit\Document\Editable;
 use DOMDocument;
 use DOMElement;
 use Pimcore\Model\Document\Editable\Link;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Tests\Support\Test\TestCase;
 
+/**
+ * AttributeSanitizer::getInstance() defaults to a fully permissive policy (see
+ * AttributeSanitizerTest for that), so every test in this class that exercises the
+ * GHSA-9g27-c28m-8xg5 fix explicitly installs the strict() policy first.
+ */
 class LinkTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+    }
+
+    protected function tearDown(): void
+    {
+        AttributeSanitizer::setInstance(null);
+        parent::tearDown();
+    }
+
     public function testGetHrefEscapesAttributeBreakoutCharacters(): void
     {
         $link = new Link();
@@ -235,6 +253,33 @@ class LinkTest extends TestCase
         $this->assertStringContainsString('target="_blank"', $output);
         $this->assertStringContainsString('title="Example"', $output);
         $this->assertStringContainsString('data-track="homepage-link"', $output);
+    }
+
+    public function testDefaultSanitizerAllowsDangerousSchemeInGetHref(): void
+    {
+        AttributeSanitizer::setInstance(null);
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'javascript:alert(document.domain)',
+            'linktype' => 'direct',
+        ]);
+
+        $this->assertSame('javascript:alert(document.domain)', $link->getHref());
+    }
+
+    public function testDefaultSanitizerAllowsEditorSuppliedEventHandlerAttribute(): void
+    {
+        AttributeSanitizer::setInstance(null);
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'https://example.com',
+            'linktype' => 'direct',
+            'onmouseover' => 'alert(document.domain)',
+        ]);
+
+        $this->assertSame('alert(document.domain)', $this->getRenderedAnchorAttribute($link->frontend(), 'onmouseover'));
     }
 
     /**
