@@ -23,6 +23,14 @@ use Pimcore\Tests\Support\Test\TestCase;
  */
 class QuantityValueFilterConditionTest extends TestCase
 {
+    // these tests only quote values via the DB connection and don't mutate data, so cleanup can stay disabled
+    protected bool $cleanupDbInSetup = false;
+
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     public function testLegitimateNumericValueIsFiltered(): void
     {
         $field = new QuantityValue();
