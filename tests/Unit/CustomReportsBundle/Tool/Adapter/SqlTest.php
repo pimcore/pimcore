@@ -128,8 +128,9 @@ final class SqlTest extends TestCase
     {
         // MySQL's lexer starts a "--" comment when followed by a space OR any control
         // character (my_iscntrl), not only the bytes PCRE's '\s' matches. A payload using
-        // e.g. \x01 right after "--" used to slip past the whitespace-only rule.
-        $config = $this->configWith('where', "id = 1--\x01 INTO OUTFILE '/tmp/x'");
+        // e.g. \x01 right after "--" used to slip past the whitespace-only rule. No other
+        // forbidden primitive appears here, so this only exercises the comment-start rule.
+        $config = $this->configWith('where', "id = 1--\x01harmless");
 
         $this->expectException(InvalidArgumentException::class);
         $this->adapter()->exposedBuildQueryString($config);
