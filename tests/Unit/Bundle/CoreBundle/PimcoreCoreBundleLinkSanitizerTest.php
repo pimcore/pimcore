@@ -59,6 +59,26 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
         $this->assertTrue(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(document.domain)'));
     }
 
+    /**
+     * Application bundles register at Symfony's default priority (0) and boot before
+     * PimcoreCoreBundle (registered at -10 in Kernel::registerCoreBundlesToCollection()), since
+     * BundleCollection::getItems() boots bundles in descending-priority order. So an application
+     * bundle's boot() calling AttributeSanitizer::setInstance() - the documented custom-policy
+     * hook - already ran by the time PimcoreCoreBundle::boot() runs; it must not be overwritten,
+     * even when the config value would otherwise disagree with it.
+     */
+    public function testBootDoesNotOverwriteAnAlreadyInstalledApplicationPolicy(): void
+    {
+        $applicationPolicy = new AttributeSanitizer(blockDangerousUrlSchemes: true);
+        AttributeSanitizer::setInstance($applicationPolicy);
+
+        // config says "strict: false", which would normally reset to permissive - but an
+        // application bundle already installed its own policy first, so it must win
+        $this->bootWithParameter(false);
+
+        $this->assertSame($applicationPolicy, AttributeSanitizer::getInstance());
+    }
+
     private function bootWithParameter(bool $strict): void
     {
         $bundle = new PimcoreCoreBundle();

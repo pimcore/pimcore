@@ -52,6 +52,18 @@ class AttributeSanitizerTest extends TestCase
         $this->assertSame($custom, AttributeSanitizer::getInstance());
     }
 
+    public function testIsConfiguredReflectsWhetherSetInstanceWasCalledWithANonNullPolicy(): void
+    {
+        AttributeSanitizer::setInstance(null);
+        $this->assertFalse(AttributeSanitizer::isConfigured());
+
+        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+        $this->assertTrue(AttributeSanitizer::isConfigured());
+
+        AttributeSanitizer::setInstance(null);
+        $this->assertFalse(AttributeSanitizer::isConfigured());
+    }
+
     /**
      * @dataProvider strictBlockedSchemeProvider
      */

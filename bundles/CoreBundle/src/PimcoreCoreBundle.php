@@ -73,6 +73,17 @@ class PimcoreCoreBundle extends Bundle
 
     public function boot(): void
     {
+        if (AttributeSanitizer::isConfigured()) {
+            // an application bundle already installed an explicit policy (e.g. via its own
+            // boot() calling AttributeSanitizer::setInstance()). Application bundles register at
+            // the default priority (0, see BundleCollection::addBundle()) while this bundle
+            // registers at -10 (see Kernel::registerCoreBundlesToCollection()), and bundles boot
+            // in descending-priority order (BundleCollection::getItems()), so application bundles
+            // have already booted by the time this runs - respect their choice instead of
+            // overwriting it with the config-driven default below.
+            return;
+        }
+
         $strict = $this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.strict')
             && $this->container->getParameter('pimcore.documents.editables.link_sanitizer.strict');
 

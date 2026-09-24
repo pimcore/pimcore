@@ -48,9 +48,10 @@ pimcore:
 ```
 
 `PimcoreCoreBundle::boot()` reads this and installs the strict policy for you. If you need a fully
-custom policy instead of the boolean toggle, call
-`AttributeSanitizer::setInstance(...)` directly (e.g. from your own bundle's `boot()` method, which
-Symfony calls once per kernel boot for both HTTP and console requests, after `PimcoreCoreBundle`'s):
+custom policy instead of the boolean toggle, call `AttributeSanitizer::setInstance(...)` directly
+from your own bundle's `boot()` method - application bundles register at Symfony's default priority
+and boot before `PimcoreCoreBundle` (registered at a lower priority), so an explicit call there
+always takes precedence over the config-driven default, regardless of the config value:
 
 ```php
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;

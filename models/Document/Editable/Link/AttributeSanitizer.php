@@ -49,11 +49,24 @@ class AttributeSanitizer
     }
 
     /**
-     * @internal test seam - also usable by applications to install a custom policy at bootstrap
+     * The supported application extension point: call this once during bootstrap (e.g. a bundle's
+     * boot() method) to install a custom policy, most commonly AttributeSanitizer::strict(). Also
+     * usable to reset the policy (pass null) - tests do this in tearDown().
      */
     public static function setInstance(?self $sanitizer): void
     {
         self::$instance = $sanitizer;
+    }
+
+    /**
+     * True once something (an application bundle, or a previous PimcoreCoreBundle::boot() call)
+     * has explicitly called setInstance() with a non-null policy. PimcoreCoreBundle::boot() checks
+     * this before applying the config-driven default, so it never clobbers a policy an application
+     * bundle already installed.
+     */
+    public static function isConfigured(): bool
+    {
+        return self::$instance !== null;
     }
 
     /**
