@@ -24,7 +24,7 @@ namespace Pimcore\Model\Document\Editable\Link;
  * executing data: URLs, and on*-shaped attribute keys the document editor could influence).
  *
  * To opt into the stricter policy, call setInstance(AttributeSanitizer::strict()) once during
- * application bootstrap (e.g. a kernel.boot listener). Note that a document editor able to set an
+ * application bootstrap (e.g. a bundle's boot() method). Note that a document editor able to set an
  * arbitrary "direct" link path or a custom Link attribute is, under the permissive default,
  * able to store a stored-XSS payload that executes for every visitor who views or clicks the
  * rendered link - see the advisory for the full impact.

@@ -36,13 +36,21 @@ editor (document-edit permission, not necessarily an administrator) can use it t
 persistent (stored) XSS payload that runs for every visitor who views or clicks the rendered link
 (GHSA-9g27-c28m-8xg5).
 
-To close this, install the stricter policy once during application bootstrap (e.g. a
-`kernel.boot`/`kernel.request` listener):
+To close this, install the stricter policy once during application bootstrap - for example from
+your application bundle's `boot()` method, which Symfony calls once per kernel boot for both HTTP
+and console requests:
 
 ```php
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+class YourBundle extends Bundle
+{
+    public function boot(): void
+    {
+        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+    }
+}
 ```
 
 This rejects `javascript:`/`vbscript:` paths and most `data:` URIs (`data:image/*` other than
