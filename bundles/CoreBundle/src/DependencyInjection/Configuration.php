@@ -1027,6 +1027,26 @@ final class Configuration implements ConfigurationInterface
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
                         ->end()
+                        ->arrayNode('link_sanitizer')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('strict')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                    ->info(
+                                        'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
+                                        .'event-handler attributes (e.g. onclick) in the Link editable, closing GHSA-9g27-c28m-8xg5. '
+                                        .'Defaults to false to preserve existing behavior on this release line; expected to '
+                                        .'default to true in the next major release. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
+                                    )
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('areas')

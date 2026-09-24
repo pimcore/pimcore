@@ -33,6 +33,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPas
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -68,6 +69,14 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new TranslationSanitizerPass());
         $container->addCompilerPass(new SerializerPass());
         $container->addCompilerPass(new ImageAdapterAliasPass());
+    }
+
+    public function boot(): void
+    {
+        $strict = $this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.strict')
+            && $this->container->getParameter('pimcore.documents.editables.link_sanitizer.strict');
+
+        AttributeSanitizer::setInstance($strict ? AttributeSanitizer::strict() : null);
     }
 
     public function getPath(): string

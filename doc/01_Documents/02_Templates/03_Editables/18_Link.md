@@ -36,9 +36,21 @@ editor (document-edit permission, not necessarily an administrator) can use it t
 persistent (stored) XSS payload that runs for every visitor who views or clicks the rendered link
 (GHSA-9g27-c28m-8xg5).
 
-To close this, install the stricter policy once during application bootstrap - for example from
-your application bundle's `boot()` method, which Symfony calls once per kernel boot for both HTTP
-and console requests:
+To close this, enable it via config:
+
+```yaml
+# config/packages/pimcore.yaml
+pimcore:
+    documents:
+        editables:
+            link_sanitizer:
+                strict: true
+```
+
+`PimcoreCoreBundle::boot()` reads this and installs the strict policy for you. If you need a fully
+custom policy instead of the boolean toggle, call
+`AttributeSanitizer::setInstance(...)` directly (e.g. from your own bundle's `boot()` method, which
+Symfony calls once per kernel boot for both HTTP and console requests, after `PimcoreCoreBundle`'s):
 
 ```php
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
@@ -53,7 +65,7 @@ class YourBundle extends Bundle
 }
 ```
 
-This rejects `javascript:`/`vbscript:` paths and most `data:` URIs (`data:image/*` other than
+The strict policy rejects `javascript:`/`vbscript:` paths and most `data:` URIs (`data:image/*` other than
 `data:image/svg+xml` is still allowed, e.g. for a downloadable data-uri image), and rejects
 editor-supplied attribute keys that look like an event handler (`on*`) or aren't shaped like a
 conventional HTML attribute name. A `target`/`title`/`class`/`data-*`/`aria-*`/... attribute, or an

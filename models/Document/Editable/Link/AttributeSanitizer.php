@@ -23,11 +23,14 @@ namespace Pimcore\Model\Document\Editable\Link;
  * GHSA-9g27-c28m-8xg5. strict() closes that advisory (rejects javascript:/vbscript:/script-
  * executing data: URLs, and on*-shaped attribute keys the document editor could influence).
  *
- * To opt into the stricter policy, call setInstance(AttributeSanitizer::strict()) once during
- * application bootstrap (e.g. a bundle's boot() method). Note that a document editor able to set an
- * arbitrary "direct" link path or a custom Link attribute is, under the permissive default,
- * able to store a stored-XSS payload that executes for every visitor who views or clicks the
- * rendered link - see the advisory for the full impact.
+ * To opt into the stricter policy, set the "pimcore.documents.editables.link_sanitizer.strict"
+ * config option to true (see Configuration::addDocumentsNode()) - PimcoreCoreBundle::boot() reads
+ * it and calls setInstance(AttributeSanitizer::strict()) for you. For a fully custom policy, call
+ * setInstance() directly instead, from your own bundle's boot() method.
+ *
+ * Note that a document editor able to set an arbitrary "direct" link path or a custom Link
+ * attribute is, under the permissive default, able to store a stored-XSS payload that executes
+ * for every visitor who views or clicks the rendered link - see the advisory for the full impact.
  */
 class AttributeSanitizer
 {
