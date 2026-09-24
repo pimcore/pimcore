@@ -108,6 +108,17 @@ class PimcoreCoreBundle extends Bundle
         ));
     }
 
+    public function shutdown(): void
+    {
+        // Pimcore's own test suite boots multiple kernels/containers within the same PHP process
+        // (see lib/Kernel.php's shutdown-function comment). Without this, a policy installed by
+        // this bundle's boot() (or by an application bundle) for one kernel would leak into the
+        // next kernel's boot() and be mistaken there for an already-configured application policy,
+        // silently bypassing that kernel's own "strict" config. Reset on shutdown so every kernel
+        // lifecycle starts from a clean slate.
+        AttributeSanitizer::setInstance(null);
+    }
+
     public function getPath(): string
     {
         return dirname(__DIR__);

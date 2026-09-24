@@ -116,6 +116,46 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
         $this->assertFalse($sanitizer->isUrlAllowed('vbscript:msgbox("x")'));
     }
 
+    /**
+     * getInstance()'s lazy permissive fallback must not be mistaken by boot() for an
+     * already-installed application policy - otherwise anything that merely reads the sanitizer
+     * (e.g. rendering a Link) before this bundle boots would silently suppress a configured
+     * "strict: true" policy. See AttributeSanitizer::$explicitlyConfigured.
+     */
+    public function testReadingTheSanitizerBeforeBootDoesNotSuppressTheConfiguredStrictPolicy(): void
+    {
+        AttributeSanitizer::getInstance();
+
+        $this->bootWithParameter(true);
+
+        $this->assertFalse(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(document.domain)'));
+    }
+
+    /**
+     * Pimcore's own test suite boots multiple kernels/containers within one PHP process (see
+     * lib/Kernel.php's shutdown-function comment), so a policy installed for one kernel must not
+     * leak into the next kernel's boot() and be mistaken there for an application policy.
+     */
+    public function testShutdownResetsStateForTheNextKernelBoot(): void
+    {
+        $firstKernelBundle = new PimcoreCoreBundle();
+        $firstKernelBundle->setContainer(new Container(new ParameterBag([
+            'pimcore.documents.editables.link_sanitizer.strict' => true,
+        ])));
+        $firstKernelBundle->boot();
+        $this->assertFalse(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(1)'));
+
+        $firstKernelBundle->shutdown();
+
+        $secondKernelBundle = new PimcoreCoreBundle();
+        $secondKernelBundle->setContainer(new Container(new ParameterBag([
+            'pimcore.documents.editables.link_sanitizer.strict' => false,
+        ])));
+        $secondKernelBundle->boot();
+
+        $this->assertTrue(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(1)'));
+    }
+
     private function bootWithParameter(bool $strict): void
     {
         $this->bootWithParameters(['pimcore.documents.editables.link_sanitizer.strict' => $strict]);

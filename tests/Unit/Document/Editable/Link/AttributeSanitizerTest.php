@@ -65,6 +65,21 @@ class AttributeSanitizerTest extends TestCase
     }
 
     /**
+     * getInstance()'s lazy fallback must not be mistaken for an explicit application policy - or
+     * anything that reads the sanitizer (e.g. rendering a Link) before PimcoreCoreBundle::boot()
+     * runs would make isConfigured() falsely report true, causing boot() to skip a configured
+     * "strict: true" policy entirely.
+     */
+    public function testGetInstanceDoesNotMarkThePolicyAsConfigured(): void
+    {
+        AttributeSanitizer::setInstance(null);
+
+        AttributeSanitizer::getInstance();
+
+        $this->assertFalse(AttributeSanitizer::isConfigured());
+    }
+
+    /**
      * @dataProvider strictBlockedSchemeProvider
      */
     public function testStrictBlocksDangerousSchemes(string $url): void

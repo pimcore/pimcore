@@ -45,6 +45,15 @@ class AttributeSanitizer
     private static ?self $instance = null;
 
     /**
+     * Tracks explicit setInstance() calls separately from $instance, because $instance is also
+     * populated by getInstance()'s lazy permissive fallback - conflating the two would let merely
+     * reading the sanitizer (e.g. rendering a Link) before setInstance() is ever called make
+     * isConfigured() report true, causing PimcoreCoreBundle::boot() to skip a configured
+     * "strict: true" policy.
+     */
+    private static bool $explicitlyConfigured = false;
+
+    /**
      * @param string[] $blockedUrlSchemes lower-case scheme prefixes (including the trailing ":")
      *                                     to reject outright, e.g. ["javascript:", "vbscript:"].
      *                                     Empty by default: no scheme is rejected.
@@ -57,6 +66,11 @@ class AttributeSanitizer
     ) {
     }
 
+    /**
+     * Returns the active policy, without marking it as explicitly configured - see
+     * $explicitlyConfigured. A caller that needs to distinguish "nothing configured yet" from "an
+     * explicit permissive policy was installed" must use isConfigured() instead.
+     */
     public static function getInstance(): self
     {
         return self::$instance ??= new self();
@@ -70,17 +84,19 @@ class AttributeSanitizer
     public static function setInstance(?self $sanitizer): void
     {
         self::$instance = $sanitizer;
+        self::$explicitlyConfigured = $sanitizer !== null;
     }
 
     /**
      * True once something (an application bundle, or a previous PimcoreCoreBundle::boot() call)
-     * has explicitly called setInstance() with a non-null policy. PimcoreCoreBundle::boot() checks
-     * this before applying the config-driven default, so it never clobbers a policy an application
-     * bundle already installed.
+     * has explicitly called setInstance() with a non-null policy - never true merely because
+     * getInstance() was called. PimcoreCoreBundle::boot() checks this before applying the
+     * config-driven default, so it never clobbers a policy an application bundle already
+     * installed.
      */
     public static function isConfigured(): bool
     {
-        return self::$instance !== null;
+        return self::$explicitlyConfigured;
     }
 
     /**
