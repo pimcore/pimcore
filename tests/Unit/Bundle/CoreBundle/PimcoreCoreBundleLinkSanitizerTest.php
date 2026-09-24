@@ -60,15 +60,6 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
         $this->assertTrue(AttributeSanitizer::getInstance()->isAttributeKeyAllowed('onclick', true));
     }
 
-    public function testBootIsPermissiveWhenParameterIsMissing(): void
-    {
-        $bundle = new PimcoreCoreBundle();
-        $bundle->setContainer(new Container(new ParameterBag()));
-        $bundle->boot();
-
-        $this->assertTrue(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(document.domain)'));
-    }
-
     /**
      * Application bundles register at Symfony's default priority (0) and boot before
      * PimcoreCoreBundle (registered at -10 in Kernel::registerCoreBundlesToCollection()), since
@@ -105,17 +96,6 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
         $this->assertTrue($sanitizer->isUrlAllowed('data:text/html,<script>alert(1)</script>'));
     }
 
-    public function testBootFallsBackToDefaultBlockedUrlSchemesWhenParameterIsMissing(): void
-    {
-        $this->bootWithParameters([
-            'pimcore.documents.editables.link_sanitizer.strict' => true,
-        ]);
-
-        $sanitizer = AttributeSanitizer::getInstance();
-        $this->assertFalse($sanitizer->isUrlAllowed('javascript:alert(1)'));
-        $this->assertFalse($sanitizer->isUrlAllowed('vbscript:msgbox("x")'));
-    }
-
     /**
      * getInstance()'s lazy permissive fallback must not be mistaken by boot() for an
      * already-installed application policy - otherwise anything that merely reads the sanitizer
@@ -138,33 +118,35 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
      */
     public function testShutdownResetsStateForTheNextKernelBoot(): void
     {
-        $firstKernelBundle = new PimcoreCoreBundle();
-        $firstKernelBundle->setContainer(new Container(new ParameterBag([
-            'pimcore.documents.editables.link_sanitizer.strict' => true,
-        ])));
-        $firstKernelBundle->boot();
+        $firstKernelBundle = $this->bootWithParameter(true);
         $this->assertFalse(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(1)'));
 
         $firstKernelBundle->shutdown();
 
-        $secondKernelBundle = new PimcoreCoreBundle();
-        $secondKernelBundle->setContainer(new Container(new ParameterBag([
-            'pimcore.documents.editables.link_sanitizer.strict' => false,
-        ])));
-        $secondKernelBundle->boot();
+        $this->bootWithParameter(false);
 
         $this->assertTrue(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(1)'));
     }
 
-    private function bootWithParameter(bool $strict): void
+    private function bootWithParameter(bool $strict): PimcoreCoreBundle
     {
-        $this->bootWithParameters(['pimcore.documents.editables.link_sanitizer.strict' => $strict]);
+        return $this->bootWithParameters(['pimcore.documents.editables.link_sanitizer.strict' => $strict]);
     }
 
-    private function bootWithParameters(array $parameters): void
+    /**
+     * Merges over the same defaults Configuration::addDocumentsNode() declares, since
+     * PimcoreCoreExtension always sets all three parameters.
+     */
+    private function bootWithParameters(array $parameters): PimcoreCoreBundle
     {
         $bundle = new PimcoreCoreBundle();
-        $bundle->setContainer(new Container(new ParameterBag($parameters)));
+        $bundle->setContainer(new Container(new ParameterBag($parameters + [
+            'pimcore.documents.editables.link_sanitizer.strict' => false,
+            'pimcore.documents.editables.link_sanitizer.blocked_url_schemes' => AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES,
+            'pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls' => true,
+        ])));
         $bundle->boot();
+
+        return $bundle;
     }
 }

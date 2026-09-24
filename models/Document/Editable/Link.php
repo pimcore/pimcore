@@ -129,10 +129,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 if ($editorControlled && !AttributeSanitizer::strict()->isAttributeKeyAllowed($key, true)) {
                     trigger_deprecation(
                         'pimcore/pimcore',
-                        '12.4',
+                        '2026.3',
                         'Rendering a Link editable attribute key ("%s") that the stricter policy closing'
-                        .' GHSA-9g27-c28m-8xg5 would reject. Call AttributeSanitizer::setInstance(AttributeSanitizer::strict())'
-                        .' during application bootstrap to reject it now; this becomes the default in Pimcore 13.0.',
+                        .' GHSA-9g27-c28m-8xg5 would reject. The permissive Link sanitizer default is deprecated and'
+                        .' will be removed in 2027.0; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                        .' reject it now.',
                         $key
                     );
                 }
@@ -231,10 +232,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         if ($url !== '' && !AttributeSanitizer::strict()->isUrlAllowed($url)) {
             trigger_deprecation(
                 'pimcore/pimcore',
-                '12.4',
+                '2026.3',
                 'Rendering a Link editable path with a URL scheme that the stricter policy closing'
-                .' GHSA-9g27-c28m-8xg5 would reject. Call AttributeSanitizer::setInstance(AttributeSanitizer::strict())'
-                .' during application bootstrap to reject it now; this becomes the default in Pimcore 13.0.'
+                .' GHSA-9g27-c28m-8xg5 would reject. The permissive Link sanitizer default is deprecated and'
+                .' will be removed in 2027.0; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                .' reject it now.'
             );
         }
 

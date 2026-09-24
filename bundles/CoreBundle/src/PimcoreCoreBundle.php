@@ -84,25 +84,15 @@ class PimcoreCoreBundle extends Bundle
             return;
         }
 
-        $strict = $this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.strict')
-            && $this->container->getParameter('pimcore.documents.editables.link_sanitizer.strict');
-
-        if (!$strict) {
+        if (!$this->container->getParameter('pimcore.documents.editables.link_sanitizer.strict')) {
             AttributeSanitizer::setInstance(null);
 
             return;
         }
 
-        $blockedUrlSchemes = $this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes')
-            ? $this->container->getParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes')
-            : AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES;
-
-        $blockUnsafeDataUrls = !$this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls')
-            || $this->container->getParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls');
-
         AttributeSanitizer::setInstance(new AttributeSanitizer(
-            blockedUrlSchemes: $blockedUrlSchemes,
-            blockUnsafeDataUrls: $blockUnsafeDataUrls,
+            blockedUrlSchemes: $this->container->getParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes'),
+            blockUnsafeDataUrls: $this->container->getParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls'),
             blockEditorSuppliedEventHandlerAttributes: true,
             requireConventionalAttributeNameShape: true,
         ));

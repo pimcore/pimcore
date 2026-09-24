@@ -73,8 +73,10 @@ conventional HTML attribute name. A `target`/`title`/`class`/`data-*`/`aria-*`/.
 event handler passed only via the template call (e.g.
 `pimcore_link("x", {"onclick": "track()"})`), is unaffected either way.
 
-The strict policy is expected to become the default in the next major release; using it today
-without waiting is recommended for any site where document editors are not fully trusted.
+The permissive default is deprecated since 2026.3 and will be removed in 2027.0, where the strict
+policy becomes the default. While running with the permissive default, a deprecation is triggered
+whenever a Link renders a URL or attribute the strict policy would reject. Enabling it today is
+recommended for any site where document editors are not fully trusted.
 
 ## Methods
 

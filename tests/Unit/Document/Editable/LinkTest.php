@@ -268,6 +268,36 @@ class LinkTest extends TestCase
         $this->assertSame('javascript:alert(document.domain)', $link->getHref());
     }
 
+    public function testDefaultSanitizerTriggersDeprecationForAUrlTheStrictPolicyWouldReject(): void
+    {
+        AttributeSanitizer::setInstance(null);
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'javascript:alert(document.domain)',
+            'linktype' => 'direct',
+        ]);
+
+        $deprecations = $this->captureDeprecations(fn () => $link->getHref());
+
+        $this->assertCount(1, $deprecations);
+        $this->assertStringStartsWith('Since pimcore/pimcore 2026.3:', $deprecations[0]);
+        $this->assertStringContainsString('will be removed in 2027.0', $deprecations[0]);
+    }
+
+    public function testDefaultSanitizerDoesNotTriggerDeprecationForALegitimateUrl(): void
+    {
+        AttributeSanitizer::setInstance(null);
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'https://example.com',
+            'linktype' => 'direct',
+        ]);
+
+        $this->assertSame([], $this->captureDeprecations(fn () => $link->frontend()));
+    }
+
     public function testDefaultSanitizerAllowsEditorSuppliedEventHandlerAttribute(): void
     {
         AttributeSanitizer::setInstance(null);
@@ -280,6 +310,29 @@ class LinkTest extends TestCase
         ]);
 
         $this->assertSame('alert(document.domain)', $this->getRenderedAnchorAttribute($link->frontend(), 'onmouseover'));
+    }
+
+    /**
+     * @return string[]
+     */
+    private function captureDeprecations(callable $callback): array
+    {
+        $deprecations = [];
+        set_error_handler(static function (int $level, string $message) use (&$deprecations): bool {
+            if ($level === E_USER_DEPRECATED) {
+                $deprecations[] = $message;
+            }
+
+            return true;
+        });
+
+        try {
+            $callback();
+        } finally {
+            restore_error_handler();
+        }
+
+        return $deprecations;
     }
 
     /**
