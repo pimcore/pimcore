@@ -158,7 +158,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
             $text = '';
             if (!$noText) {
-                // $url is already HTML-escaped (it comes from getHref()); only the editor-supplied
+                // $url is already HTML-escaped (it comes from buildHref(true)); only the editor-supplied
                 // text needs escaping here, or it would be double-escaped when used as fallback
                 $rawText = $disabledText ? null : ($this->data['text'] ?? null);
                 $text = $rawText !== null ? htmlspecialchars($rawText) : $url;
