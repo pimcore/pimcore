@@ -282,7 +282,23 @@ class LinkTest extends TestCase
 
         $this->assertCount(1, $deprecations);
         $this->assertStringStartsWith('Since pimcore/pimcore 2026.3:', $deprecations[0]);
-        $this->assertStringContainsString('will be removed in 2027.0', $deprecations[0]);
+        $this->assertStringContainsString('will be removed in 2027.1', $deprecations[0]);
+    }
+
+    public function testExplicitCustomPolicyDoesNotTriggerTheDefaultDeprecation(): void
+    {
+        // an application deliberately allowing everything is an explicit opt-out, not the
+        // deprecated unconfigured default
+        AttributeSanitizer::setInstance(new AttributeSanitizer());
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'javascript:alert(document.domain)',
+            'linktype' => 'direct',
+            'onmouseover' => 'alert(document.domain)',
+        ]);
+
+        $this->assertSame([], $this->captureDeprecations(fn () => $link->frontend()));
     }
 
     public function testDefaultSanitizerDoesNotTriggerDeprecationForALegitimateUrl(): void

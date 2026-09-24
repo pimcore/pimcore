@@ -1048,7 +1048,7 @@ final class Configuration implements ConfigurationInterface
                                         'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
                                         .'event-handler attributes (e.g. onclick) in the Link editable, closing GHSA-9g27-c28m-8xg5. '
                                         .'Defaults to false to preserve existing behavior; the permissive default is deprecated since '
-                                        .'2026.3 and will be removed in 2027.0. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
+                                        .'2026.3 and will be removed in 2027.1. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
                                     )
                                 ->end()
                                 ->arrayNode('blocked_url_schemes')
