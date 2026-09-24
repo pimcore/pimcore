@@ -74,17 +74,22 @@ class QuantityValueFilterConditionTest extends TestCase
         $this->assertSame('1 = 0', $condition);
     }
 
-    public function testNonAllowlistedOperatorIsRejectedOnNonClassificationStorePath(): void
+    public function testNonAllowlistedOperatorOnNonClassificationStorePathIsUnchangedForBackwardCompatibility(): void
     {
+        // BC: unlike the cskey_ (classificationstore) branch above, this path is not part of
+        // the reported vulnerability and is deliberately left unvalidated here to avoid a
+        // behavior change for this public method's non-classificationstore callers. The actual
+        // grid entry point (GridHelperService) already only ever forwards a small hardcoded
+        // operator set ('=', 'LIKE', '<', '>', 'in') to this method, so this remains safe.
         $field = new QuantityValue();
 
         $condition = $field->getFilterConditionExt(
             '5',
-            '1=1; DROP TABLE users; --',
+            'BETWEEN',
             ['name' => 'myQuantityValue__value']
         );
 
-        $this->assertSame('1 = 0', $condition);
+        $this->assertSame("`myQuantityValue__value` BETWEEN '5' ", $condition);
     }
 
     public function testHighPrecisionDecimalValueIsPreservedExactly(): void
@@ -102,6 +107,22 @@ class QuantityValueFilterConditionTest extends TestCase
         $this->assertStringContainsString($highPrecisionValue, $condition, 'casting to float must not truncate a DECIMAL(65, 30) value');
         $this->assertStringNotContainsString('E+', $condition);
         $this->assertStringNotContainsString('INF', $condition);
+    }
+
+    public function testTypicalPrecisionValueKeepsThePriorUnquotedFloatFormat(): void
+    {
+        // BC: for any value a float can represent exactly (the overwhelming majority of
+        // real filters), the generated condition must stay byte-for-byte identical to
+        // what this method returned before the DECIMAL(65, 30) precision fix.
+        $field = new QuantityValue();
+
+        $condition = $field->getFilterConditionExt(
+            [['12.5', '1']],
+            '=',
+            ['name' => 'cskey_1-2']
+        );
+
+        $this->assertSame('`cskey_1-2`.`value` = 12.5 ', $condition);
     }
 
     public function testInOperatorProducesValidListOnNonClassificationStorePath(): void

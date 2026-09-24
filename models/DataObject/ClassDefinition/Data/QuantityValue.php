@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Connection;
 use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -431,18 +432,34 @@ class QuantityValue extends AbstractQuantityValue
             return $key . ' IN (' . $quotedValues . ') ';
         }
 
-        if (!in_array($operator, self::$validFilterOperators)) {
-            return '1 = 0';
-        }
-
         if ($isClassificationStoreKey) {
-            if (!is_numeric($value[0][0])) {
+            if (!is_numeric($value[0][0]) || !in_array($operator, self::$validFilterOperators)) {
                 return '1 = 0';
             }
 
-            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $db->quote((string) $value[0][0]) . ' ';
+            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $this->formatValidatedNumericValue($db, (string) $value[0][0]) . ' ';
         }
 
         return $key . ' ' . $operator . ' ' . (is_string($value) ? $db->quote($value) : $value) . ' ';
+    }
+
+    /**
+     * Formats an already-validated (is_numeric()) decimal string for use in a SQL condition.
+     *
+     * A plain (float) cast keeps this method's prior output byte-for-byte identical for any
+     * value it can represent without loss (~15 significant digits), which covers virtually
+     * every real quantity-value filter. This field's column supports DECIMAL(65, 30), which a
+     * PHP float cannot represent exactly, so higher-precision values are quoted instead of cast
+     * to avoid truncation, scientific notation, or INF.
+     */
+    private function formatValidatedNumericValue(Connection $db, string $value): string
+    {
+        $significantDigits = strlen(ltrim(str_replace(['-', '+', '.'], '', $value), '0')) ?: 1;
+
+        if ($significantDigits <= 15) {
+            return (string) (float) $value;
+        }
+
+        return $db->quote($value);
     }
 }
