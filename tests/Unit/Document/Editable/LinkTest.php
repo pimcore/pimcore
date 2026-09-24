@@ -39,15 +39,31 @@ class LinkTest extends TestCase
         parent::tearDown();
     }
 
-    public function testGetHrefEscapesAttributeBreakoutCharacters(): void
+    /**
+     * getHref() is printed by templates in escaping contexts (e.g. {{ pimcore_link('x').href }}),
+     * so it must keep returning the path raw, as before - escaping it there double-encodes "&".
+     */
+    public function testGetHrefReturnsThePathUnescaped(): void
     {
         $link = new Link();
         $link->setDataFromResource([
-            'path' => '#x" onclick="alert(document.domain)',
+            'path' => 'https://example.com/search?a=1&b=2',
             'linktype' => 'direct',
         ]);
 
-        $this->assertSame('#x&quot; onclick=&quot;alert(document.domain)', $link->getHref());
+        $this->assertSame('https://example.com/search?a=1&b=2', $link->getHref());
+    }
+
+    public function testFrontendEscapesThePathInTheHrefAttribute(): void
+    {
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'https://example.com/search?a=1&b=2',
+            'linktype' => 'direct',
+        ]);
+
+        $this->assertStringContainsString('href="https://example.com/search?a=1&amp;b=2"', $link->frontend());
+        $this->assertSame('https://example.com/search?a=1&b=2', $this->getRenderedAnchorAttribute($link->frontend(), 'href'));
     }
 
     public function testGetHrefStripsJavascriptScheme(): void
@@ -312,6 +328,36 @@ class LinkTest extends TestCase
         ]);
 
         $this->assertSame([], $this->captureDeprecations(fn () => $link->frontend()));
+    }
+
+    public function testDefaultSanitizerStillEscapesAttributeBreakoutInThePath(): void
+    {
+        // the path escaping in frontend() is unconditional - only scheme/attribute *rejection* is
+        // opt-in
+        AttributeSanitizer::setInstance(null);
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => '#x" onclick="alert(document.domain)',
+            'linktype' => 'direct',
+        ]);
+
+        $this->assertNull($this->getRenderedAnchorAttribute($link->frontend(), 'onclick'));
+    }
+
+    public function testDefaultSanitizerKeepsEmittingInternalDataAttributes(): void
+    {
+        AttributeSanitizer::setInstance(null);
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'https://example.com',
+            'linktype' => 'direct',
+            'text' => 'Visit us',
+        ]);
+
+        $this->assertSame('direct', $this->getRenderedAnchorAttribute($link->frontend(), 'linktype'));
+        $this->assertSame('Visit us', $this->getRenderedAnchorAttribute($link->frontend(), 'text'));
     }
 
     public function testDefaultSanitizerAllowsEditorSuppliedEventHandlerAttribute(): void

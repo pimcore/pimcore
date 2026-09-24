@@ -139,6 +139,12 @@ class AttributeSanitizerTest extends TestCase
         }
     }
 
+    public function testOnlyStrictOmitsInternalDataAttributes(): void
+    {
+        $this->assertFalse((new AttributeSanitizer())->omitsInternalDataAttributes());
+        $this->assertTrue(AttributeSanitizer::strict()->omitsInternalDataAttributes());
+    }
+
     public function testBlockedUrlSchemesIsConfigurable(): void
     {
         $sanitizer = new AttributeSanitizer(blockedUrlSchemes: ['mailto:', 'tel:']);

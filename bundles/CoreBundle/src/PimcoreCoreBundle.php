@@ -95,6 +95,7 @@ class PimcoreCoreBundle extends Bundle
             blockUnsafeDataUrls: $this->container->getParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls'),
             blockEditorSuppliedEventHandlerAttributes: true,
             requireConventionalAttributeNameShape: true,
+            omitInternalDataAttributes: true,
         ));
     }
 

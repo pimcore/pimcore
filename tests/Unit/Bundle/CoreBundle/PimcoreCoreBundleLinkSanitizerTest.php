@@ -50,6 +50,7 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
 
         $this->assertFalse(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(document.domain)'));
         $this->assertFalse(AttributeSanitizer::getInstance()->isAttributeKeyAllowed('onclick', true));
+        $this->assertTrue(AttributeSanitizer::getInstance()->omitsInternalDataAttributes());
     }
 
     public function testBootKeepsPermissivePolicyByDefault(): void

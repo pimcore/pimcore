@@ -69,9 +69,11 @@ class YourBundle extends Bundle
 The strict policy rejects `javascript:`/`vbscript:` paths and most `data:` URIs (`data:image/*` other than
 `data:image/svg+xml` is still allowed, e.g. for a downloadable data-uri image), and rejects
 editor-supplied attribute keys that look like an event handler (`on*`) or aren't shaped like a
-conventional HTML attribute name. A `target`/`title`/`class`/`data-*`/`aria-*`/... attribute, or an
-event handler passed only via the template call (e.g.
-`pimcore_link("x", {"onclick": "track()"})`), is unaffected either way.
+conventional HTML attribute name. It also stops emitting the editable's own bookkeeping data
+(`path`, `linktype`, `text`, `parameters`, `anchor`, `internal*`) as attributes on the `<a>` tag,
+which the permissive default still does for backward compatibility (e.g. `linktype="direct"`).
+A `target`/`title`/`class`/`data-*`/`aria-*`/... attribute, or an event handler passed only via the
+template call (e.g. `pimcore_link("x", {"onclick": "track()"})`), is unaffected either way.
 
 The permissive default is deprecated since 2026.3 and will be removed in 2027.1, where the strict
 policy becomes the default. While running with the permissive default, a deprecation is triggered
@@ -82,7 +84,7 @@ recommended for any site where document editors are not fully trusted.
 
 | Name              | Return      | Description                          |
 |-------------------|-------------|--------------------------------------|
-| `getHref()`       | string      | Get the path of this link, already HTML-escaped and safe to embed in an HTML attribute (embedding it in an auto-escaping context, e.g. Twig, would double-encode it). |
+| `getHref()`       | string      | Get the path of this link. The path is not HTML-escaped (print it in an escaping context, e.g. Twig auto-escaping); query parameters and anchor are. |
 | `getText()`       | string      | Get the text of the link             |
 | `getTarget()`     | string      | Get the target of the link           |
 | `getParameters()` | string      | Get the query params of the link     |

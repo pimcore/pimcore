@@ -35,8 +35,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     /**
      * Data keys that carry the editable's own bookkeeping or are already rendered elsewhere
-     * (link text, parameters/anchor folded into the href, internal target reference) and must
-     * never be echoed back as a raw HTML attribute on the rendered <a> tag.
+     * (link text, parameters/anchor folded into the href, internal target reference). They are
+     * kept out of the rendered <a> tag's attributes when the active AttributeSanitizer policy
+     * omitsInternalDataAttributes(); the permissive default still emits them, as it always has.
      */
     private const RESERVED_DATA_KEYS = [
         'path', 'linktype', 'internal', 'internalId', 'internalType',
@@ -78,7 +79,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function frontend()
     {
-        $url = $this->getHref();
+        $url = $this->buildHref(true);
 
         if (strlen($url) > 0) {
             $prefix = '';
@@ -113,7 +114,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $sanitizer = AttributeSanitizer::getInstance();
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
-                if (!is_string($key) || in_array($key, self::RESERVED_DATA_KEYS, true)) {
+                $key = (string) $key;
+                if ($sanitizer->omitsInternalDataAttributes() && in_array($key, self::RESERVED_DATA_KEYS, true)) {
                     continue;
                 }
 
@@ -209,10 +211,10 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     }
 
     /**
-     * Returns the link's target URL, already HTML-escaped and safe to embed directly in an HTML
-     * attribute (e.g. href="..."), consistent with the parameters/anchor portions this method has
-     * always pre-escaped. Escaping it again (e.g. via a Twig auto-escaping context) will double-
-     * encode it.
+     * Returns the link's target URL. The path is returned as stored (not HTML-escaped), so escape
+     * it for the context you print it in - e.g. Twig auto-escaping does that for
+     * {{ pimcore_link('x').href }}. The parameters/anchor portions are HTML-escaped, as they always
+     * have been.
      *
      * Whether a path with a dangerous scheme (javascript:, vbscript:, most data: URIs) is rejected
      * (returning an empty string, even if the link otherwise has parameters or an anchor set)
@@ -220,6 +222,15 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      * that class.
      */
     public function getHref(): string
+    {
+        return $this->buildHref(false);
+    }
+
+    /**
+     * @param bool $escapePath frontend() interpolates the result into href="..." itself, so it
+     *                         needs the path escaped there; getHref() keeps returning it raw
+     */
+    private function buildHref(bool $escapePath): string
     {
         $this->updatePathFromInternal();
 
@@ -245,7 +256,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             );
         }
 
-        $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+        if ($escapePath) {
+            $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+        }
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
             $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
