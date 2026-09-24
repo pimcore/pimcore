@@ -94,6 +94,9 @@ class QuantityValueFilterConditionTest extends TestCase
 
     public function testHighPrecisionDecimalValueIsPreservedExactly(): void
     {
+        // Confirms FilterValueFormatter is actually wired into this branch; the formatter's
+        // own boundary cases (typical values, DECIMAL(65,30) precision, exponent overflow) are
+        // covered directly and exhaustively in FilterValueFormatterTest.
         $field = new QuantityValue();
 
         $highPrecisionValue = '123456789012345678901234567890.123456789012345678901234567890';
@@ -104,43 +107,7 @@ class QuantityValueFilterConditionTest extends TestCase
             ['name' => 'cskey_1-2']
         );
 
-        $this->assertStringContainsString($highPrecisionValue, $condition, 'casting to float must not truncate a DECIMAL(65, 30) value');
-        $this->assertStringNotContainsString('E+', $condition);
-        $this->assertStringNotContainsString('INF', $condition);
-    }
-
-    public function testExponentOverflowValueDoesNotProduceInfOrScientificNotation(): void
-    {
-        // is_numeric() accepts exponent notation with very few significant digits (e.g. "1e309"),
-        // which would pass a naive digit-count check but overflow (float) to INF, or render back
-        // as scientific notation - both are invalid bare SQL numeric literals.
-        $field = new QuantityValue();
-
-        $condition = $field->getFilterConditionExt(
-            [['1e309', '1']],
-            '=',
-            ['name' => 'cskey_1-2']
-        );
-
-        $this->assertSame("`cskey_1-2`.`value` = '1e309' ", $condition);
-        $this->assertStringNotContainsString('INF', $condition);
-        $this->assertStringNotContainsString('E+', $condition);
-    }
-
-    public function testTypicalPrecisionValueKeepsThePriorUnquotedFloatFormat(): void
-    {
-        // BC: for any value a float can represent exactly (the overwhelming majority of
-        // real filters), the generated condition must stay byte-for-byte identical to
-        // what this method returned before the DECIMAL(65, 30) precision fix.
-        $field = new QuantityValue();
-
-        $condition = $field->getFilterConditionExt(
-            [['12.5', '1']],
-            '=',
-            ['name' => 'cskey_1-2']
-        );
-
-        $this->assertSame('`cskey_1-2`.`value` = 12.5 ', $condition);
+        $this->assertSame("`cskey_1-2`.`value` = '" . $highPrecisionValue . "' ", $condition);
     }
 
     public function testInOperatorProducesValidListOnNonClassificationStorePath(): void

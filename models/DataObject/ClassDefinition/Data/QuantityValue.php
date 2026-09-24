@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Doctrine\DBAL\Connection;
 use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue\FilterValueFormatter;
 use Pimcore\Model\Exception\NotFoundException;
 
 class QuantityValue extends AbstractQuantityValue
@@ -437,37 +437,9 @@ class QuantityValue extends AbstractQuantityValue
                 return '1 = 0';
             }
 
-            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $this->formatValidatedNumericValue($db, (string) $value[0][0]) . ' ';
+            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . FilterValueFormatter::format($db, (string) $value[0][0]) . ' ';
         }
 
         return $key . ' ' . $operator . ' ' . (is_string($value) ? $db->quote($value) : $value) . ' ';
-    }
-
-    /**
-     * Formats an already-validated (is_numeric()) decimal string for use in a SQL condition.
-     *
-     * A plain (float) cast keeps this method's prior output byte-for-byte identical for any
-     * value it can represent without loss (~15 significant digits), which covers virtually
-     * every real quantity-value filter. This field's column supports DECIMAL(65, 30), which a
-     * PHP float cannot represent exactly, so higher-precision values are quoted instead of cast
-     * to avoid truncation, scientific notation, or INF.
-     */
-    private function formatValidatedNumericValue(Connection $db, string $value): string
-    {
-        $significantDigits = strlen(ltrim(str_replace(['-', '+', '.'], '', $value), '0')) ?: 1;
-
-        if ($significantDigits <= 15) {
-            $float = (float) $value;
-            $formatted = (string) $float;
-
-            // is_numeric() also accepts exponent notation (e.g. "1e309"), which can overflow to
-            // INF despite a low digit count, or render back as scientific notation; neither is a
-            // valid bare SQL numeric literal, so fall through to the quoted form for those too.
-            if (is_finite($float) && !str_contains($formatted, 'E')) {
-                return $formatted;
-            }
-        }
-
-        return $db->quote($value);
     }
 }
