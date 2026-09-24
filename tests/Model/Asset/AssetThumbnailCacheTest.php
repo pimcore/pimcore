@@ -549,47 +549,4 @@ class AssetThumbnailCacheTest extends TestCase
             $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
         });
     }
-
-    /**
-     * Runs $callback with the thumbnail storage replaced by $storage.
-     *
-     * Pimcore\Tool\Storage resolves each storage from a tagged service locator, so the whole
-     * service is swapped for one backed by a locator that returns $storage for the thumbnail
-     * storage and delegates everything else to the original.
-     */
-    private function withThumbnailStorage(FilesystemOperator $storage, callable $callback): mixed
-    {
-        $storageService = Pimcore::getContainer()->get(Storage::class);
-
-        // the container refuses to replace an already initialized service, and Storage is
-        // initialized long before a test runs, so swap the locator it resolves each storage from
-        $property = new ReflectionProperty(Storage::class, 'locator');
-        $originalLocator = $property->getValue($storageService);
-
-        $property->setValue($storageService, new class($storage, $originalLocator) implements ContainerInterface {
-            public function __construct(
-                private FilesystemOperator $thumbnailStorage,
-                private ContainerInterface $original,
-            ) {
-            }
-
-            public function has(string $id): bool
-            {
-                return $id === 'pimcore.thumbnail.storage' || $this->original->has($id);
-            }
-
-            public function get(string $id): mixed
-            {
-                return $id === 'pimcore.thumbnail.storage'
-                    ? $this->thumbnailStorage
-                    : $this->original->get($id);
-            }
-        });
-
-        try {
-            return $callback();
-        } finally {
-            $property->setValue($storageService, $originalLocator);
-        }
-    }
 }
