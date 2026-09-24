@@ -109,6 +109,24 @@ class QuantityValueFilterConditionTest extends TestCase
         $this->assertStringNotContainsString('INF', $condition);
     }
 
+    public function testExponentOverflowValueDoesNotProduceInfOrScientificNotation(): void
+    {
+        // is_numeric() accepts exponent notation with very few significant digits (e.g. "1e309"),
+        // which would pass a naive digit-count check but overflow (float) to INF, or render back
+        // as scientific notation - both are invalid bare SQL numeric literals.
+        $field = new QuantityValue();
+
+        $condition = $field->getFilterConditionExt(
+            [['1e309', '1']],
+            '=',
+            ['name' => 'cskey_1-2']
+        );
+
+        $this->assertSame("`cskey_1-2`.`value` = '1e309' ", $condition);
+        $this->assertStringNotContainsString('INF', $condition);
+        $this->assertStringNotContainsString('E+', $condition);
+    }
+
     public function testTypicalPrecisionValueKeepsThePriorUnquotedFloatFormat(): void
     {
         // BC: for any value a float can represent exactly (the overwhelming majority of

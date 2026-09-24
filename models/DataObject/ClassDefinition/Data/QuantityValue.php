@@ -457,7 +457,15 @@ class QuantityValue extends AbstractQuantityValue
         $significantDigits = strlen(ltrim(str_replace(['-', '+', '.'], '', $value), '0')) ?: 1;
 
         if ($significantDigits <= 15) {
-            return (string) (float) $value;
+            $float = (float) $value;
+            $formatted = (string) $float;
+
+            // is_numeric() also accepts exponent notation (e.g. "1e309"), which can overflow to
+            // INF despite a low digit count, or render back as scientific notation; neither is a
+            // valid bare SQL numeric literal, so fall through to the quoted form for those too.
+            if (is_finite($float) && !str_contains($formatted, 'E')) {
+                return $formatted;
+            }
         }
 
         return $db->quote($value);
