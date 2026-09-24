@@ -213,7 +213,7 @@ class Sql extends AbstractAdapter
 
         foreach ($forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $sqlForValidation)) {
-                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, and DDL/DML are not allowed).');
+                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, DDL/DML, and file access functions are not allowed).');
             }
         }
     }
