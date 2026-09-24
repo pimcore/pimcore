@@ -17,8 +17,8 @@ use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue\FilterValueFormatter;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Exception\NotFoundException;
 
 class QuantityValue extends AbstractQuantityValue
