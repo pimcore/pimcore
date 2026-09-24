@@ -145,6 +145,35 @@ class LinkTest extends TestCase
         $this->assertNull($this->getRenderedAnchorAttribute($link->frontend(), 'onmouseover'));
     }
 
+    public function testFrontendKeepsEventHandlerAttributeConfiguredOnlyByTemplate(): void
+    {
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'https://example.com',
+            'linktype' => 'direct',
+        ]);
+        $link->setConfig(['onclick' => 'trackClick()']);
+
+        $this->assertSame('trackClick()', $this->getRenderedAnchorAttribute($link->frontend(), 'onclick'));
+    }
+
+    public function testFrontendRejectsEventHandlerWhenEditorDataSharesKeyWithTrustedConfig(): void
+    {
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'https://example.com',
+            'linktype' => 'direct',
+            'onclick' => 'alert(document.domain)',
+        ]);
+        $link->setConfig(['onclick' => 'trackClick()']);
+
+        // the editor-supplied value would otherwise merge into the same attribute as the
+        // trusted config value (see the empty($this->data[$key]) && empty($this->config[$key])
+        // branch), so the key must be rejected once the editor can influence it at all -
+        // trusting it because the template also configured it is not enough
+        $this->assertNull($this->getRenderedAnchorAttribute($link->frontend(), 'onclick'));
+    }
+
     public function testFrontendRejectsAttributeKeyContainingWhitespaceOrQuote(): void
     {
         $link = new Link();

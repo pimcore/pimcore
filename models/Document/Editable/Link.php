@@ -111,8 +111,16 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             // add attributes to link
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
-                if (!is_string($key) || !$this->isSafeAttributeName($key) || $this->isEventHandlerAttribute($key)
-                    || in_array($key, self::RESERVED_DATA_KEYS, true)) {
+                if (!is_string($key) || !$this->isSafeAttributeName($key) || in_array($key, self::RESERVED_DATA_KEYS, true)) {
+                    continue;
+                }
+
+                // event handler attributes execute script regardless of value escaping; trust
+                // them only when they come exclusively from the (developer-authored) template
+                // configuration - reject the moment the document editor could have supplied or
+                // influenced the same key via $this->data, including a value that would merge
+                // with a trusted config value into a single attribute below
+                if ($this->isEventHandlerAttribute($key) && array_key_exists($key, $this->data)) {
                     continue;
                 }
 
