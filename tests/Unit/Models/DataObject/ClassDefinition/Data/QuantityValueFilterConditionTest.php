@@ -95,4 +95,56 @@ class QuantityValueFilterConditionTest extends TestCase
         $this->assertStringNotContainsString('E+', $condition);
         $this->assertStringNotContainsString('INF', $condition);
     }
+
+    public function testInOperatorProducesValidListOnNonClassificationStorePath(): void
+    {
+        $field = new QuantityValue();
+
+        $condition = $field->getFilterConditionExt(
+            '1.5,2.3,10',
+            'in',
+            ['name' => 'myQuantityValue__value']
+        );
+
+        $this->assertSame("`myQuantityValue__value` IN ('1.5','2.3','10') ", $condition);
+    }
+
+    public function testInOperatorProducesValidListOnClassificationStorePath(): void
+    {
+        $field = new QuantityValue();
+
+        $condition = $field->getFilterConditionExt(
+            [['1.5,2.3,10', '1']],
+            'in',
+            ['name' => 'cskey_1-2']
+        );
+
+        $this->assertSame("`cskey_1-2`.`value` IN ('1.5','2.3','10') ", $condition);
+    }
+
+    public function testInOperatorRejectsSqlInjectionPayload(): void
+    {
+        $field = new QuantityValue();
+
+        $condition = $field->getFilterConditionExt(
+            '1,2) OR (1=1',
+            'in',
+            ['name' => 'myQuantityValue__value']
+        );
+
+        $this->assertSame('1 = 0', $condition);
+    }
+
+    public function testInOperatorRejectsEmptyList(): void
+    {
+        $field = new QuantityValue();
+
+        $condition = $field->getFilterConditionExt(
+            '',
+            'in',
+            ['name' => 'myQuantityValue__value']
+        );
+
+        $this->assertSame('1 = 0', $condition);
+    }
 }
