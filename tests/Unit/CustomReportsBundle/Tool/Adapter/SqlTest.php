@@ -36,6 +36,33 @@ final class SqlTest extends TestCase
         };
     }
 
+    /**
+     * An adapter whose DB round-trip is stubbed, so getColumns() can be exercised end-to-end
+     * (fragment validation + derived-table wrapping) without a real DB connection. Captures
+     * the exact, already-wrapped SQL that would have been sent to Db::get()->fetchAssociative().
+     *
+     * @param-out string $capturedSql
+     */
+    private function adapterCapturingWrappedSql(stdClass $config, ?string &$capturedSql): Sql
+    {
+        return new class($config, $capturedSql) extends Sql {
+            private ?string $capturedSql;
+
+            public function __construct(stdClass $config, ?string &$capturedSql)
+            {
+                parent::__construct($config);
+                $this->capturedSql = &$capturedSql;
+            }
+
+            protected function fetchAssociative(string $sql): array|false
+            {
+                $this->capturedSql = $sql;
+
+                return ['id' => 1, 'name' => 'foo'];
+            }
+        };
+    }
+
     private function configWith(string $key, string $value): stdClass
     {
         $config = new stdClass();
@@ -95,6 +122,36 @@ final class SqlTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsCommentStartFollowedByControlByte(): void
+    {
+        // MySQL's lexer starts a "--" comment when followed by a space OR any control
+        // character (my_iscntrl), not only the bytes PCRE's '\s' matches. A payload using
+        // e.g. \x01 right after "--" used to slip past the whitespace-only rule.
+        $config = $this->configWith('where', "id = 1--\x01 INTO OUTFILE '/tmp/x'");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testGetColumnsSendsComposedQueryAsDerivedTable(): void
+    {
+        $config = new stdClass();
+        $config->sql = 'SELECT id, name';
+        $config->from = 'my_table';
+
+        $capturedSql = null;
+        $adapter = $this->adapterCapturingWrappedSql($config, $capturedSql);
+
+        $columns = $adapter->getColumns($config);
+
+        $this->assertSame(['id', 'name'], $columns);
+        $this->assertNotNull($capturedSql);
+        $this->assertMatchesRegularExpression(
+            '/^SELECT \* FROM \(.*my_table.*\) AS somerandxyz LIMIT 0,1$/s',
+            $capturedSql
+        );
     }
 
     public function testLegitimateFragmentsAreStillAccepted(): void

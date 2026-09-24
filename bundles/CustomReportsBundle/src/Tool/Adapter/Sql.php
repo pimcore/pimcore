@@ -74,8 +74,7 @@ class Sql extends AbstractAdapter
             // as INTO OUTFILE is a syntax error inside the subquery, whereas appending LIMIT
             // directly is only a string suffix and can be neutralised by a trailing comment.
             $wrappedSql = 'SELECT * FROM (' . $sql . ') AS somerandxyz LIMIT 0,1';
-            $db = Db::get();
-            $res = $db->fetchAssociative($wrappedSql);
+            $res = $this->fetchAssociative($wrappedSql);
             if ($res) {
                 return array_keys($res);
             }
@@ -84,6 +83,15 @@ class Sql extends AbstractAdapter
         }
 
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+    }
+
+    /**
+     * Thin seam around the actual DB round-trip, so tests can assert on the exact
+     * (already-wrapped) SQL getColumns() sends without needing a real DB connection.
+     */
+    protected function fetchAssociative(string $sql): array|false
+    {
+        return Db::get()->fetchAssociative($sql);
     }
 
     protected function buildQueryString(
@@ -164,13 +172,6 @@ class Sql extends AbstractAdapter
             }
         }
 
-        // Structural allowlist on top of the fragment denylist above: whatever gets embedded
-        // as a derived table in getColumns()/getBaseQuery() must itself be a single SELECT/WITH
-        // statement, independent of which forbidden keyword or primitive the denylist covers.
-        if (!preg_match('/^\s*(SELECT|WITH)\b/i', $sql)) {
-            throw new InvalidArgumentException('The composed report query must start with SELECT or WITH.');
-        }
-
         return $sql;
     }
 
@@ -191,7 +192,10 @@ class Sql extends AbstractAdapter
         $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
         $forbiddenPatterns = [
             '/;/',
-            '/--(\s|$)/', // comment start (MySQL-style: "-- " or a fragment-terminal "--")
+            // Comment start: MySQL's lexer treats "--" as a comment when followed by a space
+            // or *any* control character (my_iscntrl), not only the whitespace \s matches, or
+            // when "--" ends the fragment outright.
+            '/--(?:[\x00-\x20\x7F]|$)/',
             '/#/',
             '/\/\*/',
             '/\*\//',
