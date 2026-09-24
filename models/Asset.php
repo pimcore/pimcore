@@ -686,8 +686,27 @@ class Asset extends Element\AbstractElement
         }
 
         // do not allow PHP and .htaccess files
-        if (preg_match("@\.ph(p[\d+]?|t|tml|ps|ar)$@i", $this->getFilename()) || $this->getFilename() == '.htaccess') {
+        if (preg_match('@\.ph(p(\d+(\.\d+)*)?|t(ml)?|ps|ar)$@i', $this->getFilename()) || $this->getFilename() == '.htaccess') {
             $this->setFilename($this->getFilename() . '.txt');
+        }
+
+        // also block extensions that would be served with an executable/active content-type and
+        // can be used for stored XSS (e.g. via WebDAV uploads), but only when the filename
+        // itself is being set for the first time or changed (create or rename). Moving an asset
+        // to a different folder alone does not change its filename and is therefore not
+        // affected by this check. This is intentionally not applied when an existing asset is
+        // saved without its filename changing, since that would silently rename (and break
+        // every reference to) any already-stored .html/.js asset the next time it is saved for
+        // an unrelated reason (e.g. a metadata edit) - but a rename must still be checked,
+        // otherwise an asset could bypass the denylist by being uploaded under a harmless name
+        // and renamed to a dangerous one afterwards. The DB lookup needed to detect a rename is
+        // only done once the extension itself is already dangerous, so a normal save (.jpg,
+        // .pdf, ...) never pays for it.
+        if (preg_match('@\.(html?|xht(ml)?|shtml|js|mjs)$@i', $this->getFilename())) {
+            $storedFilename = $this->getId() ? basename((string) $this->getCurrentFullPath()) : null;
+            if ($storedFilename !== $this->getFilename()) {
+                $this->setFilename($this->getFilename() . '.txt');
+            }
         }
 
         if (mb_strlen($this->getFilename()) > 255) {
