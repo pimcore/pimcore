@@ -13,13 +13,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use League\Flysystem\FilesystemOperator;
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
+use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use Psr\Container\ContainerInterface;
+use ReflectionProperty;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AssetThumbnailCacheTest extends TestCase
 {
@@ -126,6 +133,81 @@ class AssetThumbnailCacheTest extends TestCase
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
     }
 
+    public function testThumbnailCacheControlHeaders(): void
+    {
+        $customLifetime = 3600;
+
+        $assetsConfig = Config::getSystemConfiguration('assets');
+        $originalLifetime = $assetsConfig['thumbnails']['cache_lifetime'];
+        $assetsConfig['thumbnails']['cache_lifetime'] = $customLifetime;
+        Config::setSystemConfiguration($assetsConfig, 'assets');
+
+        try {
+            $asset = $this->testAsset;
+            $thumbnailName = $this->thumbnailName;
+
+            /** @var Asset\Image $asset */
+            $thumbConfig = $asset->getThumbnail($thumbnailName);
+            $asset->clearThumbnails(true);
+
+            $thumbnailStorage = Storage::get('thumbnail');
+
+            // Generate the thumbnail so it exists in storage
+            $thumbConfig->getPath(['deferredAllowed' => false]);
+            $pathReference = $thumbConfig->getPathReference(true);
+            $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
+
+            $controller = new PublicServicesController();
+
+            // Branch 1: existing file – the storage path is used as the request URI so
+            // getStreamedResponseForThumbnail() serves it directly without re-generating.
+            $storagePath = $pathReference['storagePath'];
+            $existingFileRequest = Request::create($storagePath);
+            $existingFileRequest->attributes->set('assetId', $asset->getId());
+            $existingFileRequest->attributes->set('thumbnailName', $thumbnailName);
+            $existingFileRequest->attributes->set('filename', $thumbConfig->getFilename());
+            $existingFileRequest->attributes->set('type', 'image');
+            $existingFileRequest->attributes->set('prefix', '');
+
+            $timeBefore = time();
+            $response = $controller->thumbnailAction($existingFileRequest);
+            $timeAfter = time();
+
+            $this->assertInstanceOf(StreamedResponse::class, $response);
+            $this->assertTrue($response->headers->hasCacheControlDirective('public'));
+            $this->assertSame($customLifetime, (int) $response->headers->getCacheControlDirective('max-age'));
+            $expiresTimestamp = strtotime($response->headers->get('Expires'));
+            $this->assertGreaterThanOrEqual($timeBefore + $customLifetime, $expiresTimestamp);
+            $this->assertLessThanOrEqual($timeAfter + $customLifetime, $expiresTimestamp);
+
+            // Branch 2: on-demand generation – delete the file so it must be re-generated.
+            $thumbnailStorage->delete($storagePath);
+            $this->assertFalse($thumbnailStorage->fileExists($storagePath));
+
+            $onDemandRequest = new Request(attributes: [
+                'assetId' => $asset->getId(),
+                'thumbnailName' => $thumbnailName,
+                'filename' => $thumbConfig->getFilename(),
+                'type' => 'image',
+                'prefix' => '',
+            ]);
+
+            $timeBefore2 = time();
+            $response2 = $controller->thumbnailAction($onDemandRequest);
+            $timeAfter2 = time();
+
+            $this->assertInstanceOf(StreamedResponse::class, $response2);
+            $this->assertTrue($response2->headers->hasCacheControlDirective('public'));
+            $this->assertSame($customLifetime, (int) $response2->headers->getCacheControlDirective('max-age'));
+            $expiresTimestamp2 = strtotime($response2->headers->get('Expires'));
+            $this->assertGreaterThanOrEqual($timeBefore2 + $customLifetime, $expiresTimestamp2);
+            $this->assertLessThanOrEqual($timeAfter2 + $customLifetime, $expiresTimestamp2);
+        } finally {
+            $assetsConfig['thumbnails']['cache_lifetime'] = $originalLifetime;
+            Config::setSystemConfiguration($assetsConfig, 'assets');
+        }
+    }
+
     /**
      * Regression test for the ORIGINAL format: the processor streams the source
      * file to the storage without writing the local temp path, but used to pass
@@ -221,5 +303,222 @@ class AssetThumbnailCacheTest extends TestCase
             $compatModificationDate,
             $asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename),
         );
+    }
+
+    /**
+     * A cached thumbnail is streamed straight from storage. The existence check that used to
+     * precede readStream() is gone, so remote adapters no longer pay for an extra HEAD request
+     * on every delivery.
+     */
+    public function testDeliveringACachedThumbnailDoesNotCheckFileExistence(): void
+    {
+        $asset = $this->testAsset;
+        $thumbnailName = $this->thumbnailName;
+
+        /** @var Asset\Image $asset */
+        $thumbConfig = $asset->getThumbnail($thumbnailName);
+        $asset->clearThumbnails(true);
+
+        // generate the thumbnail so the delivery below is a cache hit
+        $thumbConfig->getPath(['deferredAllowed' => false]);
+        $pathReference = $thumbConfig->getPathReference(true);
+        $storagePath = $pathReference['storagePath'];
+
+        $contents = 'cached-thumbnail-contents';
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, $contents);
+        rewind($stream);
+
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->expects($this->never())->method('fileExists');
+        $storage->method('readStream')->willReturn($stream);
+        $storage->method('mimeType')->willReturn('image/jpeg');
+        $storage->method('fileSize')->willReturn(strlen($contents));
+
+        $response = $this->withThumbnailStorage(
+            $storage,
+            fn () => Asset\Service::getStreamedResponseForThumbnail(
+                $this->buildThumbnailConfig($asset, $thumbConfig->getFilename()),
+                $storagePath,
+            ),
+        );
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame('image/jpeg', $response->headers->get('Content-Type'));
+        $this->assertSame((string) strlen($contents), $response->headers->get('Content-Length'));
+    }
+
+    /**
+     * A request URI that denotes a directory rather than a file must fall back to thumbnail
+     * generation. readStream() cannot be used to rule this out: the local adapter opens
+     * directories successfully, so without an explicit guard the storage root would be streamed
+     * and the subsequent mimeType() call would throw.
+     */
+    public function testDirectoryShapedUriFallsBackToThumbnailGeneration(): void
+    {
+        $asset = $this->testAsset;
+        $thumbnailName = $this->thumbnailName;
+
+        /** @var Asset\Image $asset */
+        $thumbConfig = $asset->getThumbnail($thumbnailName);
+        $asset->clearThumbnails(true);
+
+        $thumbnailStorage = Storage::get('thumbnail');
+        $pathReference = $thumbConfig->getPathReference(true);
+        $storagePath = $pathReference['storagePath'];
+        $config = $this->buildThumbnailConfig($asset, $thumbConfig->getFilename());
+
+        // '/' is what PublicServicesController passes when the request carries no REQUEST_URI,
+        // and it normalizes to the root of the thumbnail storage
+        foreach (['/', '/directory-shaped-path/'] as $uri) {
+            if ($thumbnailStorage->fileExists($storagePath)) {
+                $thumbnailStorage->delete($storagePath);
+            }
+
+            $response = Asset\Service::getStreamedResponseForThumbnail($config, $uri);
+
+            $this->assertInstanceOf(
+                StreamedResponse::class,
+                $response,
+                sprintf('URI "%s" should fall back to thumbnail generation.', $uri),
+            );
+
+            ob_start();
+            $response->sendContent();
+            ob_end_clean();
+
+            $this->assertTrue(
+                $thumbnailStorage->fileExists($storagePath),
+                sprintf('URI "%s" should have re-generated the thumbnail.', $uri),
+            );
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildThumbnailConfig(Asset $asset, string $filename): array
+    {
+        return [
+            'prefix' => '',
+            'type' => 'image',
+            'asset_id' => $asset->getId(),
+            'thumbnail_name' => $this->thumbnailName,
+            'filename' => $filename,
+            'file_extension' => strtolower(pathinfo($filename, PATHINFO_EXTENSION)),
+        ];
+    }
+
+    /**
+     * Runs $callback with the thumbnail storage replaced by $storage.
+     *
+     * Pimcore\Tool\Storage resolves each storage from a tagged service locator, so the whole
+     * service is swapped for one backed by a locator that returns $storage for the thumbnail
+     * storage and delegates everything else to the original.
+     */
+    private function withThumbnailStorage(FilesystemOperator $storage, callable $callback): mixed
+    {
+        $storageService = Pimcore::getContainer()->get(Storage::class);
+
+        // the container refuses to replace an already initialized service, and Storage is
+        // initialized long before a test runs, so swap the locator it resolves each storage from
+        $property = new ReflectionProperty(Storage::class, 'locator');
+        $originalLocator = $property->getValue($storageService);
+
+        $property->setValue($storageService, new class($storage, $originalLocator) implements ContainerInterface {
+            public function __construct(
+                private FilesystemOperator $thumbnailStorage,
+                private ContainerInterface $original,
+            ) {
+            }
+
+            public function has(string $id): bool
+            {
+                return $id === 'pimcore.thumbnail.storage' || $this->original->has($id);
+            }
+
+            public function get(string $id): mixed
+            {
+                return $id === 'pimcore.thumbnail.storage'
+                    ? $this->thumbnailStorage
+                    : $this->original->get($id);
+            }
+        });
+
+        try {
+            return $callback();
+        } finally {
+            $property->setValue($storageService, $originalLocator);
+        }
+    }
+
+    public function testThumbnailActionRedirectsToPlaceholderOnGenerationFailure(): void
+    {
+        // valid JPEG magic bytes so the asset stays an image, but garbage image data
+        // so the thumbnail generation fails
+        $brokenAsset = TestHelper::createImageAsset('broken', "\xFF\xD8\xFF\xE0" . str_repeat('x', 128));
+
+        $controller = new PublicServicesController();
+        $request = new Request(attributes: [
+            'assetId' => $brokenAsset->getId(),
+            'thumbnailName' => $this->thumbnailName,
+            'filename' => 'broken.jpg',
+            'type' => 'image',
+            'prefix' => '',
+        ]);
+
+        $response = $controller->thumbnailAction($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/bundles/pimcoreadmin/img/filetype-not-supported.svg', $response->getTargetUrl());
+
+        // the public helper for custom asset delivery (see doc/02_Assets/02_Restricting_Public_Asset_Access.md)
+        // keeps its nullable contract for a failed generation as well, previously the placeholder
+        // path reference ended in a TypeError from writeStream(null) on the thumbnail storage
+        $uri = sprintf('/image-thumb__%d__%s/broken.jpg', $brokenAsset->getId(), $this->thumbnailName);
+        $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
+    }
+
+    public function testGetStreamInvalidatesStaleStatusCacheWhenFileMissingFromStorage(): void
+    {
+        $asset = $this->testAsset;
+        $thumbnailName = $this->thumbnailName;
+
+        /** @var Asset\Image $asset */
+        $thumbConfig = $asset->getThumbnail($thumbnailName);
+
+        //create the thumbnail file and fill the status cache
+        $thumbConfig->getPath(['deferredAllowed' => false]);
+        $pathReference = $thumbConfig->getPathReference(true);
+        $storagePath = $pathReference['storagePath'];
+        $filename = $thumbConfig->getFilename();
+
+        $thumbnailStorage = Storage::get('thumbnail');
+        $this->assertTrue($thumbnailStorage->fileExists($storagePath));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename));
+
+        //delete just the file on the file system, the status cache entry remains
+        $thumbnailStorage->delete($storagePath);
+
+        //the stale status cache entry makes a fresh thumbnail instance report the file as existing
+        $thumbnail = $asset->getThumbnail($thumbnailName);
+        $this->assertTrue($thumbnail->exists());
+
+        //previously threw an unhandled League\Flysystem\UnableToReadFile
+        $this->assertNull($thumbnail->getStream());
+
+        //the stale status cache entry got invalidated ...
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename));
+
+        //... so the next request (a fresh thumbnail instance) no longer reports the missing file
+        //as existing and regenerates it instead
+        $thumbnail = $asset->getThumbnail($thumbnailName);
+        $this->assertFalse($thumbnail->exists());
+
+        $stream = $thumbnail->getStream();
+        $this->assertIsResource($stream);
+        fclose($stream);
+        $this->assertTrue($thumbnailStorage->fileExists($storagePath));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename));
     }
 }

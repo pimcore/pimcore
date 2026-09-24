@@ -29,6 +29,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
+use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
 
@@ -75,11 +76,18 @@ final class Version extends AbstractModel
 
     protected ?string $storageType = null;
 
+    protected ?string $coauthorType = null;
+
+    protected ?string $coauthor = null;
+
     protected VersionStorageAdapterInterface $storageAdapter;
+
+    protected CoauthorContextInterface $coauthorContext;
 
     public function __construct()
     {
         $this->storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $this->coauthorContext = Pimcore::getContainer()->get(CoauthorContextInterface::class);
     }
 
     public static function getById(int $id): ?Version
@@ -122,6 +130,12 @@ final class Version extends AbstractModel
 
     public function save(): void
     {
+        if (!self::$disabled && $this->id === null && $this->coauthorType === null && $this->coauthor === null
+            && $this->coauthorContext->isActive()) {
+            $this->coauthorType = $this->coauthorContext->getType();
+            $this->coauthor = $this->coauthorContext->getCoauthor();
+        }
+
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_SAVE);
 
         // check if versioning is disabled for this process
@@ -551,5 +565,29 @@ final class Version extends AbstractModel
     public function setStorageType(string $storageType): void
     {
         $this->storageType = $storageType;
+    }
+
+    public function getCoauthorType(): ?string
+    {
+        return $this->coauthorType;
+    }
+
+    public function setCoauthorType(?string $coauthorType): static
+    {
+        $this->coauthorType = $coauthorType;
+
+        return $this;
+    }
+
+    public function getCoauthor(): ?string
+    {
+        return $this->coauthor;
+    }
+
+    public function setCoauthor(?string $coauthor): static
+    {
+        $this->coauthor = $coauthor;
+
+        return $this;
     }
 }

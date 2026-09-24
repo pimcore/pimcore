@@ -190,7 +190,7 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` varchar(70) NOT NULL DEFAULT '0',
             `index` int(11) unsigned NOT NULL DEFAULT '0',
             `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
-            `ownername` varchar(70) NOT NULL DEFAULT '',
+            `ownername` varchar(190) NOT NULL DEFAULT '',
             `position` varchar(70) NOT NULL DEFAULT '0',
             INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
             INDEX `reverse_lookup` (`dest_id`, `type`),

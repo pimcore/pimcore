@@ -18,6 +18,7 @@ use Imagick;
 use ImagickPixel;
 use League\Flysystem\UnableToMoveFile;
 use Normalizer;
+use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Service as AssetService;
@@ -495,6 +496,107 @@ class AssetTest extends ModelTestCase
         $asset = Asset::create(1, $data);
 
         $this->assertEquals('image/jpeg', $asset->getMimeType());
+    }
+
+    private function withAssetsMimeMappings(array $mappings, callable $callback): void
+    {
+        $original = Config::getSystemConfiguration('assets');
+        Config::setSystemConfiguration(
+            array_merge($original ?? [], ['mime_mappings' => $mappings]),
+            'assets'
+        );
+
+        try {
+            $callback();
+        } finally {
+            Config::setSystemConfiguration($original, 'assets');
+        }
+    }
+
+    public function testMimeMappingOverridesDetectedMimeTypeOnCreate(): void
+    {
+        $this->withAssetsMimeMappings(['jpg' => 'image/x-custom'], function (): void {
+            $asset = Asset::create(
+                1,
+                [
+                    'stream' => fopen(
+                        TestHelper::resolveFilePath('assets/images/image1.jpg'),
+                        'rb'
+                    ),
+                    'filename' => 'mime_mapping_create.jpg',
+                ]
+            );
+
+            $this->assertEquals('image/x-custom', $asset->getMimeType());
+        });
+    }
+
+    public function testMimeMappingOverridesDetectedMimeTypeOnUpdate(): void
+    {
+        $asset = Asset::create(
+            1,
+            [
+                'stream' => fopen(
+                    TestHelper::resolveFilePath('assets/images/image1.jpg'),
+                    'rb'
+                ),
+                'filename' => 'mime_mapping_update.jpg',
+            ]
+        );
+        $this->assertEquals('image/jpeg', $asset->getMimeType());
+
+        $this->withAssetsMimeMappings(['jpg' => 'image/x-custom'], function () use ($asset): void {
+            $asset->setStream(fopen(TestHelper::resolveFilePath('assets/images/image2.jpg'), 'rb'));
+            $asset->save();
+
+            $this->assertEquals('image/x-custom', $asset->getMimeType());
+        });
+    }
+
+    public function testMimeMappingNormalizesUppercaseExtension(): void
+    {
+        $this->withAssetsMimeMappings(['jpg' => 'image/x-custom'], function (): void {
+            $asset = Asset::create(
+                1,
+                [
+                    'stream' => fopen(
+                        TestHelper::resolveFilePath('assets/images/image1.jpg'),
+                        'rb'
+                    ),
+                    'filename' => 'mime_mapping_uppercase.JPG',
+                ]
+            );
+
+            $this->assertEquals('image/x-custom', $asset->getMimeType());
+        });
+    }
+
+    public function testMimeMappingDoesNotApplyWhenExtensionNotMapped(): void
+    {
+        $this->withAssetsMimeMappings(['indd' => 'application/x-indesign'], function (): void {
+            $asset = Asset::create(
+                1,
+                [
+                    'stream' => fopen(
+                        TestHelper::resolveFilePath('assets/images/image1.jpg'),
+                        'rb'
+                    ),
+                    'filename' => 'mime_mapping_unmapped.jpg',
+                ]
+            );
+
+            $this->assertEquals('image/jpeg', $asset->getMimeType());
+        });
+    }
+
+    public function testResolveMimeTypeFromMappingPreservesDirectorySentinel(): void
+    {
+        $this->withAssetsMimeMappings(['indd' => 'application/x-indesign'], function (): void {
+            $this->assertEquals(
+                'directory',
+                Asset::resolveMimeTypeFromMapping('directory', 'folder.indd')
+            );
+        });
     }
 
     /**

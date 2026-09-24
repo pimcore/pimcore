@@ -5,8 +5,11 @@ description: Embed PDF and other document assets into pages with preview image g
 
 # PDF Editable
 
-> This editable requires Ghostscript installed on your server.
+> This editable requires Ghostscript installed on your server, which renders the preview image of
+> the embedded document. Non-PDF assets (doc, xls, ...) additionally require LibreOffice or
+> Gotenberg to be converted to PDF first.
 > See [System Requirements](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/01_System_Requirements.md)
+> and [Optional System Dependencies](../../../11_Deployment_Recommendations/06_Optional_System_Dependencies.md#document-and-pdf-processing).
 
 ## General
 
