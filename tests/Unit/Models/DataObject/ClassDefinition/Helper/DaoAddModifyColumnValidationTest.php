@@ -16,8 +16,11 @@ namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Helper;
 use Doctrine\DBAL\Connection;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Date;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DateRange;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Datetime;
 
 /**
  * Regression test for GHSA-qfg9-rq74-hp35: addModifyColumn() is the point where a field's
@@ -36,7 +39,10 @@ class DaoAddModifyColumnValidationTest extends TestCase
 {
     private const INJECTION_PAYLOAD = 'bigint(20), DROP COLUMN `oo_id`, ADD INDEX `pwn`(`o_published`) -- ';
 
-    public function testRejectsInjectedTypeForUserDefinedColumnTypeField(): void
+    /**
+     * @dataProvider userDefinedColumnTypeFieldProvider
+     */
+    public function testRejectsInjectedTypeForUserDefinedColumnTypeField(Data $field): void
     {
         $mockDb = $this->createMock(Connection::class);
         $mockDb->expects($this->never())->method('executeQuery');
@@ -44,7 +50,16 @@ class DaoAddModifyColumnValidationTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $dao = $this->createDaoWithDb($mockDb);
-        $dao->callAddModifyColumn('object_store_test', 'mycolumn', self::INJECTION_PAYLOAD, '', 'NULL', new Date());
+        $dao->callAddModifyColumn('object_store_test', 'mycolumn', self::INJECTION_PAYLOAD, '', 'NULL', $field);
+    }
+
+    public static function userDefinedColumnTypeFieldProvider(): array
+    {
+        return [
+            Date::class => [new Date()],
+            Datetime::class => [new Datetime()],
+            DateRange::class => [new DateRange()],
+        ];
     }
 
     public function testAddsColumnForLegitimateTypeOnUserDefinedColumnTypeField(): void
