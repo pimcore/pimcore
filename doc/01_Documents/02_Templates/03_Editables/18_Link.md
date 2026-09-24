@@ -31,7 +31,7 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 
 | Name              | Return      | Description                          |
 |-------------------|-------------|--------------------------------------|
-| `getHref()`       | string      | Get the path of this link            |
+| `getHref()`       | string      | Get the path of this link, already HTML-escaped and safe to embed in an HTML attribute (embedding it in an auto-escaping context, e.g. Twig, would double-encode it). Returns an empty string for a path with a rejected scheme (`javascript:`, `vbscript:`, most `data:` types), even if parameters or an anchor are set. |
 | `getText()`       | string      | Get the text of the link             |
 | `getTarget()`     | string      | Get the target of the link           |
 | `getParameters()` | string      | Get the query params of the link     |

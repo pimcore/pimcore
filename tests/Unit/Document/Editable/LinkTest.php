@@ -189,6 +189,20 @@ class LinkTest extends TestCase
         $this->assertNull($this->getRenderedAnchorAttribute($link->frontend(), 'onmouseover'));
     }
 
+    public function testFrontendDoesNotDoubleEscapeUrlUsedAsFallbackText(): void
+    {
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'https://example.com/?a=1&b=2',
+            'linktype' => 'direct',
+        ]);
+
+        // no editor-supplied 'text', so frontend() falls back to the (already HTML-escaped)
+        // href as the visible text - it must not be escaped a second time
+        $this->assertStringContainsString('>https://example.com/?a=1&amp;b=2</a>', $link->frontend());
+        $this->assertStringNotContainsString('&amp;amp;', $link->frontend());
+    }
+
     public function testFrontendDoesNotLeakInternalBookkeepingKeysAsAttributes(): void
     {
         $link = new Link();

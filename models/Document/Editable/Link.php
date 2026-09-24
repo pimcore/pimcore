@@ -139,7 +139,10 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
             $text = '';
             if (!$noText) {
-                $text = htmlspecialchars($disabledText ? $url : ($this->data['text'] ?? $url));
+                // $url is already HTML-escaped (it comes from getHref()); only the editor-supplied
+                // text needs escaping here, or it would be double-escaped when used as fallback
+                $rawText = $disabledText ? null : ($this->data['text'] ?? null);
+                $text = $rawText !== null ? htmlspecialchars($rawText) : $url;
             }
 
             return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . $text . $suffix . '</a>';
@@ -188,6 +191,13 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $sane;
     }
 
+    /**
+     * Returns the link's target URL, already HTML-escaped and safe to embed directly in an HTML
+     * attribute (e.g. href="..."), consistent with the parameters/anchor portions this method has
+     * always pre-escaped. Escaping it again (e.g. via a Twig auto-escaping context) will double-
+     * encode it. A path with a rejected scheme (see hasDangerousUrlScheme()) returns an empty
+     * string, even if the link otherwise has parameters or an anchor set.
+     */
     public function getHref(): string
     {
         $this->updatePathFromInternal();
