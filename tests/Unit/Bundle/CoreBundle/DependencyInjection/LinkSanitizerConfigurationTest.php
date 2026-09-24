@@ -78,4 +78,54 @@ class LinkSanitizerConfigurationTest extends TestCase
             'quoted 1' => ['1', true],
         ];
     }
+
+    public function testBlockedUrlSchemesDefaultsToJavascriptAndVbscript(): void
+    {
+        $config = $this->process([[]]);
+
+        $this->assertSame(
+            ['javascript:', 'vbscript:'],
+            $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']
+        );
+    }
+
+    public function testBlockedUrlSchemesAcceptsACustomList(): void
+    {
+        $config = $this->process([[
+            'documents' => [
+                'editables' => [
+                    'link_sanitizer' => [
+                        'blocked_url_schemes' => ['javascript:', 'mailto:', 'tel:'],
+                    ],
+                ],
+            ],
+        ]]);
+
+        $this->assertSame(
+            ['javascript:', 'mailto:', 'tel:'],
+            $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']
+        );
+    }
+
+    public function testBlockUnsafeDataUrlsDefaultsToTrue(): void
+    {
+        $config = $this->process([[]]);
+
+        $this->assertTrue($config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+    }
+
+    public function testBlockUnsafeDataUrlsAcceptsFalse(): void
+    {
+        $config = $this->process([[
+            'documents' => [
+                'editables' => [
+                    'link_sanitizer' => [
+                        'block_unsafe_data_urls' => false,
+                    ],
+                ],
+            ],
+        ]]);
+
+        $this->assertFalse($config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+    }
 }

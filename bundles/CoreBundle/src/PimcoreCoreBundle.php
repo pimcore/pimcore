@@ -87,7 +87,25 @@ class PimcoreCoreBundle extends Bundle
         $strict = $this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.strict')
             && $this->container->getParameter('pimcore.documents.editables.link_sanitizer.strict');
 
-        AttributeSanitizer::setInstance($strict ? AttributeSanitizer::strict() : null);
+        if (!$strict) {
+            AttributeSanitizer::setInstance(null);
+
+            return;
+        }
+
+        $blockedUrlSchemes = $this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes')
+            ? $this->container->getParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes')
+            : AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES;
+
+        $blockUnsafeDataUrls = !$this->container?->hasParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls')
+            || $this->container->getParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls');
+
+        AttributeSanitizer::setInstance(new AttributeSanitizer(
+            blockedUrlSchemes: $blockedUrlSchemes,
+            blockUnsafeDataUrls: $blockUnsafeDataUrls,
+            blockEditorSuppliedEventHandlerAttributes: true,
+            requireConventionalAttributeNameShape: true,
+        ));
     }
 
     public function getPath(): string

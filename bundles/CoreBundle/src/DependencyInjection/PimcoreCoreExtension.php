@@ -81,6 +81,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
 
         //twig security policy allowlist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);

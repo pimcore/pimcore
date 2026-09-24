@@ -79,7 +79,7 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
      */
     public function testBootDoesNotOverwriteAnAlreadyInstalledApplicationPolicy(): void
     {
-        $applicationPolicy = new AttributeSanitizer(blockDangerousUrlSchemes: true);
+        $applicationPolicy = new AttributeSanitizer(blockedUrlSchemes: ['javascript:']);
         AttributeSanitizer::setInstance($applicationPolicy);
 
         // config says "strict: false", which would normally reset to permissive - but an
@@ -89,12 +89,42 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
         $this->assertSame($applicationPolicy, AttributeSanitizer::getInstance());
     }
 
+    public function testBootUsesTheConfiguredBlockedUrlSchemesList(): void
+    {
+        $this->bootWithParameters([
+            'pimcore.documents.editables.link_sanitizer.strict' => true,
+            'pimcore.documents.editables.link_sanitizer.blocked_url_schemes' => ['mailto:'],
+            'pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls' => false,
+        ]);
+
+        $sanitizer = AttributeSanitizer::getInstance();
+        $this->assertFalse($sanitizer->isUrlAllowed('mailto:someone@example.com'));
+        // not in the configured list, so it's allowed even under a strict: true config
+        $this->assertTrue($sanitizer->isUrlAllowed('javascript:alert(1)'));
+        // block_unsafe_data_urls is configured off
+        $this->assertTrue($sanitizer->isUrlAllowed('data:text/html,<script>alert(1)</script>'));
+    }
+
+    public function testBootFallsBackToDefaultBlockedUrlSchemesWhenParameterIsMissing(): void
+    {
+        $this->bootWithParameters([
+            'pimcore.documents.editables.link_sanitizer.strict' => true,
+        ]);
+
+        $sanitizer = AttributeSanitizer::getInstance();
+        $this->assertFalse($sanitizer->isUrlAllowed('javascript:alert(1)'));
+        $this->assertFalse($sanitizer->isUrlAllowed('vbscript:msgbox("x")'));
+    }
+
     private function bootWithParameter(bool $strict): void
     {
+        $this->bootWithParameters(['pimcore.documents.editables.link_sanitizer.strict' => $strict]);
+    }
+
+    private function bootWithParameters(array $parameters): void
+    {
         $bundle = new PimcoreCoreBundle();
-        $bundle->setContainer(new Container(new ParameterBag([
-            'pimcore.documents.editables.link_sanitizer.strict' => $strict,
-        ])));
+        $bundle->setContainer(new Container(new ParameterBag($parameters)));
         $bundle->boot();
     }
 }

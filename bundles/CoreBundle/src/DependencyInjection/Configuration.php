@@ -1051,6 +1051,30 @@ final class Configuration implements ConfigurationInterface
                                         .'default to true in the next major release. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
                                     )
                                 ->end()
+                                ->arrayNode('blocked_url_schemes')
+                                    ->prototype('scalar')->end()
+                                    ->defaultValue(['javascript:', 'vbscript:'])
+                                    ->info(
+                                        'The URL scheme prefixes (including the trailing ":") rejected when "strict" is true. '
+                                        .'Override to add or remove schemes without writing PHP; has no effect while "strict" is false.'
+                                    )
+                                ->end()
+                                ->booleanNode('block_unsafe_data_urls')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                                            return $parsed ?? $v;
+                                        })
+                                    ->end()
+                                    ->defaultTrue()
+                                    ->info(
+                                        'Also reject script-executing data: URLs when "strict" is true (data:image/* other than '
+                                        .'data:image/svg+xml stays allowed, e.g. for a downloadable data-uri image). '
+                                        .'Has no effect while "strict" is false.'
+                                    )
+                                ->end()
                             ->end()
                         ->end()
                     ->end()

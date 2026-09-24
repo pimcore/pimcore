@@ -123,4 +123,38 @@ class AttributeSanitizerTest extends TestCase
             $this->assertTrue($sanitizer->isAttributeKeyAllowed($key, true));
         }
     }
+
+    public function testBlockedUrlSchemesIsConfigurable(): void
+    {
+        $sanitizer = new AttributeSanitizer(blockedUrlSchemes: ['mailto:', 'tel:']);
+
+        $this->assertFalse($sanitizer->isUrlAllowed('mailto:someone@example.com'));
+        $this->assertFalse($sanitizer->isUrlAllowed('tel:+1234567890'));
+        // a scheme not in the configured list is allowed, even though it's normally part of strict()
+        $this->assertTrue($sanitizer->isUrlAllowed('javascript:alert(1)'));
+    }
+
+    public function testBlockedUrlSchemesMatchIsCaseInsensitive(): void
+    {
+        $sanitizer = new AttributeSanitizer(blockedUrlSchemes: ['JavaScript:']);
+
+        $this->assertFalse($sanitizer->isUrlAllowed('JAVASCRIPT:alert(1)'));
+    }
+
+    public function testBlockUnsafeDataUrlsIsIndependentOfBlockedUrlSchemes(): void
+    {
+        $sanitizer = new AttributeSanitizer(blockedUrlSchemes: ['javascript:'], blockUnsafeDataUrls: false);
+
+        $this->assertFalse($sanitizer->isUrlAllowed('javascript:alert(1)'));
+        // blockUnsafeDataUrls is off, so this is allowed even though blockedUrlSchemes is non-empty
+        $this->assertTrue($sanitizer->isUrlAllowed('data:text/html,<script>alert(1)</script>'));
+    }
+
+    public function testDefaultBlockedUrlSchemesConstantMatchesStrict(): void
+    {
+        $sanitizer = new AttributeSanitizer(blockedUrlSchemes: AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES);
+
+        $this->assertFalse($sanitizer->isUrlAllowed('javascript:alert(1)'));
+        $this->assertFalse($sanitizer->isUrlAllowed('vbscript:msgbox("x")'));
+    }
 }

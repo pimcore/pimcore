@@ -25,8 +25,10 @@ namespace Pimcore\Model\Document\Editable\Link;
  *
  * To opt into the stricter policy, set the "pimcore.documents.editables.link_sanitizer.strict"
  * config option to true (see Configuration::addDocumentsNode()) - PimcoreCoreBundle::boot() reads
- * it and calls setInstance(AttributeSanitizer::strict()) for you. For a fully custom policy, call
- * setInstance() directly instead, from your own bundle's boot() method.
+ * it and installs a policy built from it, including the blocked scheme list, which can be
+ * overridden via the "...link_sanitizer.blocked_url_schemes" config option (default:
+ * DEFAULT_BLOCKED_URL_SCHEMES) to add or remove schemes without writing PHP. For a fully custom
+ * policy, call setInstance() directly instead, from your own bundle's boot() method.
  *
  * Note that a document editor able to set an arbitrary "direct" link path or a custom Link
  * attribute is, under the permissive default, able to store a stored-XSS payload that executes
@@ -34,10 +36,22 @@ namespace Pimcore\Model\Document\Editable\Link;
  */
 class AttributeSanitizer
 {
+    /**
+     * The scheme list strict() uses, and the default for the
+     * "pimcore.documents.editables.link_sanitizer.blocked_url_schemes" config option.
+     */
+    public const DEFAULT_BLOCKED_URL_SCHEMES = ['javascript:', 'vbscript:'];
+
     private static ?self $instance = null;
 
+    /**
+     * @param string[] $blockedUrlSchemes lower-case scheme prefixes (including the trailing ":")
+     *                                     to reject outright, e.g. ["javascript:", "vbscript:"].
+     *                                     Empty by default: no scheme is rejected.
+     */
     public function __construct(
-        private readonly bool $blockDangerousUrlSchemes = false,
+        private readonly array $blockedUrlSchemes = [],
+        private readonly bool $blockUnsafeDataUrls = false,
         private readonly bool $blockEditorSuppliedEventHandlerAttributes = false,
         private readonly bool $requireConventionalAttributeNameShape = false,
     ) {
@@ -76,7 +90,8 @@ class AttributeSanitizer
     public static function strict(): self
     {
         return new self(
-            blockDangerousUrlSchemes: true,
+            blockedUrlSchemes: self::DEFAULT_BLOCKED_URL_SCHEMES,
+            blockUnsafeDataUrls: true,
             blockEditorSuppliedEventHandlerAttributes: true,
             requireConventionalAttributeNameShape: true,
         );
@@ -84,7 +99,7 @@ class AttributeSanitizer
 
     public function isUrlAllowed(string $url): bool
     {
-        if (!$this->blockDangerousUrlSchemes) {
+        if ($this->blockedUrlSchemes === [] && !$this->blockUnsafeDataUrls) {
             return true;
         }
 
@@ -93,13 +108,13 @@ class AttributeSanitizer
         // prevent bypasses such as "java\tscript:"
         $normalized = strtolower(preg_replace('/[\x00-\x20]+/', '', $url) ?? '');
 
-        foreach (['javascript:', 'vbscript:'] as $scheme) {
-            if (str_starts_with($normalized, $scheme)) {
+        foreach ($this->blockedUrlSchemes as $scheme) {
+            if (str_starts_with($normalized, strtolower($scheme))) {
                 return false;
             }
         }
 
-        if (str_starts_with($normalized, 'data:')) {
+        if ($this->blockUnsafeDataUrls && str_starts_with($normalized, 'data:')) {
             // data:image/* covers the legitimate use case (e.g. a downloadable data-uri image);
             // image/svg+xml can still embed and execute <script>, so it stays blocked
             return (bool) preg_match('/^data:image\/(?!svg\+xml)[a-z0-9.+-]+[;,]/', $normalized);
