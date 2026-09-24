@@ -1052,7 +1052,15 @@ final class Configuration implements ConfigurationInterface
                                     )
                                 ->end()
                                 ->arrayNode('blocked_url_schemes')
-                                    ->prototype('scalar')->end()
+                                    ->prototype('scalar')
+                                        // entries are matched as URL prefixes, so anything that isn't a scheme
+                                        // name plus ":" (e.g. 123, or "java" without the colon) would silently
+                                        // block unrelated URLs such as a relative "java-tips" path
+                                        ->validate()
+                                            ->ifTrue(fn ($v) => !is_string($v) || !preg_match('/^[a-z][a-z0-9+.\-]*:$/i', $v))
+                                            ->thenInvalid('Each blocked URL scheme must be a scheme name followed by ":", e.g. "javascript:", got %s.')
+                                        ->end()
+                                    ->end()
                                     ->defaultValue(['javascript:', 'vbscript:'])
                                     ->info(
                                         'The URL scheme prefixes (including the trailing ":") rejected when "strict" is true. '

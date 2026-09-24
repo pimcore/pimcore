@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Configuration;
 use Pimcore\Tests\Support\Test\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 
 class LinkSanitizerConfigurationTest extends TestCase
@@ -105,6 +106,35 @@ class LinkSanitizerConfigurationTest extends TestCase
             ['javascript:', 'mailto:', 'tel:'],
             $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']
         );
+    }
+
+    /**
+     * @dataProvider invalidBlockedUrlSchemeProvider
+     */
+    public function testBlockedUrlSchemesRejectsEntriesThatAreNotASchemeName(mixed $scheme): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->process([[
+            'documents' => [
+                'editables' => [
+                    'link_sanitizer' => [
+                        'blocked_url_schemes' => [$scheme],
+                    ],
+                ],
+            ],
+        ]]);
+    }
+
+    public static function invalidBlockedUrlSchemeProvider(): array
+    {
+        return [
+            'integer' => [123],
+            'boolean' => [true],
+            'missing colon' => ['java'],
+            'empty string' => [''],
+            'leading digit' => ['1http:'],
+        ];
     }
 
     public function testBlockUnsafeDataUrlsDefaultsToTrue(): void
