@@ -54,16 +54,30 @@ class LinkTest extends TestCase
         $this->assertSame('https://example.com/search?a=1&b=2', $link->getHref());
     }
 
-    public function testFrontendEscapesThePathInTheHrefAttribute(): void
+    public function testFrontendKeepsALegitimateHrefByteIdentical(): void
     {
         $link = new Link();
         $link->setDataFromResource([
-            'path' => 'https://example.com/search?a=1&b=2',
+            'path' => "https://example.com/it's?a=1&b=2",
             'linktype' => 'direct',
         ]);
 
-        $this->assertStringContainsString('href="https://example.com/search?a=1&amp;b=2"', $link->frontend());
-        $this->assertSame('https://example.com/search?a=1&b=2', $this->getRenderedAnchorAttribute($link->frontend(), 'href'));
+        // only '"' is escaped in the href attribute, so everything else renders as before
+        $this->assertStringContainsString('href="https://example.com/it\'s?a=1&b=2"', $link->frontend());
+    }
+
+    public function testFrontendUsesAnOverriddenGetHref(): void
+    {
+        // e.g. a project mapping its own Link implementation via documents.editables.map
+        $link = new class() extends Link {
+            public function getHref(): string
+            {
+                return parent::getHref() . '?utm=x';
+            }
+        };
+        $link->setDataFromResource(['path' => '/p', 'linktype' => 'direct', 'text' => 'T']);
+
+        $this->assertSame('/p?utm=x', $this->getRenderedAnchorAttribute($link->frontend(), 'href'));
     }
 
     public function testGetHrefStripsJavascriptScheme(): void

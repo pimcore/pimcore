@@ -79,7 +79,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function frontend()
     {
-        $url = $this->buildHref(true);
+        // via getHref(), so a subclass overriding it (e.g. mapped via documents.editables.map) still
+        // shapes the rendered link
+        $url = $this->getHref();
 
         if (strlen($url) > 0) {
             $prefix = '';
@@ -158,13 +160,18 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
             $text = '';
             if (!$noText) {
-                // $url is already HTML-escaped (it comes from buildHref(true)); only the editor-supplied
-                // text needs escaping here, or it would be double-escaped when used as fallback
+                // getHref() already escapes the parameters/anchor portions, so don't re-encode
+                // existing entities when the href is used as the fallback text
                 $rawText = $disabledText ? null : ($this->data['text'] ?? null);
-                $text = $rawText !== null ? htmlspecialchars($rawText) : $url;
+                $text = $rawText !== null
+                    ? htmlspecialchars($rawText)
+                    : htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, null, false);
             }
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . $text . $suffix . '</a>';
+            // '"' is the only character that can end the double-quoted href value, and it is the
+            // only one escaped here: getHref() already escapes parameters/anchor, so escaping it
+            // wholesale would double-encode them, and everything else stays byte-identical
+            return '<a href="'.str_replace('"', '&quot;', $url).'" '.implode(' ', $attribs).'>' . $prefix . $text . $suffix . '</a>';
         }
 
         return '';
@@ -223,15 +230,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     public function getHref(): string
     {
-        return $this->buildHref(false);
-    }
-
-    /**
-     * @param bool $escapePath frontend() interpolates the result into href="..." itself, so it
-     *                         needs the path escaped there; getHref() keeps returning it raw
-     */
-    private function buildHref(bool $escapePath): string
-    {
         $this->updatePathFromInternal();
 
         $url = $this->data['path'] ?? '';
@@ -254,10 +252,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 .' will be removed in 2027.1; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
                 .' reject it now.'
             );
-        }
-
-        if ($escapePath) {
-            $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
         }
 
         if (strlen($this->data['parameters'] ?? '') > 0) {

@@ -18,6 +18,7 @@ use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Controller\Config\Template\TemplateProviderInterface;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -1062,7 +1063,7 @@ final class Configuration implements ConfigurationInterface
                                             ->thenInvalid('Each blocked URL scheme must be a scheme name followed by ":", e.g. "javascript:", got %s.')
                                         ->end()
                                     ->end()
-                                    ->defaultValue(['javascript:', 'vbscript:'])
+                                    ->defaultValue(AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES)
                                     ->info(
                                         'The URL scheme prefixes (including the trailing ":") rejected when "strict" is true. '
                                         .'Override to add or remove schemes without writing PHP; has no effect while "strict" is false.'
