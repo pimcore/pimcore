@@ -34,17 +34,39 @@ class Video extends Model\Asset
 
     protected function update(array $params = []): void
     {
-        if ($this->getDataChanged()) {
-            foreach (['duration', 'videoWidth', 'videoHeight'] as $key) {
+        if ($this->isDataReplaced()) {
+            foreach (['duration', 'videoWidth', 'videoHeight', 'SphericalMetaData'] as $key) {
                 $this->removeCustomSetting($key);
             }
         }
 
-        if ($params['isUpdate']) {
-            $this->clearThumbnails();
+        // see clearThumbnails(): the custom settings of the thumbnails are cleared before the asset is saved by
+        // parent::update(), the thumbnail files afterwards, when the asset is locked against concurrent saves: the
+        // asset update tasks queue generates the previews before it saves its results, which locks the asset and
+        // checks that the data wasn't changed in the meantime (see Asset::saveProcessingResults()). A preview of the
+        // previous data written after the thumbnails were cleared, but before the change was saved, would survive
+        // otherwise, as the check wouldn't notice the change yet. The files are also cleared if saving fails, as the
+        // new data might already have been written to the storage then (it isn't rolled back).
+        $clearThumbnails = $params['isUpdate'] && $this->getDataChanged();
+        if ($clearThumbnails) {
+            $this->setCustomSetting('thumbnails', null);
         }
 
-        parent::update($params);
+        try {
+            parent::update($params);
+        } finally {
+            if ($clearThumbnails) {
+                parent::clearThumbnails(true);
+            }
+        }
+    }
+
+    public static function getDataDerivedCustomSettingKeys(): array
+    {
+        return array_merge(
+            parent::getDataDerivedCustomSettingKeys(),
+            ['duration', 'videoWidth', 'videoHeight', 'SphericalMetaData', 'thumbnails']
+        );
     }
 
     public function clearThumbnails(bool $force = false): void

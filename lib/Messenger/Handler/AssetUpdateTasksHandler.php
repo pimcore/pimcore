@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Closure;
 use Exception;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
@@ -44,59 +45,236 @@ class AssetUpdateTasksHandler
         }
         $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
-        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+        // a task created for certain data (see Asset::save()) is only handled as long as this data is the current one:
+        // if the data was replaced or restored in the meantime, the new data has its own task (whose results this task
+        // must not overwrite) or doesn't need any processing (processing it anyway could overwrite the restored derived
+        // data). A task processing the data is also skipped if its processing was finished by others in the meantime.
+        // A task without data generation (e.g. created on demand) processes the asset in any case.
+        if ($message->getDataGeneration() !== null) {
+            if ($message->getDataGeneration() !== $asset->getDataGeneration()) {
+                $this->logger->debug(sprintf(
+                    'Skipping the task for asset with ID %s, as the data it was created for was replaced or restored in the meantime',
+                    $asset->getId()
+                ));
 
-        if ($asset instanceof Asset\Image) {
-            $this->processImage($asset);
-        } elseif ($asset instanceof Asset\Document) {
-            $this->processDocument($asset);
-        } elseif ($asset instanceof Asset\Video) {
-            $this->processVideo($asset);
+                return;
+            }
+            if (!$message->isPreviewsOnly() && !$asset->isProcessingPending()) {
+                $this->logger->debug(sprintf(
+                    'Skipping the task for asset with ID %s, as the processing of its data was finished in the meantime',
+                    $asset->getId()
+                ));
+
+                return;
+            }
+        }
+
+        // the state of the data the results are generated for (see completeProcessing())
+        $dataState = $asset->getDataState();
+
+        if ($message->isPreviewsOnly()) {
+            if ($generatePreviews = $this->getPreviewGenerator($asset)) {
+                $this->completeProcessing($asset, $dataState, false, [], $generatePreviews);
+            }
+        } else {
+            $this->process($asset, $dataState);
         }
 
         $this->longRunningHelper->deleteTemporaryFiles();
         $this->lockFactory->createLock($asset->getUpdateQueueLockId())->release();
     }
 
-    private function saveAsset(Asset $asset, array $saveParams = []): void
+    private function process(Asset $asset, string $dataState): void
     {
-        Version::disable();
-        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
-        $asset->save($saveParams);
-        Version::enable();
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+
+        // the settings derived from data whose processing is pending are unknown: they belong to the previous data.
+        // They were normally cleared when the data was replaced, but an outdated instance of the asset saved by
+        // others in the meantime can have written them again, so they are removed before the data is processed,
+        // instead of being taken for already generated (or being kept, if the processing doesn't generate them, e.g.
+        // because it is disabled)
+        if ($asset->isProcessingPending()) {
+            foreach ($asset->getDataDerivedCustomSettingKeys() as $key) {
+                $asset->removeCustomSetting($key);
+            }
+        }
+
+        if ($asset instanceof Asset\Image) {
+            $this->processImage($asset, $dataState);
+        } elseif ($asset instanceof Asset\Document) {
+            $this->processDocument($asset, $dataState);
+        } elseif ($asset instanceof Asset\Video) {
+            $this->processVideo($asset, $dataState);
+        }
     }
 
-    private function processDocument(Asset\Document $asset): void
+    /**
+     * Completes the processing: saves the results and generates the previews (if requested). The results are only
+     * saved if the state of the data is still the one the asset was loaded with (see Asset::saveProcessingResults()):
+     * if its data was replaced or restored in the meantime (or its processing finished by others), the results belong
+     * to previous data and are discarded, as they would overwrite the state of the current data, whose own task would
+     * find its processing finished and skip it (or which doesn't need any processing, as it was restored from a
+     * processed state). The previews are generated afterwards (see generatePreviews()), so that a failure generating
+     * them doesn't prevent the results from being saved.
+     *
+     * @param string $dataState the state of the data the asset had when it was loaded
+     *
+     * @return bool whether the processing was completed
+     *
+     * @throws Exception
+     */
+    private function completeProcessing(
+        Asset $asset,
+        string $dataState,
+        bool $save = true,
+        array $saveParams = [],
+        ?Closure $generatePreviews = null
+    ): bool {
+        if ($save) {
+            Version::disable();
+
+            try {
+                $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
+                $completed = $asset->saveProcessingResults($dataState, $saveParams);
+            } finally {
+                Version::enable();
+            }
+
+            if (!$completed) {
+                $this->logger->info(sprintf(
+                    'Discarding the processing results of asset with ID %s, as its data was replaced or restored in the meantime',
+                    $asset->getId()
+                ));
+
+                return false;
+            }
+        }
+
+        if ($generatePreviews) {
+            return $this->generatePreviews($asset, $generatePreviews);
+        }
+
+        return true;
+    }
+
+    /**
+     * Generates the previews of the current state of the asset (see completeProcessing()), unless the state of the
+     * data isn't the stored one anymore (see Asset::getDataState()). The previews are generated without locking the
+     * asset against concurrent saves (generating them can take long), so the state is checked again afterwards: if
+     * the data was replaced or restored in the meantime, the previews are cleared, as they might show the previous
+     * data (the previews of the current data are generated by its own task, or on demand). Generating, checking and
+     * clearing the previews is serialized per asset among the tasks, so that a task only clears its own previews,
+     * never those the task of the current data generated in the meantime. A failure generating the previews is
+     * logged, but doesn't fail the task, as the results of the processing are already saved (the previews are
+     * generated on demand then).
+     *
+     * @return bool whether the previews were generated for the current state of the data
+     */
+    private function generatePreviews(Asset $asset, Closure $generate): bool
     {
-        $save = false;
+        $lock = $this->lockFactory->createLock('asset-previews-' . $asset->getId());
+        $lock->acquire(true);
+
+        try {
+            $dataState = $asset->getDataState();
+            if (!$asset->isDataStateStored($dataState)) {
+                $this->logger->info(sprintf(
+                    'Skipping the previews of asset with ID %s, as its data was replaced or restored in the meantime',
+                    $asset->getId()
+                ));
+
+                return false;
+            }
+
+            try {
+                $generate();
+            } catch (Exception $e) {
+                $this->logger->warning(sprintf('Failed generating the previews of asset with ID %s: %s', $asset->getId(), $e));
+            }
+
+            if (!$asset->isDataStateStored($dataState)) {
+                $this->logger->info(sprintf(
+                    'Clearing the previews of asset with ID %s, as its data was replaced or restored while they were generated',
+                    $asset->getId()
+                ));
+                $asset->clearThumbnails(true);
+
+                return false;
+            }
+        } finally {
+            $lock->release();
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns the generation of the previews of the asset (see completeProcessing()), or null if there is nothing
+     * to generate
+     */
+    private function getPreviewGenerator(Asset $asset): ?Closure
+    {
+        if ($asset instanceof Asset\Image) {
+            return function () use ($asset): void {
+                $asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+
+                try {
+                    $asset->generateLowQualityPreview();
+                } catch (Exception $e) {
+                    $this->logger->warning($e->getMessage());
+                }
+            };
+        }
+
+        if ($asset instanceof Asset\Document) {
+            if (!$asset->isThumbnailsEnabled() || $asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
+                return null;
+            }
+
+            return function () use ($asset): void {
+                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+            };
+        }
+
+        if ($asset instanceof Asset\Video) {
+            if (!$asset->getCustomSetting('videoWidth') || !$asset->getCustomSetting('videoHeight')) {
+                return null;
+            }
+
+            return function () use ($asset): void {
+                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+            };
+        }
+
+        return null;
+    }
+
+    private function processDocument(Asset\Document $asset, string $dataState): void
+    {
         $saveParams = [];
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
-            $save = true;
             $saveParams['versionNote'] = 'PDF scan result';
         }
 
         if ($asset->isPageCountProcessingEnabled()) {
-            $pageCount = $asset->getCustomSetting('document_page_count');
-            if (!$pageCount || $pageCount === 'failed') {
-                if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
+            // getPageCount() is also falsy when the last processing attempt failed
+            if (!$asset->getPageCount()) {
+                if (!$asset->processPageCount()) {
                     $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
                     $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
                 }
-
-                $save = true;
             }
         }
 
-        if ($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
-            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-        }
+        $asset->handleEmbeddedMetaData();
 
-        if ($save) {
-            $this->saveAsset($asset, $saveParams);
-        }
+        // every finished processing is saved, as it assigns a new revision to the results (see Asset::getDataState())
+        $asset->setProcessingPending(false);
+
+        $this->completeProcessing($asset, $dataState, true, $saveParams, $this->getPreviewGenerator($asset));
     }
 
-    private function processVideo(Asset\Video $asset): void
+    private function processVideo(Asset\Video $asset, string $dataState): void
     {
         $failed = true;
 
@@ -123,20 +301,21 @@ class AssetUpdateTasksHandler
         }
 
         $asset->handleEmbeddedMetaData();
-        $this->saveAsset($asset);
+        $asset->setProcessingPending(false);
 
-        if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
-            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-        }
+        $this->completeProcessing($asset, $dataState, true, [], $this->getPreviewGenerator($asset));
     }
 
-    private function processImage(Asset\Image $image): void
+    private function processImage(Asset\Image $image, string $dataState): void
     {
         // getDimensions() might fail, so assume `false` first
         $imageDimensionsCalculated = false;
 
         try {
-            $dimensions = $image->getDimensions(null, true);
+            // getDimensionsFromFile() instead of getDimensions(): the latter writes the custom settings of the
+            // loaded state to the database right away, bypassing the check whether the data changed in the
+            // meantime (see completeProcessing())
+            $dimensions = $image->getDimensionsFromFile($image->getLocalFile());
             if ($dimensions && $dimensions['width']) {
                 $image->setCustomSetting('imageWidth', $dimensions['width']);
                 $image->setCustomSetting('imageHeight', $dimensions['height']);
@@ -151,16 +330,10 @@ class AssetUpdateTasksHandler
         // calculate the dimensions on every request an also will create a version, ...
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
         $image->handleEmbeddedMetaData();
-        $this->saveAsset($image);
+        $image->setProcessingPending(false);
 
-        // generating the thumbnails must be after saving the image, because otherwise the generated
-        // thumbnail would be invalidated on the next call, because it's older than the modification date of the asset
-        $image->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-
-        try {
-            $image->generateLowQualityPreview();
-        } catch (Exception $e) {
-            $this->logger->warning($e->getMessage());
-        }
+        // the previews are generated after the results are saved (see completeProcessing()), as the thumbnails
+        // would be invalidated by a later modification date of the image otherwise (it is kept by the save, though)
+        $this->completeProcessing($image, $dataState, true, [], $this->getPreviewGenerator($image));
     }
 }

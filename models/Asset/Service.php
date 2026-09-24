@@ -102,7 +102,8 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        $new->setStream($source->getStream());
+        // the data and the custom settings belonging to it (e.g. embedded meta data) are taken over from the source
+        $new->copyDataFrom($source);
         $new->save();
 
         // add to store
@@ -155,7 +156,8 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        $new->setStream($source->getStream());
+        // the data and the custom settings belonging to it (e.g. embedded meta data) are taken over from the source
+        $new->copyDataFrom($source);
         $new->save();
 
         if ($target instanceof Asset\Folder) {
@@ -189,8 +191,8 @@ class Service extends Model\Element\Service
         $target = $event->getArgument('target_element');
 
         if (!$source instanceof Asset\Folder) {
-            $target->setStream($source->getStream());
-            $target->setCustomSettings($source->getCustomSettings());
+            // the data and the custom settings belonging to it (e.g. embedded meta data) are taken over from the source
+            $target->copyDataFrom($source);
         }
 
         $target->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -231,6 +233,12 @@ class Service extends Model\Element\Service
     public static function loadAllFields(Element\ElementInterface $element): Element\ElementInterface
     {
         $element->getProperties();
+
+        if ($element instanceof Asset) {
+            // custom settings which are too large for the cache are only loaded on access, so they have to be
+            // loaded explicitly before the asset is dumped (e.g. for a version or the recycle bin)
+            $element->getCustomSettings();
+        }
 
         return $element;
     }

@@ -245,7 +245,8 @@ class Item extends Model\AbstractModel
             if ($element instanceof Asset) {
                 $binFile = $scope->getStorageFileBinary($element);
                 if ($storage->fileExists($binFile)) {
-                    $element->setStream($storage->readStream($binFile));
+                    // the binary data belongs to the state of the deleted asset, so the embedded meta data has to be kept
+                    $element->restoreStream($storage->readStream($binFile));
                 }
             }
         };

@@ -14,11 +14,17 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Support\Util;
 
 use DateTimeInterface;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
+use Pimcore\Messenger\Handler\AssetUpdateTasksHandler;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -26,17 +32,22 @@ use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tool;
+use Psr\Log\NullLogger;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Traversable;
 
 class TestHelper
@@ -585,6 +596,172 @@ class TestHelper
         }
 
         return $asset;
+    }
+
+    /**
+     * Returns the number of messages currently waiting in the asset update tasks queue (doctrine transport)
+     */
+    public static function getAssetUpdateTaskQueueSize(): int
+    {
+        try {
+            return (int) Db::get()->fetchOne(
+                'SELECT COUNT(*) FROM messenger_messages WHERE queue_name = ?',
+                ['pimcore_asset_update']
+            );
+        } catch (TableNotFoundException) {
+            // the transport creates the table with the first message
+            return 0;
+        }
+    }
+
+    /**
+     * Returns the serialized data of a dump (e.g. version, recycle bin) of the asset in the format created before
+     * the custom settings were loaded explicitly before dumping, from an asset hydrated from the cache without its
+     * custom settings (as they were too large for the cache): such a dump doesn't contain the custom settings at all.
+     *
+     * @throws Exception
+     */
+    public static function getLegacyDumpDataWithoutCustomSettings(Asset $asset): string
+    {
+        $hydratedAsset = self::getCacheHydratedAsset(Asset::getById($asset->getId(), ['force' => true]));
+        $hydratedAsset->setInDumpState(true);
+
+        return self::removeCustomSettingsTrackingFromDumpData(Tool\Serialize::serialize($hydratedAsset));
+    }
+
+    /**
+     * Returns the serialized data of a dump (e.g. version, recycle bin) of the asset in the format created before
+     * it was tracked whether the custom settings were complete when the asset was dumped
+     *
+     * @throws Exception
+     */
+    public static function getLegacyDumpData(Asset $asset): string
+    {
+        $asset = Asset::getById($asset->getId(), ['force' => true]);
+        $asset->setInDumpState(true);
+
+        return self::removeCustomSettingsTrackingFromDumpData(Tool\Serialize::serialize($asset));
+    }
+
+    /**
+     * Removes the property tracking whether the custom settings were loaded when the asset was dumped, which didn't
+     * exist in the past, from the serialized data of a dump
+     */
+    private static function removeCustomSettingsTrackingFromDumpData(string $data): string
+    {
+        $data = preg_replace('/s:\d+:"\0\*\0customSettingsIncomplete";(?:N;|b:[01];)/', '', $data, -1, $count);
+        if ($count !== 1) {
+            throw new RuntimeException(sprintf('Expected exactly one tracking property in the dump, found %d', $count));
+        }
+        $data = preg_replace_callback(
+            '/^(O:\d+:"[^"]+":)(\d+)(:\{)/',
+            fn (array $matches) => $matches[1] . ((int) $matches[2] - 1) . $matches[3],
+            $data,
+            1,
+            $count
+        );
+        if ($count !== 1 || str_contains($data, 'customSettingsIncomplete')) {
+            throw new RuntimeException('Failed to remove the tracking property from the dump');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Processes the asset like the asset update tasks queue does when a task was created on demand (without
+     * processing token), which processes the asset in any case
+     *
+     * @throws Exception
+     */
+    public static function runAssetUpdateTasks(int $assetId): void
+    {
+        self::handleAssetUpdateTaskMessage(new AssetUpdateTasksMessage($assetId));
+    }
+
+    /**
+     * Handles the message like the worker of the asset update tasks queue does. The worker clears the runtime cache
+     * before handling a message, so the handler loads the current state of the asset. A state loaded before can be
+     * given instead, to simulate a handler which loaded the asset before it was changed by others (e.g. a replacement
+     * of its data saved while it was processed).
+     *
+     * @throws Exception
+     */
+    public static function handleAssetUpdateTaskMessage(AssetUpdateTasksMessage $message, ?Asset $loadedState = null): void
+    {
+        RuntimeCache::set(Element\Service::getElementCacheTag('asset', $message->getId()), $loadedState);
+
+        $container = Pimcore::getContainer();
+        $handler = new AssetUpdateTasksHandler(
+            new NullLogger(),
+            $container->get(LongRunningHelper::class),
+            $container->get(LockFactory::class)
+        );
+        $handler($message);
+    }
+
+    /**
+     * Returns the messages for the asset currently waiting in the asset update tasks queue (doctrine transport), in
+     * the order they were dispatched
+     *
+     * @return AssetUpdateTasksMessage[]
+     */
+    public static function getQueuedAssetUpdateTaskMessages(int $assetId): array
+    {
+        try {
+            $bodies = Db::get()->fetchFirstColumn(
+                'SELECT body FROM messenger_messages WHERE queue_name = ? ORDER BY id',
+                ['pimcore_asset_update']
+            );
+        } catch (TableNotFoundException) {
+            return [];
+        }
+
+        $serializer = new PhpSerializer();
+        $messages = [];
+        foreach ($bodies as $body) {
+            // the bodies are encoded by the PhpSerializer of the messenger component (the default serializer of
+            // the doctrine transport), which is therefore used to decode them as well
+            $message = $serializer->decode(['body' => $body, 'headers' => []])->getMessage();
+            if ($message instanceof AssetUpdateTasksMessage && $message->getId() === $assetId) {
+                $messages[] = $message;
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Simulates that the custom settings of the asset were loaded from the database with a size too large for the
+     * cache (the asset remembers this, even if the custom settings are changed or cleared afterwards)
+     */
+    public static function simulateCustomSettingsTooLargeForCache(Asset $asset): void
+    {
+        $canBeCachedProperty = new ReflectionProperty(Asset::class, 'customSettingsCanBeCached');
+        $canBeCachedProperty->setValue($asset, false);
+    }
+
+    /**
+     * Simulates an asset with custom settings which are too large for the cache, that was hydrated from the cache:
+     * the custom settings are not serialized in this case and are only loaded from the database on the first access.
+     *
+     * @throws Exception
+     */
+    public static function getCacheHydratedAsset(Asset $asset): Asset
+    {
+        self::simulateCustomSettingsTooLargeForCache($asset);
+
+        $hydratedAsset = unserialize(serialize($asset));
+        if (!$hydratedAsset instanceof Asset) {
+            throw new RuntimeException('Failed to serialize and unserialize the asset');
+        }
+
+        $customSettingsProperty = new ReflectionProperty(Asset::class, 'customSettings');
+        $needRefreshProperty = new ReflectionProperty(Asset::class, 'customSettingsNeedRefresh');
+        if ($customSettingsProperty->getValue($hydratedAsset) !== [] || $needRefreshProperty->getValue($hydratedAsset) !== true) {
+            throw new RuntimeException('The custom settings of the asset were expected to be omitted from the cache');
+        }
+
+        return $hydratedAsset;
     }
 
     /**

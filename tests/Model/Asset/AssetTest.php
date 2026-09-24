@@ -383,6 +383,48 @@ class AssetTest extends ModelTestCase
     }
 
     /**
+     * A copy of an asset must not share the stream of the source: the copy closes its stream when it is saved,
+     * which would close the stream of the source as well, so the source would lose data assigned but not saved yet.
+     * This also applies to a stream which can't be opened again with the same data (e.g. php://memory).
+     */
+    public function testCopyDoesNotShareStreamOfSource(): void
+    {
+        $newData = file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'));
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('copy-stream-'));
+        $service = new Asset\Service();
+
+        $assignData = [
+            'setData' => fn (Asset $source) => $source->setData($newData),
+            'setStream with php://memory' => function (Asset $source) use ($newData): void {
+                $stream = fopen('php://memory', 'r+b');
+                fwrite($stream, $newData);
+                rewind($stream);
+                $source->setStream($stream);
+            },
+        ];
+
+        foreach ($assignData as $assignMethod => $assign) {
+            foreach (['copyAsChild', 'copyRecursive', 'copyContents'] as $copyMethod) {
+                $label = $copyMethod . ' after ' . $assignMethod;
+                $source = TestHelper::createDocumentAsset();
+                $this->assertNotSame($newData, $source->getData());
+                // the data is replaced, but the source is not saved yet
+                $assign($source);
+
+                if ($copyMethod === 'copyContents') {
+                    $copy = $service->copyContents(TestHelper::createDocumentAsset(), $source);
+                } else {
+                    $copy = $service->$copyMethod($folder, $source);
+                }
+                $this->assertSame($newData, Asset::getById($copy->getId(), ['force' => true])->getData(), $label . ': copy');
+
+                $source->save();
+                $this->assertSame($newData, Asset::getById($source->getId(), ['force' => true])->getData(), $label . ': source');
+            }
+        }
+    }
+
+    /**
      * Verifies that an asset can be saved with custom user modification id.
      *
      */
