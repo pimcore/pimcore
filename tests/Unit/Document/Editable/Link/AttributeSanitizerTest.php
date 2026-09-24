@@ -95,6 +95,16 @@ class AttributeSanitizerTest extends TestCase
             'vbscript' => ['vbscript:msgbox("x")'],
             'data text/html' => ['data:text/html,<script>alert(1)</script>'],
             'data image/svg+xml' => ['data:image/svg+xml,<svg onload="alert(1)"></svg>'],
+            // frontend() leaves character references intact and the browser decodes them in href
+            'decimal char ref colon' => ['javascript&#58;alert(1)'],
+            'hex char ref colon' => ['javascript&#x3A;alert(1)'],
+            'char ref without semicolon' => ['javascript&#58alert(1)'],
+            'zero-padded char ref' => ['javascript&#0000058;alert(1)'],
+            'named char ref colon' => ['javascript&colon;alert(1)'],
+            'char ref for first letter' => ['&#106;avascript:alert(1)'],
+            'char ref tab inside scheme' => ['java&#x09;script:alert(1)'],
+            'char ref in vbscript' => ['vbscript&#58;msgbox(1)'],
+            'char ref in data url' => ['data&#58;text/html,<script>alert(1)</script>'],
         ];
     }
 
@@ -105,6 +115,9 @@ class AttributeSanitizerTest extends TestCase
         $this->assertTrue($sanitizer->isUrlAllowed('https://example.com/some/page?a=1&b=2'));
         $this->assertTrue($sanitizer->isUrlAllowed('data:image/png;base64,iVBORw0KGgo='));
         $this->assertTrue($sanitizer->isUrlAllowed(''));
+        // character references elsewhere in a legitimate URL must not trip the check
+        $this->assertTrue($sanitizer->isUrlAllowed('https://example.com/?a=1&amp;b=2&#38;c=&#58;'));
+        $this->assertTrue($sanitizer->isUrlAllowed('/javascript&#58;-tips'));
     }
 
     public function testStrictRejectsEditorSuppliedEventHandlerAttribute(): void

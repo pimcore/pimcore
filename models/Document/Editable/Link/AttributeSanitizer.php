@@ -134,7 +134,7 @@ class AttributeSanitizer
         // browsers ignore leading/trailing whitespace and embedded control characters (e.g.
         // tabs, newlines) when parsing a URL scheme, so those are stripped before comparison to
         // prevent bypasses such as "java\tscript:"
-        $normalized = strtolower(preg_replace('/[\x00-\x20]+/', '', $url) ?? '');
+        $normalized = strtolower(preg_replace('/[\x00-\x20]+/', '', self::decodeCharacterReferences($url)) ?? '');
 
         foreach ($this->blockedUrlSchemes as $scheme) {
             if (str_starts_with($normalized, strtolower($scheme))) {
@@ -149,6 +149,31 @@ class AttributeSanitizer
         }
 
         return true;
+    }
+
+    /**
+     * The Link editable writes the path into href="..." with only '"' escaped, so the browser
+     * decodes character references in it before resolving the scheme - "javascript&#58;..." runs
+     * as "javascript:...". Decode them the way the HTML parser does before checking: once (so
+     * "&amp;#58;" stays literal), and numeric references even without the trailing ";".
+     */
+    private static function decodeCharacterReferences(string $url): string
+    {
+        return preg_replace_callback(
+            '/&(?:#[xX]([0-9a-fA-F]+);?|#([0-9]+);?|[a-zA-Z][a-zA-Z0-9]*;)/',
+            static function (array $match): string {
+                if (($match[1] ?? '') === '' && ($match[2] ?? '') === '') {
+                    return html_entity_decode($match[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+
+                $codePoint = ($match[1] ?? '') !== '' ? hexdec($match[1]) : (float) $match[2];
+
+                // out-of-range references become U+FFFD in the browser; dropping them instead is
+                // stricter (it can only join, never hide, the characters around it)
+                return $codePoint > 0 && $codePoint <= 0x10FFFF ? (mb_chr((int) $codePoint, 'UTF-8') ?: '') : '';
+            },
+            $url
+        ) ?? $url;
     }
 
     public function isAttributeKeyAllowed(string $key, bool $editorControlled): bool
