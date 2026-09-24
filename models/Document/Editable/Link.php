@@ -185,7 +185,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $this->updatePathFromInternal();
 
         $url = $this->data['path'] ?? '';
-        $url = $this->hasDangerousUrlScheme($url) ? '' : htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+        if ($this->hasDangerousUrlScheme($url)) {
+            // reject the link outright rather than letting parameters/anchor below reassemble
+            // a non-empty (if otherwise harmless) href out of a rejected path
+            return '';
+        }
+        $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
             $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));

@@ -108,6 +108,20 @@ class LinkTest extends TestCase
         $this->assertSame('', $xssScheme->frontend());
     }
 
+    public function testGetHrefRejectsDangerousSchemeEvenWithParametersAndAnchor(): void
+    {
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => 'javascript:alert(document.domain)',
+            'linktype' => 'direct',
+            'parameters' => 'foo=bar',
+            'anchor' => 'section1',
+        ]);
+
+        $this->assertSame('', $link->getHref());
+        $this->assertSame('', $link->frontend());
+    }
+
     public function testGetHrefKeepsLegitimatePathIntact(): void
     {
         $link = new Link();
