@@ -673,10 +673,14 @@ class Asset extends Element\AbstractElement
         // every reference to) any already-stored .html/.js asset the next time it is saved for
         // an unrelated reason (e.g. a metadata edit) - but a rename must still be checked,
         // otherwise an asset could bypass the denylist by being uploaded under a harmless name
-        // and renamed to a dangerous one afterwards.
-        $storedFilename = $this->getId() ? basename((string) $this->getCurrentFullPath()) : null;
-        if ($storedFilename !== $this->getFilename() && preg_match('@\.(html?|xht(ml)?|shtml|js|mjs)$@i', $this->getFilename())) {
-            $this->setFilename($this->getFilename() . '.txt');
+        // and renamed to a dangerous one afterwards. The DB lookup needed to detect a rename is
+        // only done once the extension itself is already dangerous, so a normal save (.jpg,
+        // .pdf, ...) never pays for it.
+        if (preg_match('@\.(html?|xht(ml)?|shtml|js|mjs)$@i', $this->getFilename())) {
+            $storedFilename = $this->getId() ? basename((string) $this->getCurrentFullPath()) : null;
+            if ($storedFilename !== $this->getFilename()) {
+                $this->setFilename($this->getFilename() . '.txt');
+            }
         }
 
         if (mb_strlen($this->getFilename()) > 255) {
