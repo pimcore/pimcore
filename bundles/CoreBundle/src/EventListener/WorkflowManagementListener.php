@@ -22,12 +22,16 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
 use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Workflow\Exception\LogicException;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @internal
@@ -48,6 +52,10 @@ class WorkflowManagementListener implements EventSubscriberInterface
             DocumentEvents::POST_ADD => 'onElementPostAdd',
             AssetEvents::POST_ADD => 'onElementPostAdd',
 
+            DataObjectEvents::POST_UPDATE => 'onElementPostUpdate',
+            DocumentEvents::POST_UPDATE => 'onElementPostUpdate',
+            AssetEvents::POST_UPDATE => 'onElementPostUpdate',
+
             DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
             AssetEvents::POST_DELETE => 'onElementPostDelete',
@@ -62,6 +70,8 @@ class WorkflowManagementListener implements EventSubscriberInterface
         /** @var Asset|Document|ConcreteObject $element */
         $element = $e->getElement();
 
+        $this->persistPendingWorkflowMarkings($element);
+
         foreach ($this->workflowManager->getAllWorkflows() as $workflowName) {
             $workflow = $this->workflowManager->getWorkflowIfExists($element, $workflowName);
             if (!$workflow) {
@@ -74,6 +84,52 @@ class WorkflowManagementListener implements EventSubscriberInterface
             if ($hasInitialPlaceConfig) {
                 $workflow->getMarking($element);
             }
+        }
+    }
+
+    /**
+     * Persist workflow markings that were kept pending on the element (e.g. by a
+     * transition with changePublishedState "save_version") once the element is
+     * fully saved. Version-only saves keep them pending, as they belong to the draft.
+     */
+    public function onElementPostUpdate(ElementEventInterface $e): void
+    {
+        if ($e->hasArgument('saveVersionOnly')) {
+            return;
+        }
+
+        $this->persistPendingWorkflowMarkings($e->getElement());
+    }
+
+    private function persistPendingWorkflowMarkings(ElementInterface $element): void
+    {
+        if (!$element instanceof AbstractElement) {
+            return;
+        }
+
+        foreach (array_keys($element->getPendingWorkflowMarkings()) as $workflowName) {
+            // Resolve the workflow by name on purpose: the pending place was set while the workflow
+            // applied to the element, and re-evaluating the support strategy (e.g. an expression)
+            // against the content being published must not silently drop it.
+            $workflow = $this->getWorkflowByName($workflowName);
+            if (!$workflow) {
+                continue;
+            }
+
+            $markingStore = $workflow->getMarkingStore();
+            if ($markingStore instanceof PendingMarkingStoreInterface) {
+                $markingStore->persistPendingMarking($element);
+            }
+        }
+    }
+
+    private function getWorkflowByName(string $workflowName): ?WorkflowInterface
+    {
+        try {
+            return $this->workflowManager->getWorkflowByName($workflowName);
+        } catch (LogicException) {
+            // the workflow the pending place belongs to is not configured (anymore)
+            return null;
         }
     }
 
