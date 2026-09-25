@@ -525,6 +525,13 @@ class Service extends Model\Element\Service
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
             if ($actualFileExtension !== $config['file_extension']) {
+                $allowedFormats = Config::getSystemConfiguration('assets')['thumbnails']['allowed_formats'];
+                if (!in_array(strtolower($config['file_extension']), $allowedFormats, true)) {
+                    // the requested extension is not a configured thumbnail output format - never
+                    // persist the thumbnail bytes under it in the public thumbnail storage
+                    return null;
+                }
+
                 // create a copy/symlink to the file with the original file extension
                 // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                 // is set to auto-optimized format so the resulting thumbnail can be jpeg
