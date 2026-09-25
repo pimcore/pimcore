@@ -27,6 +27,25 @@ use Sabre\DAV\Exception\Forbidden;
 class Tree extends DAV\Tree
 {
     /**
+     * Resolves a node for every WebDAV operation (PROPFIND, LOCK, GET, PUT, DELETE, MKCOL, MOVE, ...).
+     * Anonymous requests never reach a node this way, so the asset-level "view"/mutation permission
+     * checks in Folder/File can no longer be bypassed by operations - like PROPFIND and LOCK - that
+     * don't call any of those gated methods themselves.
+     *
+     * @param string $path
+     *
+     * @throws Forbidden
+     */
+    public function getNodeForPath($path): DAV\INode
+    {
+        if (Admin::getCurrentUser() === null) {
+            throw new Forbidden('No authenticated user available');
+        }
+
+        return parent::getNodeForPath($path);
+    }
+
+    /**
      * Moves a file/directory
      *
      * @param string $sourcePath
