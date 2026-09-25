@@ -401,12 +401,13 @@ class Link implements OwnerAwareFieldInterface
         $attribs = [];
         foreach ($attributes as $a) {
             if ($this->$a) {
-                $attribs[] = $a . '="' . $this->$a . '"';
+                $attribs[] = $a . '="' . htmlspecialchars((string) $this->$a) . '"';
             }
         }
 
-        if ($this->getAttributes()) {
-            $attribs[] = $this->getAttributes();
+        $safeAttributes = $this->getSanitizedAttributesString();
+        if ($safeAttributes !== '') {
+            $attribs[] = $safeAttributes;
         }
 
         $href = $this->getHref();
@@ -422,7 +423,39 @@ class Link implements OwnerAwareFieldInterface
             }
         }
 
-        return '<a href="' . $this->getHref() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
+        return '<a href="' . htmlspecialchars($this->getSanitizedHref($href)) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
+    }
+
+    /**
+     * Blocks script-executing URI schemes (e.g. "javascript:") that browsers would otherwise
+     * execute on click, tolerating the control-character obfuscation ("java\tscript:") browsers
+     * themselves strip before parsing the scheme.
+     */
+    private function getSanitizedHref(string $href): string
+    {
+        $normalized = ltrim((string) preg_replace('/[\x00-\x1F\x7F]+/', '', $href));
+
+        if (preg_match('/^(javascript|vbscript):/i', $normalized) === 1) {
+            return '';
+        }
+
+        return $href;
+    }
+
+    /**
+     * The free-form `attributes` string is rendered as raw markup, so quoting its values would
+     * not stop an unquoted event-handler attribute (e.g. "autofocus onfocus=alert(1)") from
+     * executing. Strip event-handler attributes specifically; everything else passes through
+     * unchanged.
+     */
+    private function getSanitizedAttributesString(): string
+    {
+        $raw = $this->getAttributes();
+        if (!$raw) {
+            return '';
+        }
+
+        return trim((string) preg_replace('/\bon[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|\S+)/i', '', $raw));
     }
 
     public function isEmpty(): bool
