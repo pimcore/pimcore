@@ -33,13 +33,20 @@ class RoutingListenerTest extends TestCase
         return new RoutingListener(
             $this->createMock(RequestHelper::class),
             $this->createMock(SiteResolver::class),
-            $this->createMock(Config::class)
+            // Config is final and cannot be mocked; the redirect handler does not read it
+            new Config()
         );
     }
 
     private function invokeRedirectHandler(RoutingListener $listener, string $path, string $httpMethod = 'GET'): RequestEvent
     {
-        $request = Request::create($path, $httpMethod);
+        // a real request carries these characters percent-encoded (Symfony rejects them raw);
+        // the listener then works on urldecode($request->getPathInfo()), as done here
+        $request = Request::create(
+            strtr($path, ['\\' => '%5C', "\t" => '%09', "\n" => '%0A', "\r" => '%0D']),
+            $httpMethod
+        );
+        $path = urldecode($request->getPathInfo());
         $event = new RequestEvent(
             $this->createMock(HttpKernelInterface::class),
             $request,
@@ -71,6 +78,20 @@ class RoutingListenerTest extends TestCase
 
         $location = $event->getResponse()->headers->get('Location');
         $this->assertSame('/evil.com', $location);
+    }
+
+    public function testTabsAndNewlinesBetweenLeadingSlashesAreRemoved(): void
+    {
+        // the listener works on the url-decoded path, and browsers ignore tab and newline
+        // characters in a URL, so they must not keep two leading slashes apart
+        foreach (["/app.php/\t/evil.com", "/app.php/\\\t\\evil.com", "/app.php/\t\t//evil.com"] as $path) {
+            $location = $this->invokeRedirectHandler($this->makeListener(), $path)->getResponse()->headers->get('Location');
+            $this->assertSame('/evil.com', $location, json_encode($path));
+        }
+
+        // a newline ends the path match, so the redirect target is cut off there
+        $location = $this->invokeRedirectHandler($this->makeListener(), "/app.php/\n/evil.com")->getResponse()->headers->get('Location');
+        $this->assertStringStartsNotWith('//', $location);
     }
 
     public function testLegitimateAppPhpPathIsRedirectedWithoutAppPhpPrefix(): void
