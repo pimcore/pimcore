@@ -13,8 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use PDO;
+use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Serialize;
+use Sabre\DAV\Browser\Plugin as BrowserPlugin;
+use Sabre\DAV\Locks\Backend\PDO as LocksPDO;
+use Sabre\DAV\Locks\Plugin as LocksPlugin;
+use Sabre\DAV\Server;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -22,6 +28,28 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class Service
 {
+    /**
+     * Builds the Sabre server behind the WebDAV endpoint, rooted at the asset home folder.
+     */
+    public static function createServer(string $baseUri): Server
+    {
+        $server = new Server(new Tree(new Folder(Asset::getById(1))));
+        $server->setBaseUri($baseUri);
+
+        // guards every method, including those that never resolve a node through the tree (UNLOCK)
+        $server->addPlugin(new AuthenticationPlugin());
+
+        /** @var PDO $pdo */
+        $pdo = Db::get()->getNativeConnection();
+        $lockBackend = new LocksPDO($pdo);
+        $lockBackend->tableName = 'webdav_locks';
+        $server->addPlugin(new LocksPlugin($lockBackend));
+
+        $server->addPlugin(new BrowserPlugin());
+
+        return $server;
+    }
+
     public static function getDeleteLogFile(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-delete.dat';

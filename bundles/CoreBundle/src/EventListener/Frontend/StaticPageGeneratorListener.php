@@ -17,6 +17,7 @@ use DateTimeInterface;
 use Exception;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
+use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Config;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Event\DocumentEvents;
@@ -48,7 +49,8 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         protected StaticPageGenerator $staticPageGenerator,
         protected DocumentResolver $documentResolver,
         protected RequestHelper $requestHelper,
-        private Config $config
+        private Config $config,
+        private SessionStatus $sessionStatus
     ) {
     }
 
@@ -87,17 +89,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         $storage = Storage::get('document_static');
 
         try {
-            $path = '';
-            $filename = urldecode($request->getPathInfo());
-
-            if (Site::isSiteRequest()) {
-                if ($request->getPathInfo() === '/') {
-                    $filename = '/' . Site::getCurrentSite()->getRootDocument()->getKey();
-                } else {
-                    $path = Site::getCurrentSite()->getRootPath();
-                }
-            }
-            $filename = $path .  $filename  . '.html';
+            $filename = $this->resolveRequestDocumentPath($request) . '.html';
 
             if ($storage->fileExists($filename)) {
                 $content = $storage->read($filename);
@@ -139,12 +131,68 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             return;
         }
 
+        $response = $event->getResponse();
+        if ($response->getStatusCode() !== Response::HTTP_OK
+            || $response->headers->hasCacheControlDirective('no-store')) {
+            return;
+        }
+
+        // a response rendered with session data may be personalized, don't persist it for everyone
+        if ($this->sessionStatus->isDisabledBySession($request)) {
+            return;
+        }
+
         $document = $this->documentResolver->getDocument();
 
-        if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
-            $response = $event->getResponse()->getContent();
-            $this->staticPageGenerator->generate($document, ['response' => $response]);
+        if ($document instanceof Page
+            && $document->getStaticGeneratorEnabled()
+            && $this->matchesRequestPath($request, $document)
+        ) {
+            $this->staticPageGenerator->generate($document, ['response' => $response->getContent()]);
         }
+    }
+
+    /**
+     * Ensures the document resolved for this request (which may be a fallback ancestor,
+     * see DocumentFallbackListener) is actually the document addressed by the request path,
+     * so the generated cache entry is written under a key that matches its own content.
+     */
+    private function matchesRequestPath(Request $request, Page $document): bool
+    {
+        // pretty URLs are site-relative and routed against the original request path
+        // (see DocumentRouteHandler::matchRequest()), so they must not get the site root prefix
+        if ($prettyUrl = $document->getPrettyUrl()) {
+            return $prettyUrl === rawurldecode($request->getPathInfo());
+        }
+
+        try {
+            // the site root document is not necessarily a top-level document, so compare with its full path
+            $requestPath = Site::isSiteRequest() && $request->getPathInfo() === '/'
+                ? Site::getCurrentSite()->getRootPath()
+                : $this->resolveRequestDocumentPath($request);
+        } catch (Exception $e) {
+            Logger::error($e->getMessage());
+
+            return false;
+        }
+
+        return $document->getRealFullPath() === $requestPath;
+    }
+
+    private function resolveRequestDocumentPath(Request $request): string
+    {
+        $path = '';
+        $filename = rawurldecode($request->getPathInfo());
+
+        if (Site::isSiteRequest()) {
+            if ($request->getPathInfo() === '/') {
+                $filename = '/' . Site::getCurrentSite()->getRootDocument()->getKey();
+            } else {
+                $path = Site::getCurrentSite()->getRootPath();
+            }
+        }
+
+        return $path . $filename;
     }
 
     public function onPostAddUpdateDeleteDocument(DocumentEvent $e): void
@@ -174,6 +222,8 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         if ($this->requestHelper->isFrontendRequestByAdmin($request)
             || $request->isXmlHttpRequest()
             || $request->getMethod() !== 'GET'
+            || $request->getQueryString() !== null
+            || $request->headers->has('Authorization')
             || !in_array('text/html', $request->getAcceptableContentTypes())) {
             return false;
         }
