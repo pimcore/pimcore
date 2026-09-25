@@ -87,17 +87,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         $storage = Storage::get('document_static');
 
         try {
-            $path = '';
-            $filename = urldecode($request->getPathInfo());
-
-            if (Site::isSiteRequest()) {
-                if ($request->getPathInfo() === '/') {
-                    $filename = '/' . Site::getCurrentSite()->getRootDocument()->getKey();
-                } else {
-                    $path = Site::getCurrentSite()->getRootPath();
-                }
-            }
-            $filename = $path .  $filename  . '.html';
+            $filename = $this->resolveRequestDocumentPath($request) . '.html';
 
             if ($storage->fileExists($filename)) {
                 $content = $storage->read($filename);
@@ -139,12 +129,55 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             return;
         }
 
+        $response = $event->getResponse();
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
+            return;
+        }
+
         $document = $this->documentResolver->getDocument();
 
-        if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
-            $response = $event->getResponse()->getContent();
-            $this->staticPageGenerator->generate($document, ['response' => $response]);
+        if ($document instanceof Page
+            && $document->getStaticGeneratorEnabled()
+            && $this->matchesRequestPath($request, $document)
+        ) {
+            $this->staticPageGenerator->generate($document, ['response' => $response->getContent()]);
         }
+    }
+
+    /**
+     * Ensures the document resolved for this request (which may be a fallback ancestor,
+     * see DocumentFallbackListener) is actually the document addressed by the request path,
+     * so the generated cache entry is written under a key that matches its own content.
+     */
+    private function matchesRequestPath(Request $request, Page $document): bool
+    {
+        try {
+            $requestPath = $this->resolveRequestDocumentPath($request);
+        } catch (Exception $e) {
+            Logger::error($e->getMessage());
+
+            return false;
+        }
+
+        $documentPath = $document->getPrettyUrl() ?: $document->getRealFullPath();
+
+        return $documentPath === $requestPath;
+    }
+
+    private function resolveRequestDocumentPath(Request $request): string
+    {
+        $path = '';
+        $filename = urldecode($request->getPathInfo());
+
+        if (Site::isSiteRequest()) {
+            if ($request->getPathInfo() === '/') {
+                $filename = '/' . Site::getCurrentSite()->getRootDocument()->getKey();
+            } else {
+                $path = Site::getCurrentSite()->getRootPath();
+            }
+        }
+
+        return $path . $filename;
     }
 
     public function onPostAddUpdateDeleteDocument(DocumentEvent $e): void
@@ -174,6 +207,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         if ($this->requestHelper->isFrontendRequestByAdmin($request)
             || $request->isXmlHttpRequest()
             || $request->getMethod() !== 'GET'
+            || $request->getQueryString() !== null
             || !in_array('text/html', $request->getAcceptableContentTypes())) {
             return false;
         }
