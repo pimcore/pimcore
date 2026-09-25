@@ -49,9 +49,15 @@ class DaoRemoveUnusedColumnsTest extends TestCase
         $this->assertCount(1, $executedQueries);
         $alterTableQuery = $executedQueries[0];
         $this->assertStringStartsWith('ALTER TABLE', $alterTableQuery);
-        // The malicious backtick must be escaped (doubled) by quoteIdentifier(), not passed through raw -
-        // otherwise the embedded "DROP COLUMN `oo_classname" clause would be a second, executable clause.
-        $this->assertSame(1, substr_count($alterTableQuery, 'DROP COLUMN'));
+        // The malicious key's own payload contains the literal text "DROP COLUMN", so a plain
+        // substring/occurrence count can't tell a neutralized clause apart from an injected one.
+        // What matters is that quoteIdentifier() escaped (doubled) every backtick, so the whole
+        // malicious value ends up inside a single quoted identifier - assert the exact resulting
+        // clause to prove that, rather than counting substring occurrences.
+        $this->assertSame(
+            'ALTER TABLE `object_query_1` DROP COLUMN `x``, DROP COLUMN ``oo_classname`;',
+            $alterTableQuery
+        );
         $this->assertStringNotContainsString('DROP COLUMN `oo_classname`', $alterTableQuery);
     }
 
