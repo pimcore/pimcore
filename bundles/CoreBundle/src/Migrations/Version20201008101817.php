@@ -21,6 +21,11 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201008101817 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('DROP VIEW IF EXISTS documents_editables;');

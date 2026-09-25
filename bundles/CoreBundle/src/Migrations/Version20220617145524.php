@@ -24,6 +24,11 @@ final class Version20220617145524 extends AbstractMigration
         return 'Drop custom_layouts table in favor of LocationAwareConfigRepository';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('DROP TABLE IF EXISTS custom_layouts');

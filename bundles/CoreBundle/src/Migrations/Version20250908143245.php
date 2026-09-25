@@ -27,6 +27,11 @@ final class Version20250908143245 extends AbstractMigration
         return 'Add lastPasswordReset column with default CURRENT_TIMESTAMP to users table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE users ADD lastPasswordReset INT(11) UNSIGNED NULL');

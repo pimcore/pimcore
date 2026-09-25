@@ -24,6 +24,11 @@ final class Version20221107084519 extends AbstractMigration
         return 'Remove index column from object_url_slugs table.';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE object_url_slugs DROP INDEX `index`;');

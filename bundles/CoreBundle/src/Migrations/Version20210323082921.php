@@ -40,6 +40,11 @@ final class Version20210323082921 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $db = \Pimcore\Db::get();

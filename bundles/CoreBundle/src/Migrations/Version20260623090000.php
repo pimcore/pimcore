@@ -27,6 +27,11 @@ final class Version20260623090000 extends AbstractMigration
         return 'Add theme column to users table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('users')->hasColumn('theme')) {
