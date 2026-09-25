@@ -15,11 +15,22 @@ namespace Pimcore\Model\Asset\Document;
 
 /**
  * Scans a PDF for JavaScript by matching /JS and /JavaScript as proper PDF name
- * tokens outside of stream payloads, instead of raw byte matching which flags
- * binary (compressed) stream data by chance (see #16955).
+ * tokens, instead of raw byte matching which flags binary (compressed) stream
+ * data by chance (see #16955).
  *
- * This is a heuristic pre-check for the admin preview, not a sanitizer: names
- * hidden inside compressed object streams are not decompressed.
+ * A stream's own declared /Length (when a direct integer literal, not an
+ * indirect reference) is used to find the payload's true end, the same way a
+ * conforming reader does — instead of searching for the next literal
+ * `endstream` keyword. This closes off smuggling a real name token into the
+ * gap between the declared length and that keyword. A /FlateDecode-only
+ * payload of bounded size is additionally inflated and scanned, since that is
+ * exactly what real readers do with it (e.g. an object stream produced by
+ * `qpdf --object-streams=generate`).
+ *
+ * This is a heuristic pre-check for the admin preview, not a sanitizer: a
+ * stream whose length can't be determined statically, that uses any other
+ * filter (images, LZW, filter chains, ...), or that exceeds the size bounds
+ * below is still left unscanned, exactly as before.
  *
  * @internal
  */
@@ -36,6 +47,19 @@ final class PdfScanner
      */
     private const BOUNDARY_OVERLAP = 64;
 
+    /**
+     * Bounds how much of a single /FlateDecode stream payload is buffered for
+     * inflation. Streams beyond this size stop being collected and are left
+     * unscanned, same as any other filter this class doesn't inspect.
+     */
+    private const MAX_STREAM_BUFFER_BYTES = 4 * 1024 * 1024;
+
+    /**
+     * Bounds zlib_decode() output to defend against a decompression bomb
+     * hidden in a small /FlateDecode stream.
+     */
+    private const MAX_INFLATED_BYTES = 8 * 1024 * 1024;
+
     public function __construct(private readonly int $chunkSize = 65536)
     {
     }
@@ -46,7 +70,7 @@ final class PdfScanner
     public function containsJavaScript($stream): bool
     {
         $buffer = '';
-        $inStreamPayload = false;
+        $streamState = null;
 
         do {
             $chunk = feof($stream) ? '' : fread($stream, $this->chunkSize);
@@ -55,7 +79,7 @@ final class PdfScanner
             }
             $atEof = $chunk === false || $chunk === '' || feof($stream);
 
-            if ($this->scanBuffer($buffer, $inStreamPayload, $atEof)) {
+            if ($this->scanBuffer($buffer, $streamState, $atEof)) {
                 return true;
             }
         } while (!$atEof);
@@ -66,26 +90,54 @@ final class PdfScanner
     /**
      * Consumes the buffer, retaining an unconsumed tail so tokens and keywords
      * split across chunk boundaries are seen once completed by the next read.
+     *
+     * @param array{remaining: ?int, isFlate: bool, collected: string, truncated: bool}|null $streamState
      */
-    private function scanBuffer(string &$buffer, bool &$inStreamPayload, bool $atEof): bool
+    private function scanBuffer(string &$buffer, ?array &$streamState, bool $atEof): bool
     {
         $position = 0;
         $length = strlen($buffer);
 
         while (true) {
-            if ($inStreamPayload) {
-                $endstream = strpos($buffer, self::ENDSTREAM_KEYWORD, $position);
-                if ($endstream === false) {
-                    // everything so far is payload — keep only enough bytes to
-                    // recognize a split endstream keyword on the next read
-                    $keep = $atEof ? 0 : strlen(self::ENDSTREAM_KEYWORD) - 1;
-                    $buffer = $keep > 0 ? substr($buffer, max($position, $length - $keep)) : '';
+            if ($streamState !== null) {
+                if ($streamState['remaining'] === null) {
+                    // length isn't known statically — fall back to skipping
+                    // opaquely until the literal endstream keyword, exactly
+                    // as this class always did before it inspected streams
+                    $endstream = strpos($buffer, self::ENDSTREAM_KEYWORD, $position);
+                    if ($endstream === false) {
+                        $keep = $atEof ? 0 : strlen(self::ENDSTREAM_KEYWORD) - 1;
+                        $buffer = $keep > 0 ? substr($buffer, max($position, $length - $keep)) : '';
+
+                        return false;
+                    }
+
+                    $position = $endstream + strlen(self::ENDSTREAM_KEYWORD);
+                    $streamState = null;
+
+                    continue;
+                }
+
+                $consume = min($length - $position, $streamState['remaining']);
+                if ($streamState['isFlate']) {
+                    $this->collectStreamBytes($streamState, substr($buffer, $position, $consume));
+                }
+                $position += $consume;
+                $streamState['remaining'] -= $consume;
+
+                if ($streamState['remaining'] > 0) {
+                    // payload continues beyond this chunk — everything
+                    // available has been consumed already
+                    $buffer = '';
 
                     return false;
                 }
 
-                $position = $endstream + strlen(self::ENDSTREAM_KEYWORD);
-                $inStreamPayload = false;
+                if ($streamState['isFlate'] && $this->streamPayloadContainsJsName($streamState)) {
+                    return true;
+                }
+
+                $streamState = null;
 
                 continue;
             }
@@ -94,7 +146,8 @@ final class PdfScanner
             $regionEnd = $streamKeywordStart ?? $length;
             $regionIsFinal = $streamKeywordStart === null && $atEof;
 
-            if ($this->regionContainsJsName(substr($buffer, $position, $regionEnd - $position), $regionIsFinal)) {
+            $region = substr($buffer, $position, $regionEnd - $position);
+            if ($this->regionContainsJsName($region, $regionIsFinal)) {
                 return true;
             }
 
@@ -107,9 +160,111 @@ final class PdfScanner
                 return false;
             }
 
+            // the keyword's EOL marker (guaranteed present by the lookahead
+            // in findStreamKeyword) precedes the payload and isn't part of
+            // the declared length
             $position = $streamKeywordStart + strlen(self::STREAM_KEYWORD);
-            $inStreamPayload = true;
+            $position += ($buffer[$position] ?? '') === "\r" && ($buffer[$position + 1] ?? '') === "\n" ? 2 : 1;
+
+            $streamState = [
+                'remaining' => $this->detectStreamLength($region),
+                'isFlate' => $this->detectStreamIsFlate($region),
+                'collected' => '',
+                'truncated' => false,
+            ];
         }
+    }
+
+    /**
+     * Reads the /Length declared in the stream's own dictionary (the last
+     * `<<...` in the text preceding the `stream` keyword). Returns null when
+     * it is missing or an indirect reference (e.g. `/Length 5 0 R`), which
+     * this heuristic scanner can't resolve — the caller then falls back to
+     * treating the stream exactly as before this class used /Length at all.
+     */
+    private function detectStreamLength(string $precedingText): ?int
+    {
+        $dictionary = $this->lastDictionary($precedingText);
+
+        if (!preg_match('/\/Length\s+(\d+)(\s+\d+\s+R\b)?/', $dictionary, $match)) {
+            return null;
+        }
+
+        if (isset($match[2]) && $match[2] !== '') {
+            return null;
+        }
+
+        return (int) $match[1];
+    }
+
+    /**
+     * True only for a stream declaring a single /FlateDecode filter — the
+     * common case (including object streams produced by
+     * `qpdf --object-streams=generate`) safe to inflate and scan. Any other
+     * filter (images, LZW, filter chains, ...) is left unscanned.
+     */
+    private function detectStreamIsFlate(string $precedingText): bool
+    {
+        $dictionary = $this->lastDictionary($precedingText);
+
+        if (!preg_match('/\/Filter\s*(\/[A-Za-z0-9]+|\[[^\]]*\])/', $dictionary, $match)) {
+            return false;
+        }
+
+        $value = $match[1];
+        if ($value[0] === '[') {
+            if (!preg_match('/^\[\s*(\/[A-Za-z0-9]+)\s*\]$/', $value, $single)) {
+                return false;
+            }
+
+            $value = $single[1];
+        }
+
+        return $value === '/FlateDecode';
+    }
+
+    private function lastDictionary(string $precedingText): string
+    {
+        $dictStart = strrpos($precedingText, '<<');
+
+        return $dictStart === false ? $precedingText : substr($precedingText, $dictStart);
+    }
+
+    /**
+     * @param array{remaining: ?int, isFlate: bool, collected: string, truncated: bool} $streamState
+     */
+    private function collectStreamBytes(array &$streamState, string $bytes): void
+    {
+        if ($streamState['truncated']) {
+            return;
+        }
+
+        if (strlen($streamState['collected']) + strlen($bytes) > self::MAX_STREAM_BUFFER_BYTES) {
+            // too large to buffer safely — fall back to leaving it unscanned
+            $streamState['truncated'] = true;
+            $streamState['collected'] = '';
+
+            return;
+        }
+
+        $streamState['collected'] .= $bytes;
+    }
+
+    /**
+     * @param array{remaining: ?int, isFlate: bool, collected: string, truncated: bool} $streamState
+     */
+    private function streamPayloadContainsJsName(array $streamState): bool
+    {
+        if ($streamState['truncated']) {
+            return false;
+        }
+
+        $decoded = @zlib_decode($streamState['collected'], self::MAX_INFLATED_BYTES);
+        if ($decoded === false) {
+            return false;
+        }
+
+        return $this->regionContainsJsName($decoded, true);
     }
 
     /**

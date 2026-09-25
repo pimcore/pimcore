@@ -144,6 +144,68 @@ class PdfScannerTest extends TestCase
         $this->assertFalse($this->scan($pdf));
     }
 
+    public function testJsNameSmuggledBetweenDeclaredLengthAndEndstreamIsDetected(): void
+    {
+        // a conforming reader trusts /Length to find the end of stream data;
+        // anything beyond it up to the literal endstream keyword is not
+        // stream data at all and must still be scanned like the rest of the file
+        $smuggled = "\n>> \n5 0 obj\n<< /S /JavaScript /JS (app.alert(1);) >>\nendobj\n";
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 10 >>\nstream\n0123456789" . $smuggled . 'endstream' . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testFlateCompressedObjectStreamWithJsIsDetected(): void
+    {
+        // standard `qpdf --object-streams=generate` output: the JavaScript
+        // action lives inside a compressed /ObjStm the previous scanner never inflated
+        $decompressed = '5 0 obj << /S /JavaScript /JS (app.alert(1);) >> endobj';
+        $compressed = gzcompress($decompressed);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Type /ObjStm /Filter /FlateDecode /Length " . strlen($compressed) . " >>\nstream\n" .
+            $compressed . "\nendstream\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testCleanFlateCompressedStreamIsNotFlagged(): void
+    {
+        $decompressed = str_repeat('clean content stream data ', 20);
+        $compressed = gzcompress($decompressed);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Filter /FlateDecode /Length " . strlen($compressed) . " >>\nstream\n" .
+            $compressed . "\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
+    public function testIndirectLengthFallsBackToLegacyEndstreamSearch(): void
+    {
+        // /Length as an indirect reference can't be resolved by this
+        // heuristic scanner; the payload is skipped exactly as before, so
+        // raw bytes that merely look like a name token are not a detection (see #16955)
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 5 0 R >>\nstream\n/JS binary garbage\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
+    public function testUnsupportedFilterStreamIsNotInspected(): void
+    {
+        // e.g. image data behind DCTDecode — not text, not decompressed, and
+        // a coincidental name-like byte sequence must not be a detection
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Filter /DCTDecode /Length 6 >>\nstream\n/JS \x00\xff\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
     private function scan(string $content, ?int $chunkSize = null): bool
     {
         $stream = fopen('php://memory', 'r+');
