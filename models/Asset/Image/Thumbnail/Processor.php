@@ -494,17 +494,20 @@ class Processor
                                     }
                                 }
 
-                                // inject the focal point
-                                if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
-                                    $value = [
-                                        'x' => $asset->getCustomSetting('focalPointX'),
-                                        'y' => $asset->getCustomSetting('focalPointY'),
-                                    ];
-                                }
-
                                 $arguments[$position] = $value;
                             }
                         }
+                    }
+
+                    // inject the focal point - it is stored on the asset and therefore overrules the
+                    // positioning of a cover transformation. This has to happen outside of the loop
+                    // above, as `positioning` is an optional argument that does not have to be part
+                    // of the thumbnail configuration at all
+                    if ($transformation['method'] === 'cover'
+                        && $asset instanceof Asset\Image
+                        && ($focalPoint = $asset->getFocalPoint()) !== null
+                    ) {
+                        $arguments[(int)array_search('positioning', $mapping, true)] = $focalPoint;
                     }
 
                     ksort($arguments);

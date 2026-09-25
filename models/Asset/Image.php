@@ -344,6 +344,25 @@ EOT;
         return parent::setCustomSetting($key, $value);
     }
 
+    /**
+     * The focal point of the image as percentage coordinates, null if it does not have one.
+     * Both coordinates are required and 0 is a valid one (left/top edge), so they must not
+     * be checked for truthiness.
+     *
+     * @return array{x: int|float|string, y: int|float|string}|null
+     */
+    public function getFocalPoint(): ?array
+    {
+        $x = $this->getCustomSetting('focalPointX');
+        $y = $this->getCustomSetting('focalPointY');
+
+        if (!is_numeric($x) || !is_numeric($y)) {
+            return null;
+        }
+
+        return ['x' => $x, 'y' => $y];
+    }
+
     public function isVectorGraphic(): bool
     {
         // we use a simple file-extension check, for performance reasons
