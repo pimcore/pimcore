@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\EventSubscriber;
 
+use Pimcore\Event\Workflow\GlobalActionEvent;
+use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Workflow\Transition;
@@ -44,8 +46,22 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
         /** @var Document|Concrete $subject */
         $subject = $event->getSubject();
 
-        $changePublishedState = $transition->getChangePublishedState();
+        $this->changePublishedState($transition->getChangePublishedState(), $subject);
+    }
 
+    public function onPostGlobalAction(GlobalActionEvent $event): void
+    {
+        $subject = $event->getSubject();
+
+        if (!$subject instanceof Concrete && !$subject instanceof Document) {
+            return;
+        }
+
+        $this->changePublishedState($event->getGlobalAction()->getChangePublishedState(), $subject);
+    }
+
+    private function changePublishedState(string $changePublishedState, Document|Concrete $subject): void
+    {
         if ($changePublishedState === self::FORCE_UNPUBLISHED) {
             $subject->setPublished(false);
         } elseif ($changePublishedState === self::FORCE_PUBLISHED) {
@@ -66,6 +82,7 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
     {
         return [
             'workflow.completed' => 'onWorkflowCompleted',
+            WorkflowEvents::POST_GLOBAL_ACTION => 'onPostGlobalAction',
         ];
     }
 }
