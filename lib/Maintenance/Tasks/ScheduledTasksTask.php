@@ -45,6 +45,18 @@ class ScheduledTasksTask implements TaskInterface
         foreach ($tasks as $task) {
             $taskUser = User::getById($task->getUserId());
 
+            if (!$taskUser instanceof User) {
+                $this->logger->error(sprintf(
+                    'Schedule\\Task\\Executor: Task ID %d references a non-existent user ID %d. Deactivating it.',
+                    $task->getId(),
+                    $task->getUserId()
+                ));
+                $task->setActive(false);
+                $task->save();
+
+                continue;
+            }
+
             try {
                 if ($task->getCtype() === 'document') {
                     $document = Document::getById($task->getCid());
