@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -100,6 +101,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
         foreach ($cols as $c) {
             $c['key'] = strtolower($c['key']);
+            $this->validateKey($c['key']);
             $this->cols[] = $c;
         }
 
@@ -126,10 +128,23 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
         foreach ($rows as $r) {
             $r['key'] = strtolower($r['key']);
+            $this->validateKey($r['key']);
             $this->rows[] = $r;
         }
 
         return $this;
+    }
+
+    /**
+     * Column/row keys become physical database column names (see calculateDbColumns()) and are
+     * emitted into ALTER TABLE DDL, so they must be restricted to valid identifier characters,
+     * mirroring the allowlist enforced by Data::setName().
+     */
+    private function validateKey(string $key): void
+    {
+        if ($key !== '' && !preg_match('/^[a-z_][a-z0-9_]{0,62}\z/', $key)) {
+            throw new InvalidArgumentException(sprintf('Invalid structured table key "%s"', $key));
+        }
     }
 
     /**
