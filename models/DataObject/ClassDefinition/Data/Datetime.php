@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use InvalidArgumentException;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -26,6 +27,7 @@ use Pimcore\Tool\UserTimezone;
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, UserDefinedColumnTypeInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
+    use DateColumnTypeValidatorTrait;
 
     /**
      * @internal
@@ -419,8 +421,15 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return 'datetime';
     }
 
+    /**
+     * @throws InvalidArgumentException if $columnType is not a valid SQL type declaration
+     */
     public function setColumnType(string $columnType): void
     {
+        if (!self::isValidColumnType($columnType)) {
+            throw new InvalidArgumentException(sprintf('Invalid column type "%s" given for field type "datetime"', $columnType));
+        }
+
         $this->columnType = $columnType;
     }
 
