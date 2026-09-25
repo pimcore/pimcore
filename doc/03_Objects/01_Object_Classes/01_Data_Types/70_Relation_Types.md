@@ -227,12 +227,61 @@ $references[] = $elementMetadata;
 $object->setMetadata($references); 
 ```
 
+## Many-To-Many Asset Relation
+
+A dedicated variant of the Many-To-Many Relation that holds **assets only**. It behaves like a Many-To-Many Relation
+whose allowed types are restricted to assets, but the restriction is part of the data type rather than a setting:
+documents and objects are always disallowed and cannot be enabled in the class definition, the drop area only accepts
+assets, the generated getter is documented as returning assets, and setting anything other than assets fails
+validation. The allowed asset subtypes (image, video, document, ...) can still be restricted in the class definition.
+
+In addition, one or more **visible fields** can be configured. Each visible field is an asset metadata key and is
+shown as a read-only column next to the related asset in the editor grid, resolved through
+`$asset->getMetadata($key)`; for a
+[predefined metadata](../../../02_Assets/04_Working_with_Assets_via_PHP_API.md#using-localized-asset-metadata) key, the column takes the predefined type
+(`input`, `textarea`, `checkbox`, `date` or `select`). The grid's own system columns (`id`, `fullpath`, `type`,
+`subtype`, `filename`, `creationDate`, `modificationDate`, `published`) always show the asset's own values, so a
+metadata key with one of those names is not displayed as a visible field.
+
+The PHP API is the same as for the Many-To-Many Relation, except that the getter and setter deal with assets only:
+
+```php
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+
+$object = DataObject::getById(12345);
+
+$object->setMyAssetRelations([
+    Asset::getById(350),
+    Asset::getByPath('/images/hero.jpg'),
+]);
+$object->save();
+
+// Asset[]
+$assets = $object->getMyAssetRelations();
+```
+
+The relations are stored in the same `object_relations_ID` table as any other relation type. In the `object_ID` query
+view the column holds a comma-separated list of asset IDs without a type prefix (`,350,351,`), so a listing condition
+on such a column is written as `myAssetRelations LIKE '%,350,%'`, or through the data type's `addListingFilter()`,
+which accepts an asset, an asset ID, or an array containing the key `id` (and optionally `type` = `asset`); any other
+element or element type is rejected with an `InvalidArgumentException`.
+
+#### When to use it
+
+Use a Many-To-Many Asset Relation for fields that are asset-only by design, such as galleries, downloads or related
+images. A Many-To-Many Relation with only assets allowed still works, but keeps the per-element-type switches in the
+class definition and the untyped `ElementInterface` API. An existing asset-only Many-To-Many Relation field can be
+switched to this type in the class definition: the rows in `object_relations_ID` stay as they are, only the value in
+the query table changes format and is rewritten whenever an object is saved.
+
 ## Dependencies
 
 There are several object data types which represent a relation to an other Pimcore element. The pure relation types are
 * Many-To-One Relation
 * Many-To-Many Relation
 * Advanced Many-To-Many Relation
+* Many-To-Many Asset Relation
 * Many-To-Many Object Relation
 * Advanced Many-To-One Object Relation
 
