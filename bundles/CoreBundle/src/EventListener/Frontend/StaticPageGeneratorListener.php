@@ -151,6 +151,12 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
      */
     private function matchesRequestPath(Request $request, Page $document): bool
     {
+        // pretty URLs are site-relative and routed against the original request path
+        // (see DocumentRouteHandler::matchRequest()), so they must not get the site root prefix
+        if ($prettyUrl = $document->getPrettyUrl()) {
+            return $prettyUrl === urldecode($request->getPathInfo());
+        }
+
         try {
             $requestPath = $this->resolveRequestDocumentPath($request);
         } catch (Exception $e) {
@@ -159,9 +165,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             return false;
         }
 
-        $documentPath = $document->getPrettyUrl() ?: $document->getRealFullPath();
-
-        return $documentPath === $requestPath;
+        return $document->getRealFullPath() === $requestPath;
     }
 
     private function resolveRequestDocumentPath(Request $request): string

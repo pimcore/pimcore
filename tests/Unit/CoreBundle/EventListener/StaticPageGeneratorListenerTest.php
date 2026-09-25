@@ -22,7 +22,9 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Site;
 use Pimcore\Tests\Support\Test\TestCase;
+use ReflectionProperty;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -30,6 +32,25 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class StaticPageGeneratorListenerTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        $this->setCurrentSite(null);
+
+        parent::tearDown();
+    }
+
+    private function setCurrentSite(?Site $site): void
+    {
+        (new ReflectionProperty(Site::class, 'currentSite'))->setValue(null, $site);
+    }
+
+    private function enterSite(string $rootPath): void
+    {
+        $site = new Site();
+        $site->setRootPath($rootPath);
+        $this->setCurrentSite($site);
+    }
+
     private function makePage(string $realFullPath, ?string $prettyUrl = null): Page
     {
         $page = $this->createMock(Page::class);
@@ -146,6 +167,49 @@ class StaticPageGeneratorListenerTest extends TestCase
         $document->method('getPrettyUrl')->willReturn(null);
         $document->method('getStaticGeneratorEnabled')->willReturn(false);
 
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->never())->method('generate');
+
+        $request = Request::create('/products', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testGeneratesStaticPageForSiteRelativePrettyUrlInsideASite(): void
+    {
+        // Pretty URLs are site-relative and routed against the original request path
+        // (DocumentRouteHandler::matchRequest), so they must not be compared with the
+        // site-root-prefixed path.
+        $this->enterSite('/site');
+
+        $document = $this->makePage('/site/en/products-real-path', '/products');
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->once())->method('generate');
+
+        $request = Request::create('/products', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testGeneratesStaticPageForRealPathInsideASite(): void
+    {
+        $this->enterSite('/site');
+
+        $document = $this->makePage('/site/products');
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->once())->method('generate');
+
+        $request = Request::create('/products', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testSkipsGenerationWhenSiteRelativeRealPathIsComparedWithoutSiteRoot(): void
+    {
+        // Inside a site, /products addresses /site/products, not a document at /products.
+        $this->enterSite('/site');
+
+        $document = $this->makePage('/products');
         [$listener, $staticPageGenerator] = $this->makeListener($document);
 
         $staticPageGenerator->expects($this->never())->method('generate');
