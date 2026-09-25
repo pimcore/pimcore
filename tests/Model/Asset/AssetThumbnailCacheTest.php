@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Asset;
 
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Config;
@@ -525,21 +526,16 @@ class AssetThumbnailCacheTest extends TestCase
 
     public function testGetStreamedResponseByUriReturnsNullWhenTheThumbnailCannotBeRead(): void
     {
-        $asset = $this->testAsset;
+        [$uri, $storagePath] = $this->generateThumbnailAndBuildDeliveryUri();
 
-        /** @var Asset\Image $asset */
-        $thumbnail = $asset->getThumbnail($this->thumbnailName);
-
-        //generate the thumbnail so the delivery below takes the direct-delivery path
-        $thumbnail->getPath(['deferredAllowed' => false]);
-        $storagePath = $thumbnail->getPathReference(true)['storagePath'];
-        $uri = sprintf('/image-thumb__%d__%s/%s', $asset->getId(), $this->thumbnailName, basename($storagePath));
-
-        //fileExists() reports the thumbnail, the subsequent read fails: either the file was removed
-        //in between, or the storage cannot serve it (permission/IO). readStream() is not guarded,
-        //so the UnableToReadFile used to escape this helper.
+        //the storage reports the thumbnail as present and up to date, so both the direct delivery
+        //and the thumbnail generation behind it take the "already generated" path - but the read
+        //itself fails, e.g. because of a permission or I/O problem, or because the file was removed
+        //in between. ImageThumbnailTrait::getStream() deliberately rethrows in that case.
         $storage = $this->createMock(FilesystemOperator::class);
         $storage->method('fileExists')->willReturn(true);
+        $storage->method('lastModified')->willReturn(time());
+        $storage->method('fileSize')->willReturn(12345);
         $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($storagePath));
 
         $this->withThumbnailStorage($storage, function () use ($uri) {
@@ -548,5 +544,43 @@ class AssetThumbnailCacheTest extends TestCase
             //?StreamedResponse, so the storage failure must not reach the calling project code
             $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
         });
+    }
+
+    public function testGetStreamedResponseByUriReturnsNullWhenThumbnailMetadataCannotBeRetrieved(): void
+    {
+        [$uri, $storagePath] = $this->generateThumbnailAndBuildDeliveryUri();
+
+        //the read succeeds but the storage cannot stat the file afterwards, which is what a briefly
+        //unavailable remote adapter looks like between two calls - the helper must not leak that either
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->method('fileExists')->willReturn(true);
+        $storage->method('lastModified')->willReturn(time());
+        $storage->method('readStream')->willReturnCallback(static fn () => fopen('php://memory', 'rb'));
+        $storage->method('mimeType')->willReturn('image/jpeg');
+        $storage->method('fileSize')->willThrowException(UnableToRetrieveMetadata::fileSize($storagePath));
+
+        $this->withThumbnailStorage($storage, function () use ($uri) {
+            $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
+        });
+    }
+
+    /**
+     * generates the thumbnail of the test asset so the delivery under test takes the
+     * direct-delivery path, and returns its delivery uri and storage path
+     *
+     * @return array{string, string}
+     */
+    private function generateThumbnailAndBuildDeliveryUri(): array
+    {
+        /** @var Asset\Image $asset */
+        $asset = $this->testAsset;
+        $thumbnail = $asset->getThumbnail($this->thumbnailName);
+
+        $thumbnail->getPath(['deferredAllowed' => false]);
+        $storagePath = $thumbnail->getPathReference(true)['storagePath'];
+
+        $uri = sprintf('/image-thumb__%d__%s/%s', $asset->getId(), $this->thumbnailName, basename($storagePath));
+
+        return [$uri, $storagePath];
     }
 }

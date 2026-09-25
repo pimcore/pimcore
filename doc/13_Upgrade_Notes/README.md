@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.1
+
+### [Assets]
+- [Thumbnails] `Asset\Service::getStreamedResponseByUri()` no longer lets a `League\Flysystem\FilesystemException` escape when the thumbnail resolves but the thumbnail storage cannot serve it - a permission or I/O problem, a briefly unavailable remote adapter, or the file disappearing between two storage calls. The helper is public API for custom asset delivery (see [Restricting Public Asset Access](../02_Assets/02_Restricting_Public_Asset_Access.md)) and is typed `?StreamedResponse`; it now returns `null` for that case as well, the same way it already does when the thumbnail cannot be resolved at all, so a project delivery controller renders its own 404 or placeholder instead of failing with a 500. The failure is logged at **error** level, because a plain cache miss is already absorbed inside `getStreamedResponseForThumbnail()` and everything reaching this point is a real storage fault. Two things are deliberately unchanged: the `@internal` `Asset\Service::getStreamedResponseForThumbnail()` still lets the exception through (its `@throws \League\Flysystem\FilesystemException` covers it), and with it the public thumbnail route, which calls that method directly.
+
 ## Pimcore 2026.3.0
 
 ### [General]
@@ -49,7 +54,6 @@
 ## Pimcore 2026.2.14
 
 ### [Assets]
-- [Thumbnails] `Asset\Service::getStreamedResponseByUri()` no longer lets a `League\Flysystem\UnableToReadFile` escape when the thumbnail file is reported as existing but cannot be read - e.g. because it was removed between the existence check and the read, or because of a permission or I/O problem on the thumbnail storage. The helper is public API for custom asset delivery (see [Restricting Public Asset Access](../02_Assets/02_Restricting_Public_Asset_Access.md)) and documented as returning `?StreamedResponse`; it now returns `null` for that case as well, so project code implementing its own delivery controller no longer has to guard against an undeclared exception.
 - [Thumbnails] `ImageThumbnailTrait::getStream()` (used by `Asset\Image\Thumbnail`, `Asset\Video\ImageThumbnail` and `Asset\Document\ImageThumbnail`) now returns `null` as documented instead of letting `League\Flysystem\UnableToReadFile` escape when the thumbnail file no longer exists on the thumbnail storage, e.g. because of a stale entry in the thumbnail status cache. The stale status cache entry is invalidated in that case, so the thumbnail is regenerated on the next request instead of failing again. A read failure for a file that still exists on the storage (or whose existence cannot be determined) is still thrown as before. `Asset\Service::getStreamedResponseFromImageThumbnail()` accordingly returns `null` for a missing stream and for a failed generation (previously a `TypeError` from writing a `null` stream to the storage) instead of throwing.
 
 ### [Database]
