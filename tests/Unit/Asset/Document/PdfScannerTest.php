@@ -243,6 +243,20 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($pdf));
     }
 
+    public function testUnfulfillableDeclaredLengthPastTheBufferCapIsFlagged(): void
+    {
+        // the declared length exceeds both the actual file and the buffer
+        // cap, so it can never be validated and the retained prefix never
+        // recovers a literal endstream either — the discarded remainder
+        // can't be ruled out, so this can't be certified safe
+        $content = str_repeat('x', 17 * 1024 * 1024);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length " . (20 * 1024 * 1024) . " >>\nstream\n" . $content . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testUncompressedObjectStreamIsInspected(): void
     {
         $pdf = $this->objectStreamPdf('/Length ' . strlen(self::OBJECT_STREAM_WITH_JS), self::OBJECT_STREAM_WITH_JS);

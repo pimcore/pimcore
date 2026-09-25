@@ -162,21 +162,29 @@ final class PdfScanner
                         // the file ended before the declared length could be
                         // fulfilled, so it can't be trusted after all. If the
                         // real endstream is already among what was
-                        // collected, the true payload is everything before
-                        // it; resume normal scanning right after it, the
-                        // same as a too-long length recovers below. If it
-                        // isn't there either, there's nothing left in the
-                        // file to recover a boundary from.
+                        // collected (even if that's only a retained prefix),
+                        // the true payload is everything before it; resume
+                        // normal scanning right after it, the same as a
+                        // too-long length recovers below.
                         $payload = $streamState['payload'];
-                        $endstream = $streamState['truncated'] ? false : strpos($payload, self::ENDSTREAM_KEYWORD);
+                        $endstream = strpos($payload, self::ENDSTREAM_KEYWORD);
 
                         if ($endstream === false) {
                             $buffer = '';
 
-                            return false;
+                            // nothing to recover a boundary from. A small,
+                            // genuinely unterminated stream is left
+                            // unflagged, as this class always has; but once
+                            // the payload was large enough to be truncated,
+                            // the discarded remainder can't be ruled out and
+                            // this can't be certified safe
+                            return $streamState['truncated'];
                         }
 
+                        // found within what was retained: that slice is the
+                        // exact true payload, not merely a prefix of it
                         $streamState['payload'] = substr($payload, 0, $endstream);
+                        $streamState['truncated'] = false;
                         $buffer = substr($payload, $endstream + strlen(self::ENDSTREAM_KEYWORD));
                         $length = strlen($buffer);
                         $position = 0;
