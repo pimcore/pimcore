@@ -421,3 +421,7 @@ pimcore:
     product_registration:
         instance_identifier: '%env(PIMCORE_INSTANCE_IDENTIFIER)%'
         product_key: '%env(PIMCORE_PRODUCT_KEY)%'
+
+scheb_two_factor:
+    google:
+        server_name: "%router.request_context.host%"
