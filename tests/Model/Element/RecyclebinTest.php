@@ -116,6 +116,10 @@ class RecyclebinTest extends ModelTestCase
             DataObject::getById($objectId, ['force' => true]),
             'no stub object may be persisted when the restore is denied for insufficient permissions'
         );
+
+        // the denied restore leaves the item in the recycle bin; remove it so it does not leak into
+        // tests that read the unfiltered recycle bin listing
+        $recycledItem->delete();
     }
 
     /**
