@@ -190,7 +190,7 @@ final class PdfScanner
             return null;
         }
 
-        if (isset($match[2]) && $match[2] !== '') {
+        if (isset($match[2])) {
             return null;
         }
 
