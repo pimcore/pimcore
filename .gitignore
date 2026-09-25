@@ -7,6 +7,10 @@
 /templates/
 /var/
 /.env
+/.env.local
+/.env.local.php
+/.env.*.local
+/translations/
 
 # Composer
 /vendor/
