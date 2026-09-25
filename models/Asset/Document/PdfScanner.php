@@ -131,7 +131,7 @@ final class PdfScanner
      * Consumes the buffer, retaining an unconsumed tail so tokens and keywords
      * split across chunk boundaries are seen once completed by the next read.
      *
-     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool}|null $streamState
+     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool, boundaryTrusted: bool}|null $streamState
      */
     private function scanBuffer(string &$buffer, string &$context, ?array &$streamState, bool $atEof): bool
     {
@@ -182,9 +182,12 @@ final class PdfScanner
                         }
 
                         // found within what was retained: that slice is the
-                        // exact true payload, not merely a prefix of it
+                        // exact true payload, not merely a prefix of it — but
+                        // this boundary is still only a search result, not a
+                        // fulfilled length, so it stays unproven
                         $streamState['payload'] = substr($payload, 0, $endstream);
                         $streamState['truncated'] = false;
+                        $streamState['boundaryTrusted'] = false;
                         $buffer = substr($payload, $endstream + strlen(self::ENDSTREAM_KEYWORD));
                         $length = strlen($buffer);
                         $position = 0;
@@ -271,12 +274,19 @@ final class PdfScanner
             $position += ($buffer[$position] ?? '') === "\r" && ($buffer[$position + 1] ?? '') === "\n" ? 2 : 1;
 
             $entries = $this->readStreamDictionary($dictionary);
+            $remaining = $this->extractStreamLength($entries);
 
             $streamState = [
-                'remaining' => $this->extractStreamLength($entries),
+                'remaining' => $remaining,
                 'type' => $this->extractStreamType($entries),
                 'payload' => '',
                 'truncated' => false,
+                // only a fulfilled declared length is a proven boundary; a
+                // boundary recovered by searching for the literal endstream
+                // keyword can always be spoofed by embedding that exact byte
+                // sequence earlier in a crafted payload (e.g. a raw/stored
+                // deflate block), so it can never be trusted to be complete
+                'boundaryTrusted' => $remaining !== null,
             ];
         }
     }
@@ -500,7 +510,7 @@ final class PdfScanner
     }
 
     /**
-     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool} $streamState
+     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool, boundaryTrusted: bool} $streamState
      */
     private function collectStreamBytes(array &$streamState, string $bytes): void
     {
@@ -520,13 +530,18 @@ final class PdfScanner
     }
 
     /**
-     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool} $streamState
+     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool, boundaryTrusted: bool} $streamState
      */
     private function streamPayloadContainsJavaScript(array $streamState): bool
     {
         // a truncated payload can't be cleared once its prefix decodes to an
-        // object stream — legitimate object streams are far smaller
-        return $this->decodingsContainJavaScript($streamState['payload'], $streamState['truncated'], 0, $streamState['type']);
+        // object stream — legitimate object streams are far smaller. The
+        // same applies to a payload whose very boundary is unproven: it
+        // can't be cleared either, once it decodes to an object stream, since
+        // the true end may lie beyond a spoofed endstream match
+        $cannotBeProvenComplete = $streamState['truncated'] || !$streamState['boundaryTrusted'];
+
+        return $this->decodingsContainJavaScript($streamState['payload'], $cannotBeProvenComplete, 0, $streamState['type']);
     }
 
     /**

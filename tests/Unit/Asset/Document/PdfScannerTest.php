@@ -190,6 +190,23 @@ class PdfScannerTest extends TestCase
         }
     }
 
+    public function testIndirectLengthObjectStreamWithEmbeddedEndstreamBytesIsFlagged(): void
+    {
+        // an indirect length is recovered by searching for the literal
+        // endstream keyword, a boundary a raw/stored deflate block can always
+        // spoof by embedding that exact byte sequence earlier in the
+        // payload; an object stream recovered this way can't be proven
+        // complete and so can't be certified safe, even without finding /JS
+        // in the (possibly truncated-at-the-fake-marker) recovered payload
+        $decompressed = '5 0 ' . str_repeat(' ', 40) . 'endstream' . str_repeat(' ', 40) . '<< >> endobj';
+        $compressed = gzcompress($decompressed, 0);
+        self::assertTrue(str_contains($compressed, 'endstream'), 'test setup: compressed bytes must contain "endstream" literally');
+
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length 3 0 R', $compressed);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testCompressedObjectStreamWithNestedDictionaryIsInspected(): void
     {
         $compressed = gzcompress(self::OBJECT_STREAM_WITH_JS);
