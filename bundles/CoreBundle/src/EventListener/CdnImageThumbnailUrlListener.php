@@ -103,7 +103,7 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
         // into a focal-point crop whenever the asset has a focal point set (see Thumbnail\Processor).
         // The resolver only sees the config and cannot know this, so guard it here where the asset
         // is available — the CDN cover fit is center-only and would crop differently.
-        if ($transform->fit === 'cover' && $this->hasFocalPoint($asset)) {
+        if ($transform->fit === 'cover' && $asset->getFocalPoint() !== null) {
             return;
         }
 
@@ -116,15 +116,5 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
         if ($url !== $originalPath) {
             $event->setArgument('frontendPath', $url);
         }
-    }
-
-    /**
-     * Both coordinates are required and 0 is a valid one (left/top edge), so they must not be
-     * checked for truthiness - this has to stay in sync with Thumbnail\Processor::getFocalPoint().
-     */
-    private function hasFocalPoint(Image $asset): bool
-    {
-        return is_numeric($asset->getCustomSetting('focalPointX'))
-            && is_numeric($asset->getCustomSetting('focalPointY'));
     }
 }

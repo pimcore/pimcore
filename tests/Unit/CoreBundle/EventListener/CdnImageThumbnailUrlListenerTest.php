@@ -45,7 +45,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $image->method('getCustomSetting')->willReturnCallback(
             static fn (string $key) => match ($key) {
                 'focalPointX' => $focalPointX,
-                'focalPointY' => $focalPointY ?? $focalPointX,
+                'focalPointY' => $focalPointY,
                 default => null,
             },
         );
@@ -159,11 +159,37 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $adapter->expects(self::never())->method('buildUrl');
 
         $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS, new AssetWebPath());
-        $event = $this->event($this->image('/folder/photo.jpg', focalPointX: 50), new Config());
+        $event = $this->event(
+            $this->image('/folder/photo.jpg', focalPointX: 50, focalPointY: 25),
+            new Config()
+        );
 
         $listener->onThumbnailPath($event);
 
         self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testRewritesCoverWithIncompleteFocalPoint(): void
+    {
+        // Only one of the two coordinates is set, so there is no usable focal point - the
+        // processor crops centered in that case and the CDN can reproduce it faithfully.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(200, 200, 'cover'));
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::once())
+            ->method('buildUrl')
+            ->willReturn('https://cdn.example.com/var/assets/folder/photo.jpg?width=200&height=200&fit=cover');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS, new AssetWebPath());
+        $event = $this->event($this->image('/folder/photo.jpg', focalPointX: 50), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame(
+            'https://cdn.example.com/var/assets/folder/photo.jpg?width=200&height=200&fit=cover',
+            $event->getArgument('frontendPath'),
+        );
     }
 
     public function testDoesNotRewriteCoverWithFocalPointOnTheEdge(): void
