@@ -1,5 +1,28 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.0
+
+### [Documents] Static page generator: frontend requests only store a static page when it is safe to share
+
+When a frontend request renders a document that has the static page generator enabled, the
+response is only stored as its static page if all of the following apply:
+
+- the response status is `200`,
+- the request has no query string,
+- the request carries no session data (the same check the full page cache uses; session keys
+  can be excluded via the `FullPageCacheEvents::IGNORED_SESSION_KEYS` event),
+- the resolved document is the one addressed by the request path. A sub-path that falls back
+  to an ancestor document, or a static route rendered with a document, no longer overwrites
+  that document's static page.
+
+Requests that do not qualify still render normally; the static page is written by the next
+qualifying request, the maintenance job or `pimcore:documents:generate-static-pages`.
+
+If the static page router (`pimcore.documents.static_page_router`) is enabled, requests with
+a query string are no longer answered from the stored static pages and are rendered instead.
+Static pages delivered directly by the web server, as configured in the documentation, are not
+affected.
+
 ## Pimcore 2026.2.11
 
 ### [Assets] Storage operation queue: `pimcore:assets:storage-queue:process` now stops at the first failing row
