@@ -27,10 +27,13 @@ use Sabre\DAV\Exception\Forbidden;
 class Tree extends DAV\Tree
 {
     /**
-     * Resolves a node for every WebDAV operation (PROPFIND, LOCK, GET, PUT, DELETE, MKCOL, MOVE, ...).
-     * Anonymous requests never reach a node this way, so the asset-level "view"/mutation permission
-     * checks in Folder/File can no longer be bypassed by operations - like PROPFIND and LOCK - that
-     * don't call any of those gated methods themselves.
+     * Resolves a node for the node-based WebDAV operations (PROPFIND, LOCK, GET, PUT, DELETE, MKCOL,
+     * MOVE, ...). Anonymous requests never reach a node this way, so the asset-level "view"/mutation
+     * permission checks in Folder/File can no longer be bypassed by operations - like PROPFIND and
+     * LOCK - that don't call any of those gated methods themselves.
+     *
+     * Operations that never resolve a node (UNLOCK only talks to the lock backend) are guarded by
+     * AuthenticationPlugin, which rejects anonymous requests before Sabre dispatches any method.
      *
      * @param string $path
      *

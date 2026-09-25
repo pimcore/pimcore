@@ -29,10 +29,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
- * Regression test for GHSA-xj42-3gh9-g6jv: Sabre resolves every WebDAV operation - including
- * PROPFIND (metadata) and LOCK, which never call any of the permission-gated File/Folder methods
- * themselves - through Tree::getNodeForPath(). Without a check there, an unauthenticated request
- * can enumerate asset existence/metadata and place locks.
+ * Regression test for GHSA-xj42-3gh9-g6jv: Sabre resolves the node-based WebDAV operations -
+ * including PROPFIND (metadata) and LOCK, which never call any of the permission-gated File/Folder
+ * methods themselves - through Tree::getNodeForPath(). Without a check there, an unauthenticated
+ * request can enumerate asset existence/metadata and place locks.
+ *
+ * Operations that don't resolve a node, like UNLOCK, are covered at the server level by
+ * ServerAuthenticationTest.
  *
  * @group model.asset.webdav
  */
