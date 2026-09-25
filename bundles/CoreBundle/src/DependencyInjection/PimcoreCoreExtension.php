@@ -83,6 +83,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
 
         // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
         $container->setParameter('pimcore.cache.max_write_items', $config['cache']['max_write_items']);
