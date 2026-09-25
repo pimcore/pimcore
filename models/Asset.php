@@ -323,85 +323,90 @@ class Asset extends Element\AbstractElement
         // (tree) is generated immediately after creating an image
         $type = 'unknown';
         $tmpFile = null;
-        if (
-            array_key_exists('filename', $data) &&
-            (
-                array_key_exists('data', $data) ||
-                array_key_exists('sourcePath', $data) ||
-                array_key_exists('stream', $data)
-            )
-        ) {
-            $mimeTypeHelper = new MimeTypeHelper();
-            $mimeType = 'directory';
-            $mimeTypeGuessData = null;
-            if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . pathinfo($data['filename'], PATHINFO_EXTENSION);
-                $mimeTypeGuessData = $tmpFile;
 
-                if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
-                    throw new InvalidArgumentException('Invalid filename');
-                }
+        try {
+            if (
+                array_key_exists('filename', $data) &&
+                (
+                    array_key_exists('data', $data) ||
+                    array_key_exists('sourcePath', $data) ||
+                    array_key_exists('stream', $data)
+                )
+            ) {
+                $mimeTypeHelper = new MimeTypeHelper();
+                $mimeType = 'directory';
+                $mimeTypeGuessData = null;
+                if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
+                    $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . pathinfo($data['filename'], PATHINFO_EXTENSION);
+                    $mimeTypeGuessData = $tmpFile;
 
-                if (array_key_exists('data', $data)) {
-                    $filesystem = new Filesystem();
-                    $filesystem->dumpFile($tmpFile, $data['data']);
-                } else {
-                    // guess mime type from stream directly
-                    $mimeTypeGuessData = $data['stream'];
-                }
-
-                $mimeType = $mimeTypeHelper->guessMimeType(
-                    $mimeTypeGuessData
-                );
-            } else {
-                if (!is_dir($data['sourcePath'])) {
-                    $mimeTypeGuessData = $data['sourcePath'];
-                    if (is_file($data['sourcePath'])) {
-                        $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                    if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
+                        throw new InvalidArgumentException('Invalid filename');
                     }
-                    $mimeType = $mimeTypeHelper->guessMimeType($mimeTypeGuessData);
+
+                    if (array_key_exists('data', $data)) {
+                        $filesystem = new Filesystem();
+                        $filesystem->dumpFile($tmpFile, $data['data']);
+                    } else {
+                        // guess mime type from stream directly
+                        $mimeTypeGuessData = $data['stream'];
+                    }
+
+                    $mimeType = $mimeTypeHelper->guessMimeType(
+                        $mimeTypeGuessData
+                    );
+                } else {
+                    if (!is_dir($data['sourcePath'])) {
+                        $mimeTypeGuessData = $data['sourcePath'];
+                        if (is_file($data['sourcePath'])) {
+                            $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                        }
+                        $mimeType = $mimeTypeHelper->guessMimeType($mimeTypeGuessData);
+                    }
+                    unset($data['sourcePath']);
                 }
-                unset($data['sourcePath']);
-            }
 
-            $mimeType ??= 'application/octet-stream';
-            $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
-            $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
-            Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
-            $mimeType = $mimeTypeEvent->getMimeType();
+                $mimeType ??= 'application/octet-stream';
+                $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
+                $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
+                Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+                $mimeType = $mimeTypeEvent->getMimeType();
 
-            $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
-            // only check maxpixels if it is an image
-            if ($type === 'image' && $mimeTypeGuessData) {
-                self::checkMaxPixels($mimeTypeGuessData, $data);
-            }
+                $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
+                // only check maxpixels if it is an image
+                if ($type === 'image' && $mimeTypeGuessData) {
+                    self::checkMaxPixels($mimeTypeGuessData, $data);
+                }
 
-            if (array_key_exists('type', $data)) {
+                if (array_key_exists('type', $data)) {
+                    unset($data['type']);
+                }
+            } elseif (array_key_exists('type', $data)) {
+                $type = $data['type'];
                 unset($data['type']);
             }
-        } elseif (array_key_exists('type', $data)) {
-            $type = $data['type'];
-            unset($data['type']);
+
+            $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type)
+                ?? throw new InvalidArgumentException('Invalid asset type provided');
+
+            /** @var Asset $asset */
+            $asset = self::getModelFactory()->build($className);
+            $asset->setParentId($parentId);
+            self::checkCreateData($data);
+            $asset->setValues($data);
+
+            if ($save) {
+                $asset->save();
+            }
+
+            return $asset;
+        } finally {
+            // remove the mime-detection temp file on every exit path - a throwing
+            // validation, type resolution or save previously leaked one per failed create
+            if ($tmpFile !== null && file_exists($tmpFile)) {
+                unlink($tmpFile);
+            }
         }
-
-        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type)
-            ?? throw new InvalidArgumentException('Invalid asset type provided');
-
-        /** @var Asset $asset */
-        $asset = self::getModelFactory()->build($className);
-        $asset->setParentId($parentId);
-        self::checkCreateData($data);
-        $asset->setValues($data);
-
-        if ($save) {
-            $asset->save();
-        }
-
-        if ($tmpFile !== null && file_exists($tmpFile)) {
-            unlink($tmpFile);
-        }
-
-        return $asset;
     }
 
     private static function getImageSizeFromStream(mixed $stream): array
@@ -1053,9 +1058,17 @@ class Asset extends Element\AbstractElement
                     }
                 }
 
-                // Dispatch Symfony Message Bus to delete versions
+                // Dispatch Symfony Message Bus to delete versions - bounded to the versions
+                // existing right now, so a later re-use of this id (WebDAV delete-log restore)
+                // does not lose versions created after the restore. The bound is captured FOR
+                // UPDATE inside this delete transaction, so a concurrent saveVersion() cannot
+                // slip a version above the bound before the delete commits
                 Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                    new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+                    new VersionDeleteMessage(
+                        Service::getElementType($this),
+                        $this->getId(),
+                        Version::getHighestIdForElement(Service::getElementType($this), $this->getId(), true) ?? 0
+                    )
                 );
 
                 // remove all properties
