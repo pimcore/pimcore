@@ -188,4 +188,85 @@ class LinkTest extends ModelTestCase
         // "0" is valid link text and must not be treated as empty / fall back to the href.
         $this->assertEquals('<a href="https://pimcore.com" >0</a>', $link->getHtml());
     }
+
+    public function testGetHtmlEscapesAttributeValues(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click me');
+        $link->setTitle('" data-marker="1');
+
+        $html = $link->getHtml();
+
+        $this->assertStringNotContainsString('data-marker="1"', $html);
+        $this->assertStringContainsString('title="&quot; data-marker=&quot;1"', $html);
+    }
+
+    public function testGetHtmlEscapesClassAttributeValue(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setClass('" data-marker="1');
+
+        $html = $link->getHtml();
+
+        $this->assertStringNotContainsString('data-marker="1"', $html);
+        $this->assertStringContainsString('class="&quot; data-marker=&quot;1"', $html);
+    }
+
+    public function testGetHtmlRejectsScriptExecutingScheme(): void
+    {
+        $link = new Link();
+        $link->setDirect('javascript:void(0)');
+        $link->setText('Safe link');
+
+        $html = $link->getHtml();
+
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertEquals('<a href="" >Safe link</a>', $html);
+    }
+
+    public function testGetHtmlRejectsScriptExecutingSchemeWithEmbeddedWhitespace(): void
+    {
+        $link = new Link();
+        $link->setDirect("java\tscript:void(0)");
+        $link->setText('Safe link');
+
+        $this->assertStringNotContainsString('javascript:', $link->getHtml());
+    }
+
+    public function testGetHtmlStripsEventHandlerFromFreeFormAttributes(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setAttributes('autofocus onclick=x');
+
+        $html = $link->getHtml();
+
+        $this->assertStringNotContainsString('onclick', $html);
+        $this->assertStringContainsString('autofocus', $html);
+    }
+
+    public function testGetHtmlKeepsLegitimateFreeFormAttributes(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setAttributes('data-foo="bar" data-baz=\'qux\'');
+
+        $html = $link->getHtml();
+
+        $this->assertStringContainsString('data-foo="bar" data-baz=\'qux\'', $html);
+    }
+
+    public function testGetHtmlKeepsLegitimateNonScriptSchemes(): void
+    {
+        $link = new Link();
+        $link->setDirect('mailto:test@example.com');
+        $link->setText('Mail us');
+
+        $this->assertEquals('<a href="mailto:test@example.com" >Mail us</a>', $link->getHtml());
+    }
 }
