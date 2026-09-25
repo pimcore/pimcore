@@ -1,5 +1,12 @@
 # Upgrade Notes
 
+## Pimcore 2027.1.0
+
+### [Assets]
+- [Thumbnails] The public thumbnail route now returns a `404 Not Found` when the requested asset or the thumbnail configuration does not exist, or when the thumbnail can neither be delivered nor (re)generated - previously all of these redirected to the `filetype-not-supported.svg` placeholder. The placeholder redirect is now reserved for thumbnails whose generation actually failed, e.g. because of a broken source file. Frontends relying on the redirect for unresolvable thumbnail URLs will see the browser's broken-image handling and an error document instead.
+- [Thumbnails] A read failure for a cached thumbnail file that still exists on the thumbnail storage - or whose existence cannot be determined - is no longer swallowed by `Asset\Service::getStreamedResponseForThumbnail()` and retried as a regeneration. Regenerating masked a storage fault (permission, I/O or backend availability) as a cache miss and did so for every request; the underlying `League\Flysystem\UnableToReadFile` is surfaced instead, and the route answers with the placeholder. A transient storage failure therefore no longer self-heals by regenerating the thumbnail. Files that are genuinely gone keep falling through to regeneration as before. The `@internal` `getStreamedResponseForThumbnail()` additionally throws the new `@internal` `Pimcore\Model\Exception\ThumbnailGenerationFailedException` for a failed generation and accepts an optional `FilesystemOperator` as its third argument. `Asset\Service::getStreamedResponseByUri()` is unaffected and keeps its documented `?StreamedResponse` contract: it returns `null` for both cases.
+- [Thumbnails] `ImageThumbnailTrait::getStream()` now also discards the memoized path reference (`reset()`) when it runs into a thumbnail file that is missing from the storage. Later calls such as `exists()`, `getPath()` or `getFileSize()` on that same instance therefore no longer report the missing file as existing, and can trigger a synchronous regeneration where they previously returned the stale values.
+
 ## Pimcore 2026.3.0
 
 ### [General]

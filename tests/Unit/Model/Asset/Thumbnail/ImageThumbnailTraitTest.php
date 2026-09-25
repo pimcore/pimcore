@@ -37,6 +37,7 @@ class ImageThumbnailTraitTest extends TestCase
         // a permission, I/O or backend availability problem is not a stale reference,
         // so the status cache entry must survive and the instance keeps its state
         $asset = $this->createMock(Asset\Image::class);
+        $asset->method('getFilename')->willReturn('testimage.jpg');
         $asset->expects($this->never())->method('getDao');
 
         $thumbnail = $this->createThumbnail($storage, $asset, $this->createConfig());
@@ -46,6 +47,7 @@ class ImageThumbnailTraitTest extends TestCase
             $this->fail('Expected ' . UnableToReadFile::class . ' to be thrown');
         } catch (UnableToReadFile $e) {
             $this->assertSame(self::STORAGE_PATH, $thumbnail->getPathReference(true)['storagePath']);
+            $this->assertSame(0, $thumbnail->generateCalls);
         }
     }
 
@@ -56,6 +58,7 @@ class ImageThumbnailTraitTest extends TestCase
         $storage->method('fileExists')->willThrowException(UnableToCheckFileExistence::forLocation(self::STORAGE_PATH));
 
         $asset = $this->createMock(Asset\Image::class);
+        $asset->method('getFilename')->willReturn('testimage.jpg');
         $asset->expects($this->never())->method('getDao');
 
         $thumbnail = $this->createThumbnail($storage, $asset, $this->createConfig());
@@ -76,11 +79,18 @@ class ImageThumbnailTraitTest extends TestCase
             ->with('unittest', basename(self::STORAGE_PATH));
 
         $asset = $this->createMock(Asset\Image::class);
+        $asset->method('getFilename')->willReturn('testimage.jpg');
         $asset->method('getDao')->willReturn($dao);
 
         $thumbnail = $this->createThumbnail($storage, $asset, $this->createConfig());
 
         $this->assertNull($thumbnail->getStream());
+
+        // the memoized path reference is discarded as well, so a later call on this same
+        // instance re-resolves instead of pointing at the file that is no longer there
+        $this->assertSame(0, $thumbnail->generateCalls);
+        $thumbnail->getPathReference(true);
+        $this->assertSame(1, $thumbnail->generateCalls);
     }
 
     public function testGetStreamInvalidatesStatusCacheOfDelegatedOwner(): void
@@ -100,37 +110,10 @@ class ImageThumbnailTraitTest extends TestCase
         $owner->method('getDao')->willReturn($ownerDao);
 
         $asset = $this->createMock(Asset\Image::class);
+        $asset->method('getFilename')->willReturn('testimage.jpg');
         $asset->expects($this->never())->method('getDao');
 
-        $thumbnail = new class($this->createConfig(), $storage, $asset, $owner, self::STORAGE_PATH) {
-            use ImageThumbnailTrait;
-
-            public function __construct(
-                ?Config $config,
-                private readonly FilesystemOperator $storage,
-                ?Asset $asset,
-                private readonly ?Asset $cacheOwner,
-                string $storagePath
-            ) {
-                $this->asset = $asset;
-                $this->config = $config;
-                $this->pathReference = [
-                    'type' => 'thumbnail',
-                    'src' => $storagePath,
-                    'storagePath' => $storagePath,
-                ];
-            }
-
-            protected function getThumbnailStorage(): FilesystemOperator
-            {
-                return $this->storage;
-            }
-
-            protected function getThumbnailStatusCacheOwner(): ?Asset
-            {
-                return $this->cacheOwner;
-            }
-        };
+        $thumbnail = $this->createThumbnail($storage, $asset, $this->createConfig(), $owner);
 
         $this->assertNull($thumbnail->getStream());
     }
@@ -143,29 +126,52 @@ class ImageThumbnailTraitTest extends TestCase
         return $config;
     }
 
-    private function createThumbnail(FilesystemOperator $storage, Asset $asset, Config $config): object
-    {
-        return new class($storage, $asset, $config, self::STORAGE_PATH) {
+    private function createThumbnail(
+        FilesystemOperator $storage,
+        Asset $asset,
+        Config $config,
+        ?Asset $cacheOwner = null
+    ): object {
+        return new class($storage, $asset, $config, $cacheOwner, self::STORAGE_PATH) {
             use ImageThumbnailTrait;
+
+            public int $generateCalls = 0;
 
             public function __construct(
                 private readonly FilesystemOperator $storage,
                 ?Asset $asset,
                 ?Config $config,
-                string $storagePath
+                private readonly ?Asset $cacheOwner,
+                private readonly string $storagePath
             ) {
                 $this->asset = $asset;
                 $this->config = $config;
-                $this->pathReference = [
-                    'type' => 'thumbnail',
-                    'src' => $storagePath,
-                    'storagePath' => $storagePath,
-                ];
+                $this->pathReference = $this->buildPathReference();
+            }
+
+            public function generate(bool $deferredAllowed = true): void
+            {
+                $this->generateCalls++;
+                $this->pathReference = $this->buildPathReference();
             }
 
             protected function getThumbnailStorage(): FilesystemOperator
             {
                 return $this->storage;
+            }
+
+            protected function getThumbnailStatusCacheOwner(): ?Asset
+            {
+                return $this->cacheOwner ?? $this->asset;
+            }
+
+            private function buildPathReference(): array
+            {
+                return [
+                    'type' => 'thumbnail',
+                    'src' => $this->storagePath,
+                    'storagePath' => $this->storagePath,
+                ];
             }
         };
     }
