@@ -20,12 +20,27 @@ use Generator;
  * tokens, instead of raw byte matching which flags binary (compressed) stream
  * data by chance (see #16955).
  *
- * Stream data is not scanned as text. It ends at the stream's declared /Length
- * or at the next endstream keyword, whichever comes first, and everything
- * after it is scanned as regular file content. Objects — and with them
- * actions — can only live inside stream data when it is an object stream, so
- * a payload is decoded (ASCIIHex, ASCII85 and Flate, sniffed from the data
- * itself) and scanned only when it decodes to an object stream.
+ * Stream data is not scanned as text. A direct /Length is trusted outright
+ * for where the payload ends — never by searching for the endstream keyword
+ * inside it, since a genuine payload can be made to contain that exact byte
+ * sequence (e.g. a raw/stored deflate block) and stopping there would
+ * truncate the decode early. Everything past a fulfilled declared length is
+ * scanned like ordinary file content, whether or not it happens to contain
+ * the endstream keyword itself — a short declared length doesn't leave a gap
+ * that's skipped unscanned the way it used to. Only when the file runs out
+ * before the declared length is satisfied is it treated as unfulfillable,
+ * recovering the true payload from the literal endstream keyword instead.
+ * The same recovery applies when the length is missing or an indirect
+ * reference to begin with, which this heuristic scanner can't resolve.
+ *
+ * Objects — and with them actions — can only live inside stream data when it
+ * is an object stream. The dictionary's own /Type decides that whenever it is
+ * present and readable; only when it is missing or an indirect reference does
+ * a structural fallback (PDF 32000-1 §7.5.7: pairs of integers ahead of the
+ * objects) apply, so a stream explicitly typed as something else (an image,
+ * for instance) is never scanned no matter what its payload happens to
+ * contain. Every payload resolved this way is decoded (ASCIIHex, ASCII85 and
+ * Flate, sniffed from the data itself) before it is scanned.
  *
  * This is a heuristic pre-check for the admin preview, not a sanitizer: object
  * streams using any other encoding (LZW, RunLength, predictors, encryption)
@@ -52,9 +67,12 @@ final class PdfScanner
 
     /**
      * Text preceding a stream keyword that is kept for reading the stream's
-     * dictionary.
+     * dictionary. Bounded so an attacker sending endless non-stream content
+     * can't grow this without limit; real dictionaries are a tiny fraction
+     * of this size, so a bigger one is treated as unreadable — the safe
+     * direction, since that just means the length falls back to unknown.
      */
-    private const MAX_DICTIONARY_BYTES = 65536;
+    private const MAX_DICTIONARY_BYTES = 1024 * 1024;
 
     /**
      * Bounds how much of a single stream payload is buffered for decoding.
@@ -113,7 +131,7 @@ final class PdfScanner
      * Consumes the buffer, retaining an unconsumed tail so tokens and keywords
      * split across chunk boundaries are seen once completed by the next read.
      *
-     * @param array{remaining: ?int, payload: string, truncated: bool}|null $streamState
+     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool}|null $streamState
      */
     private function scanBuffer(string &$buffer, string &$context, ?array &$streamState, bool $atEof): bool
     {
@@ -122,36 +140,90 @@ final class PdfScanner
 
         while (true) {
             if ($streamState !== null) {
-                $available = $length - $position;
-                $remaining = $streamState['remaining'];
+                if ($streamState['remaining'] !== null) {
+                    // a declared length is trusted outright, and never by
+                    // searching for the endstream keyword inside it — a
+                    // genuine payload can be made to contain that byte
+                    // sequence (e.g. a raw/stored deflate block), and
+                    // stopping at it would truncate the decode early
+                    $consume = min($length - $position, $streamState['remaining']);
+                    $this->collectStreamBytes($streamState, substr($buffer, $position, $consume));
+                    $position += $consume;
+                    $streamState['remaining'] -= $consume;
+
+                    if ($streamState['remaining'] > 0) {
+                        if (!$atEof) {
+                            // payload continues beyond this chunk
+                            $buffer = '';
+
+                            return false;
+                        }
+
+                        // the file ended before the declared length could be
+                        // fulfilled, so it can't be trusted after all. If the
+                        // real endstream is already among what was
+                        // collected, the true payload is everything before
+                        // it; resume normal scanning right after it, the
+                        // same as a too-long length recovers below. If it
+                        // isn't there either, there's nothing left in the
+                        // file to recover a boundary from.
+                        $payload = $streamState['payload'];
+                        $endstream = $streamState['truncated'] ? false : strpos($payload, self::ENDSTREAM_KEYWORD);
+
+                        if ($endstream === false) {
+                            $buffer = '';
+
+                            return false;
+                        }
+
+                        $streamState['payload'] = substr($payload, 0, $endstream);
+                        $buffer = substr($payload, $endstream + strlen(self::ENDSTREAM_KEYWORD));
+                        $length = strlen($buffer);
+                        $position = 0;
+
+                        if ($this->streamPayloadContainsJavaScript($streamState)) {
+                            return true;
+                        }
+
+                        $streamState = null;
+
+                        continue;
+                    }
+
+                    // the declared length was fully consumed: trust it
+                    // outright and resume normal scanning right after it,
+                    // regardless of what follows. A too-short declared length
+                    // means everything past it is, by definition, no longer
+                    // stream data — this is what closes the smuggling bypass,
+                    // the gap is scanned like any other file content instead
+                    // of being skipped as if it were still part of the stream.
+                    if ($this->streamPayloadContainsJavaScript($streamState)) {
+                        return true;
+                    }
+
+                    $streamState = null;
+
+                    continue;
+                }
+
+                // length unknown (missing or an indirect reference) or given
+                // up on above: fall back to finding the literal endstream
+                // keyword, exactly as this class always did before it
+                // inspected streams — the payload found this way is still
+                // decoded and checked like any other, just without a
+                // validated exact boundary
                 $endstream = strpos($buffer, self::ENDSTREAM_KEYWORD, $position);
-
-                // a reader recovering from a wrong /Length ends the payload at
-                // the endstream keyword — whichever end comes first applies
-                $complete = true;
-                if ($endstream !== false && ($remaining === null || $endstream - $position <= $remaining)) {
-                    $consume = $endstream - $position;
-                } elseif ($remaining !== null && $remaining <= $available) {
-                    $consume = $remaining;
-                } elseif ($atEof) {
-                    $consume = $available;
-                } else {
-                    // hold back what may be the start of a split endstream keyword
-                    $consume = max(0, $available - (strlen(self::ENDSTREAM_KEYWORD) - 1));
-                    $complete = false;
-                }
-
-                $this->collectStreamBytes($streamState, substr($buffer, $position, $consume));
-                $position += $consume;
-                if ($remaining !== null) {
-                    $streamState['remaining'] = $remaining - $consume;
-                }
-
-                if (!$complete) {
-                    $buffer = substr($buffer, $position);
+                if ($endstream === false) {
+                    $keep = $atEof ? 0 : strlen(self::ENDSTREAM_KEYWORD) - 1;
+                    $cut = $atEof ? $length : max($position, $length - $keep);
+                    $this->collectStreamBytes($streamState, substr($buffer, $position, $cut - $position));
+                    $buffer = substr($buffer, $cut);
 
                     return false;
                 }
+
+                $this->collectStreamBytes($streamState, substr($buffer, $position, $endstream - $position));
+                $position = $endstream + strlen(self::ENDSTREAM_KEYWORD);
 
                 if ($this->streamPayloadContainsJavaScript($streamState)) {
                     return true;
@@ -190,8 +262,11 @@ final class PdfScanner
             $position = $streamKeywordStart + strlen(self::STREAM_KEYWORD);
             $position += ($buffer[$position] ?? '') === "\r" && ($buffer[$position + 1] ?? '') === "\n" ? 2 : 1;
 
+            $entries = $this->readStreamDictionary($dictionary);
+
             $streamState = [
-                'remaining' => $this->detectStreamLength($dictionary),
+                'remaining' => $this->extractStreamLength($entries),
+                'type' => $this->extractStreamType($entries),
                 'payload' => '',
                 'truncated' => false,
             ];
@@ -199,39 +274,58 @@ final class PdfScanner
     }
 
     /**
-     * Reads a direct /Length from the stream's own dictionary, the one closing
-     * right before the stream keyword. Returns null when it is missing, an
-     * indirect reference (e.g. `/Length 5 0 R`) or the dictionary can't be
-     * read — the payload then ends at the endstream keyword.
+     * Reads a direct /Length from the stream's own dictionary. Returns null
+     * when it is missing, an indirect reference (e.g. `/Length 5 0 R`) or the
+     * dictionary can't be read — the caller then falls back to treating the
+     * stream exactly as before this class used /Length at all.
      */
-    private function detectStreamLength(string $precedingText): ?int
+    private function extractStreamLength(?array $entries): ?int
     {
-        $entries = $this->readStreamDictionary($precedingText);
-        $length = $entries['Length'] ?? null;
-
-        if ($length === null || $length[0] !== 'word' || !ctype_digit($length[1])) {
+        $value = $entries['Length'] ?? null;
+        if ($value === null || $value[0] !== 'word') {
             return null;
         }
 
-        return (int) $length[1];
+        $digits = $value[1];
+        if ($digits !== '' && ($digits[0] === '+')) {
+            // PDF integers may carry an optional leading sign (PDF 32000-1
+            // §7.3.3); a negative length is nonsensical and left unknown
+            $digits = substr($digits, 1);
+        }
+
+        return $digits !== '' && ctype_digit($digits) ? (int) $digits : null;
     }
 
     /**
-     * @return array<string, array{0: string, 1: string}>|null top-level entries as [token type, value]
+     * Reads the stream's declared /Type, decoded like any other name. Null
+     * when it is missing or an indirect reference — the caller then falls
+     * back to recognizing an object stream by its own structure instead.
+     */
+    private function extractStreamType(?array $entries): ?string
+    {
+        $value = $entries['Type'] ?? null;
+
+        return $value !== null && $value[0] === 'name' ? $value[1] : null;
+    }
+
+    /**
+     * Reads the top-level entries of the dictionary that closes right before
+     * the stream keyword (the last one at nesting depth 0 in $precedingText,
+     * with nothing but whitespace or comments — correctly recognized even
+     * inside a literal string — following it).
+     *
+     * @return array<string, array{0: string, 1: string}>|null entries as [token type, value]
      */
     private function readStreamDictionary(string $precedingText): ?array
     {
-        $end = $this->skipTrailingWhitespaceAndComments($precedingText);
-        if ($end < 2 || substr($precedingText, $end - 2, 2) !== '>>') {
+        $dictionary = $this->findLastTopLevelDictionary($precedingText);
+        if ($dictionary === null) {
             return null;
         }
 
-        $start = $this->findDictionaryStart($precedingText, $end - 1);
-        if ($start === null) {
-            return null;
-        }
-
-        $tokens = $this->topLevelTokens(substr($precedingText, $start + 2, $end - $start - 4));
+        $tokens = $this->topLevelTokens(
+            substr($precedingText, $dictionary['start'] + 2, $dictionary['end'] - $dictionary['start'] - 4)
+        );
 
         $entries = [];
         $count = count($tokens);
@@ -253,80 +347,73 @@ final class PdfScanner
         return $entries;
     }
 
-    private function skipTrailingWhitespaceAndComments(string $text): int
-    {
-        $end = strlen($text);
-
-        while (true) {
-            $end = strlen(rtrim(substr($text, 0, $end), self::WHITESPACE));
-            $lineStart = max((int) strrpos(substr($text, 0, $end), "\n"), (int) strrpos(substr($text, 0, $end), "\r"));
-            $comment = strpos(substr($text, $lineStart, $end - $lineStart), '%');
-            if ($comment === false) {
-                return $end;
-            }
-
-            $end = $lineStart + $comment;
-        }
-    }
-
     /**
-     * Walks back from the dictionary's closing `>>` to its matching `<<`,
-     * skipping nested dictionaries and strings.
+     * Forward scan for the last dictionary that opens and closes at nesting
+     * depth 0, with nothing else at depth 0 following its close. Comments and
+     * literal strings are recognized correctly no matter what they contain
+     * (including a '%' or a nested, escaped ')'), so neither can be mistaken
+     * for structure — the same bug class that #16955 already ruled out of
+     * plain byte scanning.
+     *
+     * @return array{start: int, end: int}|null
      */
-    private function findDictionaryStart(string $text, int $closingAt): ?int
+    private function findLastTopLevelDictionary(string $text): ?array
     {
         $depth = 0;
+        $length = strlen($text);
+        $i = 0;
+        /** @var list<int> $starts */
+        $starts = [];
+        $last = null;
 
-        for ($i = $closingAt; $i >= 0; $i--) {
+        while ($i < $length) {
             $char = $text[$i];
 
-            if ($char === ')' && !$this->isEscaped($text, $i)) {
-                $i = $this->findLiteralStringStart($text, $i);
-                if ($i === null) {
-                    return null;
-                }
-            } elseif ($char === '>' && $i > 0 && $text[$i - 1] === '>') {
-                $depth++;
-                $i--;
-            } elseif ($char === '>') {
-                $i = strrpos(substr($text, 0, $i), '<');
-                if ($i === false) {
-                    return null;
-                }
-            } elseif ($char === '<' && $i > 0 && $text[$i - 1] === '<') {
-                $i--;
-                if (--$depth === 0) {
-                    return $i;
-                }
-            }
-        }
+            if (str_contains(self::WHITESPACE, $char)) {
+                $i++;
 
-        return null;
-    }
-
-    private function findLiteralStringStart(string $text, int $closingAt): ?int
-    {
-        $depth = 0;
-
-        for ($i = $closingAt; $i >= 0; $i--) {
-            if (($text[$i] !== '(' && $text[$i] !== ')') || $this->isEscaped($text, $i)) {
                 continue;
             }
 
-            $depth += $text[$i] === ')' ? 1 : -1;
+            if ($char === '%') {
+                $i += strcspn($text, "\r\n", $i);
+
+                continue;
+            }
+
             if ($depth === 0) {
-                return $i;
+                // real content at top level invalidates a previously found
+                // candidate — it wasn't the last thing here after all
+                $last = null;
+            }
+
+            if ($char === '(') {
+                $i = $this->findLiteralStringEnd($text, $i);
+            } elseif ($char === '<' && ($text[$i + 1] ?? '') === '<') {
+                $starts[] = $i;
+                $depth++;
+                $i += 2;
+            } elseif ($char === '>' && ($text[$i + 1] ?? '') === '>') {
+                $i += 2;
+                $start = array_pop($starts);
+                if ($start !== null && $depth > 0 && --$depth === 0) {
+                    $last = ['start' => $start, 'end' => $i];
+                }
+            } elseif ($char === '[') {
+                $depth++;
+                $i++;
+            } elseif ($char === ']') {
+                $i++;
+                $depth = max(0, $depth - 1);
+            } elseif ($char === '<') {
+                $end = strpos($text, '>', $i);
+                $i = $end === false ? $length : $end + 1;
+            } else {
+                $i += max(1, strcspn($text, self::WHITESPACE . self::DELIMITERS, $i));
             }
         }
 
-        return null;
-    }
-
-    private function isEscaped(string $text, int $offset): bool
-    {
-        $backslashes = strspn(strrev(substr($text, 0, $offset)), '\\');
-
-        return $backslashes % 2 === 1;
+        return $last;
     }
 
     /**
@@ -405,7 +492,7 @@ final class PdfScanner
     }
 
     /**
-     * @param array{remaining: ?int, payload: string, truncated: bool} $streamState
+     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool} $streamState
      */
     private function collectStreamBytes(array &$streamState, string $bytes): void
     {
@@ -425,22 +512,22 @@ final class PdfScanner
     }
 
     /**
-     * @param array{remaining: ?int, payload: string, truncated: bool} $streamState
+     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool} $streamState
      */
     private function streamPayloadContainsJavaScript(array $streamState): bool
     {
         // a truncated payload can't be cleared once its prefix decodes to an
         // object stream — legitimate object streams are far smaller
-        return $this->decodingsContainJavaScript($streamState['payload'], $streamState['truncated'], 0);
+        return $this->decodingsContainJavaScript($streamState['payload'], $streamState['truncated'], 0, $streamState['type']);
     }
 
     /**
      * Tries the payload as is and every ASCIIHex / ASCII85 / Flate decoding
      * of it, sniffed from the data itself rather than trusting /Filter.
      */
-    private function decodingsContainJavaScript(string $data, bool $headerOnly, int $depth): bool
+    private function decodingsContainJavaScript(string $data, bool $headerOnly, int $depth, ?string $type): bool
     {
-        if ($this->piecesContainJavaScript([$data], $headerOnly)) {
+        if ($this->piecesContainJavaScript([$data], $headerOnly, $type)) {
             return true;
         }
 
@@ -450,11 +537,11 @@ final class PdfScanner
 
         $data = ltrim($data, self::WHITESPACE);
         if ($this->hasZlibHeader($data)) {
-            return $this->piecesContainJavaScript($this->inflate($data), $headerOnly);
+            return $this->piecesContainJavaScript($this->inflate($data), $headerOnly, $type);
         }
 
         foreach ([$this->decodeAsciiHex($data), $this->decodeAscii85($data)] as $decoded) {
-            if ($decoded !== null && $this->decodingsContainJavaScript($decoded, $headerOnly, $depth + 1)) {
+            if ($decoded !== null && $this->decodingsContainJavaScript($decoded, $headerOnly, $depth + 1, $type)) {
                 return true;
             }
         }
@@ -463,22 +550,33 @@ final class PdfScanner
     }
 
     /**
-     * Scans decoded output piece by piece, provided it starts like an object
-     * stream (PDF 32000-1 §7.5.7: pairs of integers ahead of the objects).
+     * Scans decoded output piece by piece. Only an object stream can hold
+     * objects and thus an action: when the dictionary's own /Type says so,
+     * or says otherwise, that decides it outright; only when /Type is
+     * missing or unresolvable does whether the output starts like one (PDF
+     * 32000-1 §7.5.7: pairs of integers ahead of the objects) decide instead.
      *
      * @param iterable<string> $pieces
      */
-    private function piecesContainJavaScript(iterable $pieces, bool $headerOnly): bool
+    private function piecesContainJavaScript(iterable $pieces, bool $headerOnly, ?string $type): bool
     {
+        if ($type !== null && $type !== 'ObjStm') {
+            return false;
+        }
+
+        if ($type === 'ObjStm' && $headerOnly) {
+            return true;
+        }
+
         $probe = '';
-        $isObjectStream = null;
+        $confirmed = $type === 'ObjStm';
         $tail = '';
         $decodedBytes = 0;
 
         foreach ($pieces as $piece) {
             $decodedBytes += strlen($piece);
 
-            if ($isObjectStream === null) {
+            if (!$confirmed) {
                 $probe .= $piece;
                 $isObjectStream = $this->startsLikeObjectStream($probe, false);
                 if ($isObjectStream === null) {
@@ -489,6 +587,7 @@ final class PdfScanner
                     return $isObjectStream;
                 }
 
+                $confirmed = true;
                 $piece = $probe;
             }
 
@@ -504,8 +603,8 @@ final class PdfScanner
             $tail = substr($text, -self::BOUNDARY_OVERLAP);
         }
 
-        if ($isObjectStream === null) {
-            $isObjectStream = (bool) $this->startsLikeObjectStream($probe, true);
+        if (!$confirmed) {
+            $isObjectStream = $this->startsLikeObjectStream($probe, true);
             if (!$isObjectStream || $headerOnly) {
                 return $isObjectStream;
             }
