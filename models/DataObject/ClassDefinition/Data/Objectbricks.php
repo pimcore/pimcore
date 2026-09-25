@@ -850,7 +850,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $result[$key] = [];
 
                 foreach ($v as $fieldKey => $fieldValue) {
-                    $fd = $fds[$fieldKey];
+                    $fd = $fds[$fieldKey] ?? null;
+                    if ($fd === null) {
+                        // brick definition seems to have changed
+                        Logger::warn('brick definition seems to have changed, field name: ' . $fieldKey);
+
+                        continue;
+                    }
                     if ($fd instanceof NormalizerInterface) {
                         $fieldValue = $fd->denormalize($fieldValue, $params);
                     }
