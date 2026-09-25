@@ -38,6 +38,26 @@ Assets support two kinds of metadata:
 See [Working with Assets via PHP API](./04_Working_with_Assets_via_PHP_API.md) for metadata
 access examples and predefined system metadata fields.
 
+### Backfilling Metadata
+
+Embedded metadata is extracted asynchronously, together with image dimensions, video duration
+and document page count, when an asset is added or its file is changed. The extraction runs as an
+update task in the
+[Symfony Messenger queue](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/03_Advanced_Installation_Topics/01_Symfony_Messenger.md),
+under the `pimcore_asset_update` queue. Assets that were uploaded while that queue was not
+consumed therefore have no embedded metadata - the *Embedded Meta Info* tab stays empty.
+
+Such assets can be added back to the queue with:
+
+```bash
+bin/console pimcore:assets:add-to-update-task-queue --missing-metadata
+```
+
+Only assets that are actually missing the metadata are queued, so the command can be run on an
+existing installation without re-processing every asset. It can be narrowed down further with
+`--id`, `--parent` and `--path-pattern`, and combined with `--retry-failed` to include assets whose
+processing failed before.
+
 ## Thumbnails and Format Conversion
 
 Pimcore provides a thumbnail processing engine that generates optimized output variants
