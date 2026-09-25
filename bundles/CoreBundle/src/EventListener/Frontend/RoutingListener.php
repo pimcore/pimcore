@@ -104,7 +104,7 @@ class RoutingListener implements EventSubscriberInterface
 
         // check for a registered site
         // do not initialize a site if it is a "special" admin request
-        if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
+        if (!$this->requestHelper->isAuthenticatedFrontendRequestByAdmin($request)) {
             // host name without port incl. X-Forwarded-For handling for trusted proxies
             $host = $request->getHost();
             $site = Site::getByDomain($host);
@@ -160,7 +160,7 @@ class RoutingListener implements EventSubscriberInterface
                     $hostRedirect = $site->getMainDomain();
                 }
             } else {
-                if (!$this->requestHelper->isFrontendRequestByAdmin()) {
+                if (!$this->requestHelper->isAuthenticatedFrontendRequestByAdmin($request)) {
                     $hostRedirect = $this->resolveConfigDomainRedirectHost($request);
                 }
             }
