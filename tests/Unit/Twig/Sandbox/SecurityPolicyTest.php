@@ -327,6 +327,30 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
+     * @return iterable<string, array{string}>
+     */
+    public static function fileReadDeleteFunctionsProvider(): iterable
+    {
+        yield 'pimcore_asset_version_preview' => ['pimcore_asset_version_preview'];
+        yield 'pimcore_image_version_preview' => ['pimcore_image_version_preview'];
+    }
+
+    /**
+     * @dataProvider fileReadDeleteFunctionsProvider
+     */
+    public function testFileReadDeleteFunctionsAreNotAutoAllowedByDefault(string $function): void
+    {
+        // GHSA-f5q9-27jc-vxm9: HelpersExtension::getAssetVersionPreview()/
+        // getImageVersionPreview() take an arbitrary filesystem path, read its contents
+        // (returned base64-encoded) and then delete it - letting a sandboxed template
+        // read and destroy any file reachable by the PHP process (e.g. `.env`).
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], [$function]);
+    }
+
+    /**
      * @dataProvider idLookupPimcoreFunctionsAutoAllowedByDefaultProvider
      */
     public function testOtherIdLookupPimcoreFunctionsAreAutoAllowedByDefault(string $function): void
