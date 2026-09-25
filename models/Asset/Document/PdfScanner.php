@@ -230,7 +230,17 @@ final class PdfScanner
                     $this->collectStreamBytes($streamState, substr($buffer, $position, $cut - $position));
                     $buffer = substr($buffer, $cut);
 
-                    return false;
+                    if (!$atEof) {
+                        return false;
+                    }
+
+                    // never terminated: nothing to recover a boundary from.
+                    // A small, genuinely unterminated stream is left
+                    // unflagged, as this class always has; but once the
+                    // payload was large enough to be truncated, the
+                    // discarded remainder can't be ruled out and this can't
+                    // be certified safe
+                    return $streamState['truncated'];
                 }
 
                 $this->collectStreamBytes($streamState, substr($buffer, $position, $endstream - $position));
@@ -246,6 +256,21 @@ final class PdfScanner
             }
 
             $streamKeywordStart = $this->findStreamKeyword($buffer, $position);
+
+            if ($streamKeywordStart !== null && !$atEof) {
+                // the keyword's own EOL marker can itself be split across a
+                // chunk boundary: findStreamKeyword's lookahead already
+                // matches on a lone trailing \r because it can't see past
+                // the end of the buffer, but that \r might really be the
+                // first half of a \r\n whose \n hasn't been read yet.
+                // Treating it as a bare \r now would shift the payload start
+                // by one byte, so it's deferred until that's known for sure.
+                $eolStart = $streamKeywordStart + strlen(self::STREAM_KEYWORD);
+                if ($eolStart === $length - 1 && $buffer[$eolStart] === "\r") {
+                    $streamKeywordStart = null;
+                }
+            }
+
             $regionEnd = $streamKeywordStart ?? $length;
             $regionIsFinal = $streamKeywordStart === null && $atEof;
 
@@ -560,7 +585,21 @@ final class PdfScanner
 
         $data = ltrim($data, self::WHITESPACE);
         if ($this->hasZlibHeader($data)) {
-            return $this->piecesContainJavaScript($this->inflate($data), $headerOnly, $type);
+            // a legal filter chain can wrap Flate in another encoding (e.g.
+            // [/FlateDecode /ASCII85Decode]), so the inflated output is
+            // recursed into like any other decoding instead of being scanned
+            // as final; it's materialized (bounded, matching the scan cap)
+            // rather than kept as a generator, since decodeAsciiHex/Ascii85
+            // need the complete text
+            $inflated = '';
+            foreach ($this->inflate($data) as $piece) {
+                $inflated .= $piece;
+                if (strlen($inflated) > self::MAX_DECODED_BYTES) {
+                    break;
+                }
+            }
+
+            return $this->decodingsContainJavaScript($inflated, $headerOnly, $depth + 1, $type);
         }
 
         foreach ([$this->decodeAsciiHex($data), $this->decodeAscii85($data)] as $decoded) {

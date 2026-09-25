@@ -117,6 +117,60 @@ class PdfScannerTest extends TestCase
         }
     }
 
+    public function testCrlfSplitExactlyAcrossAChunkBoundaryDoesNotShiftThePayload(): void
+    {
+        // findStreamKeyword's lookahead can match on a lone trailing \r
+        // merely because it can't see past the end of the buffer yet, even
+        // though the real file has \r\n; if that \r were treated as a
+        // complete one-byte EOL, the payload would start one byte early,
+        // shifting a declared length so it ends one byte short — losing, for
+        // example, the closing '>' of an ASCII85 terminator
+        $ascii85 = $this->ascii85Encode(self::OBJECT_STREAM_WITH_JS) . '~>';
+        $prefix = '2 0 obj' . "\n" . '<< /Type /ObjStm /N 1 /First 4 /Filter /ASCII85Decode /Length '
+            . strlen($ascii85) . ' >>' . "\n" . 'stream';
+        $wrapped = $this->wrapPdf(
+            $prefix . "\r\n" . $ascii85 . "\nendstream\nendobj\n3 0 obj\n" . strlen($ascii85) . "\nendobj\n"
+        );
+
+        // the trailing \r of "stream\r\n" sits right at the header length
+        // (everything before it, from wrapPdf's own preamble); splitting the
+        // read exactly there is the case that can't yet tell \r from \r\n
+        $crOffset = strpos($wrapped, "stream\r\n") + strlen('stream') + 1;
+
+        foreach ([$crOffset, $crOffset + 1, null] as $chunkSize) {
+            $this->assertTrue($this->scan($wrapped, $chunkSize), sprintf('missed with chunk size %s', $chunkSize ?? 'default'));
+        }
+    }
+
+    public function testFlateThenAscii85FilterChainIsDecoded(): void
+    {
+        // /Filter [/FlateDecode /ASCII85Decode] decodes Flate first, then
+        // ASCII85 — the opposite order from testFilterChainsAroundFlateAreDecoded;
+        // inflating must not be the final decode attempt
+        $ascii85 = $this->ascii85Encode(self::OBJECT_STREAM_WITH_JS) . '~>';
+        $compressed = gzcompress($ascii85);
+        $pdf = $this->objectStreamPdf(
+            '/Filter [/FlateDecode /ASCII85Decode] /Length ' . strlen($compressed),
+            $compressed
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testUnresolvedLengthTruncatedWithoutRecoverableEndstreamIsFlagged(): void
+    {
+        // same as the declared-but-unfulfillable case: once a payload
+        // recovered without any validated length has been truncated at the
+        // buffer cap, and no endstream is ever found, the discarded
+        // remainder can't be ruled out and this can't be certified safe
+        $content = str_repeat('x', 17 * 1024 * 1024);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 5 0 R >>\nstream\n" . $content . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testShortReadsDoNotAbortTheScan(): void
     {
         // fread() may return less than the requested chunk size (e.g. remote
