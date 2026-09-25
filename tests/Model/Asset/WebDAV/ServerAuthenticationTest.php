@@ -71,7 +71,7 @@ class ServerAuthenticationTest extends ModelTestCase
         parent::tearDown();
     }
 
-    public function testUnlockIsForbiddenWithoutAuthentication(): void
+    public function testUnlockRequiresAuthentication(): void
     {
         $server = Service::createServer(self::BASE_URI);
         $path = $this->lockAsset($server, 'anonymous-unlock-target.txt');
@@ -79,18 +79,18 @@ class ServerAuthenticationTest extends ModelTestCase
 
         $response = $this->dispatch($server, 'UNLOCK', $path, ['Lock-Token' => '<opaquelocktoken:' . $this->lock->token . '>']);
 
-        $this->assertSame(403, $response->getStatus());
+        $this->assertAuthenticationChallenge($response);
         $this->assertCount(1, $this->lockBackend($server)->getLocks($path, false), 'The lock must survive an anonymous UNLOCK.');
     }
 
-    public function testPropfindIsForbiddenWithoutAuthentication(): void
+    public function testPropfindRequiresAuthentication(): void
     {
         $server = Service::createServer(self::BASE_URI);
         $this->tokenStorage()->setToken(null);
 
         $response = $this->dispatch($server, 'PROPFIND', '', ['Depth' => '0']);
 
-        $this->assertSame(403, $response->getStatus());
+        $this->assertAuthenticationChallenge($response);
     }
 
     public function testUnlockSucceedsWithAuthenticatedUser(): void
@@ -104,6 +104,15 @@ class ServerAuthenticationTest extends ModelTestCase
         $this->assertSame(204, $response->getStatus());
         $this->assertCount(0, $this->lockBackend($server)->getLocks($path, false));
         $this->lock = null;
+    }
+
+    /**
+     * Anonymous requests must be challenged, so that HTTP Basic clients resend them with credentials.
+     */
+    private function assertAuthenticationChallenge(Response $response): void
+    {
+        $this->assertSame(401, $response->getStatus());
+        $this->assertStringStartsWith('Basic ', (string) $response->getHeader('WWW-Authenticate'));
     }
 
     private function dispatch(Server $server, string $method, string $path, array $headers = []): Response

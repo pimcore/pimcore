@@ -28,9 +28,10 @@ class Tree extends DAV\Tree
 {
     /**
      * Resolves a node for the node-based WebDAV operations (PROPFIND, LOCK, GET, PUT, DELETE, MKCOL,
-     * MOVE, ...). Anonymous requests never reach a node this way, so the asset-level "view"/mutation
-     * permission checks in Folder/File can no longer be bypassed by operations - like PROPFIND and
-     * LOCK - that don't call any of those gated methods themselves.
+     * MOVE, ...). Anonymous requests never reach a node this way, so operations - like PROPFIND and
+     * LOCK - that don't call any of the permission-gated Folder/File methods themselves can no longer
+     * leak asset metadata or place locks without authentication. This is an authentication check
+     * only; it does not add per-asset "view" authorization to those operations.
      *
      * Operations that never resolve a node (UNLOCK only talks to the lock backend) are guarded by
      * AuthenticationPlugin, which rejects anonymous requests before Sabre dispatches any method.

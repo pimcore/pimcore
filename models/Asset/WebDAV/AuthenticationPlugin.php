@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Pimcore\Tool\Admin;
-use Sabre\DAV\Exception\Forbidden;
+use Sabre\DAV\Exception\NotAuthenticated;
 use Sabre\DAV\Server;
 use Sabre\DAV\ServerPlugin;
+use Sabre\HTTP\RequestInterface;
+use Sabre\HTTP\ResponseInterface;
 
 /**
  * Rejects every anonymous WebDAV request before Sabre dispatches the method. Not all methods
@@ -34,12 +36,17 @@ final class AuthenticationPlugin extends ServerPlugin
     }
 
     /**
-     * @throws Forbidden
+     * Server::start() turns the exception into the response itself, so the HTTP Basic challenge has
+     * to be added here - otherwise clients never resend the request with credentials.
+     *
+     * @throws NotAuthenticated
      */
-    public function beforeMethod(): void
+    public function beforeMethod(RequestInterface $request, ResponseInterface $response): void
     {
         if (Admin::getCurrentUser() === null) {
-            throw new Forbidden('No authenticated user available');
+            $response->addHeader('WWW-Authenticate', 'Basic realm="Pimcore WebDAV", charset="UTF-8"');
+
+            throw new NotAuthenticated('No authenticated user available');
         }
     }
 
