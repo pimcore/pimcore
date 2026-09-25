@@ -158,7 +158,10 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         }
 
         try {
-            $requestPath = $this->resolveRequestDocumentPath($request);
+            // the site root document is not necessarily a top-level document, so compare with its full path
+            $requestPath = Site::isSiteRequest() && $request->getPathInfo() === '/'
+                ? Site::getCurrentSite()->getRootPath()
+                : $this->resolveRequestDocumentPath($request);
         } catch (Exception $e) {
             Logger::error($e->getMessage());
 

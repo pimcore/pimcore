@@ -46,7 +46,11 @@ class StaticPageGeneratorListenerTest extends TestCase
 
     private function enterSite(string $rootPath): void
     {
+        $rootDocument = $this->createMock(Page::class);
+        $rootDocument->method('getKey')->willReturn(basename($rootPath));
+
         $site = new Site();
+        $site->setRootDocument($rootDocument);
         $site->setRootPath($rootPath);
         $this->setCurrentSite($site);
     }
@@ -215,6 +219,20 @@ class StaticPageGeneratorListenerTest extends TestCase
         $staticPageGenerator->expects($this->never())->method('generate');
 
         $request = Request::create('/products', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testGeneratesStaticPageForNestedSiteRootDocument(): void
+    {
+        // the site root document is not necessarily a top-level document
+        $this->enterSite('/sites/de');
+
+        $document = $this->makePage('/sites/de');
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->once())->method('generate');
+
+        $request = Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
         $this->dispatchResponse($listener, $request, new Response('body', 200));
     }
 }
