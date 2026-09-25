@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener;
+use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Config;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
@@ -68,7 +69,7 @@ class StaticPageGeneratorListenerTest extends TestCase
     /**
      * @return array{0: StaticPageGeneratorListener, 1: StaticPageGenerator&\PHPUnit\Framework\MockObject\MockObject}
      */
-    private function makeListener(?Page $document): array
+    private function makeListener(?Page $document, bool $sessionInUse = false): array
     {
         $staticPageGenerator = $this->createMock(StaticPageGenerator::class);
 
@@ -78,11 +79,15 @@ class StaticPageGeneratorListenerTest extends TestCase
         $requestHelper = $this->createMock(RequestHelper::class);
         $requestHelper->method('isFrontendRequestByAdmin')->willReturn(false);
 
+        $sessionStatus = $this->createMock(SessionStatus::class);
+        $sessionStatus->method('isDisabledBySession')->willReturn($sessionInUse);
+
         $listener = new StaticPageGeneratorListener(
             $staticPageGenerator,
             $documentResolver,
             $requestHelper,
-            new Config()
+            new Config(),
+            $sessionStatus
         );
 
         $pimcoreContextResolver = $this->createMock(PimcoreContextResolver::class);
@@ -233,6 +238,42 @@ class StaticPageGeneratorListenerTest extends TestCase
         $staticPageGenerator->expects($this->once())->method('generate');
 
         $request = Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testSkipsGenerationWhenSessionIsInUse(): void
+    {
+        // a response rendered for a request with session data may be personalized and
+        // must not be persisted as the static page served to everyone
+        $document = $this->makePage('/products');
+        [$listener, $staticPageGenerator] = $this->makeListener($document, true);
+
+        $staticPageGenerator->expects($this->never())->method('generate');
+
+        $request = Request::create('/products', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testSkipsGenerationWhenPlusInRequestPathOnlyMatchesAPrettyUrlWithASpace(): void
+    {
+        // routing decodes the path with rawurldecode(), so /foo+bar is not the page /foo bar
+        $document = $this->makePage('/en/foo-real-path', '/foo bar');
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->never())->method('generate');
+
+        $request = Request::create('/foo+bar', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testGeneratesStaticPageForDocumentPathContainingAPlus(): void
+    {
+        $document = $this->makePage('/foo+bar');
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->once())->method('generate');
+
+        $request = Request::create('/foo+bar', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
         $this->dispatchResponse($listener, $request, new Response('body', 200));
     }
 }

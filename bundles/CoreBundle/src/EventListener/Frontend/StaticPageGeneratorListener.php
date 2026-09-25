@@ -17,6 +17,7 @@ use DateTimeInterface;
 use Exception;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
+use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Config;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Event\DocumentEvents;
@@ -48,7 +49,8 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         protected StaticPageGenerator $staticPageGenerator,
         protected DocumentResolver $documentResolver,
         protected RequestHelper $requestHelper,
-        private Config $config
+        private Config $config,
+        private SessionStatus $sessionStatus
     ) {
     }
 
@@ -134,6 +136,11 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             return;
         }
 
+        // a response rendered with session data may be personalized, don't persist it for everyone
+        if ($this->sessionStatus->isDisabledBySession($request)) {
+            return;
+        }
+
         $document = $this->documentResolver->getDocument();
 
         if ($document instanceof Page
@@ -154,7 +161,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         // pretty URLs are site-relative and routed against the original request path
         // (see DocumentRouteHandler::matchRequest()), so they must not get the site root prefix
         if ($prettyUrl = $document->getPrettyUrl()) {
-            return $prettyUrl === urldecode($request->getPathInfo());
+            return $prettyUrl === rawurldecode($request->getPathInfo());
         }
 
         try {
@@ -174,7 +181,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     private function resolveRequestDocumentPath(Request $request): string
     {
         $path = '';
-        $filename = urldecode($request->getPathInfo());
+        $filename = rawurldecode($request->getPathInfo());
 
         if (Site::isSiteRequest()) {
             if ($request->getPathInfo() === '/') {
