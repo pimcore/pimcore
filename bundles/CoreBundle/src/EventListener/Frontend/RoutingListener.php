@@ -134,7 +134,10 @@ class RoutingListener implements EventSubscriberInterface
         // this is after the first redirect check, to allow redirects in app.php?xxx
         if (preg_match('@^/app\.php(.*)@', $path, $matches) && $request->getMethod() === 'GET') {
             $redirectUrl = $matches[1];
-            $redirectUrl = ltrim($redirectUrl, '/');
+            // strip leading slashes AND backslashes: browsers normalize a leading backslash
+            // to a forward slash for special-scheme URLs, so a lone ltrim('/') would still
+            // allow a scheme-relative redirect target like `/\evil.com` => `//evil.com`.
+            $redirectUrl = ltrim($redirectUrl, '/\\');
             $redirectUrl = '/' . $redirectUrl;
 
             $event->setResponse(new RedirectResponse($redirectUrl, Response::HTTP_MOVED_PERMANENTLY));
