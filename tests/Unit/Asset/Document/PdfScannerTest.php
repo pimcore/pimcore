@@ -19,6 +19,8 @@ use Pimcore\Tests\Support\Test\TestCase;
 
 class PdfScannerTest extends TestCase
 {
+    private const OBJECT_STREAM_WITH_JS = '5 0 << /S /JavaScript /JS (app.alert(1);) >>';
+
     public function testJsActionNameIsDetected(): void
     {
         $pdf = $this->wrapPdf(
@@ -115,6 +117,60 @@ class PdfScannerTest extends TestCase
         }
     }
 
+    public function testCrlfSplitExactlyAcrossAChunkBoundaryDoesNotShiftThePayload(): void
+    {
+        // findStreamKeyword's lookahead can match on a lone trailing \r
+        // merely because it can't see past the end of the buffer yet, even
+        // though the real file has \r\n; if that \r were treated as a
+        // complete one-byte EOL, the payload would start one byte early,
+        // shifting a declared length so it ends one byte short — losing, for
+        // example, the closing '>' of an ASCII85 terminator
+        $ascii85 = $this->ascii85Encode(self::OBJECT_STREAM_WITH_JS) . '~>';
+        $prefix = '2 0 obj' . "\n" . '<< /Type /ObjStm /N 1 /First 4 /Filter /ASCII85Decode /Length '
+            . strlen($ascii85) . ' >>' . "\n" . 'stream';
+        $wrapped = $this->wrapPdf(
+            $prefix . "\r\n" . $ascii85 . "\nendstream\nendobj\n3 0 obj\n" . strlen($ascii85) . "\nendobj\n"
+        );
+
+        // the trailing \r of "stream\r\n" sits right at the header length
+        // (everything before it, from wrapPdf's own preamble); splitting the
+        // read exactly there is the case that can't yet tell \r from \r\n
+        $crOffset = strpos($wrapped, "stream\r\n") + strlen('stream') + 1;
+
+        foreach ([$crOffset, $crOffset + 1, null] as $chunkSize) {
+            $this->assertTrue($this->scan($wrapped, $chunkSize), sprintf('missed with chunk size %s', $chunkSize ?? 'default'));
+        }
+    }
+
+    public function testFlateThenAscii85FilterChainIsDecoded(): void
+    {
+        // /Filter [/FlateDecode /ASCII85Decode] decodes Flate first, then
+        // ASCII85 — the opposite order from testFilterChainsAroundFlateAreDecoded;
+        // inflating must not be the final decode attempt
+        $ascii85 = $this->ascii85Encode(self::OBJECT_STREAM_WITH_JS) . '~>';
+        $compressed = gzcompress($ascii85);
+        $pdf = $this->objectStreamPdf(
+            '/Filter [/FlateDecode /ASCII85Decode] /Length ' . strlen($compressed),
+            $compressed
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testUnresolvedLengthTruncatedWithoutRecoverableEndstreamIsFlagged(): void
+    {
+        // same as the declared-but-unfulfillable case: once a payload
+        // recovered without any validated length has been truncated at the
+        // buffer cap, and no endstream is ever found, the discarded
+        // remainder can't be ruled out and this can't be certified safe
+        $content = str_repeat('x', 17 * 1024 * 1024);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 5 0 R >>\nstream\n" . $content . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testShortReadsDoNotAbortTheScan(): void
     {
         // fread() may return less than the requested chunk size (e.g. remote
@@ -144,6 +200,189 @@ class PdfScannerTest extends TestCase
         $this->assertFalse($this->scan($pdf));
     }
 
+    public function testContentBetweenDeclaredLengthAndEndstreamIsScanned(): void
+    {
+        // a stream's data ends at its declared /Length; what follows up to
+        // the endstream keyword is regular file content
+        $trailing = "\n>> \n5 0 obj\n<< /S /JavaScript /JS (app.alert(1);) >>\nendobj\n";
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 10 >>\nstream\n0123456789" . $trailing . 'endstream' . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testContentAfterEndstreamIsScannedWhenDeclaredLengthIsTooLong(): void
+    {
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 99999999 >>\nstream\nabc\nendstream\nendobj\n" .
+            "5 0 obj\n<< /S /JavaScript /JS (app.alert(1);) >>\nendobj\n"
+        );
+
+        foreach ([null, 1, 2, 3, 7, 16] as $chunkSize) {
+            $this->assertTrue($this->scan($pdf, $chunkSize), sprintf('missed with chunk size %s', $chunkSize ?? 'default'));
+        }
+    }
+
+    public function testFlateCompressedObjectStreamWithJsIsDetected(): void
+    {
+        $compressed = gzcompress(self::OBJECT_STREAM_WITH_JS);
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length ' . strlen($compressed), $compressed);
+
+        foreach ([null, 1, 2, 3, 7, 16] as $chunkSize) {
+            $this->assertTrue($this->scan($pdf, $chunkSize), sprintf('missed with chunk size %s', $chunkSize ?? 'default'));
+        }
+    }
+
+    public function testCompressedObjectStreamWithIndirectLengthIsInspected(): void
+    {
+        $compressed = gzcompress(self::OBJECT_STREAM_WITH_JS);
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length 3 0 R', $compressed);
+
+        foreach ([null, 1, 7] as $chunkSize) {
+            $this->assertTrue($this->scan($pdf, $chunkSize), sprintf('missed with chunk size %s', $chunkSize ?? 'default'));
+        }
+    }
+
+    public function testIndirectLengthObjectStreamWithEmbeddedEndstreamBytesIsFlagged(): void
+    {
+        // an indirect length is recovered by searching for the literal
+        // endstream keyword, a boundary a raw/stored deflate block can always
+        // spoof by embedding that exact byte sequence earlier in the
+        // payload; an object stream recovered this way can't be proven
+        // complete and so can't be certified safe, even without finding /JS
+        // in the (possibly truncated-at-the-fake-marker) recovered payload
+        $decompressed = '5 0 ' . str_repeat(' ', 40) . 'endstream' . str_repeat(' ', 40) . '<< >> endobj';
+        $compressed = gzcompress($decompressed, 0);
+        self::assertTrue(str_contains($compressed, 'endstream'), 'test setup: compressed bytes must contain "endstream" literally');
+
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length 3 0 R', $compressed);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testCompressedObjectStreamWithNestedDictionaryIsInspected(): void
+    {
+        $compressed = gzcompress(self::OBJECT_STREAM_WITH_JS);
+        $pdf = $this->objectStreamPdf(
+            '/Filter /FlateDecode /Length ' . strlen($compressed) . ' /DecodeParms << /Columns 1 >>',
+            $compressed
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testFilterChainsAroundFlateAreDecoded(): void
+    {
+        $compressed = gzcompress(self::OBJECT_STREAM_WITH_JS);
+
+        $hex = bin2hex($compressed) . '>';
+        $this->assertTrue($this->scan(
+            $this->objectStreamPdf('/Filter [/ASCIIHexDecode /FlateDecode] /Length ' . strlen($hex), $hex)
+        ));
+
+        $ascii85 = $this->ascii85Encode($compressed) . '~>';
+        $this->assertTrue($this->scan(
+            $this->objectStreamPdf('/Filter [/ASCII85Decode /FlateDecode] /Length ' . strlen($ascii85), $ascii85)
+        ));
+    }
+
+    public function testCompressedObjectStreamWithInvalidChecksumIsInspected(): void
+    {
+        // readers don't verify the trailing Adler-32 checksum of Flate data
+        $compressed = substr(gzcompress(self::OBJECT_STREAM_WITH_JS), 0, -4) . "\0\0\0\0";
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length ' . strlen($compressed), $compressed);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testLargeCompressedObjectStreamIsInspectedBeyondFirstMegabytes(): void
+    {
+        $compressed = gzcompress('5 0 ' . str_repeat(' ', 9 * 1024 * 1024) . self::OBJECT_STREAM_WITH_JS);
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length ' . strlen($compressed), $compressed);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testObjectStreamTooLargeToInspectIsFlagged(): void
+    {
+        // an object stream decompressing beyond the inspection bound can't be
+        // cleared; legitimate object streams are orders of magnitude smaller
+        $compressed = gzcompress('5 0 ' . str_repeat("\0", 65 * 1024 * 1024) . '<< >>');
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length ' . strlen($compressed), $compressed);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testUnfulfillableDeclaredLengthPastTheBufferCapIsFlagged(): void
+    {
+        // the declared length exceeds both the actual file and the buffer
+        // cap, so it can never be validated and the retained prefix never
+        // recovers a literal endstream either — the discarded remainder
+        // can't be ruled out, so this can't be certified safe
+        $content = str_repeat('x', 17 * 1024 * 1024);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length " . (20 * 1024 * 1024) . " >>\nstream\n" . $content . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testUncompressedObjectStreamIsInspected(): void
+    {
+        $pdf = $this->objectStreamPdf('/Length ' . strlen(self::OBJECT_STREAM_WITH_JS), self::OBJECT_STREAM_WITH_JS);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testCleanFlateCompressedStreamIsNotFlagged(): void
+    {
+        $decompressed = str_repeat('clean content stream data ', 20);
+        $compressed = gzcompress($decompressed);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Filter /FlateDecode /Length " . strlen($compressed) . " >>\nstream\n" .
+            $compressed . "\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
+    public function testCompressedDataThatIsNoObjectStreamIsNotFlagged(): void
+    {
+        // decompressed image or page content may contain /JS-like bytes by
+        // chance; only object streams can hold objects and thus actions (see #16955)
+        foreach (["\x80\x12/JS \xff pixel data /JavaScript\x00", 'BT /JS 12 Tf (text) Tj ET'] as $decompressed) {
+            $compressed = gzcompress($decompressed);
+            $pdf = $this->wrapPdf(
+                "2 0 obj\n<< /Filter /FlateDecode /Length " . strlen($compressed) . " >>\nstream\n" .
+                $compressed . "\nendstream\nendobj\n"
+            );
+
+            $this->assertFalse($this->scan($pdf));
+        }
+    }
+
+    public function testIndirectLengthFallsBackToEndstreamSearch(): void
+    {
+        // raw bytes that merely look like a name token are not a detection (see #16955)
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 5 0 R >>\nstream\n/JS binary garbage\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
+    public function testUnsupportedFilterStreamIsNotInspected(): void
+    {
+        // e.g. image data behind DCTDecode — not text, not decompressed, and
+        // a coincidental name-like byte sequence must not be a detection
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Filter /DCTDecode /Length 6 >>\nstream\n/JS \x00\xff\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
     private function scan(string $content, ?int $chunkSize = null): bool
     {
         $stream = fopen('php://memory', 'r+');
@@ -156,6 +395,31 @@ class PdfScannerTest extends TestCase
         fclose($stream);
 
         return $result;
+    }
+
+    private function objectStreamPdf(string $dictionaryEntries, string $payload): string
+    {
+        return $this->wrapPdf(
+            "2 0 obj\n<< /Type /ObjStm /N 1 /First 4 " . $dictionaryEntries . " >>\nstream\n" .
+            $payload . "\nendstream\nendobj\n3 0 obj\n" . strlen($payload) . "\nendobj\n"
+        );
+    }
+
+    private function ascii85Encode(string $data): string
+    {
+        $encoded = '';
+        foreach (str_split($data, 4) as $group) {
+            $padding = 4 - strlen($group);
+            $value = unpack('N', str_pad($group, 4, "\0"))[1];
+            $digits = '';
+            for ($i = 0; $i < 5; $i++) {
+                $digits = chr($value % 85 + 33) . $digits;
+                $value = intdiv($value, 85);
+            }
+            $encoded .= substr($digits, 0, 5 - $padding);
+        }
+
+        return $encoded;
     }
 
     private function wrapPdf(string $body): string
