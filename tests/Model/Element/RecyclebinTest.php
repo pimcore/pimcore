@@ -13,12 +13,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Exception;
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
+use Pimcore\Model\User\Workspace\DataObject as DataObjectWorkspace;
+use Pimcore\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use ReflectionProperty;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Class RecyclebinTest
@@ -31,12 +40,32 @@ class RecyclebinTest extends ModelTestCase
 {
     protected User $user;
 
+    private ?TokenInterface $originalToken = null;
+
+    private ?User $restrictedUser = null;
+
+    private ?User\Role $restrictedRole = null;
+
     public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
 
         $this->createDummyUser();
+
+        $this->originalToken = $this->tokenStorage()->getToken();
+    }
+
+    public function tearDown(): void
+    {
+        $this->tokenStorage()->setToken($this->originalToken);
+
+        $this->restrictedUser?->delete();
+        $this->restrictedRole?->delete();
+        $this->restrictedUser = null;
+        $this->restrictedRole = null;
+
+        parent::tearDown();
     }
 
     protected function createDummyUser(): void
@@ -50,6 +79,115 @@ class RecyclebinTest extends ModelTestCase
         }
 
         $this->user = $user;
+    }
+
+    /**
+     * Regression test for GHSA-mwmm-cqj2-55wg: restoring a DataObject from the recycle bin must not
+     * persist the intermediate stub object before the "publish" permission on the target parent has
+     * been checked. A user without publish rights on the restore target must not be able to leave a
+     * stub object behind in that subtree.
+     */
+    public function testRestoreDeniesUserWithoutPublishPermissionAndLeavesNoStub(): void
+    {
+        $folder = TestHelper::createObjectFolder('restricted-');
+        $object = TestHelper::createEmptyObject('recyclebin-', false);
+        $object->setParentId($folder->getId());
+        $object->save();
+        $objectId = $object->getId();
+        $objectPath = $object->getFullPath();
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $this->loginAs($this->createUserWithFolderWorkspace($folder, publish: false));
+
+        $recycledItems = new Item\Listing();
+        $recycledItems->setCondition('`path` = ?', $objectPath);
+        $recycledItem = $recycledItems->current();
+
+        try {
+            $recycledItem->restore();
+            $this->fail('Expected an exception because the user lacks the "publish" permission on the restore target.');
+        } catch (Exception $e) {
+            $this->assertSame('Not sufficient permissions', $e->getMessage());
+        }
+
+        $this->assertNull(
+            DataObject::getById($objectId, ['force' => true]),
+            'no stub object may be persisted when the restore is denied for insufficient permissions'
+        );
+    }
+
+    /**
+     * Control for testRestoreDeniesUserWithoutPublishPermissionAndLeavesNoStub: a user who does have
+     * the "publish" permission on the restore target must still be able to restore normally.
+     */
+    public function testRestoreSucceedsForUserWithPublishPermission(): void
+    {
+        $folder = TestHelper::createObjectFolder('allowed-');
+        $object = TestHelper::createEmptyObject('recyclebin-', false);
+        $object->setParentId($folder->getId());
+        $object->save();
+        $objectId = $object->getId();
+        $objectPath = $object->getFullPath();
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $this->loginAs($this->createUserWithFolderWorkspace($folder, publish: true));
+
+        $recycledItems = new Item\Listing();
+        $recycledItems->setCondition('`path` = ?', $objectPath);
+        $recycledItems->current()->restore();
+
+        $restoredObject = DataObject::getById($objectId, ['force' => true]);
+        $this->assertIsObject($restoredObject, 'Restored object with sufficient permissions');
+    }
+
+    private function createUserWithFolderWorkspace(DataObject\Folder $folder, bool $publish): User
+    {
+        $workspace = new DataObjectWorkspace();
+        $workspace->setCid($folder->getId());
+        $workspace->setCpath($folder->getRealFullPath());
+        $workspace->setList(true);
+        $workspace->setView(true);
+        $workspace->setPublish($publish);
+
+        $role = new User\Role();
+        $role->setParentId(0);
+        $role->setName('recyclebin_role_' . uniqid());
+        $role->setPermissions(['objects', 'recyclebin']);
+        $role->setWorkspacesObject([$workspace]);
+        $role->save();
+        $this->restrictedRole = $role;
+
+        $user = new User();
+        $user->setParentId(0);
+        $user->setName('recyclebin_user_' . uniqid());
+        $user->setActive(true);
+        $user->setAdmin(false);
+        $user->setPermissions(['objects', 'recyclebin']);
+        $user->setRoles([$role->getId()]);
+        $user->save();
+        $this->restrictedUser = $user;
+
+        return $user;
+    }
+
+    private function loginAs(User $user): void
+    {
+        $this->tokenStorage()->setToken(new UsernamePasswordToken(new SecurityUser($user), 'pimcore_admin'));
+    }
+
+    private function tokenStorage(): TokenStorageInterface
+    {
+        // security.token_storage is inlined out of the compiled container and cannot be fetched by
+        // id. Item::restore() resolves the current user via Admin::getCurrentUser(), which reads the
+        // token storage held by the public TokenStorageUserResolver service, so we reach the same
+        // shared instance through that resolver rather than replacing the service.
+        $resolver = Pimcore::getContainer()->get(TokenStorageUserResolver::class);
+
+        return (new ReflectionProperty(TokenStorageUserResolver::class, 'tokenStorage'))->getValue($resolver);
     }
 
     /**
