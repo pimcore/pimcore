@@ -7,8 +7,8 @@
 When a frontend request renders a document that has the static page generator enabled, the
 response is only stored as its static page if all of the following apply:
 
-- the response status is `200`,
-- the request has no query string,
+- the response status is `200` and its `Cache-Control` header has no `no-store` directive,
+- the request has neither a query string nor an `Authorization` header,
 - the request carries no session data (the same check the full page cache uses; session keys
   can be excluded via the `FullPageCacheEvents::IGNORED_SESSION_KEYS` event),
 - the resolved document is the one addressed by the request path. A sub-path that falls back
@@ -19,7 +19,8 @@ Requests that do not qualify still render normally; the static page is written b
 qualifying request, the maintenance job or `pimcore:documents:generate-static-pages`.
 
 If the static page router (`pimcore.documents.static_page_router`) is enabled, requests with
-a query string are no longer answered from the stored static pages and are rendered instead.
+a query string or an `Authorization` header are no longer answered from the stored static pages
+and are rendered instead.
 Static pages delivered directly by the web server, as configured in the documentation, are not
 affected.
 

@@ -276,4 +276,30 @@ class StaticPageGeneratorListenerTest extends TestCase
         $request = Request::create('/foo+bar', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
         $this->dispatchResponse($listener, $request, new Response('body', 200));
     }
+
+    public function testSkipsGenerationWhenRequestHasAnAuthorizationHeader(): void
+    {
+        // stateless authentication (Basic/Bearer) carries no session but may still render user-specific content
+        $document = $this->makePage('/products');
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->never())->method('generate');
+
+        $request = Request::create('/products', 'GET', [], [], [], [
+            'HTTP_ACCEPT' => 'text/html',
+            'HTTP_AUTHORIZATION' => 'Bearer token',
+        ]);
+        $this->dispatchResponse($listener, $request, new Response('body', 200));
+    }
+
+    public function testSkipsGenerationWhenResponseIsMarkedNoStore(): void
+    {
+        $document = $this->makePage('/products');
+        [$listener, $staticPageGenerator] = $this->makeListener($document);
+
+        $staticPageGenerator->expects($this->never())->method('generate');
+
+        $request = Request::create('/products', 'GET', [], [], [], ['HTTP_ACCEPT' => 'text/html']);
+        $this->dispatchResponse($listener, $request, new Response('body', 200, ['Cache-Control' => 'no-store']));
+    }
 }

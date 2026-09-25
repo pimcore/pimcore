@@ -132,7 +132,8 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         }
 
         $response = $event->getResponse();
-        if ($response->getStatusCode() !== Response::HTTP_OK) {
+        if ($response->getStatusCode() !== Response::HTTP_OK
+            || $response->headers->hasCacheControlDirective('no-store')) {
             return;
         }
 
@@ -222,6 +223,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             || $request->isXmlHttpRequest()
             || $request->getMethod() !== 'GET'
             || $request->getQueryString() !== null
+            || $request->headers->has('Authorization')
             || !in_array('text/html', $request->getAcceptableContentTypes())) {
             return false;
         }
