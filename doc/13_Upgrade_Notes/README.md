@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.1
+
+### [Assets]
+- [Thumbnails] `Asset\Service::getStreamedResponseByUri()` no longer lets a `League\Flysystem\FilesystemException` escape when the thumbnail resolves but the thumbnail storage cannot serve it - a permission or I/O problem, a briefly unavailable remote adapter, or the file disappearing between two storage calls. The helper is public API for custom asset delivery (see [Restricting Public Asset Access](../02_Assets/02_Restricting_Public_Asset_Access.md)) and is typed `?StreamedResponse`; it now returns `null` for that case as well, the same way it already does when the thumbnail cannot be resolved at all, so a project delivery controller renders its own 404 or placeholder instead of failing with a 500. The failure is logged at **error** level, because a plain cache miss is already absorbed inside `getStreamedResponseForThumbnail()` and everything reaching this point is a real storage fault. Two things are deliberately unchanged: the `@internal` `Asset\Service::getStreamedResponseForThumbnail()` still lets the exception through (its `@throws \League\Flysystem\FilesystemException` covers it), and with it the public thumbnail route, which calls that method directly.
+
 ## Pimcore 2026.3.0
 
 ### [General]

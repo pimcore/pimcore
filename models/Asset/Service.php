@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Exception;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
@@ -579,7 +580,20 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            return self::getStreamedResponseForThumbnail($config, $uri);
+            try {
+                return self::getStreamedResponseForThumbnail($config, $uri);
+            } catch (FilesystemException $e) {
+                // the thumbnail storage could not serve the file although the thumbnail itself
+                // resolved - a permission or I/O problem, a briefly unavailable remote adapter, or
+                // the file disappearing between two storage calls. This helper is public API for
+                // custom asset delivery and documented as returning ?StreamedResponse, so the
+                // failure must not escape to the calling project code.
+                // Logged as an error rather than debug: a plain cache miss is already absorbed by
+                // getStreamedResponseForThumbnail(), so everything arriving here is a real fault.
+                Logger::error('Could not stream thumbnail for ' . $uri . ': ' . $e->getMessage());
+
+                return null;
+            }
         }
 
         return null;
