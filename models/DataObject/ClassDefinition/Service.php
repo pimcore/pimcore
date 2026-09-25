@@ -492,14 +492,26 @@ class Service
     public static function buildFieldConstantsCode(Data ...$fieldDefinitions): string
     {
         $fieldConstants = '';
+        // Distinct field names can generate the same constant name, which PHP forbids declaring twice.
+        $emittedConstantNames = [];
         foreach ($fieldDefinitions as $fieldDefinition) {
             if (!$fieldDefinition instanceof Data\Localizedfields) {
+                $constantName = static::camelCaseToUpperSnakeCase($fieldDefinition->getName());
+                if (isset($emittedConstantNames[$constantName])) {
+                    continue;
+                }
+                $emittedConstantNames[$constantName] = true;
                 $fieldConstants .= static::buildFieldConstantCode($fieldDefinition) . "\n";
 
                 continue;
             }
 
             foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
+                $constantName = static::camelCaseToUpperSnakeCase($localizedFieldDefinition->getName());
+                if (isset($emittedConstantNames[$constantName])) {
+                    continue;
+                }
+                $emittedConstantNames[$constantName] = true;
                 $fieldConstants .= static::buildFieldConstantCode($localizedFieldDefinition) . "\n";
             }
         }
