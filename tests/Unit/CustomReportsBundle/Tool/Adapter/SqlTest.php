@@ -172,6 +172,36 @@ final class SqlTest extends TestCase
         $this->assertStringContainsString('GROUP BY', $sql);
     }
 
+    public function testRejectsSemicolonHiddenByEscapedBackslashInsideString(): void
+    {
+        // GHSA-3c7m-9rp5-j5v4: MySQL's default lexer treats "\\" inside a single-quoted
+        // string as one escaped backslash, so the string ends at the following quote and
+        // ";"/keywords after it are ordinary SQL, not string content. The old stripping
+        // regex consumed "\\" differently: it ate the first backslash as an ordinary
+        // character, then read the second backslash plus the real closing quote as a
+        // (bogus) escaped-quote, so it kept scanning as if still inside the string until
+        // the next unrelated quote further down the fragment - hiding the ";" and the DML
+        // keyword in between from the checks below.
+        $config = $this->configWith(
+            'where',
+            "1=1) OR 'x' = '\\\\'; INSERT INTO t (a,b) VALUES (1,'y')"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testFragmentWithLegitimateEscapedBackslashInStringIsStillAccepted(): void
+    {
+        // A string value containing an escaped backslash (MySQL: "\\" -> one literal
+        // backslash), with nothing unsafe following it, must not be rejected.
+        $config = $this->configWith('where', "path = 'C:\\\\temp' AND 1=1");
+
+        $sql = $this->adapter()->exposedBuildQueryString($config);
+
+        $this->assertStringContainsString("path = 'C:\\\\temp' AND 1=1", $sql);
+    }
+
     public function testColumnNameResemblingForbiddenFunctionIsNotAFalsePositive(): void
     {
         // "load_file_id" must not be confused with the LOAD_FILE(...) function call.
