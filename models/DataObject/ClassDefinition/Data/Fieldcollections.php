@@ -329,6 +329,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            // a calculated value cannot own a dependency: it is computed on read and
+                            // CalculatedValue does not override Data::resolveDependencies(), which
+                            // returns an empty array. Calling the getter would run the calculator
+                            // for nothing.
+                            continue;
+                        }
+
                         $getter = 'get' . ucfirst($fd->getName());
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
                     }
