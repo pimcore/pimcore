@@ -402,6 +402,24 @@ pimcore:
                         - getStream
                         - getLocalFile
                         - getTemporaryFile
+                        - delete
+                        - save
+                        - saveVersion
+                    Pimcore\Model\DataObject\Concrete:
+                        - delete
+                        - save
+                        - saveVersion
+                    Pimcore\Model\Document:
+                        - delete
+                        - save
+                        - saveVersion
+                hard_blocked_method_patterns:
+                    Pimcore\Model\DataObject\Concrete:
+                        - '/^set/'
+                    Pimcore\Model\Asset:
+                        - '/^set/'
+                    Pimcore\Model\Document:
+                        - '/^set/'
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

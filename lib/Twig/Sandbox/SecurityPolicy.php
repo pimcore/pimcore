@@ -73,6 +73,16 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     private array $hardBlockedMethods;
 
+    /**
+     * FQCN => PCRE pattern list map. A matching instance may never call a method whose
+     * name matches any of these patterns, subject to the same "not bypassed by allowlist
+     * mode" guarantee as $hardBlockedMethods. Populated via the
+     * `sandbox_security_policy.hard_blocked_method_patterns` default in default.yaml -
+     * used for method families (e.g. every dynamically-generated `setXxx` setter on a
+     * DataObject class) that cannot be enumerated by exact name.
+     */
+    private array $hardBlockedMethodPatterns;
+
     public function __construct(
         array $allowedTags = [],
         array $allowedFilters = [],
@@ -81,6 +91,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         array $allowedClasses = [],
         array $blockedFunctions = [],
         array $hardBlockedMethods = [],
+        array $hardBlockedMethodPatterns = [],
     ) {
         $this->allowedTags = $allowedTags;
         $this->allowedFilters = $allowedFilters;
@@ -89,6 +100,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->allowedClasses = $allowedClasses;
         $this->blockedFunctions = $blockedFunctions;
         $this->hardBlockedMethods = $hardBlockedMethods;
+        $this->hardBlockedMethodPatterns = $hardBlockedMethodPatterns;
     }
 
     public function setAllowedTags(array $tags): void
@@ -124,6 +136,11 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function setHardBlockedMethods(array $hardBlockedMethods): void
     {
         $this->hardBlockedMethods = $hardBlockedMethods;
+    }
+
+    public function setHardBlockedMethodPatterns(array $hardBlockedMethodPatterns): void
+    {
+        $this->hardBlockedMethodPatterns = $hardBlockedMethodPatterns;
     }
 
     /**
@@ -173,6 +190,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function checkMethodAllowed($obj, $method): void
     {
         $this->assertNotHardBlockedMethod($obj, $method);
+        $this->assertNotHardBlockedMethodPattern($obj, $method);
 
         if ($this->isAllowlistMode()) {
             if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
@@ -257,6 +275,35 @@ final class SecurityPolicy implements SecurityPolicyInterface
                     $objClass,
                     $method,
                 );
+            }
+        }
+    }
+
+    /**
+     * @param object $obj
+     * @param string $method
+     */
+    private function assertNotHardBlockedMethodPattern($obj, $method): void
+    {
+        foreach ($this->hardBlockedMethodPatterns as $class => $patterns) {
+            if (!class_exists($class, false) && !interface_exists($class, false)) {
+                continue;
+            }
+
+            if (!$obj instanceof $class) {
+                continue;
+            }
+
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $method) === 1) {
+                    $objClass = $obj::class;
+
+                    throw new SecurityNotAllowedMethodError(
+                        sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $objClass),
+                        $objClass,
+                        $method,
+                    );
+                }
             }
         }
     }
