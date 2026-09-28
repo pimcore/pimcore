@@ -74,10 +74,9 @@ class ScheduledTasksTaskTest extends ModelTestCase
 
         $reloaded = Document::getById($document->getId(), ['force' => true]);
         $this->assertTrue($reloaded->isPublished(), 'a task referencing a non-existent user id must not execute');
-        $this->assertFalse(
-            (bool) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]),
-            'the dangling task must be deactivated so it is not retried indefinitely'
-        );
+        $row = Db::get()->fetchAssociative('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]);
+        $this->assertIsArray($row, 'the dangling task must still exist, only deactivated, not deleted');
+        $this->assertSame(0, (int) $row['active'], 'the dangling task must be deactivated so it is not retried indefinitely');
 
         $reloaded->delete();
     }
@@ -96,10 +95,9 @@ class ScheduledTasksTaskTest extends ModelTestCase
 
         $reloaded = Document::getById($document->getId(), ['force' => true]);
         $this->assertTrue($reloaded->isPublished(), 'a task with a null user id must not execute');
-        $this->assertFalse(
-            (bool) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]),
-            'the dangling task must be deactivated so it is not retried indefinitely'
-        );
+        $row = Db::get()->fetchAssociative('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]);
+        $this->assertIsArray($row, 'the dangling task must still exist, only deactivated, not deleted');
+        $this->assertSame(0, (int) $row['active'], 'the dangling task must be deactivated so it is not retried indefinitely');
 
         $reloaded->delete();
     }
