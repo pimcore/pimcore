@@ -27,8 +27,6 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\NullLogger;
 use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -46,12 +44,19 @@ class ElementListenerTest extends TestCase
         RequestHelper $requestHelper,
         UserLoader $userLoader
     ): ElementListener {
-        $listener = new ElementListener(
-            $documentResolver,
-            $this->createMock(EditmodeResolver::class),
-            $requestHelper,
-            $userLoader
-        );
+        // handleObjectParams() is unrelated to the document permission logic under test here,
+        // but it unconditionally touches Element\Service::getElementFromSession() (a real
+        // TmpStore/DB lookup) whenever an admin user is present. Stub it out so this remains a
+        // true unit test, consistent with TestCase::needsDb() defaulting to false.
+        $listener = $this->getMockBuilder(ElementListener::class)
+            ->setConstructorArgs([
+                $documentResolver,
+                $this->createMock(EditmodeResolver::class),
+                $requestHelper,
+                $userLoader,
+            ])
+            ->onlyMethods(['handleObjectParams'])
+            ->getMock();
         $listener->setLogger(new NullLogger());
 
         $contextResolver = $this->createMock(PimcoreContextResolver::class);
@@ -63,11 +68,6 @@ class ElementListenerTest extends TestCase
 
     private function dispatch(ElementListener $listener, Request $request): void
     {
-        // An admin-authenticated request always carries a real session; a bare Request() built
-        // in a test does not until one is attached, and handleObjectParams() unconditionally
-        // reads $request->getSession() whenever a user is present.
-        $request->setSession(new Session(new MockArraySessionStorage()));
-
         $kernel = $this->createMock(HttpKernelInterface::class);
         $event = new ControllerEvent($kernel, static function (): void {
         }, $request, HttpKernelInterface::MAIN_REQUEST);
