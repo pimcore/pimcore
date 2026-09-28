@@ -82,6 +82,28 @@ class ScheduledTasksTaskTest extends ModelTestCase
         $reloaded->delete();
     }
 
+    public function testTaskWithNullUserIdIsSkippedWithoutCleanup(): void
+    {
+        // Covers the `userId` column being nullable: the guard must not pass a `null`
+        // user id into `User::getById()` (which requires `int`), or the maintenance
+        // run aborts with a `TypeError` before the task is deactivated.
+        $document = TestHelper::createEmptyDocumentPage('scheduled-tasks-', true, true);
+        $this->assertTrue($document->isPublished(), 'precondition: the document starts out published');
+
+        $task = $this->scheduleUnpublish($document, null);
+
+        $this->executeScheduledTasks();
+
+        $reloaded = Document::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($reloaded->isPublished(), 'a task with a null user id must not execute');
+        $this->assertFalse(
+            (bool) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]),
+            'the dangling task must be deactivated so it is not retried indefinitely'
+        );
+
+        $reloaded->delete();
+    }
+
     public function testTaskForExistingUserStillExecutes(): void
     {
         $user = $this->createUser();
@@ -102,7 +124,7 @@ class ScheduledTasksTaskTest extends ModelTestCase
         $user->delete();
     }
 
-    private function scheduleUnpublish(Document $document, int $userId): Task
+    private function scheduleUnpublish(Document $document, ?int $userId): Task
     {
         $task = new Task();
         $task->setCid($document->getId());
