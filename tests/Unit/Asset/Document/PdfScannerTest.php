@@ -396,6 +396,32 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($pdf));
     }
 
+    public function testCleanCompressedObjectStreamIsNotFlagged(): void
+    {
+        // once decoded content is confirmed as genuine object-stream syntax
+        // and thoroughly scanned for /JS, that's a final answer — trying
+        // (and failing) further decodings on top of it must not override a
+        // genuinely clean result with a fail-closed one
+        $decompressed = '488 0 489 19 490 115 491 209 [/ICCBased 4 0 R] endobj 492 0 obj << >> endobj';
+        $compressed = gzcompress($decompressed);
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length ' . strlen($compressed), $compressed);
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
+    public function testObjectStreamWithUnsupportedEncodingIsFlagged(): void
+    {
+        // a /Type-confirmed object stream using an encoding this class
+        // can't decode at all (e.g. LZW, or Flate with a predictor) never
+        // resolves to content recognizable as decoded object-stream syntax
+        // and can't be certified safe just because none of the sniffed
+        // decodings applied to it
+        $opaqueBytes = "\x80\x0b\x60\x50\x22\x0c\x0c\x85\x01";
+        $pdf = $this->objectStreamPdf('/Filter /LZWDecode /Length ' . strlen($opaqueBytes), $opaqueBytes);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testCleanFlateCompressedStreamIsNotFlagged(): void
     {
         $decompressed = str_repeat('clean content stream data ', 20);

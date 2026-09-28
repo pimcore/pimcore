@@ -594,17 +594,28 @@ final class PdfScanner
             return true;
         }
 
+        if ($type !== null && $type !== 'ObjStm') {
+            // a stream explicitly typed as something else can't hold
+            // objects no matter how it's encoded, exactly as
+            // piecesContainJavaScript() already decides above — nothing
+            // below this point can change that verdict
+            return false;
+        }
+
+        if ($this->startsLikeObjectStream($data, true) === true) {
+            // piecesContainJavaScript() already scanned this thoroughly and
+            // found nothing, and this is genuine decoded object-stream
+            // content rather than still-encoded bytes — that's the final,
+            // trustworthy answer. Trying to decode already-decoded content
+            // any further would only ever fail anyway, so there's nothing
+            // to gain from reaching the fail-closed fallback below.
+            return false;
+        }
+
         $data = ltrim($data, self::WHITESPACE);
         $hasZlibHeader = $this->hasZlibHeader($data);
 
         if ($depth >= self::MAX_DECODE_DEPTH) {
-            if ($type !== null && $type !== 'ObjStm') {
-                // a stream explicitly typed as something else can't hold
-                // objects no matter how it's encoded, exactly as
-                // piecesContainJavaScript() already decides above
-                return false;
-            }
-
             // a legal filter chain can stack more layers than this budget
             // allows for; exhausting it while another decoding still looks
             // possible can't be certified safe, since a reader would still
@@ -636,7 +647,12 @@ final class PdfScanner
             }
         }
 
-        return false;
+        // every decoding this class knows how to sniff has been tried
+        // (or none applied at all) without ever seeing content that looks
+        // decoded: a /Type-confirmed object stream using something else
+        // entirely (LZW, a predictor, encryption, ...) can't be certified
+        // safe just because none of ours applied to it
+        return $type === 'ObjStm';
     }
 
     /**
