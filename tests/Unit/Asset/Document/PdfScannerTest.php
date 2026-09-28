@@ -439,6 +439,18 @@ class PdfScannerTest extends TestCase
         $this->assertFalse($this->scan($pdf));
     }
 
+    public function testCleanScalarOnlyUncompressedObjectStreamIsNotFlagged(): void
+    {
+        // an absent /Filter declares zero decode steps — a known quantity,
+        // not an unknown one the way an indirect reference or an
+        // unparseable filter array is — so this is trustworthy immediately,
+        // without ever needing a '<<'/'>>' to appear
+        $decompressed = '5 0 42';
+        $pdf = $this->objectStreamPdf('/Length ' . strlen($decompressed), $decompressed);
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
     public function testObjectStreamWithUnsupportedEncodingIsFlagged(): void
     {
         // a /Type-confirmed object stream using an encoding this class

@@ -393,10 +393,18 @@ final class PdfScanner
      */
     private function extractFilterStepCount(?array $entries): ?int
     {
-        $value = $entries['Filter'] ?? null;
-        if ($value === null) {
+        if ($entries === null) {
             return null;
         }
+
+        if (!array_key_exists('Filter', $entries)) {
+            // no /Filter at all: the payload is already the final content,
+            // needing zero decode steps — a known quantity, not an unknown
+            // one, unlike an indirect reference or an unparseable array
+            return 0;
+        }
+
+        $value = $entries['Filter'];
 
         if ($value[0] === 'name') {
             return 1;
@@ -558,7 +566,7 @@ final class PdfScanner
                 $i += $char === ']' ? 1 : 2;
                 $depth = max(0, $depth - 1);
                 $elementCount = array_pop($arrayElementCounts);
-                $token = $depth === 0 ? ['composite', $elementCount > 0 ? (string) $elementCount : ''] : null;
+                $token = $depth === 0 ? ['composite', $elementCount >= 0 ? (string) $elementCount : ''] : null;
             } elseif ($char === '<') {
                 $end = strpos($text, '>', $i);
                 $i = $end === false ? $length : $end + 1;
