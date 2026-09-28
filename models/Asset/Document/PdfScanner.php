@@ -602,7 +602,18 @@ final class PdfScanner
             return false;
         }
 
-        if ($this->startsLikeObjectStream($data, true) === true) {
+        if ($this->startsLikeObjectStream($data, true) === true && str_contains($data, '<<') && str_contains($data, '>>')) {
+            // the digit-pair shape alone isn't proof of anything: valid
+            // ASCIIHex/ASCII85 text can itself start with what looks like a
+            // pair of object numbers once whitespace is ignored, and would
+            // wrongly be treated as final, still-undecoded content. A
+            // literal dictionary delimiter can't occur in ASCIIHex text
+            // (its alphabet is hex digits and whitespace only) and is a much
+            // narrower coincidence for ASCII85 to also hit alongside the
+            // exact digit-pair prefix, so requiring both together is a
+            // meaningfully stronger signal that this is genuinely decoded,
+            // human-readable PDF syntax and not still-encoded bytes.
+            //
             // piecesContainJavaScript() already scanned this thoroughly and
             // found nothing, and this is genuine decoded object-stream
             // content rather than still-encoded bytes — that's the final,

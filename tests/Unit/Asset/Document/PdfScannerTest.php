@@ -422,6 +422,21 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($pdf));
     }
 
+    public function testAsciiHexEncodedJsIsDecodedDespiteLookingLikeAnObjectStreamHeader(): void
+    {
+        // ASCIIHex text can start with what, once whitespace is ignored,
+        // reads as a plausible object-number pair (e.g. "35 20 30 20" —
+        // still just hex digits for "5 0 <"); the shape alone must not be
+        // mistaken for already-decoded content, or the real hex decode is
+        // skipped entirely and the JS underneath it is never found
+        $hexPairs = str_split(bin2hex(self::OBJECT_STREAM_WITH_JS), 2);
+        $hex = implode(' ', $hexPairs) . '>';
+
+        $pdf = $this->objectStreamPdf('/Filter /ASCIIHexDecode /Length ' . strlen($hex), $hex);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testCleanFlateCompressedStreamIsNotFlagged(): void
     {
         $decompressed = str_repeat('clean content stream data ', 20);
