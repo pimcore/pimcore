@@ -90,6 +90,15 @@ final class PdfScanner
     private const MAX_DECODED_BYTES = 64 * 1024 * 1024;
 
     /**
+     * Bounds the decoded output scanned across the whole document, defending
+     * against many small, individually-compliant streams that each stay
+     * under MAX_DECODED_BYTES but together still force gigabytes of
+     * decompression. A document exceeding it can't be cleared and counts as
+     * containing JavaScript, the same as a single stream that does.
+     */
+    private const MAX_TOTAL_DECODED_BYTES = 256 * 1024 * 1024;
+
+    /**
      * Decoded output inspected for the object stream header before a payload
      * consisting of nothing but whitespace and comments is scanned anyway.
      */
@@ -98,6 +107,12 @@ final class PdfScanner
     private const MAX_DECODE_DEPTH = 4;
 
     private const INFLATE_INPUT_BYTES = 8192;
+
+    /**
+     * Decoded output scanned so far across every stream of the current
+     * document, checked against MAX_TOTAL_DECODED_BYTES.
+     */
+    private int $totalDecodedBytes = 0;
 
     public function __construct(private readonly int $chunkSize = 65536)
     {
@@ -108,6 +123,8 @@ final class PdfScanner
      */
     public function containsJavaScript($stream): bool
     {
+        $this->totalDecodedBytes = 0;
+
         $buffer = '';
         $context = '';
         $streamState = null;
@@ -131,7 +148,7 @@ final class PdfScanner
      * Consumes the buffer, retaining an unconsumed tail so tokens and keywords
      * split across chunk boundaries are seen once completed by the next read.
      *
-     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool, boundaryTrusted: bool}|null $streamState
+     * @param array{remaining: ?int, type: ?string, filterSteps: ?int, payload: string, truncated: bool, boundaryTrusted: bool}|null $streamState
      */
     private function scanBuffer(string &$buffer, string &$context, ?array &$streamState, bool $atEof): bool
     {
@@ -319,6 +336,7 @@ final class PdfScanner
             $streamState = [
                 'remaining' => $remaining,
                 'type' => $this->extractStreamType($entries),
+                'filterSteps' => $this->extractFilterStepCount($entries),
                 'payload' => '',
                 'truncated' => false,
                 // only a fulfilled declared length is a proven boundary; a
@@ -364,6 +382,27 @@ final class PdfScanner
         $value = $entries['Type'] ?? null;
 
         return $value !== null && $value[0] === 'name' ? $value[1] : null;
+    }
+
+    /**
+     * Reads how many filters /Filter declares: 1 for a single name, or a
+     * top-level array's element count. Null when missing, an indirect
+     * reference, or an unparseable/empty array — the caller then has no
+     * declared step count to check decoding against and relies on sniffed
+     * content shape alone, the same as if /Filter didn't exist at all.
+     */
+    private function extractFilterStepCount(?array $entries): ?int
+    {
+        $value = $entries['Filter'] ?? null;
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value[0] === 'name') {
+            return 1;
+        }
+
+        return $value[0] === 'composite' && $value[1] !== '' && ctype_digit($value[1]) ? (int) $value[1] : null;
     }
 
     /**
@@ -475,8 +514,12 @@ final class PdfScanner
     }
 
     /**
-     * Tokenizes a dictionary's body, collapsing nested dictionaries and arrays
-     * into a single `composite` token.
+     * Tokenizes a dictionary's body, collapsing nested dictionaries and
+     * arrays into a single `composite` token — except a top-level array's
+     * own value carries its element count as a string, since /Filter's
+     * declared step count (a single name, or an array of them) is the one
+     * piece of array content this class otherwise never needs and can't
+     * safely rely on sniffed content shape alone to reconstruct.
      *
      * @return list<array{0: string, 1: string}>
      */
@@ -486,6 +529,8 @@ final class PdfScanner
         $depth = 0;
         $length = strlen($text);
         $i = 0;
+        /** @var list<int> $arrayElementCounts one entry per currently-open bracket; -1 marks a dictionary, not an array */
+        $arrayElementCounts = [];
 
         while ($i < $length) {
             $char = $text[$i];
@@ -501,24 +546,32 @@ final class PdfScanner
                 $i += strcspn($text, "\r\n", $i);
             } elseif ($char === '(') {
                 $i = $this->findLiteralStringEnd($text, $i);
+                $this->countArrayElement($arrayElementCounts, $depth);
                 $token = ['string', ''];
             } elseif ($char === '<' && ($text[$i + 1] ?? '') === '<' || $char === '[') {
-                $i += $char === '[' ? 1 : 2;
+                $isArray = $char === '[';
+                $this->countArrayElement($arrayElementCounts, $depth);
+                $arrayElementCounts[] = $isArray ? 0 : -1;
+                $i += $isArray ? 1 : 2;
                 $depth++;
             } elseif ($char === '>' && ($text[$i + 1] ?? '') === '>' || $char === ']') {
                 $i += $char === ']' ? 1 : 2;
                 $depth = max(0, $depth - 1);
-                $token = $depth === 0 ? ['composite', ''] : null;
+                $elementCount = array_pop($arrayElementCounts);
+                $token = $depth === 0 ? ['composite', $elementCount > 0 ? (string) $elementCount : ''] : null;
             } elseif ($char === '<') {
                 $end = strpos($text, '>', $i);
                 $i = $end === false ? $length : $end + 1;
+                $this->countArrayElement($arrayElementCounts, $depth);
                 $token = ['string', ''];
             } elseif ($char === '/') {
                 $nameLength = strcspn($text, self::WHITESPACE . self::DELIMITERS, $i + 1);
+                $this->countArrayElement($arrayElementCounts, $depth);
                 $token = ['name', $this->decodeName(substr($text, $i + 1, $nameLength))];
                 $i += 1 + $nameLength;
             } else {
                 $wordLength = max(1, strcspn($text, self::WHITESPACE . self::DELIMITERS, $i));
+                $this->countArrayElement($arrayElementCounts, $depth);
                 $token = ['word', substr($text, $i, $wordLength)];
                 $i += $wordLength;
             }
@@ -529,6 +582,21 @@ final class PdfScanner
         }
 
         return $tokens;
+    }
+
+    /**
+     * Counts a token as an element of the innermost currently-open array,
+     * provided it's directly inside it (not a nested bracket's own content)
+     * and that bracket really is an array, not a dictionary.
+     *
+     * @param list<int> $arrayElementCounts
+     */
+    private function countArrayElement(array &$arrayElementCounts, int $depth): void
+    {
+        $innermost = count($arrayElementCounts) - 1;
+        if ($innermost >= 0 && $depth === $innermost + 1 && $arrayElementCounts[$innermost] >= 0) {
+            $arrayElementCounts[$innermost]++;
+        }
     }
 
     private function findLiteralStringEnd(string $text, int $openingAt): int
@@ -550,7 +618,7 @@ final class PdfScanner
     }
 
     /**
-     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool, boundaryTrusted: bool} $streamState
+     * @param array{remaining: ?int, type: ?string, filterSteps: ?int, payload: string, truncated: bool, boundaryTrusted: bool} $streamState
      */
     private function collectStreamBytes(array &$streamState, string $bytes): void
     {
@@ -570,7 +638,7 @@ final class PdfScanner
     }
 
     /**
-     * @param array{remaining: ?int, type: ?string, payload: string, truncated: bool, boundaryTrusted: bool} $streamState
+     * @param array{remaining: ?int, type: ?string, filterSteps: ?int, payload: string, truncated: bool, boundaryTrusted: bool} $streamState
      */
     private function streamPayloadContainsJavaScript(array $streamState): bool
     {
@@ -581,14 +649,26 @@ final class PdfScanner
         // the true end may lie beyond a spoofed endstream match
         $cannotBeProvenComplete = $streamState['truncated'] || !$streamState['boundaryTrusted'];
 
-        return $this->decodingsContainJavaScript($streamState['payload'], $cannotBeProvenComplete, 0, $streamState['type']);
+        return $this->decodingsContainJavaScript(
+            $streamState['payload'],
+            $cannotBeProvenComplete,
+            0,
+            $streamState['type'],
+            $streamState['filterSteps']
+        );
     }
 
     /**
      * Tries the payload as is and every ASCIIHex / ASCII85 / Flate decoding
-     * of it, sniffed from the data itself rather than trusting /Filter.
+     * of it, sniffed from the data itself rather than trusting /Filter for
+     * *which* filter applies — a lying /Filter is exactly what this class
+     * defends against. $expectedSteps (/Filter's own declared step count) is
+     * used only as a positive signal for *when decoding is complete*, and
+     * only once sniffed content also looks plausible — an attacker
+     * under-declaring the count to stop decoding early doesn't help them,
+     * since implausible content past that point still keeps this going.
      */
-    private function decodingsContainJavaScript(string $data, bool $headerOnly, int $depth, ?string $type): bool
+    private function decodingsContainJavaScript(string $data, bool $headerOnly, int $depth, ?string $type, ?int $expectedSteps): bool
     {
         if ($this->piecesContainJavaScript([$data], $headerOnly, $type)) {
             return true;
@@ -602,17 +682,23 @@ final class PdfScanner
             return false;
         }
 
-        if ($this->startsLikeObjectStream($data, true) === true && str_contains($data, '<<') && str_contains($data, '>>')) {
-            // the digit-pair shape alone isn't proof of anything: valid
-            // ASCIIHex/ASCII85 text can itself start with what looks like a
-            // pair of object numbers once whitespace is ignored, and would
-            // wrongly be treated as final, still-undecoded content. A
-            // literal dictionary delimiter can't occur in ASCIIHex text
-            // (its alphabet is hex digits and whitespace only) and is a much
-            // narrower coincidence for ASCII85 to also hit alongside the
-            // exact digit-pair prefix, so requiring both together is a
-            // meaningfully stronger signal that this is genuinely decoded,
-            // human-readable PDF syntax and not still-encoded bytes.
+        $looksDecoded = $this->startsLikeObjectStream($data, true) === true;
+        $reachedDeclaredDepth = $expectedSteps !== null && $depth >= $expectedSteps;
+
+        if ($looksDecoded && ($reachedDeclaredDepth || (str_contains($data, '<<') && str_contains($data, '>>')))) {
+            // the digit-pair shape alone isn't proof of anything by itself:
+            // valid ASCIIHex/ASCII85 text can itself start with what looks
+            // like a pair of object numbers once whitespace is ignored, and
+            // would wrongly be treated as final, still-undecoded content.
+            // Either of two independent, much narrower signals raises that
+            // to an actual answer: a declared filter count already reached
+            // (an object stream can legitimately hold only scalar objects,
+            // with no dictionary anywhere, so the shape has to be trusted
+            // eventually — but only this deliberately, not merely because
+            // sniffing ran out of ideas), or a literal dictionary delimiter,
+            // which can't occur in ASCIIHex text at all (its alphabet is hex
+            // digits and whitespace only) and is a much narrower coincidence
+            // for ASCII85 to also hit alongside the digit-pair prefix.
             //
             // piecesContainJavaScript() already scanned this thoroughly and
             // found nothing, and this is genuine decoded object-stream
@@ -649,11 +735,11 @@ final class PdfScanner
                 }
             }
 
-            return $this->decodingsContainJavaScript($inflated, $headerOnly, $depth + 1, $type);
+            return $this->decodingsContainJavaScript($inflated, $headerOnly, $depth + 1, $type, $expectedSteps);
         }
 
         foreach ([$this->decodeAsciiHex($data), $this->decodeAscii85($data)] as $decoded) {
-            if ($decoded !== null && $this->decodingsContainJavaScript($decoded, $headerOnly, $depth + 1, $type)) {
+            if ($decoded !== null && $this->decodingsContainJavaScript($decoded, $headerOnly, $depth + 1, $type, $expectedSteps)) {
                 return true;
             }
         }
@@ -692,6 +778,15 @@ final class PdfScanner
 
         foreach ($pieces as $piece) {
             $decodedBytes += strlen($piece);
+            $this->totalDecodedBytes += strlen($piece);
+
+            if ($this->totalDecodedBytes > self::MAX_TOTAL_DECODED_BYTES) {
+                // many streams that each individually stay under the
+                // per-stream cap can still force gigabytes of cumulative
+                // decompression across one document; once the document-wide
+                // budget is spent, the rest of it can't be certified safe
+                return true;
+            }
 
             if (!$confirmed) {
                 $probe .= $piece;

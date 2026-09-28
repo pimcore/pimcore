@@ -375,6 +375,22 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($pdf));
     }
 
+    public function testManyStreamsEachUnderTheLimitAreFlaggedOnceTheDocumentBudgetIsSpent(): void
+    {
+        // several clean object streams that each individually stay under
+        // the per-stream cap can still force a huge amount of cumulative
+        // decompression across one document; once that document-wide
+        // budget is spent, the rest of it can't be certified safe either
+        $body = '';
+        for ($n = 0; $n < 6; $n++) {
+            $compressed = gzcompress('5 0 ' . str_repeat(' ', 50 * 1024 * 1024) . '42');
+            $body .= (2 + $n) . " 0 obj\n<< /Type /ObjStm /N 1 /First 4 /Filter /FlateDecode /Length "
+                . strlen($compressed) . " >>\nstream\n" . $compressed . "\nendstream\nendobj\n";
+        }
+
+        $this->assertTrue($this->scan($this->wrapPdf($body)));
+    }
+
     public function testUnfulfillableDeclaredLengthPastTheBufferCapIsFlagged(): void
     {
         // the declared length exceeds both the actual file and the buffer
@@ -403,6 +419,20 @@ class PdfScannerTest extends TestCase
         // (and failing) further decodings on top of it must not override a
         // genuinely clean result with a fail-closed one
         $decompressed = '488 0 489 19 490 115 491 209 [/ICCBased 4 0 R] endobj 492 0 obj << >> endobj';
+        $compressed = gzcompress($decompressed);
+        $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length ' . strlen($compressed), $compressed);
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
+    public function testCleanScalarOnlyObjectStreamIsNotFlagged(): void
+    {
+        // an object stream may legitimately hold only scalar objects, with
+        // no dictionary anywhere in its decoded content; the declared
+        // /Filter's step count having been reached is what makes this
+        // trustworthy, not the shape alone (which a still-encoded payload
+        // could otherwise coincidentally match too)
+        $decompressed = '5 0 42';
         $compressed = gzcompress($decompressed);
         $pdf = $this->objectStreamPdf('/Filter /FlateDecode /Length ' . strlen($compressed), $compressed);
 
