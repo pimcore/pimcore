@@ -174,9 +174,15 @@ class MyAssetController extends FrontendController
             ]);
         }
 
-        // null when the uri does not resolve to a thumbnail, or when the thumbnail storage
-        // cannot serve it (e.g. an I/O problem) - deliver your own 404 or placeholder here
-        $response = Asset\Service::getStreamedResponseByUri($pathInfo);
+        // throws when the uri is not a thumbnail uri at all (it cannot be parsed), and returns
+        // null when the thumbnail cannot be resolved or when the thumbnail storage cannot serve
+        // it (e.g. an I/O problem) - deliver your own 404 or placeholder in both cases
+        try {
+            $response = Asset\Service::getStreamedResponseByUri($pathInfo);
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException('Asset not found.', $e);
+        }
+
         if ($response) {
             return $response;
         }
