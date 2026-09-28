@@ -83,7 +83,15 @@ class DaoRemoveUnusedColumnsTest extends TestCase
         $this->assertCount(1, $executedQueries);
         $dropIndexQuery = $executedQueries[0];
         $this->assertStringStartsWith('ALTER TABLE', $dropIndexQuery);
-        $this->assertSame(1, substr_count($dropIndexQuery, 'DROP INDEX'));
+        // The malicious key injects the literal text "DROP COLUMN", not "DROP INDEX", so counting
+        // "DROP INDEX" occurrences would pass even against the vulnerable pre-fix concatenation
+        // (it produces a second, executable "DROP COLUMN" clause, leaving "DROP INDEX" at 1 either
+        // way). Assert the exact resulting clause instead, which only matches once quoteIdentifier()
+        // has escaped every backtick in the malicious value.
+        $this->assertSame(
+            'ALTER TABLE `object_query_1` DROP INDEX `u_index_x``, DROP COLUMN ``oo_classname`;',
+            $dropIndexQuery
+        );
     }
 
     public function testLegitimateColumnKeyStillDropsCorrectColumn(): void

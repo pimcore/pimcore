@@ -137,13 +137,17 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     /**
      * Column/row keys become physical database column names (see calculateDbColumns()) and are
-     * emitted into ALTER TABLE DDL, so they must be restricted to valid identifier characters,
-     * mirroring the allowlist enforced by Data::setName().
+     * emitted into ALTER TABLE DDL. Unlike Data::setName(), these keys are array-key components,
+     * not PHP field identifiers, and every DDL sink that consumes them now quotes via
+     * Connection::quoteIdentifier() - so only the byte that could break out of that quoting
+     * (a backtick) needs to be rejected here; anything else (digits-first, spaces, punctuation)
+     * is a legacy-safe key that must keep loading for already-persisted class definitions, which
+     * pass through this same setter on every hydration via VarExporterInterface::__set_state().
      */
     private function validateKey(string $key): void
     {
-        if ($key !== '' && !preg_match('/^[a-z_][a-z0-9_]{0,62}\z/', $key)) {
-            throw new InvalidArgumentException(sprintf('Invalid structured table key "%s"', $key));
+        if (str_contains($key, '`')) {
+            throw new InvalidArgumentException(sprintf('Invalid structured table key "%s": backticks are not allowed', $key));
         }
     }
 

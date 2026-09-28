@@ -18,10 +18,11 @@ use PHPUnit\Framework\TestCase;
 use Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable;
 
 /**
- * Ensures StructuredTable::setCols()/setRows() only accept valid identifier keys (GHSA-2rmm-27mv-jwg5).
- * Column/row keys are concatenated into physical database column names (calculateDbColumns()) and,
- * on removal, into raw ALTER TABLE ... DROP COLUMN/DROP INDEX DDL, so they must be restricted the
- * same way Data::setName() restricts field names.
+ * Ensures StructuredTable::setCols()/setRows() reject backticks in column/row keys
+ * (GHSA-2rmm-27mv-jwg5), while continuing to accept every other legacy-safe key shape (digits-first,
+ * punctuation, spaces, long values) since those keys are only ever emitted through DDL sinks that
+ * now quote via Connection::quoteIdentifier() - unlike Data::setName(), which restricts PHP field
+ * identifiers, these are array-key components and were never limited to that allowlist.
  */
 class StructuredTableKeyValidationTest extends TestCase
 {
@@ -55,6 +56,14 @@ class StructuredTableKeyValidationTest extends TestCase
             'single char' => ['a'],
             'mixed case gets lowercased' => ['MyCol'],
             'digits and underscores' => ['col_123'],
+            // Legacy-safe keys that predate this validation and must keep working: they never went
+            // through a raw-concatenation DDL sink even before this fix, and every sink they do reach
+            // now quotes via Connection::quoteIdentifier().
+            'leading digit' => ['1col'],
+            'contains comma' => ['a,b'],
+            'contains space' => ['my col'],
+            'contains hash' => ['a#b'],
+            'longer than a PHP-identifier cap' => [str_repeat('a', 64)],
         ];
     }
 
@@ -91,11 +100,6 @@ class StructuredTableKeyValidationTest extends TestCase
         return [
             'DDL injection payload from the advisory PoC' => ['x`, DROP COLUMN `oo_classname'],
             'contains backtick' => ['poc`'],
-            'contains comma' => ['a,b'],
-            'contains space' => ['my col'],
-            'contains hash' => ['a#b'],
-            'leading digit' => ['1col'],
-            'too long (64)' => [str_repeat('a', 64)],
         ];
     }
 }
