@@ -226,6 +226,24 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($pdf));
     }
 
+    public function testTruncatedPayloadWithUnresolvedTypeAndBlankRetainedPrefixIsFlagged(): void
+    {
+        // a truncated payload's retained prefix is genuinely incomplete —
+        // the real header may sit beyond it, entirely discarded. If that
+        // prefix happens to be nothing but whitespace, treating it as if
+        // it were the complete content would wrongly conclude "not an
+        // object stream" instead of "inconclusive", certifying as safe an
+        // object stream whose real JS sits just past what was kept
+        $realJs = self::OBJECT_STREAM_WITH_JS;
+        $content = '% ' . str_repeat(' ', 17 * 1024 * 1024) . $realJs;
+        $pdf = $this->wrapPdf(
+            '2 0 obj' . "\n" . '<< /Type 9 0 R /Length ' . strlen($content) . ' >>' . "\n"
+            . 'stream' . "\n" . $content . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testShortReadsDoNotAbortTheScan(): void
     {
         // fread() may return less than the requested chunk size (e.g. remote

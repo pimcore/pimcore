@@ -690,11 +690,12 @@ final class PdfScanner
         // same applies to a payload whose very boundary is unproven: it
         // can't be cleared either, once it decodes to an object stream, since
         // the true end may lie beyond a spoofed endstream match
-        $cannotBeProvenComplete = $streamState['truncated'] || !$streamState['boundaryTrusted'];
+        $failClosedIfConfirmed = $streamState['truncated'] || !$streamState['boundaryTrusted'];
 
         return $this->decodingsContainJavaScript(
             $streamState['payload'],
-            $cannotBeProvenComplete,
+            $failClosedIfConfirmed,
+            $streamState['truncated'],
             0,
             $streamState['type'],
             $streamState['filterSteps']
@@ -711,9 +712,9 @@ final class PdfScanner
      * under-declaring the count to stop decoding early doesn't help them,
      * since implausible content past that point still keeps this going.
      */
-    private function decodingsContainJavaScript(string $data, bool $headerOnly, int $depth, ?string $type, ?int $expectedSteps): bool
+    private function decodingsContainJavaScript(string $data, bool $failClosedIfConfirmed, bool $truncated, int $depth, ?string $type, ?int $expectedSteps): bool
     {
-        if ($this->piecesContainJavaScript([$data], $headerOnly, $type)) {
+        if ($this->piecesContainJavaScript([$data], $failClosedIfConfirmed, $truncated, $type)) {
             return true;
         }
 
@@ -785,11 +786,11 @@ final class PdfScanner
                 }
             }
 
-            return $this->decodingsContainJavaScript($inflated, $headerOnly, $depth + 1, $type, $expectedSteps);
+            return $this->decodingsContainJavaScript($inflated, $failClosedIfConfirmed, $truncated, $depth + 1, $type, $expectedSteps);
         }
 
         foreach ([$this->decodeAsciiHex($data), $this->decodeAscii85($data)] as $decoded) {
-            if ($decoded !== null && $this->decodingsContainJavaScript($decoded, $headerOnly, $depth + 1, $type, $expectedSteps)) {
+            if ($decoded !== null && $this->decodingsContainJavaScript($decoded, $failClosedIfConfirmed, $truncated, $depth + 1, $type, $expectedSteps)) {
                 return true;
             }
         }
@@ -811,13 +812,13 @@ final class PdfScanner
      *
      * @param iterable<string> $pieces
      */
-    private function piecesContainJavaScript(iterable $pieces, bool $headerOnly, ?string $type): bool
+    private function piecesContainJavaScript(iterable $pieces, bool $failClosedIfConfirmed, bool $truncated, ?string $type): bool
     {
         if ($type !== null && $type !== 'ObjStm') {
             return false;
         }
 
-        if ($type === 'ObjStm' && $headerOnly) {
+        if ($type === 'ObjStm' && $failClosedIfConfirmed) {
             return true;
         }
 
@@ -845,7 +846,7 @@ final class PdfScanner
                     continue;
                 }
 
-                if (!$isObjectStream || $headerOnly) {
+                if (!$isObjectStream || $failClosedIfConfirmed) {
                     return $isObjectStream;
                 }
 
@@ -866,8 +867,22 @@ final class PdfScanner
         }
 
         if (!$confirmed) {
+            if ($truncated) {
+                // the data we have is genuinely incomplete (only a
+                // retained prefix, not the real end) — telling
+                // startsLikeObjectStream() this is now complete would
+                // wrongly turn "nothing confirmed yet" into "definitely
+                // not an object stream" when the real header may simply
+                // sit beyond what was kept. That can't be certified safe
+                // for lack of evidence; by this point $type is null (a
+                // confirmed ObjStm already returned above), so this
+                // decision is reached only for an object stream this
+                // heuristic never got to positively rule out either way
+                return true;
+            }
+
             $isObjectStream = $this->startsLikeObjectStream($probe, true);
-            if (!$isObjectStream || $headerOnly) {
+            if (!$isObjectStream || $failClosedIfConfirmed) {
                 return $isObjectStream;
             }
 
