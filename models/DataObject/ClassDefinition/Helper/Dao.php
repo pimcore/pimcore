@@ -118,7 +118,11 @@ trait Dao
         foreach ($columnsToRemove as $value) {
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                $dropColumns[] = 'DROP COLUMN ' . $this->db->quoteIdentifier($value);
+                // quoteIdentifier() splits on '.' and quotes each part as a separate qualified-name
+                // segment; StructuredTable keys may legitimately contain a literal '.', so that would
+                // silently turn one physical column into an unquoted, dot-joined multi-part reference.
+                // quoteSingleIdentifier() quotes the whole string as one identifier instead.
+                $dropColumns[] = 'DROP COLUMN ' . $this->db->quoteSingleIdentifier($value);
 
                 if (
                     str_ends_with(strtolower($value), '__unit') &&
@@ -138,7 +142,7 @@ trait Dao
         }
 
         if ($dropColumns) {
-            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ' . implode(', ', $dropColumns) . ';');
+            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteSingleIdentifier($table) . ' ' . implode(', ', $dropColumns) . ';');
             $this->resetValidTableColumnsCache($table);
         }
     }
@@ -189,7 +193,9 @@ trait Dao
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $lowerCaseColumns) && $this->indexExists($table, 'u_index_', $value)) {
-                    $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' DROP INDEX ' . $this->db->quoteIdentifier('u_index_' . $value) . ';');
+                    // See removeUnusedColumns(): quoteSingleIdentifier() keeps a literal '.' inside
+                    // the value as part of one identifier instead of splitting it as a qualified name.
+                    $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteSingleIdentifier($table) . ' DROP INDEX ' . $this->db->quoteSingleIdentifier('u_index_' . $value) . ';');
                 }
             }
             $this->resetValidTableColumnsCache($table);

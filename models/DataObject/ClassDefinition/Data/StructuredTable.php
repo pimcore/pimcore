@@ -139,7 +139,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * Column/row keys become physical database column names (see calculateDbColumns()) and are
      * emitted into ALTER TABLE DDL. Unlike Data::setName(), these keys are array-key components,
      * not PHP field identifiers, and every DDL sink that consumes them now quotes via
-     * Connection::quoteIdentifier() - so only the byte that could break out of that quoting
+     * Connection::quoteSingleIdentifier() - so only the byte that could break out of that quoting
      * (a backtick) needs to be rejected here; anything else (digits-first, spaces, punctuation)
      * is a legacy-safe key that must keep loading for already-persisted class definitions, which
      * pass through this same setter on every hydration via VarExporterInterface::__set_state().

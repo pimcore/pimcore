@@ -19,9 +19,13 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Ensures removeUnusedColumns()/removeIndices() from the Helper\Dao trait quote the column/index
- * name via quoteIdentifier() instead of concatenating it with raw backticks (GHSA-2rmm-27mv-jwg5).
+ * name via quoteSingleIdentifier() instead of concatenating it with raw backticks (GHSA-2rmm-27mv-jwg5).
  * Without this, a column name reaching this path with an embedded backtick (e.g. a StructuredTable
  * key that bypassed validation) could inject an additional DDL clause into the ALTER TABLE statement.
+ * quoteSingleIdentifier() (rather than the deprecated quoteIdentifier()) is required specifically
+ * because it does not split the value on '.' as a qualified-name separator - StructuredTable keys are
+ * still allowed to contain a literal '.', which quoteIdentifier() would otherwise misquote as two
+ * separate, unquoted-dot-joined identifier parts.
  */
 class DaoRemoveUnusedColumnsTest extends TestCase
 {
@@ -30,7 +34,7 @@ class DaoRemoveUnusedColumnsTest extends TestCase
     public function testMaliciousColumnKeyIsQuotedInDropColumnStatement(): void
     {
         $mockDb = $this->createMock(Connection::class);
-        $mockDb->method('quoteIdentifier')->willReturnCallback(
+        $mockDb->method('quoteSingleIdentifier')->willReturnCallback(
             static fn (string $id): string => '`' . str_replace('`', '``', $id) . '`'
         );
         // indexExists()/foreignKeyExists() => not found, so removeIndices() executes no extra query
@@ -64,7 +68,7 @@ class DaoRemoveUnusedColumnsTest extends TestCase
     public function testMaliciousIndexKeyIsQuotedInDropIndexStatement(): void
     {
         $mockDb = $this->createMock(Connection::class);
-        $mockDb->method('quoteIdentifier')->willReturnCallback(
+        $mockDb->method('quoteSingleIdentifier')->willReturnCallback(
             static fn (string $id): string => '`' . str_replace('`', '``', $id) . '`'
         );
         // indexExists() => found, so the DROP INDEX statement is actually built and executed
@@ -97,7 +101,7 @@ class DaoRemoveUnusedColumnsTest extends TestCase
     public function testLegitimateColumnKeyStillDropsCorrectColumn(): void
     {
         $mockDb = $this->createMock(Connection::class);
-        $mockDb->method('quoteIdentifier')->willReturnCallback(
+        $mockDb->method('quoteSingleIdentifier')->willReturnCallback(
             static fn (string $id): string => '`' . str_replace('`', '``', $id) . '`'
         );
         $mockDb->method('fetchFirstColumn')->willReturn([0]);
@@ -114,6 +118,37 @@ class DaoRemoveUnusedColumnsTest extends TestCase
 
         $this->assertCount(1, $executedQueries);
         $this->assertStringContainsString('DROP COLUMN `legacyfield`', $executedQueries[0]);
+    }
+
+    /**
+     * StructuredTable::validateKey() deliberately still accepts a literal '.' in a key (only
+     * backticks are rejected). quoteIdentifier() treats '.' as a qualified-name separator and would
+     * quote "row.withdot" as two parts joined by an unquoted dot; quoteSingleIdentifier() must keep
+     * it as a single physical identifier instead.
+     */
+    public function testDottedLegacyColumnKeyIsQuotedAsASingleIdentifier(): void
+    {
+        $mockDb = $this->createMock(Connection::class);
+        $mockDb->method('quoteSingleIdentifier')->willReturnCallback(
+            static fn (string $id): string => '`' . str_replace('`', '``', $id) . '`'
+        );
+        $mockDb->method('fetchFirstColumn')->willReturn([0]);
+
+        $executedQueries = [];
+        $mockDb->method('executeQuery')->willReturnCallback(function (string $sql) use (&$executedQueries) {
+            $executedQueries[] = $sql;
+
+            return $this->createMock(Result::class);
+        });
+
+        $dao = $this->createDaoWithDb($mockDb);
+        $dao->callRemoveUnusedColumns('object_query_1', ['row.withdot#col'], []);
+
+        $this->assertCount(1, $executedQueries);
+        $this->assertSame(
+            'ALTER TABLE `object_query_1` DROP COLUMN `row.withdot#col`;',
+            $executedQueries[0]
+        );
     }
 
     /**

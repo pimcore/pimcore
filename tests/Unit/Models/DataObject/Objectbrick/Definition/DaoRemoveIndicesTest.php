@@ -25,7 +25,9 @@ use ReflectionMethod;
  * ClassDefinition\Helper\Dao trait method it also `use`s, so it has its own raw-backtick-concatenation
  * DDL-injection sink (GHSA-2rmm-27mv-jwg5) that DaoRemoveUnusedColumnsTest's trait-only test double
  * never exercises. It is still reached via the shared trait's removeUnusedColumns() -> $this->removeIndices()
- * call on an Objectbrick Dao instance, so it needs its own direct coverage.
+ * call on an Objectbrick Dao instance, so it needs its own direct coverage. It must use
+ * quoteSingleIdentifier(), not the deprecated quoteIdentifier(), because the latter splits on '.' as
+ * a qualified-name separator and StructuredTable keys are allowed to contain a literal '.'.
  */
 class DaoRemoveIndicesTest extends TestCase
 {
@@ -33,8 +35,37 @@ class DaoRemoveIndicesTest extends TestCase
 
     public function testMaliciousIndexKeyIsQuotedInObjectbrickDropIndexStatement(): void
     {
+        $executedQueries = $this->invokeRemoveIndices([self::MALICIOUS_KEY]);
+
+        $this->assertCount(1, $executedQueries);
+        // The malicious value must end up fully inside one quoted identifier - a raw, unescaped
+        // backtick here would let it inject a second, executable "DROP COLUMN" clause.
+        $this->assertSame(
+            'ALTER TABLE `object_brick_query_test_1` DROP INDEX `p_index_x``, DROP COLUMN ``oo_classname`;',
+            $executedQueries[0]
+        );
+    }
+
+    public function testDottedLegacyIndexKeyIsQuotedAsASingleIdentifier(): void
+    {
+        $executedQueries = $this->invokeRemoveIndices(['row.withdot#col']);
+
+        $this->assertCount(1, $executedQueries);
+        // quoteIdentifier() would split this into `p_index_row`.`withdot#col` (an unquoted-dot-joined
+        // qualified name); quoteSingleIdentifier() must keep it as one identifier.
+        $this->assertSame(
+            'ALTER TABLE `object_brick_query_test_1` DROP INDEX `p_index_row.withdot#col`;',
+            $executedQueries[0]
+        );
+    }
+
+    /**
+     * @return string[] the SQL statements executed via the mocked Connection
+     */
+    private function invokeRemoveIndices(array $columnsToRemove): array
+    {
         $mockDb = $this->createMock(Connection::class);
-        $mockDb->method('quoteIdentifier')->willReturnCallback(
+        $mockDb->method('quoteSingleIdentifier')->willReturnCallback(
             static fn (string $id): string => '`' . str_replace('`', '``', $id) . '`'
         );
 
@@ -51,14 +82,8 @@ class DaoRemoveIndicesTest extends TestCase
         $removeIndices = new ReflectionMethod(Dao::class, 'removeIndices');
         $removeIndices->setAccessible(true);
         // 'object_brick_query_...' table name selects the 'p_index_' prefix branch.
-        $removeIndices->invoke($dao, 'object_brick_query_test_1', [self::MALICIOUS_KEY], []);
+        $removeIndices->invoke($dao, 'object_brick_query_test_1', $columnsToRemove, []);
 
-        $this->assertCount(1, $executedQueries);
-        // The malicious value must end up fully inside one quoted identifier - a raw, unescaped
-        // backtick here would let it inject a second, executable "DROP COLUMN" clause.
-        $this->assertSame(
-            'ALTER TABLE `object_brick_query_test_1` DROP INDEX `p_index_x``, DROP COLUMN ``oo_classname`;',
-            $executedQueries[0]
-        );
+        return $executedQueries;
     }
 }

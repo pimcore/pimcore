@@ -20,9 +20,10 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable;
 /**
  * Ensures StructuredTable::setCols()/setRows() reject backticks in column/row keys
  * (GHSA-2rmm-27mv-jwg5), while continuing to accept every other legacy-safe key shape (digits-first,
- * punctuation, spaces, long values) since those keys are only ever emitted through DDL sinks that
- * now quote via Connection::quoteIdentifier() - unlike Data::setName(), which restricts PHP field
- * identifiers, these are array-key components and were never limited to that allowlist.
+ * punctuation including a literal '.', spaces, long values) since those keys are only ever emitted
+ * through DDL sinks that now quote via Connection::quoteSingleIdentifier() - unlike Data::setName(),
+ * which restricts PHP field identifiers, these are array-key components and were never limited to
+ * that allowlist.
  */
 class StructuredTableKeyValidationTest extends TestCase
 {
@@ -63,6 +64,7 @@ class StructuredTableKeyValidationTest extends TestCase
             'contains comma' => ['a,b'],
             'contains space' => ['my col'],
             'contains hash' => ['a#b'],
+            'contains dot' => ['a.b'],
             'longer than a PHP-identifier cap' => [str_repeat('a', 64)],
         ];
     }
