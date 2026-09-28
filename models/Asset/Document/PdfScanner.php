@@ -738,7 +738,14 @@ final class PdfScanner
             $inflated = '';
             foreach ($this->inflate($data) as $piece) {
                 $inflated .= $piece;
-                if (strlen($inflated) > self::MAX_DECODED_BYTES) {
+                if (strlen($inflated) > self::MAX_DECODED_BYTES
+                    || $this->totalDecodedBytes + strlen($inflated) > self::MAX_TOTAL_DECODED_BYTES) {
+                    // stop inflating, rather than only checking the
+                    // document-wide budget once this is fully materialized
+                    // and handed to the scan below — a chain of several
+                    // Flate layers, each allowed up to the per-stream cap,
+                    // would otherwise still fully decompress one more layer
+                    // before that later check ever runs
                     break;
                 }
             }
