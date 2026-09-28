@@ -579,12 +579,18 @@ final class PdfScanner
             return true;
         }
 
+        $data = ltrim($data, self::WHITESPACE);
+        $hasZlibHeader = $this->hasZlibHeader($data);
+
         if ($depth >= self::MAX_DECODE_DEPTH) {
-            return false;
+            // a legal filter chain can stack more layers than this budget
+            // allows for; exhausting it while another decoding still looks
+            // possible can't be certified safe, since a reader would still
+            // apply it
+            return $hasZlibHeader || $this->decodeAsciiHex($data) !== null || $this->decodeAscii85($data) !== null;
         }
 
-        $data = ltrim($data, self::WHITESPACE);
-        if ($this->hasZlibHeader($data)) {
+        if ($hasZlibHeader) {
             // a legal filter chain can wrap Flate in another encoding (e.g.
             // [/FlateDecode /ASCII85Decode]), so the inflated output is
             // recursed into like any other decoding instead of being scanned

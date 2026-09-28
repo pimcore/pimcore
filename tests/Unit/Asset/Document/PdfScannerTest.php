@@ -287,6 +287,34 @@ class PdfScannerTest extends TestCase
         ));
     }
 
+    public function testFilterChainDeeperThanTheDecodeBudgetIsFlagged(): void
+    {
+        // a legal filter chain can legitimately stack more layers than any
+        // fixed recursion budget allows for; exhausting it while the data
+        // still looks decodable can't be certified safe, since a reader
+        // would still apply the remaining filter
+        $data = self::OBJECT_STREAM_WITH_JS;
+        for ($i = 0; $i < 5; $i++) {
+            $data = bin2hex($data) . '>';
+        }
+
+        $pdf = $this->objectStreamPdf('/Filter [/ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode] /Length ' . strlen($data), $data);
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testFilterChainWithinTheDecodeBudgetIsNotFlaggedWhenClean(): void
+    {
+        // a chain that fully decodes within budget to something that isn't
+        // an object stream must not be flagged just for looking encoded
+        $data = bin2hex('just some ordinary clean text content') . '>';
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Filter /ASCIIHexDecode /Length " . strlen($data) . " >>\nstream\n" . $data . "\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
+    }
+
     public function testCompressedObjectStreamWithInvalidChecksumIsInspected(): void
     {
         // readers don't verify the trailing Adler-32 checksum of Flate data
