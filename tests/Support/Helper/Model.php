@@ -483,6 +483,16 @@ class Model extends AbstractDefinitionHelper
             $mandatoryInputWithDefault->setDefaultValue('default');
             $panel->addChild($mandatoryInputWithDefault);
 
+            /** @var ClassDefinition\Data\Numeric $mandatoryNumericWithZeroDefault */
+            $mandatoryNumericWithZeroDefault = $this->createDataChild('numeric', 'mandatoryNumericWithZeroDefault', true);
+            $mandatoryNumericWithZeroDefault->setDefaultValue(0);
+            $panel->addChild($mandatoryNumericWithZeroDefault);
+
+            /** @var ClassDefinition\Data\Checkbox $mandatoryCheckboxWithFalseDefault */
+            $mandatoryCheckboxWithFalseDefault = $this->createDataChild('checkbox', 'mandatoryCheckboxWithFalseDefault', true);
+            $mandatoryCheckboxWithFalseDefault->setDefaultValue(0);
+            $panel->addChild($mandatoryCheckboxWithFalseDefault);
+
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
@@ -648,9 +658,17 @@ class Model extends AbstractDefinitionHelper
             $lFields->addChild($this->createDataChild('input'));
             $lFields->addChild($this->createDataChild('textarea'));
             $lFields->addChild($this->createDataChild('wysiwyg'));
+            $lCalculatedInherited = $this->createDataChild('calculatedValue', 'lcalculatedinherited');
+            $lCalculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lCalculatedInherited);
+            $lFields->addChild($this->createDataChild('consent', 'lconsentinherited'));
 
             $otherPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('Layout');
             $otherPanel->addChild($this->createDataChild('input', 'normalinput'));
+            $calculatedInherited = $this->createDataChild('calculatedValue', 'calculatedinherited');
+            $calculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $otherPanel->addChild($calculatedInherited);
+            $otherPanel->addChild($this->createDataChild('consent', 'consentinherited'));
             $otherPanel->addChild($this->createDataChild('image', 'yx'));
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
@@ -983,6 +1001,11 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('input', 'brickinput'));
 
             $panel->addChild($this->createDataChild('input', 'brickinput2'));
+
+            $brickCalculated = $this->createDataChild('calculatedValue', 'brickcalculated');
+            $brickCalculated->setCalculatorClass('@test.calculatorservice');
+            $panel->addChild($brickCalculated);
+            $panel->addChild($this->createDataChild('consent', 'brickconsent'));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

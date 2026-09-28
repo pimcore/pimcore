@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Exception;
-use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Sabre\DAV\Exception\NotFound;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -34,36 +34,19 @@ class WebDavController extends Controller
 
     public function webdavAction(): void
     {
-        $homeDir = Asset::getById(1);
-
-        if (!$homeDir) {
+        try {
+            $server = Asset\WebDAV\Service::createServer(
+                $this->generateUrl('pimcore_webdav', ['path' => '/']),
+                $this->browserPluginEnabled
+            );
+        } catch (NotFound $e) {
             Logger::error('WebDAV: home directory asset (ID 1) not found');
 
             // let Symfony emit a proper 404 instead of exiting with an empty 200 response
-            throw new NotFoundHttpException('WebDAV root not found');
+            throw new NotFoundHttpException('WebDAV root not found', $e);
         }
 
         try {
-            $publicDir = new Asset\WebDAV\Folder($homeDir);
-            $objectTree = new Asset\WebDAV\Tree($publicDir);
-            $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_webdav', ['path' => '/']));
-
-            // lock plugin
-            /** @var PDO $pdo */
-            $pdo = \Pimcore\Db::get()->getNativeConnection();
-            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
-            $lockBackend->tableName = 'webdav_locks';
-
-            $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
-            $server->addPlugin($lockPlugin);
-
-            // browser plugin - the HTML directory listing and its POST-based creation form are
-            // opt-in, so the endpoint serves WebDAV clients only unless explicitly enabled
-            if ($this->browserPluginEnabled) {
-                $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
-            }
-
             $server->start();
         } catch (Exception $e) {
             Logger::error((string)$e);

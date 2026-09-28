@@ -30,7 +30,8 @@ class DateRange extends Data implements
     EqualComparisonInterface,
     VarExporterInterface,
     NormalizerInterface,
-    CustomVersionMarshalInterface
+    CustomVersionMarshalInterface,
+    UserDefinedColumnTypeInterface
 {
     use DataObject\Traits\DataWidthTrait;
 

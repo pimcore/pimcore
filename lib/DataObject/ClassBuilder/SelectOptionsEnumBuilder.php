@@ -177,7 +177,10 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
 
     protected function escapeSingleQuote(string $value): string
     {
-        return str_replace("'", "\\'", $value);
+        // Backslash must be escaped first: otherwise a value ending in `\'` produces `\\'` in the
+        // emitted source, an escaped backslash followed by a live, unescaped closing quote, which
+        // breaks out of the single-quoted PHP string literal (GHSA-x347-3h85-7jh8).
+        return str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
     }
 
     protected function generateCaseName(SelectOption $selectOption): string

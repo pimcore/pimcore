@@ -325,7 +325,6 @@ services:
     # framework-level content-never guard (event-name taxonomy + scalar-only properties)
     Pimcore\Telemetry\EventSanitizer: ~
 
-    Pimcore\Telemetry\Snapshot\Bucketizer: ~
 
     # time-boxes every snapshot collector query so a full scan on a huge table (path-depth, GROUP BY)
     # aborts instead of stalling the maintenance run; collectors autowire this in place of Connection
@@ -345,6 +344,11 @@ services:
             $debugMode: '%kernel.debug%'
             $timezone: '%pimcore.telemetry.timezone%'
 
+    # seats, permission-model shape, database footprint, schema currency and workflow reach - the
+    # install-scale facts the legacy StatisticsManager carried in its `tables` payload, without the
+    # per-class table names that made that payload unsendable
+    Pimcore\Telemetry\Snapshot\PlatformCollector: ~
+
     # evidence for EM question #1 - which pillars (DAM/PIM/MDM/DXP/Commerce) are actually used
     Pimcore\Telemetry\Snapshot\PillarUsageCollector: ~
 
@@ -353,6 +357,19 @@ services:
     Pimcore\Telemetry\Snapshot\DataModelComplexityCollector: ~
 
     Pimcore\Telemetry\Snapshot\CatalogShapeCollector: ~
+
+    # helpers shared by the collectors: ranked, capped name => count maps and the cache-adapter kind
+    Pimcore\Telemetry\Snapshot\CountMapInterface:
+        class: Pimcore\Telemetry\Snapshot\CountMap
+
+    Pimcore\Telemetry\Snapshot\CacheAdapterKindInterface:
+        class: Pimcore\Telemetry\Snapshot\CacheAdapterKind
+
+    # queue transport and backlog, as every configured transport reports it about itself
+    Pimcore\Telemetry\Snapshot\QueueCollector: ~
+
+    # thumbnail configuration shape: counts, formats, transformations, media queries
+    Pimcore\Telemetry\Snapshot\ThumbnailsCollector: ~
 
     # active-bundle list, resolved once per snapshot (enumerating them costs ~1 statement per bundle)
     Pimcore\Telemetry\Snapshot\ActiveBundles: ~

@@ -17,18 +17,22 @@ use Exception;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementKind;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
 use function is_numeric;
+use function is_string;
+use function preg_match;
+use function strtolower;
+use function trim;
 
 /**
  * Evidence for "which Pimcore pillars does each customer actually use?" (EM question #1).
  *
  * The pillars (DAM, PIM, MDM, DXP, Commerce) are not bundles - they are core capabilities every
  * install technically has - so we cannot answer by checking a feature flag. Instead we emit the
- * *structural evidence* of real usage: bucketed element-type volumes and a few capability bundle
+ * *structural evidence* of real usage: element-type volumes and a few capability bundle
  * flags. The actual pillar classification (and the "combination" label) is deliberately left to
  * the analysis layer (HogQL over these group properties), so the definition can be tuned without
  * shipping a new Pimcore release.
  *
- * Everything here is content-never: counts, buckets, types, and booleans only - never class,
+ * Everything here is content-never: counts, types, and booleans only - never class,
  * product, asset, document, or field names. Per-element-kind counts come from
  * {@see ElementStatisticsProviderInterface} - a single type aggregation per kind (a SQL `GROUP BY
  * type`, or a search-index terms aggregation when Studio's decorating provider is active) yielding
@@ -42,13 +46,20 @@ use function is_numeric;
  */
 final readonly class PillarUsageCollector implements SnapshotCollectorInterface
 {
-    private const SCHEMA_VERSION = 1;
+    private const SCHEMA_VERSION = 2;
+
+    private const MIMETYPE_LIMIT = 40;
+
+    /**
+     * `type/subtype` as RFC 2045 spells it, lower-cased; no parameters, no spaces.
+     */
+    private const MIMETYPE_TOKEN = '#^[a-z0-9][a-z0-9!\#$&^_.+-]*/[a-z0-9][a-z0-9!\#$&^_.+-]*$#';
 
     public function __construct(
         private ActiveBundles $activeBundles,
         private SnapshotQueryRunner $queryRunner,
         private ElementStatisticsProviderInterface $statistics,
-        private Bucketizer $bucketizer,
+        private CountMapInterface $countMap,
     ) {
     }
 
@@ -65,26 +76,35 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
         $objects = $this->statistics->typeCounts(ElementKind::DataObject);
         $documents = $this->statistics->typeCounts(ElementKind::Document);
 
-        return [
+        $metrics = [
             'schema_version' => self::SCHEMA_VERSION,
 
             // DAM - digital asset volume and the variety of rich-media types managed.
-            'asset_count_bucket' => $this->bucket($assets->total()),
-            'asset_image_count_bucket' => $this->bucket($assets->ofType('image')),
-            'asset_video_count_bucket' => $this->bucket($assets->ofType('video')),
-            'asset_document_count_bucket' => $this->bucket($assets->ofType('document')),
-            'asset_audio_count_bucket' => $this->bucket($assets->ofType('audio')),
+            'asset_count' => $assets->total(),
+            'asset_image_count' => $assets->ofType('image'),
+            'asset_video_count' => $assets->ofType('video'),
+            'asset_document_count' => $assets->ofType('document'),
+            'asset_audio_count' => $assets->ofType('audio'),
             'asset_type_variety' => $assets->distinctTypes(),
 
             // PIM - modelled data objects, product-like variant depth, and class-model breadth.
-            'class_count_bucket' => $this->bucket($this->count('classes')),
-            'object_count_bucket' => $this->bucket($objects->ofType('object')),
-            'object_variant_count_bucket' => $this->bucket($objects->ofType('variant')),
+            // `object_count` is plain objects only; `object_total_count` is every row in the table
+            // (objects + variants + folders), which is what core.* used to report separately.
+            // Assets need no equivalent: `asset_count` above is already the table-wide total.
+            'class_count' => $this->count('classes'),
+            'object_count' => $objects->ofType('object'),
+            'object_variant_count' => $objects->ofType('variant'),
+            'object_total_count' => $objects->total(),
 
             // DXP - web documents, page vs. transactional content, and multi-site footprint.
-            'document_page_count_bucket' => $this->bucket($documents->ofType('page')),
-            'document_email_count_bucket' => $this->bucket($documents->ofType('email')),
-            'document_link_count_bucket' => $this->bucket($documents->ofType('link')),
+            'document_page_count' => $documents->ofType('page'),
+            'document_email_count' => $documents->ofType('email'),
+            'document_link_count' => $documents->ofType('link'),
+            'document_total_count' => $documents->total(),
+            // Exact count of Site entities. The legacy StatisticsManager appeared to disagree here -
+            // it reported `sites: 0` alongside a non-empty `sites_domains` - but its table rows came
+            // from information_schema.TABLE_ROWS, an InnoDB estimate that commonly reads 0 for small
+            // tables. The estimate was wrong; this count is not.
             'site_count' => $this->count('sites'),
             'seo_bundle_active' => $this->activeBundles->has('Seo'),
             'personalization_bundle_active' => $this->activeBundles->has('Personalization'),
@@ -98,6 +118,55 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
             // Integration - Data Hub as a cross-cutting maturity signal (see also question #5).
             'datahub_bundle_active' => $this->activeBundles->has('DataHub'),
         ];
+
+        $breakdown = $this->mimeTypeBreakdown();
+        if ($breakdown !== null) {
+            $metrics['asset_mimetype_breakdown'] = $breakdown;
+        }
+
+        return $metrics;
+    }
+
+    /**
+     * Exact mime types behind the per-type asset counts, as normalised `type/subtype` tokens: an empty
+     * mime type reads as `unknown`, anything that is not a token as `other`, and the map is capped at the
+     * most frequent {@see self::MIMETYPE_LIMIT} types with the tail summed into `other`. Folders carry no
+     * mime type and are left out by the query. Unknown (key omitted) when the query fails - an empty map
+     * would read as an installation without assets.
+     *
+     * @return array<string, int>|null
+     */
+    private function mimeTypeBreakdown(): ?array
+    {
+        try {
+            $mimetype = $this->queryRunner->quoteIdentifier('mimetype');
+            $rows = $this->queryRunner->fetchAllKeyValue(
+                'SELECT ' . $mimetype . ', COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier('assets')
+                . ' WHERE ' . $this->queryRunner->quoteIdentifier('type') . ' <> ? GROUP BY ' . $mimetype,
+                ['folder']
+            );
+        } catch (Exception) {
+            return null;
+        }
+
+        $counts = [];
+        foreach ($rows as $mimetype => $count) {
+            $key = $this->mimeTypeKey($mimetype);
+            $counts[$key] = ($counts[$key] ?? 0) + (int) $count;
+        }
+
+        return $this->countMap->ranked($counts, self::MIMETYPE_LIMIT);
+    }
+
+    private function mimeTypeKey(mixed $mimetype): string
+    {
+        if (!is_string($mimetype) || trim($mimetype) === '') {
+            return 'unknown';
+        }
+
+        $token = strtolower(trim($mimetype));
+
+        return preg_match(self::MIMETYPE_TOKEN, $token) === 1 ? $token : 'other';
     }
 
     /**
@@ -115,10 +184,5 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
         } catch (Exception) {
             return 0;
         }
-    }
-
-    private function bucket(int $count): string
-    {
-        return $this->bucketizer->bucket($count);
     }
 }

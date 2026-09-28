@@ -30,7 +30,7 @@ use function round;
  * tiering are left to the analysis layer (HogQL over these group properties) so thresholds can be
  * tuned without shipping a Pimcore release - the same approach as {@see PillarUsageCollector}.
  *
- * Everything here is content-never: counts, buckets, booleans, and Pimcore's own field-type
+ * Everything here is content-never: counts, booleans, and Pimcore's own field-type
  * identifiers only - never class, field, product, or any customer names/values. Reads cached
  * definition files (not data tables) so it is cheap and runs only on the periodic snapshot. Any
  * failure degrades to zero, never an exception.
@@ -45,7 +45,6 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
 
     public function __construct(
         private FieldTreeAnalyzer $analyzer,
-        private Bucketizer $bucketizer,
         private SnapshotQueryRunner $queryRunner,
     ) {
     }
@@ -78,10 +77,10 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
             'objectbrick_count' => $this->objectbrickCount(),
             'custom_layout_count' => $this->customLayoutCount(),
             'classificationstore_group_count' => $this->tableCount('classificationstore_groups'),
-            'classificationstore_key_count' => $this->bucketizer->bucket($this->tableCount('classificationstore_keys')),
+            'classificationstore_key_count' => $this->tableCount('classificationstore_keys'),
 
             // Depth.
-            'total_field_count' => $this->bucketizer->bucket($aggregate->fieldCount),
+            'total_field_count' => $aggregate->fieldCount,
             'max_fields_per_class' => $classes['maxFields'],
             'avg_fields_per_class' => $avgFields,
             'max_nesting_depth' => $aggregate->maxDepth,
@@ -89,7 +88,7 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
 
             // Richness.
             'distinct_fieldtype_count' => $aggregate->distinctTypeCount(),
-            'relation_field_count' => $this->bucketizer->bucket($aggregate->relationFieldCount),
+            'relation_field_count' => $aggregate->relationFieldCount,
             'fieldtype_usage' => $aggregate->typeUsage,
             'uses_localizedfields' => $aggregate->usesLocalizedfields,
             'uses_blocks' => $aggregate->usesBlocks,

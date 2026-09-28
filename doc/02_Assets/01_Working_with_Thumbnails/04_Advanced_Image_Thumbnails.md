@@ -182,7 +182,10 @@ For most web-based applications, use the auto configuration, which does the foll
   (such as alpha channel)
 - Generates multiple additional optimized image formats (`webp`, `avif`) using progressive
   enhancement (in `<picture>` tag)
-- Runs image optimizers (such as `jpegoptim` and `pngout`) on generated images using an async queue
+- Runs a chain of image optimizers (`jpegoptim`, `pngquant`, `optipng`, `cwebp`) on generated
+  images using an async queue; a step whose binary is not installed is skipped and the rest of the
+  chain still runs. See [Optional System Dependencies](../../11_Deployment_Recommendations/06_Optional_System_Dependencies.md#image-processing)
+  for details
 
 Even with the auto setting, you still need to set a quality in the thumbnail configuration.
 This quality is used by `jpeg` and `png` and, if not configured otherwise, also for `webp`.

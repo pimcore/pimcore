@@ -28,6 +28,7 @@ final readonly class StorageQueueProcessingResult
         private int $pendingRows,
         private bool $timedOut,
         private array $errors,
+        private bool $stoppedOnError = false,
     ) {
     }
 
@@ -44,6 +45,15 @@ final readonly class StorageQueueProcessingResult
     public function getPendingRows(): int
     {
         return $this->pendingRows;
+    }
+
+    /**
+     * Whether the run ended early because a row failed and the run was not asked to continue.
+     * The remaining rows were not attempted and stay queued.
+     */
+    public function isStoppedOnError(): bool
+    {
+        return $this->stoppedOnError;
     }
 
     public function isTimedOut(): bool

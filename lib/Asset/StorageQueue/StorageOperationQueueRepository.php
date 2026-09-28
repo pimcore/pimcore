@@ -39,7 +39,12 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     public function add(StorageOperation $operation): void
     {
         if ($operation->getType() === StorageOperationType::Move) {
-            $this->repointMoves($operation->getStorage(), $operation->getSourcePrefix(), $operation->getTargetPrefix());
+            $this->repointMoves(
+                $operation->getStorage(),
+                $operation->getSourcePrefix(),
+                $operation->getTargetPrefix(),
+                $operation->getCopyOptions() ?? []
+            );
         } else {
             $this->convertCoveredMovesToDeletes($operation->getStorage(), $operation->getSourcePrefix());
         }
@@ -50,6 +55,9 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             'source_prefix' => $operation->getSourcePrefix(),
             'target_prefix' => $operation->getTargetPrefix(),
             'created_at' => $operation->getCreatedAt()->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+            'copy_options' => $operation->getCopyOptions() === null
+                ? null
+                : json_encode($operation->getCopyOptions(), JSON_THROW_ON_ERROR),
         ]);
 
         $this->invalidateHasOperationsCache($operation->getStorage());
@@ -181,26 +189,66 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
 
     public function removeIfUnchanged(StorageOperation $operation): bool
     {
-        $affected = $this->db->executeStatement(
-            'DELETE FROM ' . self::TABLE
-            . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
-            . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
-            [
-                'id' => (int) $operation->getId(),
-                'storage' => $operation->getStorage(),
-                'operation' => $operation->getType()->value,
-                'sourcePrefix' => $operation->getSourcePrefix(),
-                'targetPrefix' => $operation->getTargetPrefix(),
-            ]
-        );
+        // copy_options is part of the compared state - a live repoint can rewrite it while leaving
+        // the target alone, so a row matching on the other columns is not necessarily the row the
+        // processor applied.
+        //
+        // It cannot be compared inside the DELETE: the column is a real JSON type on MySQL and
+        // LONGTEXT on MariaDB, so a literal <=> against a serialized string only matches on the
+        // latter, and comparing the raw text would break on any hand-written backfill that spells
+        // the same options differently. So the row is read and compared in PHP - under FOR UPDATE,
+        // inside the same transaction as the DELETE, so a concurrent repoint cannot slip between
+        // the two. completeMove() refreshes and retries when this returns false.
+        $removed = (bool) $this->db->transactional(function () use ($operation): bool {
+            $row = $this->db->fetchAssociative(
+                'SELECT * FROM ' . self::TABLE
+                . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
+                . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)'
+                . ' FOR UPDATE',
+                $this->identityParameters($operation)
+            );
 
-        if ($affected > 0) {
+            if ($row === false) {
+                return false;
+            }
+
+            $current = $this->hydrate($row);
+            if ($this->canonicalCopyOptions($current->getCopyOptions())
+                !== $this->canonicalCopyOptions($operation->getCopyOptions())
+            ) {
+                return false;
+            }
+
+            return $this->db->executeStatement(
+                'DELETE FROM ' . self::TABLE
+                . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
+                . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
+                $this->identityParameters($operation)
+            ) > 0;
+        });
+
+        if ($removed) {
             $this->invalidateHasOperationsCache($operation->getStorage());
-
-            return true;
         }
 
-        return false;
+        return $removed;
+    }
+
+    /**
+     * The columns that identify the row the processor is applying, shared by the locking read and
+     * the delete so the two cannot drift apart.
+     *
+     * @return array<string, mixed>
+     */
+    private function identityParameters(StorageOperation $operation): array
+    {
+        return [
+            'id' => (int) $operation->getId(),
+            'storage' => $operation->getStorage(),
+            'operation' => $operation->getType()->value,
+            'sourcePrefix' => $operation->getSourcePrefix(),
+            'targetPrefix' => $operation->getTargetPrefix(),
+        ];
     }
 
     /**
@@ -208,22 +256,36 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
      * the new target so lookups stay flat (single-hop candidates, never chains). Rows that
      * become self-mappings (moved back to their source) are dropped.
      */
-    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
-    {
+    public function repointMoves(
+        string $storage,
+        string $movedPrefix,
+        string $newPrefix,
+        ?array $copyOptions = null
+    ): void {
+        $parameters = [
+            'newPrefix' => $newPrefix,
+            'storage' => $storage,
+            'movedPrefix' => $movedPrefix,
+            'movedPrefixB' => $movedPrefix,
+            'movedPrefixC' => $movedPrefix,
+            'movedPrefixD' => $movedPrefix,
+        ];
+
+        $copyOptionsAssignment = '';
+        if ($copyOptions !== null) {
+            $copyOptionsAssignment = ', `copy_options` = :copyOptions';
+            $parameters['copyOptions'] = $copyOptions === []
+                ? null
+                : json_encode($copyOptions, JSON_THROW_ON_ERROR);
+        }
+
         $this->db->executeStatement(
-            'UPDATE ' . self::TABLE . "
-             SET `target_prefix` = CONCAT(:newPrefix, SUBSTRING(`target_prefix`, CHAR_LENGTH(:movedPrefixD) + 1))
+            'UPDATE ' . self::TABLE . '
+             SET `target_prefix` = CONCAT(:newPrefix, SUBSTRING(`target_prefix`, CHAR_LENGTH(:movedPrefixD) + 1))' . $copyOptionsAssignment . "
              WHERE `storage` = :storage
                AND `operation` = 'move'
                AND (`target_prefix` = :movedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:movedPrefixB) + 1) = CONCAT(:movedPrefixC, '/'))",
-            [
-                'newPrefix' => $newPrefix,
-                'storage' => $storage,
-                'movedPrefix' => $movedPrefix,
-                'movedPrefixB' => $movedPrefix,
-                'movedPrefixC' => $movedPrefix,
-                'movedPrefixD' => $movedPrefix,
-            ]
+            $parameters
         );
 
         $this->db->executeStatement(
@@ -248,7 +310,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     {
         $this->db->executeStatement(
             'UPDATE ' . self::TABLE . "
-             SET `operation` = 'delete', `target_prefix` = NULL
+             SET `operation` = 'delete', `target_prefix` = NULL, `copy_options` = NULL
              WHERE `storage` = :storage
                AND `operation` = 'move'
                AND (`target_prefix` = :deletedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:deletedPrefixB) + 1) = CONCAT(:deletedPrefixC, '/'))",
@@ -273,7 +335,43 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             (string) $row['source_prefix'],
             $row['target_prefix'] === null ? null : (string) $row['target_prefix'],
             new DateTimeImmutable((string) $row['created_at'], new DateTimeZone('UTC')),
+            $this->decodeCopyOptions($row['copy_options'] ?? null),
         );
+    }
+
+    /**
+     * A stable representation for comparing two option sets. MySQL normalises a JSON object's key
+     * order on storage, so the decoded array need not come back in the order it went in; an empty
+     * set and an absent one mean the same thing.
+     *
+     * @param array<string, mixed>|null $options
+     */
+    private function canonicalCopyOptions(?array $options): ?string
+    {
+        if ($options === null || $options === []) {
+            return null;
+        }
+
+        ksort($options);
+
+        return json_encode($options, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * Rows predating the column decode to null, as do installs that have not run the ALTER
+     * statement yet - both keep the previous behaviour of copying with flysystem's own defaults.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function decodeCopyOptions(mixed $value): ?array
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $decoded = json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
+
+        return is_array($decoded) && $decoded !== [] ? $decoded : null;
     }
 
     /**

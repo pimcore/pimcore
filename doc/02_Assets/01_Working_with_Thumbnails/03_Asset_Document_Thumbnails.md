@@ -10,11 +10,21 @@ PDF, XLS(X), ODT, ODS, ODP, and many others.
 
 You can use existing image thumbnail configurations to create a thumbnail of your choice.
 
-This feature requires Ghostscript and at least
+## Required Tools
+
+This feature requires Ghostscript, which renders the page image and counts the pages of the
+document. Non-PDF formats (DOC(X), PPT(X), XLS(X), ODT, ODS, ODP, ...) additionally require
 [Gotenberg](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/03_Advanced_Installation_Topics/README.md#gotenberg)
 or
 [LibreOffice](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/03_Advanced_Installation_Topics/README.md#libreoffice)
-to be installed on the server.
+to convert the document to PDF first.
+
+`pdftotext` is only relevant for the `process_text` option (see [Configuration](#configuration)
+below), which extracts text for search indexing. It is optional, since Ghostscript can also
+extract text via its `txtwrite` device, though less accurately.
+
+See [Optional System Dependencies](../../11_Deployment_Recommendations/06_Optional_System_Dependencies.md#document-and-pdf-processing)
+for a full overview of these tools and how to configure their binary locations.
 
 > **Important**
 > Thumbnail processing for documents runs asynchronously as part of the
@@ -85,6 +95,6 @@ pimcore:
 |--------|---------|-------------|
 | `thumbnails.enabled` | `true` | Process thumbnails for asset documents. |
 | `process_page_count` | `true` | Process and store page count. Internally required for thumbnails and text generation. |
-| `process_text` | `true` | Extract text from asset documents (used by search). |
+| `process_text` | `true` | Extract text from asset documents (used by search), via `pdftotext` or, as a fallback, Ghostscript. |
 | `scan_pdf` | `true` | Scan PDF documents for unsafe JavaScript. |
 | `open_pdf_in_new_tab` | `only-unsafe` | Controls PDF display: `all-pdfs` (show thumbnail for all PDFs), `only-unsafe` (show thumbnail only for PDFs with JavaScript), `none` (show all PDFs inline, not recommended). |

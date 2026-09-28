@@ -86,7 +86,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 }
 
                 $definitionFile = $class->getDefinitionFile($name);
-                $class = @include $definitionFile;
+                $class = ClassDefinition\DefinitionFileCache::load($definitionFile, $force);
 
                 if (!$class instanceof ClassDefinition) {
                     throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
