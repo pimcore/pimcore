@@ -103,6 +103,48 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($pdf));
     }
 
+    public function testUnterminatedCommentBeforeAStreamCandidateInvalidatesIt(): void
+    {
+        // the dictionary text a candidate is checked against is deliberately
+        // truncated right before that candidate; if a comment within it
+        // hasn't reached its own terminator by that cutoff, the comment may
+        // really extend past the candidate too, making it part of the
+        // comment rather than a real stream keyword — a valid dictionary
+        // followed by such a comment must not be trusted as truly preceding it
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Length 100 >> % stream\n/JS /JavaScript /S (app.alert(1);) obj\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testTerminatedCommentBetweenDictionaryAndStreamIsStillRecognized(): void
+    {
+        // unlike the unterminated case above, a comment that reaches its
+        // own end-of-line before the stream keyword doesn't put that
+        // keyword's candidacy in doubt
+        $compressed = gzcompress(self::OBJECT_STREAM_WITH_JS);
+        $pdf = $this->wrapPdf(
+            '2 0 obj' . "\n" . '<< /Type /ObjStm /N 1 /First 4 /Filter /FlateDecode /Length '
+            . strlen($compressed) . ' >> % just a note' . "\n" . 'stream' . "\n"
+            . $compressed . "\nendstream\nendobj\n3 0 obj\n" . strlen($compressed) . "\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testManyRejectedStreamCandidatesAreFlaggedRatherThanRescannedForever(): void
+    {
+        // each "stream"-shaped candidate lacking a preceding dictionary
+        // re-parses the retained context to confirm that; a document packed
+        // with many such candidates while that context stays large would
+        // otherwise force that cost over and over, without bound
+        $padding = str_repeat('x', 1024 * 1024);
+        $fakeTokens = str_repeat("stream\n", 2000);
+
+        $this->assertTrue($this->scan($this->wrapPdf($padding . $fakeTokens)));
+    }
+
     public function testDetectionAcrossChunkBoundaries(): void
     {
         // tokens and keywords split across read-chunk boundaries must still be handled

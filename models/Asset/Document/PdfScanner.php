@@ -109,10 +109,25 @@ final class PdfScanner
     private const INFLATE_INPUT_BYTES = 8192;
 
     /**
+     * Bounds the cumulative cost of re-parsing the retained context for a
+     * "stream"-shaped candidate that turns out not to be a real stream
+     * keyword (no dictionary precedes it). Each rejection is otherwise a
+     * fresh forward parse of up to MAX_DICTIONARY_BYTES; a document packed
+     * with many such candidates would force that cost over and over.
+     */
+    private const MAX_REJECTED_CANDIDATE_BYTES = 64 * 1024 * 1024;
+
+    /**
      * Decoded output scanned so far across every stream of the current
      * document, checked against MAX_TOTAL_DECODED_BYTES.
      */
     private int $totalDecodedBytes = 0;
+
+    /**
+     * Bytes re-parsed so far across every rejected "stream"-shaped
+     * candidate, checked against MAX_REJECTED_CANDIDATE_BYTES.
+     */
+    private int $rejectedCandidateBytes = 0;
 
     public function __construct(private readonly int $chunkSize = 65536)
     {
@@ -124,6 +139,7 @@ final class PdfScanner
     public function containsJavaScript($stream): bool
     {
         $this->totalDecodedBytes = 0;
+        $this->rejectedCandidateBytes = 0;
 
         $buffer = '';
         $context = '';
@@ -316,6 +332,16 @@ final class PdfScanner
                 // which findStreamKeyword's own regex can't recognize — and
                 // must be scanned normally like any other content, not
                 // treated as the start of payload to skip or decode
+                $this->rejectedCandidateBytes += strlen($dictionary);
+                if ($this->rejectedCandidateBytes > self::MAX_REJECTED_CANDIDATE_BYTES) {
+                    // many "stream"-shaped candidates that each turn out
+                    // not to be real, retained context near its own cap,
+                    // would otherwise force this re-parse over and over —
+                    // a document this expensive to rule out can't be
+                    // certified safe either
+                    return true;
+                }
+
                 $newPosition = $streamKeywordStart + strlen(self::STREAM_KEYWORD);
                 $context = substr($dictionary . substr($buffer, $streamKeywordStart, $newPosition - $streamKeywordStart), -self::MAX_DICTIONARY_BYTES);
                 $position = $newPosition;
@@ -481,7 +507,16 @@ final class PdfScanner
             }
 
             if ($char === '%') {
-                $i += strcspn($text, "\r\n", $i);
+                $commentLength = strcspn($text, "\r\n", $i);
+                if ($i + $commentLength >= $length) {
+                    // the comment doesn't terminate within the text given —
+                    // it may really extend past a stream keyword candidate
+                    // truncated from view, in which case that candidate is
+                    // actually part of the comment, not a real token, and
+                    // nothing here can vouch for what does or doesn't follow
+                    $last = null;
+                }
+                $i += $commentLength;
 
                 continue;
             }
