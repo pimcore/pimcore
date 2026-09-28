@@ -200,6 +200,24 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             && $document->isAllowed('versions', $user);
     }
 
+    /**
+     * Editmode and studio-preview substitute in the document's latest (possibly unpublished)
+     * version via getLatestVersion() - the same disclosure this guards for pimcore_version,
+     * just reached implicitly instead of by explicit id, and reachable for published documents
+     * too since they skip the isPublished() guard in onKernelController() (see GHSA-v36c-r89g-2226).
+     */
+    private function denyAccessUnlessVersionsAllowed(Document $document, User $user, string $context): void
+    {
+        if (!$document->isAllowed('versions', $user)) {
+            $this->logger->warning('Denying access to the latest version of document {document} for {context} as the user may not view versions', [
+                'document' => $document->getFullPath(),
+                'context' => $context,
+            ]);
+
+            throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
+        }
+    }
+
     protected function handleEditmode(
         Document $document,
         User $user,
@@ -218,6 +236,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 return $documentFromSession;
             }
         }
+
+        $this->denyAccessUnlessVersionsAllowed($document, $user, 'editmode');
 
         $this->logger->debug('Loading editmode document {document} from latest version', [
             'document' => $document->getFullPath(),
@@ -297,6 +317,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     private function handleDocumentStudioPreview(Document $document, User $user): Document
     {
+        $this->denyAccessUnlessVersionsAllowed($document, $user, 'studio preview');
+
         $this->logger->debug('Loading preview document {document} from latest version', [
             'document' => $document->getFullPath(),
         ]);

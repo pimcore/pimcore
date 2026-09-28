@@ -27,6 +27,8 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\NullLogger;
 use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -42,7 +44,8 @@ class ElementListenerTest extends TestCase
     private function makeListener(
         DocumentResolver $documentResolver,
         RequestHelper $requestHelper,
-        UserLoader $userLoader
+        UserLoader $userLoader,
+        ?EditmodeResolver $editmodeResolver = null
     ): ElementListener {
         // handleObjectParams() is unrelated to the document permission logic under test here,
         // but it unconditionally touches Element\Service::getElementFromSession() (a real
@@ -51,7 +54,7 @@ class ElementListenerTest extends TestCase
         $listener = $this->getMockBuilder(ElementListener::class)
             ->setConstructorArgs([
                 $documentResolver,
-                $this->createMock(EditmodeResolver::class),
+                $editmodeResolver ?? $this->createMock(EditmodeResolver::class),
                 $requestHelper,
                 $userLoader,
             ])
@@ -145,6 +148,116 @@ class ElementListenerTest extends TestCase
         $listener = $this->makeListener($documentResolver, $requestHelper, $userLoader);
 
         $this->dispatch($listener, new Request());
+    }
+
+    // -----------------------------------------------------------------------
+    // denyAccessUnlessVersionsAllowed() via editmode/studio-preview - these substitute in the
+    // document's latest (possibly unpublished) version and, unlike the isPublished() guard,
+    // are reachable for *published* documents too (see GHSA-v36c-r89g-2226).
+    // -----------------------------------------------------------------------
+
+    public function testEditmodeOnPublishedDocumentIsDeniedWithoutVersionsPermission(): void
+    {
+        // Any active backend session was enough to reach getLatestVersion() here, regardless
+        // of workspace - even though the document is published and the top-level guard added
+        // for the unpublished case never applies to it. Plain Document (not PageSnippet) is
+        // deliberate: it keeps this test off the real getLatestVersion()/Dao delegation
+        // (a PHP magic-__call method PHPUnit cannot stub) while still exercising the guard,
+        // which runs before the instanceof PageSnippet substitution is ever reached.
+        $document = $this->createMock(Document::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getId')->willReturn(1);
+        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(false);
+        $document->method('getFullPath')->willReturn('/poc-published');
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn(new User());
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(true);
+
+        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader, $editmodeResolver);
+
+        // pimcore_studio=1 skips the session-stored-draft lookup (self-scoped, not part of this
+        // defect) and goes straight to the getLatestVersion() substitution under test.
+        $request = new Request(['pimcore_editmode' => '1', 'pimcore_studio' => '1']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->dispatch($listener, $request);
+    }
+
+    public function testEditmodeOnPublishedDocumentServesLatestVersionWithVersionsPermission(): void
+    {
+        // Legitimate editing must keep working for a user who does hold "versions" on the
+        // document: the guard must not throw. Plain Document (not instanceof PageSnippet)
+        // means the getLatestVersion() substitution is a no-op, so this covers the permission
+        // gate itself without depending on the real Dao-backed magic method.
+        $document = $this->createMock(Document::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getId')->willReturn(1);
+        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(true);
+        $document->method('getFullPath')->willReturn('/poc-published');
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+        $documentResolver->expects($this->once())->method('setDocument')->with($this->anything(), $document);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn(new User());
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(true);
+
+        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader, $editmodeResolver);
+
+        $request = new Request(['pimcore_editmode' => '1', 'pimcore_studio' => '1']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $this->dispatch($listener, $request);
+    }
+
+    public function testStudioPreviewOnPublishedDocumentIsDeniedWithoutVersionsPermission(): void
+    {
+        $document = $this->createMock(Document::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getId')->willReturn(1);
+        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(false);
+        $document->method('getFullPath')->willReturn('/poc-published');
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn(new User());
+
+        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader);
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->dispatch($listener, new Request(['pimcore_studio_preview' => '1']));
+    }
+
+    public function testStudioPreviewOnPublishedDocumentServesLatestVersionWithVersionsPermission(): void
+    {
+        $document = $this->createMock(Document::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getId')->willReturn(1);
+        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(true);
+        $document->method('getFullPath')->willReturn('/poc-published');
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+        $documentResolver->expects($this->once())->method('setDocument')->with($this->anything(), $document);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn(new User());
+
+        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader);
+
+        $this->dispatch($listener, new Request(['pimcore_studio_preview' => '1']));
     }
 
     // -----------------------------------------------------------------------
