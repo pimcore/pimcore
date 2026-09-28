@@ -151,12 +151,15 @@ class ElementListenerTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // denyAccessUnlessVersionsAllowed() via editmode/studio-preview - these substitute in the
+    // denyAccessUnlessViewAllowed() via editmode/studio-preview - these substitute in the
     // document's latest (possibly unpublished) version and, unlike the isPublished() guard,
-    // are reachable for *published* documents too (see GHSA-v36c-r89g-2226).
+    // are reachable for *published* documents too (see GHSA-v36c-r89g-2226). Gated on "view"
+    // (not "versions" - a separate, stricter grant reserved for isVersionAccessAllowedForDocument()
+    // / explicit pimcore_version=<id> access), matching what already gates loading this same
+    // latest working version in the admin editor.
     // -----------------------------------------------------------------------
 
-    public function testEditmodeOnPublishedDocumentIsDeniedWithoutVersionsPermission(): void
+    public function testEditmodeOnPublishedDocumentIsDeniedWithoutViewPermission(): void
     {
         // Any active backend session was enough to reach getLatestVersion() here, regardless
         // of workspace - even though the document is published and the top-level guard added
@@ -167,7 +170,7 @@ class ElementListenerTest extends TestCase
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(true);
         $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(false);
+        $document->method('isAllowed')->with('view', $this->anything())->willReturn(false);
         $document->method('getFullPath')->willReturn('/poc-published');
 
         $documentResolver = $this->createMock(DocumentResolver::class);
@@ -190,16 +193,18 @@ class ElementListenerTest extends TestCase
         $this->dispatch($listener, $request);
     }
 
-    public function testEditmodeOnPublishedDocumentServesLatestVersionWithVersionsPermission(): void
+    public function testEditmodeOnPublishedDocumentServesLatestVersionWithViewPermission(): void
     {
-        // Legitimate editing must keep working for a user who does hold "versions" on the
-        // document: the guard must not throw. Plain Document (not instanceof PageSnippet)
-        // means the getLatestVersion() substitution is a no-op, so this covers the permission
-        // gate itself without depending on the real Dao-backed magic method.
+        // Legitimate editing must keep working for a user who holds "view" on the document -
+        // matching admin-ui-classic-bundle's DocumentControllerBase::getDataByIdAction(), which
+        // loads this same latest working version under "view", not "versions". Plain Document
+        // (not instanceof PageSnippet) means the getLatestVersion() substitution is a no-op, so
+        // this covers the permission gate itself without depending on the real Dao-backed magic
+        // method.
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(true);
         $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(true);
+        $document->method('isAllowed')->with('view', $this->anything())->willReturn(true);
         $document->method('getFullPath')->willReturn('/poc-published');
 
         $documentResolver = $this->createMock(DocumentResolver::class);
@@ -220,12 +225,12 @@ class ElementListenerTest extends TestCase
         $this->dispatch($listener, $request);
     }
 
-    public function testStudioPreviewOnPublishedDocumentIsDeniedWithoutVersionsPermission(): void
+    public function testStudioPreviewOnPublishedDocumentIsDeniedWithoutViewPermission(): void
     {
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(true);
         $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(false);
+        $document->method('isAllowed')->with('view', $this->anything())->willReturn(false);
         $document->method('getFullPath')->willReturn('/poc-published');
 
         $documentResolver = $this->createMock(DocumentResolver::class);
@@ -240,12 +245,12 @@ class ElementListenerTest extends TestCase
         $this->dispatch($listener, new Request(['pimcore_studio_preview' => '1']));
     }
 
-    public function testStudioPreviewOnPublishedDocumentServesLatestVersionWithVersionsPermission(): void
+    public function testStudioPreviewOnPublishedDocumentServesLatestVersionWithViewPermission(): void
     {
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(true);
         $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(true);
+        $document->method('isAllowed')->with('view', $this->anything())->willReturn(true);
         $document->method('getFullPath')->willReturn('/poc-published');
 
         $documentResolver = $this->createMock(DocumentResolver::class);

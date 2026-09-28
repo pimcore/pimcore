@@ -202,14 +202,18 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     /**
      * Editmode and studio-preview substitute in the document's latest (possibly unpublished)
-     * version via getLatestVersion() - the same disclosure this guards for pimcore_version,
-     * just reached implicitly instead of by explicit id, and reachable for published documents
-     * too since they skip the isPublished() guard in onKernelController() (see GHSA-v36c-r89g-2226).
+     * version via getLatestVersion() and, unlike pimcore_version, are reachable for *published*
+     * documents too, since they skip the isPublished() guard in onKernelController() (see
+     * GHSA-v36c-r89g-2226). Gate on "view", matching what already gates loading this same latest
+     * working version in the admin editor (DocumentControllerBase::getDataByIdAction()) - "versions"
+     * is a separate, stricter grant for browsing/restoring historical versions by id
+     * (isVersionAccessAllowedForDocument()) and would 403 ordinary editors who can view/save a
+     * document but were never granted that workspace permission.
      */
-    private function denyAccessUnlessVersionsAllowed(Document $document, User $user, string $context): void
+    private function denyAccessUnlessViewAllowed(Document $document, User $user, string $context): void
     {
-        if (!$document->isAllowed('versions', $user)) {
-            $this->logger->warning('Denying access to the latest version of document {document} for {context} as the user may not view versions', [
+        if (!$document->isAllowed('view', $user)) {
+            $this->logger->warning('Denying access to the latest version of document {document} for {context} as the user may not view it', [
                 'document' => $document->getFullPath(),
                 'context' => $context,
             ]);
@@ -237,7 +241,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             }
         }
 
-        $this->denyAccessUnlessVersionsAllowed($document, $user, 'editmode');
+        $this->denyAccessUnlessViewAllowed($document, $user, 'editmode');
 
         $this->logger->debug('Loading editmode document {document} from latest version', [
             'document' => $document->getFullPath(),
@@ -317,7 +321,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     private function handleDocumentStudioPreview(Document $document, User $user): Document
     {
-        $this->denyAccessUnlessVersionsAllowed($document, $user, 'studio preview');
+        $this->denyAccessUnlessViewAllowed($document, $user, 'studio preview');
 
         $this->logger->debug('Loading preview document {document} from latest version', [
             'document' => $document->getFullPath(),
