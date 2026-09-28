@@ -843,11 +843,11 @@ final class PdfScanner
         $normalized = (string) preg_replace('/%[^\r\n]*/', ' ', $probe);
         $normalized = ltrim((string) preg_replace('/[\x00\t\n\f\r ]+/', ' ', $normalized), ' ');
 
-        if (preg_match('/^\d+ \d+ /', $normalized)) {
+        if (preg_match('/^\+?\d+ \+?\d+ /', $normalized)) {
             return true;
         }
 
-        if ($isComplete || !preg_match('/^(\d+( \d*)?)?$/', $normalized)) {
+        if ($isComplete || !preg_match('/^(\+?\d+( \+?\d*)?)?$/', $normalized)) {
             return false;
         }
 

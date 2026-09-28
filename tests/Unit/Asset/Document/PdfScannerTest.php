@@ -451,6 +451,22 @@ class PdfScannerTest extends TestCase
         $this->assertFalse($this->scan($pdf));
     }
 
+    public function testPlusPrefixedObjectStreamHeaderIsRecognizedWithoutType(): void
+    {
+        // PDF integers may carry an optional leading '+' (PDF 32000-1
+        // §7.3.3), including the object-number/generation pair that opens
+        // an object stream's decoded content; the structural fallback used
+        // when /Type is missing or indirect must recognize this shape too
+        $decompressed = '+5 +0 << /S /JavaScript /JS (app.alert(1);) >>';
+        $compressed = gzcompress($decompressed);
+        $pdf = $this->wrapPdf(
+            "2 0 obj\n<< /Filter /FlateDecode /Length " . strlen($compressed) . " >>\nstream\n"
+            . $compressed . "\nendstream\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testObjectStreamWithUnsupportedEncodingIsFlagged(): void
     {
         // a /Type-confirmed object stream using an encoding this class
