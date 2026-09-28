@@ -290,6 +290,22 @@ final class PdfScanner
             }
 
             $dictionary = $context . $region;
+            $entries = $this->readStreamDictionary($dictionary);
+
+            if ($entries === null) {
+                // a dictionary must precede a genuine stream keyword (PDF
+                // 32000-1 §7.3.8.1); finding none means this "stream" is
+                // just text — inside a comment or a literal string, both of
+                // which findStreamKeyword's own regex can't recognize — and
+                // must be scanned normally like any other content, not
+                // treated as the start of payload to skip or decode
+                $newPosition = $streamKeywordStart + strlen(self::STREAM_KEYWORD);
+                $context = substr($dictionary . substr($buffer, $streamKeywordStart, $newPosition - $streamKeywordStart), -self::MAX_DICTIONARY_BYTES);
+                $position = $newPosition;
+
+                continue;
+            }
+
             $context = '';
 
             // the keyword's EOL marker (guaranteed present by the lookahead
@@ -298,7 +314,6 @@ final class PdfScanner
             $position = $streamKeywordStart + strlen(self::STREAM_KEYWORD);
             $position += ($buffer[$position] ?? '') === "\r" && ($buffer[$position + 1] ?? '') === "\n" ? 2 : 1;
 
-            $entries = $this->readStreamDictionary($dictionary);
             $remaining = $this->extractStreamLength($entries);
 
             $streamState = [
@@ -583,6 +598,13 @@ final class PdfScanner
         $hasZlibHeader = $this->hasZlibHeader($data);
 
         if ($depth >= self::MAX_DECODE_DEPTH) {
+            if ($type !== null && $type !== 'ObjStm') {
+                // a stream explicitly typed as something else can't hold
+                // objects no matter how it's encoded, exactly as
+                // piecesContainJavaScript() already decides above
+                return false;
+            }
+
             // a legal filter chain can stack more layers than this budget
             // allows for; exhausting it while another decoding still looks
             // possible can't be certified safe, since a reader would still

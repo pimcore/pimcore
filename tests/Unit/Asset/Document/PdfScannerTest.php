@@ -90,6 +90,19 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($pdf));
     }
 
+    public function testStreamKeywordInsideACommentIsNotTreatedAsRealStream(): void
+    {
+        // a genuine stream keyword is always preceded by a dictionary
+        // (PDF 32000-1 §7.3.8.1); "stream" occurring inside a comment isn't
+        // one, and must not make the /JS right after it look like it's
+        // sitting inside undecoded, unscanned payload
+        $pdf = $this->wrapPdf(
+            "5 0 obj\n<< /Foo % stream\n/S /JavaScript /JS (app.alert(1);) >>\n% endstream\nendobj\n"
+        );
+
+        $this->assertTrue($this->scan($pdf));
+    }
+
     public function testDetectionAcrossChunkBoundaries(): void
     {
         // tokens and keywords split across read-chunk boundaries must still be handled
@@ -301,6 +314,26 @@ class PdfScannerTest extends TestCase
         $pdf = $this->objectStreamPdf('/Filter [/ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode] /Length ' . strlen($data), $data);
 
         $this->assertTrue($this->scan($pdf));
+    }
+
+    public function testTypedNonObjectStreamExceedingTheDecodeBudgetIsNotFlagged(): void
+    {
+        // a stream explicitly typed as something other than an object
+        // stream can never hold JavaScript, and exhausting the decode
+        // budget on it must not override that — only an unknown or
+        // ObjStm-typed stream fails closed when exhaustion is reached
+        $data = 'clean image bytes, nothing JS-like at all here';
+        for ($i = 0; $i < 5; $i++) {
+            $data = bin2hex($data) . '>';
+        }
+
+        $pdf = $this->wrapPdf(
+            '2 0 obj' . "\n"
+            . '<< /Type /XObject /Subtype /Image /Filter [/ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode /ASCIIHexDecode] /Length '
+            . strlen($data) . ' >>' . "\n" . 'stream' . "\n" . $data . "\nendstream\nendobj\n"
+        );
+
+        $this->assertFalse($this->scan($pdf));
     }
 
     public function testFilterChainWithinTheDecodeBudgetIsNotFlaggedWhenClean(): void
