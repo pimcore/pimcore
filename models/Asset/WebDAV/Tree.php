@@ -19,6 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
+use Pimcore\Model\User;
 use Pimcore\Tool\Admin;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
@@ -223,6 +224,17 @@ class Tree extends DAV\Tree
                 throw new Forbidden('No publish permission on target asset');
             }
 
+            // The check above cannot see the destination's OWN workspace rules on the restore
+            // branch: they were removed with the asset by the ON DELETE CASCADE on
+            // users_workspaces_asset.cid, and restoreWorkspaces() only re-inserts them after
+            // save(). isAllowed() would therefore fall back to the inherited rules and ignore an
+            // explicit deny on the destination for exactly the write that replaces it. Decide the
+            // overwrite against the captured rows instead.
+            if (isset($restoredWorkspaces)
+                && !$this->isPermittedByWorkspaceSnapshot('publish', $restoredWorkspaces, $user)) {
+                throw new Forbidden('No publish permission on target asset');
+            }
+
             if (isset($sourceAsset) && !$sourceAsset->isAllowed('delete', $user)) {
                 throw new Forbidden('No delete permission on source');
             }
@@ -361,6 +373,49 @@ class Tree extends DAV\Tree
         if ($metadata) {
             $asset->setMetadataRaw($metadata);
         }
+    }
+
+    /**
+     * Resolves one permission against the destination's own `users_workspaces_asset` rows as
+     * captured in the delete log, mirroring how Asset\Dao::isAllowed() resolves them: it orders by
+     * `LENGTH(cpath) DESC, FIELD(userId, <id>) DESC, <type> DESC` and takes the first row, so the
+     * deepest cpath wins - and the captured rows are the asset's own, which outrank every
+     * inherited rule - the user's own row outranks a role row, and among role rows a granting one
+     * wins.
+     *
+     * Returns true when the snapshot carries no rule for this user, leaving the decision to the
+     * inherited rules that Asset::isAllowed() has already evaluated. Admins are never restricted
+     * by workspaces, same as in Element\AbstractElement::isAllowed().
+     *
+     * @param array<mixed> $rows raw `users_workspaces_asset` rows from the delete log
+     */
+    private function isPermittedByWorkspaceSnapshot(string $type, array $rows, User $user): bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        $roleIds = $user->getRoles();
+        $allowedByRole = null;
+
+        foreach ($rows as $row) {
+            if (!is_array($row) || !array_key_exists($type, $row)) {
+                continue;
+            }
+
+            $rowUserId = (int) ($row['userId'] ?? 0);
+
+            if ($rowUserId === $user->getId()) {
+                // the user's own rule is decisive, whether it grants or denies
+                return (bool) $row[$type];
+            }
+
+            if (in_array($rowUserId, $roleIds, true)) {
+                $allowedByRole = ($allowedByRole ?? false) || (bool) $row[$type];
+            }
+        }
+
+        return $allowedByRole ?? true;
     }
 
     /**
