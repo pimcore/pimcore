@@ -75,6 +75,17 @@ final class PdfScanner
     private const MAX_DICTIONARY_BYTES = 1024 * 1024;
 
     /**
+     * How far past MAX_DICTIONARY_BYTES retention is allowed to grow while
+     * looking for a lexically safe place to cut it (never inside an open
+     * comment or literal string — cutting there could discard the marker
+     * that opened it). Real content almost never needs this; a comment or
+     * string still open this far in is itself a strong signal of something
+     * adversarial, at which point retention gives up and falls back to a
+     * plain byte cut that can no longer be trusted to be safe.
+     */
+    private const MAX_DICTIONARY_SEARCH_BYTES = 8 * 1024 * 1024;
+
+    /**
      * Bounds how much of a single stream payload is buffered for decoding.
      * Beyond it, only a prefix is kept to tell whether it is an object stream.
      */
@@ -143,6 +154,7 @@ final class PdfScanner
 
         $buffer = '';
         $context = '';
+        $contextTruncated = false;
         $streamState = null;
 
         do {
@@ -152,7 +164,7 @@ final class PdfScanner
             }
             $atEof = $chunk === false || $chunk === '' || feof($stream);
 
-            if ($this->scanBuffer($buffer, $context, $streamState, $atEof)) {
+            if ($this->scanBuffer($buffer, $context, $contextTruncated, $streamState, $atEof)) {
                 return true;
             }
         } while (!$atEof);
@@ -166,7 +178,7 @@ final class PdfScanner
      *
      * @param array{remaining: ?int, type: ?string, filterSteps: ?int, payload: string, truncated: bool, boundaryTrusted: bool}|null $streamState
      */
-    private function scanBuffer(string &$buffer, string &$context, ?array &$streamState, bool $atEof): bool
+    private function scanBuffer(string &$buffer, string &$context, bool &$contextTruncated, ?array &$streamState, bool $atEof): bool
     {
         $position = 0;
         $length = strlen($buffer);
@@ -316,14 +328,33 @@ final class PdfScanner
                 // keep a tail: it may hold the start of a stream keyword or an
                 // incomplete name token continued by the next read
                 $cut = $atEof ? $length : max($position, $length - self::BOUNDARY_OVERLAP);
-                $context = substr($context . substr($buffer, $position, $cut - $position), -self::MAX_DICTIONARY_BYTES);
+                $context = $this->appendContext($context, substr($buffer, $position, $cut - $position), $contextTruncated);
                 $buffer = substr($buffer, $cut);
+
+                if ($this->rejectedCandidateBytes > self::MAX_REJECTED_CANDIDATE_BYTES) {
+                    // a single, genuinely huge stretch of non-stream content
+                    // forces the same repeated safe-cut-search cost as many
+                    // rejected candidates would — a document this expensive
+                    // to get through can't be certified safe either
+                    return true;
+                }
 
                 return false;
             }
 
             $dictionary = $context . $region;
             $entries = $this->readStreamDictionary($dictionary);
+
+            if ($entries !== null && $contextTruncated) {
+                // this candidate would be accepted, but $context was
+                // truncated on the left since it was last known to be
+                // reliable: that can silently discard an opening '%' or
+                // '(' whose comment or string was still open, after which
+                // what remains can misread as a genuine, complete
+                // dictionary. There's no way to tell a real one apart from
+                // that here, so this can't be certified safe either.
+                return true;
+            }
 
             if ($entries === null) {
                 // a dictionary must precede a genuine stream keyword (PDF
@@ -343,13 +374,18 @@ final class PdfScanner
                 }
 
                 $newPosition = $streamKeywordStart + strlen(self::STREAM_KEYWORD);
-                $context = substr($dictionary . substr($buffer, $streamKeywordStart, $newPosition - $streamKeywordStart), -self::MAX_DICTIONARY_BYTES);
+                $context = $this->appendContext(
+                    $dictionary,
+                    substr($buffer, $streamKeywordStart, $newPosition - $streamKeywordStart),
+                    $contextTruncated
+                );
                 $position = $newPosition;
 
                 continue;
             }
 
             $context = '';
+            $contextTruncated = false;
 
             // the keyword's EOL marker (guaranteed present by the lookahead
             // in findStreamKeyword) precedes the payload and isn't part of
@@ -1028,6 +1064,128 @@ final class PdfScanner
         }
 
         return $value > 0xFFFFFFFF ? null : pack('N', $value);
+    }
+
+    /**
+     * Appends $addition to $existing, retaining at most MAX_DICTIONARY_BYTES
+     * from the end. $truncated is set (never unset) whenever this actually
+     * discards bytes from the left — which can silently drop an opening '%'
+     * or '(' whose comment or string was still open, after which what
+     * remains can misread as genuine, complete structure.
+     */
+    private function appendContext(string $existing, string $addition, bool &$truncated): string
+    {
+        $combined = $existing . $addition;
+
+        if (strlen($combined) <= self::MAX_DICTIONARY_BYTES) {
+            return $combined;
+        }
+
+        // finding a safe cut point is an O(length) scan, unlike a plain
+        // byte truncation; repeating it on a context this size, over and
+        // over for many candidates, is exactly the cost the rejection
+        // budget below already exists to bound — so it counts here too
+        $this->rejectedCandidateBytes += strlen($combined);
+
+        $minCut = strlen($combined) - self::MAX_DICTIONARY_BYTES;
+        $safeCut = $this->findSafeContextCut($combined, $minCut);
+
+        if ($safeCut !== null) {
+            return substr($combined, $safeCut);
+        }
+
+        if (strlen($combined) <= self::MAX_DICTIONARY_SEARCH_BYTES) {
+            // no safe point yet: keep growing past the normal budget, but
+            // only up to the bounded search ceiling, rather than settling
+            // for an unsafe cut just because the ideal one wasn't reached
+            return $combined;
+        }
+
+        // no lexically safe cut point exists even this far back — a
+        // comment or string still open this long is itself a strong signal
+        // of something adversarial. Give up looking and fall back to a
+        // plain byte cut, which can no longer be trusted to be safe
+        $truncated = true;
+
+        return substr($combined, -self::MAX_DICTIONARY_BYTES);
+    }
+
+    /**
+     * Finds the latest position, at or after $minCut, where $text (parsed
+     * from its own start) is neither inside an open comment nor an open
+     * literal string. Null if no such position exists at all.
+     */
+    private function findSafeContextCut(string $text, int $minCut): ?int
+    {
+        $length = strlen($text);
+        $i = 0;
+        $safe = null;
+        $stringDepth = 0;
+
+        while ($i < $length) {
+            if ($safe === null && $stringDepth === 0 && $i >= $minCut) {
+                // the position right before whatever comes next (a
+                // comment, a string opening, or a run of plain bytes) is
+                // itself already a valid, top-level, past-$minCut point
+                $safe = $i;
+            }
+
+            if ($stringDepth > 0) {
+                // every position in here is unsafe regardless of $minCut,
+                // so skipping over all of them in one jump loses nothing
+                $i += strcspn($text, '\\()', $i);
+                if ($i >= $length) {
+                    break;
+                }
+
+                if ($text[$i] === '\\') {
+                    $i = min($i + 2, $length);
+                } elseif ($text[$i] === '(') {
+                    $stringDepth++;
+                    $i++;
+                } else {
+                    $stringDepth--;
+                    $i++;
+                }
+
+                continue;
+            }
+
+            if ($text[$i] === '%') {
+                // likewise: nothing inside a comment is ever safe
+                $commentLength = strcspn($text, "\r\n", $i);
+                if ($i + $commentLength >= $length) {
+                    // the comment doesn't terminate within what's given —
+                    // nothing from here on can be considered safe, since
+                    // this position is still inside it, not past it
+                    break;
+                }
+
+                $i += $commentLength + 1; // consume the terminator too
+
+                continue;
+            }
+
+            if ($text[$i] === '(') {
+                $stringDepth = 1;
+                $i++;
+
+                continue;
+            }
+
+            // a run of plain, top-level bytes: every position in it is
+            // safe, so if $minCut falls within this run, that's the
+            // earliest safe position — it has to be found before jumping
+            // over the run, not just checked once the jump has already
+            // landed somewhere past it
+            $runEnd = $i + max(1, strcspn($text, '%(', $i));
+            if ($safe === null && $minCut < $runEnd) {
+                $safe = max($i, $minCut);
+            }
+            $i = $runEnd;
+        }
+
+        return $safe;
     }
 
     /**

@@ -145,6 +145,35 @@ class PdfScannerTest extends TestCase
         $this->assertTrue($this->scan($this->wrapPdf($padding . $fakeTokens)));
     }
 
+    public function testCommentOpeningMarkerDiscardedByContextRetentionIsStillDetected(): void
+    {
+        // the retained context preceding a stream candidate is bounded; if
+        // it simply cut at a fixed byte offset, a comment's opening '%'
+        // could be discarded from the left while its tail (something that
+        // then misreads as a valid, complete dictionary) survives — closing
+        // this requires the retention cut itself to land at a lexically
+        // safe position, never inside a comment or string still open there
+        $realJs = "/JS /JavaScript /S (app.alert(1);) obj\nendobj\n";
+        $padding = str_repeat(' ', 2 * 1024 * 1024);
+        $commentLine = '%' . $padding . '<< /Length ' . strlen($realJs) . " >>\nstream\n" . $realJs;
+
+        $this->assertTrue($this->scan($this->wrapPdf("2 0 obj\n" . $commentLine)));
+    }
+
+    public function testLargeNonCommentContentBeforeARealStreamIsNotFlagged(): void
+    {
+        // a large, entirely ordinary stretch of content (no comments or
+        // strings at all) forcing the retained context to be trimmed must
+        // not be mistaken for the adversarial case above and wrongly
+        // certify a real, clean stream that follows as unsafe
+        $bigArray = '2 0 obj' . "\n" . '<< /Kids [' . str_repeat('99 0 R ', 200000) . "] >>\nendobj\n";
+        $compressed = gzcompress('clean content, nothing js-like');
+        $realStream = '3 0 obj' . "\n" . '<< /Filter /FlateDecode /Length ' . strlen($compressed)
+            . " >>\nstream\n" . $compressed . "\nendstream\nendobj\n";
+
+        $this->assertFalse($this->scan($this->wrapPdf($bigArray . $realStream)));
+    }
+
     public function testDetectionAcrossChunkBoundaries(): void
     {
         // tokens and keywords split across read-chunk boundaries must still be handled
