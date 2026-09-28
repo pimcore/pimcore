@@ -158,7 +158,10 @@ class Dao extends Model\Dao\AbstractDao
             $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $protectedColumns)) {
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `' . $indexPrefix . $value . '`;');
+                    // quoteIdentifier() splits on '.' as a qualified-name separator; StructuredTable
+                    // keys may legitimately contain a literal '.', so quoteSingleIdentifier() is used
+                    // to keep the whole value as one identifier (see Helper\Dao::removeIndices()).
+                    Helper::queryIgnoreError($this->db, 'ALTER TABLE ' . $this->db->quoteSingleIdentifier($table) . ' DROP INDEX ' . $this->db->quoteSingleIdentifier($indexPrefix . $value) . ';');
                 }
             }
             $this->resetValidTableColumnsCache($table);
