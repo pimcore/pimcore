@@ -131,11 +131,20 @@ class ElementDelegateVersionStorageTest extends TestCase
         $object = TestHelper::createEmptyObject();
         $asset = TestHelper::createImageAsset();
         $document = TestHelper::createEmptyDocumentPage();
+        $paths = new FileSystemVersionStorageAdapter($this->remoteStorage);
 
-        $this->assertSame($object->getId(), $this->loadLatestVersion($object, 'object')->loadData()->getId());
-        $this->assertSame($document->getId(), $this->loadLatestVersion($document, 'document')->loadData()->getId());
+        $objectVersion = $this->loadLatestVersion($object, 'object');
+        $assetVersion = $this->loadLatestVersion($asset, 'asset');
+        $documentVersion = $this->loadLatestVersion($document, 'document');
 
-        $assetData = $this->loadLatestVersion($asset, 'asset')->loadData();
+        $this->assertTrue($this->remoteStorage->fileExists($paths->getStorageFilename($objectVersion->getId(), $object->getId(), 'object')));
+        $this->assertTrue($this->remoteStorage->fileExists($paths->getStorageFilename($assetVersion->getId(), $asset->getId(), 'asset')));
+        $this->assertTrue($this->localStorage->fileExists($paths->getStorageFilename($documentVersion->getId(), $document->getId(), 'document')));
+
+        $this->assertSame($object->getId(), $objectVersion->loadData()->getId());
+        $this->assertSame($document->getId(), $documentVersion->loadData()->getId());
+
+        $assetData = $assetVersion->loadData();
         $this->assertSame($asset->getId(), $assetData->getId());
         $this->assertSame(stream_get_contents($asset->getStream()), stream_get_contents($assetData->getStream()));
     }
@@ -151,6 +160,10 @@ class ElementDelegateVersionStorageTest extends TestCase
 
         $this->assertNotSame($first->getId(), $second->getId());
         $this->assertSame($first->getId(), $second->getBinaryFileId(), 'the unchanged binary data is shared');
+
+        $binaryPath = (new FileSystemVersionStorageAdapter($this->remoteStorage))->getBinaryStoragePath($second);
+        $this->assertTrue($this->remoteStorage->fileExists($binaryPath), 'the shared binary lives in the asset storage');
+        $this->assertFalse($this->localStorage->fileExists($binaryPath));
         $this->assertSame(stream_get_contents($asset->getStream()), stream_get_contents($second->loadData()->getStream()));
     }
 
@@ -175,6 +188,11 @@ class ElementDelegateVersionStorageTest extends TestCase
         $paths = new FileSystemVersionStorageAdapter($this->remoteStorage);
         $objectPath = $paths->getStorageFilename($objectVersion->getId(), $object->getId(), 'object');
         $documentPath = $paths->getStorageFilename($documentVersion->getId(), $document->getId(), 'document');
+
+        $this->assertTrue($this->remoteStorage->fileExists($objectPath));
+        $this->assertFalse($this->localStorage->fileExists($objectPath));
+        $this->assertTrue($this->localStorage->fileExists($documentPath));
+        $this->assertFalse($this->remoteStorage->fileExists($documentPath));
 
         // the maintenance cleanup (VersionsCleanupTask) deletes the outdated versions by id through this method
         (new Version())->getDao()->deleteVersions(
