@@ -120,6 +120,11 @@ trait ImageThumbnailTrait
                 if (($cacheOwner = $this->getThumbnailStatusCacheOwner()) && $this->config) {
                     $cacheOwner->getDao()->deleteFromThumbnailCache($this->config->getName(), basename($pathReference['storagePath']));
                 }
+
+                // the path reference claiming the file exists is memoized on this (potentially
+                // reused) instance, reset it so subsequent calls like exists() or getPath()
+                // regenerate instead of reporting the missing file
+                $this->reset();
             }
         }
 

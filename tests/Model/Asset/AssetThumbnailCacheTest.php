@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Config;
@@ -27,6 +28,7 @@ use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AssetThumbnailCacheTest extends TestCase
 {
@@ -479,6 +481,51 @@ class AssetThumbnailCacheTest extends TestCase
         $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
     }
 
+    public function testGetStreamedResponseByUriReturnsNullWhenDirectDeliveryReadFails(): void
+    {
+        $asset = $this->testAsset;
+
+        /** @var Asset\Image $asset */
+        $thumbnail = $asset->getThumbnail($this->thumbnailName);
+
+        //generate the thumbnail so the delivery below takes the direct-delivery path
+        $thumbnail->getPath(['deferredAllowed' => false]);
+        $storagePath = $thumbnail->getPathReference(true)['storagePath'];
+        $uri = sprintf('/image-thumb__%d__%s/%s', $asset->getId(), $this->thumbnailName, basename($storagePath));
+
+        //the file is still on the storage but cannot be read, i.e. a storage fault rather than a
+        //cache miss, so getStreamedResponseForThumbnail() surfaces the UnableToReadFile
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->method('fileExists')->willReturn(true);
+        $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($storagePath));
+
+        $this->withThumbnailStorage($storage, function () use ($uri) {
+            //the public helper for custom asset delivery (see
+            //doc/02_Assets/02_Restricting_Public_Asset_Access.md) must keep its ?StreamedResponse
+            //contract and swallow the storage error rather than let it escape to project code
+            $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
+        });
+    }
+
+    public function testThumbnailActionReturnsNotFoundForNonExistingAsset(): void
+    {
+        $nonExistingAssetId = 999999999;
+        $this->assertNull(Asset::getById($nonExistingAssetId));
+
+        $controller = new PublicServicesController();
+        $request = new Request(attributes: [
+            'assetId' => $nonExistingAssetId,
+            'thumbnailName' => $this->thumbnailName,
+            'filename' => 'image1.jpg',
+            'type' => 'image',
+            'prefix' => '',
+        ]);
+
+        //previously redirected to the placeholder image, masking the missing asset as a 200/302
+        $this->expectException(NotFoundHttpException::class);
+        $controller->thumbnailAction($request);
+    }
+
     public function testGetStreamInvalidatesStaleStatusCacheWhenFileMissingFromStorage(): void
     {
         $asset = $this->testAsset;
@@ -510,9 +557,8 @@ class AssetThumbnailCacheTest extends TestCase
         //the stale status cache entry got invalidated ...
         $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename));
 
-        //... so the next request (a fresh thumbnail instance) no longer reports the missing file
-        //as existing and regenerates it instead
-        $thumbnail = $asset->getThumbnail($thumbnailName);
+        //... and the memoized path reference discarded, so the very same instance regenerates
+        //the thumbnail on the next access instead of pointing at the file that is gone
         $this->assertFalse($thumbnail->exists());
 
         $stream = $thumbnail->getStream();
