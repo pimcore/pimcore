@@ -75,6 +75,12 @@ class Asset extends Element\AbstractElement
     public const CUSTOM_SETTING_PROCESSING_FAILED = 'pimcore-asset-processing-failed';
 
     /**
+     * Marks an asset that was added without a version (see `pimcore.assets.versions.skip_initial_version`), so that
+     * its persisted state is versioned before its first modification even if the option is disabled in the meantime
+     */
+    private const CUSTOM_SETTING_INITIAL_VERSION_SKIPPED = 'pimcore-asset-initial-version-skipped';
+
+    /**
      * @internal
      *
      */
@@ -545,13 +551,22 @@ class Asset extends Element\AbstractElement
                 // need for $this->update() for certain types (image, video, document)
                 $parameters['isUpdate'] = $isUpdate;
 
-                // if no version was created when the asset was added (see `pimcore.assets.versions.skip_initial_version`),
-                // version the persisted state before it gets overwritten by the first modification, so that the
-                // original state of the asset stays restorable. This is committed before the save transaction on
-                // purpose: the asset storage isn't transactional, so a failing save may already have overwritten the
-                // binary data and the snapshot must be kept as the only copy of it
-                if ($isUpdate && $this->getType() != 'folder' && self::isInitialVersionSkipped()) {
-                    $this->saveVersionOfPersistedStateInTransaction();
+                if ($this->getType() != 'folder') {
+                    if (!$isUpdate) {
+                        // remember that no version is created for the upload (see `pimcore.assets.versions.skip_initial_version`)
+                        if (self::isInitialVersionSkipped()) {
+                            $this->setCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED, true);
+                        } else {
+                            $this->removeCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
+                        }
+                    } elseif ($this->isVersionOfPersistedStatePending()) {
+                        // if no version was created when the asset was added, version the persisted state before it
+                        // gets overwritten by the first modification, so that the original state of the asset stays
+                        // restorable. This is committed before the save transaction on purpose: the asset storage isn't
+                        // transactional, so a failing save may already have overwritten the binary data and the
+                        // snapshot must be kept as the only copy of it
+                        $this->saveVersionOfPersistedStateInTransaction();
+                    }
                 }
             },
             retryableFunc: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
@@ -911,6 +926,15 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Whether the persisted state may still have to be versioned before a modification: the option is enabled, or the
+     * asset was added without a version while it was enabled
+     */
+    private function isVersionOfPersistedStatePending(): bool
+    {
+        return self::isInitialVersionSkipped() || (bool) $this->getCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
+    }
+
+    /**
      * Runs saveVersionOfPersistedState() in a transaction of its own (retried like a regular save), so that the check for
      * existing versions and the creation of the version are serialized by the row lock of the asset.
      *
@@ -934,6 +958,12 @@ class Asset extends Element\AbstractElement
                 $version = null;
             }
         );
+
+        // the persisted state is versioned (or the asset had versions already), so the marker of the skipped initial
+        // version is obsolete; it is removed from the database with the modification that is saved next
+        if ($this->getCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED) && $this->getDao()->hasVersionsForUpdate()) {
+            $this->removeCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
+        }
     }
 
     private function deleteStorageFilesOfRolledBackVersion(Version $version): void
@@ -997,6 +1027,9 @@ class Asset extends Element\AbstractElement
         // contains the binary data as it is currently on the storage (even if this save moves or renames the asset)
         $persisted->stream = $this->readPersistedBinaryData($persisted->getRealFullPath());
         $persisted->getStream();
+
+        // the marker of the skipped initial version is not part of the versioned state
+        $persisted->removeCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
 
         // Version::save() relies on Asset::getById() (runtime cache) for the path correction in __wakeup(), which
         // would return the instance currently being saved (possibly already carrying a new path), so the persisted
@@ -1123,7 +1156,7 @@ class Asset extends Element\AbstractElement
 
             // with `pimcore.assets.versions.skip_initial_version`, an asset without versions has to get a version of
             // its persisted state first, the version created here would prevent that on the next save() otherwise
-            if ($saveOnlyVersion && Version::isEnabled() && $this->getType() !== 'folder' && self::isInitialVersionSkipped()) {
+            if ($saveOnlyVersion && Version::isEnabled() && $this->getType() !== 'folder' && $this->isVersionOfPersistedStatePending()) {
                 $this->saveVersionOfPersistedStateInTransaction();
             }
 

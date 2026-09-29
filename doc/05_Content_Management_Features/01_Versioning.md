@@ -73,6 +73,9 @@ Notes:
 - Only assets are affected, versions of documents and data objects don't contain binary data.
 - Any save of the asset counts as a modification, including metadata or property changes, moves and renames, and
   programmatic saves. If the binary data is unchanged, it is stored only once and shared by the versions.
+- Assets added while the option is enabled are marked with the custom setting `pimcore-asset-initial-version-skipped`,
+  so that their persisted state is also versioned on their first modification after the option has been disabled
+  again. The marker is removed as soon as the asset has a version.
 - The lazy version of the persisted state is only created for assets that have no versions at all. Assets created
   while the option was disabled already have their upload version and behave as before; assets whose versions have
   been removed by the versions cleanup get their persisted state versioned again on the next modification.

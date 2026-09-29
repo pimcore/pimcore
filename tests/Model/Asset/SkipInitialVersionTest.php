@@ -46,6 +46,8 @@ use Throwable;
  */
 class SkipInitialVersionTest extends ModelTestCase
 {
+    private const INITIAL_VERSION_SKIPPED = 'pimcore-asset-initial-version-skipped';
+
     private ?array $originalAssetsConfig = null;
 
     private SystemSettingsConfig $systemSettingsConfig;
@@ -153,6 +155,48 @@ class SkipInitialVersionTest extends ModelTestCase
         $versions = $this->loadVersions($asset);
         $this->assertCount(1, $versions);
         $this->assertSame(1, $versions[0]->getVersionCount());
+        $this->assertNull(
+            Asset::getById($asset->getId(), ['force' => true])->getCustomSetting(self::INITIAL_VERSION_SKIPPED),
+            'an asset that got its upload version is not marked'
+        );
+    }
+
+    public function testPersistedStateIsVersionedAfterTheOptionIsDisabledAgain(): void
+    {
+        // an asset added while the option was enabled has no version of its upload; disabling the option must not
+        // make its first modification overwrite the original data without a version
+        $originalContent = $this->loadFileContent('assets/images/image5.jpg');
+        $changedContent = $this->loadFileContent('assets/images/image1.jpg');
+        $asset = TestHelper::createImageAsset('', $originalContent);
+
+        $this->setSkipInitialVersion(false);
+
+        $asset = Asset::getById($asset->getId(), ['force' => true]);
+        $asset->setData($changedContent);
+        $asset->save();
+
+        $versions = $this->loadVersions($asset);
+        $this->assertCount(2, $versions, 'the persisted state and the modification are versioned');
+        $this->assertSame($originalContent, stream_get_contents($versions[0]->getBinaryFileStream()));
+        $this->assertSame($changedContent, stream_get_contents($versions[1]->getBinaryFileStream()));
+    }
+
+    public function testMarkerOfSkippedInitialVersionIsRemovedOnceVersioned(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $this->assertTrue(
+            Asset::getById($asset->getId(), ['force' => true])->getCustomSetting(self::INITIAL_VERSION_SKIPPED),
+            'an asset added without a version is marked'
+        );
+
+        $asset->setProperty('propname', 'text', 'changed');
+        $asset->save();
+
+        $this->assertNull(Asset::getById($asset->getId(), ['force' => true])->getCustomSetting(self::INITIAL_VERSION_SKIPPED));
+
+        // the marker is not part of the versioned state, so restoring the snapshot doesn't bring it back
+        [$snapshot] = $this->loadVersions($asset);
+        $this->assertNull($snapshot->loadData()->getCustomSetting(self::INITIAL_VERSION_SKIPPED));
     }
 
     public function testFoldersAreNotAffected(): void
