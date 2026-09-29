@@ -75,47 +75,44 @@ class RoutingListener implements EventSubscriberInterface
             return;
         }
 
+        // requests with admin parameters are handled in onKernelRequestWithSession(), as only the
+        // session tells an admin from a spoofed parameter; listeners in between ignore such requests
+        if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
+            $this->handleFrontendRequest($event);
+        }
+    }
+
+    public function onKernelRequestWithSession(RequestEvent $event): void
+    {
+        if ($event->isMainRequest() && $this->requestHelper->isFrontendRequestByAdmin($event->getRequest())) {
+            $this->handleFrontendRequest($event);
+        }
+    }
+
+    private function handleFrontendRequest(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
+
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
 
         $path = urldecode($request->getPathInfo());
 
-        // requests with admin parameters are resolved in onKernelRequestWithSession(), as only the
-        // session tells an admin from a spoofed parameter; listeners in between ignore such requests
-        $isFrontendRequestByAdmin = $this->requestHelper->isFrontendRequestByAdmin($request);
-
         // resolve current site from request
-        if (!$isFrontendRequestByAdmin) {
-            $this->resolveSite($request, $path);
-        }
+        $this->resolveSite($request, $path);
 
         // check for app.php in URL and remove it for SEO puroposes
         $this->handleFrontControllerRedirect($event, $path);
-        if ($event->hasResponse() || $isFrontendRequestByAdmin) {
+        if ($event->hasResponse()) {
             return;
         }
 
         // redirect to the main domain if specified
         $this->handleMainDomainRedirect($event);
-    }
-
-    public function onKernelRequestWithSession(RequestEvent $event): void
-    {
-        if (!$event->isMainRequest()) {
+        if ($event->hasResponse()) {
             return;
         }
-
-        $request = $event->getRequest();
-
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)
-            || !$this->requestHelper->isFrontendRequestByAdmin($request)
-        ) {
-            return;
-        }
-
-        $this->resolveSite($request, urldecode($request->getPathInfo()));
-        $this->handleMainDomainRedirect($event);
     }
 
     /**
