@@ -28,6 +28,7 @@ use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool\Storage;
 
 /**
  * Asset and object versions go to one storage ("remote"), document versions to the default storage ("local").
@@ -92,6 +93,97 @@ class ElementDelegateVersionStorageTest extends TestCase
         $documentVersion = $this->loadLatestVersion($document, 'document');
         $this->assertSame('fs', $documentVersion->getStorageType());
         $this->assertNotNull($documentVersion->loadData());
+    }
+
+    public function testVersionsAreStoredPerElementType(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $asset = TestHelper::createImageAsset();
+        $document = TestHelper::createEmptyDocumentPage();
+        $paths = new FileSystemVersionStorageAdapter($this->remoteStorage);
+
+        $objectVersion = $this->loadLatestVersion($object, 'object');
+        $objectPath = $paths->getStorageFilename($objectVersion->getId(), $object->getId(), 'object');
+        $this->assertTrue($this->remoteStorage->fileExists($objectPath));
+        $this->assertFalse($this->localStorage->fileExists($objectPath));
+
+        // asset and object share one adapter instance, the paths contain the element type
+        $assetVersion = $this->loadLatestVersion($asset, 'asset');
+        $this->assertTrue($this->remoteStorage->fileExists($paths->getStorageFilename($assetVersion->getId(), $asset->getId(), 'asset')));
+        $this->assertTrue($this->remoteStorage->fileExists($paths->getBinaryStoragePath($assetVersion)));
+
+        $documentVersion = $this->loadLatestVersion($document, 'document');
+        $documentPath = $paths->getStorageFilename($documentVersion->getId(), $document->getId(), 'document');
+        $this->assertTrue($this->localStorage->fileExists($documentPath));
+        $this->assertFalse($this->remoteStorage->fileExists($documentPath));
+
+        // nothing is written to the regular version storage
+        $this->assertFalse(Storage::get('version')->fileExists($objectPath));
+        $this->assertFalse(Storage::get('version')->fileExists($documentPath));
+
+        foreach ([$objectVersion, $assetVersion, $documentVersion] as $version) {
+            $this->assertSame('fs', $version->getStorageType());
+        }
+    }
+
+    public function testVersionsAreLoadedFromTheirStorage(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $asset = TestHelper::createImageAsset();
+        $document = TestHelper::createEmptyDocumentPage();
+
+        $this->assertSame($object->getId(), $this->loadLatestVersion($object, 'object')->loadData()->getId());
+        $this->assertSame($document->getId(), $this->loadLatestVersion($document, 'document')->loadData()->getId());
+
+        $assetData = $this->loadLatestVersion($asset, 'asset')->loadData();
+        $this->assertSame($asset->getId(), $assetData->getId());
+        $this->assertSame(stream_get_contents($asset->getStream()), stream_get_contents($assetData->getStream()));
+    }
+
+    public function testDeduplicatedAssetBinaryIsLoadedFromItsRoute(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $first = $this->loadLatestVersion($asset, 'asset');
+
+        $asset->setProperty('changed', 'text', 'yes');
+        $asset->save();
+        $second = $this->loadLatestVersion($asset, 'asset');
+
+        $this->assertNotSame($first->getId(), $second->getId());
+        $this->assertSame($first->getId(), $second->getBinaryFileId(), 'the unchanged binary data is shared');
+        $this->assertSame(stream_get_contents($asset->getStream()), stream_get_contents($second->loadData()->getStream()));
+    }
+
+    public function testDeleteRemovesFilesFromTheirStorage(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $version = $this->loadLatestVersion($object, 'object');
+        $path = (new FileSystemVersionStorageAdapter($this->remoteStorage))->getStorageFilename($version->getId(), $object->getId(), 'object');
+        $this->assertTrue($this->remoteStorage->fileExists($path));
+
+        $version->delete();
+
+        $this->assertFalse($this->remoteStorage->fileExists($path));
+    }
+
+    public function testVersionsCleanupDeletesFromEachStorage(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $document = TestHelper::createEmptyDocumentPage();
+        $objectVersion = $this->loadLatestVersion($object, 'object');
+        $documentVersion = $this->loadLatestVersion($document, 'document');
+        $paths = new FileSystemVersionStorageAdapter($this->remoteStorage);
+        $objectPath = $paths->getStorageFilename($objectVersion->getId(), $object->getId(), 'object');
+        $documentPath = $paths->getStorageFilename($documentVersion->getId(), $document->getId(), 'document');
+
+        // the maintenance cleanup (VersionsCleanupTask) deletes the outdated versions by id through this method
+        (new Version())->getDao()->deleteVersions(
+            [$objectVersion->getId(), $documentVersion->getId()],
+            [['elementType' => 'object', 'disable_events' => false]]
+        );
+
+        $this->assertFalse($this->remoteStorage->fileExists($objectPath));
+        $this->assertFalse($this->localStorage->fileExists($documentPath));
     }
 
     private function setStorageAdapter(VersionStorageAdapterInterface $adapter): void
