@@ -51,8 +51,12 @@ class RoutingListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            // run with high priority as we need to set the site early
-            KernelEvents::REQUEST => ['onKernelRequest', 512],
+            KernelEvents::REQUEST => [
+                // run with high priority as we need to set the site early
+                ['onKernelRequest', 512],
+                // right after Symfony's SessionListener (128): the admin session check needs the session
+                ['onKernelRequestWithSession', 127],
+            ],
         ];
     }
 
@@ -70,6 +74,24 @@ class RoutingListener implements EventSubscriberInterface
 
             return;
         }
+
+        // requests with admin parameters are handled in onKernelRequestWithSession(), as only the
+        // session tells an admin from a spoofed parameter; listeners in between ignore such requests
+        if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
+            $this->handleFrontendRequest($event);
+        }
+    }
+
+    public function onKernelRequestWithSession(RequestEvent $event): void
+    {
+        if ($event->isMainRequest() && $this->requestHelper->isFrontendRequestByAdmin($event->getRequest())) {
+            $this->handleFrontendRequest($event);
+        }
+    }
+
+    private function handleFrontendRequest(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
