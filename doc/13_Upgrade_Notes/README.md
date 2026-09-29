@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.1
+
+### [Versioning]
+- New `Pimcore\Model\Version\Adapter\ElementDelegateVersionStorageAdapter` to store version data in a different storage per element type (asset, document, object), e.g. asset versions on S3 and document and object versions on the local filesystem. `FileSystemVersionStorageAdapter` accepts an optional Flysystem storage as constructor argument (default: `pimcore.version.storage`), and adapters can implement the new optional `ElementTypeAwareStorageTypeInterface`, which `Version::save()` uses to determine the storage type. Nothing changes unless the new adapter is configured. See [Versioning](../05_Content_Management_Features/01_Versioning.md#element-type-delegate).
+
 ## Pimcore 2026.3.0
 
 ### [General]
