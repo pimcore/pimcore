@@ -132,7 +132,7 @@ flysystem:
             adapter: 'aws'
             visibility: private
             options:
-                client: 'assets_s3'
+                client: 'assets_s3' # an existing S3 client service of your project
                 bucket: '%env(S3_PRIVATE_BUCKET)%'
                 prefix: versions
 
@@ -157,7 +157,7 @@ services:
             $defaultAdapter: '@Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter'
 ```
 
-Several element types can share one adapter, the storage paths contain the element type. Any adapter can be used
+Several element types can share one adapter, because the storage paths contain the element type. Any adapter can be used
 for an element type, including the size-based `DelegateVersionStorageAdapter` (e.g. small object versions in the
 database, larger ones on S3). Each version records the storage type of the adapter it was written by.
 
@@ -165,16 +165,21 @@ database, larger ones on S3). Each version records the storage type of the adapt
 
 The adapters don't fall back to each other: after changing where the versions of an element type are stored, its
 existing versions are still listed, but can't be loaded until their data has been moved to the new storage. Moving
-them is project-specific. This works in any direction (e.g. from the local filesystem to S3 and back):
+them is project-specific. The steps below work for moves between storages of the same kind, in any direction
+(filesystem to filesystem, e.g. from the local filesystem to S3 and back, or database to database). Each version is
+loaded by the adapter matching its recorded storage type (`versions.storageType`, `fs` or `db`), so a move between
+the database and a filesystem-based storage (including into or out of the size-based `DelegateVersionStorageAdapter`)
+requires converting the data and updating that column, which these steps don't cover.
 
 1. Enable the maintenance mode and stop the workers, so that no versions are written in the meantime.
 2. Copy the data of the re-routed element types to the new storage. For filesystem-based storages these are the
-   `<element type>/` directories of the version storage, e.g. `aws s3 sync var/versions/asset s3://<bucket>/versions/asset`
-   or `rclone copy`. For the database adapter, export and import the rows of the element type from the
+   `<element type>/` directories of the version storage, e.g.
+   `aws s3 sync var/versions/asset s3://<bucket>/versions/asset` (`versions` being the `prefix` of the storage in the
+   example above) or `rclone copy`. For the database adapter, export and import the rows of the element type from the
    `versionsData` table.
 3. Deploy the new configuration.
 4. Verify it, e.g. by opening and restoring a version of each re-routed element type.
-5. Remove the data from the old storage.
+5. Only once step 4 succeeded, remove the data from the old storage.
 
 ## Disable Versioning for the Current Process
 
