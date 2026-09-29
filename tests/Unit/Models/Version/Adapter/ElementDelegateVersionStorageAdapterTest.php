@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\Version\Adapter;
 
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter;
