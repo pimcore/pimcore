@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Exception;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
@@ -28,6 +30,8 @@ use Pimcore\Tests\Support\Helper\Pimcore as PimcoreHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use Psr\Container\ContainerInterface;
+use ReflectionProperty;
 use RuntimeException;
 
 /**
@@ -46,6 +50,8 @@ class SkipInitialVersionTest extends ModelTestCase
 
     private array $registeredListeners = [];
 
+    private ?ContainerInterface $originalStorageLocator = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -60,6 +66,7 @@ class SkipInitialVersionTest extends ModelTestCase
 
     protected function tearDown(): void
     {
+        $this->restoreStorage();
         Config::setSystemConfiguration($this->originalAssetsConfig, 'assets');
         $this->systemSettingsConfig->testSave($this->originalSystemSettings);
         Version::enable();
@@ -275,7 +282,7 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->assertCount(2, $this->loadVersions($asset), 'an asset that already has versions gets exactly one new version');
     }
 
-    public function testDisabledVersioningSkipsLazySnapshot(): void
+    public function testDisabledVersioningSkipsLazySnapshotWithoutBinaryChange(): void
     {
         $asset = TestHelper::createImageAsset();
 
@@ -289,6 +296,90 @@ class SkipInitialVersionTest extends ModelTestCase
         }
 
         $this->assertCount(0, $this->loadVersions($asset));
+    }
+
+    public function testDisabledVersioningStillVersionsPersistedStateOnBinaryChange(): void
+    {
+        // without a version of the upload, replacing the binary data with versioning disabled (importers, data-hub
+        // `omitVersionCreate`, ...) would otherwise destroy the original data for good
+        $originalContent = $this->loadFileContent('assets/images/image5.jpg');
+        $changedContent = $this->loadFileContent('assets/images/image1.jpg');
+        $asset = TestHelper::createImageAsset('', $originalContent);
+
+        Version::disable();
+
+        try {
+            $asset->setData($changedContent);
+            $asset->save();
+        } finally {
+            Version::enable();
+        }
+
+        $versions = $this->loadVersions($asset);
+        $this->assertCount(1, $versions, 'only the persisted state is versioned, the edit itself is not');
+        $this->assertSame($originalContent, stream_get_contents($versions[0]->getBinaryFileStream()));
+        $this->assertSame($changedContent, stream_get_contents(Asset::getById($asset->getId(), ['force' => true])->getStream()));
+    }
+
+    public function testVersioningStaysDisabledAfterLazySnapshot(): void
+    {
+        $asset = TestHelper::createImageAsset();
+
+        Version::disable();
+
+        try {
+            $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
+            $asset->save();
+
+            $this->assertFalse(Version::isEnabled(), 'the snapshot must not re-enable versioning for the caller');
+        } finally {
+            Version::enable();
+        }
+    }
+
+    public function testSaveIsAbortedWhenPersistedBinaryCannotBeRead(): void
+    {
+        $originalContent = $this->loadFileContent('assets/images/image5.jpg');
+        $asset = TestHelper::createImageAsset('', $originalContent);
+        $path = $asset->getRealFullPath();
+
+        // a transient read error (e.g. on an object storage) must not lead to an empty snapshot, followed by
+        // overwriting the original binary data
+        $this->failReadsOnAssetStorage($path);
+
+        $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
+
+        $exception = null;
+
+        try {
+            $asset->save();
+        } catch (Exception $e) {
+            $exception = $e;
+        } finally {
+            $this->restoreStorage();
+        }
+
+        $this->assertNotNull($exception, 'save() was expected to fail because the persisted binary data cannot be read');
+        $this->assertStringContainsString('Unable to read the binary data', $exception->getMessage());
+
+        $this->assertCount(0, $this->loadVersions($asset), 'no (empty) snapshot is kept');
+        $this->assertSame($originalContent, Storage::get('asset')->read($path), 'the original binary data is untouched');
+    }
+
+    public function testMissingPersistedBinaryDoesNotBlockSave(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $path = $asset->getRealFullPath();
+
+        // there is nothing to preserve if the binary data is already gone, uploading a replacement must stay possible
+        Storage::get('asset')->delete($path);
+
+        $changedContent = $this->loadFileContent('assets/images/image1.jpg');
+        $asset->setData($changedContent);
+        $asset->save();
+
+        $this->assertCount(2, $this->loadVersions($asset));
+        $this->assertSame($changedContent, Storage::get('asset')->read($path));
     }
 
     public function testRetentionPolicyWithoutVersionsIsRespected(): void
@@ -375,7 +466,104 @@ class SkipInitialVersionTest extends ModelTestCase
 
         $this->assertNotNull($version);
         $versions = $this->loadVersions($asset);
-        $this->assertCount(1, $versions);
-        $this->assertSame('explicit version', $versions[0]->getNote());
+        $this->assertCount(2, $versions, 'the persisted state is versioned first, followed by the explicit version');
+        $this->assertSame('explicit version', $versions[1]->getNote());
+        $this->assertSame($version->getId(), $versions[1]->getId());
+    }
+
+    public function testSaveVersionCalledDirectlyVersionsPersistedStateFirst(): void
+    {
+        // the version created by saveVersion() would otherwise prevent the lazy snapshot on the next save(),
+        // so the persisted (upload) state would be overwritten without ever being versioned
+        $asset = TestHelper::createImageAsset();
+
+        $asset->setProperty('propname', 'text', 'unsaved change');
+        $asset->saveVersion(true, true, 'unsaved change');
+
+        $versions = $this->loadVersions($asset);
+        $this->assertCount(2, $versions);
+        [$snapshot, $explicit] = $versions;
+        $this->assertSame('bla', $snapshot->loadData()->getProperty('propname'));
+        $this->assertSame('unsaved change', $explicit->loadData()->getProperty('propname'));
+        $this->assertSame('unsaved change', $explicit->getNote());
+
+        // the next save() doesn't create another snapshot
+        $asset->save();
+        $this->assertCount(3, $this->loadVersions($asset));
+    }
+
+    public function testSaveVersionCalledDirectlyWithDisabledVersioningCreatesNoSnapshot(): void
+    {
+        // no version is created, so nothing prevents the lazy snapshot on a later save()
+        $asset = TestHelper::createImageAsset();
+
+        Version::disable();
+
+        try {
+            $asset->saveVersion(true, true, 'not versioned');
+        } finally {
+            Version::enable();
+        }
+
+        $this->assertCount(0, $this->loadVersions($asset));
+    }
+
+    /**
+     * Makes the next readStream() of the asset storage fail for the given path while the file still exists, as it
+     * happens with a transient error of a remote storage. The storage service is shared (and already initialized), so its locator
+     * is swapped instead.
+     */
+    private function failReadsOnAssetStorage(string $failingPath): void
+    {
+        $storage = Pimcore::getContainer()->get(Storage::class);
+        $locatorProperty = new ReflectionProperty(Storage::class, 'locator');
+        $originalLocator = $locatorProperty->getValue($storage);
+        $this->originalStorageLocator = $originalLocator;
+
+        $assetStorage = $originalLocator->get('pimcore.asset.storage');
+        $failed = false;
+        $methods = array_filter(
+            get_class_methods($assetStorage),
+            static fn (string $method): bool => !str_starts_with($method, '__')
+        );
+        $failingAssetStorage = $this->getMockBuilder($assetStorage::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(array_values($methods))
+            ->getMock();
+        foreach ($methods as $method) {
+            if ($method === 'readStream') {
+                continue;
+            }
+            $failingAssetStorage->method($method)->willReturnCallback(
+                static fn (mixed ...$arguments): mixed => $assetStorage->$method(...$arguments)
+            );
+        }
+        $failingAssetStorage->method('readStream')->willReturnCallback(
+            static function (string $location) use ($assetStorage, $failingPath, &$failed) {
+                if ($location === $failingPath && !$failed) {
+                    $failed = true;
+
+                    throw UnableToReadFile::fromLocation($location, 'simulated transient read error');
+                }
+
+                return $assetStorage->readStream($location);
+            }
+        );
+
+        $locator = $this->createStub(ContainerInterface::class);
+        $locator->method('get')->willReturnCallback(
+            static fn (string $id): mixed => $id === 'pimcore.asset.storage' ? $failingAssetStorage : $originalLocator->get($id)
+        );
+
+        $locatorProperty->setValue($storage, $locator);
+    }
+
+    private function restoreStorage(): void
+    {
+        if ($this->originalStorageLocator !== null) {
+            $storage = Pimcore::getContainer()->get(Storage::class);
+            (new ReflectionProperty(Storage::class, 'locator'))->setValue($storage, $this->originalStorageLocator);
+            $this->originalStorageLocator = null;
+        }
     }
 }

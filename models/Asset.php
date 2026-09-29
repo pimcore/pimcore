@@ -926,14 +926,21 @@ class Asset extends Element\AbstractElement
      * but only if the asset doesn't have any versions yet. This is used when no version was created on adding the
      * asset (see `pimcore.assets.versions.skip_initial_version`) and the asset is now modified for the first time.
      *
+     * If versioning is disabled for the current process (see Version::disable()), the persisted state is still
+     * versioned when the binary data is about to be replaced, because there is no version of the upload which would
+     * keep the original binary data restorable otherwise. Changes without new binary data are not versioned then, so
+     * saves that only enrich an asset with derived data (e.g. AssetUpdateTasksHandler) don't create any version.
+     *
      * @internal
      *
      * @throws Exception
      */
     protected function saveVersionOfPersistedState(): ?Version
     {
+        $versioningDisabled = !Version::isEnabled();
+
         // the same versioning policy applies as for regular saves, see saveVersion()
-        if (!Version::isEnabled() || !$this->getId() || !self::isVersionCreationEnabledByConfig()) {
+        if (($versioningDisabled && !$this->getDataChanged()) || !$this->getId() || !self::isVersionCreationEnabledByConfig()) {
             return null;
         }
 
@@ -959,6 +966,7 @@ class Asset extends Element\AbstractElement
 
         // open the stream of the persisted binary data before anything else happens, so that the version definitely
         // contains the binary data as it is currently on the storage (even if this save moves or renames the asset)
+        $persisted->stream = $this->readPersistedBinaryData($persisted->getRealFullPath());
         $persisted->getStream();
 
         // Version::save() relies on Asset::getById() (runtime cache) for the path correction in __wakeup(), which
@@ -968,14 +976,48 @@ class Asset extends Element\AbstractElement
         $cachedInstance = RuntimeCache::isRegistered($cacheKey) ? RuntimeCache::get($cacheKey) : null;
         RuntimeCache::set($cacheKey, $persisted);
 
+        if ($versioningDisabled) {
+            Version::enable();
+        }
+
         try {
             $assetsConfig = SystemSettingsConfig::get()['assets'];
             $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
 
             return $persisted->doSaveVersion(null, false, $saveStackTrace);
         } finally {
+            if ($versioningDisabled) {
+                Version::disable();
+            }
             RuntimeCache::set($cacheKey, $cachedInstance ?? $this);
             $persisted->closeStream();
+        }
+    }
+
+    /**
+     * Opens the persisted binary data for the version of the persisted state. Unlike getStream(), a read error is not
+     * replaced by an empty placeholder, since the data would be overwritten right after and be lost for good.
+     *
+     * @return resource|null null if there is no binary data on the storage, so there is nothing to preserve
+     *
+     * @throws Exception
+     */
+    private function readPersistedBinaryData(string $path)
+    {
+        $storage = Storage::get('asset');
+
+        try {
+            return $storage->readStream($path);
+        } catch (FilesystemException $e) {
+            if (!$storage->fileExists($path)) {
+                return null;
+            }
+
+            throw new Exception(sprintf(
+                'Unable to read the binary data of asset %d to version its persisted state before it is modified for the first time, the asset is not saved to keep its original data: %s',
+                $this->getId(),
+                $e->getMessage()
+            ), 0, $e);
         }
     }
 
@@ -1042,6 +1084,12 @@ class Asset extends Element\AbstractElement
 
             // create version
             $version = null;
+
+            // with `pimcore.assets.versions.skip_initial_version`, an asset without versions has to get a version of
+            // its persisted state first, the version created here would prevent that on the next save() otherwise
+            if ($saveOnlyVersion && Version::isEnabled() && $this->getType() !== 'folder' && self::isInitialVersionSkipped()) {
+                $this->saveVersionOfPersistedState();
+            }
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)

@@ -76,7 +76,15 @@ Notes:
 - The lazy version of the persisted state is only created for assets that have no versions at all. Assets created
   while the option was disabled already have their upload version and behave as before; assets whose versions have
   been removed by the versions cleanup get their persisted state versioned again on the next modification.
-- Calling `$asset->saveVersion()` directly always creates a version, regardless of this option.
+- Calling `$asset->saveVersion()` directly always creates a version, regardless of this option. For an asset without
+  versions, the persisted state is versioned first, as it is on the first modification.
+- With versioning disabled for the current process (`\Pimcore\Model\Version::disable()`, e.g. in importers), the
+  persisted state is still versioned if the binary data of an asset without versions is replaced, because the original
+  binary data would be lost otherwise. Changes that don't replace the binary data are not versioned in this case, so
+  saves that only add derived data (e.g. image dimensions or video metadata after the upload) create no version.
+- If the persisted binary data cannot be read from the storage when its lazy version is created, the save is aborted
+  with an exception instead of overwriting the original data. If the binary data doesn't exist on the storage at all,
+  there is nothing to preserve and the asset is saved as usual.
 - The configured retention policy still applies: with `steps` or `days` set to `0` (keep no versions), the lazy version
   of the persisted state is not created either.
 
