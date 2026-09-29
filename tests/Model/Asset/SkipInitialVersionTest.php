@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\Asset;
 use Exception;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\AssetEvents;
@@ -23,6 +24,7 @@ use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
@@ -368,6 +370,30 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->assertSame($originalContent, Storage::get('asset')->read($path), 'the original binary data is untouched');
     }
 
+    public function testRuntimeCacheIsRestoredWhenSnapshotFails(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $cacheKey = ElementService::getElementCacheTag('asset', $asset->getId());
+        RuntimeCache::getInstance()->offsetUnset($cacheKey);
+
+        // fails while the persisted instance temporarily takes the place in the runtime cache
+        $this->failPostSaveOfFirstVersion($asset);
+        $asset->setFilename('unsaved-' . $asset->getFilename());
+
+        $exception = null;
+
+        try {
+            $asset->save();
+        } catch (RuntimeException $e) {
+            $exception = $e;
+        }
+
+        $this->assertNotNull($exception, 'save() was expected to fail');
+
+        // the unsaved instance must not have taken the place of the absent runtime cache entry
+        $this->assertFalse(RuntimeCache::isRegistered($cacheKey));
+    }
+
     public function testMissingPersistedBinaryDoesNotBlockSave(): void
     {
         $asset = TestHelper::createImageAsset();
@@ -454,6 +480,29 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->assertCount(2, $versions);
         $this->assertSame($snapshot->getId(), $versions[0]->getId());
         $this->assertSame($changedContent, stream_get_contents($versions[1]->getBinaryFileStream()));
+    }
+
+    public function testEditVersionIsCreatedWhenSnapshotIsRemovedBeforeSaveTransaction(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $changedContent = $this->loadFileContent('assets/images/image1.jpg');
+
+        // simulates the versions cleanup removing the (committed) snapshot while the save is running: this is still
+        // an update of the asset and must get its regular version
+        $this->addListener(AssetEvents::RESOLVE_MIME_TYPE, function (ResolveMimeTypeEvent $event) use ($asset): void {
+            if ($event->getAsset() === $asset) {
+                foreach ($this->loadVersions($asset) as $version) {
+                    $version->delete();
+                }
+            }
+        });
+
+        $asset->setData($changedContent);
+        $asset->save();
+
+        $versions = $this->loadVersions($asset);
+        $this->assertCount(1, $versions, 'the regular version of the update is created');
+        $this->assertSame($changedContent, stream_get_contents($versions[0]->getBinaryFileStream()));
     }
 
     public function testStorageFilesOfSnapshotAreRemovedWhenItsSaveFailsAfterWriting(): void

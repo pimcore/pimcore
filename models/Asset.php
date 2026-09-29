@@ -592,8 +592,9 @@ class Asset extends Element\AbstractElement
                 // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                 if ($this->getType() != 'folder') {
                     // optionally no version is created when adding an asset (see `pimcore.assets.versions.skip_initial_version`),
-                    // an asset which is modified already got a version of its persisted state in update()
-                    if (!self::isInitialVersionSkipped() || $this->getDao()->hasVersionsForUpdate()) {
+                    // an asset which is modified already got a version of its persisted state before this transaction
+                    /** @var bool $isUpdate assigned by reference in beforeRetryables */
+                    if ($isUpdate || !self::isInitialVersionSkipped()) {
                         $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
                     } else {
                         // scheduled tasks are saved always, they are not versioned (see saveVersion())
@@ -1001,7 +1002,8 @@ class Asset extends Element\AbstractElement
         // would return the instance currently being saved (possibly already carrying a new path), so the persisted
         // instance temporarily takes its place in the runtime cache
         $cacheKey = self::getCacheKey($this->getId());
-        $cachedInstance = RuntimeCache::isRegistered($cacheKey) ? RuntimeCache::get($cacheKey) : null;
+        $wasCached = RuntimeCache::isRegistered($cacheKey);
+        $cachedInstance = $wasCached ? RuntimeCache::get($cacheKey) : null;
         RuntimeCache::set($cacheKey, $persisted);
 
         if ($versioningDisabled) {
@@ -1022,7 +1024,11 @@ class Asset extends Element\AbstractElement
             if ($versioningDisabled) {
                 Version::disable();
             }
-            RuntimeCache::set($cacheKey, $cachedInstance ?? $this);
+            if ($wasCached) {
+                RuntimeCache::set($cacheKey, $cachedInstance);
+            } else {
+                RuntimeCache::getInstance()->offsetUnset($cacheKey);
+            }
             $persisted->closeStream();
         }
     }
