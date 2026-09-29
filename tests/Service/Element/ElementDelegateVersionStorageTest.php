@@ -39,6 +39,11 @@ class ElementDelegateVersionStorageTest extends TestCase
 
     private FilesystemOperator $localStorage;
 
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
