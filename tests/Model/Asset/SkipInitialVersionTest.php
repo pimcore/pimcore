@@ -17,6 +17,7 @@ use Exception;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
 use Pimcore\Event\Model\VersionEvent;
@@ -33,6 +34,7 @@ use Pimcore\Tool\Storage;
 use Psr\Container\ContainerInterface;
 use ReflectionProperty;
 use RuntimeException;
+use Throwable;
 
 /**
  * Covers `pimcore.assets.versions.skip_initial_version`: no version is created when an asset is added, the persisted
@@ -491,6 +493,34 @@ class SkipInitialVersionTest extends ModelTestCase
 
         $this->assertNotNull($exception, 'saveVersion() was expected to fail');
         $this->assertSnapshotIsGone($asset, $snapshot->version);
+    }
+
+    public function testStorageFilesOfSnapshotAreRemovedWhenItsCommitFails(): void
+    {
+        $asset = TestHelper::createImageAsset();
+
+        /** @var Version|null $snapshot */
+        $snapshot = null;
+        $this->addListener(VersionEvents::POST_SAVE, function (VersionEvent $event) use ($asset, &$snapshot): void {
+            if ($snapshot === null && $event->getVersion()->getCid() === $asset->getId()) {
+                $snapshot = $event->getVersion();
+
+                // the transaction of the snapshot is gone underneath, so its commit() fails after the snapshot's
+                // row and storage files were written
+                Db::get()->rollBack();
+            }
+        });
+
+        $exception = null;
+
+        try {
+            $asset->saveVersion(true, true, 'explicit version');
+        } catch (Throwable $e) {
+            $exception = $e;
+        }
+
+        $this->assertNotNull($exception, 'saveVersion() was expected to fail because the commit fails');
+        $this->assertSnapshotIsGone($asset, $snapshot);
     }
 
     /**

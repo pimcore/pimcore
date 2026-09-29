@@ -917,11 +917,36 @@ class Asset extends Element\AbstractElement
      */
     private function saveVersionOfPersistedStateInTransaction(): void
     {
+        /** @var Version|null $version assigned by reference in the closures below */
+        $version = null;
+
         $this->retryableFunction(
-            retryableFunc: function (): void {
-                $this->saveVersionOfPersistedState();
+            retryableFunc: function () use (&$version): void {
+                $version = $this->saveVersionOfPersistedState();
+            },
+            onBeforeRetry: function () use (&$version): void {
+                // the transaction was rolled back after the version was written (e.g. its commit failed), so its row
+                // is gone, but its storage files are not transactional and have to be removed
+                if ($version instanceof Version) {
+                    $this->deleteStorageFilesOfRolledBackVersion($version);
+                }
+                $version = null;
             }
         );
+    }
+
+    private function deleteStorageFilesOfRolledBackVersion(Version $version): void
+    {
+        try {
+            $version->delete();
+        } catch (Throwable $e) {
+            Logger::error(sprintf(
+                'Unable to clean up the storage files of the rolled back version %d of asset %d: %s',
+                $version->getId(),
+                $this->getId(),
+                $e->getMessage()
+            ));
+        }
     }
 
     /**
