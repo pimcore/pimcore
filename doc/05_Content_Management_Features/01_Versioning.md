@@ -87,6 +87,10 @@ Notes:
   there is nothing to preserve and the asset is saved as usual.
 - The lazy version of the persisted state is committed before the save itself. If the save fails afterwards, the
   version is kept, since the failed save may already have overwritten the binary data on the asset storage.
+  This doesn't apply if the save is wrapped in a database transaction of the caller: the lazy version then becomes
+  part of that transaction and is rolled back with it, while the asset storage (which isn't transactional) keeps
+  the new binary data. Don't roll back such transactions after saving assets whose original state must stay
+  restorable.
 - The configured retention policy still applies: with `steps` or `days` set to `0` (keep no versions), the lazy version
   of the persisted state is not created either.
 
