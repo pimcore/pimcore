@@ -18,12 +18,20 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Telemetry\Snapshot\PlatformCollector;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Manager;
 use RuntimeException;
+use Symfony\Component\Workflow\Definition;
+use Symfony\Component\Workflow\Transition;
+use Symfony\Component\Workflow\WorkflowInterface;
+use function array_fill;
 use function array_filter;
+use function array_key_exists;
+use function in_array;
 use function is_string;
 use function preg_match;
 use function preg_quote;
+use function rtrim;
 use function str_contains;
 
 class PlatformCollectorTest extends TestCase
@@ -32,6 +40,19 @@ class PlatformCollectorTest extends TestCase
      * @var list<string>
      */
     private array $executedSql = [];
+
+    /**
+     * @var list<list<mixed>>
+     */
+    private array $executedParams = [];
+
+    private const SHAPE_KEYS = [
+        'workflow_place_count',
+        'workflow_transition_count',
+        'workflow_start_place_count',
+        'workflow_end_place_count',
+        'workflow_global_action_count',
+    ];
 
     public function testNamespaceIsPlatform(): void
     {
@@ -84,8 +105,9 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
-     * Database size is an aggregate over information_schema. Only the SUM leaves the server - never a
-     * table name, which is exactly what made the legacy `tables` payload unsendable.
+     * Database size is an aggregate over information_schema. Only aggregates and bound fixed-name
+     * predicates leave the server - never a selected table name, which is exactly what made the
+     * legacy `tables` payload unsendable.
      */
     public function testReportsDatabaseSizeAndTableCountWithoutNamingTables(): void
     {
@@ -98,7 +120,8 @@ class PlatformCollectorTest extends TestCase
             if (!str_contains($sql, 'information_schema')) {
                 continue;
             }
-            $this->assertStringNotContainsString('TABLE_NAME', $sql, 'must not select table names');
+            $this->assertStringNotContainsString('SELECT TABLE_NAME', $sql, 'must not select table names');
+            $this->assertStringNotContainsString('LIKE', $sql, 'must not pattern-match table names');
         }
     }
 
@@ -113,7 +136,8 @@ class PlatformCollectorTest extends TestCase
 
     /**
      * Versioning volume and relation-graph density are the two biggest storage drivers on a mature
-     * install and neither was collected before.
+     * install. Both are information_schema estimates (see PlatformCollector::rowEstimate); the test
+     * fakes the estimate, so the assertion is on plumbing, not precision.
      */
     public function testReportsOperationalVolume(): void
     {
@@ -129,17 +153,48 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
-     * These are the counts most likely to hit the statement timeout, because they are unbounded. An
-     * absent key says "too large to count in budget", which is information; a wrong integer is not.
-     * Losing one must not cost the others.
+     * An estimate that cannot be obtained - the table is absent (search_backend_data on an install
+     * without the legacy search bundle), or the driver fails - omits its key. Losing one must not cost
+     * the others, and an absent key must never become 0.
      */
-    public function testATimedOutVolumeCountIsOmittedWithoutLosingTheRest(): void
+    public function testAnUnavailableVolumeEstimateIsOmittedWithoutLosingTheRest(): void
     {
         $metrics = $this->collector(failFor: 'versions')->collect();
 
         $this->assertArrayNotHasKey('version_count', $metrics);
         $this->assertArrayHasKey('dependency_count', $metrics);
         $this->assertArrayHasKey('user_count', $metrics);
+    }
+
+    public function testUnboundedVolumeTablesAreEstimatedWithAFixedNameNotScanned(): void
+    {
+        $this->collector()->collect();
+
+        foreach (['versions', 'dependencies', 'search_backend_data'] as $table) {
+            $scans = array_filter(
+                $this->executedSql,
+                static fn (string $sql): bool => preg_match(
+                    '/COUNT\(\*\)\s+FROM\s+`?' . preg_quote($table, '/') . '`?\b/',
+                    $sql,
+                ) === 1,
+            );
+            $this->assertSame([], $scans, "$table must not be scanned with COUNT(*)");
+
+            $estimates = [];
+            foreach ($this->executedSql as $i => $sql) {
+                if (str_contains($sql, 'TABLE_ROWS') && ($this->executedParams[$i] ?? []) === [$table]) {
+                    $estimates[] = $sql;
+                }
+            }
+            $this->assertCount(1, $estimates, "$table must be estimated exactly once");
+
+            foreach ($estimates as $sql) {
+                $this->assertStringContainsString('TABLE_SCHEMA = DATABASE()', $sql);
+                $this->assertStringEndsWith('TABLE_NAME = ?', rtrim($sql));
+                $this->assertStringNotContainsString('LIKE', $sql);
+                $this->assertStringNotContainsString('SELECT TABLE_NAME', $sql);
+            }
+        }
     }
 
     /**
@@ -158,12 +213,104 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
+     * Workflow shape: the definitions summed over every configured workflow. A start place is an initial
+     * marking, an end place is a place no transition leaves.
+     */
+    public function testReportsTheWorkflowShape(): void
+    {
+        $metrics = $this->collector(
+            workflows: ['product_approval', 'asset_review'],
+            definitions: [
+                'product_approval' => new Definition(
+                    ['draft', 'review', 'published', 'rejected'],
+                    [
+                        new Transition('submit', 'draft', 'review'),
+                        new Transition('approve', 'review', 'published'),
+                        new Transition('reject', 'review', 'rejected'),
+                        new Transition('rework', 'rejected', 'draft'),
+                    ],
+                    'draft',
+                ),
+                'asset_review' => new Definition(['new', 'checked'], [new Transition('check', 'new', 'checked')]),
+            ],
+            globalActions: ['product_approval' => 2],
+        )->collect();
+
+        $this->assertSame(6, $metrics['workflow_place_count'] ?? null);
+        $this->assertSame(5, $metrics['workflow_transition_count'] ?? null);
+        $this->assertSame(2, $metrics['workflow_start_place_count'] ?? null);
+        // `published` and `checked`: no transition leaves them
+        $this->assertSame(2, $metrics['workflow_end_place_count'] ?? null);
+        $this->assertSame(2, $metrics['workflow_global_action_count'] ?? null);
+    }
+
+    /**
+     * Several initial markings are several start places, and a place that nothing leaves is an end place
+     * even when it is also a start.
+     */
+    public function testEveryInitialMarkingIsAStartAndEveryPlaceNothingLeavesIsAnEnd(): void
+    {
+        $metrics = $this->collector(
+            definitions: [
+                'product_approval' => new Definition(
+                    ['inbox', 'archive', 'done'],
+                    [new Transition('finish', 'inbox', 'done')],
+                    ['inbox', 'archive'],
+                ),
+            ],
+        )->collect();
+
+        $this->assertSame(2, $metrics['workflow_start_place_count'] ?? null);
+        // `archive` and `done`
+        $this->assertSame(2, $metrics['workflow_end_place_count'] ?? null);
+    }
+
+    /**
+     * The shape is all-or-nothing: one workflow whose service cannot be resolved makes every shape sum
+     * unknown, because a partial sum would read as a smaller installation. The reach counts stand.
+     */
+    public function testAnUnloadableWorkflowLeavesTheWholeShapeUnknown(): void
+    {
+        $metrics = $this->collector(
+            workflows: ['product_approval', 'asset_review'],
+            definitions: ['asset_review' => null],
+        )->collect();
+
+        $this->assertSame(2, $metrics['workflow_configured_count']);
+        $this->assertArrayHasKey('workflow_active_element_count', $metrics);
+        foreach (self::SHAPE_KEYS as $key) {
+            $this->assertArrayNotHasKey($key, $metrics);
+        }
+    }
+
+    /**
+     * With no workflows configured there is no shape to report, only the zero.
+     */
+    public function testNoShapeIsReportedWhenNoWorkflowsAreConfigured(): void
+    {
+        $metrics = $this->collector(workflows: [])->collect();
+
+        foreach (self::SHAPE_KEYS as $key) {
+            $this->assertArrayNotHasKey($key, $metrics);
+        }
+    }
+
+    /**
      * `element_workflow_state.workflow` holds customer-chosen workflow names, so only the DISTINCT
      * count may be emitted. Nothing in this namespace may be a string.
      */
     public function testNoWorkflowNameCanLeak(): void
     {
-        $metrics = $this->collector(workflows: ['secret_project_gate'])->collect();
+        $metrics = $this->collector(
+            workflows: ['secret_project_gate'],
+            definitions: [
+                'secret_project_gate' => new Definition(
+                    ['secret_place_a', 'secret_place_b'],
+                    [new Transition('secret_transition', 'secret_place_a', 'secret_place_b')],
+                ),
+            ],
+            globalActions: ['secret_project_gate' => 1],
+        )->collect();
 
         foreach ($metrics as $key => $value) {
             $this->assertIsInt($value, "metric '$key' must be an int");
@@ -294,16 +441,23 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
-     * @param array<string, int> $overrides replacement counts, by table
-     * @param list<string>       $workflows configured workflow names
+     * @param array<string, int> $overrides     replacement counts, by table
+     * @param list<string>       $workflows     configured workflow names
+     * @param array<string, Definition|null> $definitions workflow name => definition; null stands for a
+     *        workflow whose service the container cannot resolve. Workflows without an entry get a
+     *        two-place definition so the shape is always computable unless a test says otherwise.
+     * @param array<string, int> $globalActions workflow name => number of configured global actions
      */
     private function collector(
         ?string $failFor = null,
         array $overrides = [],
         array $workflows = ['product_approval'],
         bool $failWorkflowManager = false,
+        array $definitions = [],
+        array $globalActions = [],
     ): PlatformCollector {
         $this->executedSql = [];
+        $this->executedParams = [];
 
         $counts = $overrides + [
             'users'                        => 10,
@@ -328,20 +482,52 @@ class PlatformCollectorTest extends TestCase
         } else {
             $manager->method('getAllWorkflows')->willReturn($workflows);
         }
+        $manager->method('getWorkflowByName')->willReturnCallback(
+            function (string $name) use ($definitions): ?WorkflowInterface {
+                $definition = array_key_exists($name, $definitions)
+                    ? $definitions[$name]
+                    : new Definition(['open', 'closed'], [new Transition('close', 'open', 'closed')]);
+                if ($definition === null) {
+                    return null;
+                }
+                $workflow = $this->createStub(WorkflowInterface::class);
+                $workflow->method('getDefinition')->willReturn($definition);
+
+                return $workflow;
+            }
+        );
+        $manager->method('getGlobalActions')->willReturnCallback(
+            fn (string $name): array => array_fill(
+                0,
+                $globalActions[$name] ?? 0,
+                $this->createStub(GlobalAction::class),
+            )
+        );
 
         $connection = $this->createMock(Connection::class);
         $connection->method('quoteIdentifier')->willReturnArgument(0);
         $connection->method('fetchOne')->willReturnCallback(
             function (string $sql, array $params = []) use ($counts, $failFor): int|string|false {
                 $this->executedSql[] = $sql;
+                $this->executedParams[] = $params;
 
-                if ($failFor !== null && str_contains($sql, $failFor)) {
+                if ($failFor !== null && (str_contains($sql, $failFor) || in_array($failFor, $params, true))) {
                     // stands in for what the per-statement timeout surfaces as
                     throw new RuntimeException('max_statement_time exceeded');
                 }
 
                 if (str_contains($sql, 'SUM(data_length')) {
                     return 26_214_400; // 25 MiB
+                }
+
+                if (str_contains($sql, 'TABLE_ROWS')) {
+                    // information_schema row estimate for one fixed-name table, bound as a parameter
+                    $table = $params[0] ?? null;
+                    if (!is_string($table)) {
+                        throw new RuntimeException('estimate query must bind exactly one table name: ' . $sql);
+                    }
+
+                    return $counts[$table] ?? false; // false: table does not exist
                 }
 
                 if (str_contains($sql, 'information_schema')) {

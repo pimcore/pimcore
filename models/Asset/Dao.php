@@ -157,7 +157,8 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
+        Helper::updateOrInsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);

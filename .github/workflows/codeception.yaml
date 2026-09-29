@@ -11,6 +11,7 @@ on:
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
+            - '**.md'
     push:
         branches:
             - "2026.*"
@@ -18,9 +19,14 @@ on:
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'   
+            - '**.md'
 permissions:
   contents: read
  
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
 jobs:
     codeception-tests:
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-public.yaml@main

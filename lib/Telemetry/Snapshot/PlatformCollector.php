@@ -21,15 +21,12 @@ use function is_numeric;
 
 /**
  * How large this installation is and how it is run: seats, permission-model shape, database footprint,
- * schema currency, operational volume, and workflow reach.
+ * schema currency, operational volume, and workflow reach and shape.
  *
- * Complements the content collectors - {@see PillarUsageCollector} counts what is managed, this counts
- * who manages it and what it costs to host.
- *
- * Every figure is a count over a FIXED-NAME table. Nothing here enumerates table names: the database
- * footprint is a single SUM over information_schema, so only the aggregate leaves the server. That is
- * the line the legacy StatisticsManager crossed - half of its `tables` payload was per-class tables
- * whose names embed the customer's own class, brick and fieldcollection names.
+ * Every figure reads a FIXED-NAME table and only aggregates leave the server; table names appear as
+ * bound predicates, never in a SELECT list. `version_count`, `dependency_count` and
+ * `search_index_entry_count` are InnoDB row estimates (information_schema TABLE_ROWS), because an
+ * exact COUNT(*) over those unbounded tables timed out in production; everything else is exact.
  *
  * @internal
  */
@@ -37,10 +34,13 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
 {
     private const SCHEMA_VERSION = 1;
 
+    private WorkflowShape $workflowShape;
+
     public function __construct(
         private SnapshotQueryRunner $queryRunner,
         private Manager $workflowManager,
     ) {
+        $this->workflowShape = new WorkflowShape($workflowManager);
     }
 
     public function getNamespace(): string
@@ -72,14 +72,9 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
 
             // Schema currency - an install can run a stale schema behind a current package version.
             'applied_migration_count' => $this->count('migration_versions'),
-
-            // Unbounded operational tables. These are the most likely to exceed the statement timeout;
-            // when they do the key is omitted, which reads as "too large to count in budget" rather
-            // than as a small install. An information_schema row estimate is not acceptable at raw
-            // precision - that is exactly what was removed when bucketing went.
-            'version_count' => $this->count('versions'),
-            'dependency_count' => $this->count('dependencies'),
-            'search_index_entry_count' => $this->count('search_backend_data'),
+            'version_count' => $this->rowEstimate('versions'),
+            'dependency_count' => $this->rowEstimate('dependencies'),
+            'search_index_entry_count' => $this->rowEstimate('search_backend_data'),
 
             // Recycle bin. Both figures are needed: one entry can hold an entire subtree, so the row
             // count alone understates what is actually retained - and it is the element total that
@@ -145,6 +140,15 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
         return $bytes === null ? null : (int)round($bytes / 1024 / 1024);
     }
 
+    private function rowEstimate(string $table): ?int
+    {
+        return $this->fetchCount(
+            'SELECT TABLE_ROWS FROM information_schema.TABLES'
+            . ' WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+            [$table],
+        );
+    }
+
     private function tableCount(): ?int
     {
         return $this->fetchCount(
@@ -157,34 +161,46 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
      * manager is unknown rather than zero, and the state counts stand on their own as evidence, so
      * they are still collected in that case - just without a configured count to compare them to.
      *
+     * The shape sums - places, transitions, start and end places, global actions - come from the workflow
+     * definitions themselves and cost no query; {@see WorkflowShape} makes them all-or-nothing.
+     *
      * @return array<string, int|null>
      */
     private function workflowMetrics(): array
     {
         try {
-            $configured = count($this->workflowManager->getAllWorkflows());
+            $names = $this->workflowManager->getAllWorkflows();
         } catch (Exception) {
-            $configured = null;
+            $names = null;
         }
 
-        if ($configured === 0) {
+        if ($names === []) {
             return ['workflow_configured_count' => 0];
         }
 
-        return [
-            'workflow_configured_count' => $configured,
+        $metrics = [
+            'workflow_configured_count' => $names === null ? null : count($names),
             'workflow_active_element_count' => $this->count('element_workflow_state'),
             'workflow_distinct_in_use_count' => $this->fetchCount(
                 'SELECT COUNT(DISTINCT workflow) FROM '
                 . $this->queryRunner->quoteIdentifier('element_workflow_state')
             ),
         ];
+
+        if ($names === null) {
+            return $metrics;
+        }
+
+        return $metrics + ($this->workflowShape->sums($names) ?? []);
     }
 
-    private function fetchCount(string $sql): ?int
+    /**
+     * @param list<string> $params
+     */
+    private function fetchCount(string $sql, array $params = []): ?int
     {
         try {
-            $value = $this->queryRunner->fetchOne($sql);
+            $value = $this->queryRunner->fetchOne($sql, $params);
 
             return is_numeric($value) ? (int)$value : null;
         } catch (Exception) {
