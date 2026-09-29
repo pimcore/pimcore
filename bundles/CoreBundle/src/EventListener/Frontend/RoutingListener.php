@@ -51,8 +51,12 @@ class RoutingListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            // run with high priority as we need to set the site early
-            KernelEvents::REQUEST => ['onKernelRequest', 512],
+            KernelEvents::REQUEST => [
+                // run with high priority as we need to set the site early
+                ['onKernelRequest', 512],
+                // right after Symfony's SessionListener (128): the admin session check needs the session
+                ['onKernelRequestWithSession', 127],
+            ],
         ];
     }
 
@@ -77,20 +81,41 @@ class RoutingListener implements EventSubscriberInterface
 
         $path = urldecode($request->getPathInfo());
 
+        // requests with admin parameters are resolved in onKernelRequestWithSession(), as only the
+        // session tells an admin from a spoofed parameter; listeners in between ignore such requests
+        $isFrontendRequestByAdmin = $this->requestHelper->isFrontendRequestByAdmin($request);
+
         // resolve current site from request
-        $this->resolveSite($request, $path);
+        if (!$isFrontendRequestByAdmin) {
+            $this->resolveSite($request, $path);
+        }
 
         // check for app.php in URL and remove it for SEO puroposes
         $this->handleFrontControllerRedirect($event, $path);
-        if ($event->hasResponse()) {
+        if ($event->hasResponse() || $isFrontendRequestByAdmin) {
             return;
         }
 
         // redirect to the main domain if specified
         $this->handleMainDomainRedirect($event);
-        if ($event->hasResponse()) {
+    }
+
+    public function onKernelRequestWithSession(RequestEvent $event): void
+    {
+        if (!$event->isMainRequest()) {
             return;
         }
+
+        $request = $event->getRequest();
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)
+            || !$this->requestHelper->isFrontendRequestByAdmin($request)
+        ) {
+            return;
+        }
+
+        $this->resolveSite($request, urldecode($request->getPathInfo()));
+        $this->handleMainDomainRedirect($event);
     }
 
     /**
