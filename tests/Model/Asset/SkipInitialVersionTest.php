@@ -408,19 +408,14 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->assertCount(1, $this->loadVersions($asset));
     }
 
-    public function testStorageFilesOfSnapshotAreRemovedWhenSaveIsRolledBack(): void
+    public function testSnapshotIsKeptWhenSaveIsRolledBack(): void
     {
-        $asset = TestHelper::createImageAsset();
+        $originalContent = $this->loadFileContent('assets/images/image5.jpg');
+        $changedContent = $this->loadFileContent('assets/images/image1.jpg');
+        $asset = TestHelper::createImageAsset('', $originalContent);
 
-        /** @var Version|null $snapshot */
-        $snapshot = null;
-        $this->addListener(VersionEvents::POST_SAVE, function (VersionEvent $event) use ($asset, &$snapshot): void {
-            if ($snapshot === null && $event->getVersion()->getCid() === $asset->getId()) {
-                $snapshot = $event->getVersion();
-            }
-        });
-
-        // fails inside update() after the version of the persisted state was written and the transaction is rolled back
+        // fails inside update() after the new binary data was already written to the (non-transactional) asset
+        // storage, the transaction is rolled back afterwards
         $failingListener = function (ResolveMimeTypeEvent $event) use ($asset): void {
             if ($event->getAsset() === $asset) {
                 throw new RuntimeException('simulated failure during save');
@@ -428,37 +423,41 @@ class SkipInitialVersionTest extends ModelTestCase
         };
         $this->addListener(AssetEvents::RESOLVE_MIME_TYPE, $failingListener);
 
-        $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
+        $asset->setData($changedContent);
+
+        $exception = null;
 
         try {
             $asset->save();
-            $this->fail('save() was expected to fail');
         } catch (RuntimeException $e) {
-            $this->assertSame('simulated failure during save', $e->getMessage());
+            $exception = $e;
         }
 
-        $this->assertNotNull($snapshot, 'the version of the persisted state was written before the failure');
-        $this->assertCount(0, $this->loadVersions($asset), 'the version row was rolled back');
+        $this->assertNotNull($exception, 'save() was expected to fail');
+        $this->assertSame('simulated failure during save', $exception->getMessage());
 
-        // version storage is not transactional, the files must have been cleaned up explicitly
-        $storage = Storage::get('version');
-        $adapter = new FileSystemVersionStorageAdapter();
-        $this->assertFalse($storage->fileExists($adapter->getStorageFilename($snapshot->getId(), $asset->getId(), 'asset')));
-        $this->assertFalse($storage->fileExists($adapter->getBinaryStoragePath($snapshot)));
+        // the snapshot is committed before the save transaction, so the original binary data stays restorable even
+        // though the failed save already overwrote it on the asset storage
+        $versions = $this->loadVersions($asset);
+        $this->assertCount(1, $versions, 'the version of the persisted state is kept');
+        $snapshot = $versions[0];
+        $this->assertSame($originalContent, stream_get_contents($snapshot->getBinaryFileStream()));
+        $this->assertSame($originalContent, stream_get_contents($snapshot->loadData()->getStream()));
 
-        // a subsequent successful save starts over: snapshot of the persisted state plus the regular version
+        // a subsequent successful save only adds the regular version
         Pimcore::getEventDispatcher()->removeListener(AssetEvents::RESOLVE_MIME_TYPE, $failingListener);
         $asset->save();
 
         $versions = $this->loadVersions($asset);
         $this->assertCount(2, $versions);
-        $this->assertNotSame($snapshot->getId(), $versions[0]->getId());
-        $this->assertTrue($storage->fileExists($adapter->getBinaryStoragePath($versions[0])));
+        $this->assertSame($snapshot->getId(), $versions[0]->getId());
+        $this->assertSame($changedContent, stream_get_contents($versions[1]->getBinaryFileStream()));
     }
 
     public function testStorageFilesOfSnapshotAreRemovedWhenItsSaveFailsAfterWriting(): void
     {
-        $asset = TestHelper::createImageAsset();
+        $originalContent = $this->loadFileContent('assets/images/image5.jpg');
+        $asset = TestHelper::createImageAsset('', $originalContent);
         $snapshot = $this->failPostSaveOfFirstVersion($asset);
 
         $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
@@ -474,6 +473,7 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->assertNotNull($exception, 'save() was expected to fail');
         $this->assertSame('simulated failure after the version was written', $exception->getMessage());
         $this->assertSnapshotIsGone($asset, $snapshot->version);
+        $this->assertSame($originalContent, Storage::get('asset')->read($asset->getRealFullPath()), 'the save was aborted before the binary data was overwritten');
     }
 
     public function testStorageFilesOfSnapshotAreRemovedWhenItsSaveFailsInSaveVersion(): void

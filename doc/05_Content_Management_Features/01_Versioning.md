@@ -85,6 +85,8 @@ Notes:
 - If the persisted binary data cannot be read from the storage when its lazy version is created, the save is aborted
   with an exception instead of overwriting the original data. If the binary data doesn't exist on the storage at all,
   there is nothing to preserve and the asset is saved as usual.
+- The lazy version of the persisted state is committed before the save itself. If the save fails afterwards, the
+  version is kept, since the failed save may already have overwritten the binary data on the asset storage.
 - The configured retention policy still applies: with `steps` or `days` set to `0` (keep no versions), the lazy version
   of the persisted state is not created either.
 
