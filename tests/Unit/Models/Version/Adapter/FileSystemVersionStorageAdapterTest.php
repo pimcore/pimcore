@@ -27,9 +27,23 @@ use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class FileSystemVersionStorageAdapterTest extends TestCase
 {
+    public function testStorageParameterIsPinnedToVersionStorageAgainstAutowiring(): void
+    {
+        $parameter = (new ReflectionClass(FileSystemVersionStorageAdapter::class))
+            ->getConstructor()
+            ->getParameters()[0];
+
+        $this->assertSame('storage', $parameter->getName());
+
+        $attributes = $parameter->getAttributes(Autowire::class);
+        $this->assertCount(1, $attributes);
+        $this->assertSame('pimcore.version.storage', $attributes[0]->getArguments()['service'] ?? null);
+    }
+
     public function testInjectedStorageIsUsed(): void
     {
         $storage = new Filesystem(new InMemoryFilesystemAdapter());
