@@ -985,6 +985,11 @@ class Asset extends Element\AbstractElement
             $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
 
             return $persisted->doSaveVersion(null, false, $saveStackTrace);
+        } catch (Throwable $e) {
+            // Version::save() may fail after its row and storage files were written (e.g. in a POST_SAVE listener)
+            $this->deletePartiallySavedVersionsOfPersistedState();
+
+            throw $e;
         } finally {
             if ($versioningDisabled) {
                 Version::disable();
@@ -1018,6 +1023,29 @@ class Asset extends Element\AbstractElement
                 $this->getId(),
                 $e->getMessage()
             ), 0, $e);
+        }
+    }
+
+    /**
+     * Removes the version of the persisted state, including its non-transactional storage files, if saving it failed
+     * after it was (partially) written. The asset had no versions and its row is locked (see
+     * saveVersionOfPersistedState()), so all versions of the asset belong to the failed attempt.
+     */
+    private function deletePartiallySavedVersionsOfPersistedState(): void
+    {
+        try {
+            $listing = new Version\Listing();
+            $listing->setCondition('cid = ? AND ctype = ?', [$this->getId(), 'asset']);
+
+            foreach ($listing->load() as $version) {
+                $version->delete();
+            }
+        } catch (Throwable $e) {
+            Logger::error(sprintf(
+                'Unable to clean up the partially saved version of the persisted state of asset %d: %s',
+                $this->getId(),
+                $e->getMessage()
+            ));
         }
     }
 

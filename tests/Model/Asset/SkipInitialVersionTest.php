@@ -456,6 +456,77 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->assertTrue($storage->fileExists($adapter->getBinaryStoragePath($versions[0])));
     }
 
+    public function testStorageFilesOfSnapshotAreRemovedWhenItsSaveFailsAfterWriting(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $snapshot = $this->failPostSaveOfFirstVersion($asset);
+
+        $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
+
+        $exception = null;
+
+        try {
+            $asset->save();
+        } catch (RuntimeException $e) {
+            $exception = $e;
+        }
+
+        $this->assertNotNull($exception, 'save() was expected to fail');
+        $this->assertSame('simulated failure after the version was written', $exception->getMessage());
+        $this->assertSnapshotIsGone($asset, $snapshot->version);
+    }
+
+    public function testStorageFilesOfSnapshotAreRemovedWhenItsSaveFailsInSaveVersion(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $snapshot = $this->failPostSaveOfFirstVersion($asset);
+
+        $exception = null;
+
+        try {
+            $asset->saveVersion(true, true, 'explicit version');
+        } catch (RuntimeException $e) {
+            $exception = $e;
+        }
+
+        $this->assertNotNull($exception, 'saveVersion() was expected to fail');
+        $this->assertSnapshotIsGone($asset, $snapshot->version);
+    }
+
+    /**
+     * Lets the POST_SAVE event of the first version of the asset fail, after its row and storage files were written.
+     *
+     * @return object{version: ?Version}
+     */
+    private function failPostSaveOfFirstVersion(Asset $asset): object
+    {
+        $captured = new class() {
+            public ?Version $version = null;
+        };
+
+        $this->addListener(VersionEvents::POST_SAVE, function (VersionEvent $event) use ($asset, $captured): void {
+            if ($captured->version === null && $event->getVersion()->getCid() === $asset->getId()) {
+                $captured->version = $event->getVersion();
+
+                throw new RuntimeException('simulated failure after the version was written');
+            }
+        });
+
+        return $captured;
+    }
+
+    private function assertSnapshotIsGone(Asset $asset, ?Version $snapshot): void
+    {
+        $this->assertNotNull($snapshot, 'the version of the persisted state was written before the failure');
+        $this->assertCount(0, $this->loadVersions($asset), 'the version row is removed');
+
+        // version storage is not transactional, the files must have been cleaned up explicitly
+        $storage = Storage::get('version');
+        $adapter = new FileSystemVersionStorageAdapter();
+        $this->assertFalse($storage->fileExists($adapter->getStorageFilename($snapshot->getId(), $asset->getId(), 'asset')));
+        $this->assertFalse($storage->fileExists($adapter->getBinaryStoragePath($snapshot)));
+    }
+
     public function testSaveVersionCalledDirectlyStillCreatesVersion(): void
     {
         $asset = TestHelper::createImageAsset();
