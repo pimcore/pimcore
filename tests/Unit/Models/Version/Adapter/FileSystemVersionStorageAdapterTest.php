@@ -17,7 +17,9 @@ namespace Pimcore\Tests\Unit\Model\Version\Adapter;
 use ArrayIterator;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\FileAttributes;
+use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\UnableToDeleteFile;
 use Pimcore\Config;
 use Pimcore\Model\Version;
@@ -28,6 +30,21 @@ use ReflectionMethod;
 
 class FileSystemVersionStorageAdapterTest extends TestCase
 {
+    public function testInjectedStorageIsUsed(): void
+    {
+        $storage = new Filesystem(new InMemoryFilesystemAdapter());
+        $adapter = new FileSystemVersionStorageAdapter($storage);
+        $version = $this->createVersion(100, 12345, 'object');
+
+        $adapter->save($version, 'serialized version data', null);
+
+        $this->assertTrue($storage->fileExists('object/g10000/12345/100'));
+        $this->assertSame('serialized version data', $adapter->loadMetaData($version));
+
+        $adapter->delete($version, false);
+        $this->assertFalse($storage->fileExists('object/g10000/12345/100'));
+    }
+
     public function testDeleteIgnoresDeleteRaceWhenFileDisappears(): void
     {
         $version = $this->createVersion(100, 12345, 'object');

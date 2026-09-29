@@ -28,9 +28,9 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     protected FilesystemOperator $storage;
 
-    public function __construct()
+    public function __construct(?FilesystemOperator $storage = null)
     {
-        $this->storage = Storage::get('version');
+        $this->storage = $storage ?? Storage::get('version');
     }
 
     public function loadMetaData(Version $version): ?string
