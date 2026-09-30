@@ -46,6 +46,57 @@ pimcore:
 
 A maintenance job (`VersionsCleanupStackTraceDbTask`) automatically removes stack traces older than 7 days.
 
+### Skip the Initial Asset Version
+
+By default, a version is created every time an asset is saved, including the very first save when the asset is
+uploaded. The version of the initial upload contains a full copy of the binary data, which is wasted storage for
+assets that are uploaded once and never modified afterwards (a common case in DAM scenarios). On a local filesystem
+this copy is a cheap hardlink (see `pimcore.assets.versions.use_hardlinks`), but with remote or separate storages
+for assets and versions, it is a real copy.
+
+Enable `skip_initial_version` to create no version when an asset is added:
+
+```yaml
+pimcore:
+    assets:
+        versions:
+            skip_initial_version: true
+```
+
+The original state is not lost: the first time such an asset is modified, Pimcore versions the persisted state
+(metadata and binary data as they were uploaded) right before applying the change, and then creates the regular
+version of the modification. Assets that are never modified therefore never occupy version storage, while the upload
+state of modified assets remains restorable from the Versions tab.
+
+Notes:
+
+- Only assets are affected, versions of documents and data objects don't contain binary data.
+- Any save of the asset counts as a modification, including metadata or property changes, moves and renames, and
+  programmatic saves. If the binary data is unchanged, it is stored only once and shared by the versions.
+- Assets added while the option is enabled are marked with the custom setting `pimcore-asset-initial-version-skipped`,
+  so that their persisted state is also versioned on their first modification after the option has been disabled
+  again. The marker is removed as soon as the asset has a version.
+- The lazy version of the persisted state is only created for assets that have no versions at all. Assets created
+  while the option was disabled already have their upload version and behave as before; assets whose versions have
+  been removed by the versions cleanup get their persisted state versioned again on the next modification.
+- Calling `$asset->saveVersion()` directly always creates a version, regardless of this option. For an asset without
+  versions, the persisted state is versioned first, as it is on the first modification.
+- With versioning disabled for the current process (`\Pimcore\Model\Version::disable()`, e.g. in importers), the
+  persisted state is still versioned if the binary data of an asset without versions is replaced, because the original
+  binary data would be lost otherwise. Changes that don't replace the binary data are not versioned in this case, so
+  saves that only add derived data (e.g. image dimensions or video metadata after the upload) create no version.
+- If the persisted binary data cannot be read from the storage when its lazy version is created, the save is aborted
+  with an exception instead of overwriting the original data. If the binary data doesn't exist on the storage at all,
+  there is nothing to preserve and the asset is saved as usual.
+- The lazy version of the persisted state is committed before the save itself. If the save fails afterwards, the
+  version is kept, since the failed save may already have overwritten the binary data on the asset storage.
+  This doesn't apply if the save is wrapped in a database transaction of the caller: the lazy version then becomes
+  part of that transaction and is rolled back with it, while the asset storage (which isn't transactional) keeps
+  the new binary data. Don't roll back such transactions after saving assets whose original state must stay
+  restorable.
+- The configured retention policy still applies: with `steps` or `days` set to `0` (keep no versions), the lazy version
+  of the persisted state is not created either.
+
 ## Version Storage
 
 Every version stores metadata and, if present, binary data. Since version data can grow quickly,
