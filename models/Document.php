@@ -121,10 +121,8 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     *
      */
-    protected static function getPathCacheKey(string $path): string
+    public static function getPathCacheKey(string $path): string
     {
         return 'document_path_' . md5($path);
     }

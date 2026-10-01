@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Workflow\MarkingStore;
 
 use Pimcore\Model\Element\ElementInterface;
+use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 /**
@@ -39,4 +40,21 @@ interface PendingMarkingStoreInterface extends MarkingStoreInterface
      * Called when the subject is fully saved.
      */
     public function persistPendingMarking(ElementInterface $subject): void;
+
+    /**
+     * The marking the store persisted for the subject, ignoring a marking pending on the subject.
+     * (getMarking() reports the pending marking when there is one.)
+     */
+    public function getPersistedMarking(ElementInterface $subject): Marking;
+
+    /**
+     * The marking pending on the subject for this store's workflow, null if there is none.
+     */
+    public function getPendingMarking(ElementInterface $subject): ?Marking;
+
+    /**
+     * Replace the marking pending on the subject (null removes it) without touching the store.
+     * Used to restore a snapshot taken with getPendingMarking(), e.g. when a save fails after a transition.
+     */
+    public function setPendingMarking(ElementInterface $subject, ?Marking $marking): void;
 }

@@ -34,13 +34,30 @@ class StateTableMarkingStore implements PendingMarkingStoreInterface
         $subject = $this->checkIfSubjectIsValid($subject);
 
         // a marking pending on the subject (draft) takes precedence over the persisted one
-        if ($subject instanceof AbstractElement) {
-            $pendingPlaces = $subject->getPendingWorkflowMarking($this->workflowName);
-            if ($pendingPlaces !== null) {
-                return $this->createMarking($pendingPlaces);
-            }
+        return $this->getPendingMarking($subject) ?? $this->getPersistedMarking($subject);
+    }
+
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
+    {
+        $subject = $this->checkIfSubjectIsValid($subject);
+
+        if (!empty($context[self::CONTEXT_SAVE_VERSION]) && $subject instanceof AbstractElement) {
+            // the subject is only saved as a version (draft) after this transition:
+            // keep the place with the draft instead of committing it to the state table
+            $this->setPendingMarking($subject, $marking);
+
+            return;
         }
 
+        $this->persistPlaces($subject, array_keys($marking->getPlaces()));
+
+        // a directly persisted marking supersedes whatever was pending on the subject; it is
+        // cleared only now, so that a failed write leaves the draft's place in memory
+        $this->setPendingMarking($subject, null);
+    }
+
+    public function getPersistedMarking(ElementInterface $subject): Marking
+    {
         $placeName = '';
 
         if ($workflowState = WorkflowState::getByPrimary($subject->getId(), Service::getElementType($subject), $this->workflowName)) {
@@ -54,40 +71,42 @@ class StateTableMarkingStore implements PendingMarkingStoreInterface
         return $this->createMarking(explode(',', $placeName));
     }
 
-    public function setMarking(object $subject, Marking $marking, array $context = []): void
+    public function getPendingMarking(ElementInterface $subject): ?Marking
     {
-        $subject = $this->checkIfSubjectIsValid($subject);
-        $places = array_keys($marking->getPlaces());
-
-        if ($subject instanceof AbstractElement) {
-            if (!empty($context[self::CONTEXT_SAVE_VERSION])) {
-                // the subject is only saved as a version (draft) after this transition:
-                // keep the place with the draft instead of committing it to the state table
-                $subject->setPendingWorkflowMarking($this->workflowName, $places);
-
-                return;
-            }
-
-            // a directly persisted marking supersedes whatever was pending on the subject
-            $subject->setPendingWorkflowMarking($this->workflowName, null);
+        if (!$subject instanceof AbstractElement) {
+            return null;
         }
 
-        $this->persistPlaces($subject, $places);
+        $places = $subject->getPendingWorkflowMarking($this->workflowName);
+
+        return $places === null ? null : $this->createMarking($places);
+    }
+
+    public function setPendingMarking(ElementInterface $subject, ?Marking $marking): void
+    {
+        if (!$subject instanceof AbstractElement) {
+            if ($marking !== null) {
+                throw new LogicException('A marking can only be kept pending on elements extending ' . AbstractElement::class);
+            }
+
+            return;
+        }
+
+        $subject->setPendingWorkflowMarking(
+            $this->workflowName,
+            $marking === null ? null : array_keys($marking->getPlaces())
+        );
     }
 
     public function persistPendingMarking(ElementInterface $subject): void
     {
-        if (!$subject instanceof AbstractElement) {
+        $marking = $this->getPendingMarking($subject);
+        if ($marking === null) {
             return;
         }
 
-        $places = $subject->getPendingWorkflowMarking($this->workflowName);
-        if ($places === null) {
-            return;
-        }
-
-        $this->persistPlaces($subject, $places);
-        $subject->setPendingWorkflowMarking($this->workflowName, null);
+        $this->persistPlaces($subject, array_keys($marking->getPlaces()));
+        $this->setPendingMarking($subject, null);
     }
 
     public function getProperty(): string
@@ -98,7 +117,7 @@ class StateTableMarkingStore implements PendingMarkingStoreInterface
     /**
      * @param string[] $places
      */
-    private function persistPlaces(ElementInterface $subject, array $places): void
+    protected function persistPlaces(ElementInterface $subject, array $places): void
     {
         $type = Service::getElementType($subject);
 
