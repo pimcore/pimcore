@@ -187,8 +187,10 @@ final class LogArchiveTaskTest extends TestCase
 
         // the file is still there when it is looked at and gone when it is deleted
         $storage = $this->createMock(FilesystemOperator::class);
-        $storage->method('fileExists')->willReturnOnConsecutiveCalls(true, false);
-        $storage->method('delete')->willThrowException(UnableToDeleteFile::atLocation('gone/by/now.log'));
+        $storage->expects($this->exactly(2))->method('fileExists')
+            ->with('gone/by/now.log')->willReturnOnConsecutiveCalls(true, false);
+        $storage->expects($this->once())->method('delete')
+            ->with('gone/by/now.log')->willThrowException(UnableToDeleteFile::atLocation('gone/by/now.log'));
         $storage->method('directoryExists')->willReturn(false);
 
         $this->runTask($storage);
@@ -203,8 +205,9 @@ final class LogArchiveTaskTest extends TestCase
         $this->createArchiveTable();
 
         $storage = $this->createMock(FilesystemOperator::class);
-        $storage->method('fileExists')->willReturn(true);
-        $storage->method('delete')->willThrowException(UnableToDeleteFile::atLocation('stuck/file.log'));
+        $storage->expects($this->exactly(2))->method('fileExists')->with('stuck/file.log')->willReturn(true);
+        $storage->expects($this->once())->method('delete')
+            ->with('stuck/file.log')->willThrowException(UnableToDeleteFile::atLocation('stuck/file.log'));
 
         $this->expectException(UnableToDeleteFile::class);
 
@@ -224,12 +227,32 @@ final class LogArchiveTaskTest extends TestCase
         $this->db->executeStatement('CREATE TABLE IF NOT EXISTS ' . $oldTable . ' (id BIGINT(20) NOT NULL)');
 
         $storage = $this->createMock(FilesystemOperator::class);
-        $storage->method('directoryExists')->willReturnOnConsecutiveCalls(true, false);
-        $storage->method('deleteDirectory')->willThrowException(UnableToDeleteDirectory::atLocation('old/month'));
+        // any other expired archive table in the test database goes through the same path, so the
+        // calls are tracked per directory rather than by position
+        $checked = [];
+        $storage->method('directoryExists')->willReturnCallback(
+            static function (string $path) use (&$checked): bool {
+                $checked[$path] = ($checked[$path] ?? 0) + 1;
+
+                return $checked[$path] === 1;
+            }
+        );
+        $deleted = [];
+        $storage->method('deleteDirectory')->willReturnCallback(
+            static function (string $path) use (&$deleted): void {
+                $deleted[] = $path;
+
+                throw UnableToDeleteDirectory::atLocation($path);
+            }
+        );
 
         try {
             $this->runTask($storage);
-            $this->addToAssertionCount(1);
+
+            $this->assertNotEmpty($deleted, 'The deletion must have been attempted.');
+            foreach ($deleted as $path) {
+                $this->assertSame(2, $checked[$path], 'The directory must be checked again after the failure.');
+            }
         } finally {
             $this->db->executeStatement('DROP TABLE IF EXISTS ' . $oldTable);
         }
