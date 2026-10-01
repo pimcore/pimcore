@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Workflow;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
@@ -26,6 +27,7 @@ use Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface;
 use Pimcore\Workflow\Transition as PimcoreTransition;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Workflow\Definition;
+use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use Symfony\Component\Workflow\Registry;
@@ -197,7 +199,12 @@ class ManagerTest extends TestCase
         );
     }
 
-    public function testSaveVersionTransitionRestoresPendingMarkingWhenSaveVersionFails(): void
+    /**
+     * The rollback of a save_version transition must restore exactly what was pending
+     * before: nothing in this case. Staging the previous place as a new pending draft
+     * entry would invent a draft state the subject never had.
+     */
+    public function testSaveVersionTransitionRollbackRemovesThePendingMarkingAgain(): void
     {
         $store = $this->createPendingMarkingStore();
         $transition = $this->createSaveVersionTransition();
@@ -219,7 +226,94 @@ class ManagerTest extends TestCase
 
         $this->assertInstanceOf(ValidationException::class, $thrown);
         $this->assertSame(['start' => 1], $store->persisted, 'The rollback must not commit anything to the store.');
-        $this->assertSame(['start' => 1], $store->pending, 'The previous marking should be restored as pending marking.');
+        $this->assertNull($store->pending, 'Nothing was pending before the transition, so nothing may be pending after the rollback.');
+    }
+
+    /**
+     * An earlier draft already moved the subject from "draft" (persisted) to "start"
+     * (pending). A further save_version transition that fails to save must bring the
+     * pending place back to "start" and must leave the persisted place alone.
+     */
+    public function testSaveVersionTransitionRollbackRestoresTheEarlierPendingMarking(): void
+    {
+        $store = $this->createPendingMarkingStore(['draft' => 1], ['start' => 1]);
+        $transition = $this->createSaveVersionTransition();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher, ['draft', 'start', 'end']);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('saveVersion')->willThrowException(new ValidationException('mandatory field missing'));
+
+        $manager = $this->buildManager($eventDispatcher, $transition);
+
+        $thrown = null;
+
+        try {
+            $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
+        } catch (ValidationException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(ValidationException::class, $thrown);
+        $this->assertSame(['draft' => 1], $store->persisted, 'The persisted place must not change.');
+        $this->assertSame(['start' => 1], $store->pending, 'The pending place of the earlier draft must be restored.');
+    }
+
+    /**
+     * Same starting point ("draft" persisted, "start" pending from an earlier draft), but
+     * now a publishing transition fails to save. The transition committed "end" to the
+     * store and dropped the pending place; the rollback must put the *persisted* place
+     * back, not the draft's place, and must restore the pending place as well.
+     */
+    public function testRollbackOfAPublishingTransitionRestoresThePersistedMarkingNotTheDraftPlace(): void
+    {
+        $store = $this->createPendingMarkingStore(['draft' => 1], ['start' => 1]);
+        $transition = $this->createForcePublishedTransition();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher, ['draft', 'start', 'end']);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('isPublished')->willReturn(false);
+        $subject->method('save')->willThrowException(new ValidationException('mandatory field missing'));
+
+        $manager = $this->buildManager($eventDispatcher, $transition);
+
+        $thrown = null;
+
+        try {
+            $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
+        } catch (ValidationException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(ValidationException::class, $thrown);
+        $this->assertSame(['draft' => 1], $store->persisted, 'The persisted place must be restored, not the pending draft place.');
+        $this->assertSame(['start' => 1], $store->pending, 'The pending place of the earlier draft must be restored.');
+    }
+
+    public function testGlobalActionRollbackRestoresThePersistedMarkingNotTheDraftPlace(): void
+    {
+        $store = $this->createPendingMarkingStore(['draft' => 1], ['start' => 1]);
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher, ['draft', 'start', 'end']);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('save')->willThrowException(new ValidationException('mandatory field missing'));
+
+        $manager = $this->buildManager($eventDispatcher);
+        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', ['to' => ['end']]);
+
+        $thrown = null;
+
+        try {
+            $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+        } catch (ValidationException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(ValidationException::class, $thrown);
+        $this->assertSame(['draft' => 1], $store->persisted, 'The persisted place must be restored, not the pending draft place.');
+        $this->assertSame(['start' => 1], $store->pending, 'The pending place of the earlier draft must be restored.');
     }
 
     public function testOtherTransitionsPersistMarkingImmediately(): void
@@ -268,16 +362,90 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * Marking store that can keep a marking pending on the subject, like StateTableMarkingStore.
+     * The context key that keeps a marking pending is reserved for the Manager. Additional
+     * data is caller-provided; a caller smuggling the key in must not be able to leave a
+     * place pending that no save is going to flush.
      */
-    private function createPendingMarkingStore(): PendingMarkingStoreInterface
+    #[DataProvider('callerProvidedSaveVersionFlagProvider')]
+    public function testCallersCannotForceTheMarkingToStayPending(PimcoreTransition $transition, bool $saveSubject): void
     {
-        return new class() implements PendingMarkingStoreInterface {
-            public array $persisted = ['start' => 1];
+        $store = $this->createPendingMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher);
 
-            public ?array $pending = null;
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('isPublished')->willReturn(false);
 
+        $manager = $this->buildManager($eventDispatcher, $transition);
+
+        $manager->applyWithAdditionalData(
+            $workflow,
+            $subject,
+            'go',
+            [PendingMarkingStoreInterface::CONTEXT_SAVE_VERSION => true, 'notes' => 'kept'],
+            $saveSubject
+        );
+
+        $this->assertArrayNotHasKey(PendingMarkingStoreInterface::CONTEXT_SAVE_VERSION, $store->lastContext);
+        $this->assertSame('kept', $store->lastContext['notes'] ?? null, 'Other additional data still reaches the store.');
+        $this->assertSame(['end' => 1], $store->persisted);
+        $this->assertNull($store->pending);
+    }
+
+    public static function callerProvidedSaveVersionFlagProvider(): iterable
+    {
+        yield 'force_published transition, subject saved by the manager' => [self::createForcePublishedTransition(), true];
+        yield 'save_version transition, subject saved by the caller' => [self::createSaveVersionTransition(), false];
+    }
+
+    /**
+     * The additional data handed to the notes subscriber is request-scoped state. It must be
+     * cleared even when the transition cannot be resolved, otherwise a later apply() in the
+     * same process would pick up this call's notes.
+     */
+    public function testNotesDataIsClearedWhenTheTransitionCannotBeResolved(): void
+    {
+        $store = $this->createPendingMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createSaveVersionTransition(), $eventDispatcher);
+
+        $notesSubscriber = $this->createMock(NotesSubscriber::class);
+        $additionalDataCalls = [];
+        $notesSubscriber->method('setAdditionalData')->willReturnCallback(
+            function (array $data) use (&$additionalDataCalls): void {
+                $additionalDataCalls[] = $data;
+            }
+        );
+
+        $manager = $this->buildManager($eventDispatcher, null, $notesSubscriber);
+        $manager->method('getTransitionByName')->willThrowException(new LogicException('workflow unknown_wf not found'));
+
+        $thrown = null;
+
+        try {
+            $manager->applyWithAdditionalData($workflow, $this->createMock(Concrete::class), 'go', ['notes' => 'x'], true);
+        } catch (LogicException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(LogicException::class, $thrown);
+        $this->assertSame([['notes' => 'x'], []], $additionalDataCalls, 'The notes data must be cleared again.');
+    }
+
+    /**
+     * Marking store that can keep a marking pending on the subject, like StateTableMarkingStore.
+     *
+     * @param array<string, int> $persisted the places the store persisted
+     * @param array<string, int>|null $pending the places pending on the subject, if any
+     */
+    private function createPendingMarkingStore(array $persisted = ['start' => 1], ?array $pending = null): PendingMarkingStoreInterface
+    {
+        return new class($persisted, $pending) implements PendingMarkingStoreInterface {
             public array $lastContext = [];
+
+            public function __construct(public array $persisted, public ?array $pending)
+            {
+            }
 
             public function getMarking(object $subject): Marking
             {
@@ -305,10 +473,25 @@ class ManagerTest extends TestCase
                     $this->pending = null;
                 }
             }
+
+            public function getPersistedMarking(ElementInterface $subject): Marking
+            {
+                return new Marking($this->persisted);
+            }
+
+            public function getPendingMarking(ElementInterface $subject): ?Marking
+            {
+                return $this->pending === null ? null : new Marking($this->pending);
+            }
+
+            public function setPendingMarking(ElementInterface $subject, ?Marking $marking): void
+            {
+                $this->pending = $marking?->getPlaces();
+            }
         };
     }
 
-    private function createSaveVersionTransition(): PimcoreTransition
+    private static function createSaveVersionTransition(): PimcoreTransition
     {
         return new PimcoreTransition('go', 'start', 'end', [
             'changePublishedState' => ChangePublishedStateSubscriber::SAVE_VERSION,
@@ -335,7 +518,7 @@ class ManagerTest extends TestCase
         };
     }
 
-    private function createForcePublishedTransition(): PimcoreTransition
+    private static function createForcePublishedTransition(): PimcoreTransition
     {
         return new PimcoreTransition('go', 'start', 'end', [
             'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
@@ -350,13 +533,17 @@ class ManagerTest extends TestCase
         return $eventDispatcher;
     }
 
+    /**
+     * @param string[] $places
+     */
     private function createWorkflow(
         MarkingStoreInterface $store,
         PimcoreTransition $transition,
-        EventDispatcher $eventDispatcher
+        EventDispatcher $eventDispatcher,
+        array $places = ['start', 'end']
     ): StateMachine {
         return new StateMachine(
-            new Definition(['start', 'end'], [$transition]),
+            new Definition($places, [$transition]),
             $store,
             $eventDispatcher,
             self::WORKFLOW_NAME
@@ -365,9 +552,10 @@ class ManagerTest extends TestCase
 
     private function buildManager(
         EventDispatcher $eventDispatcher,
-        ?PimcoreTransition $transition = null
+        ?PimcoreTransition $transition = null,
+        ?NotesSubscriber $notesSubscriber = null
     ): Manager&MockObject {
-        $notesSubscriber = $this->createMock(NotesSubscriber::class);
+        $notesSubscriber ??= $this->createMock(NotesSubscriber::class);
         $expressionService = $this->createMock(ExpressionService::class);
         $registry = new Registry();
 
@@ -375,7 +563,9 @@ class ManagerTest extends TestCase
             ->setConstructorArgs([$registry, $notesSubscriber, $expressionService, $eventDispatcher])
             ->onlyMethods(['getTransitionByName'])
             ->getMock();
-        $manager->method('getTransitionByName')->willReturn($transition);
+        if ($transition !== null) {
+            $manager->method('getTransitionByName')->willReturn($transition);
+        }
 
         return $manager;
     }

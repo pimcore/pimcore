@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Exception;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
@@ -94,11 +95,15 @@ class WorkflowManagementListener implements EventSubscriberInterface
      */
     public function onElementPostUpdate(ElementEventInterface $e): void
     {
+        $element = $e->getElement();
+
         if ($e->hasArgument('saveVersionOnly')) {
+            $this->detachDraftFromRuntimeCache($element);
+
             return;
         }
 
-        $this->persistPendingWorkflowMarkings($e->getElement());
+        $this->persistPendingWorkflowMarkings($element);
     }
 
     private function persistPendingWorkflowMarkings(ElementInterface $element): void
@@ -119,6 +124,39 @@ class WorkflowManagementListener implements EventSubscriberInterface
             $markingStore = $workflow->getMarkingStore();
             if ($markingStore instanceof PendingMarkingStoreInterface) {
                 $markingStore->persistPendingMarking($element);
+            }
+        }
+    }
+
+    /**
+     * After a version-only save the pending markings stay on the element: they belong to the
+     * draft that was just written. When that element is the instance the runtime cache holds
+     * (the element had no draft before, so the transition ran on the published instance), later
+     * loads in the same process would get the draft's place as if it were the published one, and
+     * a full save for an unrelated reason would even commit it. Drop the instance from the runtime
+     * cache, so that subsequent loads get the published state from the database again.
+     */
+    private function detachDraftFromRuntimeCache(ElementInterface $element): void
+    {
+        if (!$element instanceof AbstractElement || $element->getPendingWorkflowMarkings() === []) {
+            return;
+        }
+
+        $elementType = Service::getElementType($element);
+        if ($elementType === null) {
+            return;
+        }
+
+        $cacheKeys = [Service::getElementCacheTag($elementType, $element->getId())];
+        if ($element instanceof Document) {
+            $cacheKeys[] = Document::getPathCacheKey($element->getRealFullPath());
+        }
+
+        foreach ($cacheKeys as $cacheKey) {
+            // only this very instance: a published instance cached next to a draft that was
+            // loaded from a version is left alone
+            if (RuntimeCache::isRegistered($cacheKey) && RuntimeCache::get($cacheKey) === $element) {
+                RuntimeCache::set($cacheKey, null);
             }
         }
     }
