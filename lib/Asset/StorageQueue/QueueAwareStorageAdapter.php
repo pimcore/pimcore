@@ -40,6 +40,30 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 {
     use CalculateChecksumFromStream;
 
+    /**
+     * The resolved flysystem options a deferred copy has to reproduce. Everything else in a
+     * resolved config (public urls, the deprecated flags) has no bearing on a copy.
+     *
+     * Spelled out rather than referenced as Config:: constants: 'retain_visibility' only gained
+     * its constant in league/flysystem 3.24, and the lowest version this package supports is
+     * 3.12. The string values are the wire format either way, and a config that predates the
+     * option simply never carries it.
+     *
+     * Known limitation. An adapter may read further keys off the config it is handed - the S3
+     * adapter forwards ACL, StorageClass, Metadata and friends - and those are not journalled
+     * here, because the whole config cannot be enumerated on flysystem 3.12 (Config::toArray()
+     * arrived in 3.20) and naming them would tie this class to one adapter. In practice nothing
+     * is lost: storage-level adapter options are applied by the adapter itself on every call, so
+     * a deferred copy still gets them, and the flysystem bundle offers no storage-level node for
+     * the rest. Only an option passed per call, as $storage->move($a, $b, ['StorageClass' => ...]),
+     * would be dropped when the move is deferred. Pimcore itself never does that.
+     */
+    private const COPY_OPTION_KEYS = [
+        'visibility',
+        'directory_visibility',
+        'retain_visibility',
+    ];
+
     public function __construct(
         private readonly FilesystemAdapter $inner,
         private readonly StorageOperationQueueRepositoryInterface $repository,
@@ -350,7 +374,12 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             if ($hasOperations) {
                 // Legacy rows still pointing at this prefix must follow along so lookups stay
                 // flat; a genuinely empty destination would drop to a self-mapping and vanish.
-                $this->repository->repointMoves($this->storageName, $source, $destination);
+                $this->repository->repointMoves(
+                    $this->storageName,
+                    $source,
+                    $destination,
+                    $this->copyOptions($config) ?? []
+                );
             }
 
             return; // native rename moved everything physically - never insert a row
@@ -373,7 +402,12 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             // row for $source itself would be vacuous and would wrongly shadow whatever gets
             // (re-)created at $source afterwards.
             if ($hasOperations) {
-                $this->repository->repointMoves($this->storageName, $source, $destination);
+                $this->repository->repointMoves(
+                    $this->storageName,
+                    $source,
+                    $destination,
+                    $this->copyOptions($config) ?? []
+                );
             }
 
             return;
@@ -389,7 +423,37 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             $source,
             $destination,
             new DateTimeImmutable(),
+            $this->copyOptions($config),
         ));
+    }
+
+    /**
+     * The visibility settings the processor needs to copy the way this move would have.
+     *
+     * Filesystem::move() resolves the storage's configuration before calling the adapter, so
+     * $config already carries the effective values. The processor works on the inner adapter and
+     * therefore never sees that configuration, and a bare Config() leaves the adapter on
+     * retain_visibility=true - reading the source object's ACL before every copy, which costs a
+     * request per file on object storage and fails outright on backends that do not serve it.
+     *
+     * Only the copy-relevant keys are kept; the rest of a resolved config (public urls, the
+     * deprecated flags) has no bearing on a copy and does not belong in the queue.
+     *
+     * @return array<string, mixed>|null null when the storage configures none of them
+     */
+    private function copyOptions(Config $config): ?array
+    {
+        // Read key by key instead of Config::toArray(), which only exists from
+        // league/flysystem 3.20 while this package still supports 3.12.
+        $options = [];
+        foreach (self::COPY_OPTION_KEYS as $key) {
+            $value = $config->get($key);
+            if ($value !== null) {
+                $options[$key] = $value;
+            }
+        }
+
+        return $options === [] ? null : $options;
     }
 
     /**
@@ -458,7 +522,9 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             }
             $target = $this->mapToTarget($path, $operation);
             if (!$this->inner->fileExists($target)) {
-                $this->inner->copy($path, $target, new Config());
+                // This copy carries out part of the pending move, so it has to use the options
+                // that move was recorded with rather than the adapter's own defaults.
+                $this->inner->copy($path, $target, new Config($operation->getCopyOptions() ?? []));
             }
 
             return; // most specific row wins; one materialization is sufficient

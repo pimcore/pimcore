@@ -358,6 +358,19 @@ services:
 
     Pimcore\Telemetry\Snapshot\CatalogShapeCollector: ~
 
+    # helpers shared by the collectors: ranked, capped name => count maps and the cache-adapter kind
+    Pimcore\Telemetry\Snapshot\CountMapInterface:
+        class: Pimcore\Telemetry\Snapshot\CountMap
+
+    Pimcore\Telemetry\Snapshot\CacheAdapterKindInterface:
+        class: Pimcore\Telemetry\Snapshot\CacheAdapterKind
+
+    # queue transport and backlog, as every configured transport reports it about itself
+    Pimcore\Telemetry\Snapshot\QueueCollector: ~
+
+    # thumbnail configuration shape: counts, formats, transformations, media queries
+    Pimcore\Telemetry\Snapshot\ThumbnailsCollector: ~
+
     # active-bundle list, resolved once per snapshot (enumerating them costs ~1 statement per bundle)
     Pimcore\Telemetry\Snapshot\ActiveBundles: ~
 

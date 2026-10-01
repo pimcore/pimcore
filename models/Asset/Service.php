@@ -26,6 +26,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
 use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
@@ -256,6 +257,27 @@ class Service extends Model\Element\Service
         }
         $asset->setProperties($properties);
 
+        // rewriting metadata relations (e.g. "asset", "document" or "object" metadata fields)
+        if ($asset->getHasMetaData()) {
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $metadata = $asset->getMetadata(null, null, false, true);
+
+            foreach ($metadata as &$item) {
+                try {
+                    /** @var Data $instance */
+                    $instance = $loader->build($item['type']);
+                } catch (UnsupportedException $e) {
+                    continue;
+                }
+
+                if ($instance instanceof IdRewriterInterface) {
+                    $item['data'] = $instance->rewriteIds($item['data'], $rewriteConfig, $item);
+                }
+            }
+
+            $asset->setMetadataRaw($metadata);
+        }
+
         return $asset;
     }
 
@@ -401,7 +423,7 @@ class Service extends Model\Element\Service
                 return null;
             }
 
-            if ($config['type'] === 'image' && strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+            if ($config['type'] === 'image' && ThumbnailConfig::isAutoFormat($thumbnailConfig->getFormat())) {
                 $formatOverride = $config['file_extension'];
                 if (in_array($config['file_extension'], ['jpg', 'jpeg'])) {
                     $formatOverride = 'pjpeg';
@@ -485,11 +507,21 @@ class Service extends Model\Element\Service
         $config['file_extension'] ??= strtolower(pathinfo($config['filename'], PATHINFO_EXTENSION));
 
         if ($config['type'] === 'image') {
+            $pathReference = $thumbnail->getPathReference();
+
+            if (($pathReference['type'] ?? '') === 'error') {
+                // failed generations have no stream to deliver; the metadata/copy operations
+                // below would fail on the storage for the placeholder path reference
+                return null;
+            }
+
             $thumbnailStream = $thumbnail->getStream();
+            if ($thumbnailStream === null) {
+                return null;
+            }
 
             $mime = $thumbnail->getMimeType();
             $fileSize = $thumbnail->getFileSize();
-            $pathReference = $thumbnail->getPathReference();
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
             if ($actualFileExtension !== $config['file_extension']) {

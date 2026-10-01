@@ -483,6 +483,16 @@ class Model extends AbstractDefinitionHelper
             $mandatoryInputWithDefault->setDefaultValue('default');
             $panel->addChild($mandatoryInputWithDefault);
 
+            /** @var ClassDefinition\Data\Numeric $mandatoryNumericWithZeroDefault */
+            $mandatoryNumericWithZeroDefault = $this->createDataChild('numeric', 'mandatoryNumericWithZeroDefault', true);
+            $mandatoryNumericWithZeroDefault->setDefaultValue(0);
+            $panel->addChild($mandatoryNumericWithZeroDefault);
+
+            /** @var ClassDefinition\Data\Checkbox $mandatoryCheckboxWithFalseDefault */
+            $mandatoryCheckboxWithFalseDefault = $this->createDataChild('checkbox', 'mandatoryCheckboxWithFalseDefault', true);
+            $mandatoryCheckboxWithFalseDefault->setDefaultValue(0);
+            $panel->addChild($mandatoryCheckboxWithFalseDefault);
+
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));

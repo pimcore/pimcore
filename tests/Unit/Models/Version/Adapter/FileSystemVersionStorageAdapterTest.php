@@ -17,15 +17,48 @@ namespace Pimcore\Tests\Unit\Model\Version\Adapter;
 use ArrayIterator;
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\FileAttributes;
+use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\UnableToDeleteFile;
+use Pimcore\Config;
 use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionClass;
+use ReflectionMethod;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class FileSystemVersionStorageAdapterTest extends TestCase
 {
+    public function testStorageParameterIsPinnedToVersionStorageAgainstAutowiring(): void
+    {
+        $parameter = (new ReflectionClass(FileSystemVersionStorageAdapter::class))
+            ->getConstructor()
+            ->getParameters()[0];
+
+        $this->assertSame('storage', $parameter->getName());
+
+        $attributes = $parameter->getAttributes(Autowire::class);
+        $this->assertCount(1, $attributes);
+        $this->assertSame('pimcore.version.storage', $attributes[0]->getArguments()['service'] ?? null);
+    }
+
+    public function testInjectedStorageIsUsed(): void
+    {
+        $storage = new Filesystem(new InMemoryFilesystemAdapter());
+        $adapter = new FileSystemVersionStorageAdapter($storage);
+        $version = $this->createVersion(100, 12345, 'object');
+
+        $adapter->save($version, 'serialized version data', null);
+
+        $this->assertTrue($storage->fileExists('object/g10000/12345/100'));
+        $this->assertSame('serialized version data', $adapter->loadMetaData($version));
+
+        $adapter->delete($version, false);
+        $this->assertFalse($storage->fileExists('object/g10000/12345/100'));
+    }
+
     public function testDeleteIgnoresDeleteRaceWhenFileDisappears(): void
     {
         $version = $this->createVersion(100, 12345, 'object');
@@ -86,6 +119,99 @@ class FileSystemVersionStorageAdapterTest extends TestCase
 
         $this->expectException(UnableToDeleteFile::class);
         $adapter->delete($version, false);
+    }
+
+    public function testResolveLocalFilePathReturnsNullForInMemoryStream(): void
+    {
+        $adapter = $this->createAdapterWithStorage($this->createMock(FilesystemOperator::class));
+        $stream = fopen('php://temp', 'r+');
+
+        try {
+            $this->assertNull($this->callResolveLocalFilePath($adapter, $stream));
+        } finally {
+            fclose($stream);
+        }
+    }
+
+    public function testResolveLocalFilePathReturnsPathForRealFile(): void
+    {
+        $adapter = $this->createAdapterWithStorage($this->createMock(FilesystemOperator::class));
+        $tmpFile = tmpfile();
+        $tmpFilePath = stream_get_meta_data($tmpFile)['uri'];
+
+        try {
+            $this->assertSame($tmpFilePath, $this->callResolveLocalFilePath($adapter, $tmpFile));
+        } finally {
+            fclose($tmpFile);
+        }
+    }
+
+    public function testSaveFallsBackToWriteStreamWhenBinaryDataStreamIsInMemory(): void
+    {
+        $version = $this->createVersion(100, 12345, 'asset');
+        $metadataFilePath = 'asset/g10000/12345/100';
+        $binaryFilePath = 'asset/g10000/12345/100.bin';
+
+        $binaryDataStream = fopen('php://temp', 'r+');
+        fwrite($binaryDataStream, 'version binary data');
+        rewind($binaryDataStream);
+
+        // the freshly written .bin temp file resolves to a real local file, so
+        // only the in-memory source stream prevents the hardlink
+        $existingFileStream = tmpfile();
+
+        $writtenPaths = [];
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage
+            ->expects($this->exactly(2))
+            ->method('write')
+            ->willReturnCallback(function (string $path) use (&$writtenPaths): void {
+                $writtenPaths[] = $path;
+            });
+        $storage
+            ->expects($this->once())
+            ->method('fileExists')
+            ->with($binaryFilePath)
+            ->willReturn(false);
+        $storage
+            ->expects($this->once())
+            ->method('readStream')
+            ->with($binaryFilePath)
+            ->willReturn($existingFileStream);
+        // the hardlink must not be attempted, so the .bin temp file may never
+        // be deleted before the fallback writes the actual stream content
+        $storage
+            ->expects($this->never())
+            ->method('delete');
+        $storage
+            ->expects($this->once())
+            ->method('writeStream')
+            ->with($binaryFilePath, $this->identicalTo($binaryDataStream));
+
+        $adapter = $this->createAdapterWithStorage($storage);
+
+        $originalAssetsConfig = Config::getSystemConfiguration('assets');
+        $assetsConfig = $originalAssetsConfig ?? [];
+        $assetsConfig['versions']['use_hardlinks'] = true;
+        Config::setSystemConfiguration($assetsConfig, 'assets');
+
+        try {
+            $adapter->save($version, 'metadata', $binaryDataStream);
+        } finally {
+            Config::setSystemConfiguration($originalAssetsConfig, 'assets');
+            fclose($binaryDataStream);
+            fclose($existingFileStream);
+        }
+
+        $this->assertSame([$metadataFilePath, $binaryFilePath], $writtenPaths);
+    }
+
+    private function callResolveLocalFilePath(FileSystemVersionStorageAdapter $adapter, mixed $stream): ?string
+    {
+        $method = new ReflectionMethod(FileSystemVersionStorageAdapter::class, 'resolveLocalFilePath');
+        $method->setAccessible(true);
+
+        return $method->invoke($adapter, $stream);
     }
 
     private function createAdapterWithStorage(FilesystemOperator $storage): FileSystemVersionStorageAdapter

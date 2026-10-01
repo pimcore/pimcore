@@ -23,6 +23,7 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Helper\ReservedWordsHelper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -30,6 +31,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -256,11 +258,46 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public function rename(string $name): void
     {
+        $this->validateName($name);
+
         $this->deletePhpClasses();
         $this->getDao()->updateClassNameInObjects($name);
 
         $this->setName($name);
         $this->save();
+    }
+
+    /**
+     * The name is emitted verbatim as the PHP class name in the generated class file (see
+     * PHPClassDumper) and used to build the on-disk class file path, so it must be a valid
+     * identifier that is neither a PHP reserved word nor the name of a class already living in the
+     * `Pimcore\Model\DataObject` namespace the generated class is emitted into (the latter would be
+     * shadowed by the generated file, see ReservedWordsHelper::isReservedDataObjectClassName()).
+     * Called from rename() as well as saveClassInternal(), because
+     * rename() deletes the existing class files and renames persisted objects before ever
+     * calling save() - validating only inside save() would let a rejected rename leave those
+     * side effects applied while the class definition itself keeps its old name.
+     *
+     * `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+     *
+     * @throws Exception
+     */
+    private function validateName(string $name): void
+    {
+        if (!preg_match('/^[a-zA-Z]\w+\z/', $name)) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: %s',
+                $name
+            ));
+        }
+
+        $reservedWordsHelper = new ReservedWordsHelper();
+        if ($reservedWordsHelper->isReservedDataObjectClassName($name)) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: `%s` is a reserved word and cannot be used as a class name',
+                $name
+            ));
+        }
     }
 
     /**
@@ -346,11 +383,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
         if ($title = $this->getTitle()) {
-            $cd .= ' * Title: ' . $title."\n";
+            $cd .= ' * Title: ' . DocBlockSanitizer::sanitize($title)."\n";
         }
 
         if ($description = $this->getDescription()) {
-            $description = str_replace(['/**', '*/', '//'], '', $description);
+            $description = DocBlockSanitizer::sanitize($description);
             $description = str_replace("\n", "\n * ", $description);
 
             $cd .= ' * '.$description."\n";
@@ -1152,14 +1189,10 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        if (!preg_match('/^[a-zA-Z]\w+$/', $this->getName())) {
-            throw new Exception(sprintf(
-                'Invalid name for class definition: %s',
-                $this->getName()
-            ));
-        }
+        $this->validateName($this->getName());
 
-        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*$/', $this->getId())) {
+        // `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*\z/', $this->getId())) {
             throw new Exception(sprintf(
                 'Invalid ID `%s` for class definition %s',
                 $this->getId(),
@@ -1169,7 +1202,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
         foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
             $propertyValue = $this->{'get'.ucfirst($propertyName)}();
-            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
+            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*\z/', $propertyValue)) {
                 throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
                     $this->getParentClass()));
             }

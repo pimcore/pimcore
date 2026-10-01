@@ -179,6 +179,12 @@ parameters:
 			path: lib/Controller/Traits/ElementEditLockHelperTrait.php
 
 		-
+			message: '#^Trait Pimcore\\Controller\\Traits\\JsonHelperTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Controller/Traits/JsonHelperTrait.php
+
+		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
