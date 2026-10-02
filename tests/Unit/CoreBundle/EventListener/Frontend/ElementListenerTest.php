@@ -27,6 +27,7 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -177,5 +178,62 @@ class ElementListenerTest extends TestCase
 
         // No exception means the view-permission gate let the permitted user through.
         $this->addToAssertionCount(1);
+    }
+
+    public function testBackendUserWithoutViewPermissionCannotUseAdminParamsOnPublishedDocument(): void
+    {
+        $document = $this->createMock(Document::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getFullPath')->willReturn('/published');
+
+        $user = new User();
+        $user->setId(99);
+
+        $document->expects($this->once())
+            ->method('isAllowed')
+            ->with('view', $user)
+            ->willReturn(false);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+        // the original, route-resolved document must be kept untouched
+        $documentResolver->expects($this->once())->method('setDocument')->with($this->anything(), $this->identicalTo($document));
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(true);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+            public bool $adminHandlerInvoked = false;
+
+            protected function handleEditmode(Document $document, User $user, SessionInterface $session, bool $isPimcoreStudio): Document
+            {
+                $this->adminHandlerInvoked = true;
+
+                return $document;
+            }
+
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/published', 'GET', ['pimcore_preview' => '1', 'pimcore_version' => '123']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $listener->onKernelController($this->makeControllerEvent($request));
+
+        $this->assertFalse($listener->adminHandlerInvoked, 'Admin preview/editmode/version handling must be skipped without view permission');
     }
 }
