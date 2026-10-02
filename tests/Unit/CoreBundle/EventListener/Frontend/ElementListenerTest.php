@@ -292,7 +292,9 @@ class ElementListenerTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('foreignVersionProvider')]
+    /**
+     * @dataProvider foreignVersionProvider
+     */
     public function testPimcoreVersionOfForeignElementIsRejected(string $ctype, int $cid): void
     {
         $routeDocument = $this->createMock(Document::class);
