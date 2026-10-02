@@ -303,6 +303,16 @@ class LinkTest extends ModelTestCase
         $this->assertEquals('<a href="https://example.com/?a=1&amp;b=&quot;x&quot;" >Click</a>', $link->getHtml());
     }
 
+    public function testGetHtmlHandlesLongWhitespaceRunsBeforeInvalidTokens(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setAttributes('data-a="1"' . str_repeat(' ', 20000) . '"><script>' . str_repeat(' ', 20000) . 'data-b="2"');
+
+        $this->assertEquals('<a href="https://example.com" data-a="1" data-b="2">Click</a>', $link->getHtml());
+    }
+
     public function testGetHtmlDoesNotTreatQuotedValueTextAsAttribute(): void
     {
         $link = new Link();

@@ -462,12 +462,11 @@ class Link implements OwnerAwareFieldInterface
 
         while ($offset < $length) {
             if (preg_match($pattern, $raw, $m, PREG_UNMATCHED_AS_NULL, $offset) !== 1) {
-                // skip the unparsable token and continue with the next whitespace-separated one
-                $next = preg_match('/\s/', $raw, $ws, PREG_OFFSET_CAPTURE, $offset + 1);
-                if ($next !== 1) {
+                // drop the unparsable token (including leading whitespace) in one step
+                if (preg_match('/\G\s*\S+/', $raw, $skipped, 0, $offset) !== 1) {
                     break;
                 }
-                $offset = $ws[0][1];
+                $offset += strlen($skipped[0]);
 
                 continue;
             }
