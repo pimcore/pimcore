@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Maintenance;
 
 use Pimcore\Maintenance\Tasks\ScheduledTasksTask;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -98,6 +100,100 @@ class ScheduledTasksTaskTest extends ModelTestCase
         $this->assertTrue(
             $reloaded->isPublished(),
             'a legitimate publish-version task must still publish the document'
+        );
+    }
+
+    public function testPublishVersionTaskIgnoresAnAssetVersionBelongingToAnotherElement(): void
+    {
+        $assetA = TestHelper::createImageAsset('element-a-');
+        $assetB = TestHelper::createImageAsset('element-b-');
+        $versionOfB = $assetB->saveVersion();
+        $this->assertNotNull($versionOfB, 'expected a version to be created on asset B');
+
+        $this->createPublishVersionTask($assetA->getId(), 'asset', $versionOfB->getId());
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('error')->with($this->stringContains('does not belong to element'));
+
+        (new ScheduledTasksTask($logger))->execute();
+    }
+
+    public function testPublishVersionTaskStillRestoresItsOwnAssetVersion(): void
+    {
+        $asset = TestHelper::createImageAsset('own-');
+        $ownVersion = $asset->saveVersion();
+        $this->assertNotNull($ownVersion, 'expected a version to be created');
+
+        $this->createPublishVersionTask($asset->getId(), 'asset', $ownVersion->getId());
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->never())->method('error');
+
+        (new ScheduledTasksTask($logger))->execute();
+    }
+
+    public function testPublishVersionTaskIgnoresAnObjectVersionBelongingToAnotherElement(): void
+    {
+        $elementA = TestHelper::createEmptyObject('element-a-');
+        $elementA->setInput('element A original input');
+        $elementA->save();
+
+        $elementB = TestHelper::createEmptyObject('element-b-');
+        $elementB->setInput('element B original input');
+        $elementB->save();
+
+        $elementB->setInput('element B modified input');
+        $versionOfB = $elementB->saveVersion();
+        $this->assertNotNull($versionOfB, 'expected a version to be created on element B');
+
+        $elementB->setInput('element B original input');
+        $elementB->save();
+
+        // task targets element A, but the referenced version belongs to element B
+        $this->createPublishVersionTask($elementA->getId(), 'object', $versionOfB->getId());
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $reloadedA = Unittest::getById($elementA->getId(), ['force' => true]);
+        $reloadedB = Unittest::getById($elementB->getId(), ['force' => true]);
+
+        $this->assertSame(
+            'element A original input',
+            $reloadedA->getInput(),
+            'a task must not apply a version that belongs to a different element'
+        );
+        $this->assertSame(
+            'element B original input',
+            $reloadedB->getInput(),
+            'the element the version actually belongs to must remain untouched'
+        );
+    }
+
+    public function testPublishVersionTaskStillPublishesItsOwnObjectVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('own-');
+        $object->setInput('v1');
+        $object->save();
+
+        $object->setPublished(false);
+        $object->setInput('v2');
+        $ownVersion = $object->saveVersion();
+        $this->assertNotNull($ownVersion, 'expected a version to be created');
+
+        $this->createPublishVersionTask($object->getId(), 'object', $ownVersion->getId());
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $reloaded = Unittest::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame(
+            'v2',
+            $reloaded->getInput(),
+            'a legitimate publish-version task on its own element must still apply the version data'
+        );
+        $this->assertTrue(
+            $reloaded->isPublished(),
+            'a legitimate publish-version task must still publish the object'
         );
     }
 

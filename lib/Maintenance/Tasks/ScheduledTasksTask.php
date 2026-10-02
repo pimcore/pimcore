@@ -19,6 +19,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Recyclebin;
+use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Schedule\Task\Listing;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
@@ -50,24 +51,14 @@ class ScheduledTasksTask implements TaskInterface
                     $document = Document::getById($task->getCid());
                     if ($document instanceof Document) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $document->isAllowed('publish', $taskUser) && $document->isAllowed('versions', $taskUser)) {
-                            if ($version = Version::getById($task->getVersion())) {
-                                if ($version->getCid() !== $task->getCid()
-                                    || $version->getCtype() !== $task->getCtype()) {
-                                    $this->logger->error(
-                                        'Schedule\\Task\\Executor: Version [ '.$task->getVersion().
-                                        ' ] does not belong to element [ '.$task->getCid().' ].'
-                                    );
+                            if ($version = $this->getOwnedVersion($task)) {
+                                $document = $version->getData();
+                                if ($document instanceof Document) {
+                                    $document->setPublished(true);
+                                    $document->save();
                                 } else {
-                                    $document = $version->getData();
-                                    if ($document instanceof Document) {
-                                        $document->setPublished(true);
-                                        $document->save();
-                                    } else {
-                                        $this->logger->error('Schedule\\Task\\Executor: Could not restore document from version data.');
-                                    }
+                                    $this->logger->error('Schedule\\Task\\Executor: Could not restore document from version data.');
                                 }
-                            } else {
-                                $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() === 'publish' && $document->isAllowed('publish', $taskUser)) {
                             $document->setPublished(true);
@@ -85,23 +76,13 @@ class ScheduledTasksTask implements TaskInterface
 
                     if ($asset instanceof Asset) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $asset->isAllowed('publish', $taskUser) && $asset->isAllowed('versions', $taskUser)) {
-                            if ($version = Version::getById($task->getVersion())) {
-                                if ($version->getCid() !== $task->getCid()
-                                    || $version->getCtype() !== $task->getCtype()) {
-                                    $this->logger->error(
-                                        'Schedule\\Task\\Executor: Version [ '.$task->getVersion().
-                                        ' ] does not belong to element [ '.$task->getCid().' ].'
-                                    );
+                            if ($version = $this->getOwnedVersion($task)) {
+                                $asset = $version->getData();
+                                if ($asset instanceof Asset) {
+                                    $asset->save();
                                 } else {
-                                    $asset = $version->getData();
-                                    if ($asset instanceof Asset) {
-                                        $asset->save();
-                                    } else {
-                                        $this->logger->error('Schedule\\Task\\Executor: Could not restore asset from version data.');
-                                    }
+                                    $this->logger->error('Schedule\\Task\\Executor: Could not restore asset from version data.');
                                 }
-                            } else {
-                                $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() === 'delete' && $asset->isAllowed('delete', $taskUser)) {
                             Recyclebin\Item::create($asset);
@@ -113,24 +94,14 @@ class ScheduledTasksTask implements TaskInterface
 
                     if ($object instanceof DataObject\Concrete) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $object->isAllowed('publish', $taskUser) && $object->isAllowed('versions', $taskUser)) {
-                            if ($version = Version::getById($task->getVersion())) {
-                                if ($version->getCid() !== $task->getCid()
-                                    || $version->getCtype() !== $task->getCtype()) {
-                                    $this->logger->error(
-                                        'Schedule\\Task\\Executor: Version [ '.$task->getVersion().
-                                        ' ] does not belong to element [ '.$task->getCid().' ].'
-                                    );
+                            if ($version = $this->getOwnedVersion($task)) {
+                                $object = $version->getData();
+                                if ($object instanceof DataObject\Concrete) {
+                                    $object->setPublished(true);
+                                    $object->save();
                                 } else {
-                                    $object = $version->getData();
-                                    if ($object instanceof DataObject\Concrete) {
-                                        $object->setPublished(true);
-                                        $object->save();
-                                    } else {
-                                        $this->logger->error('Schedule\\Task\\Executor: Could not restore object from version data.');
-                                    }
+                                    $this->logger->error('Schedule\\Task\\Executor: Could not restore object from version data.');
                                 }
-                            } else {
-                                $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() === 'publish' && $object->isAllowed('publish', $taskUser)) {
                             $object->setPublished(true);
@@ -152,5 +123,31 @@ class ScheduledTasksTask implements TaskInterface
                 $this->logger->error((string) $e);
             }
         }
+    }
+
+    /**
+     * Returns the version referenced by the task, but only if it belongs to the task's own element.
+     * A mismatch is rejected (and logged) before the version data is unserialized, so a task can
+     * never restore and overwrite another element (GHSA-mfr4-5hr5-jqvg).
+     */
+    private function getOwnedVersion(Task $task): ?Version
+    {
+        $version = Version::getById($task->getVersion());
+        if (!$version) {
+            $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
+
+            return null;
+        }
+
+        if ($version->getCid() !== $task->getCid() || $version->getCtype() !== $task->getCtype()) {
+            $this->logger->error(
+                'Schedule\\Task\\Executor: Version [ '.$task->getVersion().
+                ' ] does not belong to element [ '.$task->getCid().' ].'
+            );
+
+            return null;
+        }
+
+        return $version;
     }
 }
