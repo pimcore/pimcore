@@ -83,9 +83,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $user = $this->userLoader->getUser();
             }
 
-            if ($document && !$document->isPublished() && !$user) {
+            $hasDocumentViewPermission = $document && $user && $document->isAllowed('view', $user);
+
+            if ($document && !$document->isPublished() && !$hasDocumentViewPermission) {
                 $this->logger->warning(
-                    "Denying access to document {$document->getFullPath()} as it is unpublished and there is no user in the session."
+                    "Denying access to document {$document->getFullPath()} as it is unpublished and the user has no view permission."
                 );
 
                 throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
@@ -93,7 +95,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
-                $document = $this->handleAdminUserDocumentParams($request, $document, $user);
+                if ($hasDocumentViewPermission) {
+                    $document = $this->handleAdminUserDocumentParams($request, $document, $user);
+                }
                 $this->handleObjectParams($request, $user);
             }
 
@@ -154,7 +158,17 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         if ($request->query->has('pimcore_version')) {
             $versionId = ParameterBagHelper::getInt($request->query, 'pimcore_version');
             // TODO there was a check with a registry flag here - check if the main request handling is sufficient
-            $version = Version::getById($versionId);
+            $version = $this->loadVersion($versionId);
+            if ($version && ($version->getCtype() !== 'document' || (int) $version->getCid() !== $document->getId())) {
+                // the version must belong to the already authorized document
+                $this->logger->warning('Denying version {version} as it does not belong to document {document}', [
+                    'version' => $versionId,
+                    'document' => $document->getFullPath(),
+                ]);
+
+                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
+            }
+
             if ($documentVersion = $version?->getData()) {
                 $document = $documentVersion;
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
@@ -174,6 +188,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         return $document;
+    }
+
+    protected function loadVersion(int $versionId): ?Version
+    {
+        return Version::getById($versionId);
     }
 
     protected function handleEditmode(
