@@ -238,11 +238,16 @@ class ElementListenerTest extends TestCase
         $this->assertFalse($listener->adminHandlerInvoked, 'Admin preview/editmode/version handling must be skipped without view permission');
     }
 
-    private function runWithVersionParam(Document $routeDocument, Version $version, DocumentResolver $documentResolver): void
+    /**
+     * @param string[] $allowedPermissions
+     */
+    private function runWithVersionParam(Document $routeDocument, Version $version, DocumentResolver $documentResolver, array $allowedPermissions = ['view', 'versions']): void
     {
         $user = new User();
         $user->setId(42);
-        $routeDocument->method('isAllowed')->with('view', $user)->willReturn(true);
+        $routeDocument->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
+        );
 
         $editmodeResolver = $this->createMock(EditmodeResolver::class);
         $requestHelper = $this->createMock(RequestHelper::class);
@@ -330,5 +335,22 @@ class ElementListenerTest extends TestCase
             ->with($this->anything(), $this->identicalTo($versionDocument));
 
         $this->runWithVersionParam($routeDocument, $version, $documentResolver);
+    }
+
+    public function testPimcoreVersionOfSameDocumentIsRejectedWithoutVersionsPermission(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $version = (new Version())->setCtype('document')->setCid(10)->setData($this->createMock(Document::class));
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->never())->method('setDocument');
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runWithVersionParam($routeDocument, $version, $documentResolver, ['view']);
     }
 }
