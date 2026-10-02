@@ -146,10 +146,25 @@ Please also see the section about [Link Generators](../../../03_Objects/01_Objec
 
 ### DataObject Link data type
 
-`getHtml()` / `__toString()` of the DataObject `Link` data type (`Pimcore\Model\DataObject\Data\Link`) use the same
-policy and the same `link_sanitizer.strict` option (GHSA-h78x-47qg-qjmq). With the permissive default the output is
-unchanged apart from `"` in `href` and in the named attributes (`title`, `class`, `rel`, `target`, `tabindex`,
-`accesskey`) being escaped as `&quot;`; a deprecation is triggered whenever the strict policy would have rejected the
-`href` or a free-form attribute. With `strict: true`, `javascript:`/`vbscript:` and script-capable `data:` URLs render an
-empty `href`, and the free-form `attributes` string is parsed and re-serialized (event handlers and malformed tokens are
-dropped; remaining values are HTML-escaped).
+`getHtml()` / `__toString()` of the DataObject `Link` data type (`Pimcore\Model\DataObject\Data\Link`) are hardened by an
+independent policy with its own config (GHSA-h78x-47qg-qjmq); it does not depend on the Document setting above:
+
+```yaml
+# config/packages/pimcore.yaml
+pimcore:
+    objects:
+        link_sanitizer:
+            strict: true
+            # optional, only used while strict is true:
+            blocked_url_schemes: ['javascript:', 'vbscript:']   # default
+            block_unsafe_data_urls: true                        # default
+```
+
+With the permissive default (`strict: false`) the output is unchanged apart from `"` in `href` and in the named attributes
+(`title`, `class`, `rel`, `target`, `tabindex`, `accesskey`) being escaped as `&quot;`; a deprecation is triggered whenever
+the strict policy would have rejected the `href` or a free-form attribute. With `strict: true`, `javascript:`/`vbscript:`
+and script-capable `data:` URLs render an empty `href`, and the free-form `attributes` string is parsed and re-serialized
+(event handlers and malformed tokens are dropped; remaining values are HTML-escaped).
+
+For a fully custom policy, call `Pimcore\Model\DataObject\Data\Link\SanitizerPolicy::setInstance(...)` from your own bundle's
+`boot()` method; it takes precedence over the config value.

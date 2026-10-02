@@ -14,18 +14,19 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Models\DataObject\Data;
 
 use Pimcore\Model\DataObject\Data\Link;
+use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * GHSA-h78x-47qg-qjmq: DataObject\Data\Link::getHtml() shares the AttributeSanitizer policy with the
- * Document Link editable. The permissive default keeps the historical output, strict() closes the advisory.
+ * GHSA-h78x-47qg-qjmq: DataObject\Data\Link::getHtml() applies the SanitizerPolicy (configured via
+ * pimcore.objects.link_sanitizer.*, independent of the Document Link editable). The permissive default keeps the historical output, strict() closes the advisory.
  */
 class LinkSanitizerTest extends TestCase
 {
     protected function tearDown(): void
     {
-        AttributeSanitizer::setInstance(null);
+        SanitizerPolicy::setInstance(null);
         parent::tearDown();
     }
 
@@ -109,7 +110,7 @@ class LinkSanitizerTest extends TestCase
 
     public function testExplicitCustomPolicyDoesNotTriggerTheDefaultDeprecation(): void
     {
-        AttributeSanitizer::setInstance(new AttributeSanitizer());
+        SanitizerPolicy::setInstance(new AttributeSanitizer());
         $link = $this->createLink('javascript:alert(1)', 'onclick=x');
 
         $this->assertSame([], $this->captureDeprecations(fn () => $link->getHtml()));
@@ -122,7 +123,7 @@ class LinkSanitizerTest extends TestCase
      */
     public function testStrictRejectsUnsafeHref(string $href): void
     {
-        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+        SanitizerPolicy::setInstance(AttributeSanitizer::strict());
 
         $this->assertSame('<a href="" >Click</a>', $this->createLink($href)->getHtml());
     }
@@ -141,7 +142,7 @@ class LinkSanitizerTest extends TestCase
 
     public function testStrictKeepsLegitimateUrls(): void
     {
-        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+        SanitizerPolicy::setInstance(AttributeSanitizer::strict());
 
         $this->assertSame('<a href="mailto:test@example.com" >Click</a>', $this->createLink('mailto:test@example.com')->getHtml());
         $this->assertSame('<a href="/relative/path?a=1&b=2" >Click</a>', $this->createLink('/relative/path?a=1&b=2')->getHtml());
@@ -149,7 +150,7 @@ class LinkSanitizerTest extends TestCase
 
     public function testStrictStripsEventHandlersFromFreeFormAttributes(): void
     {
-        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+        SanitizerPolicy::setInstance(AttributeSanitizer::strict());
 
         $html = $this->createLink('https://example.com', 'autofocus onclick=x ONFOCUS="y" data-ok=1')->getHtml();
 
@@ -158,7 +159,7 @@ class LinkSanitizerTest extends TestCase
 
     public function testStrictRejectsTagInjectionViaFreeFormAttributes(): void
     {
-        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+        SanitizerPolicy::setInstance(AttributeSanitizer::strict());
 
         $html = $this->createLink('https://example.com', 'data-x=""><script>alert(1)</script>')->getHtml();
 
@@ -168,7 +169,7 @@ class LinkSanitizerTest extends TestCase
 
     public function testStrictKeepsQuotedValuesContainingEventHandlerTextOrAngleBrackets(): void
     {
-        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+        SanitizerPolicy::setInstance(AttributeSanitizer::strict());
 
         $html = $this->createLink('https://example.com', 'data-code="onclick=foo" data-label="1 < 2" data-e="a &amp; b"')->getHtml();
 
@@ -177,7 +178,7 @@ class LinkSanitizerTest extends TestCase
 
     public function testStrictHandlesLongWhitespaceRunsBeforeInvalidTokens(): void
     {
-        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+        SanitizerPolicy::setInstance(AttributeSanitizer::strict());
         $attributes = 'data-a="1"' . str_repeat(' ', 20000) . '"><script>' . str_repeat(' ', 20000) . 'data-b="2"';
 
         $this->assertSame('<a href="https://example.com" data-a="1" data-b="2">Click</a>', $this->createLink('https://example.com', $attributes)->getHtml());

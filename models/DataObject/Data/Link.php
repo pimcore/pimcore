@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
@@ -399,9 +400,9 @@ class Link implements OwnerAwareFieldInterface
     /**
      * Renders the link as an anchor tag. Whether script-executing URL schemes and event-handler
      * attributes are rejected depends on the active
-     * \Pimcore\Model\Document\Editable\Link\AttributeSanitizer policy (shared with the Document
-     * Link editable, see GHSA-h78x-47qg-qjmq): the permissive default keeps the historical output,
-     * strict() (config "pimcore.documents.editables.link_sanitizer.strict") rejects them.
+     * \Pimcore\Model\DataObject\Data\Link\SanitizerPolicy (see GHSA-h78x-47qg-qjmq): the
+     * permissive default keeps the historical output, strict() (config
+     * "pimcore.objects.link_sanitizer.strict") rejects them.
      */
     public function getHtml(): string
     {
@@ -445,19 +446,19 @@ class Link implements OwnerAwareFieldInterface
 
     private function getRenderedHref(string $href): string
     {
-        if (!AttributeSanitizer::getInstance()->isUrlAllowed($href)) {
+        if (!SanitizerPolicy::getInstance()->isUrlAllowed($href)) {
             return '';
         }
 
         // only the unconfigured permissive default is deprecated - an application that installed
-        // its own policy via AttributeSanitizer::setInstance() has opted out on purpose
-        if ($href !== '' && !AttributeSanitizer::isConfigured() && !AttributeSanitizer::strict()->isUrlAllowed($href)) {
+        // its own policy via SanitizerPolicy::setInstance() has opted out on purpose
+        if ($href !== '' && !SanitizerPolicy::isConfigured() && !AttributeSanitizer::strict()->isUrlAllowed($href)) {
             trigger_deprecation(
                 'pimcore/pimcore',
                 '2026.3',
                 'Rendering a DataObject Link href with a URL scheme that the stricter policy closing'
                 . ' GHSA-h78x-47qg-qjmq would reject. The permissive Link sanitizer default is deprecated and'
-                . ' will be removed in 2027.1; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                . ' will be removed in 2027.1; set "pimcore.objects.link_sanitizer.strict: true" to'
                 . ' reject it now.'
             );
         }
@@ -478,20 +479,20 @@ class Link implements OwnerAwareFieldInterface
             return '';
         }
 
-        $sanitizer = AttributeSanitizer::getInstance();
+        $sanitizer = SanitizerPolicy::getInstance();
         if ($sanitizer->rejectsEditorSuppliedAttributeKeys()) {
             return $this->parseFreeFormAttributes($raw, $sanitizer)[0];
         }
 
         [, $dropped] = $this->parseFreeFormAttributes($raw, AttributeSanitizer::strict());
 
-        if ($dropped && !AttributeSanitizer::isConfigured()) {
+        if ($dropped && !SanitizerPolicy::isConfigured()) {
             trigger_deprecation(
                 'pimcore/pimcore',
                 '2026.3',
                 'Rendering a DataObject Link with free-form attributes that the stricter policy closing'
                 . ' GHSA-h78x-47qg-qjmq would reject. The permissive Link sanitizer default is deprecated and'
-                . ' will be removed in 2027.1; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                . ' will be removed in 2027.1; set "pimcore.objects.link_sanitizer.strict: true" to'
                 . ' reject it now.'
             );
         }
