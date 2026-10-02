@@ -443,10 +443,10 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * The free-form `attributes` string is rendered as raw markup, so quoting its values would
-     * not stop an unquoted event-handler attribute (e.g. "autofocus onfocus=alert(1)") from
-     * executing. Strip event-handler attributes specifically; everything else passes through
-     * unchanged.
+     * The free-form `attributes` string used to be emitted as raw markup. It is now parsed into
+     * name/value pairs and re-serialized, so it can neither break out of the opening tag nor
+     * smuggle in event handlers. Attribute names must be plain identifiers and must not start
+     * with "on"; values are HTML-escaped. Anything that does not parse as an attribute is dropped.
      */
     private function getSanitizedAttributesString(): string
     {
@@ -455,7 +455,34 @@ class Link implements OwnerAwareFieldInterface
             return '';
         }
 
-        return trim((string) preg_replace('/\bon[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|\S+)/i', '', $raw));
+        $pattern = '/\G\s*([A-Za-z_:][-A-Za-z0-9_:.]*)(?:\s*=\s*(?:"([^"<>]*)"|\'([^\'<>]*)\'|([^\s"\'=<>`]+)))?(?=\s|$)/';
+        $attribs = [];
+        $offset = 0;
+        $length = strlen($raw);
+
+        while ($offset < $length) {
+            if (preg_match($pattern, $raw, $m, PREG_UNMATCHED_AS_NULL, $offset) !== 1) {
+                // skip the unparsable token and continue with the next whitespace-separated one
+                $next = preg_match('/\s/', $raw, $ws, PREG_OFFSET_CAPTURE, $offset + 1);
+                if ($next !== 1) {
+                    break;
+                }
+                $offset = $ws[0][1];
+
+                continue;
+            }
+
+            $offset += strlen($m[0]);
+            $name = $m[1];
+            if (stripos($name, 'on') === 0) {
+                continue;
+            }
+
+            $value = $m[2] ?? $m[3] ?? $m[4] ?? null;
+            $attribs[] = $value === null ? $name : $name . '="' . htmlspecialchars($value) . '"';
+        }
+
+        return implode(' ', $attribs);
     }
 
     public function isEmpty(): bool

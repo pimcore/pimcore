@@ -233,7 +233,7 @@ class LinkTest extends ModelTestCase
         $link->setDirect("java\tscript:void(0)");
         $link->setText('Safe link');
 
-        $this->assertStringNotContainsString('javascript:', $link->getHtml());
+        $this->assertEquals('<a href="" >Safe link</a>', $link->getHtml());
     }
 
     public function testGetHtmlStripsEventHandlerFromFreeFormAttributes(): void
@@ -258,7 +258,30 @@ class LinkTest extends ModelTestCase
 
         $html = $link->getHtml();
 
-        $this->assertStringContainsString('data-foo="bar" data-baz=\'qux\'', $html);
+        $this->assertStringContainsString('data-foo="bar" data-baz="qux"', $html);
+    }
+
+    public function testGetHtmlRejectsTagInjectionViaFreeFormAttributes(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setAttributes('data-x=""><script>alert(1)</script>');
+
+        $html = $link->getHtml();
+
+        $this->assertStringNotContainsString('<script', $html);
+        $this->assertEquals('<a href="https://example.com" >Click</a>', $html);
+    }
+
+    public function testGetHtmlDoesNotTreatQuotedValueTextAsAttribute(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setAttributes('data-code="onclick=foo"');
+
+        $this->assertEquals('<a href="https://example.com" data-code="onclick=foo">Click</a>', $link->getHtml());
     }
 
     public function testGetHtmlKeepsLegitimateNonScriptSchemes(): void
