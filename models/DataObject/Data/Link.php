@@ -402,7 +402,7 @@ class Link implements OwnerAwareFieldInterface
         $attribs = [];
         foreach ($attributes as $a) {
             if ($this->$a) {
-                $attribs[] = $a . '="' . htmlspecialchars((string) $this->$a) . '"';
+                $attribs[] = $a . '="' . self::escapeAttributeValue((string) $this->$a) . '"';
             }
         }
 
@@ -424,7 +424,16 @@ class Link implements OwnerAwareFieldInterface
             }
         }
 
-        return '<a href="' . htmlspecialchars($this->getSanitizedHref($href)) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
+        return '<a href="' . self::escapeAttributeValue($this->getSanitizedHref($href)) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
+    }
+
+    /**
+     * Escapes quotes and angle brackets without double-encoding existing character references,
+     * so values stored as "&amp;" keep rendering exactly as before.
+     */
+    private static function escapeAttributeValue(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8', false);
     }
 
     /**
@@ -472,7 +481,7 @@ class Link implements OwnerAwareFieldInterface
             }
 
             $value = $m[2] ?? $m[3] ?? $m[4] ?? null;
-            $attribs[] = $value === null ? $name : $name . '="' . htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, null, false) . '"';
+            $attribs[] = $value === null ? $name : $name . '="' . self::escapeAttributeValue($value) . '"';
         }
 
         return implode(' ', $attribs);

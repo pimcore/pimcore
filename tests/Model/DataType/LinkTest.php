@@ -305,6 +305,25 @@ class LinkTest extends ModelTestCase
         $this->assertEquals('<a href="https://example.com" data-label="a &amp; b">Click</a>', $link->getHtml());
     }
 
+    public function testGetHtmlDoesNotDoubleEncodeEntitiesInHrefAndNamedAttributes(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com/?a=1&amp;b=2');
+        $link->setText('Click');
+        $link->setTitle('Tom &amp; Jerry');
+
+        $this->assertEquals('<a href="https://example.com/?a=1&amp;b=2" title="Tom &amp; Jerry">Click</a>', $link->getHtml());
+    }
+
+    public function testGetHtmlStillRejectsSchemeHiddenInCharacterReferences(): void
+    {
+        $link = new Link();
+        $link->setDirect('javascript&#58;alert(1)');
+        $link->setText('Safe link');
+
+        $this->assertEquals('<a href="" >Safe link</a>', $link->getHtml());
+    }
+
     public function testGetHtmlEscapesHrefValue(): void
     {
         $link = new Link();
