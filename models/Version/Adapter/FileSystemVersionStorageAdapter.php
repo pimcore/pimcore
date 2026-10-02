@@ -20,17 +20,23 @@ use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Model\Version;
 use Pimcore\Tool\Storage;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/**
- * @internal
- */
 class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     protected FilesystemOperator $storage;
 
-    public function __construct()
-    {
-        $this->storage = Storage::get('version');
+    /**
+     * $storage allows additional instances on other storages (e.g. one per storage backend, see
+     * ElementDelegateVersionStorageAdapter). Without an explicit argument `pimcore.version.storage` is used; it is
+     * pinned via #[Autowire], so autowiring never injects another FilesystemOperator (e.g. a project alias for
+     * FilesystemOperator or a storage named `storage`) into the default adapter.
+     */
+    public function __construct(
+        #[Autowire(service: 'pimcore.version.storage')]
+        ?FilesystemOperator $storage = null
+    ) {
+        $this->storage = $storage ?? Storage::get('version');
     }
 
     public function loadMetaData(Version $version): ?string
