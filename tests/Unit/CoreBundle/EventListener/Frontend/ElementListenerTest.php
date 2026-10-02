@@ -21,6 +21,7 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
+use Pimcore\Model\Version;
 use Pimcore\Security\User\UserLoader;
 use Pimcore\Model\UserInterface;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -235,5 +236,97 @@ class ElementListenerTest extends TestCase
         $listener->onKernelController($this->makeControllerEvent($request));
 
         $this->assertFalse($listener->adminHandlerInvoked, 'Admin preview/editmode/version handling must be skipped without view permission');
+    }
+
+    private function runWithVersionParam(Document $routeDocument, Version $version, DocumentResolver $documentResolver): void
+    {
+        $user = new User();
+        $user->setId(42);
+        $routeDocument->method('isAllowed')->with('view', $user)->willReturn(true);
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $version) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private Version $version
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
+
+            protected function loadVersion(int $versionId): ?Version
+            {
+                return $this->version;
+            }
+
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_version' => '5']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    /**
+     * @return array<string, array{string, int}>
+     */
+    public static function foreignVersionProvider(): array
+    {
+        return [
+            'version of another document' => ['document', 11],
+            'version of a non-document element' => ['object', 10],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('foreignVersionProvider')]
+    public function testPimcoreVersionOfForeignElementIsRejected(string $ctype, int $cid): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $foreignDocument = $this->createMock(Document::class);
+        $version = (new Version())->setCtype($ctype)->setCid($cid)->setData($foreignDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->never())->method('setDocument');
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runWithVersionParam($routeDocument, $version, $documentResolver);
+    }
+
+    public function testPimcoreVersionOfSameDocumentIsLoaded(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $versionDocument = $this->createMock(Document::class);
+        $versionDocument->method('getFullPath')->willReturn('/page');
+        $version = (new Version())->setCtype('document')->setCid(10)->setData($versionDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($versionDocument));
+
+        $this->runWithVersionParam($routeDocument, $version, $documentResolver);
     }
 }

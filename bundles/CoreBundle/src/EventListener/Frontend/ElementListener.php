@@ -158,7 +158,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         if ($request->query->has('pimcore_version')) {
             $versionId = ParameterBagHelper::getInt($request->query, 'pimcore_version');
             // TODO there was a check with a registry flag here - check if the main request handling is sufficient
-            $version = Version::getById($versionId);
+            $version = $this->loadVersion($versionId);
             if ($version && ($version->getCtype() !== 'document' || (int) $version->getCid() !== $document->getId())) {
                 // the version must belong to the already authorized document
                 $this->logger->warning('Denying version {version} as it does not belong to document {document}', [
@@ -188,6 +188,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         return $document;
+    }
+
+    protected function loadVersion(int $versionId): ?Version
+    {
+        return Version::getById($versionId);
     }
 
     protected function handleEditmode(
