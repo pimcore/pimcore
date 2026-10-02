@@ -86,8 +86,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         'getinheritedvalues', 'haschildren', 'hassiblings', 'hideunpublished', 'id', 'idpath', 'index', 'key',
         'language', 'latestversion', 'lazyloadedfieldnames', 'list', 'listingcachekey', 'locked', 'modelfactory',
         'modificationdate', 'nextparentforinheritance', 'object', 'objectvar', 'objectvars', 'omitmandatorycheck',
-        'parent', 'parentclass', 'parentid', 'path', 'permissions', 'permissionsforuser', 'properties', 'property',
-        'published', 'realfullpath', 'realpath', 'relationdata', 'resource', 'scheduledtasks', 'siblings', 'type',
+        'parent', 'parentclass', 'parentid', 'path', 'pendingworkflowmarking', 'pendingworkflowmarkings', 'permissions',
+        'permissionsforuser', 'properties', 'property', 'published', 'realfullpath', 'realpath', 'relationdata',
+        'resource', 'scheduledtasks', 'siblings', 'type',
         'types', 'usermodification', 'userowner', 'userpermissions', 'validtablecolumns', 'value', 'valueforfieldname',
         'valuefromparent', 'values', 'versioncount', 'versions',
     ];
