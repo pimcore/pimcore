@@ -69,9 +69,12 @@ class Sql extends AbstractAdapter
         if (
             !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
         ) {
-            $sql .= ' LIMIT 0,1';
-            $db = Db::get();
-            $res = $db->fetchAssociative($sql);
+            // Wrap in a derived table (as getBaseQuery() does) rather than appending a raw
+            // ' LIMIT 0,1' to the concatenated string: a statement-terminating primitive such
+            // as INTO OUTFILE is a syntax error inside the subquery, whereas appending LIMIT
+            // directly is only a string suffix and can be neutralised by a trailing comment.
+            $wrappedSql = 'SELECT * FROM (' . $sql . ') AS somerandxyz LIMIT 0,1';
+            $res = $this->fetchAssociative($wrappedSql);
             if ($res) {
                 return array_keys($res);
             }
@@ -80,6 +83,15 @@ class Sql extends AbstractAdapter
         }
 
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+    }
+
+    /**
+     * Thin seam around the actual DB round-trip, so tests can assert on the exact
+     * (already-wrapped) SQL getColumns() sends without needing a real DB connection.
+     */
+    protected function fetchAssociative(string $sql): array|false
+    {
+        return Db::get()->fetchAssociative($sql);
     }
 
     protected function buildQueryString(
@@ -180,7 +192,10 @@ class Sql extends AbstractAdapter
         $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
         $forbiddenPatterns = [
             '/;/',
-            '/--\s/', // comment start (MySQL-style, requires whitespace after --)
+            // Comment start: MySQL's lexer treats "--" as a comment when followed by a space
+            // or *any* control character (my_iscntrl), not only the whitespace \s matches, or
+            // when "--" ends the fragment outright.
+            '/--(?:[\x00-\x20\x7F]|$)/',
             '/#/',
             '/\/\*/',
             '/\*\//',
@@ -191,11 +206,14 @@ class Sql extends AbstractAdapter
             '/^\s*ALTER\b/i',
             '/^\s*CREATE\b/i',
             '/^\s*TRUNCATE\b/i',
+            '/\bINTO\s+OUTFILE\b/i',
+            '/\bINTO\s+DUMPFILE\b/i',
+            '/\bLOAD_FILE\s*\(/i',
         ];
 
         foreach ($forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $sqlForValidation)) {
-                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, and DDL/DML are not allowed).');
+                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, DDL/DML, and file access functions are not allowed).');
             }
         }
     }
