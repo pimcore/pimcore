@@ -18,6 +18,7 @@ use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Controller\Config\Template\TemplateProviderInterface;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -428,6 +429,11 @@ final class Configuration implements ConfigurationInterface
                             ->floatNode('max_scaling_factor')
                                 ->defaultValue(5.0)
                             ->end()
+                            ->integerNode('cache_lifetime')
+                                ->info('Lifetime in seconds for the HTTP caching headers (Cache-Control, Expires) sent when a thumbnail is delivered through the thumbnail service.')
+                                ->min(0)
+                                ->defaultValue(86400 * 7)
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode('storage_operation_queue')
@@ -689,6 +695,18 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->defaultFalse()
                             ->end()
+                            ->booleanNode('skip_initial_version')
+                                ->info('Do not create a version when an asset is created (uploaded). The persisted state is versioned lazily when the asset is modified for the first time, so write-once assets never occupy version storage while the original state of edited assets stays restorable.')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        // "false", "off", "no", "0" and "" are false; anything unrecognized (e.g. an
+                                        // env placeholder) is passed through for the node to handle
+                                        return filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $v;
+                                    })
+                                ->end()
+                                ->defaultFalse()
+                            ->end()
                         ->end()
                     ->end()
                     ->scalarNode('icc_rgb_profile')
@@ -765,6 +783,28 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end();
         $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
+
+        $assetsNode
+            ->children()
+                ->arrayNode('mime_mappings')
+                    ->info('Override MIME type detection by file extension. Map of lowercase file extensions (without leading dot) to MIME type, e.g. `indd: application/x-indesign`.')
+                    ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
+                    ->beforeNormalization()
+                        ->ifArray()
+                        ->then(function (array $v) {
+                            $result = [];
+                            foreach ($v as $extension => $mimeType) {
+                                $extension = ltrim((string)$extension, '.');
+                                $result[strtolower($extension)] = $mimeType;
+                            }
+
+                            return $result;
+                        })
+                    ->end()
+                    ->scalarPrototype()->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -1026,6 +1066,65 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('link_sanitizer')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('strict')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            // casting the string itself to bool would make "false"/"no"/"off"
+                                            // (any non-empty string) evaluate to true; parse recognized
+                                            // boolean strings and leave anything else for booleanNode's own
+                                            // type check to reject
+                                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                                            return $parsed ?? $v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                    ->info(
+                                        'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
+                                        .'event-handler attributes (e.g. onclick) in the Link editable, closing GHSA-9g27-c28m-8xg5, '
+                                        .'and stop emitting its internal data (linktype, path, text, ...) as <a> attributes. '
+                                        .'Defaults to false to preserve existing behavior; the permissive default is deprecated since '
+                                        .'2026.3 and will be removed in 2027.1. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
+                                    )
+                                ->end()
+                                ->arrayNode('blocked_url_schemes')
+                                    ->prototype('scalar')
+                                        // entries are matched as URL prefixes, so anything that isn't a scheme
+                                        // name plus ":" (e.g. 123, or "java" without the colon) would silently
+                                        // block unrelated URLs such as a relative "java-tips" path
+                                        ->validate()
+                                            ->ifTrue(fn ($v) => !is_string($v) || !preg_match('/^[a-z][a-z0-9+.\-]*:$/i', $v))
+                                            ->thenInvalid('Each blocked URL scheme must be a scheme name followed by ":", e.g. "javascript:", got %s.')
+                                        ->end()
+                                    ->end()
+                                    ->defaultValue(AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES)
+                                    ->info(
+                                        'The URL scheme prefixes (including the trailing ":") rejected when "strict" is true. '
+                                        .'Override to add or remove schemes without writing PHP; has no effect while "strict" is false.'
+                                    )
+                                ->end()
+                                ->booleanNode('block_unsafe_data_urls')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                                            return $parsed ?? $v;
+                                        })
+                                    ->end()
+                                    ->defaultTrue()
+                                    ->info(
+                                        'Also reject script-executing data: URLs when "strict" is true (data:image/* other than '
+                                        .'data:image/svg+xml stays allowed, e.g. for a downloadable data-uri image). '
+                                        .'Has no effect while "strict" is false.'
+                                    )
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -1335,6 +1434,20 @@ final class Configuration implements ConfigurationInterface
     private function addCacheNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode->children()
+            ->arrayNode('cache')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('max_write_items')
+                        ->info('Maximum number of items that are written to the object cache within a single request. Additional items are dropped (and logged) on cleanup. Raise this on requests that legitimately touch many cacheable items.')
+                        ->min(1)
+                        ->defaultValue(50)
+                    ->end()
+                    ->booleanNode('handle_cli')
+                        ->info('Whether the object cache should also write items to the cache in CLI mode. Disabled by default as long-running CLI scripts tend to produce race conditions.')
+                        ->defaultFalse()
+                    ->end()
+                ->end()
+            ->end()
             ->arrayNode('full_page_cache')
                 ->ignoreExtraKeys()
                 ->canBeDisabled()
@@ -1588,6 +1701,7 @@ final class Configuration implements ConfigurationInterface
                                                     ->end()
                                                 ->end()
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a place, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->beforeNormalization()
@@ -1778,6 +1892,7 @@ final class Configuration implements ConfigurationInterface
                                                         ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
                                                         ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
+                                                    ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a transition, for example via bundles, etc.')->end()
                                                 ->end()
                                             ->end()
                                         ->end()
@@ -1890,6 +2005,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->end()
                                                 ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a global action, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->info('Actions which will be added to actions button independently of the current workflow place.')

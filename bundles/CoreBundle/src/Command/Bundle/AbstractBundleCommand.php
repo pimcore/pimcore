@@ -16,32 +16,35 @@ namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
 use InvalidArgumentException;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Extension\Bundle\Installer\InstallerInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Symfony\Component\Console\Completion\CompletionInput;
+use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
  * @internal
  */
 abstract class AbstractBundleCommand extends AbstractCommand
 {
-    public function __construct(protected PimcoreBundleManager $bundleManager, ?string $name = null)
-    {
+    public function __construct(
+        protected PimcoreBundleManager $bundleManager,
+        ?string $name = null
+    ) {
         parent::__construct($name);
     }
 
     /**
      * @return $this
      */
-    protected function configureDescriptionAndHelp(string $description, ?string $help = null): static
+    protected function configureBundleHelp(): static
     {
-        if (null === $help) {
-            $help = 'Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).';
-        }
-
-        $this
-            ->setDescription($description)
-            ->setHelp(sprintf('%s. %s', $description, $help));
+        $this->setHelp(sprintf(
+            '%s. Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).',
+            $this->getDescription()
+        ));
 
         return $this;
     }
@@ -61,9 +64,16 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $this;
     }
 
-    protected function buildName(string $name): string
+    protected function completeBundleArgument(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
-        return sprintf('pimcore:bundle:%s', $name);
+        if ($input->mustSuggestArgumentValuesFor('bundle') === true) {
+            $suggestions->suggestValues(
+                array_map(
+                    static fn (BundleInterface $bundle): string => $bundle->getName(),
+                    array_values($this->bundleManager->getActiveBundles(false))
+                )
+            );
+        }
     }
 
     protected function handlePrerequisiteError(string $message): int
@@ -71,12 +81,12 @@ abstract class AbstractBundleCommand extends AbstractCommand
         if ($this->io->getInput()->getOption('fail-without-error')) {
             $this->io->warning($message);
 
-            return 0;
-        } else {
-            $this->io->error($message);
-
-            return 1;
+            return self::SUCCESS;
         }
+
+        $this->io->error($message);
+
+        return self::FAILURE;
     }
 
     protected function getBundle(): PimcoreBundleInterface
@@ -85,8 +95,6 @@ abstract class AbstractBundleCommand extends AbstractCommand
         $bundleId = $this->normalizeBundleIdentifier($bundleId);
 
         $activeBundles = $this->bundleManager->getActiveBundles(false);
-
-        $bundle = null;
 
         if (isset($activeBundles[$bundleId])) {
             // try to load bundle via fully qualified class name first
@@ -108,14 +116,9 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $bundle;
     }
 
-    protected function setupInstaller(PimcoreBundleInterface $bundle): ?\Pimcore\Extension\Bundle\Installer\InstallerInterface
+    protected function setupInstaller(PimcoreBundleInterface $bundle): ?InstallerInterface
     {
-        $installer = $this->bundleManager->getInstaller($bundle);
-        if (null === $installer) {
-            return null;
-        }
-
-        return $installer;
+        return $this->bundleManager->getInstaller($bundle);
     }
 
     protected function normalizeBundleIdentifier(string $bundleIdentifier): string

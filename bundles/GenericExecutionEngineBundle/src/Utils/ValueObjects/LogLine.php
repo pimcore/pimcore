@@ -16,20 +16,41 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Utils\ValueObjects;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use InvalidArgumentException;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidLogLineException;
 
 /**
+ * Immutable representation of a single job run log entry: the moment it was created
+ * plus its (potentially multi-line) message. Segmentation of the raw log column into
+ * individual entries is the responsibility of the LogParser.
+ *
  * @internal
  */
 final class LogLine
 {
-    private string $logLine;
+    /**
+     * Supported timestamp formats, each paired with an optional timezone to force.
+     * ATOM and the numeric-offset variant carry their own offset; the Zulu variant
+     * is anchored to UTC.
+     *
+     * @var list<array{string, string|null}>
+     */
+    private const SUPPORTED_FORMATS = [
+        [DateTimeInterface::ATOM, null],
+        ['Y-m-d\TH:i:sO', null],
+        ['Y-m-d\TH:i:s\Z', 'UTC'],
+    ];
 
-    private DateTimeImmutable $createdAt;
+    private readonly DateTimeImmutable $createdAt;
 
-    public function __construct(string $logLine)
+    private readonly string $logLine;
+
+    /**
+     * @throws InvalidLogLineException if $dateTime is not a supported timestamp format
+     */
+    public function __construct(string $dateTime, string $logLine)
     {
-        $this->extract($logLine);
+        $this->createdAt = $this->parseDateTime($dateTime);
+        $this->logLine = $logLine;
     }
 
     public function getLogLine(): string
@@ -37,37 +58,37 @@ final class LogLine
         return $this->logLine;
     }
 
-    public function appendLogLine(string $logLine): void
-    {
-        $this->logLine .= PHP_EOL . $logLine;
-    }
-
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    private function extract(string $logLine): void
+    /**
+     * @throws InvalidLogLineException
+     */
+    private function parseDateTime(string $dateTime): DateTimeImmutable
     {
-        $logLine = trim($logLine);
+        // createFromFormat() overflows out-of-range fields (e.g. 2024-02-31 becomes a
+        // March date) and only records a *warning* while still returning a valid object.
+        // A candidate format is therefore accepted only when it both parses and reports
+        // no warnings or errors; otherwise the timestamp is treated as invalid so a
+        // corrupt value can never masquerade as an accurate creation time.
+        foreach (self::SUPPORTED_FORMATS as [$format, $timezone]) {
+            $parsed = $timezone === null
+                ? DateTimeImmutable::createFromFormat($format, $dateTime)
+                : DateTimeImmutable::createFromFormat($format, $dateTime, new DateTimeZone($timezone));
 
-        $separatorPos = strpos($logLine, ': ');
-        if ($separatorPos === false) {
-            throw new InvalidArgumentException('Invalid Time Format given');
+            $errors = DateTimeImmutable::getLastErrors();
+            $hasIssues = $errors !== false
+                && ($errors['warning_count'] > 0 || $errors['error_count'] > 0);
+
+            if ($parsed !== false && !$hasIssues) {
+                return $parsed;
+            }
         }
 
-        $dateTimeString = substr($logLine, 0, $separatorPos);
-        $log = substr($logLine, $separatorPos + 2);
-        $dateTime =
-            DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTimeString)
-            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:sO', $dateTimeString)
-            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTimeString, new DateTimeZone('UTC'));
-
-        if ($dateTime === false) {
-            throw new InvalidArgumentException('Invalid Time Format given');
-        }
-
-        $this->createdAt = $dateTime;
-        $this->logLine = $log;
+        throw new InvalidLogLineException(
+            sprintf('Invalid log line date time format given: "%s".', $dateTime)
+        );
     }
 }

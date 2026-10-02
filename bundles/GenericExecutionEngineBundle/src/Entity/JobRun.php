@@ -17,10 +17,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Table;
-use InvalidArgumentException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\MessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\ValueObjects\LogLine;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -146,29 +146,7 @@ class JobRun
      */
     public function getLogs(): array
     {
-        if ($this->log === null) {
-            return [];
-        }
-
-        /** @var LogLine[] $parsed */
-        $parsed = [];
-
-        $logLines = explode("\n", $this->log);
-
-        foreach ($logLines as $line) {
-            try {
-                $logLine = new LogLine($line);
-                $parsed[] = $logLine;
-            } catch (InvalidArgumentException $e) {
-                // not starting with a date, append to last parsed log line
-                if (!empty($parsed)) {
-                    $lastKey = array_key_last($parsed);
-                    $parsed[$lastKey]->appendLogLine($line);
-                }
-            }
-        }
-
-        return $parsed;
+        return (new LogParser())->parse($this->log);
     }
 
     public function setLog(?string $log): void

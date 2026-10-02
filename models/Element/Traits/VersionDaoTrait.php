@@ -27,19 +27,19 @@ trait VersionDaoTrait
     public function getLatestVersion(?int $userId = null, bool $includingPublished = false): ?Version
     {
         $operator = $includingPublished ? '>=' : '>';
-        $versionId = $this->db->fetchOne('SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` ' . $operator . ' :mdate OR versionCount ' . $operator . ' :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1', [
+
+        $list = new Version\Listing();
+        // load the auto-save versions as well, the condition below restricts them to the given user
+        $list->setLoadAutoSave(true);
+        $list->setCondition('cid = :cid AND ctype = :ctype AND (`date` ' . $operator . ' :mdate OR versionCount ' . $operator . ' :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0)', [
             'cid' => $this->model->getId(),
             'ctype' => Element\Service::getElementType($this->model),
             'userId' => $userId,
             'mdate' => $this->model->getModificationDate(),
             'versionCount' => $this->model->getVersionCount(),
-        ]);
+        ])->setOrderKey('versionCount')->setOrder('DESC')->setLimit(1);
 
-        if ($versionId) {
-            return Version::getById($versionId);
-        }
-
-        return null;
+        return $list->load()[0] ?? null;
     }
 
     /**

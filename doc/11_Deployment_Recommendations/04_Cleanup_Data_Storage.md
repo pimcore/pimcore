@@ -48,6 +48,30 @@ mysql -e "DELETE FROM ###.versions WHERE ctype='asset';"
 rm -r var/versions/asset
 ```
 
+## Orphaned Object Brick / Fieldcollection Tables
+
+Object bricks and fieldcollections store their data in dedicated database tables
+(`object_brick_*` / `object_collection_*`). Deleting a brick/fieldcollection definition through
+Pimcore Studio drops these tables as part of the delete. However, when a definition is removed on
+the filesystem instead - e.g. by deleting its `var/classes/*.php` file during a deployment - that
+delete path is bypassed and the tables are left behind.
+
+Regular maintenance detects and drops these orphaned tables:
+
+```bash
+bin/console pimcore:maintenance -j cleanupBrickTables
+bin/console pimcore:maintenance -j cleanupFieldcollectionTables
+```
+
+:::warning
+A brick/fieldcollection table whose definition can no longer be found is treated as authorization to
+**drop that table and all of its data**. This is irreversible. Because deployments frequently add or
+remove class definition files, make sure the definitions in `var/classes/` are in sync with your
+database **before** running maintenance, and back up the database beforehand. The task deliberately
+does nothing when the class definition directory itself is missing (e.g. a broken deployment), so an
+unavailable definition store never causes live tables to be dropped.
+:::
+
 ## Logging Data
 
 All log files are stored in `var/log/`. Pimcore rotates, compresses, and cleans up logs automatically:

@@ -83,9 +83,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $user = $this->userLoader->getUser();
             }
 
-            if ($document && !$document->isPublished() && (!$user || !$document->isAllowed('view', $user))) {
+            $hasDocumentViewPermission = $document && $user && $document->isAllowed('view', $user);
+
+            if ($document && !$document->isPublished() && !$hasDocumentViewPermission) {
                 $this->logger->warning(
-                    "Denying access to document {$document->getFullPath()} as it is unpublished and the user may not view it."
+                    "Denying access to document {$document->getFullPath()} as it is unpublished and the user has no view permission."
                 );
 
                 throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
@@ -93,7 +95,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
-                $document = $this->handleAdminUserDocumentParams($request, $document, $user);
+                if ($hasDocumentViewPermission) {
+                    $document = $this->handleAdminUserDocumentParams($request, $document, $user);
+                }
                 $this->handleObjectParams($request, $user);
             }
 
@@ -153,20 +157,24 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         // for version preview
         if ($request->query->has('pimcore_version')) {
             $versionId = ParameterBagHelper::getInt($request->query, 'pimcore_version');
-            $version = Version::getById($versionId);
-
-            if (!$this->isVersionAccessAllowedForDocument($version, $document, $user)) {
-                $this->logger->warning('Denying access to {version} for document {document} from pimcore_version parameter', [
+            // TODO there was a check with a registry flag here - check if the main request handling is sufficient
+            $version = $this->loadVersion($versionId);
+            if ($version && (
+                $version->getCtype() !== 'document'
+                || (int) $version->getCid() !== $document->getId()
+                // browsing historical versions by id is a separate grant from "view" (GHSA-v36c-r89g-2226)
+                || !$document->isAllowed('versions', $user)
+            )) {
+                // the version must belong to the already authorized document and the user must be allowed to read versions
+                $this->logger->warning('Denying version {version} for document {document}: not its version or no versions permission', [
                     'version' => $versionId,
                     'document' => $document->getFullPath(),
                 ]);
 
-                throw new AccessDeniedHttpException(
-                    sprintf('Access denied for version %d of document %s', $versionId, $document->getFullPath())
-                );
+                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
             }
 
-            if ($documentVersion = $version->getData()) {
+            if ($documentVersion = $version?->getData()) {
                 $document = $documentVersion;
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
                     'version' => $version->getId(),
@@ -187,39 +195,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    /**
-     * A version passed via pimcore_version must belong to the requested document and the
-     * requesting user must hold the "versions" permission on it - otherwise any backend
-     * user could read any document version by guessing its id (see GHSA-v36c-r89g-2226).
-     */
-    private function isVersionAccessAllowedForDocument(?Version $version, Document $document, User $user): bool
+    protected function loadVersion(int $versionId): ?Version
     {
-        return $version !== null
-            && $version->getCtype() === 'document'
-            && $version->getCid() === $document->getId()
-            && $document->isAllowed('versions', $user);
-    }
-
-    /**
-     * Editmode and studio-preview substitute in the document's latest (possibly unpublished)
-     * version via getLatestVersion() and, unlike pimcore_version, are reachable for *published*
-     * documents too, since they skip the isPublished() guard in onKernelController() (see
-     * GHSA-v36c-r89g-2226). Gate on "view", matching what already gates loading this same latest
-     * working version in the admin editor (DocumentControllerBase::getDataByIdAction()) - "versions"
-     * is a separate, stricter grant for browsing/restoring historical versions by id
-     * (isVersionAccessAllowedForDocument()) and would 403 ordinary editors who can view/save a
-     * document but were never granted that workspace permission.
-     */
-    private function denyAccessUnlessViewAllowed(Document $document, User $user, string $context): void
-    {
-        if (!$document->isAllowed('view', $user)) {
-            $this->logger->warning('Denying access to the latest version of document {document} for {context} as the user may not view it', [
-                'document' => $document->getFullPath(),
-                'context' => $context,
-            ]);
-
-            throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
-        }
+        return Version::getById($versionId);
     }
 
     protected function handleEditmode(
@@ -240,8 +218,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 return $documentFromSession;
             }
         }
-
-        $this->denyAccessUnlessViewAllowed($document, $user, 'editmode');
 
         $this->logger->debug('Loading editmode document {document} from latest version', [
             'document' => $document->getFullPath(),
@@ -321,8 +297,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     private function handleDocumentStudioPreview(Document $document, User $user): Document
     {
-        $this->denyAccessUnlessViewAllowed($document, $user, 'studio preview');
-
         $this->logger->debug('Loading preview document {document} from latest version', [
             'document' => $document->getFullPath(),
         ]);

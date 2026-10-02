@@ -21,347 +21,336 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
+use Pimcore\Model\UserInterface;
 use Pimcore\Model\Version;
 use Pimcore\Security\User\UserLoader;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\NullLogger;
-use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * Regression coverage for GHSA-v36c-r89g-2226: the frontend admin-preview path authenticated
- * the requester but never checked whether they were allowed to see the element. Any active
- * backend user - regardless of workspace or "versions" permission - could read any unpublished
- * document (?pimcore_admin=1) or any historical document version by id (?pimcore_version=<id>).
+ * Regression coverage for GHSA-gqpp-f736-v4jh: the unpublished-document gate in
+ * onKernelController() must consult the document's workspace permission (isAllowed('view', $user))
+ * rather than merely the presence of a backend session user.
  */
 class ElementListenerTest extends TestCase
 {
-    private function makeListener(
-        DocumentResolver $documentResolver,
-        RequestHelper $requestHelper,
-        UserLoader $userLoader,
-        ?EditmodeResolver $editmodeResolver = null
-    ): ElementListener {
-        // handleObjectParams() is unrelated to the document permission logic under test here,
-        // but it unconditionally touches Element\Service::getElementFromSession() (a real
-        // TmpStore/DB lookup) whenever an admin user is present. Stub it out so this remains a
-        // true unit test, consistent with TestCase::needsDb() defaulting to false.
-        $listener = $this->getMockBuilder(ElementListener::class)
-            ->setConstructorArgs([
-                $documentResolver,
-                $editmodeResolver ?? $this->createMock(EditmodeResolver::class),
-                $requestHelper,
-                $userLoader,
-            ])
-            ->onlyMethods(['handleObjectParams'])
-            ->getMock();
-        $listener->setLogger(new NullLogger());
+    private function makeControllerEvent(Request $request, bool $mainRequest = true): ControllerEvent
+    {
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $controller = static fn () => null;
+
+        return new ControllerEvent(
+            $kernel,
+            $controller,
+            $request,
+            $mainRequest ? HttpKernelInterface::MAIN_REQUEST : HttpKernelInterface::SUB_REQUEST,
+        );
+    }
+
+    private function makeListener(?Document $document, bool $adminRequest, ?User $user, bool $stubObjectParams = false): ElementListener
+    {
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(false);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn($adminRequest);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
 
         $contextResolver = $this->createMock(PimcoreContextResolver::class);
         $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        // handleObjectParams() performs a DB lookup unrelated to the permission gate under test
+        $class = $stubObjectParams
+            ? new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+                protected function handleObjectParams(Request $request, UserInterface $user): void
+                {
+                }
+            }
+        : ElementListener::class;
+        $listener = $stubObjectParams ? $class : new $class($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+        $listener->setLogger(new NullLogger());
         $listener->setPimcoreContextResolver($contextResolver);
 
         return $listener;
     }
 
-    private function dispatch(ElementListener $listener, Request $request): void
+    public function testBackendUserWithoutViewPermissionIsDeniedOnUnpublishedDocument(): void
     {
-        $kernel = $this->createMock(HttpKernelInterface::class);
-        $event = new ControllerEvent($kernel, static function (): void {
-        }, $request, HttpKernelInterface::MAIN_REQUEST);
-
-        $listener->onKernelController($event);
-    }
-
-    private function adminRequestHelper(): RequestHelper
-    {
-        $requestHelper = $this->createMock(RequestHelper::class);
-        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
-
-        return $requestHelper;
-    }
-
-    public function testUnpublishedDocumentIsDeniedForLoggedInUserWithoutViewPermission(): void
-    {
-        // The exact defect: any active backend session ("$user" truthy) was sufficient, with
-        // no check that this particular user may view this particular unpublished document.
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(false);
-        $document->method('isAllowed')->with('view', $this->anything())->willReturn(false);
-        $document->method('getFullPath')->willReturn('/poc-secret');
+        $document->method('getFullPath')->willReturn('/secret_unpublished');
 
-        $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
+        $user = new User();
+        $user->setId(99);
 
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn(new User());
+        // The core assertion: isAllowed('view', $user) must actually be consulted, with the
+        // real session user, and must be able to deny access on its own merits.
+        $document->expects($this->once())
+            ->method('isAllowed')
+            ->with('view', $user)
+            ->willReturn(false);
 
-        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader);
+        $listener = $this->makeListener($document, adminRequest: true, user: $user);
+        $request = Request::create('/secret_unpublished', 'GET', ['pimcore_preview' => '1']);
 
         $this->expectException(AccessDeniedHttpException::class);
-        $this->dispatch($listener, new Request(['pimcore_admin' => '1']));
+        $listener->onKernelController($this->makeControllerEvent($request));
     }
 
-    public function testUnpublishedDocumentIsServedForLoggedInUserWithViewPermission(): void
+    public function testAnonymousRequestIsDeniedOnUnpublishedDocument(): void
     {
-        // Legitimate behaviour must keep working: a user who is actually allowed to view the
-        // unpublished document (e.g. an admin, or a user with a matching workspace) is not denied.
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(false);
-        $document->method('isAllowed')->with('view', $this->anything())->willReturn(true);
-        $document->method('getFullPath')->willReturn('/poc-secret');
+        $document->method('getFullPath')->willReturn('/secret_unpublished');
 
-        $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
-        $documentResolver->expects($this->once())->method('setDocument')->with($this->anything(), $document);
+        // No session user at all: isAllowed() must not even be consulted (short-circuited).
+        $document->expects($this->never())->method('isAllowed');
 
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn(new User());
+        $listener = $this->makeListener($document, adminRequest: false, user: null);
+        $request = Request::create('/secret_unpublished');
 
-        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader);
-
-        $this->dispatch($listener, new Request(['pimcore_admin' => '1']));
+        $this->expectException(AccessDeniedHttpException::class);
+        $listener->onKernelController($this->makeControllerEvent($request));
     }
 
-    public function testPublishedDocumentIsNotAffectedByViewPermission(): void
+    public function testAnonymousRequestToPublishedDocumentIsNotDenied(): void
     {
-        // The permission check only guards unpublished documents; published content must not
-        // start requiring a "view" grant as a side effect of this fix.
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(true);
         $document->expects($this->never())->method('isAllowed');
 
         $documentResolver = $this->createMock(DocumentResolver::class);
         $documentResolver->method('getDocument')->willReturn($document);
+        $documentResolver->expects($this->once())->method('setDocument');
 
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
         $requestHelper = $this->createMock(RequestHelper::class);
         $requestHelper->method('isFrontendRequestByAdmin')->willReturn(false);
-
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
         $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->expects($this->never())->method('getUser');
+        $userLoader->method('getUser')->willReturn(null);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
 
-        $listener = $this->makeListener($documentResolver, $requestHelper, $userLoader);
+        $listener = new ElementListener($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
 
-        $this->dispatch($listener, new Request());
+        $request = Request::create('/some/page');
+        $listener->onKernelController($this->makeControllerEvent($request));
+
+        // No exception means legitimate anonymous browsing of published content still works.
+        $this->addToAssertionCount(1);
     }
 
-    // -----------------------------------------------------------------------
-    // denyAccessUnlessViewAllowed() via editmode/studio-preview - these substitute in the
-    // document's latest (possibly unpublished) version and, unlike the isPublished() guard,
-    // are reachable for *published* documents too (see GHSA-v36c-r89g-2226). Gated on "view"
-    // (not "versions" - a separate, stricter grant reserved for isVersionAccessAllowedForDocument()
-    // / explicit pimcore_version=<id> access), matching what already gates loading this same
-    // latest working version in the admin editor.
-    // -----------------------------------------------------------------------
-
-    public function testEditmodeOnPublishedDocumentIsDeniedWithoutViewPermission(): void
+    public function testBackendUserWithViewPermissionIsNotDeniedOnUnpublishedDocument(): void
     {
-        // Any active backend session was enough to reach getLatestVersion() here, regardless
-        // of workspace - even though the document is published and the top-level guard added
-        // for the unpublished case never applies to it. Plain Document (not PageSnippet) is
-        // deliberate: it keeps this test off the real getLatestVersion()/Dao delegation
-        // (a PHP magic-__call method PHPUnit cannot stub) while still exercising the guard,
-        // which runs before the instanceof PageSnippet substitution is ever reached.
+        $document = $this->createMock(Document::class);
+        $document->method('isPublished')->willReturn(false);
+        $document->method('getFullPath')->willReturn('/secret_unpublished');
+
+        $user = new User();
+        $user->setId(42);
+
+        $document->expects($this->once())
+            ->method('isAllowed')
+            ->with('view', $user)
+            ->willReturn(true);
+
+        $listener = $this->makeListener($document, adminRequest: true, user: $user, stubObjectParams: true);
+
+        $request = Request::create('/secret_unpublished');
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $listener->onKernelController($this->makeControllerEvent($request));
+
+        // No exception means the view-permission gate let the permitted user through.
+        $this->addToAssertionCount(1);
+    }
+
+    public function testBackendUserWithoutViewPermissionCannotUseAdminParamsOnPublishedDocument(): void
+    {
         $document = $this->createMock(Document::class);
         $document->method('isPublished')->willReturn(true);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('view', $this->anything())->willReturn(false);
-        $document->method('getFullPath')->willReturn('/poc-published');
+        $document->method('getFullPath')->willReturn('/published');
+
+        $user = new User();
+        $user->setId(99);
+
+        $document->expects($this->once())
+            ->method('isAllowed')
+            ->with('view', $user)
+            ->willReturn(false);
 
         $documentResolver = $this->createMock(DocumentResolver::class);
         $documentResolver->method('getDocument')->willReturn($document);
-
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn(new User());
+        // the original, route-resolved document must be kept untouched
+        $documentResolver->expects($this->once())->method('setDocument')->with($this->anything(), $this->identicalTo($document));
 
         $editmodeResolver = $this->createMock(EditmodeResolver::class);
         $editmodeResolver->method('isEditmode')->willReturn(true);
 
-        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader, $editmodeResolver);
-
-        // pimcore_studio=1 skips the session-stored-draft lookup (self-scoped, not part of this
-        // defect) and goes straight to the getLatestVersion() substitution under test.
-        $request = new Request(['pimcore_editmode' => '1', 'pimcore_studio' => '1']);
-        $request->setSession(new Session(new MockArraySessionStorage()));
-
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->dispatch($listener, $request);
-    }
-
-    public function testEditmodeOnPublishedDocumentServesLatestVersionWithViewPermission(): void
-    {
-        // Legitimate editing must keep working for a user who holds "view" on the document -
-        // matching admin-ui-classic-bundle's DocumentControllerBase::getDataByIdAction(), which
-        // loads this same latest working version under "view", not "versions". Plain Document
-        // (not instanceof PageSnippet) means the getLatestVersion() substitution is a no-op, so
-        // this covers the permission gate itself without depending on the real Dao-backed magic
-        // method.
-        $document = $this->createMock(Document::class);
-        $document->method('isPublished')->willReturn(true);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('view', $this->anything())->willReturn(true);
-        $document->method('getFullPath')->willReturn('/poc-published');
-
-        $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
-        $documentResolver->expects($this->once())->method('setDocument')->with($this->anything(), $document);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
 
         $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn(new User());
+        $userLoader->method('getUser')->willReturn($user);
+
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+            public bool $adminHandlerInvoked = false;
+
+            protected function handleEditmode(Document $document, User $user, SessionInterface $session, bool $isPimcoreStudio): Document
+            {
+                $this->adminHandlerInvoked = true;
+
+                return $document;
+            }
+
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/published', 'GET', ['pimcore_preview' => '1', 'pimcore_version' => '123']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $listener->onKernelController($this->makeControllerEvent($request));
+
+        $this->assertFalse($listener->adminHandlerInvoked, 'Admin preview/editmode/version handling must be skipped without view permission');
+    }
+
+    /**
+     * @param string[] $allowedPermissions
+     */
+    private function runWithVersionParam(Document $routeDocument, Version $version, DocumentResolver $documentResolver, array $allowedPermissions = ['view', 'versions']): void
+    {
+        $user = new User();
+        $user->setId(42);
+        $routeDocument->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
+        );
 
         $editmodeResolver = $this->createMock(EditmodeResolver::class);
-        $editmodeResolver->method('isEditmode')->willReturn(true);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
 
-        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader, $editmodeResolver);
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $version) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private Version $version
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
 
-        $request = new Request(['pimcore_editmode' => '1', 'pimcore_studio' => '1']);
+            protected function loadVersion(int $versionId): ?Version
+            {
+                return $this->version;
+            }
+
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_version' => '5']);
         $request->setSession(new Session(new MockArraySessionStorage()));
-
-        $this->dispatch($listener, $request);
+        $listener->onKernelController($this->makeControllerEvent($request));
     }
 
-    public function testStudioPreviewOnPublishedDocumentIsDeniedWithoutViewPermission(): void
+    /**
+     * @return array<string, array{string, int}>
+     */
+    public static function foreignVersionProvider(): array
     {
-        $document = $this->createMock(Document::class);
-        $document->method('isPublished')->willReturn(true);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('view', $this->anything())->willReturn(false);
-        $document->method('getFullPath')->willReturn('/poc-published');
+        return [
+            'version of another document' => ['document', 11],
+            'version of a non-document element' => ['object', 10],
+        ];
+    }
+
+    /**
+     * @dataProvider foreignVersionProvider
+     */
+    public function testPimcoreVersionOfForeignElementIsRejected(string $ctype, int $cid): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $foreignDocument = $this->createMock(Document::class);
+        $version = (new Version())->setCtype($ctype)->setCid($cid)->setData($foreignDocument);
 
         $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
-
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn(new User());
-
-        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->never())->method('setDocument');
 
         $this->expectException(AccessDeniedHttpException::class);
-        $this->dispatch($listener, new Request(['pimcore_studio_preview' => '1']));
+        $this->runWithVersionParam($routeDocument, $version, $documentResolver);
     }
 
-    public function testStudioPreviewOnPublishedDocumentServesLatestVersionWithViewPermission(): void
+    public function testPimcoreVersionOfSameDocumentIsLoaded(): void
     {
-        $document = $this->createMock(Document::class);
-        $document->method('isPublished')->willReturn(true);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('view', $this->anything())->willReturn(true);
-        $document->method('getFullPath')->willReturn('/poc-published');
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $versionDocument = $this->createMock(Document::class);
+        $versionDocument->method('getFullPath')->willReturn('/page');
+        $version = (new Version())->setCtype('document')->setCid(10)->setData($versionDocument);
 
         $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
-        $documentResolver->expects($this->once())->method('setDocument')->with($this->anything(), $document);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($versionDocument));
 
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn(new User());
-
-        $listener = $this->makeListener($documentResolver, $this->adminRequestHelper(), $userLoader);
-
-        $this->dispatch($listener, new Request(['pimcore_studio_preview' => '1']));
+        $this->runWithVersionParam($routeDocument, $version, $documentResolver);
     }
 
-    // -----------------------------------------------------------------------
-    // isVersionAccessAllowedForDocument() - the guard that scopes ?pimcore_version=<id>
-    // to the requested document and the "versions" permission.
-    // -----------------------------------------------------------------------
-
-    private function invokeIsVersionAccessAllowedForDocument(
-        ?Version $version,
-        Document $document,
-        User $user
-    ): bool {
-        $method = new ReflectionMethod(ElementListener::class, 'isVersionAccessAllowedForDocument');
-
-        $listener = new ElementListener(
-            $this->createMock(DocumentResolver::class),
-            $this->createMock(EditmodeResolver::class),
-            $this->createMock(RequestHelper::class),
-            $this->createMock(UserLoader::class)
-        );
-
-        return $method->invoke($listener, $version, $document, $user);
-    }
-
-    private function version(int $id, string $ctype, int $cid): Version
+    public function testPimcoreVersionOfSameDocumentIsRejectedWithoutVersionsPermission(): void
     {
-        $version = new Version();
-        $version->setId($id);
-        $version->setCtype($ctype);
-        $version->setCid($cid);
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
 
-        return $version;
-    }
+        $version = (new Version())->setCtype('document')->setCid(10)->setData($this->createMock(Document::class));
 
-    public function testVersionBelongingToAnotherDocumentIsRejected(): void
-    {
-        // The PoC: /poc-public?pimcore_version=2 where version 2 belongs to /poc-secret.
-        // The requested document (id 1) must not be swapped out for a version of a
-        // different document (id 2), no matter what the user is otherwise allowed to do.
-        $requestedDocument = $this->createMock(Document::class);
-        $requestedDocument->method('getId')->willReturn(1);
-        $requestedDocument->method('isAllowed')->willReturn(true);
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->never())->method('setDocument');
 
-        $versionOfOtherDocument = $this->version(2, 'document', 2);
-
-        $this->assertFalse(
-            $this->invokeIsVersionAccessAllowedForDocument($versionOfOtherDocument, $requestedDocument, new User())
-        );
-    }
-
-    public function testVersionOfNonDocumentElementIsRejected(): void
-    {
-        $document = $this->createMock(Document::class);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->willReturn(true);
-
-        $objectVersion = $this->version(3, 'object', 1);
-
-        $this->assertFalse(
-            $this->invokeIsVersionAccessAllowedForDocument($objectVersion, $document, new User())
-        );
-    }
-
-    public function testVersionOfSameDocumentIsRejectedWithoutVersionsPermission(): void
-    {
-        // Matches the PoC's "lowpriv" user: no document workspace, only the unrelated
-        // "assets" permission - "versions" must not be implied by mere authentication.
-        $document = $this->createMock(Document::class);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(false);
-
-        $matchingVersion = $this->version(2, 'document', 1);
-
-        $this->assertFalse(
-            $this->invokeIsVersionAccessAllowedForDocument($matchingVersion, $document, new User())
-        );
-    }
-
-    public function testVersionOfSameDocumentIsAllowedWithVersionsPermission(): void
-    {
-        $document = $this->createMock(Document::class);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->with('versions', $this->anything())->willReturn(true);
-
-        $matchingVersion = $this->version(2, 'document', 1);
-
-        $this->assertTrue(
-            $this->invokeIsVersionAccessAllowedForDocument($matchingVersion, $document, new User())
-        );
-    }
-
-    public function testMissingVersionIsRejected(): void
-    {
-        $document = $this->createMock(Document::class);
-        $document->method('getId')->willReturn(1);
-        $document->method('isAllowed')->willReturn(true);
-
-        $this->assertFalse(
-            $this->invokeIsVersionAccessAllowedForDocument(null, $document, new User())
-        );
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runWithVersionParam($routeDocument, $version, $documentResolver, ['view']);
     }
 }

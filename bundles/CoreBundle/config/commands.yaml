@@ -13,6 +13,12 @@ services:
         exclude: '../src/Command/Bundle/Helper'
         tags: ['console.command']
 
+    # the instance identifier is a scalar parameter and cannot be autowired
+    Pimcore\Bundle\CoreBundle\Command\TelemetrySendSnapshotCommand:
+        arguments:
+            $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
+        tags: ['console.command']
+
     Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange:
         arguments:
             - '@Pimcore\Cache\Symfony\CacheClearer'

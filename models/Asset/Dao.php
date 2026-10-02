@@ -157,7 +157,8 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
+        Helper::updateOrInsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -298,6 +299,26 @@ class Dao extends Model\Element\Dao
         return $path;
     }
 
+    /**
+     * Checks whether at least one version exists for this asset.
+     *
+     * Acquires the row lock of the asset first (like getVersionCountForUpdate()), so that concurrent saves of the
+     * same asset are serialized at this point, and uses a locking read, which returns the latest committed versions
+     * regardless of the transaction isolation level. Must be called inside a transaction to be effective.
+     *
+     * @internal
+     */
+    public function hasVersionsForUpdate(): bool
+    {
+        if (!$this->model->getId()) {
+            return false;
+        }
+
+        $this->db->fetchOne('SELECT id FROM assets WHERE id = ? FOR UPDATE', [$this->model->getId()]);
+
+        return (bool) $this->db->fetchOne("SELECT 1 FROM versions WHERE cid = ? AND ctype = 'asset' LIMIT 1 FOR UPDATE", [$this->model->getId()]);
+    }
+
     public function getVersionCountForUpdate(): int
     {
         if (!$this->model->getId()) {
@@ -323,26 +344,20 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $query = 'SELECT `a`.`id` FROM `assets` a  WHERE parentId = ? ';
+        $query = 'SELECT o.id FROM assets o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND (cpath=CONCAT(`path`,filename) OR LOCATE(CONCAT(`path`,filename,\'/\'),cpath)=1) AND
-                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'asset', 'filename');
+            $query .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
-        $query .= ' LIMIT 1;';
-        $c = $this->db->fetchOne($query, [$this->model->getId()]);
+        $query .= ' LIMIT 1';
 
-        return (bool)$c;
+        return (bool) $this->db->fetchOne($query, $params, $types);
     }
 
     /**
@@ -378,23 +393,18 @@ class Dao extends Model\Element\Dao
             return 0;
         }
 
-        $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
+        $query = 'SELECT COUNT(*) AS count FROM assets o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND (cpath=CONCAT(`path`,filename) OR LOCATE(CONCAT(`path`,filename,\'/\'),cpath)=1) AND
-                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'asset', 'filename');
+            $query .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
-        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($query, $params, $types);
     }
 
     public function isLocked(): bool

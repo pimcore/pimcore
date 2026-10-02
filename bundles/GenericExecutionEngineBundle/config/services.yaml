@@ -64,6 +64,11 @@ services:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Extractor\JobRunExtractor
 
     # ---------------------
+    # Utils
+    # ---------------------
+    Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser: ~
+
+    # ---------------------
     # Security Services
     # ---------------------
     Pimcore\Bundle\GenericExecutionEngineBundle\Security\PermissionServiceInterface:

@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
               `column` varchar(190) NOT NULL,
               `data` text,
               `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
-              `ownername` VARCHAR(70) NOT NULL DEFAULT '',
+              `ownername` VARCHAR(190) NOT NULL DEFAULT '',
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               PRIMARY KEY (`auto_id`),
