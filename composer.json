@@ -151,7 +151,7 @@
     "league/flysystem-memory": "^3.0",
     "phpstan/phpstan": "2.2.6",
     "phpstan/phpstan-symfony": "^2.0.2",
-    "phpunit/phpunit": "^12.5.23 || ^13.1.7",
+    "phpunit/phpunit": "^12.5.23 || >=13.1.7 <13.4",
     "symfony/dotenv": "^7.4",
     "symfony/runtime": "^7.4",
     "webmozarts/console-parallelization": "^2.1"
