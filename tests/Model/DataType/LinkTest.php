@@ -284,6 +284,25 @@ class LinkTest extends ModelTestCase
         $this->assertEquals('<a href="https://example.com" data-label="1 &lt; 2">Click</a>', $link->getHtml());
     }
 
+    public function testGetHtmlDoesNotDoubleEncodeEntitiesInFreeFormAttributes(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setAttributes('data-label="a &amp; b"');
+
+        $this->assertEquals('<a href="https://example.com" data-label="a &amp; b">Click</a>', $link->getHtml());
+    }
+
+    public function testGetHtmlEscapesHrefValue(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com/?a=1&b="x"');
+        $link->setText('Click');
+
+        $this->assertEquals('<a href="https://example.com/?a=1&amp;b=&quot;x&quot;" >Click</a>', $link->getHtml());
+    }
+
     public function testGetHtmlDoesNotTreatQuotedValueTextAsAttribute(): void
     {
         $link = new Link();

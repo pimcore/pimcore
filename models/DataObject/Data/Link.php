@@ -479,7 +479,7 @@ class Link implements OwnerAwareFieldInterface
             }
 
             $value = $m[2] ?? $m[3] ?? $m[4] ?? null;
-            $attribs[] = $value === null ? $name : $name . '="' . htmlspecialchars($value) . '"';
+            $attribs[] = $value === null ? $name : $name . '="' . htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, null, false) . '"';
         }
 
         return implode(' ', $attribs);
