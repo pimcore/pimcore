@@ -22,6 +22,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserLoader;
+use Pimcore\Model\UserInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,6 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Throwable;
 
 /**
  * Regression coverage for GHSA-gqpp-f736-v4jh: the unpublished-document gate in
@@ -52,7 +52,7 @@ class ElementListenerTest extends TestCase
         );
     }
 
-    private function makeListener(?Document $document, bool $adminRequest, ?User $user): ElementListener
+    private function makeListener(?Document $document, bool $adminRequest, ?User $user, bool $stubObjectParams = false): ElementListener
     {
         $documentResolver = $this->createMock(DocumentResolver::class);
         $documentResolver->method('getDocument')->willReturn($document);
@@ -70,7 +70,15 @@ class ElementListenerTest extends TestCase
         $contextResolver = $this->createMock(PimcoreContextResolver::class);
         $contextResolver->method('matchesPimcoreContext')->willReturn(true);
 
-        $listener = new ElementListener($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+        // handleObjectParams() performs a DB lookup unrelated to the permission gate under test
+        $class = $stubObjectParams
+            ? new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+                protected function handleObjectParams(Request $request, UserInterface $user): void
+                {
+                }
+            }
+            : ElementListener::class;
+        $listener = $stubObjectParams ? $class : new $class($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
         $listener->setLogger(new NullLogger());
         $listener->setPimcoreContextResolver($contextResolver);
 
@@ -160,26 +168,14 @@ class ElementListenerTest extends TestCase
             ->with('view', $user)
             ->willReturn(true);
 
-        $listener = $this->makeListener($document, adminRequest: true, user: $user);
+        $listener = $this->makeListener($document, adminRequest: true, user: $user, stubObjectParams: true);
 
         $request = Request::create('/secret_unpublished');
         $request->setSession(new Session(new MockArraySessionStorage()));
 
-        // Beyond the permission gate under test, onKernelController() unconditionally continues
-        // into handleObjectParams(), a pre-existing code path unrelated to this fix that performs
-        // a real database lookup (Element\Service::getElementFromSession() -> TmpStore) once a
-        // backend user is present. That call is out of scope here and cannot be mocked through
-        // the public entry point without a database connection, so we only assert on the thing
-        // this fix controls: a permitted user must not be denied by the view-permission gate.
-        try {
-            $listener->onKernelController($this->makeControllerEvent($request));
-        } catch (AccessDeniedHttpException $exception) {
-            $this->fail('A user with view permission on the document must not be denied access: ' . $exception->getMessage());
-        } catch (Throwable) {
-            // Unrelated to the permission gate under test (e.g. no DB connection available
-            // in this pure unit test); the assertion above is what matters here.
-        }
+        $listener->onKernelController($this->makeControllerEvent($request));
 
+        // No exception means the view-permission gate let the permitted user through.
         $this->addToAssertionCount(1);
     }
 }
