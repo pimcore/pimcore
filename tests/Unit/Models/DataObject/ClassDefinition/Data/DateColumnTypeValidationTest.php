@@ -37,6 +37,12 @@ class DateColumnTypeValidationTest extends TestCase
 
         $field->setColumnType('date');
         $this->assertSame('date', $field->getColumnType());
+
+        $field->setColumnType('bigint(20) zerofill');
+        $this->assertSame('bigint(20) zerofill', $field->getColumnType());
+
+        $field->setColumnType('bigint(20) unsigned zerofill');
+        $this->assertSame('bigint(20) unsigned zerofill', $field->getColumnType());
     }
 
     public function testDateRejectsInjectedColumnType(): void
