@@ -80,4 +80,3 @@ final class ActionRendererTest extends TestCase
         return $resolver->getController($request);
     }
 }
-
