@@ -19,7 +19,11 @@ use Pimcore\Http\SsrfProtection;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Regression test for GHSA-qr7g-3424-h9pr (blind SSRF via the email test-send CSS <link> fetch).
+ * Regression test for GHSA-qr7g-3424-h9pr (blind SSRF via the email test-send CSS <link> fetch)
+ * and its incomplete fix, GHSA-38pc-xxpc-x298: the address predicate only implemented the
+ * RFC 3330-era reserved space and missed RFC 6598 (CGNAT, which carries the Alibaba Cloud
+ * metadata endpoint 100.100.100.200) as well as NAT64/6to4 addresses that tunnel to a
+ * loopback/metadata target.
  *
  * Only IP literals are exercised so the assertions stay deterministic and do not depend on DNS
  * resolution or network access.
@@ -57,6 +61,14 @@ class SsrfProtectionTest extends TestCase
             'ipv6 link-local' => ['http://[fe80::1]/x.css'],
             'ipv4-mapped loopback' => ['http://[::ffff:127.0.0.1]/x.css'],
             'ipv4-mapped metadata' => ['http://[::ffff:169.254.169.254]/x.css'],
+            'cgnat / alibaba cloud metadata' => ['http://100.100.100.200/latest/meta-data/'],
+            'cgnat 100.64/10' => ['http://100.64.0.1/x.css'],
+            'oracle cloud legacy metadata' => ['http://192.0.0.192/opc/v1/instance/'],
+            'benchmarking rfc2544' => ['http://198.18.0.1/x.css'],
+            'test-net-3' => ['http://203.0.113.5/x.css'],
+            'nat64 well-known prefix to metadata' => ['http://[64:ff9b::a9fe:a9fe]/latest/meta-data/'],
+            '6to4 to loopback' => ['http://[2002:7f00:1::1]/x.css'],
+            '6to4 to private range' => ['http://[2002:0a00:0001::1]/x.css'],
             'non-http scheme ftp' => ['ftp://127.0.0.1/x.css'],
             'file scheme' => ['file:///etc/passwd'],
             'gopher scheme' => ['gopher://127.0.0.1:6379/_INFO'],
@@ -89,6 +101,7 @@ class SsrfProtectionTest extends TestCase
             'public ipv4 https' => ['https://1.1.1.1/style.css', ['1.1.1.1']],
             'public ipv4 with port' => ['http://8.8.8.8:8080/style.css', ['8.8.8.8']],
             'public ipv6 https' => ['https://[2606:4700:4700::1111]/style.css', ['2606:4700:4700::1111']],
+            '6to4 tunnelling to a public ipv4' => ['http://[2002:0808:0808::1]/style.css', ['2002:0808:0808::1']],
         ];
     }
 
