@@ -274,6 +274,16 @@ class LinkTest extends ModelTestCase
         $this->assertEquals('<a href="https://example.com" >Click</a>', $html);
     }
 
+    public function testGetHtmlKeepsAngleBracketsInQuotedAttributeValuesEscaped(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://example.com');
+        $link->setText('Click');
+        $link->setAttributes('data-label="1 < 2"');
+
+        $this->assertEquals('<a href="https://example.com" data-label="1 &lt; 2">Click</a>', $link->getHtml());
+    }
+
     public function testGetHtmlDoesNotTreatQuotedValueTextAsAttribute(): void
     {
         $link = new Link();

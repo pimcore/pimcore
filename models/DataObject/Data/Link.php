@@ -455,7 +455,7 @@ class Link implements OwnerAwareFieldInterface
             return '';
         }
 
-        $pattern = '/\G\s*([A-Za-z_:][-A-Za-z0-9_:.]*)(?:\s*=\s*(?:"([^"<>]*)"|\'([^\'<>]*)\'|([^\s"\'=<>`]+)))?(?=\s|$)/';
+        $pattern = '/\G\s*([A-Za-z_:][-A-Za-z0-9_:.]*)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'=<>`]+)))?(?=\s|$)/';
         $attribs = [];
         $offset = 0;
         $length = strlen($raw);
