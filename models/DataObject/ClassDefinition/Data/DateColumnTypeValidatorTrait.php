@@ -23,13 +23,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 trait DateColumnTypeValidatorTrait
 {
     /**
-     * Guards against DDL injection via a crafted columnType/queryColumnType: only a single SQL
-     * type declaration, optionally with a size/precision and trailing keyword modifiers (e.g.
-     * "bigint(20)", "date", "tinyint(1) unsigned"), is allowed - no additional clauses or
-     * statements.
+     * Guards against DDL injection via a crafted columnType/queryColumnType: only an allowlisted
+     * integer/date/time SQL type, optionally with a size/precision and an "unsigned" modifier
+     * (e.g. "bigint(20)", "date", "tinyint(1) unsigned"), is allowed - no other keywords, clauses
+     * (e.g. "UNIQUE", "NOT NULL") or statements.
      */
     private static function isValidColumnType(string $columnType): bool
     {
-        return (bool) preg_match('/^[A-Za-z][A-Za-z0-9]*(\(\s*\d+(\s*,\s*\d+)?\s*\))?(\s+[A-Za-z]+)*$/', trim($columnType));
+        return (bool) preg_match(
+            '/^(tinyint|smallint|mediumint|int|integer|bigint|date|datetime|timestamp|time|year)(\(\s*\d+(\s*,\s*\d+)?\s*\))?(\s+unsigned)?$/i',
+            trim($columnType)
+        );
     }
 }

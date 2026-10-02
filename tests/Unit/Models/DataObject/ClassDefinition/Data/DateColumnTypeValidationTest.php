@@ -95,4 +95,30 @@ class DateColumnTypeValidationTest extends TestCase
             'end_date' => 'bigint(20), ADD COLUMN `evil` varchar(10)',
         ]);
     }
+
+    /**
+     * @dataProvider keywordOnlyClauseProvider
+     */
+    public function testRejectsKeywordOnlyClauses(string $columnType): void
+    {
+        foreach ([new Date(), new Datetime(), new DateRange()] as $field) {
+            try {
+                $field->setColumnType($columnType);
+                $this->fail(sprintf('%s accepted "%s"', $field::class, $columnType));
+            } catch (InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public static function keywordOnlyClauseProvider(): array
+    {
+        return [
+            ['varchar(255) UNIQUE'],
+            ['int NOT NULL'],
+            ['bigint(20) PRIMARY KEY'],
+            ['varchar(10)'],
+            ['bigint(20) unsigned UNIQUE'],
+        ];
+    }
 }
