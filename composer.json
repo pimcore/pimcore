@@ -139,7 +139,8 @@
     "symfony/event-dispatcher": "7.4.8",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0 <3.14.0",
-    "php-http/discovery": "<1.20"
+    "php-http/discovery": "<1.20",
+    "phpunit/phpunit": ">=13.4"
   },
   "require-dev": {
     "behat/gherkin": "4.15.0",
@@ -151,7 +152,7 @@
     "league/flysystem-memory": "^3.0",
     "phpstan/phpstan": "2.2.6",
     "phpstan/phpstan-symfony": "^2.0.2",
-    "phpunit/phpunit": "^12.5.23 || >=13.1.7 <13.4",
+    "phpunit/phpunit": "^12.5.23 || ^13.1.7",
     "symfony/dotenv": "^7.4",
     "symfony/runtime": "^7.4",
     "webmozarts/console-parallelization": "^2.1"
