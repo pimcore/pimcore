@@ -198,7 +198,7 @@ final class SqlTest extends TestCase
         // rejected when the string is written with double quotes.
         $config = $this->configWith(
             'where',
-            "1=1) OR \"x\" = \"\\\\\"; INSERT INTO t (a,b) VALUES (1,\"y\")"
+            '1=1) OR "x" = "\\\\"; INSERT INTO t (a,b) VALUES (1,"y")'
         );
 
         $this->expectException(InvalidArgumentException::class);
