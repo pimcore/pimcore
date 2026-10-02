@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
+use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -36,11 +37,13 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
         // run - the full suite runs many test classes in one process, in an order these tests
         // don't control
         AttributeSanitizer::setInstance(null);
+        SanitizerPolicy::setInstance(null);
     }
 
     protected function tearDown(): void
     {
         AttributeSanitizer::setInstance(null);
+        SanitizerPolicy::setInstance(null);
         parent::tearDown();
     }
 
@@ -136,7 +139,7 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
 
     /**
      * Merges over the same defaults Configuration::addDocumentsNode() declares, since
-     * PimcoreCoreExtension always sets all three parameters.
+     * PimcoreCoreExtension always sets all of them.
      */
     private function bootWithParameters(array $parameters): PimcoreCoreBundle
     {
@@ -145,9 +148,78 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
             'pimcore.documents.editables.link_sanitizer.strict' => false,
             'pimcore.documents.editables.link_sanitizer.blocked_url_schemes' => AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES,
             'pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls' => true,
+            'pimcore.objects.link_sanitizer.strict' => false,
+            'pimcore.objects.link_sanitizer.blocked_url_schemes' => AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES,
+            'pimcore.objects.link_sanitizer.block_unsafe_data_urls' => true,
         ])));
         $bundle->boot();
 
         return $bundle;
+    }
+
+    // ---- DataObject Link policy (pimcore.objects.link_sanitizer.*, GHSA-h78x-47qg-qjmq) ----
+
+    public function testBootInstallsStrictDataObjectLinkPolicyWhenConfigured(): void
+    {
+        $this->bootWithParameters(['pimcore.objects.link_sanitizer.strict' => true]);
+
+        $this->assertFalse(SanitizerPolicy::getInstance()->isUrlAllowed('javascript:alert(1)'));
+        $this->assertFalse(SanitizerPolicy::getInstance()->isAttributeKeyAllowed('onclick', true));
+    }
+
+    public function testDataObjectLinkPolicyIsIndependentOfTheDocumentSetting(): void
+    {
+        $this->bootWithParameters(['pimcore.documents.editables.link_sanitizer.strict' => true]);
+
+        $this->assertFalse(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(1)'));
+        $this->assertTrue(SanitizerPolicy::getInstance()->isUrlAllowed('javascript:alert(1)'));
+
+        SanitizerPolicy::setInstance(null);
+        AttributeSanitizer::setInstance(null);
+
+        $this->bootWithParameters(['pimcore.objects.link_sanitizer.strict' => true]);
+
+        $this->assertTrue(AttributeSanitizer::getInstance()->isUrlAllowed('javascript:alert(1)'));
+        $this->assertFalse(SanitizerPolicy::getInstance()->isUrlAllowed('javascript:alert(1)'));
+    }
+
+    public function testBootKeepsPermissiveDataObjectLinkPolicyByDefault(): void
+    {
+        $this->bootWithParameters([]);
+
+        $this->assertTrue(SanitizerPolicy::getInstance()->isUrlAllowed('javascript:alert(1)'));
+    }
+
+    public function testBootDoesNotOverwriteAnAlreadyInstalledDataObjectLinkPolicy(): void
+    {
+        $applicationPolicy = new AttributeSanitizer(blockedUrlSchemes: ['javascript:']);
+        SanitizerPolicy::setInstance($applicationPolicy);
+
+        $this->bootWithParameters(['pimcore.objects.link_sanitizer.strict' => false]);
+
+        $this->assertSame($applicationPolicy, SanitizerPolicy::getInstance());
+    }
+
+    public function testBootUsesTheConfiguredDataObjectBlockedUrlSchemesList(): void
+    {
+        $this->bootWithParameters([
+            'pimcore.objects.link_sanitizer.strict' => true,
+            'pimcore.objects.link_sanitizer.blocked_url_schemes' => ['mailto:'],
+            'pimcore.objects.link_sanitizer.block_unsafe_data_urls' => false,
+        ]);
+
+        $this->assertFalse(SanitizerPolicy::getInstance()->isUrlAllowed('mailto:someone@example.com'));
+        $this->assertTrue(SanitizerPolicy::getInstance()->isUrlAllowed('javascript:alert(1)'));
+        $this->assertTrue(SanitizerPolicy::getInstance()->isUrlAllowed('data:text/html,<script>alert(1)</script>'));
+    }
+
+    public function testShutdownResetsTheDataObjectLinkPolicy(): void
+    {
+        $bundle = $this->bootWithParameters(['pimcore.objects.link_sanitizer.strict' => true]);
+        $this->assertTrue(SanitizerPolicy::isConfigured());
+
+        $bundle->shutdown();
+
+        $this->assertFalse(SanitizerPolicy::isConfigured());
     }
 }

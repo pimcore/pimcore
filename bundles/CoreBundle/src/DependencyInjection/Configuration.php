@@ -818,6 +818,13 @@ final class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->append($this->createLinkSanitizerNode(
+                            'Reject javascript:/vbscript:/script-executing data: URL schemes and event-handler or malformed '
+                            .'attributes in the free-form "attributes" string rendered by the DataObject Link data type '
+                            .'(getHtml()/__toString()), closing GHSA-h78x-47qg-qjmq. Independent of the Document Link editable '
+                            .'setting. Defaults to false to preserve existing behavior; the permissive default is deprecated '
+                            .'since 2026.3 and will be removed in 2027.1. See Pimcore\\Model\\DataObject\\Data\\Link\\SanitizerPolicy.'
+                        ))
                         ->booleanNode('ignore_localized_query_fallback')
                             ->beforeNormalization()
                             ->ifString()
@@ -1067,65 +1074,13 @@ final class Configuration implements ConfigurationInterface
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
                         ->end()
-                        ->arrayNode('link_sanitizer')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->booleanNode('strict')
-                                    ->beforeNormalization()
-                                        ->ifString()
-                                        ->then(function ($v) {
-                                            // casting the string itself to bool would make "false"/"no"/"off"
-                                            // (any non-empty string) evaluate to true; parse recognized
-                                            // boolean strings and leave anything else for booleanNode's own
-                                            // type check to reject
-                                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-
-                                            return $parsed ?? $v;
-                                        })
-                                    ->end()
-                                    ->defaultFalse()
-                                    ->info(
-                                        'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
-                                        .'event-handler attributes (e.g. onclick) in the Link editable, closing GHSA-9g27-c28m-8xg5, '
-                                        .'and stop emitting its internal data (linktype, path, text, ...) as <a> attributes. '
-                                        .'Defaults to false to preserve existing behavior; the permissive default is deprecated since '
-                                        .'2026.3 and will be removed in 2027.1. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
-                                    )
-                                ->end()
-                                ->arrayNode('blocked_url_schemes')
-                                    ->prototype('scalar')
-                                        // entries are matched as URL prefixes, so anything that isn't a scheme
-                                        // name plus ":" (e.g. 123, or "java" without the colon) would silently
-                                        // block unrelated URLs such as a relative "java-tips" path
-                                        ->validate()
-                                            ->ifTrue(fn ($v) => !is_string($v) || !preg_match('/^[a-z][a-z0-9+.\-]*:$/i', $v))
-                                            ->thenInvalid('Each blocked URL scheme must be a scheme name followed by ":", e.g. "javascript:", got %s.')
-                                        ->end()
-                                    ->end()
-                                    ->defaultValue(AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES)
-                                    ->info(
-                                        'The URL scheme prefixes (including the trailing ":") rejected when "strict" is true. '
-                                        .'Override to add or remove schemes without writing PHP; has no effect while "strict" is false.'
-                                    )
-                                ->end()
-                                ->booleanNode('block_unsafe_data_urls')
-                                    ->beforeNormalization()
-                                        ->ifString()
-                                        ->then(function ($v) {
-                                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-
-                                            return $parsed ?? $v;
-                                        })
-                                    ->end()
-                                    ->defaultTrue()
-                                    ->info(
-                                        'Also reject script-executing data: URLs when "strict" is true (data:image/* other than '
-                                        .'data:image/svg+xml stays allowed, e.g. for a downloadable data-uri image). '
-                                        .'Has no effect while "strict" is false.'
-                                    )
-                                ->end()
-                            ->end()
-                        ->end()
+                        ->append($this->createLinkSanitizerNode(
+                            'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
+                            .'event-handler attributes (e.g. onclick) in the Link editable, closing GHSA-9g27-c28m-8xg5, '
+                            .'and stop emitting its internal data (linktype, path, text, ...) as <a> attributes. '
+                            .'Defaults to false to preserve existing behavior; the permissive default is deprecated since '
+                            .'2026.3 and will be removed in 2027.1. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
+                        ))
                     ->end()
                 ->end()
                 ->arrayNode('areas')
@@ -1182,6 +1137,73 @@ final class Configuration implements ConfigurationInterface
     /**
      * Add implementation node config (map, prefixes)
      */
+    /**
+     * Builds the "link_sanitizer" node shared by the Document Link editable (pimcore.documents.editables)
+     * and the DataObject Link data type (pimcore.objects). The two settings are independent, but
+     * share this schema so a future policy change cannot update one and leave the other inconsistent.
+     * Only the help text of "strict" differs.
+     */
+    private function createLinkSanitizerNode(string $strictInfo): ArrayNodeDefinition
+    {
+        $node = new ArrayNodeDefinition('link_sanitizer');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('strict')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            // casting the string itself to bool would make "false"/"no"/"off"
+                            // (any non-empty string) evaluate to true; parse recognized
+                            // boolean strings and leave anything else for booleanNode's own
+                            // type check to reject
+                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                            return $parsed ?? $v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                    ->info(
+                        $strictInfo
+                    )
+                ->end()
+                ->arrayNode('blocked_url_schemes')
+                    ->prototype('scalar')
+                        // entries are matched as URL prefixes, so anything that isn't a scheme
+                        // name plus ":" (e.g. 123, or "java" without the colon) would silently
+                        // block unrelated URLs such as a relative "java-tips" path
+                        ->validate()
+                            ->ifTrue(fn ($v) => !is_string($v) || !preg_match('/^[a-z][a-z0-9+.\-]*:$/i', $v))
+                            ->thenInvalid('Each blocked URL scheme must be a scheme name followed by ":", e.g. "javascript:", got %s.')
+                        ->end()
+                    ->end()
+                    ->defaultValue(AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES)
+                    ->info(
+                        'The URL scheme prefixes (including the trailing ":") rejected when "strict" is true. '
+                        .'Override to add or remove schemes without writing PHP; has no effect while "strict" is false.'
+                    )
+                ->end()
+                ->booleanNode('block_unsafe_data_urls')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                            return $parsed ?? $v;
+                        })
+                    ->end()
+                    ->defaultTrue()
+                    ->info(
+                        'Also reject script-executing data: URLs when "strict" is true (data:image/* other than '
+                        .'data:image/svg+xml stays allowed, e.g. for a downloadable data-uri image). '
+                        .'Has no effect while "strict" is false.'
+                    )
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
     private function addImplementationLoaderNode(ArrayNodeDefinition $node, string $name): void
     {
         $node
