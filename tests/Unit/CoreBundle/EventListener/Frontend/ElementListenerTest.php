@@ -21,9 +21,9 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
+use Pimcore\Model\UserInterface;
 use Pimcore\Model\Version;
 use Pimcore\Security\User\UserLoader;
-use Pimcore\Model\UserInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +79,7 @@ class ElementListenerTest extends TestCase
                 {
                 }
             }
-            : ElementListener::class;
+        : ElementListener::class;
         $listener = $stubObjectParams ? $class : new $class($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
         $listener->setLogger(new NullLogger());
         $listener->setPimcoreContextResolver($contextResolver);
