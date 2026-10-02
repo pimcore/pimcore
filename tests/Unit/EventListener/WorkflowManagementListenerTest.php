@@ -62,7 +62,7 @@ class WorkflowManagementListenerTest extends TestCase
         $store = $this->createPendingMarkingStore($element, 1);
 
         $manager = $this->createMock(Manager::class);
-        $manager->method('getWorkflowByName')->with(self::WORKFLOW_NAME)->willReturn($this->createWorkflow($store));
+        $manager->expects($this->once())->method('getWorkflowByName')->with(self::WORKFLOW_NAME)->willReturn($this->createWorkflow($store));
 
         $listener = new WorkflowManagementListener($manager);
 
@@ -97,7 +97,7 @@ class WorkflowManagementListenerTest extends TestCase
             ->onlyMethods(['getWorkflowByName'])
             ->getMock();
         $manager->registerWorkflow(self::WORKFLOW_NAME, ['type' => 'workflow']);
-        $manager->method('getWorkflowByName')->with(self::WORKFLOW_NAME)->willReturn($workflow);
+        $manager->expects($this->once())->method('getWorkflowByName')->with(self::WORKFLOW_NAME)->willReturn($workflow);
 
         $this->assertSame(
             [],
