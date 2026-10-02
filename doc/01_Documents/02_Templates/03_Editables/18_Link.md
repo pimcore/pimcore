@@ -143,3 +143,13 @@ The above example renders a list of links:
 ### Link Generators
 
 Please also see the section about [Link Generators](../../../03_Objects/01_Object_Classes/04_Additional_Class_Settings/06_Link_Generator.md)
+
+### DataObject Link data type
+
+`getHtml()` / `__toString()` of the DataObject `Link` data type (`Pimcore\Model\DataObject\Data\Link`) use the same
+policy and the same `link_sanitizer.strict` option (GHSA-h78x-47qg-qjmq). With the permissive default the output is
+unchanged apart from `"` in `href` and in the named attributes (`title`, `class`, `rel`, `target`, `tabindex`,
+`accesskey`) being escaped as `&quot;`; a deprecation is triggered whenever the strict policy would have rejected the
+`href` or a free-form attribute. With `strict: true`, `javascript:`/`vbscript:` and script-capable `data:` URLs render an
+empty `href`, and the free-form `attributes` string is parsed and re-serialized (event handlers and malformed tokens are
+dropped; remaining values are HTML-escaped).

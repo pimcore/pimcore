@@ -396,19 +396,26 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
+    /**
+     * Renders the link as an anchor tag. Whether script-executing URL schemes and event-handler
+     * attributes are rejected depends on the active
+     * \Pimcore\Model\Document\Editable\Link\AttributeSanitizer policy (shared with the Document
+     * Link editable, see GHSA-h78x-47qg-qjmq): the permissive default keeps the historical output,
+     * strict() (config "pimcore.documents.editables.link_sanitizer.strict") rejects them.
+     */
     public function getHtml(): string
     {
         $attributes = ['rel', 'tabindex', 'accesskey', 'title', 'target', 'class'];
         $attribs = [];
         foreach ($attributes as $a) {
             if ($this->$a) {
-                $attribs[] = $a . '="' . self::escapeAttributeValue((string) $this->$a) . '"';
+                $attribs[] = $a . '="' . self::escapeDoubleQuotes((string) $this->$a) . '"';
             }
         }
 
-        $safeAttributes = $this->getSanitizedAttributesString();
-        if ($safeAttributes !== '') {
-            $attribs[] = $safeAttributes;
+        $freeFormAttributes = $this->getRenderedFreeFormAttributes();
+        if ($freeFormAttributes !== '') {
+            $attribs[] = $freeFormAttributes;
         }
 
         $href = $this->getHref();
@@ -424,42 +431,82 @@ class Link implements OwnerAwareFieldInterface
             }
         }
 
-        return '<a href="' . self::escapeAttributeValue($this->getSanitizedHref($href)) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
+        return '<a href="' . self::escapeDoubleQuotes($this->getRenderedHref($href)) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
     }
 
     /**
-     * Escapes quotes and angle brackets without double-encoding existing character references,
-     * so values stored as "&amp;" keep rendering exactly as before.
+     * Escapes only the character that can end a double-quoted attribute value, so the value cannot
+     * break out of its attribute while every input that was safe before renders byte-identically.
      */
-    private static function escapeAttributeValue(string $value): string
+    private static function escapeDoubleQuotes(string $value): string
     {
-        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8', false);
+        return str_replace('"', '&quot;', $value);
     }
 
-    /**
-     * Applies the same strict URL policy as the Document Link editable (script-executing schemes,
-     * script-capable data: URLs, control-character and character-reference obfuscation).
-     */
-    private function getSanitizedHref(string $href): string
+    private function getRenderedHref(string $href): string
     {
-        return AttributeSanitizer::strict()->isUrlAllowed($href) ? $href : '';
+        if (!AttributeSanitizer::getInstance()->isUrlAllowed($href)) {
+            return '';
+        }
+
+        // only the unconfigured permissive default is deprecated - an application that installed
+        // its own policy via AttributeSanitizer::setInstance() has opted out on purpose
+        if ($href !== '' && !AttributeSanitizer::isConfigured() && !AttributeSanitizer::strict()->isUrlAllowed($href)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '2026.3',
+                'Rendering a DataObject Link href with a URL scheme that the stricter policy closing'
+                . ' GHSA-h78x-47qg-qjmq would reject. The permissive Link sanitizer default is deprecated and'
+                . ' will be removed in 2027.1; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                . ' reject it now.'
+            );
+        }
+
+        return $href;
     }
 
     /**
-     * The free-form `attributes` string used to be emitted as raw markup. It is now parsed into
-     * name/value pairs and re-serialized, so it can neither break out of the opening tag nor
-     * smuggle in event handlers. Attribute names must be plain identifiers and must not start
-     * with "on"; values are HTML-escaped. Anything that does not parse as an attribute is dropped.
+     * The permissive default emits the free-form `attributes` string exactly as stored. Under a
+     * policy that rejects editor-supplied attribute keys it is instead parsed into name/value
+     * pairs and re-serialized, so it can neither break out of the opening tag nor carry event
+     * handlers; anything that does not parse as an attribute, or whose key is rejected, is dropped.
      */
-    private function getSanitizedAttributesString(): string
+    private function getRenderedFreeFormAttributes(): string
     {
         $raw = $this->getAttributes();
         if (!$raw) {
             return '';
         }
 
+        $sanitizer = AttributeSanitizer::getInstance();
+        if ($sanitizer->rejectsEditorSuppliedAttributeKeys()) {
+            return $this->parseFreeFormAttributes($raw, $sanitizer)[0];
+        }
+
+        [, $dropped] = $this->parseFreeFormAttributes($raw, AttributeSanitizer::strict());
+
+        if ($dropped && !AttributeSanitizer::isConfigured()) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '2026.3',
+                'Rendering a DataObject Link with free-form attributes that the stricter policy closing'
+                . ' GHSA-h78x-47qg-qjmq would reject. The permissive Link sanitizer default is deprecated and'
+                . ' will be removed in 2027.1; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                . ' reject it now.'
+            );
+        }
+
+        return $raw;
+    }
+
+    /**
+     * @return array{0: string, 1: bool} the re-serialized attributes and whether anything was dropped
+     */
+    private function parseFreeFormAttributes(string $raw, AttributeSanitizer $sanitizer): array
+    {
         $pattern = '/\G\s*([A-Za-z_:][-A-Za-z0-9_:.]*)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'=<>`]+)))?(?=\s|$)/';
         $attribs = [];
+        $dropped = false;
         $offset = 0;
         $length = strlen($raw);
 
@@ -470,21 +517,25 @@ class Link implements OwnerAwareFieldInterface
                     break;
                 }
                 $offset += strlen($skipped[0]);
+                $dropped = true;
 
                 continue;
             }
 
             $offset += strlen($m[0]);
-            $name = $m[1];
-            if (stripos($name, 'on') === 0) {
+            if (!$sanitizer->isAttributeKeyAllowed($m[1], true)) {
+                $dropped = true;
+
                 continue;
             }
 
             $value = $m[2] ?? $m[3] ?? $m[4] ?? null;
-            $attribs[] = $value === null ? $name : $name . '="' . self::escapeAttributeValue($value) . '"';
+            $attribs[] = $value === null
+                ? $m[1]
+                : $m[1] . '="' . htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8', false) . '"';
         }
 
-        return implode(' ', $attribs);
+        return [implode(' ', $attribs), $dropped];
     }
 
     public function isEmpty(): bool
