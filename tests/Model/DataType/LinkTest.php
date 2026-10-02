@@ -227,6 +227,17 @@ class LinkTest extends ModelTestCase
         $this->assertEquals('<a href="" >Safe link</a>', $html);
     }
 
+    public function testGetHtmlRejectsScriptCapableDataUrls(): void
+    {
+        foreach (['data:text/html,<script>alert(1)</script>', 'data:image/svg+xml,<svg onload="alert(1)"></svg>'] as $url) {
+            $link = new Link();
+            $link->setDirect($url);
+            $link->setText('Safe link');
+
+            $this->assertEquals('<a href="" >Safe link</a>', $link->getHtml(), $url);
+        }
+    }
+
     public function testGetHtmlRejectsScriptExecutingSchemeWithEmbeddedWhitespace(): void
     {
         $link = new Link();

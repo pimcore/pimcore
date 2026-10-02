@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
@@ -427,19 +428,12 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * Blocks script-executing URI schemes (e.g. "javascript:") that browsers would otherwise
-     * execute on click, tolerating the control-character obfuscation ("java\tscript:") browsers
-     * themselves strip before parsing the scheme.
+     * Applies the same strict URL policy as the Document Link editable (script-executing schemes,
+     * script-capable data: URLs, control-character and character-reference obfuscation).
      */
     private function getSanitizedHref(string $href): string
     {
-        $normalized = ltrim((string) preg_replace('/[\x00-\x1F\x7F]+/', '', $href));
-
-        if (preg_match('/^(javascript|vbscript):/i', $normalized) === 1) {
-            return '';
-        }
-
-        return $href;
+        return AttributeSanitizer::strict()->isUrlAllowed($href) ? $href : '';
     }
 
     /**
