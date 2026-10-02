@@ -191,6 +191,20 @@ final class SqlTest extends TestCase
         $this->adapter()->exposedBuildQueryString($config);
     }
 
+    public function testRejectsSemicolonHiddenByEscapedBackslashInsideDoubleQuotedString(): void
+    {
+        // Same desync as above for the double-quoted branch: with Pimcore's default
+        // sql_mode='' double quotes delimit strings too, so the same payload must be
+        // rejected when the string is written with double quotes.
+        $config = $this->configWith(
+            'where',
+            "1=1) OR \"x\" = \"\\\\\"; INSERT INTO t (a,b) VALUES (1,\"y\")"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
     public function testFragmentWithLegitimateEscapedBackslashInStringIsStillAccepted(): void
     {
         // A string value containing an escaped backslash (MySQL: "\\" -> one literal
