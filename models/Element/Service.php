@@ -53,6 +53,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use ReflectionProperty;
+use ReflectionReference;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -1579,7 +1580,10 @@ class Service extends Model\AbstractModel
         if ($tmpStore) {
             $data = $tmpStore->getData();
             if ($data) {
-                $element = Serialize::unserialize($data, true);
+                $element = self::safelyUnserializeSessionElement($data);
+                if ($element === null) {
+                    return null;
+                }
 
                 $context = [
                     'source' => __METHOD__,
@@ -1608,6 +1612,107 @@ class Service extends Model\AbstractModel
         }
 
         return null;
+    }
+
+    /**
+     * The `tmp_store` row read above can be forged by anyone with a raw DB write primitive against
+     * that table (e.g. an authenticated SQL injection elsewhere) - `saveElementToSession()` is not
+     * the only possible writer from an attacker's point of view, even though it is the only one Pimcore
+     * itself uses. `$data` must therefore be treated as untrusted, and `allowed_classes => true` would
+     * let a forged payload instantiate any autoloadable class, including third-party gadget classes
+     * with dangerous `__wakeup()`/`__destruct()` methods (PHP object injection).
+     *
+     * Every class that can legitimately occur in a serialized element graph - the element itself,
+     * field data wrappers, and generated class/fieldcollection/objectbrick classes alike - lives under
+     * the `Pimcore\` namespace. A first pass unserializes with `allowed_classes => false`, so PHP
+     * reconstructs the full structure without instantiating any real class (every would-be object
+     * becomes a harmless `__PHP_Incomplete_Class` and no magic method ever runs); that result is only
+     * used to confirm every class referenced anywhere in the graph is `Pimcore\`-namespaced. Only then
+     * is the payload unserialized for real. Anything else - a third-party gadget class - is rejected
+     * outright, mirroring the fail-closed behaviour already used for other `tmp_store` data in
+     * {@see \Pimcore\Model\Tool\TmpStore\Dao::getById()}.
+     *
+     * @internal
+     */
+    private static function safelyUnserializeSessionElement(string $data): Asset|Document|AbstractObject|null
+    {
+        try {
+            $probe = Serialize::unserialize($data, false);
+        } catch (Throwable) {
+            return null;
+        }
+
+        if ($probe === false && $data !== serialize(false)) {
+            return null;
+        }
+
+        if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($probe)) {
+            return null;
+        }
+
+        try {
+            $element = Serialize::unserialize($data, true);
+        } catch (Throwable) {
+            return null;
+        }
+
+        if (!$element instanceof Asset && !$element instanceof Document && !$element instanceof AbstractObject) {
+            return null;
+        }
+
+        return $element;
+    }
+
+    /**
+     * @internal
+     */
+    private static function sessionElementGraphUsesOnlyAllowedNamespaces(
+        mixed $value,
+        array &$seenObjectIds = [],
+        array &$seenReferenceIds = []
+    ): bool {
+        if ($value instanceof __PHP_Incomplete_Class) {
+            $className = $value->__PHP_Incomplete_Class_Name ?? null;
+
+            return is_string($className) && str_starts_with($className, 'Pimcore\\');
+        }
+
+        if (is_object($value)) {
+            $objectId = spl_object_id($value);
+            if (isset($seenObjectIds[$objectId])) {
+                return true;
+            }
+            $seenObjectIds[$objectId] = true;
+
+            foreach ((array) $value as $propertyValue) {
+                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $key => $propertyValue) {
+                $reference = ReflectionReference::fromArrayElement($value, $key);
+                if ($reference) {
+                    $referenceId = $reference->getId();
+                    if (isset($seenReferenceIds[$referenceId])) {
+                        continue;
+                    }
+                    $seenReferenceIds[$referenceId] = true;
+                }
+
+                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return true;
     }
 
     /**
