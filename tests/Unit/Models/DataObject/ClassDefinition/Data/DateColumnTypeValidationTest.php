@@ -43,6 +43,11 @@ class DateColumnTypeValidationTest extends TestCase
 
         $field->setColumnType('bigint(20) unsigned zerofill');
         $this->assertSame('bigint(20) unsigned zerofill', $field->getColumnType());
+
+        foreach (['varchar(10)', 'decimal(10,2)', 'double'] as $legacyType) {
+            $field->setColumnType($legacyType);
+            $this->assertSame($legacyType, $field->getColumnType());
+        }
     }
 
     public function testDateRejectsInjectedColumnType(): void
@@ -123,7 +128,8 @@ class DateColumnTypeValidationTest extends TestCase
             ['varchar(255) UNIQUE'],
             ['int NOT NULL'],
             ['bigint(20) PRIMARY KEY'],
-            ['varchar(10)'],
+            ['varchar(10) NOT NULL'],
+            ['decimal(10,2) UNIQUE'],
             ['bigint(20) unsigned UNIQUE'],
         ];
     }
