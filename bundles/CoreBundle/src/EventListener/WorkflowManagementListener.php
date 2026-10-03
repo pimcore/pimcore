@@ -130,11 +130,15 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
     /**
      * After a version-only save the pending markings stay on the element: they belong to the
-     * draft that was just written. When that element is the instance the runtime cache holds
+     * draft that was just written. When that element is an instance the runtime cache holds
      * (the element had no draft before, so the transition ran on the published instance), later
      * loads in the same process would get the draft's place as if it were the published one, and
      * a full save for an unrelated reason would even commit it. Drop the instance from the runtime
      * cache, so that subsequent loads get the published state from the database again.
+     *
+     * The entries are found by identity rather than by key: an element can be registered under
+     * several keys (documents also under their path), and a key derived from the element's
+     * current state would miss an entry made before an unsaved rename or move.
      */
     private function detachDraftFromRuntimeCache(ElementInterface $element): void
     {
@@ -142,22 +146,18 @@ class WorkflowManagementListener implements EventSubscriberInterface
             return;
         }
 
-        $elementType = Service::getElementType($element);
-        if ($elementType === null) {
-            return;
-        }
-
-        $cacheKeys = [Service::getElementCacheTag($elementType, $element->getId())];
-        if ($element instanceof Document) {
-            $cacheKeys[] = Document::getPathCacheKey($element->getRealFullPath());
+        $runtimeCache = RuntimeCache::getInstance();
+        $cacheKeys = [];
+        foreach ($runtimeCache as $cacheKey => $cached) {
+            // only this very instance: a published instance cached next to a draft that was
+            // loaded from a version is left alone
+            if ($cached === $element) {
+                $cacheKeys[] = $cacheKey;
+            }
         }
 
         foreach ($cacheKeys as $cacheKey) {
-            // only this very instance: a published instance cached next to a draft that was
-            // loaded from a version is left alone
-            if (RuntimeCache::isRegistered($cacheKey) && RuntimeCache::get($cacheKey) === $element) {
-                RuntimeCache::set($cacheKey, null);
-            }
+            $runtimeCache->offsetUnset($cacheKey);
         }
     }
 
