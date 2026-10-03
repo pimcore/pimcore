@@ -227,11 +227,29 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             throw new Exception('Function ReverseObjectRelation::getFilterConditionExt called without a table prefix.');
         }
 
-        if ($value === null || $value === 'null') {
+        $ownerClassId = $this->getOwnerClassId();
+        if ($ownerClassId === null) {
+            // no owner class resolved (getOwnerClassId() logs why), so there is no relation table
+            // to query - the same situation load() answers with an empty result
             return $noResult;
         }
 
         $db = \Pimcore\Db::get();
+
+        if ($value === null || $value === 'null') {
+            // An empty filter value means "no relation from the owner side": select the objects
+            // that are not referenced by any object of the owner class through the owner field.
+            //
+            // The destination type is constrained as well: object_relations_* also holds asset and
+            // document destinations, whose ids share a sequence with nothing - an asset dest_id can
+            // equal an object id - so a mixed relation would otherwise mark an unrelated object as
+            // referenced and drop it from the result.
+            return $tablePrefix . 'id NOT IN ('
+                . 'SELECT dest_id FROM object_relations_' . $ownerClassId
+                . ' WHERE fieldname = ' . $db->quote($this->getOwnerFieldName())
+                . " AND ownertype = 'object' AND type = 'object'"
+            . ')';
+        }
 
         if ($operator === '=') {
             $subFilter = '`' . 'src_id' . '`' . ' = ' . $db->quote((string) $value);
@@ -253,7 +271,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
         // we are looking for membership in the reverse relation
         return $tablePrefix . 'id IN ('
-            . 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId()
+            . 'SELECT dest_id FROM object_relations_'. $ownerClassId
             . ' WHERE '. $subFilter
             . ' AND fieldname = ' . $db->quote($this->getOwnerFieldName())
             . " AND ownertype = 'object'"
