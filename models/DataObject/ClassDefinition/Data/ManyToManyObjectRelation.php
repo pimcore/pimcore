@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
-use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
@@ -417,26 +416,23 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->relationType = $mainDefinition->relationType;
     }
 
+    /**
+     * The class whose fields can be shown as visible fields.
+     */
+    protected function getVisibleFieldsClassIdentifier(): ?string
+    {
+        $classIdentifier = $this->getClasses()[0]['classes'] ?? null;
+
+        return $classIdentifier !== null && $classIdentifier !== '' ? (string) $classIdentifier : null;
+    }
+
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         if (!$this->visibleFields) {
             return $this;
         }
 
-        $classIds = $this->getClasses();
-
-        if (empty($classIds[0]['classes'])) {
-            return $this;
-        }
-
-        $classId = $classIds[0]['classes'];
-
-        if (is_numeric($classId)) {
-            $class = DataObject\ClassDefinition::getById($classId);
-        } else {
-            $class = DataObject\ClassDefinition::getByName($classId);
-        }
-
+        $class = Relations\VisibleFieldDefinitionHelper::resolveClass($this->getVisibleFieldsClassIdentifier());
         if (!$class) {
             return $this;
         }
@@ -447,56 +443,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $this->visibleFieldDefinitions = [];
 
-        $translator = Pimcore::getContainer()->get('translator');
+        foreach (explode(',', $this->visibleFields) as $field) {
+            $fieldDefinition = Relations\VisibleFieldDefinitionHelper::findClassFieldDefinition($class, $field, $context);
 
-        $visibleFields = explode(',', $this->visibleFields);
-        foreach ($visibleFields as $field) {
-            $fd = $class->getFieldDefinition($field, $context);
-
-            if (!$fd) {
-                $fieldFound = false;
-                /** @var Localizedfields|null $localizedfields */
-                $localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? null;
-                if ($localizedfields) {
-                    if ($fd = $localizedfields->getFieldDefinition($field)) {
-                        $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
-                        $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
-                        $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
-
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
-                            $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
-                        }
-
-                        $fieldFound = true;
-                    }
-                }
-
-                if (!$fieldFound) {
-                    $this->visibleFieldDefinitions[$field]['name'] = $field;
-                    $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
-                    $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
-                }
-            } else {
-                $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
-                $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
-                $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
-                $this->visibleFieldDefinitions[$field]['noteditable'] = true;
-
-                if (
-                    $fd instanceof DataObject\ClassDefinition\Data\Select
-                    || $fd instanceof DataObject\ClassDefinition\Data\Multiselect
-                    || $fd instanceof DataObject\ClassDefinition\Data\BooleanSelect
-                ) {
-                    if (
-                        $fd instanceof DataObject\ClassDefinition\Data\Select
-                        || $fd instanceof DataObject\ClassDefinition\Data\Multiselect
-                    ) {
-                        $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
-                    }
-
-                    $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
-                }
-            }
+            $this->visibleFieldDefinitions[$field] = $fieldDefinition
+                ? Relations\VisibleFieldDefinitionHelper::buildDefinition($fieldDefinition)
+                : Relations\VisibleFieldDefinitionHelper::buildFallbackDefinition($field);
         }
 
         return $this;
