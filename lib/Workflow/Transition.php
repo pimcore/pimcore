@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow;
 
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
 use Pimcore\Workflow\Notification\NotificationInterface;
@@ -71,6 +72,6 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
 
     public function getChangePublishedState(): string
     {
-        return (string) $this->options['changePublishedState'];
+        return (string) ($this->options['changePublishedState'] ?? ChangePublishedStateSubscriber::NO_CHANGE);
     }
 }
