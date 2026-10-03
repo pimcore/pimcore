@@ -2240,8 +2240,21 @@ final class Configuration implements ConfigurationInterface
                                 ->info('FQCN => list-of-method-names map. Methods listed here can never be called
                                 on a matching instance from a sandboxed twig template, regardless of the
                                 blocked_classes/allowed_classes configuration. Defaults to a small set of
-                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) and
+                                the mutation methods of the content-model classes (e.g. `Asset::delete`) -
                                 a site can extend the map with further classes/methods on top of that default.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_method_patterns')
+                                ->info('FQCN => list-of-PCRE-patterns map. A matching instance may never call a
+                                method whose name matches one of the patterns, with the same guarantee as
+                                `hard_blocked_methods` (not bypassed by allowed_classes). Used for method families
+                                that cannot be enumerated by exact name, e.g. the dynamically-generated `setXxx`
+                                setters of DataObject/Asset/Document classes - a site can extend the map with
+                                further classes/patterns on top of that default.')
                                 ->useAttributeAsKey('class')
                                 ->arrayPrototype()
                                     ->scalarPrototype()->end()

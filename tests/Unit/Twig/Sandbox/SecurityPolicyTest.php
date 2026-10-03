@@ -17,6 +17,8 @@ namespace Pimcore\Tests\Unit\Twig\Sandbox;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
 use stdClass;
@@ -36,7 +38,7 @@ final class SecurityPolicyTest extends TestCase
      * SecurityPolicy itself - read them from there so the "*ByDefault" tests below
      * exercise the actual shipped defaults instead of a duplicated PHP fixture.
      *
-     * @return array{blocked_classes: string[], blocked_functions: string[], hard_blocked_methods: array<string, string[]>}
+     * @return array{blocked_classes: string[], blocked_functions: string[], hard_blocked_methods: array<string, string[]>, hard_blocked_method_patterns: array<string, string[]>}
      */
     private static function defaultSandboxSecurityPolicyConfig(): array
     {
@@ -218,6 +220,119 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Asset(), 'getId');
         $policy->checkMethodAllowed(new Asset(), 'getFilename');
         $this->addToAssertionCount(2);
+    }
+
+    /**
+     * GHSA-w9v9-v3mj-g4cp: none of the content-model classes stayed reachable-but-
+     * mutable - `delete`/`save`/`saveVersion` must be unreachable regardless of which
+     * of the three classes the instance belongs to.
+     *
+     * @return iterable<string, array{object, string}>
+     */
+    public static function contentModelMutationMethodsProvider(): iterable
+    {
+        foreach (['delete', 'save', 'saveVersion'] as $method) {
+            yield "Asset::{$method}" => [new Asset(), $method];
+            yield "DataObject\\Concrete::{$method}" => [new Concrete(), $method];
+            yield "Document::{$method}" => [new Document(), $method];
+        }
+    }
+
+    /**
+     * @dataProvider contentModelMutationMethodsProvider
+     */
+    public function testContentModelMutationMethodsAreHardBlockedByDefault(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * @return iterable<string, array{object, string}>
+     */
+    public static function contentModelSetterMethodsProvider(): iterable
+    {
+        yield 'Asset::setFilename' => [new Asset(), 'setFilename'];
+        yield 'Asset::setData' => [new Asset(), 'setData'];
+        yield 'DataObject\Concrete::setKey' => [new Concrete(), 'setKey'];
+        // the generic `set($fieldName, $value)` accessor also mutates and must be caught
+        yield 'DataObject\Concrete::set' => [new Concrete(), 'set'];
+        yield 'Document::setKey' => [new Document(), 'setKey'];
+    }
+
+    /**
+     * @dataProvider contentModelSetterMethodsProvider
+     */
+    public function testContentModelSettersAreHardBlockedByDefault(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    public function testContentModelReadMethodsRemainReachableByDefault(): void
+    {
+        // the fix must not turn the content-model classes into infrastructure-style
+        // blocked classes - safe read access (needed by Email/Dynamic Text rendering)
+        // must keep working.
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $policy->checkMethodAllowed(new Asset(), 'getId');
+        $policy->checkMethodAllowed(new Asset(), 'getFilename');
+        $policy->checkMethodAllowed(new Concrete(), 'getId');
+        $policy->checkMethodAllowed(new Concrete(), 'getKey');
+        $policy->checkMethodAllowed(new Document(), 'getId');
+        $policy->checkMethodAllowed(new Document(), 'getKey');
+        $this->addToAssertionCount(6);
+    }
+
+    /**
+     * @dataProvider contentModelMutationMethodsProvider
+     */
+    public function testHardBlockedMethodsSurviveAllowlistModeForContentModelClasses(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(
+            allowedClasses: [Asset::class, Concrete::class, Document::class],
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * @dataProvider contentModelSetterMethodsProvider
+     */
+    public function testHardBlockedMethodPatternsSurviveAllowlistMode(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(
+            allowedClasses: [Asset::class, Concrete::class, Document::class],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    public function testHardBlockedMethodPatternsCanBeSetAtRuntime(): void
+    {
+        $policy = new SecurityPolicy();
+
+        // starts with no patterns configured: reachable
+        $policy->checkMethodAllowed(new stdClass(), 'setAnything');
+
+        $policy->setHardBlockedMethodPatterns([stdClass::class => ['/^set/']]);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new stdClass(), 'setAnything');
     }
 
     /**
