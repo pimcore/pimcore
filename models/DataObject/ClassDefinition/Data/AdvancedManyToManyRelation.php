@@ -430,7 +430,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                         if (!$value) {
                             continue;
                         }
-                        $subItems[] = $key . ': ' . $value;
+                        // the metadata is free text and this string is rendered as HTML in the
+                        // version preview, so a value must not be able to close the span below
+                        $subItems[] = htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8')
+                            . ': ' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
                     }
 
                     if (count($subItems)) {
