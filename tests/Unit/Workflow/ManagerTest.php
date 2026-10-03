@@ -28,6 +28,7 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\StateMachine;
+use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 
 class ManagerTest extends TestCase
 {
@@ -159,15 +160,173 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * Marking store that persists immediately, like StateTableMarkingStore.
+     * getDeniedActionsInWorkflow() exists so a caller needing several permission types for one
+     * element resolves the workflow permissions once instead of once per type. It is the only
+     * public view of the workflow permissions, so it must answer exactly what isDeniedInWorkflow()
+     * answers for each type: denied only when a place config sets the type to false. A type no
+     * place config mentions is not denied, and neither are the language-scoped lEdit/lView
+     * entries, whose value is a language list rather than a bool.
+     */
+    public function testGetDeniedActionsInWorkflowMatchesTheSingleTypeCheck(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions([
+            'publish' => false,
+            'settings' => true,
+            'lEdit' => ['en', 'de'],
+            'lView' => [],
+        ]);
+
+        $denied = $manager->getDeniedActionsInWorkflow(
+            $element,
+            ['publish', 'settings', 'rename', 'lEdit', 'lView']
+        );
+
+        $this->assertSame(
+            [
+                'publish' => true,
+                'settings' => false,
+                // no place config mentions 'rename', which is not the same as denying it
+                'rename' => false,
+                // lEdit/lView scope by language; they never deny the permission as a whole
+                'lEdit' => false,
+                'lView' => false,
+            ],
+            $denied
+        );
+
+        foreach ($denied as $permissionType => $isDenied) {
+            $this->assertSame(
+                $manager->isDeniedInWorkflow($element, $permissionType),
+                $isDenied,
+                sprintf('Batch and single-type checks disagree about "%s".', $permissionType)
+            );
+        }
+    }
+
+    /**
+     * 'modify' expands to several element permissions; the batch result reports each of them.
+     */
+    public function testGetDeniedActionsInWorkflowExpandsModify(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions(['modify' => false]);
+
+        $this->assertSame(
+            ['save' => true, 'delete' => true, 'settings' => false],
+            $manager->getDeniedActionsInWorkflow($element, ['save', 'delete', 'settings'])
+        );
+    }
+
+    public function testGetDeniedActionsInWorkflowDeniesNothingWithoutAWorkflow(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions(null);
+
+        $this->assertSame(
+            ['publish' => false, 'save' => false],
+            $manager->getDeniedActionsInWorkflow($element, ['publish', 'save'])
+        );
+        $this->assertFalse($manager->isDeniedInWorkflow($element, 'publish'));
+    }
+
+    /**
+     * The empty batch has nothing to answer, so it must not resolve any marking either.
+     */
+    public function testGetDeniedActionsInWorkflowReturnsAnEmptyMapForNoRequestedTypes(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $manager = $this->buildManagerWithPlacePermissions(['publish' => false], $store);
+
+        $this->assertSame([], $manager->getDeniedActionsInWorkflow(self::createStub(Concrete::class), []));
+        $this->assertSame(0, $store->getMarkingCalls, 'An empty request must not resolve the marking.');
+    }
+
+    /**
+     * The point of the batch API: n permission types for one element cost one marking read, not
+     * n. Resolving the marking is the expensive part under StateTableMarkingStore (a database
+     * read per workflow), and an implementation that fell back to one isDeniedInWorkflow() call
+     * per type would still return the right values, so the call count is asserted directly.
+     */
+    public function testGetDeniedActionsInWorkflowResolvesTheMarkingOnce(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $store = $this->createImmediateMarkingStore();
+        $manager = $this->buildManagerWithPlacePermissions(
+            ['publish' => false, 'settings' => true, 'modify' => false],
+            $store
+        );
+
+        $denied = $manager->getDeniedActionsInWorkflow(
+            $element,
+            ['publish', 'settings', 'rename', 'save', 'delete', 'lEdit']
+        );
+
+        $this->assertCount(6, $denied);
+        $this->assertSame(
+            1,
+            $store->getMarkingCalls,
+            'Requesting several permission types at once must resolve the marking exactly once.'
+        );
+
+        // the single-type check is the baseline: one read per call
+        $manager->isDeniedInWorkflow($element, 'publish');
+        $manager->isDeniedInWorkflow($element, 'settings');
+        $this->assertSame(3, $store->getMarkingCalls);
+    }
+
+    /**
+     * A Manager whose single workflow sits in a place carrying the given permissions, or a Manager
+     * with no workflow at all when null is given. The workflow uses the given marking store, so a
+     * test can observe what the Manager does with it.
+     */
+    private function buildManagerWithPlacePermissions(
+        ?array $permissions,
+        ?MarkingStoreInterface $store = null
+    ): Manager {
+        $eventDispatcher = new EventDispatcher();
+        $registry = new Registry();
+
+        $manager = new Manager(
+            $registry,
+            self::createStub(NotesSubscriber::class),
+            self::createStub(ExpressionService::class),
+            $eventDispatcher
+        );
+
+        if ($permissions === null) {
+            return $manager;
+        }
+
+        $workflow = $this->createWorkflow(
+            $store ?? $this->createImmediateMarkingStore(),
+            new PimcoreTransition('go', 'start', 'end', []),
+            $eventDispatcher
+        );
+        $registry->addWorkflow($workflow, new InstanceOfSupportStrategy(Concrete::class));
+
+        $manager->registerWorkflow(self::WORKFLOW_NAME);
+        // no 'condition' key, so the ExpressionService mock is never consulted
+        $manager->addPlaceConfig(self::WORKFLOW_NAME, 'start', ['permissions' => [$permissions]]);
+
+        return $manager;
+    }
+
+    /**
+     * Marking store that persists immediately, like StateTableMarkingStore, and counts how often
+     * the marking is read - the operation that costs a database query in the real store.
      */
     private function createImmediateMarkingStore(): MarkingStoreInterface
     {
         return new class() implements MarkingStoreInterface {
             public array $persisted = ['start' => 1];
 
+            public int $getMarkingCalls = 0;
+
             public function getMarking(object $subject): Marking
             {
+                $this->getMarkingCalls++;
+
                 return new Marking($this->persisted);
             }
 
