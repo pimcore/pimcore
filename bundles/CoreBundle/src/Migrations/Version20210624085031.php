@@ -27,6 +27,11 @@ final class Version20210624085031 extends AbstractMigration
         return 'Support saving error message for sent mails';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('email_log')->hasColumn('error')) {

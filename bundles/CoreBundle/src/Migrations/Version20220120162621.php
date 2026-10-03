@@ -24,6 +24,11 @@ final class Version20220120162621 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         //disable foreign key checks
