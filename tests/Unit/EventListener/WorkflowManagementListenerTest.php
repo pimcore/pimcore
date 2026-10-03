@@ -117,7 +117,7 @@ class WorkflowManagementListenerTest extends TestCase
 
         (new WorkflowManagementListener($manager))->onElementPostUpdate(new AssetEvent($element));
 
-        $this->assertSame([self::WORKFLOW_NAME => ['review']], $element->getPendingWorkflowMarkings());
+        $this->assertSame([self::WORKFLOW_NAME => ['review']], $element->__getPendingWorkflowMarkings());
     }
 
     public function testElementsWithoutPendingMarkingsAreLeftAlone(): void
@@ -148,7 +148,7 @@ class WorkflowManagementListenerTest extends TestCase
         $this->assertFalse(RuntimeCache::isRegistered(self::ASSET_CACHE_KEY), 'The draft instance must be dropped from the runtime cache.');
         $this->assertSame(
             [self::WORKFLOW_NAME => ['review']],
-            $element->getPendingWorkflowMarkings(),
+            $element->__getPendingWorkflowMarkings(),
             'The draft instance itself keeps its pending marking.'
         );
     }
@@ -222,7 +222,7 @@ class WorkflowManagementListenerTest extends TestCase
         $document->setParentId(1);
         $document->setPath('/');
         $document->setKey('about');
-        $document->setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
+        $document->__setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
 
         return $document;
     }
@@ -247,7 +247,7 @@ class WorkflowManagementListenerTest extends TestCase
     {
         $element = new Asset();
         $element->setId(42);
-        $element->setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
+        $element->__setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
 
         return $element;
     }

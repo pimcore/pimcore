@@ -112,7 +112,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
             return;
         }
 
-        foreach (array_keys($element->getPendingWorkflowMarkings()) as $workflowName) {
+        foreach (array_keys($element->__getPendingWorkflowMarkings()) as $workflowName) {
             // Resolve the workflow by name on purpose: the pending place was set while the workflow
             // applied to the element, and re-evaluating the support strategy (e.g. an expression)
             // against the content being published must not silently drop it.
@@ -142,7 +142,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
      */
     private function detachDraftFromRuntimeCache(ElementInterface $element): void
     {
-        if (!$element instanceof AbstractElement || $element->getPendingWorkflowMarkings() === []) {
+        if (!$element instanceof AbstractElement || $element->__getPendingWorkflowMarkings() === []) {
             return;
         }
 

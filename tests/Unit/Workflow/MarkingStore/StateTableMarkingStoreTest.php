@@ -42,7 +42,7 @@ class StateTableMarkingStoreTest extends TestCase
             [PendingMarkingStoreInterface::CONTEXT_SAVE_VERSION => true]
         );
 
-        $this->assertSame(['review', 'translation'], $subject->getPendingWorkflowMarking(self::WORKFLOW_NAME));
+        $this->assertSame(['review', 'translation'], $subject->__getPendingWorkflowMarking(self::WORKFLOW_NAME));
         $this->assertSame(
             ['review' => 1, 'translation' => 1],
             $store->getMarking($subject)->getPlaces(),
@@ -53,27 +53,27 @@ class StateTableMarkingStoreTest extends TestCase
     public function testPendingMarkingsAreScopedToTheirWorkflow(): void
     {
         $subject = $this->createSubject();
-        $subject->setPendingWorkflowMarking('other_wf', ['done']);
+        $subject->__setPendingWorkflowMarking('other_wf', ['done']);
 
         $store = new StateTableMarkingStore(self::WORKFLOW_NAME);
         $store->setMarking($subject, new Marking(['review' => 1]), [PendingMarkingStoreInterface::CONTEXT_SAVE_VERSION => true]);
 
         $this->assertSame(
             ['other_wf' => ['done'], self::WORKFLOW_NAME => ['review']],
-            $subject->getPendingWorkflowMarkings()
+            $subject->__getPendingWorkflowMarkings()
         );
     }
 
     public function testPendingMarkingIsPartOfVersionDumpButNotOfCache(): void
     {
         $subject = $this->createSubject();
-        $subject->setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
+        $subject->__setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
 
         $subject->setInDumpState(true);
-        $this->assertContains('pendingWorkflowMarkings', $subject->__sleep(), 'A version dump must carry the pending marking.');
+        $this->assertContains('__pendingWorkflowMarkings', $subject->__sleep(), 'A version dump must carry the pending marking.');
 
         $subject->setInDumpState(false);
-        $this->assertNotContains('pendingWorkflowMarkings', $subject->__sleep(), 'The cache must not carry the pending marking.');
+        $this->assertNotContains('__pendingWorkflowMarkings', $subject->__sleep(), 'The cache must not carry the pending marking.');
     }
 
     /**
@@ -106,13 +106,13 @@ class StateTableMarkingStoreTest extends TestCase
         $store->expects($this->exactly(2))->method('persistPlaces');
         $subject = $this->createSubject();
 
-        $subject->setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
+        $subject->__setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
         $store->persistPendingMarking($subject);
-        $this->assertNull($subject->getPendingWorkflowMarking(self::WORKFLOW_NAME), 'Publishing the draft persists and clears the pending marking.');
+        $this->assertNull($subject->__getPendingWorkflowMarking(self::WORKFLOW_NAME), 'Publishing the draft persists and clears the pending marking.');
 
-        $subject->setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
+        $subject->__setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
         $store->setMarking($subject, new Marking(['done' => 1]));
-        $this->assertNull($subject->getPendingWorkflowMarking(self::WORKFLOW_NAME), 'A directly persisted marking supersedes the pending one.');
+        $this->assertNull($subject->__getPendingWorkflowMarking(self::WORKFLOW_NAME), 'A directly persisted marking supersedes the pending one.');
     }
 
     /**
@@ -124,7 +124,7 @@ class StateTableMarkingStoreTest extends TestCase
         $store = $this->createStoreWithStubbedTable();
         $store->method('persistPlaces')->willThrowException(new RuntimeException('element_workflow_state unavailable'));
         $subject = $this->createSubject();
-        $subject->setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
+        $subject->__setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
 
         foreach (['persistPendingMarking', 'setMarking'] as $method) {
             try {
@@ -135,7 +135,7 @@ class StateTableMarkingStoreTest extends TestCase
             } catch (RuntimeException) {
                 $this->assertSame(
                     ['review'],
-                    $subject->getPendingWorkflowMarking(self::WORKFLOW_NAME),
+                    $subject->__getPendingWorkflowMarking(self::WORKFLOW_NAME),
                     sprintf('%s() must not clear the pending marking when the write fails.', $method)
                 );
             }
