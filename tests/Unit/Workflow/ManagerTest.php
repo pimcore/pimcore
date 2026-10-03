@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Workflow;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
@@ -366,8 +365,17 @@ class ManagerTest extends TestCase
      * data is caller-provided; a caller smuggling the key in must not be able to leave a
      * place pending that no save is going to flush.
      */
-    #[DataProvider('callerProvidedSaveVersionFlagProvider')]
-    public function testCallersCannotForceTheMarkingToStayPending(PimcoreTransition $transition, bool $saveSubject): void
+    public function testCallersCannotForceTheMarkingToStayPendingOnAPublishingTransition(): void
+    {
+        $this->assertCallerProvidedSaveVersionFlagIsIgnored(self::createForcePublishedTransition(), true);
+    }
+
+    public function testCallersCannotForceTheMarkingToStayPendingWhenTheySaveTheSubjectThemselves(): void
+    {
+        $this->assertCallerProvidedSaveVersionFlagIsIgnored(self::createSaveVersionTransition(), false);
+    }
+
+    private function assertCallerProvidedSaveVersionFlagIsIgnored(PimcoreTransition $transition, bool $saveSubject): void
     {
         $store = $this->createPendingMarkingStore();
         $eventDispatcher = $this->createEventDispatcher();
@@ -390,12 +398,6 @@ class ManagerTest extends TestCase
         $this->assertSame('kept', $store->lastContext['notes'] ?? null, 'Other additional data still reaches the store.');
         $this->assertSame(['end' => 1], $store->persisted);
         $this->assertNull($store->pending);
-    }
-
-    public static function callerProvidedSaveVersionFlagProvider(): iterable
-    {
-        yield 'force_published transition, subject saved by the manager' => [self::createForcePublishedTransition(), true];
-        yield 'save_version transition, subject saved by the caller' => [self::createSaveVersionTransition(), false];
     }
 
     /**
