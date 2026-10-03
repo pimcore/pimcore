@@ -42,7 +42,7 @@ class WorkflowManagementListenerTest extends TestCase
     protected function tearDown(): void
     {
         $runtimeCache = RuntimeCache::getInstance();
-        foreach ([self::ASSET_CACHE_KEY, self::DOCUMENT_CACHE_KEY, Document::getPathCacheKey('/about')] as $cacheKey) {
+        foreach ([self::ASSET_CACHE_KEY, self::DOCUMENT_CACHE_KEY, self::documentPathCacheKey('/about'), self::documentPathCacheKey('/about-us')] as $cacheKey) {
             if ($runtimeCache->offsetExists($cacheKey)) {
                 $runtimeCache->offsetUnset($cacheKey);
             }
@@ -145,7 +145,7 @@ class WorkflowManagementListenerTest extends TestCase
 
         $this->createListener()->onElementPostUpdate(new AssetEvent($element, ['saveVersionOnly' => true]));
 
-        $this->assertNull(RuntimeCache::get(self::ASSET_CACHE_KEY), 'The draft instance must be dropped from the runtime cache.');
+        $this->assertFalse(RuntimeCache::isRegistered(self::ASSET_CACHE_KEY), 'The draft instance must be dropped from the runtime cache.');
         $this->assertSame(
             [self::WORKFLOW_NAME => ['review']],
             $element->getPendingWorkflowMarkings(),
@@ -182,6 +182,41 @@ class WorkflowManagementListenerTest extends TestCase
      */
     public function testVersionOnlySaveDetachesADocumentFromBothRuntimeCacheKeys(): void
     {
+        $document = $this->createDocumentWithPendingMarking();
+
+        $pathKey = self::documentPathCacheKey('/about');
+        RuntimeCache::set(self::DOCUMENT_CACHE_KEY, $document);
+        RuntimeCache::set($pathKey, $document);
+
+        $this->createListener()->onElementPostUpdate(new DocumentEvent($document, ['saveVersionOnly' => true]));
+
+        $this->assertFalse(RuntimeCache::isRegistered(self::DOCUMENT_CACHE_KEY));
+        $this->assertFalse(RuntimeCache::isRegistered($pathKey));
+    }
+
+    /**
+     * The draft may have renamed or moved the document without saving: the path entry was made
+     * under the old path, so it must be found by the cached instance, not by the current path.
+     */
+    public function testVersionOnlySaveDetachesADocumentRegisteredUnderItsOldPath(): void
+    {
+        $document = $this->createDocumentWithPendingMarking();
+
+        $oldPathKey = self::documentPathCacheKey('/about');
+        RuntimeCache::set(self::DOCUMENT_CACHE_KEY, $document);
+        RuntimeCache::set($oldPathKey, $document);
+
+        $document->setKey('about-us');
+        $this->assertSame('/about-us', $document->getRealFullPath(), 'Precondition: the unsaved rename changed the path.');
+
+        $this->createListener()->onElementPostUpdate(new DocumentEvent($document, ['saveVersionOnly' => true]));
+
+        $this->assertFalse(RuntimeCache::isRegistered($oldPathKey), 'The entry made under the old path must be dropped as well.');
+        $this->assertFalse(RuntimeCache::isRegistered(self::DOCUMENT_CACHE_KEY));
+    }
+
+    private function createDocumentWithPendingMarking(): Document\Page
+    {
         $document = new Document\Page();
         $document->setId(7);
         $document->setParentId(1);
@@ -189,14 +224,15 @@ class WorkflowManagementListenerTest extends TestCase
         $document->setKey('about');
         $document->setPendingWorkflowMarking(self::WORKFLOW_NAME, ['review']);
 
-        $pathKey = Document::getPathCacheKey('/about');
-        RuntimeCache::set(self::DOCUMENT_CACHE_KEY, $document);
-        RuntimeCache::set($pathKey, $document);
+        return $document;
+    }
 
-        $this->createListener()->onElementPostUpdate(new DocumentEvent($document, ['saveVersionOnly' => true]));
-
-        $this->assertNull(RuntimeCache::get(self::DOCUMENT_CACHE_KEY));
-        $this->assertNull(RuntimeCache::get($pathKey));
+    /**
+     * Mirrors Document::getPathCacheKey(), which is not public.
+     */
+    private static function documentPathCacheKey(string $path): string
+    {
+        return 'document_path_' . md5($path);
     }
 
     private function createListener(): WorkflowManagementListener
