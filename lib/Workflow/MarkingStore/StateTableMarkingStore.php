@@ -77,7 +77,7 @@ class StateTableMarkingStore implements PendingMarkingStoreInterface
             return null;
         }
 
-        $places = $subject->getPendingWorkflowMarking($this->workflowName);
+        $places = $subject->__getPendingWorkflowMarking($this->workflowName);
 
         return $places === null ? null : $this->createMarking($places);
     }
@@ -92,7 +92,7 @@ class StateTableMarkingStore implements PendingMarkingStoreInterface
             return;
         }
 
-        $subject->setPendingWorkflowMarking(
+        $subject->__setPendingWorkflowMarking(
             $this->workflowName,
             $marking === null ? null : array_keys($marking->getPlaces())
         );

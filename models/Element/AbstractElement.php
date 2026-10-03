@@ -117,7 +117,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    protected array $pendingWorkflowMarkings = [];
+    protected array $__pendingWorkflowMarkings = [];
 
     private static bool $getInheritedProperties = true;
 
@@ -154,9 +154,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function getPendingWorkflowMarking(string $workflowName): ?array
+    public function __getPendingWorkflowMarking(string $workflowName): ?array
     {
-        return $this->pendingWorkflowMarkings[$workflowName] ?? null;
+        return $this->__pendingWorkflowMarkings[$workflowName] ?? null;
     }
 
     /**
@@ -164,15 +164,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function setPendingWorkflowMarking(string $workflowName, ?array $places): void
+    public function __setPendingWorkflowMarking(string $workflowName, ?array $places): void
     {
         if ($places === null) {
-            unset($this->pendingWorkflowMarkings[$workflowName]);
+            unset($this->__pendingWorkflowMarkings[$workflowName]);
 
             return;
         }
 
-        $this->pendingWorkflowMarkings[$workflowName] = array_values($places);
+        $this->__pendingWorkflowMarkings[$workflowName] = array_values($places);
     }
 
     /**
@@ -180,9 +180,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function getPendingWorkflowMarkings(): array
+    public function __getPendingWorkflowMarkings(): array
     {
-        return $this->pendingWorkflowMarkings;
+        return $this->__pendingWorkflowMarkings;
     }
 
     public function getUserModification(): ?int
@@ -743,7 +743,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         if (!$this->isInDumpState()) {
             // pending workflow markings belong to the draft (version dump) and must never leak into the cache
-            $blockedVars[] = 'pendingWorkflowMarkings';
+            $blockedVars[] = '__pendingWorkflowMarkings';
         }
 
         return $blockedVars;
