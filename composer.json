@@ -139,12 +139,11 @@
     "symfony/event-dispatcher": "7.4.8",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0 <3.14.0",
-    "php-http/discovery": "<1.20",
-    "phpunit/phpunit": ">=13.4"
+    "php-http/discovery": "<1.20"
   },
   "require-dev": {
     "behat/gherkin": "4.15.0",
-    "codeception/codeception": "^5.3.5",
+    "codeception/codeception": "^5.3.7",
     "codeception/stub": "^4.1.4",
     "codeception/module-symfony": "^3.5",
     "composer/composer": "*",
