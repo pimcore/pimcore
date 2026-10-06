@@ -19,6 +19,7 @@ use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -243,8 +244,10 @@ class Manager
             $this->notesSubscriber->setAdditionalData([]);
         }
 
-        $transition = $this->getTransitionByName($workflow->getName(), $transition);
-        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
+        $transitionObject = $this->getTransitionByName($workflow->getName(), $transition);
+        $changePublishedState = $transitionObject instanceof Transition
+            ? $transitionObject->getChangePublishedState()
+            : ChangePublishedStateSubscriber::NO_CHANGE;
 
         if ($saveSubject) {
             try {
@@ -297,11 +300,21 @@ class Manager
         $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
+        $changePublishedState = $globalActionObj->getChangePublishedState();
+
+        // Narrowed once: only documents and data objects carry a published state.
+        $publishableSubject = $subject instanceof Concrete || $subject instanceof Document ? $subject : null;
+
         // Only snapshot when the save below can actually run and fail, so that
         // read-only global actions do not pay for an extra marking-store read.
-        $previousMarking = ($saveSubject && $subject instanceof ElementInterface)
-            ? $markingStore->getMarking($subject)
-            : null;
+        $previousMarking = null;
+        $previousPublishedState = false;
+        if ($saveSubject && $subject instanceof ElementInterface) {
+            $previousMarking = $markingStore->getMarking($subject);
+            if ($publishableSubject !== null) {
+                $previousPublishedState = $publishableSubject->isPublished();
+            }
+        }
 
         if (!empty($globalActionObj->getTos())) {
             $places = [];
@@ -310,6 +323,8 @@ class Manager
             }
 
             $markingStore->setMarking($subject, new Marking($places));
+
+            $this->applyChangePublishedState($subject, $changePublishedState);
         }
 
         $this->eventDispatcher->dispatch($event, WorkflowEvents::POST_GLOBAL_ACTION);
@@ -317,13 +332,24 @@ class Manager
 
         if ($saveSubject && $subject instanceof ElementInterface) {
             try {
-                $subject->save();
+                if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION
+                    && ($subject instanceof Concrete || $subject instanceof PageSnippet)) {
+                    $subject->saveVersion();
+                } else {
+                    $subject->save();
+                }
             } catch (Throwable $e) {
-                // Roll back the workflow place if the save fails so marking
-                // stores that persist immediately do not leave the subject in
-                // an inconsistent state (see pimcore/pimcore#18178).
+                // Roll back the workflow place and the published state if the
+                // save fails so marking stores that persist immediately do not
+                // leave the subject in an inconsistent state
+                // (see pimcore/pimcore#18178).
                 if ($previousMarking !== null) {
                     $markingStore->setMarking($subject, $previousMarking);
+                }
+                // The snapshot above ran under the same condition as this block, so a
+                // non-null $publishableSubject means $previousPublishedState was taken.
+                if ($publishableSubject !== null) {
+                    $publishableSubject->setPublished($previousPublishedState);
                 }
 
                 throw $e;
@@ -331,6 +357,23 @@ class Manager
         }
 
         return $markingStore->getMarking($subject);
+    }
+
+    /**
+     * Applies an already-resolved changePublishedState to the subject. Only documents and data objects
+     * can be (un)published, all other subjects are left untouched.
+     */
+    private function applyChangePublishedState(object $subject, string $changePublishedState): void
+    {
+        if (!$subject instanceof Concrete && !$subject instanceof Document) {
+            return;
+        }
+
+        if ($changePublishedState === ChangePublishedStateSubscriber::FORCE_UNPUBLISHED) {
+            $subject->setPublished(false);
+        } elseif ($changePublishedState === ChangePublishedStateSubscriber::FORCE_PUBLISHED) {
+            $subject->setPublished(true);
+        }
     }
 
     /**
