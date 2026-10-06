@@ -474,6 +474,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
         $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . "\n";
+        $code .= "\t\t" . 'if ($preValue === \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
+        $code .= "\t\t\t" . 'return null;' . "\n";
+        $code .= "\t\t" . '}' . "\n";
         $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
