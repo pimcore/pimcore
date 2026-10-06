@@ -873,6 +873,30 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Sets up a class with an object bricks field only, so its brick container class is not loaded by other tests
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LocalizedBrickRelation(
+        string $name = 'LocalizedBrickRelation',
+        string $filename = 'relations/class_LocalizedBrickRelation_export.json'
+    ): ?DataObject\ClassDefinitionInterface {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $panel->addChild($this->createDataChild('objectbricks', 'bricks'));
+            $root->addChild($panel);
+
+            $class = $this->createClass($name, $root, $filename, false, 'LBR');
+        }
+
+        return $class;
+    }
+
+    /**
      * Sets up an object brick used for lazy loading tests
      *
      * @throws Exception
@@ -929,8 +953,11 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupObjectbrick_LazyLoadingLocalizedTest(string $name = 'LazyLoadingLocalizedTest', string $filename = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json'): ?Definition
-    {
+    public function setupObjectbrick_LazyLoadingLocalizedTest(
+        string $name = 'LazyLoadingLocalizedTest',
+        string $filename = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json',
+        array $classDefinitions = [['classname' => 'LazyLoading', 'fieldname' => 'bricks']]
+    ): ?Definition {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -973,10 +1000,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
-            $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'LazyLoading', 'fieldname' => 'bricks'],
-
-            ]);
+            $definition = $this->createObjectbrick($name, $root, $filename, $classDefinitions);
         }
 
         return $definition;
