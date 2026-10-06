@@ -426,14 +426,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $index = $context['index'] ?? null;
-            $containerName = $context['fieldname'] ?? null;
-
-            if ($context['containerType'] === 'fieldcollection') {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%';
-            } else {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
-            }
+            $ownerName = $this->getContainerLocalizedfieldOwnernameFilter($context);
 
             $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)

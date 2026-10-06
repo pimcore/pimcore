@@ -543,14 +543,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $index = $context['index'] ?? null;
-            $containerName = $context['fieldname'];
-
-            if ($context['containerType'] === 'fieldcollection') {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%';
-            } else {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
-            }
+            $ownerName = $this->getContainerLocalizedfieldOwnernameFilter($context);
 
             $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
@@ -633,25 +626,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $containerName = $context['fieldname'] ?? null;
-
-            if ($context['containerType'] === 'objectbrick') {
-                $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                );
-            } else {
-                $index = $context['index'];
-
-                $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                );
-            }
+            $db->executeStatement(
+                'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
+                Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', $this->getContainerLocalizedfieldOwnernameFilter($context))
+                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            );
         } else {
             $deleteCondition = [
                 'id' => $object->getId(),

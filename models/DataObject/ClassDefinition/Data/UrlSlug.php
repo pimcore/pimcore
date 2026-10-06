@@ -280,13 +280,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         } elseif ($object instanceof Model\DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
-                $fieldname = $context['fieldname'] ?? null;
-                if ($context['containerType'] === 'fieldcollection') {
-                    $index = $context['index'] ?? null;
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
-                } else {
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
-                }
+                $filter = $this->getContainerLocalizedfieldOwnernameFilter($context);
                 $rawResult = $object->getObject()->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
             } else {
                 $rawResult = $object->getObject()->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
