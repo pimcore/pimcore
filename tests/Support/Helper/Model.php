@@ -897,6 +897,36 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Sets up an object brick with a localized URL slug
+     *
+     * @throws Exception
+     */
+    public function setupObjectbrick_LocalizedSlugTest(
+        string $name,
+        string $filename,
+        array $classDefinitions
+    ): ?Definition {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getObjectbrick($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('urlSlug', 'lslug')
+                ->setAction('App\\Controller\\TestController::slugAction'));
+
+            $panel->addChild($lFields);
+            $root->addChild($panel);
+            $definition = $this->createObjectbrick($name, $root, $filename, $classDefinitions);
+        }
+
+        return $definition;
+    }
+
+    /**
      * Sets up an object brick used for lazy loading tests
      *
      * @throws Exception

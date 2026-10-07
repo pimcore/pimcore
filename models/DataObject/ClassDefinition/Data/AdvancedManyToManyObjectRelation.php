@@ -426,7 +426,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $ownerName = $this->getContainerLocalizedfieldOwnernameFilter($context);
+            $ownerName = DataObject\Localizedfield\ContainerOwnerName::likePattern($context);
 
             $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
@@ -504,15 +504,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            if ($context['containerType'] === 'objectbrick') {
-                throw new Exception('deletemeta not implemented');
-            }
-            $containerName = $context['fieldname'] ?? null;
-            $index = $context['index'];
             $db->executeStatement(
-                'DELETE FROM object_metadata_' . $object->getClassId()
-                . ' WHERE ' . Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
+                'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
+                Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', DataObject\Localizedfield\ContainerOwnerName::likePattern($context))
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
             );
         } else {

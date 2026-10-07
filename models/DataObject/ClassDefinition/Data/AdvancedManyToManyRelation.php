@@ -543,7 +543,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $ownerName = $this->getContainerLocalizedfieldOwnernameFilter($context);
+            $ownerName = DataObject\Localizedfield\ContainerOwnerName::likePattern($context);
 
             $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
@@ -629,7 +629,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             $db->executeStatement(
                 'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
                 Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . Db\Helper::quoteInto($db, 'ownername LIKE ?', $this->getContainerLocalizedfieldOwnernameFilter($context))
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', DataObject\Localizedfield\ContainerOwnerName::likePattern($context))
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
             );
         } else {

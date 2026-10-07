@@ -267,15 +267,18 @@ class UrlSlug implements OwnerAwareFieldInterface
                     if ($type == 'objectbrick') {
                         $objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname);
                         if ($objectFieldDef instanceof Objectbricks) {
-                            $allowedBricks = $objectFieldDef->getAllowedTypes();
-                            foreach ($allowedBricks as $allowedBrick) {
-                                $brickDef = Definition::getByKey($allowedBrick);
+                            // the owner name contains the brick type, e.g. /objectbrick~bricks/Engine/localizedfield~…
+                            $brickType = explode('/', $objectFieldnameParts)[1] ?? '';
+                            $candidateBricks = $brickType !== '' ? [$brickType] : $objectFieldDef->getAllowedTypes();
+                            foreach ($candidateBricks as $candidateBrick) {
+                                $brickDef = Definition::getByKey($candidateBrick);
                                 if ($brickDef instanceof Definition) {
                                     $lfDef = $brickDef->getFieldDefinition('localizedfields');
                                     if ($lfDef instanceof Localizedfields) {
                                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
-
-                                        break;
+                                        if ($fd !== null) {
+                                            break;
+                                        }
                                     }
                                 }
                             }

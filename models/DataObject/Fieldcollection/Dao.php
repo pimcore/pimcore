@@ -228,15 +228,23 @@ class Dao extends Model\Dao\AbstractDao
             return [];
         }
 
-        $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
-            . Helper::quoteInto($this->db, 'ownername LIKE ?', '/fieldcollection~'
-                . $this->model->getFieldname() . '/%')
+        $localizedOwnerName = Helper::quoteInto(
+            $this->db,
+            'ownername LIKE ?',
+            addcslashes('/fieldcollection~' . $this->model->getFieldname() . '/', '\\%_') . '%'
+        );
+        $whereLocalizedFields = "(ownertype = 'localizedfield' AND " . $localizedOwnerName
             . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()). ')';
+        // the metadata of the localized relations is rewritten together with the relations,
+        // otherwise the metadata of removed items is left behind
+        $whereLocalizedMetadata = "(ownertype = 'localizedfield' AND " . $localizedOwnerName
+            . ' AND ' . Helper::quoteInto($this->db, 'id = ?', $object->getId()). ')';
 
         if ($saveMode) {
             if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
+                $this->db->executeStatement('DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' . $whereLocalizedMetadata);
 
                 return ['saveLocalizedRelations' => true];
             }
@@ -248,6 +256,7 @@ class Dao extends Model\Dao\AbstractDao
         // empty relation table
         $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
         $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
+        $this->db->executeStatement('DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' . $whereLocalizedMetadata);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }

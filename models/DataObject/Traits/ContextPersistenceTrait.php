@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\Localizedfield\ContainerOwnerName;
 
 /**
  * @internal
@@ -42,7 +43,7 @@ trait ContextPersistenceTrait
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) &&
                 ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                $filter = $this->getContainerLocalizedfieldOwnernameFilter($context);
+                $filter = ContainerOwnerName::filter($context);
                 $relations = $object->getObject()->retrieveRelationData(
                     [
                         'fieldname' => $this->getName(),
@@ -104,7 +105,7 @@ trait ContextPersistenceTrait
             $row['ownername'] = 'localizedfield';
             $context = $object->getContext();
             if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                $row['ownername'] = $this->getContainerLocalizedfieldOwnernamePrefix($context) . 'localizedfield~' . $row['ownername'];
+                $row['ownername'] = ContainerOwnerName::prefix($context) . 'localizedfield~' . $row['ownername'];
             }
 
             $row['position'] = $params['language'];
@@ -118,25 +119,5 @@ trait ContextPersistenceTrait
 
             $classId = $object->getObject()->getClassId();
         }
-    }
-
-    /**
-     * Owner name prefix of the rows written for localized fields inside a field collection item or an object brick,
-     * e.g. `/objectbrick~attributes/Engine/`. It contains the item index or the brick type, so items and bricks of
-     * the same container sharing a field name don't read or overwrite each other's rows.
-     */
-    protected function getContainerLocalizedfieldOwnernamePrefix(array $context): string
-    {
-        $index = $context['index'] ?? $context['containerKey'] ?? null;
-
-        return '/' . $context['containerType'] . '~' . ($context['fieldname'] ?? null) . '/' . $index . '/';
-    }
-
-    /**
-     * LIKE pattern matching all rows of getContainerLocalizedfieldOwnernamePrefix().
-     */
-    protected function getContainerLocalizedfieldOwnernameFilter(array $context): string
-    {
-        return $this->getContainerLocalizedfieldOwnernamePrefix($context) . '%';
     }
 }

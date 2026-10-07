@@ -578,10 +578,9 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->markLanguageAsDirtyByFallback();
         }
 
-        if (!DataObject::isDirtyDetectionDisabled()) {
-            if (!$this->model->hasDirtyFields()) {
-                return false;
-            }
+        // a removal ($isUpdate = false) cleans up regardless of the dirty state
+        if ($isUpdate && !DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+            return false;
         }
 
         $db = Db::get();
@@ -604,19 +603,16 @@ class Dao extends Model\Dao\AbstractDao
             $dirtyLanguageCondition = ' AND position IN('.implode(',', $languageList).')';
         }
 
+        // also matches object bricks, their definition extends the field collection definition
         if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
-            $index = $context['index'] ?? $context['containerKey'] ?? null;
-            $containerName = $context['fieldname'];
             if (!$context['containerType']) {
                 throw new Exception('no container type set');
             }
 
             $sql = Helper::quoteInto($this->db, 'src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
-                .Helper::quoteInto($this->db,
-                    'ownername LIKE ?',
-                    '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
-                ).$dirtyLanguageCondition;
+                .Helper::quoteInto($this->db, 'ownername LIKE ?', ContainerOwnerName::likePattern($context))
+                .$dirtyLanguageCondition;
 
             if ($deleteQuery || $context['containerType'] === 'fieldcollection') {
                 // Fieldcollection don't support delta updates, so we delete the relations and insert them later again

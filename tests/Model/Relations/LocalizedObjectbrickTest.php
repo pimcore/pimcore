@@ -13,12 +13,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Relations;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\LocalizedBrickRelation;
 use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedRelationBrickA;
 use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedRelationBrickB;
+use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedRelBrick_C;
+use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedRelBrickXC;
+use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedSlugBrickA;
+use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedSlugBrickB;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -64,12 +70,23 @@ class LocalizedObjectbrickTest extends ModelTestCase
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupPimcoreClass_LocalizedBrickRelation();
 
-        // two bricks with identical localized field definitions in the same container
-        foreach (['LocalizedRelationBrickA', 'LocalizedRelationBrickB'] as $brick) {
+        $container = [['classname' => 'LocalizedBrickRelation', 'fieldname' => 'bricks']];
+
+        // bricks with identical localized field definitions in the same container; the last two keys only differ
+        // by "_", which is a wildcard in SQL LIKE
+        foreach (['LocalizedRelationBrickA', 'LocalizedRelationBrickB', 'LocalizedRelBrick_C', 'LocalizedRelBrickXC'] as $brick) {
             $this->tester->setupObjectbrick_LazyLoadingLocalizedTest(
                 $brick,
                 'relations/objectbrick_' . $brick . '_export.json',
-                [['classname' => 'LocalizedBrickRelation', 'fieldname' => 'bricks']]
+                $container
+            );
+        }
+        // bricks with a localized slug, registered after bricks whose localized fields have no slug
+        foreach (['LocalizedSlugBrickA', 'LocalizedSlugBrickB'] as $brick) {
+            $this->tester->setupObjectbrick_LocalizedSlugTest(
+                $brick,
+                'relations/objectbrick_' . $brick . '_export.json',
+                $container
             );
         }
     }
@@ -151,6 +168,160 @@ class LocalizedObjectbrickTest extends ModelTestCase
         $this->assertMetadata([$t1->getId() => 'second'], $second->getLadvancedRelations('en'));
     }
 
+    public function testMetadataOfOtherLanguagesAndBricksIsKept(): void
+    {
+        [$t0, $t1, $t2] = $this->targets;
+
+        $object = $this->createDataObject();
+        foreach (['A' => new LocalizedRelationBrickA($object), 'B' => new LocalizedRelationBrickB($object)] as $tag => $brick) {
+            foreach (['en' => $t0, 'de' => $t1] as $language => $target) {
+                $brick->setLadvancedObjects([$this->objectMetadata($target, "$tag-$language")], $language);
+                $brick->setLadvancedRelations([$this->elementMetadata($target, "$tag-$language")], $language);
+            }
+            $object->getBricks()->set($brick->getType(), $brick);
+        }
+        $object->save();
+
+        // change only the English values of the first brick
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $first = $object->getBricks()->getLocalizedRelationBrickA();
+        $first->setLadvancedObjects([$this->objectMetadata($t2, 'A-en-changed')], 'en');
+        $first->setLadvancedRelations([$this->elementMetadata($t2, 'A-en-changed')], 'en');
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $first = $object->getBricks()->getLocalizedRelationBrickA();
+        $second = $object->getBricks()->getLocalizedRelationBrickB();
+        $this->assertMetadata([$t2->getId() => 'A-en-changed'], $first->getLadvancedObjects('en'));
+        $this->assertMetadata([$t2->getId() => 'A-en-changed'], $first->getLadvancedRelations('en'));
+        $this->assertMetadata([$t1->getId() => 'A-de'], $first->getLadvancedObjects('de'));
+        $this->assertMetadata([$t1->getId() => 'A-de'], $first->getLadvancedRelations('de'));
+        foreach (['en' => $t0, 'de' => $t1] as $language => $target) {
+            $this->assertMetadata([$target->getId() => "B-$language"], $second->getLadvancedObjects($language));
+            $this->assertMetadata([$target->getId() => "B-$language"], $second->getLadvancedRelations($language));
+        }
+        // one row per field and language, nothing left behind
+        $this->assertSame(4, $this->countRows('object_metadata', 'id', $object->getId(), 'LocalizedRelationBrickA'));
+        $this->assertSame(4, $this->countRows('object_metadata', 'id', $object->getId(), 'LocalizedRelationBrickB'));
+    }
+
+    public function testUnderscoreInBrickKeyDoesNotMatchOtherBricks(): void
+    {
+        [$t0, $t1] = $this->targets;
+
+        $object = $this->createDataObject();
+        foreach ([new LocalizedRelBrick_C($object), new LocalizedRelBrickXC($object)] as $brick) {
+            $brick->setLadvancedObjects([$this->objectMetadata($t0, $brick->getType())], 'en');
+            $brick->setLadvancedRelations([$this->elementMetadata($t0, $brick->getType())], 'en');
+            $object->getBricks()->set($brick->getType(), $brick);
+        }
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $brick = $object->getBricks()->getLocalizedRelBrick_C();
+        $brick->setLadvancedObjects([$this->objectMetadata($t1, 'changed')], 'en');
+        $brick->setLadvancedRelations([$this->elementMetadata($t1, 'changed')], 'en');
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $other = $object->getBricks()->getLocalizedRelBrickXC();
+        $this->assertMetadata([$t0->getId() => 'LocalizedRelBrickXC'], $other->getLadvancedObjects('en'));
+        $this->assertMetadata([$t0->getId() => 'LocalizedRelBrickXC'], $other->getLadvancedRelations('en'));
+        $this->assertMetadata([$t1->getId() => 'changed'], $object->getBricks()->getLocalizedRelBrick_C()->getLadvancedRelations('en'));
+    }
+
+    public static function dirtyDetectionProvider(): array
+    {
+        return [
+            'dirty detection enabled' => [false],
+            'dirty detection disabled' => [true],
+        ];
+    }
+
+    /**
+     * @dataProvider dirtyDetectionProvider
+     */
+    public function testRemovingABrickRemovesItsLocalizedData(bool $disableDirtyDetection): void
+    {
+        [$t0, $t1] = $this->targets;
+
+        $object = $this->createDataObject();
+        foreach (['A' => new LocalizedRelationBrickA($object), 'B' => new LocalizedRelationBrickB($object)] as $tag => $brick) {
+            $target = $tag === 'A' ? $t0 : $t1;
+            $brick->setLrelations([$target], 'en');
+            $brick->setLadvancedObjects([$this->objectMetadata($target, $tag)], 'en');
+            $brick->setLadvancedRelations([$this->elementMetadata($target, $tag)], 'en');
+            $object->getBricks()->set($brick->getType(), $brick);
+        }
+        $object->save();
+        $id = $object->getId();
+
+        $object = LocalizedBrickRelation::getById($id, ['force' => true]);
+        $object->getBricks()->getLocalizedRelationBrickB()->setDoDelete(true);
+        if ($disableDirtyDetection) {
+            DataObject::disableDirtyDetection();
+        }
+
+        try {
+            $object->save();
+        } finally {
+            DataObject::enableDirtyDetection();
+        }
+
+        $object = LocalizedBrickRelation::getById($id, ['force' => true]);
+        $this->assertNull($object->getBricks()->getLocalizedRelationBrickB());
+        $this->assertSame(0, $this->countRows('object_relations', 'src_id', $id, 'LocalizedRelationBrickB'));
+        $this->assertSame(0, $this->countRows('object_metadata', 'id', $id, 'LocalizedRelationBrickB'));
+
+        $first = $object->getBricks()->getLocalizedRelationBrickA();
+        $this->assertRelationIds([$t0->getId()], $first->getLrelations('en'));
+        $this->assertMetadata([$t0->getId() => 'A'], $first->getLadvancedObjects('en'));
+        $this->assertMetadata([$t0->getId() => 'A'], $first->getLadvancedRelations('en'));
+
+        // adding the brick again must not bring the removed values back
+        $object->getBricks()->setLocalizedRelationBrickB(new LocalizedRelationBrickB($object));
+        $object->save();
+        $object = LocalizedBrickRelation::getById($id, ['force' => true]);
+        $second = $object->getBricks()->getLocalizedRelationBrickB();
+        $this->assertRelationIds([], $second->getLrelations('en'));
+        $this->assertSame([], $second->getLadvancedRelations('en'));
+    }
+
+    public function testSlugsInBricksAreResolvedAndRemovedPerBrick(): void
+    {
+        $slugA = '/localized-slug-brick-a';
+        $slugB = '/localized-slug-brick-b';
+
+        $object = $this->createDataObject();
+        $first = new LocalizedSlugBrickA($object);
+        $first->setLslug([new UrlSlug($slugA)], 'en');
+        $second = new LocalizedSlugBrickB($object);
+        $second->setLslug([new UrlSlug($slugB)], 'en');
+        $object->getBricks()->setLocalizedSlugBrickA($first);
+        $object->getBricks()->setLocalizedSlugBrickB($second);
+        $object->save();
+        $id = $object->getId();
+
+        // the field definition is looked up in the slug's own brick; when it is not found the slug is deleted
+        foreach ([$slugA, $slugB] as $slug) {
+            $this->assertSame('App\Controller\TestController::slugAction', UrlSlug::resolveSlug($slug)?->getAction());
+            $this->assertSame(1, $this->countSlugs($slug));
+        }
+
+        // removing one brick keeps the slugs of the other one
+        $object = LocalizedBrickRelation::getById($id, ['force' => true]);
+        $object->getBricks()->getLocalizedSlugBrickA()->setDoDelete(true);
+        $object->save();
+
+        $this->assertSame(0, $this->countSlugs($slugA));
+        $this->assertSame(1, $this->countSlugs($slugB));
+        $object = LocalizedBrickRelation::getById($id, ['force' => true]);
+        $this->assertSame(
+            [$slugB],
+            array_map(static fn (UrlSlug $slug) => $slug->getSlug(), $object->getBricks()->getLocalizedSlugBrickB()->getLslug('en'))
+        );
+    }
+
     private function createDataObject(): LocalizedBrickRelation
     {
         $object = new LocalizedBrickRelation();
@@ -159,6 +330,23 @@ class LocalizedObjectbrickTest extends ModelTestCase
         $object->setPublished(true);
 
         return $object;
+    }
+
+    /**
+     * Rows of a brick's localized fields in object_relations_* or object_metadata_*.
+     */
+    private function countRows(string $table, string $idColumn, int $objectId, string $brick): int
+    {
+        return (int) Db::get()->fetchOne(
+            'SELECT COUNT(*) FROM ' . $table . '_' . LocalizedBrickRelation::classId()
+            . ' WHERE ' . $idColumn . " = ? AND ownertype = 'localizedfield' AND ownername = ?",
+            [$objectId, '/objectbrick~bricks/' . $brick . '/localizedfield~localizedfield']
+        );
+    }
+
+    private function countSlugs(string $slug): int
+    {
+        return (int) Db::get()->fetchOne('SELECT COUNT(*) FROM ' . UrlSlug::TABLE_NAME . ' WHERE slug = ?', [$slug]);
     }
 
     private function objectMetadata(DataObject\Concrete $target, string $value): ObjectMetadata

@@ -311,7 +311,8 @@ class Dao extends Model\Dao\AbstractDao
                         'fieldname' => $this->model->getFieldname(),
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
-                    $localizedFieldDao->delete();
+                    // a removal, not an update: also clean up when the brick's localized fields are not dirty
+                    $localizedFieldDao->delete(true, false);
 
                     continue;
                 }

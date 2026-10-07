@@ -300,7 +300,7 @@ abstract class AbstractRelations extends Data implements
         } elseif ($object instanceof DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
-                $filter = $this->getContainerLocalizedfieldOwnernameFilter($context);
+                $filter = DataObject\Localizedfield\ContainerOwnerName::filter($context);
                 $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
             } else {
                 $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
