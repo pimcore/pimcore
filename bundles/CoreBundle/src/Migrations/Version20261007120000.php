@@ -44,7 +44,7 @@ final class Version20261007120000 extends AbstractMigration
         }
 
         $rows = $this->connection->fetchAllAssociative(
-            'SELECT slug, siteId, objectId, classId, fieldname, ownername FROM ' . UrlSlugData::TABLE_NAME
+            'SELECT slug, siteId, objectId, classId, fieldname, ownername, position FROM ' . UrlSlugData::TABLE_NAME
             . " WHERE ownertype = 'localizedfield' AND ownername LIKE '/objectbrick~%//localizedfield~localizedfield'"
         );
 
@@ -65,9 +65,21 @@ final class Version20261007120000 extends AbstractMigration
                 continue;
             }
 
+            $ownername = '/objectbrick~' . $match[1] . '/' . $brickType . '/localizedfield~localizedfield';
+            if ($this->hasCurrentSlug($row, $ownername)) {
+                $this->write(sprintf(
+                    'URL slug "%s" of object %d: the brick already has a slug for field "%s", left unchanged.',
+                    $row['slug'],
+                    $row['objectId'],
+                    $row['fieldname']
+                ));
+
+                continue;
+            }
+
             $this->connection->update(
                 UrlSlugData::TABLE_NAME,
-                ['ownername' => '/objectbrick~' . $match[1] . '/' . $brickType . '/localizedfield~localizedfield'],
+                ['ownername' => $ownername],
                 ['slug' => $row['slug'], 'siteId' => $row['siteId']]
             );
         }
@@ -79,10 +91,27 @@ final class Version20261007120000 extends AbstractMigration
     }
 
     /**
+     * A legacy row next to a current one is a leftover (e.g. of a removed brick), it must not become a second slug.
+     */
+    private function hasCurrentSlug(array $row, string $ownername): bool
+    {
+        return (bool) $this->connection->fetchOne(
+            'SELECT 1 FROM ' . UrlSlugData::TABLE_NAME
+            . " WHERE objectId = ? AND fieldname = ? AND ownertype = 'localizedfield'"
+            . ' AND ownername = ? AND position = ? AND siteId = ? LIMIT 1',
+            [$row['objectId'], $row['fieldname'], $ownername, $row['position'], $row['siteId']]
+        );
+    }
+
+    /**
      * The brick type, if exactly one brick of the object has a localized URL slug field of that name.
      */
-    private function resolveBrickType(string $classId, string $containerField, string $fieldname, int $objectId): ?string
-    {
+    private function resolveBrickType(
+        string $classId,
+        string $containerField,
+        string $fieldname,
+        int $objectId
+    ): ?string {
         $class = ClassDefinition::getById($classId);
         $containerDefinition = $class?->getFieldDefinition($containerField);
         if (!$containerDefinition instanceof Objectbricks) {
@@ -101,7 +130,8 @@ final class Version20261007120000 extends AbstractMigration
 
             try {
                 $hasBrick = (bool) $this->connection->fetchOne(
-                    'SELECT 1 FROM `' . $brickDefinition->getTableName($class, false) . '` WHERE id = ? AND fieldname = ? LIMIT 1',
+                    'SELECT 1 FROM `' . $brickDefinition->getTableName($class, false) . '`'
+                    . ' WHERE id = ? AND fieldname = ? LIMIT 1',
                     [$objectId, $containerField]
                 );
             } catch (TableNotFoundException) {
