@@ -12,7 +12,7 @@ Both are enforced by `Pimcore\Twig\Sandbox\SecurityPolicy` and are configurable 
 `templating_engine.twig.sandbox_security_policy`. Object access supports both a
 denylist and an allowlist mode, described below; function access is denylist-only.
 Every built-in denylist described in this document (`blocked_classes`,
-`blocked_functions`, `hard_blocked_methods`) is defined as the *default value* of
+`blocked_functions`, `hard_blocked_methods`, `hard_blocked_method_patterns`) is defined as the *default value* of
 its config option in `bundles/CoreBundle/config/pimcore/default.yaml`, not hardcoded
 in `SecurityPolicy` - a site's own config for the same option is merged with (appended
 to) that default, not substituted for it, so extending one of these options cannot
@@ -58,6 +58,32 @@ further FQCN => methods entries on top of the shipped default), but the shipped
 entries themselves stay in effect - since config for this option is merged with the
 default rather than replacing it - keeping a small number of secret/content-returning
 getters closed off no matter how the rest of the policy is configured.
+
+### Content-model mutation methods
+
+Sandboxed templates only ever need to *read* content. The mutation methods of the
+content-model classes are therefore hard-blocked as well, so a template cannot
+delete, rename or overwrite elements it was handed (or looked up via `pimcore_object`,
+`pimcore_asset`, `pimcore_document`, ...):
+
+- `hard_blocked_methods` blocks `delete`, `save` and `saveVersion` on
+  `Pimcore\Model\DataObject\AbstractObject` (which covers concrete objects **and**
+  DataObject folders), `Pimcore\Model\Asset` and `Pimcore\Model\Document`.
+- `hard_blocked_method_patterns` blocks method *families* that cannot be enumerated by
+  exact name, because the setters are generated dynamically and several
+  methods write directly without a later `save()` call. By default every method whose
+  name starts with `set`, `save` or `delete` (case-insensitive, e.g. `setKey`,
+  `setFilename`, `saveIndex`, `deleteAutoSaveVersions`) is blocked on the same three
+  base classes.
+
+`hard_blocked_method_patterns` is a FQCN => list-of-PCRE-patterns map. Keys are matched
+with `instanceof` exactly like `hard_blocked_methods`, a pattern is matched against
+the method name with `preg_match()`, and the check is **not** bypassed by allowlist
+mode. Like the other options it is merged with (appended to) the shipped default, so a
+site can add further classes/patterns but cannot remove the defaults. Use the `i` flag
+in your own patterns: PHP method names are case-insensitive.
+
+Read access (`getId`, `getKey`, `getFilename`, ...) is unaffected.
 
 ## Function access
 
@@ -109,7 +135,7 @@ pimcore:
 
 ## Configuration
 
-`blocked_classes`, `blocked_functions` and `hard_blocked_methods` already default to
+`blocked_classes`, `blocked_functions`, `hard_blocked_methods` and `hard_blocked_method_patterns` already default to
 Pimcore's built-in denylists in `default.yaml` (shown below, abbreviated) - a site's
 own `config/packages/pimcore.yaml` only needs to list what it wants to *add* on top of
 those defaults:
@@ -170,6 +196,27 @@ pimcore:
                         - getStream
                         - getLocalFile
                         - getTemporaryFile
+                        - delete
+                        - save
+                        - saveVersion
+                    Pimcore\Model\DataObject\AbstractObject:
+                        - delete
+                        - save
+                        - saveVersion
+                    Pimcore\Model\Document:
+                        - delete
+                        - save
+                        - saveVersion
+                # FQCN => PCRE patterns for method families that can't be listed by exact
+                # name (dynamic setters, save*/delete* variants). Never callable, regardless
+                # of blocked_classes/allowed_classes; merged with this default.
+                hard_blocked_method_patterns:
+                    Pimcore\Model\DataObject\AbstractObject:
+                        - '/^(set|save|delete)/i'
+                    Pimcore\Model\Asset:
+                        - '/^(set|save|delete)/i'
+                    Pimcore\Model\Document:
+                        - '/^(set|save|delete)/i'
 ```
 
 ### Example: allowlist mode
@@ -236,7 +283,11 @@ pimcore:
   e.g. `pimcore_user`) and is matched by string comparison.
 - `hard_blocked_methods` keys are FQCNs, matched the same way as `blocked_classes`;
   each value is a list of method names, matched by string comparison.
-- `blocked_classes`, `blocked_functions` and `hard_blocked_methods` are Symfony
+- `hard_blocked_method_patterns` keys are FQCNs, matched the same way as `blocked_classes`;
+  each value is a list of PCRE patterns (including delimiters and flags), matched against
+  the method name with `preg_match()`.
+- `blocked_classes`, `blocked_functions`, `hard_blocked_methods` and
+  `hard_blocked_method_patterns` are Symfony
   config array nodes, so a site's own value for any of them is merged with (appended
   to) Pimcore's default rather than replacing it - there is no config-only way to
   remove an entry from the shipped defaults.

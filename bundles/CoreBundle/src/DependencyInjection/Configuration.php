@@ -2241,7 +2241,8 @@ final class Configuration implements ConfigurationInterface
                                 method whose name matches one of the patterns, with the same guarantee as
                                 `hard_blocked_methods` (not bypassed by allowed_classes). Used for method families
                                 that cannot be enumerated by exact name, e.g. the dynamically-generated `setXxx`
-                                setters of DataObject/Asset/Document classes - a site can extend the map with
+                                setters and the `save*`/`delete*` families of DataObject/Asset/Document
+                                classes - a site can extend the map with
                                 further classes/patterns on top of that default.')
                                 ->useAttributeAsKey('class')
                                 ->arrayPrototype()

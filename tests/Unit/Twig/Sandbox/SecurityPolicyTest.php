@@ -18,6 +18,7 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
@@ -234,6 +235,7 @@ final class SecurityPolicyTest extends TestCase
         foreach (['delete', 'save', 'saveVersion'] as $method) {
             yield "Asset::{$method}" => [new Asset(), $method];
             yield "DataObject\\Concrete::{$method}" => [new Concrete(), $method];
+            yield "DataObject\\Folder::{$method}" => [new Folder(), $method];
             yield "Document::{$method}" => [new Document(), $method];
         }
     }
@@ -259,7 +261,20 @@ final class SecurityPolicyTest extends TestCase
         yield 'DataObject\Concrete::setKey' => [new Concrete(), 'setKey'];
         // the generic `set($fieldName, $value)` accessor also mutates and must be caught
         yield 'DataObject\Concrete::set' => [new Concrete(), 'set'];
+        yield 'DataObject\Folder::setKey' => [new Folder(), 'setKey'];
         yield 'Document::setKey' => [new Document(), 'setKey'];
+        // PHP method names are case-insensitive and `__call`-dispatched setters reach the
+        // policy with the casing used in the template
+        yield 'DataObject\Concrete::SETKEY' => [new Concrete(), 'SETKEY'];
+        // direct-write methods outside the exact save/delete/saveVersion names: they write
+        // through the DAO without a later `save()` call
+        yield 'DataObject\Concrete::saveIndex' => [new Concrete(), 'saveIndex'];
+        yield 'DataObject\Folder::saveIndex' => [new Folder(), 'saveIndex'];
+        yield 'Document::saveIndex' => [new Document(), 'saveIndex'];
+        yield 'Asset::deleteAutoSaveVersions' => [new Asset(), 'deleteAutoSaveVersions'];
+        yield 'DataObject\Concrete::deleteAutoSaveVersions' => [new Concrete(), 'deleteAutoSaveVersions'];
+        yield 'Document::deleteAutoSaveVersions' => [new Document(), 'deleteAutoSaveVersions'];
+        yield 'DataObject\Folder::SAVEINDEX' => [new Folder(), 'SAVEINDEX'];
     }
 
     /**
@@ -289,9 +304,10 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Asset(), 'getFilename');
         $policy->checkMethodAllowed(new Concrete(), 'getId');
         $policy->checkMethodAllowed(new Concrete(), 'getKey');
+        $policy->checkMethodAllowed(new Folder(), 'getKey');
         $policy->checkMethodAllowed(new Document(), 'getId');
         $policy->checkMethodAllowed(new Document(), 'getKey');
-        $this->addToAssertionCount(6);
+        $this->addToAssertionCount(7);
     }
 
     /**
@@ -300,7 +316,7 @@ final class SecurityPolicyTest extends TestCase
     public function testHardBlockedMethodsSurviveAllowlistModeForContentModelClasses(object $instance, string $method): void
     {
         $policy = new SecurityPolicy(
-            allowedClasses: [Asset::class, Concrete::class, Document::class],
+            allowedClasses: [Asset::class, Concrete::class, Folder::class, Document::class],
             hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
         );
 
@@ -314,7 +330,7 @@ final class SecurityPolicyTest extends TestCase
     public function testHardBlockedMethodPatternsSurviveAllowlistMode(object $instance, string $method): void
     {
         $policy = new SecurityPolicy(
-            allowedClasses: [Asset::class, Concrete::class, Document::class],
+            allowedClasses: [Asset::class, Concrete::class, Folder::class, Document::class],
             hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
         );
 

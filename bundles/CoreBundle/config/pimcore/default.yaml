@@ -405,7 +405,8 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
-                    Pimcore\Model\DataObject\Concrete:
+                    # AbstractObject (not Concrete) so that DataObject folders are covered as well
+                    Pimcore\Model\DataObject\AbstractObject:
                         - delete
                         - save
                         - saveVersion
@@ -413,13 +414,16 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
+                # Method families that cannot be enumerated by exact name: the dynamically
+                # generated `setXxx` setters and every `save*`/`delete*` variant that writes
+                # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions).
                 hard_blocked_method_patterns:
-                    Pimcore\Model\DataObject\Concrete:
-                        - '/^set/'
+                    Pimcore\Model\DataObject\AbstractObject:
+                        - '/^(set|save|delete)/i'
                     Pimcore\Model\Asset:
-                        - '/^set/'
+                        - '/^(set|save|delete)/i'
                     Pimcore\Model\Document:
-                        - '/^set/'
+                        - '/^(set|save|delete)/i'
 
     gotenberg:
         base_url: 'http://gotenberg:3000'
