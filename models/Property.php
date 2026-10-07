@@ -16,9 +16,11 @@ namespace Pimcore\Model;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Serialize;
+use Throwable;
 
 /**
  * @method \Pimcore\Model\Property\Dao getDao()
@@ -90,7 +92,15 @@ final class Property extends AbstractModel
         // IMPORTANT: if you use this method be sure that the type of the property is already set
         // do not set data for object, asset and document here, this is loaded dynamically when calling $this->getData();
         if ($this->type == 'date') {
-            $this->data = Serialize::unserialize($data, [Carbon::class, DateTime::class, DateTimeImmutable::class]);
+            // stored values are untrusted: even an allowed class can throw while being unserialized
+            // (e.g. O:8:"DateTime":0:{}), which must not make the whole element unloadable
+            try {
+                $date = Serialize::unserialize($data, [Carbon::class, DateTime::class, DateTimeImmutable::class]);
+            } catch (Throwable) {
+                $date = null;
+            }
+
+            $this->data = $date instanceof DateTimeInterface ? $date : null;
         } elseif ($this->type == 'bool') {
             $this->data = false;
             if (!empty($data)) {

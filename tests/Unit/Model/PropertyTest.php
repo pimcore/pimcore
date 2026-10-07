@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model;
 
-use __PHP_Incomplete_Class;
 use Carbon\Carbon;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -38,7 +37,25 @@ class PropertyTest extends TestCase
         $property->setDataFromResource($payload);
 
         $this->assertFalse(PropertyDeserializeCanary::$fired);
-        $this->assertInstanceOf(__PHP_Incomplete_Class::class, $property->getData());
+        $this->assertNull($property->getData());
+    }
+
+    public function testSetDataFromResourceNormalizesMalformedAllowlistedClassToNull(): void
+    {
+        $property = new Property();
+        $property->setType('date');
+        $property->setDataFromResource('O:8:"DateTime":0:{}');
+
+        $this->assertNull($property->getData());
+    }
+
+    public function testSetDataFromResourceNormalizesNonDateValueToNull(): void
+    {
+        $property = new Property();
+        $property->setType('date');
+        $property->setDataFromResource(serialize('not a date'));
+
+        $this->assertNull($property->getData());
     }
 
     public function testSetDataFromResourceStillReconstructsALegitimateDate(): void
