@@ -181,12 +181,31 @@ final class SsrfProtection
     {
         $ip = self::normalizeIp($ip);
 
+        if (self::isLocalUseNat64($ip)) {
+            return false;
+        }
+
         // FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE only implements the RFC 3330-era
         // reserved space and misses later registrations such as RFC 6598 (CGNAT, 100.64.0.0/10 -
         // which carries the Alibaba Cloud metadata endpoint 100.100.100.200) and several RFC 6890
         // special-purpose ranges. FILTER_FLAG_GLOBAL_RANGE checks the RFC 6890 "Globally
         // Reachable" attribute directly and covers those gaps.
         return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_GLOBAL_RANGE) !== false;
+    }
+
+    /**
+     * 64:ff9b:1::/48 is the RFC 8215 local-use NAT64 prefix. IANA lists it as not globally
+     * reachable, but FILTER_FLAG_GLOBAL_RANGE still accepts it. Its embedded IPv4 address sits at a
+     * position that depends on the prefix length the operator chose (RFC 6052, /48 to /96), so it
+     * cannot be decoded unambiguously and the whole range is rejected instead.
+     */
+    private static function isLocalUseNat64(string $ip): bool
+    {
+        $packed = @inet_pton($ip);
+
+        return $packed !== false
+            && strlen($packed) === 16
+            && str_starts_with($packed, "\x00\x64\xff\x9b\x00\x01");
     }
 
     /**
