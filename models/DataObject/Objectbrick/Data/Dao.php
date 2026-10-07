@@ -311,7 +311,8 @@ class Dao extends Model\Dao\AbstractDao
                         'fieldname' => $this->model->getFieldname(),
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
-                    $localizedFieldDao->delete();
+                    // a removal, not an update: also clean up when the brick's localized fields are not dirty
+                    $localizedFieldDao->delete(true, false);
 
                     continue;
                 }
@@ -328,7 +329,13 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     if ($fd instanceof CustomResourcePersistingInterface) {
-                        $fd->delete($object);
+                        $fd->delete($object, [
+                            'context' => [
+                                'containerType' => 'objectbrick',
+                                'containerKey' => $this->model->getType(),
+                                'fieldname' => $this->model->getFieldname(),
+                            ],
+                        ]);
                     }
                 }
             }

@@ -280,13 +280,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         } elseif ($object instanceof Model\DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
-                $fieldname = $context['fieldname'] ?? null;
-                if ($context['containerType'] === 'fieldcollection') {
-                    $index = $context['index'] ?? null;
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
-                } else {
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
-                }
+                $filter = Model\DataObject\Localizedfield\ContainerOwnerName::likePattern($context);
                 $rawResult = $object->getObject()->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
             } else {
                 $rawResult = $object->getObject()->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
@@ -306,10 +300,31 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
-        if (!isset($params['isUpdate']) || !$params['isUpdate']) {
-            $db = Db::get();
-            $db->delete(Model\DataObject\Data\UrlSlug::TABLE_NAME, ['objectId' => $object->getId()]);
+        if ($params['isUpdate'] ?? false) {
+            return;
         }
+
+        $db = Db::get();
+        $context = $params['context'] ?? [];
+        if (isset($context['containerType'], $context['subContainerType'])
+            && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')
+            && $context['subContainerType'] === 'localizedfield'
+        ) {
+            // a single brick or field collection item is removed, keep the other slugs of the object
+            $db->executeStatement(
+                'DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE objectId = ?'
+                . " AND ownertype = 'localizedfield' AND ownername LIKE ? AND fieldname = ?",
+                [
+                    $object->getId(),
+                    Model\DataObject\Localizedfield\ContainerOwnerName::likePattern($context),
+                    $this->getName(),
+                ]
+            );
+
+            return;
+        }
+
+        $db->delete(Model\DataObject\Data\UrlSlug::TABLE_NAME, ['objectId' => $object->getId()]);
     }
 
     public function getUnique(): bool
