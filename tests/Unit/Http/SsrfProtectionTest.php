@@ -70,6 +70,8 @@ class SsrfProtectionTest extends TestCase
             'nat64 local-use prefix to metadata' => ['http://[64:ff9b:1:a9fe:a9:fe00::]/latest/meta-data/'],
             'nat64 local-use prefix to loopback' => ['http://[64:ff9b:1:7f00:0:100::]/x.css'],
             'nat64 local-use prefix with embedded public ipv4' => ['http://[64:ff9b:1:808:8:800::]/x.css'],
+            'ipv6 deprecated site-local' => ['http://[fec0::1]/'],
+            'ipv6 deprecated site-local upper bound' => ['http://[feff:ffff::1]/'],
             '6to4 to loopback' => ['http://[2002:7f00:1::1]/x.css'],
             '6to4 to private range' => ['http://[2002:0a00:0001::1]/x.css'],
             'non-http scheme ftp' => ['ftp://127.0.0.1/x.css'],

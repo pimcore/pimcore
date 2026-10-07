@@ -181,7 +181,7 @@ final class SsrfProtection
     {
         $ip = self::normalizeIp($ip);
 
-        if (self::isLocalUseNat64($ip)) {
+        if (self::isLocalUseNat64($ip) || self::isDeprecatedSiteLocal($ip)) {
             return false;
         }
 
@@ -206,6 +206,20 @@ final class SsrfProtection
         return $packed !== false
             && strlen($packed) === 16
             && str_starts_with($packed, "\x00\x64\xff\x9b\x00\x01");
+    }
+
+    /**
+     * fec0::/10 is the deprecated IPv6 site-local range (RFC 3879). FILTER_FLAG_GLOBAL_RANGE still
+     * accepts it, but it can be routed to internal services and is not a public destination.
+     */
+    private static function isDeprecatedSiteLocal(string $ip): bool
+    {
+        $packed = @inet_pton($ip);
+
+        return $packed !== false
+            && strlen($packed) === 16
+            && ord($packed[0]) === 0xfe
+            && (ord($packed[1]) & 0xc0) === 0xc0;
     }
 
     /**
