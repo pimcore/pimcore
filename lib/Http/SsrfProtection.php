@@ -216,6 +216,11 @@ final class SsrfProtection
      * FILTER_FLAG_GLOBAL_RANGE - validate only the outer IPv6 address and do not decode the
      * embedded IPv4, which would let a mapped/tunnelled loopback or metadata address bypass the
      * check even though the address they actually reach is not globally routable.
+     *
+     * Known limitation: operator-specific NAT64 prefixes (RFC 6052 network-specific Pref64, /32 to
+     * /96) are ordinary global IPv6 addresses and cannot be told apart from native IPv6 here. Where a
+     * NAT64 gateway is reachable from the application server, block access to metadata endpoints at
+     * the gateway / network level.
      */
     private static function normalizeIp(string $ip): string
     {
