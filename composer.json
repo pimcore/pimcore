@@ -143,7 +143,7 @@
   },
   "require-dev": {
     "behat/gherkin": "4.15.0",
-    "codeception/codeception": "^5.3.5",
+    "codeception/codeception": "^5.3.7",
     "codeception/stub": "^4.1.4",
     "codeception/module-symfony": "^3.5",
     "composer/composer": "*",

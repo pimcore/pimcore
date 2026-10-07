@@ -51,8 +51,12 @@ class RoutingListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            // run with high priority as we need to set the site early
-            KernelEvents::REQUEST => ['onKernelRequest', 512],
+            KernelEvents::REQUEST => [
+                // run with high priority as we need to set the site early
+                ['onKernelRequest', 512],
+                // right after Symfony's SessionListener (128): the admin session check needs the session
+                ['onKernelRequestWithSession', 127],
+            ],
         ];
     }
 
@@ -70,6 +74,24 @@ class RoutingListener implements EventSubscriberInterface
 
             return;
         }
+
+        // requests with admin parameters are handled in onKernelRequestWithSession(), as only the
+        // session tells an admin from a spoofed parameter; listeners in between ignore such requests
+        if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
+            $this->handleFrontendRequest($event);
+        }
+    }
+
+    public function onKernelRequestWithSession(RequestEvent $event): void
+    {
+        if ($event->isMainRequest() && $this->requestHelper->isFrontendRequestByAdmin($event->getRequest())) {
+            $this->handleFrontendRequest($event);
+        }
+    }
+
+    private function handleFrontendRequest(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
@@ -133,8 +155,13 @@ class RoutingListener implements EventSubscriberInterface
         // do not allow requests including /app.php/ => SEO
         // this is after the first redirect check, to allow redirects in app.php?xxx
         if (preg_match('@^/app\.php(.*)@', $path, $matches) && $request->getMethod() === 'GET') {
-            $redirectUrl = $matches[1];
-            $redirectUrl = ltrim($redirectUrl, '/');
+            // browsers drop ASCII tab and newline characters anywhere in a URL, so remove them
+            // before trimming; otherwise they could separate the leading slashes from the rest
+            $redirectUrl = str_replace(["\t", "\n", "\r"], '', $matches[1]);
+            // strip leading slashes AND backslashes: browsers normalize a leading backslash
+            // to a forward slash for special-scheme URLs, so a lone ltrim('/') would still
+            // allow a scheme-relative redirect target like `/\evil.com` => `//evil.com`.
+            $redirectUrl = ltrim($redirectUrl, '/\\');
             $redirectUrl = '/' . $redirectUrl;
 
             $event->setResponse(new RedirectResponse($redirectUrl, Response::HTTP_MOVED_PERMANENTLY));

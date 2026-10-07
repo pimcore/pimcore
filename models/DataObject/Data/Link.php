@@ -16,10 +16,12 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
@@ -395,18 +397,26 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
+    /**
+     * Renders the link as an anchor tag. Whether script-executing URL schemes and event-handler
+     * attributes are rejected depends on the active
+     * \Pimcore\Model\DataObject\Data\Link\SanitizerPolicy (see GHSA-h78x-47qg-qjmq): the
+     * permissive default keeps the historical output, strict() (config
+     * "pimcore.objects.link_sanitizer.strict") rejects them.
+     */
     public function getHtml(): string
     {
         $attributes = ['rel', 'tabindex', 'accesskey', 'title', 'target', 'class'];
         $attribs = [];
         foreach ($attributes as $a) {
             if ($this->$a) {
-                $attribs[] = $a . '="' . $this->$a . '"';
+                $attribs[] = $a . '="' . self::escapeDoubleQuotes((string) $this->$a) . '"';
             }
         }
 
-        if ($this->getAttributes()) {
-            $attribs[] = $this->getAttributes();
+        $freeFormAttributes = $this->getRenderedFreeFormAttributes();
+        if ($freeFormAttributes !== '') {
+            $attribs[] = $freeFormAttributes;
         }
 
         $href = $this->getHref();
@@ -422,7 +432,111 @@ class Link implements OwnerAwareFieldInterface
             }
         }
 
-        return '<a href="' . $this->getHref() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
+        return '<a href="' . self::escapeDoubleQuotes($this->getRenderedHref($href)) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
+    }
+
+    /**
+     * Escapes only the character that can end a double-quoted attribute value, so the value cannot
+     * break out of its attribute while every input that was safe before renders byte-identically.
+     */
+    private static function escapeDoubleQuotes(string $value): string
+    {
+        return str_replace('"', '&quot;', $value);
+    }
+
+    private function getRenderedHref(string $href): string
+    {
+        if (!SanitizerPolicy::getInstance()->isUrlAllowed($href)) {
+            return '';
+        }
+
+        // only the unconfigured permissive default is deprecated - an application that installed
+        // its own policy via SanitizerPolicy::setInstance() has opted out on purpose
+        if ($href !== '' && !SanitizerPolicy::isConfigured() && !AttributeSanitizer::strict()->isUrlAllowed($href)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '2026.3',
+                'Rendering a DataObject Link href with a URL scheme that the stricter policy closing'
+                . ' GHSA-h78x-47qg-qjmq would reject. The permissive Link sanitizer default is deprecated and'
+                . ' will be removed in 2027.1; set "pimcore.objects.link_sanitizer.strict: true" to'
+                . ' reject it now.'
+            );
+        }
+
+        return $href;
+    }
+
+    /**
+     * The permissive default emits the free-form `attributes` string exactly as stored. Under a
+     * policy that rejects editor-supplied attribute keys it is instead parsed into name/value
+     * pairs and re-serialized, so it can neither break out of the opening tag nor carry event
+     * handlers; anything that does not parse as an attribute, or whose key is rejected, is dropped.
+     */
+    private function getRenderedFreeFormAttributes(): string
+    {
+        $raw = $this->getAttributes();
+        if (!$raw) {
+            return '';
+        }
+
+        $sanitizer = SanitizerPolicy::getInstance();
+        if ($sanitizer->rejectsEditorSuppliedAttributeKeys()) {
+            return $this->parseFreeFormAttributes($raw, $sanitizer)[0];
+        }
+
+        [, $dropped] = $this->parseFreeFormAttributes($raw, AttributeSanitizer::strict());
+
+        if ($dropped && !SanitizerPolicy::isConfigured()) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '2026.3',
+                'Rendering a DataObject Link with free-form attributes that the stricter policy closing'
+                . ' GHSA-h78x-47qg-qjmq would reject. The permissive Link sanitizer default is deprecated and'
+                . ' will be removed in 2027.1; set "pimcore.objects.link_sanitizer.strict: true" to'
+                . ' reject it now.'
+            );
+        }
+
+        return $raw;
+    }
+
+    /**
+     * @return array{0: string, 1: bool} the re-serialized attributes and whether anything was dropped
+     */
+    private function parseFreeFormAttributes(string $raw, AttributeSanitizer $sanitizer): array
+    {
+        $pattern = '/\G\s*([A-Za-z_:][-A-Za-z0-9_:.]*)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'=<>`]+)))?(?=\s|$)/';
+        $attribs = [];
+        $dropped = false;
+        $offset = 0;
+        $length = strlen($raw);
+
+        while ($offset < $length) {
+            if (preg_match($pattern, $raw, $m, PREG_UNMATCHED_AS_NULL, $offset) !== 1) {
+                // drop the unparsable token (including leading whitespace) in one step
+                if (preg_match('/\G\s*\S+/', $raw, $skipped, 0, $offset) !== 1) {
+                    break;
+                }
+                $offset += strlen($skipped[0]);
+                $dropped = true;
+
+                continue;
+            }
+
+            $offset += strlen($m[0]);
+            if (!$sanitizer->isAttributeKeyAllowed($m[1], true)) {
+                $dropped = true;
+
+                continue;
+            }
+
+            $value = $m[2] ?? $m[3] ?? $m[4] ?? null;
+            $attribs[] = $value === null
+                ? $m[1]
+                : $m[1] . '="' . htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8', false) . '"';
+        }
+
+        return [implode(' ', $attribs), $dropped];
     }
 
     public function isEmpty(): bool
