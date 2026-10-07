@@ -100,7 +100,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->allowedClasses = $allowedClasses;
         $this->blockedFunctions = $blockedFunctions;
         $this->hardBlockedMethods = $hardBlockedMethods;
-        $this->hardBlockedMethodPatterns = $hardBlockedMethodPatterns;
+        $this->setHardBlockedMethodPatterns($hardBlockedMethodPatterns);
     }
 
     public function setAllowedTags(array $tags): void
@@ -138,8 +138,24 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->hardBlockedMethods = $hardBlockedMethods;
     }
 
+    /**
+     * @throws \InvalidArgumentException if a pattern is not a valid PCRE pattern - this is a deny
+     *                                   rule, so a malformed one must never be silently ignored
+     */
     public function setHardBlockedMethodPatterns(array $hardBlockedMethodPatterns): void
     {
+        foreach ($hardBlockedMethodPatterns as $class => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (!is_string($pattern) || @preg_match($pattern, '') === false) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'Invalid hard-blocked method pattern for class "%s": %s',
+                        $class,
+                        is_string($pattern) ? $pattern : get_debug_type($pattern),
+                    ));
+                }
+            }
+        }
+
         $this->hardBlockedMethodPatterns = $hardBlockedMethodPatterns;
     }
 
@@ -295,7 +311,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
             }
 
             foreach ($patterns as $pattern) {
-                if (preg_match($pattern, $method) === 1) {
+                // a PCRE runtime error (e.g. backtrack limit) yields false: fail closed
+                if (preg_match($pattern, $method) !== 0) {
                     $objClass = $obj::class;
 
                     throw new SecurityNotAllowedMethodError(

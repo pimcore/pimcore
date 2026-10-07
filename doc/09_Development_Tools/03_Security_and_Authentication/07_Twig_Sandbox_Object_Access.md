@@ -72,8 +72,10 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
 - `hard_blocked_method_patterns` blocks method *families* that cannot be enumerated by
   exact name, because the setters are generated dynamically and several
   methods write directly without a later `save()` call. By default every method whose
-  name starts with `set`, `save` or `delete` (case-insensitive, e.g. `setKey`,
-  `setFilename`, `saveIndex`, `deleteAutoSaveVersions`) is blocked on the same three
+  name starts with `set`, `save`, `delete`, `create`, `unlock`, `add`, `remove`,
+  `clear`, `correct` or `trigger` (case-insensitive, e.g. `setKey`, `saveIndex`,
+  `deleteAutoSaveVersions`, the static `create()` factories, `unlockPropagate`,
+  `addMetadata`, `removeProperty`, `clearThumbnails`) is blocked on the same three
   base classes.
 
 `hard_blocked_method_patterns` is a FQCN => list-of-PCRE-patterns map. Keys are matched
@@ -81,7 +83,10 @@ with `instanceof` exactly like `hard_blocked_methods`, a pattern is matched agai
 the method name with `preg_match()`, and the check is **not** bypassed by allowlist
 mode. Like the other options it is merged with (appended to) the shipped default, so a
 site can add further classes/patterns but cannot remove the defaults. Use the `i` flag
-in your own patterns: PHP method names are case-insensitive.
+in your own patterns: PHP method names are case-insensitive. Patterns are validated
+when the configuration is loaded and a malformed pattern is rejected (the policy fails
+closed instead of silently ignoring a broken deny rule); a PCRE runtime error while
+matching also denies the call.
 
 Read access (`getId`, `getKey`, `getFilename`, ...) is unaffected.
 
@@ -212,11 +217,11 @@ pimcore:
                 # of blocked_classes/allowed_classes; merged with this default.
                 hard_blocked_method_patterns:
                     Pimcore\Model\DataObject\AbstractObject:
-                        - '/^(set|save|delete)/i'
+                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
                     Pimcore\Model\Asset:
-                        - '/^(set|save|delete)/i'
+                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
                     Pimcore\Model\Document:
-                        - '/^(set|save|delete)/i'
+                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
 ```
 
 ### Example: allowlist mode

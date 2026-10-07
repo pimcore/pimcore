@@ -415,15 +415,16 @@ pimcore:
                         - save
                         - saveVersion
                 # Method families that cannot be enumerated by exact name: the dynamically
-                # generated `setXxx` setters and every `save*`/`delete*` variant that writes
-                # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions).
+                # generated `setXxx` setters and every other persistent mutator that writes
+                # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions, the static
+                # create() factories, unlockPropagate, addMetadata/removeProperty, clearThumbnails).
                 hard_blocked_method_patterns:
                     Pimcore\Model\DataObject\AbstractObject:
-                        - '/^(set|save|delete)/i'
+                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
                     Pimcore\Model\Asset:
-                        - '/^(set|save|delete)/i'
+                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
                     Pimcore\Model\Document:
-                        - '/^(set|save|delete)/i'
+                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

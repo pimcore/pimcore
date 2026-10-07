@@ -275,6 +275,19 @@ final class SecurityPolicyTest extends TestCase
         yield 'DataObject\Concrete::deleteAutoSaveVersions' => [new Concrete(), 'deleteAutoSaveVersions'];
         yield 'Document::deleteAutoSaveVersions' => [new Document(), 'deleteAutoSaveVersions'];
         yield 'DataObject\Folder::SAVEINDEX' => [new Folder(), 'SAVEINDEX'];
+        // static factories that persist immediately can be invoked through an instance
+        yield 'Asset::create' => [new Asset(), 'create'];
+        yield 'Document::create' => [new Document(), 'create'];
+        yield 'DataObject\Folder::create' => [new Folder(), 'create'];
+        // direct tree-lock / property / metadata / thumbnail mutations
+        yield 'Asset::unlockPropagate' => [new Asset(), 'unlockPropagate'];
+        yield 'DataObject\Concrete::unlockPropagate' => [new Concrete(), 'unlockPropagate'];
+        yield 'Document::unlockPropagate' => [new Document(), 'unlockPropagate'];
+        yield 'Asset::removeProperty' => [new Asset(), 'removeProperty'];
+        yield 'Asset::addMetadata' => [new Asset(), 'addMetadata'];
+        yield 'Asset::removeMetadata' => [new Asset(), 'removeMetadata'];
+        yield 'Asset::removeCustomSetting' => [new Asset(), 'removeCustomSetting'];
+        yield 'Asset::clearThumbnails' => [new Asset(), 'clearThumbnails'];
     }
 
     /**
@@ -336,6 +349,20 @@ final class SecurityPolicyTest extends TestCase
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed($instance, $method);
+    }
+
+    public function testMalformedHardBlockedMethodPatternIsRejectedByConstructor(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new SecurityPolicy(hardBlockedMethodPatterns: [stdClass::class => ['/^set(/']]);
+    }
+
+    public function testMalformedHardBlockedMethodPatternIsRejectedBySetter(): void
+    {
+        $policy = new SecurityPolicy();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $policy->setHardBlockedMethodPatterns([stdClass::class => ['not-a-pattern']]);
     }
 
     public function testHardBlockedMethodPatternsCanBeSetAtRuntime(): void
