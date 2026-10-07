@@ -158,4 +158,44 @@ class LinkSanitizerConfigurationTest extends TestCase
 
         $this->assertFalse($config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
     }
+
+    // ---- DataObject Link (pimcore.objects.link_sanitizer.*, GHSA-h78x-47qg-qjmq) ----
+
+    public function testObjectsLinkSanitizerDefaults(): void
+    {
+        $config = $this->process([[]])['objects']['link_sanitizer'];
+
+        $this->assertFalse($config['strict']);
+        $this->assertSame(['javascript:', 'vbscript:'], $config['blocked_url_schemes']);
+        $this->assertTrue($config['block_unsafe_data_urls']);
+    }
+
+    public function testObjectsLinkSanitizerIsIndependentOfTheDocumentsSetting(): void
+    {
+        $config = $this->process([[
+            'objects' => ['link_sanitizer' => ['strict' => true]],
+        ]]);
+
+        $this->assertTrue($config['objects']['link_sanitizer']['strict']);
+        $this->assertFalse($config['documents']['editables']['link_sanitizer']['strict']);
+    }
+
+    public function testObjectsLinkSanitizerParsesQuotedBooleanStrings(): void
+    {
+        $config = $this->process([[
+            'objects' => ['link_sanitizer' => ['strict' => 'false', 'block_unsafe_data_urls' => 'no']],
+        ]])['objects']['link_sanitizer'];
+
+        $this->assertFalse($config['strict']);
+        $this->assertFalse($config['block_unsafe_data_urls']);
+    }
+
+    public function testObjectsLinkSanitizerRejectsEntriesThatAreNotASchemeName(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->process([[
+            'objects' => ['link_sanitizer' => ['strict' => true, 'blocked_url_schemes' => ['java']]],
+        ]]);
+    }
 }
