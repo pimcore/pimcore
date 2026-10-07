@@ -49,6 +49,18 @@ class PropertyTest extends TestCase
         $this->assertNull($property->getData());
     }
 
+    public function testSetDataFromResourceKeepsEmptyValuesAsIs(): void
+    {
+        $property = new Property();
+        $property->setType('date');
+
+        $property->setDataFromResource('');
+        $this->assertSame('', $property->getData());
+
+        $property->setDataFromResource(null);
+        $this->assertNull($property->getData());
+    }
+
     public function testSetDataFromResourceNormalizesNonDateValueToNull(): void
     {
         $property = new Property();
