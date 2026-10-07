@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.4.0
+
+### [Workflow]
+- [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
+
 ## Pimcore 2026.3.1
 
 ### [Assets]
@@ -54,9 +59,6 @@
   - This migration only touches a column when its current collation and length still match the stock legacy definition; a column a project has already widened or otherwise customized is left untouched (a notice is logged) instead of being silently reset.
   - The migration is **irreversible** (`down()` throws) — reverting `utf8mb4` columns back to `utf8`/`utf8mb3` could silently replace stored 4-byte characters (e.g. emoji) with `?` given this application's intentionally permissive `sql_mode=''`. Restore from a backup if you need to roll back.
   - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
-
-### [Workflow]
-- [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
 
 ## Pimcore 2026.2.14
 
