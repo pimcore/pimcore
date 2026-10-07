@@ -12,7 +12,6 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
-use Doctrine\DBAL\Exception\TableNotFoundException;
 use Exception;
 use Pimcore;
 use Pimcore\Db\Helper;
@@ -229,23 +228,18 @@ class Dao extends Model\Dao\AbstractDao
             return [];
         }
 
-        $localizedOwnerName = Helper::quoteInto(
-            $this->db,
-            'ownername LIKE ?',
-            Helper::escapeLike('/fieldcollection~' . $this->model->getFieldname() . '/') . '%'
-        );
-        $whereLocalizedFields = "(ownertype = 'localizedfield' AND " . $localizedOwnerName
+        $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
+            . Helper::quoteInto(
+                $this->db,
+                'ownername LIKE ?',
+                Helper::escapeLike('/fieldcollection~' . $this->model->getFieldname() . '/') . '%'
+            )
             . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()). ')';
-        // the metadata of the localized relations is rewritten together with the relations,
-        // otherwise the metadata of removed items is left behind
-        $whereLocalizedMetadata = "(ownertype = 'localizedfield' AND " . $localizedOwnerName
-            . ' AND ' . Helper::quoteInto($this->db, 'id = ?', $object->getId()). ')';
 
         if ($saveMode) {
             if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
-                $this->deleteLocalizedMetadata($object, $whereLocalizedMetadata);
 
                 return ['saveLocalizedRelations' => true];
             }
@@ -257,20 +251,7 @@ class Dao extends Model\Dao\AbstractDao
         // empty relation table
         $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
         $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
-        $this->deleteLocalizedMetadata($object, $whereLocalizedMetadata);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
-    }
-
-    /**
-     * The metadata table only exists for classes with advanced many-to-many relations.
-     */
-    private function deleteLocalizedMetadata(DataObject\Concrete $object, string $where): void
-    {
-        try {
-            $this->db->executeStatement('DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' . $where);
-        } catch (TableNotFoundException) {
-            // no metadata to delete
-        }
     }
 }

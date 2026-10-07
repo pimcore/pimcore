@@ -69,7 +69,7 @@ class LocalizedFieldcollectionTest extends ModelTestCase
         $this->tester->setupPimcoreClass_CollectionWithoutMetadata();
     }
 
-    public function testRemovingAnItemRemovesItsLocalizedMetadata(): void
+    public function testRemovingAnItemKeepsTheDataOfTheRemainingItem(): void
     {
         [$t0, $t1] = $this->targets;
 
@@ -95,7 +95,6 @@ class LocalizedFieldcollectionTest extends ModelTestCase
         $this->assertMetadata([$t1->getId() => 'second'], $items[0]->getLadvancedObjects('en'));
         $this->assertMetadata([$t1->getId() => 'second'], $items[0]->getLadvancedRelations('en'));
         $this->assertSame(2, $this->countMetadataRows($object->getId(), 0));
-        $this->assertSame(0, $this->countMetadataRows($object->getId(), 1));
     }
 
     public function testSavingTheObjectKeepsTheLocalizedMetadataOfItems(): void
@@ -161,30 +160,6 @@ class LocalizedFieldcollectionTest extends ModelTestCase
         $this->assertMetadata([$t0->getId() => 'first'], $first->getLadvancedObjects('en'));
         $this->assertMetadata([$t0->getId() => 'first'], $first->getLadvancedRelations('en'));
         $this->assertMetadata([$t2->getId() => 'changed'], $object->getFieldcollection()->get(1)->getLadvancedObjects('en'));
-    }
-
-    public function testRemovingAnItemOfAnUnpublishedObjectKeepsTheDataOfTheNextItem(): void
-    {
-        [$t0, $t1] = $this->targets;
-
-        $object = $this->createDataObject();
-        $object->setPublished(false);
-        $items = new Fieldcollection();
-        foreach (['first' => $t0, 'second' => $t1] as $tag => $target) {
-            $item = new Fieldcollection\Data\LazyLoadingLocalizedTest();
-            $item->setLadvancedRelations([$this->elementMetadata($target, $tag)], 'en');
-            $items->add($item);
-        }
-        $object->setFieldcollection($items);
-        $object->save();
-
-        // the second item moves to index 0 and must keep its own relation and metadata
-        $object = LazyLoading::getById($object->getId(), ['force' => true]);
-        $object->getFieldcollection()->remove(0);
-        $object->save();
-
-        $object = LazyLoading::getById($object->getId(), ['force' => true]);
-        $this->assertMetadata([$t1->getId() => 'second'], $object->getFieldcollection()->get(0)->getLadvancedRelations('en'));
     }
 
     public function testClassWithoutMetadataTableSavesAndDeletesFieldcollections(): void

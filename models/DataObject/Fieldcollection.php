@@ -115,10 +115,6 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
      */
     public function save(Concrete $object, array $params = []): void
     {
-        // the DAO deletes the relations and relation metadata of the localized fields, which are saved again per item
-        // below; load them first, with the item indexes they were stored with
-        $this->loadLazyData();
-
         $saveRelationalData = $this->getDao()->save($object, $params);
 
         /** @var Model\DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
