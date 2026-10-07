@@ -73,10 +73,14 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   exact name, because the setters are generated dynamically and several
   methods write directly without a later `save()` call. By default every method whose
   name starts with `set`, `save`, `delete`, `create`, `unlock`, `add`, `remove`,
-  `clear`, `correct` or `trigger` (case-insensitive, e.g. `setKey`, `saveIndex`,
+  `clear`, `clean`, `correct`, `trigger`, `rename`, `generate`, `rewrite`, `enable` or
+  `disable` (case-insensitive, e.g. `setKey`, `saveIndex`,
   `deleteAutoSaveVersions`, the static `create()` factories, `unlockPropagate`,
-  `addMetadata`, `removeProperty`, `clearThumbnails`) is blocked on the same three
-  base classes.
+  `addMetadata`, `removeProperty`, `clearThumbnails`) is blocked on
+  `Pimcore\Model\AbstractModel`, the common base class of all Pimcore models. This
+  covers not only elements but also every model a template can reach through an allowed
+  getter (e.g. `getClass()` => `ClassDefinition`, `getVersions()`, `getDependencies()`),
+  so these cannot be used to bypass the rules above.
 
 `hard_blocked_method_patterns` is a FQCN => list-of-PCRE-patterns map. Keys are matched
 with `instanceof` exactly like `hard_blocked_methods`, a pattern is matched against
@@ -216,12 +220,8 @@ pimcore:
                 # name (dynamic setters, save*/delete* variants). Never callable, regardless
                 # of blocked_classes/allowed_classes; merged with this default.
                 hard_blocked_method_patterns:
-                    Pimcore\Model\DataObject\AbstractObject:
-                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
-                    Pimcore\Model\Asset:
-                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
-                    Pimcore\Model\Document:
-                        - '/^(set|save|delete|create|unlock|add|remove|clear|correct|trigger)/i'
+                    Pimcore\Model\AbstractModel:
+                        - '/^(set|save|delete|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
 ```
 
 ### Example: allowlist mode

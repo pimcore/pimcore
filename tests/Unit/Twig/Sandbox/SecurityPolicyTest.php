@@ -17,9 +17,12 @@ namespace Pimcore\Tests\Unit\Twig\Sandbox;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
+use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
 use stdClass;
@@ -288,6 +291,15 @@ final class SecurityPolicyTest extends TestCase
         yield 'Asset::removeMetadata' => [new Asset(), 'removeMetadata'];
         yield 'Asset::removeCustomSetting' => [new Asset(), 'removeCustomSetting'];
         yield 'Asset::clearThumbnails' => [new Asset(), 'clearThumbnails'];
+        // chained calls: mutable models that are reachable through allowed getters
+        // (`Concrete::getClass()`, `getDependencies()`, `getProperties()`)
+        yield 'ClassDefinition::delete' => [new ClassDefinition(), 'delete'];
+        yield 'ClassDefinition::save' => [new ClassDefinition(), 'save'];
+        yield 'ClassDefinition::rename' => [new ClassDefinition(), 'rename'];
+        yield 'ClassDefinition::generateClassFiles' => [new ClassDefinition(), 'generateClassFiles'];
+        yield 'Dependency::cleanAllForElement' => [new Dependency(), 'cleanAllForElement'];
+        yield 'Dependency::clean' => [new Dependency(), 'clean'];
+        yield 'Property::setData' => [new Property(), 'setData'];
     }
 
     /**
@@ -320,7 +332,9 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Folder(), 'getKey');
         $policy->checkMethodAllowed(new Document(), 'getId');
         $policy->checkMethodAllowed(new Document(), 'getKey');
-        $this->addToAssertionCount(7);
+        $policy->checkMethodAllowed(new ClassDefinition(), 'getId');
+        $policy->checkMethodAllowed(new Dependency(), 'getRequires');
+        $this->addToAssertionCount(9);
     }
 
     /**
