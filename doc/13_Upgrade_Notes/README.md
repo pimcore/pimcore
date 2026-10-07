@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.4.0
+
+### [Workflow]
+- [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
+
 ## Pimcore 2026.3.2
 
 ### [DataObjects]
