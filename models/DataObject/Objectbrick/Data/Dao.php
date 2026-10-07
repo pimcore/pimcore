@@ -329,7 +329,13 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     if ($fd instanceof CustomResourcePersistingInterface) {
-                        $fd->delete($object);
+                        $fd->delete($object, [
+                            'context' => [
+                                'containerType' => 'objectbrick',
+                                'containerKey' => $this->model->getType(),
+                                'fieldname' => $this->model->getFieldname(),
+                            ],
+                        ]);
                     }
                 }
             }

@@ -643,6 +643,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $deleteCondition['ownername'] = $context['fieldname'];
                 }
 
+                // the metadata of a brick is stored with the brick type as position, keep the other bricks' metadata
+                if (($context['containerType'] ?? null) === 'objectbrick' && !empty($context['containerKey'])) {
+                    $deleteCondition['position'] = $context['containerKey'];
+                }
+
                 if (!DataObject::isDirtyDetectionDisabled()) {
                     if (!empty($context['containerType'])) {
                         $deleteCondition['ownertype'] = $context['containerType'];

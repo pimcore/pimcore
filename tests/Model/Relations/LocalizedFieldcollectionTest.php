@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Relations;
 
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\CollectionWithoutMetadata;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
@@ -64,6 +65,8 @@ class LocalizedFieldcollectionTest extends ModelTestCase
         $this->tester->setupFieldcollection_LazyLoadingTest();
         $this->tester->setupFieldcollection_LazyLoadingLocalizedTest();
         $this->tester->setupPimcoreClass_LazyLoading();
+        $this->tester->setupFieldcollection_LocalizedPlainRelations();
+        $this->tester->setupPimcoreClass_CollectionWithoutMetadata();
     }
 
     public function testRemovingAnItemRemovesItsLocalizedMetadata(): void
@@ -130,6 +133,90 @@ class LocalizedFieldcollectionTest extends ModelTestCase
             $this->assertMetadata([$t0->getId() => 'en'], $item->getLadvancedRelations('en'));
             $this->assertSame(3, $this->countMetadataRows($object->getId(), 0));
         }
+    }
+
+    public function testChangingOneItemOfAnUnpublishedObjectKeepsTheMetadataOfTheOthers(): void
+    {
+        [$t0, $t1, $t2] = $this->targets;
+
+        // unpublished objects skip the validation, which otherwise loads the localized data of all items
+        $object = $this->createDataObject();
+        $object->setPublished(false);
+        $items = new Fieldcollection();
+        foreach (['first' => $t0, 'second' => $t1] as $tag => $target) {
+            $item = new Fieldcollection\Data\LazyLoadingLocalizedTest();
+            $item->setLadvancedObjects([$this->objectMetadata($target, $tag)], 'en');
+            $item->setLadvancedRelations([$this->elementMetadata($target, $tag)], 'en');
+            $items->add($item);
+        }
+        $object->setFieldcollection($items);
+        $object->save();
+
+        $object = LazyLoading::getById($object->getId(), ['force' => true]);
+        $object->getFieldcollection()->get(1)->setLadvancedObjects([$this->objectMetadata($t2, 'changed')], 'en');
+        $object->save();
+
+        $object = LazyLoading::getById($object->getId(), ['force' => true]);
+        $first = $object->getFieldcollection()->get(0);
+        $this->assertMetadata([$t0->getId() => 'first'], $first->getLadvancedObjects('en'));
+        $this->assertMetadata([$t0->getId() => 'first'], $first->getLadvancedRelations('en'));
+        $this->assertMetadata([$t2->getId() => 'changed'], $object->getFieldcollection()->get(1)->getLadvancedObjects('en'));
+    }
+
+    public function testRemovingAnItemOfAnUnpublishedObjectKeepsTheDataOfTheNextItem(): void
+    {
+        [$t0, $t1] = $this->targets;
+
+        $object = $this->createDataObject();
+        $object->setPublished(false);
+        $items = new Fieldcollection();
+        foreach (['first' => $t0, 'second' => $t1] as $tag => $target) {
+            $item = new Fieldcollection\Data\LazyLoadingLocalizedTest();
+            $item->setLadvancedRelations([$this->elementMetadata($target, $tag)], 'en');
+            $items->add($item);
+        }
+        $object->setFieldcollection($items);
+        $object->save();
+
+        // the second item moves to index 0 and must keep its own relation and metadata
+        $object = LazyLoading::getById($object->getId(), ['force' => true]);
+        $object->getFieldcollection()->remove(0);
+        $object->save();
+
+        $object = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertMetadata([$t1->getId() => 'second'], $object->getFieldcollection()->get(0)->getLadvancedRelations('en'));
+    }
+
+    public function testClassWithoutMetadataTableSavesAndDeletesFieldcollections(): void
+    {
+        [$t0, $t1] = $this->targets;
+
+        $object = new CollectionWithoutMetadata();
+        $object->setParentId(1);
+        $object->setKey('collection-without-metadata');
+        $object->setPublished(true);
+        $items = new Fieldcollection();
+        foreach ([$t0, $t1] as $target) {
+            $item = new Fieldcollection\Data\LocalizedPlainRelations();
+            $item->setLobjects([$target], 'en');
+            $items->add($item);
+        }
+        $object->setItems($items);
+        $object->save();
+
+        $object = CollectionWithoutMetadata::getById($object->getId(), ['force' => true]);
+        $object->getItems()->remove(0);
+        $object->save();
+
+        $object = CollectionWithoutMetadata::getById($object->getId(), ['force' => true]);
+        $this->assertSame(
+            [$t1->getId()],
+            array_map(static fn ($element) => $element->getId(), $object->getItems()->get(0)->getLobjects('en'))
+        );
+
+        $id = $object->getId();
+        $object->delete();
+        $this->assertNull(CollectionWithoutMetadata::getById($id, ['force' => true]));
     }
 
     private function createDataObject(): LazyLoading

@@ -25,6 +25,8 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedRelBrick_C;
 use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedRelBrickXC;
 use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedSlugBrickA;
 use Pimcore\Model\DataObject\Objectbrick\Data\LocalizedSlugBrickB;
+use Pimcore\Model\DataObject\Objectbrick\Data\PlainRelationBrickA;
+use Pimcore\Model\DataObject\Objectbrick\Data\PlainRelationBrickB;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -76,6 +78,14 @@ class LocalizedObjectbrickTest extends ModelTestCase
         // by "_", which is a wildcard in SQL LIKE
         foreach (['LocalizedRelationBrickA', 'LocalizedRelationBrickB', 'LocalizedRelBrick_C', 'LocalizedRelBrickXC'] as $brick) {
             $this->tester->setupObjectbrick_LazyLoadingLocalizedTest(
+                $brick,
+                'relations/objectbrick_' . $brick . '_export.json',
+                $container
+            );
+        }
+        // bricks with the same (not localized) advanced relation fields
+        foreach (['PlainRelationBrickA', 'PlainRelationBrickB'] as $brick) {
+            $this->tester->setupObjectbrick_LazyLoadingTest(
                 $brick,
                 'relations/objectbrick_' . $brick . '_export.json',
                 $container
@@ -285,6 +295,30 @@ class LocalizedObjectbrickTest extends ModelTestCase
         $second = $object->getBricks()->getLocalizedRelationBrickB();
         $this->assertRelationIds([], $second->getLrelations('en'));
         $this->assertSame([], $second->getLadvancedRelations('en'));
+    }
+
+    public function testRemovingABrickKeepsTheMetadataOfOtherBricks(): void
+    {
+        [$t0, $t1] = $this->targets;
+
+        $object = $this->createDataObject();
+        foreach ([new PlainRelationBrickA($object), new PlainRelationBrickB($object)] as $brick) {
+            $metadata = new ElementMetadata('advancedRelations', ['metadataUpper'], $t0);
+            $metadata->setMetadataUpper($brick->getType());
+            $brick->setAdvancedRelations([$metadata]);
+            $object->getBricks()->set($brick->getType(), $brick);
+        }
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $object->getBricks()->getPlainRelationBrickB()->setDoDelete(true);
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $this->assertNull($object->getBricks()->getPlainRelationBrickB());
+        $relations = $object->getBricks()->getPlainRelationBrickA()->getAdvancedRelations();
+        $this->assertCount(1, $relations);
+        $this->assertSame('PlainRelationBrickA', $relations[0]->getMetadataUpper());
     }
 
     public function testSlugsInBricksAreResolvedAndRemovedPerBrick(): void

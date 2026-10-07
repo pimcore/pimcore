@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Localizedfield;
 
+use Pimcore\Db\Helper;
+
 /**
  * Owner name of the rows (relations, relation metadata, URL slugs) written for localized fields inside a field
  * collection item or an object brick, e.g. `/objectbrick~attributes/Engine/localizedfield~localizedfield`.
@@ -46,6 +48,6 @@ final class ContainerOwnerName
      */
     public static function likePattern(array $context): string
     {
-        return addcslashes(self::prefix($context), '\\%_') . '%';
+        return Helper::escapeLike(self::prefix($context)) . '%';
     }
 }

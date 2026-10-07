@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.2
+
+### [DataObjects]
+- [Object Bricks] Localized relations, relation metadata and URL slugs inside object bricks are read, written and deleted per brick. Two bricks in the same container whose localized fields share a field name no longer show or overwrite each other's values ([#9701](https://github.com/pimcore/pimcore/issues/9701)). On an affected installation, a brick that showed the relations of another brick before the upgrade shows only its own relations after it. The stored data is not changed, so there is nothing to migrate, but data that a brick lost by being overwritten cannot be restored automatically.
+- [Object Bricks] Removing a brick also removes the relations, relation metadata and URL slugs of its localized fields, so adding the brick again starts empty. URL slugs of localized fields in bricks resolve their action from their own brick, so resolving such a slug no longer deletes it when the first allowed brick has no field of that name.
+- [Object Bricks] Removing a brick only removes the metadata of advanced many-to-many relations of that brick. Before, it removed the metadata of all advanced many-to-many relations with the same field name on the object, also in other bricks and on the object itself.
+- [Object Bricks] The migration `Version20261007120000` adds the brick type to URL slugs of localized fields in bricks that were stored without it (before Pimcore 11). A slug is left unchanged when more than one brick of the object has a localized URL slug field with that name; such slugs are reported by the migration.
+- [Field Collections] Removing a field collection item also removes the relation metadata of its localized fields. Saving a field collection loads the localized relations of all items first, so items that were not loaded keep their relation metadata, and items that move to another index keep their own relations.
+
 ## Pimcore 2026.3.1
 
 ### [Assets]

@@ -897,6 +897,58 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Sets up a field collection with localized relations but no relation metadata
+     *
+     * @throws Exception
+     */
+    public function setupFieldcollection_LocalizedPlainRelations(string $name = 'LocalizedPlainRelations', string $filename = 'relations/fieldcollection_LocalizedPlainRelations_export.json'): ?Definition
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')->setClasses(['RelationTest']));
+
+            $panel->addChild($lFields);
+            $root->addChild($panel);
+            $definition = $this->createFieldcollection($name, $root, $filename);
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Sets up a class with a field collection and without advanced many-to-many relations, so it has no metadata table
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_CollectionWithoutMetadata(
+        string $name = 'CollectionWithoutMetadata',
+        string $filename = 'relations/class_CollectionWithoutMetadata_export.json'
+    ): ?DataObject\ClassDefinitionInterface {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $panel->addChild($this->createDataChild('input'));
+            $panel->addChild($this->createDataChild('fieldcollections', 'items')
+                ->setAllowedTypes(['LocalizedPlainRelations']));
+            $root->addChild($panel);
+
+            $class = $this->createClass($name, $root, $filename, false, 'CWM');
+        }
+
+        return $class;
+    }
+
+    /**
      * Sets up an object brick with a localized URL slug
      *
      * @throws Exception
@@ -931,8 +983,11 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupObjectbrick_LazyLoadingTest(string $name = 'LazyLoadingTest', string $filename = 'lazyloading/objectbrick_LazyLoadingTest_export.json'): ?Definition
-    {
+    public function setupObjectbrick_LazyLoadingTest(
+        string $name = 'LazyLoadingTest',
+        string $filename = 'lazyloading/objectbrick_LazyLoadingTest_export.json',
+        array $classDefinitions = [['classname' => 'LazyLoading', 'fieldname' => 'bricks']]
+    ): ?Definition {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -969,10 +1024,7 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $root->addChild($rootPanel);
-            $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'LazyLoading', 'fieldname' => 'bricks'],
-
-            ]);
+            $definition = $this->createObjectbrick($name, $root, $filename, $classDefinitions);
         }
 
         return $definition;

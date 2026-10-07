@@ -520,6 +520,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                     $deleteConditions['ownername'] = $context['fieldname'];
                 }
 
+                // the metadata of a brick is stored with the brick type as position, keep the other bricks' metadata
+                if (($context['containerType'] ?? null) === 'objectbrick' && !empty($context['containerKey'])) {
+                    $deleteConditions['position'] = $context['containerKey'];
+                }
+
                 if (!DataObject::isDirtyDetectionDisabled()) {
                     if ($context['containerType']) {
                         $deleteConditions['ownertype'] = $context['containerType'];
