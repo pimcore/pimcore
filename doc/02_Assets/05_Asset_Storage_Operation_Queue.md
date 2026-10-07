@@ -137,6 +137,20 @@ during low-traffic hours — nothing runs it automatically.** Options:
 - `--id`: process only the given queue row.
 - `--max-runtime`: stop cleanly after this many seconds; any unfinished rows stay
   queued for the next run.
+- `--continue-on-error`: keep going after a failing row instead of ending the run.
+
+  **The default is to stop at the first error.** These operations are destructive and
+  the command normally runs unattended, so a failure is worth looking at before
+  thousands of further rows are attempted in the same state. A failure here is usually
+  the backend being unhappy - credentials, a permission the endpoint does not serve, a
+  quota - rather than one odd row, which means the rows after it would fail the same
+  way. The command exits non-zero and names the row it stopped on; everything it had
+  not reached stays queued for the next run.
+
+  Pass this option when an operator is watching a large one-off migration and would
+  rather the bulk proceeded, to read the errors afterwards. Note that even then a move
+  which could not complete still keeps an overlapping delete deferred - that delete
+  would otherwise destroy content the move has not relocated yet.
 
 A single run is guarded by a 24-hour, non-refreshing lock, so it is safe to schedule
 the command frequently — a run that finds the lock held (a previous run still in

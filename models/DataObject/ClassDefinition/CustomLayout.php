@@ -22,6 +22,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 use Symfony\Component\Uid\UuidV4;
 
 /**
@@ -196,7 +197,7 @@ class CustomLayout extends Model\AbstractModel
         $cd = '/**' . "\n";
 
         if ($this->getDescription()) {
-            $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
+            $description = DocBlockSanitizer::sanitize($this->getDescription());
             $description = str_replace("\n", "\n* ", $description);
 
             $cd .= '* '.$description."\n";

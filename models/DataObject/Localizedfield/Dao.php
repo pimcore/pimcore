@@ -256,7 +256,19 @@ class Dao extends Model\Dao\AbstractDao
                     if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                        Helper::upsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
+                        // on an update the language row normally exists and updateOrInsert() is a single
+                        // UPDATE; a new object's rows are plain inserts either way. isUpdate describes the
+                        // object, not the language: a language written for the first time on an existing
+                        // object (added to the object, or configured after it was created) misses the UPDATE
+                        // and is inserted by the fallback - one extra UPDATE and one SELECT, once per object
+                        // and language. A per-language existence signal is not available here for objects
+                        // that come from the cache without a load(), and a SELECT per save would cost more
+                        // than that one-time miss.
+                        if (!empty($params['isUpdate'])) {
+                            Helper::updateOrInsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
+                        } else {
+                            Helper::upsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
+                        }
                     }
                 } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it! deferred creation for object bricks ...
@@ -424,7 +436,13 @@ class Dao extends Model\Dao\AbstractDao
                     $queryTable = $this->getQueryTableName().'_'.$language;
 
                     try {
-                        Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        // as for the store table above: the query row of a language written for the first
+                        // time on an existing object misses the UPDATE once and is inserted by the fallback
+                        if (!empty($params['isUpdate'])) {
+                            Helper::updateOrInsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        } else {
+                            Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        }
                     } catch (TableNotFoundException $e) {
                         // with inheritance disabled this is the first statement touching the query table,
                         // so the deferred creation of a missing language table has to be handled here as well
@@ -894,12 +912,12 @@ QUERY;
                         if (is_array($value->getColumnType())) {
                             // if a datafield requires more than one column
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
-                                $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                                $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                                 $protectedColumns[] = $key . '__' . $fkey;
                                 $this->ensureForeignKeys($table, $key, $fkey, $value);
                             }
                         } else {
-                            $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
+                            $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL', $value);
                             $protectedColumns[] = $key;
                         }
 
@@ -964,12 +982,12 @@ QUERY;
                         // if a datafield requires more than one column in the query table
                         if (is_array($value->getQueryColumnType())) {
                             foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                                $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
+                                $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL', $value);
                                 $protectedColumns[] = $key.'__'.$fkey;
                                 $this->ensureForeignKeys($queryTable, $key, $fkey, $value);
                             }
                         } elseif ($value->getQueryColumnType()) {
-                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                            $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL', $value);
                             $protectedColumns[] = $key;
                         }
 
