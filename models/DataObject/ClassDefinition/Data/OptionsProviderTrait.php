@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Bundle\CoreBundle\OptionsProvider\SelectOptionsOptionsProvider;
+
 /**
  * @see OptionsProviderInterface
  */
@@ -36,6 +38,15 @@ trait OptionsProviderTrait
 
     public function getOptionsProviderClass(): ?string
     {
+        // The shared select options provider is implied by the type, so definitions which only
+        // persist type and data (e.g. field collections saved via Studio) still resolve it
+        if (
+            empty($this->optionsProviderClass)
+            && $this->getOptionsProviderType() === OptionsProviderInterface::TYPE_SELECT_OPTIONS
+        ) {
+            return SelectOptionsOptionsProvider::class;
+        }
+
         return $this->optionsProviderClass;
     }
 
