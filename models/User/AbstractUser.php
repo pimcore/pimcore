@@ -213,11 +213,16 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
 
         $type = $this->getType();
 
-        // delete all children
-        $list = ($type === 'role' || $type === 'rolefolder') ? new Model\User\Role\Listing() : new Listing();
-        $list->setCondition('parentId = ?', $this->getId());
-        foreach ($list as $user) {
-            $user->delete();
+        // delete all children, covering both leaf and folder types
+        $childListings = ($type === 'role' || $type === 'rolefolder')
+            ? [new Role\Folder\Listing(), new Role\Listing()]
+            : [new Folder\Listing(), new Listing()];
+
+        foreach ($childListings as $childListing) {
+            $childListing->setCondition('parentId = ?', $this->getId());
+            foreach ($childListing as $child) {
+                $child->delete();
+            }
         }
 
         // remove user-role relations
