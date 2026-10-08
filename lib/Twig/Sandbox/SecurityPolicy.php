@@ -29,6 +29,17 @@ use Twig\Sandbox\SecurityPolicyInterface;
  */
 final class SecurityPolicy implements SecurityPolicyInterface
 {
+    /**
+     * Built-in mutation-method patterns, used when no patterns are passed to the constructor so that
+     * consumers which build their own policy (and do not know this option) are protected as well.
+     * Mirrors the `sandbox_security_policy.hard_blocked_method_patterns` default in default.yaml.
+     */
+    private const DEFAULT_HARD_BLOCKED_METHOD_PATTERNS = [
+        'Pimcore\\Model\\AbstractModel' => ['/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'],
+        'Pimcore\\Model\\DataObject\\ClassDefinition\\Data' => ['/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted))/i', '/editmode/i'],
+        'Pimcore\\Model\\DataObject\\Data\\UrlSlug' => ['/^(set|save|delete|create|handle)/i'],
+    ];
+
     private array $allowedTags;
 
     private array $allowedFilters;
@@ -92,7 +103,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         array $allowedClasses = [],
         array $blockedFunctions = [],
         array $hardBlockedMethods = [],
-        array $hardBlockedMethodPatterns = [],
+        ?array $hardBlockedMethodPatterns = null,
     ) {
         $this->allowedTags = $allowedTags;
         $this->allowedFilters = $allowedFilters;
@@ -101,7 +112,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->allowedClasses = $allowedClasses;
         $this->blockedFunctions = $blockedFunctions;
         $this->hardBlockedMethods = $hardBlockedMethods;
-        $this->setHardBlockedMethodPatterns($hardBlockedMethodPatterns);
+        $this->setHardBlockedMethodPatterns($hardBlockedMethodPatterns ?? self::DEFAULT_HARD_BLOCKED_METHOD_PATTERNS);
     }
 
     public function setAllowedTags(array $tags): void

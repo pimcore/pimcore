@@ -79,9 +79,10 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   `clearThumbnails`) is blocked on `Pimcore\Model\AbstractModel`, the common base class of
   all Pimcore models. This covers not only elements but also every model a template can
   reach through an allowed getter (e.g. `getClass()` => `ClassDefinition`, `getVersions()`,
-  `getDependencies()`), so these cannot be used to bypass the rules above. The setters of
+  `getDependencies()`), so these cannot be used to bypass the rules above. The same verbs
+  (plus `classSaved` and `classDeleted`) are blocked on
   `Pimcore\Model\DataObject\ClassDefinition\Data` (field definitions reachable through
-  `getFieldDefinition()`) and the mutating methods of
+  `getFieldDefinition()`, whose `save($object)`/`delete($object)` persist immediately), and the mutating methods of
   `Pimcore\Model\DataObject\Data\UrlSlug` (persisted URL slug values, which are not models)
   are blocked as well.
 - On field definitions the admin-UI (de)serialisation methods (every method whose name
@@ -97,6 +98,11 @@ Models additionally cannot be used to reach their DAO: `AbstractModel::__call()`
 method a model does not declare to its DAO, so a template call such as `asset.beginTransaction()`
 or `asset.moveThumbnailCache()` would run database-layer code. Such calls are always denied (also
 in allowlist mode); only the delegated read operations (`get*`, `is*`, `has*`, `load*`, `count*`, e.g. the magic accessors and `Listing::load()`) pass.
+
+Code that builds `Pimcore\Twig\Sandbox\SecurityPolicy` itself (for example a bundle with its own
+sandbox) gets the same patterns without passing anything: when the `hardBlockedMethodPatterns`
+constructor argument is omitted (`null`) the policy applies its built-in defaults, which mirror the
+configuration defaults shown below. Pass an explicit array (an empty one disables them) to override.
 
 `hard_blocked_method_patterns` is a FQCN => list-of-PCRE-patterns map. Keys are matched
 with `instanceof` exactly like `hard_blocked_methods`, a pattern is matched against
@@ -249,7 +255,7 @@ pimcore:
                     Pimcore\Model\AbstractModel:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
-                        - '/^set/i'
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted))/i'
                         - '/editmode/i'
                     Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(set|save|delete|create|handle)/i'

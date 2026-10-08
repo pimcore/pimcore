@@ -19,8 +19,11 @@ use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Folder;
@@ -31,6 +34,7 @@ use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
+use ReflectionClassConstant;
 use stdClass;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
@@ -322,6 +326,13 @@ final class SecurityPolicyTest extends TestCase
         yield 'ClassDefinition\\Data\\Consent::getDiffDataFromEditmode' => [new Consent(), 'getDiffDataFromEditmode'];
         yield 'ClassDefinition\\Data\\Consent::GETDATAFROMEDITMODE' => [new Consent(), 'GETDATAFROMEDITMODE'];
         yield 'ClassDefinition\\Data\\Input::getDataForEditmode' => [new Input(), 'getDataForEditmode'];
+        // field definitions persist immediately through save($object)/delete($object)/classSaved($class)
+        yield 'ClassDefinition\\Data\\Fieldcollections::save' => [new Fieldcollections(), 'save'];
+        yield 'ClassDefinition\\Data\\Fieldcollections::delete' => [new Fieldcollections(), 'delete'];
+        yield 'ClassDefinition\\Data\\Localizedfields::save' => [new Localizedfields(), 'save'];
+        yield 'ClassDefinition\\Data\\Localizedfields::DELETE' => [new Localizedfields(), 'DELETE'];
+        yield 'ClassDefinition\\Data\\Classificationstore::classSaved' => [new Classificationstore(), 'classSaved'];
+        yield 'ClassDefinition\\Data\\Classificationstore::CLASSDELETED' => [new Classificationstore(), 'CLASSDELETED'];
         yield 'ClassDefinition\\Data::setName' => [new Input(), 'setName'];
         yield 'ClassDefinition\\Data::setMandatory' => [new Input(), 'setMandatory'];
     }
@@ -586,6 +597,42 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Concrete(), 'loadSomethingDelegated');
         $policy->checkMethodAllowed(new Concrete(), 'countSomethingDelegated');
         $this->addToAssertionCount(7);
+    }
+
+    /**
+     * Consumers that build their own policy (e.g. a bundle with its own sandbox) never pass the
+     * patterns; they must still get the mutation blocks.
+     *
+     * @dataProvider contentModelSetterMethodsProvider
+     */
+    public function testBuiltInPatternsApplyWhenNoPatternsArePassed(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    public function testExplicitEmptyPatternListDisablesTheBuiltInPatterns(): void
+    {
+        $policy = new SecurityPolicy(hardBlockedMethodPatterns: []);
+
+        $policy->checkMethodAllowed(new Asset(), 'setKey');
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * The built-in defaults and the shipped configuration defaults are two copies of the same
+     * list: keep them from drifting apart.
+     */
+    public function testBuiltInPatternsMirrorTheConfigurationDefaults(): void
+    {
+        $builtIn = (new ReflectionClassConstant(SecurityPolicy::class, 'DEFAULT_HARD_BLOCKED_METHOD_PATTERNS'))->getValue();
+
+        $this->assertSame(
+            self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+            $builtIn,
+        );
     }
 
     public function testMalformedHardBlockedMethodPatternIsRejectedByConstructor(): void
