@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject\ClassDefinition;
 
+use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
@@ -21,6 +22,8 @@ use Pimcore\Model\DataObject\SelectOptions\Config;
 use Pimcore\Model\DataObject\SelectOptions\Data\SelectOption;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Select fields using shared select options are enriched from the referenced configuration even
@@ -31,9 +34,22 @@ class SelectOptionsProviderEnrichmentTest extends ModelTestCase
 {
     private const CONFIG_ID = 'EnrichmentStatus';
 
+    private ?Translator $translator = null;
+
+    private bool $translationsWereDisabled = false;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        // The options provider translates the labels. Keep the translator untouched, otherwise its
+        // catalogue cache gets written with the database state of this test and later translation
+        // tests in the same run read stale fallbacks from it.
+        $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+        $this->assertInstanceOf(Translator::class, $translator);
+        $this->translator = $translator;
+        $this->translationsWereDisabled = $translator->getDisableTranslations();
+        $translator->setDisableTranslations(true);
 
         (new Config())
             ->setId(self::CONFIG_ID)
@@ -53,6 +69,7 @@ class SelectOptionsProviderEnrichmentTest extends ModelTestCase
     {
         // delete through a loaded instance, as only that knows the data source to delete from
         Config::getById(self::CONFIG_ID)?->delete();
+        $this->translator?->setDisableTranslations($this->translationsWereDisabled);
 
         parent::tearDown();
     }
