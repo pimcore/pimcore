@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
@@ -163,6 +164,10 @@ class SelectTest extends TestCase
 
         $method = new ReflectionMethod($select, 'doGetDefaultValue');
 
-        return $method->invoke($select, $this->createMock(Concrete::class));
+        // ClassDefinition is final and cannot be doubled, so the mock must be given a real instance
+        $object = $this->createMock(Concrete::class);
+        $object->method('getClass')->willReturn(new ClassDefinition());
+
+        return $method->invoke($select, $object);
     }
 }
