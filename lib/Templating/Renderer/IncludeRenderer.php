@@ -25,7 +25,6 @@ use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Throwable;
 
 /**
  * @internal
@@ -55,7 +54,7 @@ class IncludeRenderer
         if (is_numeric($include)) {
             try {
                 $include = Model\Document::getById((int) $include);
-            } catch (Throwable $e) {
+            } catch (Exception $e) {
                 $include = $originalInclude;
             }
         } elseif (is_string($include)) {
