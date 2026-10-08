@@ -69,24 +69,23 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
 - `hard_blocked_methods` blocks `delete`, `save` and `saveVersion` on
   `Pimcore\Model\DataObject\AbstractObject` (which covers concrete objects **and**
   DataObject folders), `Pimcore\Model\Asset` and `Pimcore\Model\Document`.
-- `hard_blocked_method_patterns` defines a **deny-by-default read surface**. Mutators cannot
-  be enumerated by name (the setters are generated dynamically, several methods write
-  directly without a later `save()` call, and new ones can be added at any time), so
-  instead of listing the dangerous names the default allows only `get*`, `is*` and
-  `has*` methods on `Pimcore\Model\AbstractModel`, the common base class of all Pimcore
-  models (plus `count`, `load*` and `render*` there, which listings and editables need,
-  e.g. `object.getChildren().count()` or `editable.render()`), and on `Pimcore\Model\DataObject\ClassDefinition\Data` (the field definitions
-  reachable through `ClassDefinition::getFieldDefinition()`) and on
-  `Pimcore\Model\DataObject\Data\UrlSlug` (URL slug values, which are persisted but not
-  models). Every other method name
-  is blocked (case-insensitive), e.g. `setKey`, `saveIndex`, `deleteAutoSaveVersions`,
-  `dumpClass`, the static `create()` factories, `unlockPropagate`, `addMetadata`,
-  `removeProperty` or `clearThumbnails`. This covers not only elements but also every
-  model a template can reach through an allowed getter (e.g. `getClass()` =>
-  `ClassDefinition`, `getVersions()`, `getDependencies()`), so these cannot be used
-  to bypass the rules above.
+- `hard_blocked_method_patterns` blocks method *families* that cannot be enumerated by
+  exact name, because the setters are generated dynamically and several methods write
+  directly without a later `save()` call. By default every method whose name starts with
+  `set`, `save`, `delete`, `dump`, `update`, `create`, `unlock`, `add`, `remove`, `clear`,
+  `clean`, `correct`, `trigger`, `rename`, `generate`, `rewrite`, `enable` or `disable`
+  (case-insensitive, e.g. `setKey`, `saveIndex`, `deleteAutoSaveVersions`, `dumpClass`, the
+  static `create()` factories, `unlockPropagate`, `addMetadata`, `removeProperty`,
+  `clearThumbnails`) is blocked on `Pimcore\Model\AbstractModel`, the common base class of
+  all Pimcore models. This covers not only elements but also every model a template can
+  reach through an allowed getter (e.g. `getClass()` => `ClassDefinition`, `getVersions()`,
+  `getDependencies()`), so these cannot be used to bypass the rules above. The setters of
+  `Pimcore\Model\DataObject\ClassDefinition\Data` (field definitions reachable through
+  `getFieldDefinition()`) and the mutating methods of
+  `Pimcore\Model\DataObject\Data\UrlSlug` (persisted URL slug values, which are not models)
+  are blocked as well.
 - On field definitions the admin-UI (de)serialisation methods (every method whose name
-  contains `editmode`, e.g. `getDataFromEditmode`) are blocked as well: they accept
+  contains `editmode`, e.g. `getDataFromEditmode`) are blocked too: they accept
   caller-supplied data and can persist (the `Consent` field definition writes a `Note`).
 - A few `get*` methods persist as a side effect and cannot be told apart by name. They are
   listed in `hard_blocked_methods` instead: `Pimcore\Model\Asset\Image::getDimensions()`
@@ -104,10 +103,11 @@ when the configuration is loaded and a malformed pattern is rejected (the policy
 closed instead of silently ignoring a broken deny rule); a PCRE runtime error while
 matching also denies the call.
 
-**Behaviour change:** methods outside this read surface (for example the setters of a
-`Listing`, such as `setCondition()` or `setLimit()`, or any custom non-`get*` helper on a model)
-can no longer be called from a sandboxed template, and allowlist mode does not bring them back.
-Fetch such data in PHP and pass the result to the template.
+**Behaviour change:** the blocked method names also cover the query-building setters of a
+`Listing` (e.g. `setCondition()`, `setLimit()`, `addConditionParam()`), which cannot be told
+apart by name; allowlist mode does not bring them back. Fetch such data in PHP and pass the
+result to the template. The read operations (`get*`, `is*`, `has*`, `count`, `load`, `render`, ...)
+and custom helper names outside the blocked families are unaffected.
 
 Read access through `get*`, `is*` and `has*` methods (`getId`, `getKey`, `getFilename`, `isPublished`, ...) is unaffected.
 
@@ -242,12 +242,12 @@ pimcore:
                 # regardless of blocked_classes/allowed_classes; merged with this default.
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
-                        - '/^(?!(?:get|is|has|count|load|render)(?:[a-z0-9_]|$))/iD'
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
-                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        - '/^set/i'
                         - '/editmode/i'
                     Pimcore\Model\DataObject\Data\UrlSlug:
-                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        - '/^(set|save|delete|create|handle)/i'
 ```
 
 ### Example: allowlist mode

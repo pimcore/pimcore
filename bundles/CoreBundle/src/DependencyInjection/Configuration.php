@@ -2240,11 +2240,11 @@ final class Configuration implements ConfigurationInterface
                                 ->info('FQCN => list-of-PCRE-patterns map. A matching instance may never call a
                                 method whose name matches one of the patterns, with the same guarantee as
                                 `hard_blocked_methods` (not bypassed by allowed_classes). Used for method families
-                                that cannot be enumerated by exact name. The default is deny-by-default: only
-                                `get*`, `is*` and `has*` (plus `count`, `load*` and `render*` on models) methods are callable on `AbstractModel` instances and on
-                                class-definition field definitions, so no mutator can be reached through them.
-                                A site can extend the map with further classes/patterns on top of that default.
-                                Malformed patterns are rejected.')
+                                that cannot be enumerated by exact name, e.g. the dynamically-generated `setXxx` setters
+                                and the `save*`/`delete*`/`create*`/`unlock*`/`add*`/`remove*`/`clear*`/... families of
+                                models (the default targets the common `AbstractModel` base class, plus the setters
+                                of class-definition field definitions and URL slug values). A site can extend the map
+                                with further classes/patterns on top of that default. Malformed patterns are rejected.')
                                 ->useAttributeAsKey('class')
                                 ->arrayPrototype()
                                     ->scalarPrototype()->end()

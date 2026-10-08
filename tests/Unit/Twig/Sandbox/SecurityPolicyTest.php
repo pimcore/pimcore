@@ -306,21 +306,11 @@ final class SecurityPolicyTest extends TestCase
         yield 'Dependency::cleanAllForElement' => [new Dependency(), 'cleanAllForElement'];
         yield 'Dependency::clean' => [new Dependency(), 'clean'];
         yield 'Property::setData' => [new Property(), 'setData'];
-        // persistence gateways that are not covered by any name prefix: the policy is
-        // deny-by-default for everything that is not a get*/is*/has* method
+        // persistence gateways reached through allowed getters: dump*/update* write through the
+        // DAO or the definition files without a later `save()` call
         yield 'ClassDefinition::dumpClass' => [new ClassDefinition(), 'dumpClass'];
         yield 'ClassDefinition::DUMPCLASS' => [new ClassDefinition(), 'DUMPCLASS'];
         yield 'Asset::updateCustomSettings' => [new Asset(), 'updateCustomSettings'];
-        yield 'Asset::futureMutatorWithAnyName' => [new Asset(), 'futureMutatorWithAnyName'];
-        yield 'DataObject\Concrete::futureMutatorWithAnyName' => [new Concrete(), 'futureMutatorWithAnyName'];
-        // magic dispatch entry points are not part of the read surface either
-        yield 'Asset::__call' => [new Asset(), '__call'];
-        // the extra read verbs apply to models only, never to field definitions
-        yield 'ClassDefinition\\Data\\Input::load' => [new Input(), 'load'];
-        yield 'ClassDefinition\\Data\\Input::render' => [new Input(), 'render'];
-        yield 'ClassDefinition\\Data\\Input::count' => [new Input(), 'count'];
-        // field definitions reached through ClassDefinition::getFieldDefinition() are not
-        // AbstractModel instances but are covered by their own entry
         // URL slug values (generated getters return them) are persisted but not AbstractModel
         yield 'Data\\UrlSlug::delete' => [new UrlSlug('x'), 'delete'];
         yield 'Data\\UrlSlug::DELETE' => [new UrlSlug('x'), 'DELETE'];
@@ -497,7 +487,7 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Document(), 'getKey');
         $policy->checkMethodAllowed(new ClassDefinition(), 'getId');
         $policy->checkMethodAllowed(new Dependency(), 'getRequires');
-        // is*/has* and the generic `get($fieldName)` accessor are part of the read surface
+        // is*/has* and the generic `get($fieldName)` accessor stay reachable
         $policy->checkMethodAllowed(new Document(), 'isPublished');
         $policy->checkMethodAllowed(new Document(), 'hasChildren');
         $policy->checkMethodAllowed(new Concrete(), 'get');
@@ -507,7 +497,11 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'load');
         $policy->checkMethodAllowed($this->createStub(Editable\Input::class), 'render');
         $policy->checkMethodAllowed($this->createStub(Editable\Input::class), 'renderIndex');
-        $this->addToAssertionCount(17);
+        // names outside the blocked mutation families stay callable: this change only closes
+        // the mutation surface, it does not turn the policy into a read-only allowlist
+        $policy->checkMethodAllowed(new Asset(), 'myCustomHelper');
+        $policy->checkMethodAllowed(new Concrete(), 'renderPreview');
+        $this->addToAssertionCount(19);
     }
 
     /**

@@ -420,31 +420,27 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
-                # Deny-by-default read surface for persisted models: on every Pimcore model
-                # (AbstractModel - elements, ClassDefinition, Dependency, Version, Property, ...)
-                # on class-definition field definitions and on persisted URL slugs, only `get*`, `is*` and `has*`
-                # methods are callable (models also keep `count`, `load*` and `render*`, which
-                # listings and editables need). Every other method name is blocked, so mutators that
-                # cannot be enumerated (the dynamically generated `setXxx` setters, saveIndex,
-                # deleteAutoSaveVersions, dumpClass, the static create() factories,
-                # unlockPropagate, addMetadata/removeProperty, clearThumbnails, ...) and any
-                # future mutator name stay unreachable, including on models reached through
-                # allowed getters (Concrete::getClass(), getVersions(), getDependencies()).
+                # Method families that cannot be enumerated by exact name: the dynamically
+                # generated `setXxx` setters and every other persistent mutator that writes
+                # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions, dumpClass,
+                # the static create() factories, unlockPropagate, addMetadata/removeProperty,
+                # clearThumbnails). Keyed by the common model base class so that models
+                # reachable through allowed getters (e.g. Concrete::getClass() =>
+                # ClassDefinition, getVersions(), getDependencies()) cannot be mutated either.
                 # `get*` methods that persist as a side effect are listed in
                 # hard_blocked_methods instead (e.g. Image::getDimensions).
                 hard_blocked_method_patterns:
-                    # models additionally keep the read operations of listings and editables:
-                    # count() (Listing), load*() (Listing::load, lazy loaders), render*() (Editable)
                     Pimcore\Model\AbstractModel:
-                        - '/^(?!(?:get|is|has|count|load|render)(?:[a-z0-9_]|$))/iD'
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
+                    # field definitions reachable via ClassDefinition::getFieldDefinition()
                     Pimcore\Model\DataObject\ClassDefinition\Data:
-                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        - '/^set/i'
                         # admin-UI (de)serialisation entry points: read-looking, but they take
                         # caller-supplied data and may persist (Consent writes Notes)
                         - '/editmode/i'
                     # persisted data values returned by generated getters that are not models
                     Pimcore\Model\DataObject\Data\UrlSlug:
-                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        - '/^(set|save|delete|create|handle)/i'
 
     gotenberg:
         base_url: 'http://gotenberg:3000'
