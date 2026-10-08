@@ -13,9 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tests\Support\Test\TestCase;
+use ReflectionMethod;
 
 /**
  * @group unit.model.datatype.select
@@ -115,5 +120,49 @@ class SelectTest extends TestCase
         $select = $layout->getChildren()[0];
 
         $this->assertNull($select->getDefaultValue());
+    }
+
+    public function testEmptyStringDefaultFromOptionsProviderIsTreatedAsNull(): void
+    {
+        $this->assertNull($this->resolveProviderDefault(''));
+    }
+
+    public function testDefaultFromOptionsProviderIsKept(): void
+    {
+        $this->assertSame('open', $this->resolveProviderDefault('open'));
+        $this->assertNull($this->resolveProviderDefault(null));
+    }
+
+    private function resolveProviderDefault(?string $providerDefault): ?string
+    {
+        // the provider is instantiated by its class name without arguments, so the default is static
+        $provider = new class() implements SelectOptionsProviderInterface {
+            public static ?string $default = null;
+
+            public function getOptions(array $context, Data $fieldDefinition): array
+            {
+                return [];
+            }
+
+            public function hasStaticOptions(array $context, Data $fieldDefinition): bool
+            {
+                return false;
+            }
+
+            public function getDefaultValue(array $context, Data $fieldDefinition): ?string
+            {
+                return self::$default;
+            }
+        };
+        $provider::$default = $providerDefault;
+
+        $select = new Select();
+        $select->setName('status');
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass($provider::class);
+
+        $method = new ReflectionMethod($select, 'doGetDefaultValue');
+
+        return $method->invoke($select, $this->createMock(Concrete::class));
     }
 }

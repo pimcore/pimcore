@@ -13,6 +13,7 @@
 - [Object Bricks] Removing a brick also removes the relation metadata and URL slugs of its localized fields. Such slugs no longer keep routing to the object and no longer come back when the brick is added again. URL slugs of localized fields in bricks resolve their action from their own brick, so resolving such a slug no longer deletes it when the first allowed brick has no field of that name.
 - [Object Bricks] Removing a brick only removes the metadata of the advanced many-to-many relations placed directly in that brick. Before, it removed the metadata of all advanced many-to-many relations with the same field name on the object, also in other bricks and on the object itself.
 - [Object Bricks] The migration `Version20261007120000` adds the brick type to URL slugs of localized fields in bricks that were stored without it (before Pimcore 11). A slug is left unchanged, and reported by the migration, when more than one brick of the object has a localized URL slug field with that name, or when the brick already has a current slug for that field.
+- [Select] An empty default value of a select field is now stored as `null` instead of an empty string. This also applies to an empty default returned by a dynamic options provider. `Select::getDefaultValue()` and exported class definitions therefore show `null` for such fields, and code that compares the default strictly against `''` needs adjusting. Definitions that already contain an empty default are normalized when they are loaded.
 
 ## Pimcore 2026.3.1
 
