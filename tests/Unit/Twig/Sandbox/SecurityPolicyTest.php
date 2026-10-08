@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Twig\Sandbox;
 
+use InvalidArgumentException;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
@@ -721,7 +722,7 @@ final class SecurityPolicyTest extends TestCase
 
     public function testMalformedHardBlockedMethodPatternIsRejectedByConstructor(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new SecurityPolicy(hardBlockedMethodPatterns: [stdClass::class => ['/^set(/']]);
     }
 
@@ -729,14 +730,14 @@ final class SecurityPolicyTest extends TestCase
     {
         $policy = new SecurityPolicy();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $policy->setHardBlockedMethodPatterns([stdClass::class => ['not-a-pattern']]);
     }
 
     public function testScalarPatternListIsRejectedByConstructor(): void
     {
         // easy-to-make mistake: a bare pattern instead of a list of patterns must not fail open
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new SecurityPolicy(hardBlockedMethodPatterns: [stdClass::class => '/^set/']);
     }
 
@@ -744,7 +745,7 @@ final class SecurityPolicyTest extends TestCase
     {
         $policy = new SecurityPolicy();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $policy->setHardBlockedMethodPatterns([stdClass::class => '/^set/']);
     }
 
@@ -755,7 +756,7 @@ final class SecurityPolicyTest extends TestCase
         try {
             $policy->setHardBlockedMethodPatterns([stdClass::class => '/^get/']);
             $this->fail('a scalar pattern list must be rejected');
-        } catch (\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             $this->addToAssertionCount(1);
         }
 
