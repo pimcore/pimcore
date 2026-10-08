@@ -17,8 +17,11 @@ jobs:
   # (plus permissions/runs-on/services/snapshot/timeout-minutes) from this job, so a
   # reusable-workflow `uses:` call would be ignored by Copilot.
   copilot-setup-steps:
+    # Skip on pull requests from forks: GitHub does not expose repository secrets to
+    # them, so the private-Packagist install would always fail with HTTP 401.
+    # Copilot ignores job-level `if`, so the coding agent setup is unaffected.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 30
 
     permissions:
       contents: read
