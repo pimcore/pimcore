@@ -93,9 +93,9 @@ class ServiceTest extends TestCase
 
         $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseFromImageThumbnail($thumbnail, [
             'type' => 'image',
-            // the requested extension differs from the asset's own; only the extension is
-            // attacker-controlled here, the write target would be derived from the asset path
-            'filename' => 'zzz-totally-unrelated.php',
+            // the requested extension differs from the asset's own and is deliberately an allowed
+            // format, so only the pass-through guard (not the allowlist) can prevent the copy
+            'filename' => 'zzz-totally-unrelated.png',
         ]));
 
         $this->assertInstanceOf(StreamedResponse::class, $response);
