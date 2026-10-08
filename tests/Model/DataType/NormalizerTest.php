@@ -684,6 +684,58 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
+    /**
+     * A video field whose asset (and poster) got deleted keeps the raw asset ids after loading
+     * the object, normalize() must not pass those ids to Element\Service::getElementType().
+     */
+    public function testVideoWithDeletedAssets(): void
+    {
+        $video = TestHelper::createVideoAsset();
+        $poster = TestHelper::createImageAsset();
+
+        $value = new DataObject\Data\Video();
+        $value->setType('asset');
+        $value->setData($video);
+        $value->setPoster($poster);
+        $value->setTitle('title');
+        $value->setDescription('description');
+
+        $object = TestHelper::createEmptyObject();
+        $object->setVideo($value);
+        $object->save();
+
+        $video->delete();
+        $poster->delete();
+
+        $object = Unittest::getById($object->getId(), ['force' => true]);
+        $loadedValue = $object->getVideo();
+        $this->assertInstanceOf(DataObject\Data\Video::class, $loadedValue);
+        $this->assertSame($video->getId(), $loadedValue->getData());
+        $this->assertSame($poster->getId(), $loadedValue->getPoster());
+
+        $fd = $object->getClass()->getFieldDefinition('video');
+        $this->assertInstanceOf(DataObject\ClassDefinition\Data\Video::class, $fd);
+
+        $this->assertSame([
+            'type' => 'asset',
+            'title' => 'title',
+            'description' => 'description',
+            'data' => null,
+        ], $fd->normalize($loadedValue));
+    }
+
+    public function testVideoWithNonAssetType(): void
+    {
+        $originalValue = new DataObject\Data\Video();
+        $originalValue->setType('youtube');
+        $originalValue->setData('dQw4w9WgXcQ');
+
+        $fd = new DataObject\ClassDefinition\Data\Video();
+        $normalizedValue = $fd->normalize($originalValue);
+        $this->assertSame(['type' => 'youtube', 'data' => 'dQw4w9WgXcQ'], $normalizedValue);
+        $this->assertEquals($originalValue, $fd->denormalize($normalizedValue));
+    }
+
     public function testWysiwyg(): void
     {
         $originalValue = uniqid() . '<br />' . uniqid();
