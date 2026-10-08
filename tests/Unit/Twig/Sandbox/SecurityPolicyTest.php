@@ -559,6 +559,15 @@ final class SecurityPolicyTest extends TestCase
         yield 'Asset::rollBack' => [new Asset(), 'rollBack'];
         yield 'Asset::moveThumbnailCache' => [new Asset(), 'moveThumbnailCache'];
         yield 'Asset::BEGINTRANSACTION' => [new Asset(), 'BEGINTRANSACTION'];
+        // the magic methods are public: calling __call directly would forward any name to the DAO
+        yield 'Asset::__call' => [new Asset(), '__call'];
+        yield 'Asset::__CALL' => [new Asset(), '__CALL'];
+        yield 'DataObject\\Concrete::__call' => [new Concrete(), '__call'];
+        yield 'DataObject\\Folder::__Call' => [new Folder(), '__Call'];
+        yield 'Document::__call' => [new Document(), '__call'];
+        yield 'Asset::__get' => [new Asset(), '__get'];
+        yield 'Asset::__set' => [new Asset(), '__set'];
+        yield 'Asset::__clone' => [new Asset(), '__clone'];
         yield 'Document::updateChildPaths' => [new Document(), 'updateChildPaths'];
         yield 'DataObject\\Concrete::beginTransaction' => [new Concrete(), 'beginTransaction'];
         yield 'DataObject\\Folder::moveSomethingInTheDao' => [new Folder(), 'moveSomethingInTheDao'];

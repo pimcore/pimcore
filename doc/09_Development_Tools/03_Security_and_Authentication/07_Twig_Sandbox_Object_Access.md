@@ -100,7 +100,7 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
 Models additionally cannot be used to reach their DAO: `AbstractModel::__call()` forwards every
 method a model does not declare to its DAO, so a template call such as `asset.beginTransaction()`
 or `asset.moveThumbnailCache()` would run database-layer code. Such calls are always denied (also
-in allowlist mode); only the delegated read operations (`get*`, `is*`, `has*`, `load*`, `count*`, e.g. the magic accessors and `Listing::load()`) pass.
+in allowlist mode), as are direct calls of the magic methods themselves (`asset.__call('delete', [])`); only the delegated read operations (`get*`, `is*`, `has*`, `load*`, `count*`, e.g. the magic accessors and `Listing::load()`) pass.
 
 Code that builds `Pimcore\Twig\Sandbox\SecurityPolicy` itself (for example a bundle with its own
 sandbox) gets the same patterns without passing anything: when the `hardBlockedMethodPatterns`
