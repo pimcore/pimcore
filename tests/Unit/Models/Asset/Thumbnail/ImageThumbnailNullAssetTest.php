@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Models\Asset\Thumbnail;
 
 use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
+use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
 use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
 use Pimcore\Tests\Support\Test\TestCase;
 
@@ -37,5 +39,13 @@ class ImageThumbnailNullAssetTest extends TestCase
         $thumbnail = new DocumentImageThumbnail(null);
 
         $this->assertNull($thumbnail->getAsset());
+    }
+
+    public function testImageThumbnailAlwaysReturnsItsImage(): void
+    {
+        $image = new Image();
+        $thumbnail = new ImageThumbnail($image);
+
+        $this->assertSame($image, $thumbnail->getAsset());
     }
 }
