@@ -5,6 +5,9 @@
 ### [Workflow]
 - [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
 
+### [Assets]
+- [Thumbnails] `ImageThumbnailInterface::getAsset()` and the implementing `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail can be constructed without a backing asset (e.g. via a raw path reference), in which case `getAsset()` returned `null` and thus violated its own non-nullable return type with a `TypeError`. Callers must now handle a possible `null` return value.
+
 ## Pimcore 2026.3.2
 
 ### [Security]
@@ -58,7 +61,6 @@
 ### [Assets]
 - [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
 - Added a new optional `$parameters` argument to `Asset::saveVersion()` to allow passing custom arguments to the `PRE_UPDATE` / `POST_UPDATE` / `POST_UPDATE_FAILURE` versioning events, analogous to `Concrete::saveVersion()`. To stay backwards-compatible for classes overriding `saveVersion()`, the argument is documented in the docblock but not yet part of the method signature (it is read via `func_get_arg()`); it will become a regular signature parameter in the next major version.
-- [Thumbnails] `ImageThumbnailInterface::getAsset()` and the implementing `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail can be constructed without a backing asset (e.g. via a raw path reference), in which case `getAsset()` returned `null` and thus violated its own non-nullable return type with a `TypeError`. Callers must now handle a possible `null` return value.
 - [Security] `Asset::correctPath()` now also renames an asset filename ending in `.html`, `.htm`, `.xhtml`, `.xht`, `.shtml`, `.js` or `.mjs` by appending a `.txt` suffix whenever that filename itself is newly set or changed (creation or rename), the same way it has always done for PHP-family extensions and `.htaccess` - these extensions would otherwise be served with an executable/active content-type (`text/html`, `application/xhtml+xml`, `application/javascript`, ...) and could be used for stored XSS, e.g. via a WebDAV upload/rename from a user with only create/rename permission on an asset folder (GHSA-4xrp-5ggg-fg5p). An **existing** asset already stored under one of these extensions keeps its filename on a save that doesn't change it, including moving it to a different folder (which changes only its path, not its filename), so no existing installation loses access to already-referenced `.html`/`.js` assets. `.svg` is intentionally not covered by this change - see the PR description of the fix for GHSA-4xrp-5ggg-fg5p for why.
 
 ### [Documents]
