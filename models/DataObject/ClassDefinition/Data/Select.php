@@ -416,6 +416,13 @@ class Select extends Data implements
         return $this->getDefaultValue();
     }
 
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        // the default is resolved at runtime (options provider), the configured default value alone does not tell
+        return parent::hasApplicableDefaultValue($object, $context)
+            || ($this->getMandatory() && !$this->isEmpty($this->doGetDefaultValue($object, $context)));
+    }
+
     public function jsonSerialize(): mixed
     {
         if (!$this->useConfiguredOptions() && $this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {

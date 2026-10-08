@@ -345,6 +345,13 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return null;
     }
 
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        // the default is resolved at runtime (use current date), the configured default value alone does not tell
+        return parent::hasApplicableDefaultValue($object, $context)
+            || ($this->getMandatory() && !$this->isEmpty($this->doGetDefaultValue($object, $context)));
+    }
+
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         $oldValue = $oldValue instanceof DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;

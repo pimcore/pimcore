@@ -13,25 +13,31 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject;
 
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Date;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Datetime;
 use Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tests\Support\Test\TestCase;
-use ReflectionMethod;
+use Pimcore\Tests\Support\Util\OptionsProvider\DefaultingOptionsProvider;
+use Pimcore\Tests\Support\Util\OptionsProvider\NoDefaultOptionsProvider;
 
 /**
  * Regression test for PEES-1279.
  *
  * Concrete::update() decides whether to skip the mandatory check on object
- * creation for a field left empty, by asking
- * Concrete::fieldHasApplicableDefault() whether a real default will actually
- * be applied to that field. This test calls that private production method
- * directly via reflection - not a test-local copy of its logic - so it stays
+ * creation for a field left empty, by asking the field definition via
+ * Data::hasApplicableDefaultValue() whether a real default will actually
+ * be applied to that field. This test calls that production method
+ * directly - not a test-local copy of its logic - so it stays
  * honest if the real condition changes.
  *
  * Concrete::update() itself can only be exercised end-to-end through a full
@@ -228,6 +234,112 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         );
     }
 
+    public function testMandatoryDateWithCurrentDateIsRecognizedAsHavingADefault(): void
+    {
+        $field = new Date();
+        $field->setName('mandatoryDateWithCurrentDate');
+        $field->setMandatory(true);
+        $field->setUseCurrentDate(true);
+
+        $this->assertFalse((bool) $field->getDefaultValue(), 'Sanity check: no default value is configured');
+        $this->assertTrue(
+            $this->fieldHasApplicableDefault($field),
+            'A mandatory date field that defaults to the current date must get the create-time mandatory-check bypass'
+        );
+    }
+
+    public function testMandatoryDatetimeWithCurrentDateIsRecognizedAsHavingADefault(): void
+    {
+        $field = new Datetime();
+        $field->setName('mandatoryDatetimeWithCurrentDate');
+        $field->setMandatory(true);
+        $field->setUseCurrentDate(true);
+
+        $this->assertFalse((bool) $field->getDefaultValue(), 'Sanity check: no default value is configured');
+        $this->assertTrue(
+            $this->fieldHasApplicableDefault($field),
+            'A mandatory datetime field that defaults to the current date must get the create-time mandatory-check bypass'
+        );
+    }
+
+    public function testMandatoryDateAndDatetimeWithoutAnyDefaultAreNotRecognizedAsHavingADefault(): void
+    {
+        foreach ([new Date(), new Datetime()] as $field) {
+            $field->setMandatory(true);
+
+            $this->assertFalse(
+                $this->fieldHasApplicableDefault($field),
+                $field::class . ' without a default value and without "use current date" must not get the bypass'
+            );
+        }
+    }
+
+    public function testNonMandatoryFieldsDoNotResolveARuntimeDefaultForTheGuard(): void
+    {
+        $date = new Date();
+        $date->setUseCurrentDate(true);
+
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass(DefaultingOptionsProvider::class);
+
+        foreach ([$date, $select] as $field) {
+            $this->assertFalse(
+                $this->fieldHasApplicableDefault($field),
+                $field::class . ' is not mandatory, so there is no mandatory check to waive'
+            );
+        }
+    }
+
+    public function testMandatorySelectWithProviderDefaultIsRecognizedAsHavingADefault(): void
+    {
+        $field = new Select();
+        $field->setName('mandatorySelectWithProviderDefault');
+        $field->setMandatory(true);
+        $field->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $field->setOptionsProviderClass(DefaultingOptionsProvider::class);
+
+        $this->assertEmpty($field->getDefaultValue(), 'Sanity check: no default value is configured');
+        $this->assertTrue(
+            $this->fieldHasApplicableDefault($field),
+            'A mandatory select field whose options provider supplies a default must get the create-time mandatory-check bypass'
+        );
+    }
+
+    public function testMandatoryMultiselectWithProviderDefaultIsRecognizedAsHavingADefault(): void
+    {
+        $field = new Multiselect();
+        $field->setName('mandatoryMultiselectWithProviderDefault');
+        $field->setMandatory(true);
+        $field->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $field->setOptionsProviderClass(DefaultingOptionsProvider::class);
+
+        $this->assertEmpty($field->getDefaultValue(), 'Sanity check: no default value is configured');
+        $this->assertTrue(
+            $this->fieldHasApplicableDefault($field),
+            'A mandatory multiselect field whose options provider supplies a default must get the create-time mandatory-check bypass'
+        );
+    }
+
+    /**
+     * The bypass has to follow the *resolved* default: a provider that
+     * does not come up with a default must not waive the mandatory check,
+     * otherwise an empty mandatory field would be persisted.
+     */
+    public function testProviderThatResolvesNoDefaultDoesNotGetTheBypass(): void
+    {
+        foreach ([new Select(), new Multiselect()] as $field) {
+            $field->setMandatory(true);
+            $field->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+            $field->setOptionsProviderClass(NoDefaultOptionsProvider::class);
+
+            $this->assertFalse(
+                $this->fieldHasApplicableDefault($field),
+                $field::class . ' whose options provider resolves no default must not get the bypass'
+            );
+        }
+    }
+
     /**
      * The guard must never be *stricter* than the condition it replaced. Every
      * field whose configured default qualified for the bypass under the pre-fix
@@ -302,6 +414,17 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         $range = new QuantityValueRange();
         $range->setDefaultUnit('unit-1');
 
+        $dateConfigured = new Date();
+        $dateConfigured->setDefaultValue(1700000000);
+
+        $datetimeConfigured = new Datetime();
+        $datetimeConfigured->setDefaultValue(1700000000);
+
+        $selectWithProvider = new Select();
+        $selectWithProvider->setDefaultValue('someOption');
+        $selectWithProvider->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $selectWithProvider->setOptionsProviderClass(NoDefaultOptionsProvider::class);
+
         return [
             'Numeric with a 0 default' => $numericZero,
             'Numeric with a 5 default' => $numericFive,
@@ -314,14 +437,18 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
             'QuantityValue with a 0 value and an empty-string unit' => $quantityZeroPlusEmptyUnit,
             'InputQuantityValue with a "0" value and a unit' => $inputQuantityZeroPlusUnit,
             'QuantityValueRange with a unit' => $range,
+            'Date with a configured default' => $dateConfigured,
+            'Datetime with a configured default' => $datetimeConfigured,
+            'Select with a configured default and a provider that resolves none' => $selectWithProvider,
         ];
     }
 
     private function fieldHasApplicableDefault(Data $fd): bool
     {
-        $method = new ReflectionMethod(Concrete::class, 'fieldHasApplicableDefault');
-        $method->setAccessible(true);
+        // ClassDefinition is final and so cannot be stubbed, options providers get it via the object
+        $object = $this->createStub(Concrete::class);
+        $object->method('getClass')->willReturn(new ClassDefinition());
 
-        return $method->invoke(null, $fd);
+        return $fd->hasApplicableDefaultValue($object);
     }
 }
