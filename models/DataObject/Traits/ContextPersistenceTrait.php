@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\Localizedfield\ContainerOwnerName;
 
 /**
  * @internal
@@ -42,13 +43,7 @@ trait ContextPersistenceTrait
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) &&
                 ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                $fieldname = $context['fieldname'] ?? null;
-                if ($context['containerType'] === 'fieldcollection') {
-                    $index = $context['index'] ?? null;
-                    $filter = '/'.$context['containerType'].'~'.$fieldname.'/'.$index.'/%';
-                } else {
-                    $filter = '/'.$context['containerType'].'~'.$fieldname.'/%';
-                }
+                $filter = ContainerOwnerName::filter($context);
                 $relations = $object->getObject()->retrieveRelationData(
                     [
                         'fieldname' => $this->getName(),
@@ -110,9 +105,7 @@ trait ContextPersistenceTrait
             $row['ownername'] = 'localizedfield';
             $context = $object->getContext();
             if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                $fieldname = $context['fieldname'];
-                $index = $context['index'] ?? $context['containerKey'] ?? null;
-                $row['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $row['ownername'];
+                $row['ownername'] = ContainerOwnerName::prefix($context) . 'localizedfield~' . $row['ownername'];
             }
 
             $row['position'] = $params['language'];

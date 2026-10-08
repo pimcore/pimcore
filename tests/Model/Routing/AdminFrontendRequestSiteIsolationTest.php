@@ -35,6 +35,7 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tool\Authentication;
 use Psr\Log\NullLogger;
 use ReflectionProperty;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,6 +44,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -53,6 +55,9 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  * redirect when it comes with an authenticated admin session. Each call site is covered in both
  * directions, so reverting it to the parameter-only isFrontendRequestByAdmin() check fails the
  * unauthenticated case, and a check that never passes fails the authenticated one.
+ *
+ * The routing listener is dispatched with the session attached at Symfony's SessionListener
+ * priority, as in the kernel, so a check that runs before the session exists fails too.
  */
 class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
 {
@@ -65,6 +70,8 @@ class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
     private Document\Page $siteDocument;
 
     private ?User $user = null;
+
+    private ?Session $adminSession = null;
 
     private ?array $originalSystemSettings = null;
 
@@ -97,6 +104,7 @@ class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
 
         $this->user?->delete();
         $this->user = null;
+        $this->adminSession = null;
 
         $this->resetCurrentSite();
 
@@ -106,6 +114,7 @@ class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
     public function testAuthenticatedHelperAcceptsAdminParamWithValidAdminSession(): void
     {
         $request = $this->createAdminRequest('http://example.com/some/page', true);
+        $this->attachAdminSession($request);
 
         $this->assertTrue($this->createRequestHelper($request)->isAuthenticatedFrontendRequestByAdmin($request));
     }
@@ -183,11 +192,18 @@ class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
                 serialize(new UsernamePasswordToken(new SecurityUser($this->createAdminUser()), 'pimcore_admin'))
             );
 
-            $request->setSession($session);
             $request->cookies->set($session->getName(), $session->getId());
+            $this->adminSession = $session;
         }
 
         return $request;
+    }
+
+    private function attachAdminSession(Request $request): void
+    {
+        if (null !== $this->adminSession) {
+            $request->setSession($this->adminSession);
+        }
     }
 
     private function createRequestHelper(Request $request): RequestHelper
@@ -221,18 +237,26 @@ class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
         $listener->setPimcoreContextResolver($contextResolver);
         $listener->setLogger(new NullLogger());
 
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($listener);
+        // stands in for Symfony's SessionListener, which attaches the session at priority 128
+        $dispatcher->addListener(KernelEvents::REQUEST, fn () => $this->attachAdminSession($request), 128);
+
         $event = new RequestEvent(
             $this->createMock(HttpKernelInterface::class),
             $request,
             HttpKernelInterface::MAIN_REQUEST
         );
-        $this->runWithGlobalRequest($request, fn () => $listener->onKernelRequest($event));
+        $this->runWithGlobalRequest($request, fn () => $dispatcher->dispatch($event, KernelEvents::REQUEST));
 
         return $event;
     }
 
     private function matchDocumentRoute(Request $request): RouteCollection
     {
+        // dynamic routing runs after the session listener
+        $this->attachAdminSession($request);
+
         $handler = new DocumentRouteHandler(
             new Document\Service(),
             $this->createSiteResolver($request),

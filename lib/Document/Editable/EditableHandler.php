@@ -442,6 +442,9 @@ class EditableHandler implements LoggerAwareInterface
             $attributes = $this->addDocumentAttributes($document, $attributes);
         }
 
+        // see assertValidControllerReference() - set last, so that the editable config can't switch it off
+        $attributes['_check_controller_is_allowed'] = true;
+
         $uri = new ControllerReference($controller, $attributes, $query);
 
         if ($this->requestHelper->hasCurrentRequest()) {
@@ -465,6 +468,11 @@ class EditableHandler implements LoggerAwareInterface
      * an editable's `controller` config (e.g. via the `pimcore_renderlet` Twig function on
      * attacker-controlled template source) execute arbitrary PHP callables. Reject that form here,
      * before it reaches the fragment renderer / controller resolver.
+     *
+     * A "Class::method" string can still name any public method, e.g. a static one that runs a shell
+     * command. So renderAction() also sets Symfony's "_check_controller_is_allowed" request attribute,
+     * which makes the controller resolver accept only registered controllers (services tagged with
+     * "controller.service_arguments", subclasses of AbstractController or classes with #[AsController]).
      *
      * @throws InvalidControllerReferenceException
      */
