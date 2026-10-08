@@ -496,12 +496,8 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'count');
         $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'load');
         $policy->checkMethodAllowed($this->createStub(Editable\Input::class), 'render');
-        $policy->checkMethodAllowed($this->createStub(Editable\Input::class), 'renderIndex');
-        // names outside the blocked mutation families stay callable: this change only closes
-        // the mutation surface, it does not turn the policy into a read-only allowlist
-        $policy->checkMethodAllowed(new Asset(), 'myCustomHelper');
-        $policy->checkMethodAllowed(new Concrete(), 'renderPreview');
-        $this->addToAssertionCount(19);
+        $policy->checkMethodAllowed($this->createStub(Editable\Areablock::class), 'renderIndex');
+        $this->addToAssertionCount(17);
     }
 
     /**
@@ -530,6 +526,66 @@ final class SecurityPolicyTest extends TestCase
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * `AbstractModel::__call()` forwards undeclared methods to the DAO, which would otherwise
+     * reach the database layer under the model's class name.
+     *
+     * @return iterable<string, array{object, string}>
+     */
+    public static function daoDelegatedMethodsProvider(): iterable
+    {
+        yield 'Asset::beginTransaction' => [new Asset(), 'beginTransaction'];
+        yield 'Asset::commit' => [new Asset(), 'commit'];
+        yield 'Asset::rollBack' => [new Asset(), 'rollBack'];
+        yield 'Asset::moveThumbnailCache' => [new Asset(), 'moveThumbnailCache'];
+        yield 'Asset::BEGINTRANSACTION' => [new Asset(), 'BEGINTRANSACTION'];
+        yield 'Document::updateChildPaths' => [new Document(), 'updateChildPaths'];
+        yield 'DataObject\\Concrete::beginTransaction' => [new Concrete(), 'beginTransaction'];
+        yield 'DataObject\\Folder::moveSomethingInTheDao' => [new Folder(), 'moveSomethingInTheDao'];
+    }
+
+    /**
+     * @dataProvider daoDelegatedMethodsProvider
+     */
+    public function testDaoDelegatedMethodsAreDeniedOnModels(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * @dataProvider daoDelegatedMethodsProvider
+     */
+    public function testDaoDelegatedMethodsAreDeniedInAllowlistMode(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(allowedClasses: [$instance::class]);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    public function testDeclaredMethodsAndMagicAccessorsAreNotAffectedByDaoDelegationCheck(): void
+    {
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        // declared methods outside the blocked verbs and outside get*/is*/has* stay callable
+        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'load');
+        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'count');
+        // undeclared get*/is*/has* calls are the magic accessors (generated or DAO-backed reads)
+        $policy->checkMethodAllowed(new Asset(), 'getSomethingMagic');
+        $policy->checkMethodAllowed(new Concrete(), 'getByMagicField');
+        $policy->checkMethodAllowed(new Concrete(), 'hasSomethingMagic');
+        // Listing::load() is not declared on the class: it is delegated to the DAO
+        $policy->checkMethodAllowed(new Concrete(), 'loadSomethingDelegated');
+        $policy->checkMethodAllowed(new Concrete(), 'countSomethingDelegated');
+        $this->addToAssertionCount(7);
     }
 
     public function testMalformedHardBlockedMethodPatternIsRejectedByConstructor(): void

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Sandbox;
 
+use Pimcore\Model\AbstractModel;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
@@ -215,6 +216,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
     {
         $this->assertNotHardBlockedMethod($obj, $method);
         $this->assertNotHardBlockedMethodPattern($obj, $method);
+        $this->assertNotDaoDelegatedMethod($obj, $method);
 
         if ($this->isAllowlistMode()) {
             if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
@@ -332,6 +334,36 @@ final class SecurityPolicy implements SecurityPolicyInterface
                 }
             }
         }
+    }
+
+    /**
+     * `AbstractModel::__call()` delegates every method the model does not declare to its DAO
+     * (`beginTransaction()`, `commit()`, `rollBack()`, `moveThumbnailCache()`, ...), so those calls
+     * reach the database layer under the model's class and bypass a check on the DAO class itself.
+     * No template needs that: only the delegated read operations (`get*`/`is*`/`has*` magic
+     * accessors, and `load*`/`count*` as used by listings, whose `load()` lives in the DAO) are
+     * let through, everything else delegated to the DAO is denied.
+     *
+     * @param object $obj
+     * @param string $method
+     */
+    private function assertNotDaoDelegatedMethod($obj, $method): void
+    {
+        if (!$obj instanceof AbstractModel || method_exists($obj, $method)) {
+            return;
+        }
+
+        if (1 === preg_match('/^(get|is|has|load|count)/i', $method)) {
+            return;
+        }
+
+        $objClass = $obj::class;
+
+        throw new SecurityNotAllowedMethodError(
+            sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $objClass),
+            $objClass,
+            $method,
+        );
     }
 
     /**

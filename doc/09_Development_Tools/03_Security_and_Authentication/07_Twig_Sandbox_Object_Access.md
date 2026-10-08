@@ -93,6 +93,11 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   templates), and `Pimcore\Model\DataObject\Data\UrlSlug::getAction()` deletes the slug
   when its field definition no longer exists.
 
+Models additionally cannot be used to reach their DAO: `AbstractModel::__call()` forwards every
+method a model does not declare to its DAO, so a template call such as `asset.beginTransaction()`
+or `asset.moveThumbnailCache()` would run database-layer code. Such calls are always denied (also
+in allowlist mode); only the delegated read operations (`get*`, `is*`, `has*`, `load*`, `count*`, e.g. the magic accessors and `Listing::load()`) pass.
+
 `hard_blocked_method_patterns` is a FQCN => list-of-PCRE-patterns map. Keys are matched
 with `instanceof` exactly like `hard_blocked_methods`, a pattern is matched against
 the method name with `preg_match()`, and the check is **not** bypassed by allowlist
@@ -237,9 +242,9 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
-                # FQCN => PCRE patterns. The default is deny-by-default: only get*/is*/has*
-                # methods are callable on models and field definitions. Never callable,
-                # regardless of blocked_classes/allowed_classes; merged with this default.
+                # FQCN => PCRE patterns for method families that can't be listed by exact
+                # name (dynamic setters, save*/delete* variants). Never callable, regardless
+                # of blocked_classes/allowed_classes; merged with this default.
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
