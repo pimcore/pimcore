@@ -53,7 +53,7 @@ class IncludeRenderer
 
         if (is_numeric($include)) {
             try {
-                $include = Model\Document::getById($include);
+                $include = Model\Document::getById((int) $include);
             } catch (Exception $e) {
                 $include = $originalInclude;
             }
