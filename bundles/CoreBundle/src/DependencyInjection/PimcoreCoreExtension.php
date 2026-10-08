@@ -102,6 +102,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.allowed_classes', $config['templating_engine']['twig']['sandbox_security_policy']['allowed_classes']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_functions', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_functions']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_methods']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_method_patterns', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_method_patterns']);
 
         // register pimcore config on container
         // TODO is this bad practice?
