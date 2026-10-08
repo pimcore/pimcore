@@ -2,6 +2,9 @@
 
 ## Pimcore 2026.3.2
 
+### [Users]
+- [Users] User and role **folder** names are now unique per parent folder instead of globally, consistent with folder behavior for assets, documents and data objects. User and role names themselves remain globally unique (they are login/security identifiers) — this is still enforced on database level. Technically, the `UNIQUE KEY type_name` on the `users` table is replaced by a unique index over a new stored generated column `uniqueName` (migration `Version20261008090000`). The migration cannot fail on existing data, as the new constraint is identical for users/roles and strictly weaker for folders. Note: `\Pimcore\Model\User\Folder::getByName()` / `\Pimcore\Model\User\Role\Folder::getByName()` return the oldest match (lowest id) if multiple folders with the same name exist under different parents.
+
 ### [DataObjects]
 - [Object Bricks] Localized relations, relation metadata and URL slugs inside object bricks are read, written and deleted per brick, and `_` in brick keys and field names no longer acts as a wildcard. Two bricks in the same container whose localized fields share a field name no longer show or overwrite each other's values ([#9701](https://github.com/pimcore/pimcore/issues/9701)). On an affected installation, a brick that showed the relations of another brick before the upgrade shows only its own relations after it. The stored relations are not changed, but relations that a brick lost by being overwritten cannot be restored automatically.
 - [Object Bricks] Removing a brick also removes the relation metadata and URL slugs of its localized fields. Such slugs no longer keep routing to the object and no longer come back when the brick is added again. URL slugs of localized fields in bricks resolve their action from their own brick, so resolving such a slug no longer deletes it when the first allowed brick has no field of that name.

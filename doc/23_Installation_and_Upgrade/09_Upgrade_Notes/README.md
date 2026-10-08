@@ -1,18 +1,5 @@
 # Upgrade Notes
 
-## Pimcore 2026.3.2
-
-### [Users]
-
-- [Users] User and role **folder** names are now unique per parent folder instead of globally, consistent with
-  folder behavior for assets, documents and data objects. User and role names themselves remain globally
-  unique (they are login/security identifiers) — this is still enforced on database level.
-  Technically, the `UNIQUE KEY type_name` on the `users` table is replaced by a unique index over a new
-  stored generated column `uniqueName` (migration `Version20261008090000`). The migration cannot fail on
-  existing data, as the new constraint is identical for users/roles and strictly weaker for folders.
-  Note: `\Pimcore\Model\User\Folder::getByName()` / `\Pimcore\Model\User\Role\Folder::getByName()` return
-  the oldest match (lowest id) if multiple folders with the same name exist under different parents.
-
 ## Pimcore 2026.3.0
 
 ### [Documents] Static page generator: frontend requests only store a static page when it is safe to share
