@@ -225,4 +225,67 @@ final class SqlTest extends TestCase
 
         $this->assertStringContainsString('load_file_id', $sql);
     }
+
+    public function testRejectsForbiddenFunctionAfterQuoteNestedInBacktickIdentifier(): void
+    {
+        // GHSA-6r57-mhj4-5gmr: the old validator stripped quoted regions with three
+        // independent regexes (single-quote, then double-quote, then backtick), run in that
+        // fixed order and each blind to the regions the others own. A "'" inside a backtick
+        // identifier opened a string for the single-quote pattern, which then consumed
+        // everything up to the next unrelated "'" - erasing a forbidden token in between from
+        // the text the denylist scans, while MySQL's lexer never saw a string there at all.
+        $config = $this->configWith(
+            'sql',
+            "1 AS `x'`, LOAD_FILE('/etc/hostname') AS leak, 'z'"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterQuoteNestedInDoubleQuotedString(): void
+    {
+        // Same desync, with the nested quote living inside a double-quoted string instead of
+        // a backtick identifier.
+        $config = $this->configWith(
+            'sql',
+            "1 AS \"a'b\", LOAD_FILE('/etc/hostname') AS leak, 'z'"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubleQuoteNestedInBacktickIdentifier(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            '1 AS `x"`, LOAD_FILE(\'/etc/hostname\') AS leak, "z"'
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterBacktickNestedInSingleQuotedString(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            "1 AS 'x`', LOAD_FILE('/etc/hostname') AS leak, `z`"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testBacktickIdentifierContainingQuoteIsStillAcceptedWhenFragmentIsSafe(): void
+    {
+        // The nested-quote identifier itself is legitimate; only the companion LOAD_FILE()
+        // call made the fragments above unsafe. Without it, this must still be accepted.
+        $config = $this->configWith('sql', "1 AS `x'`, 'z' AS lit");
+
+        $sql = $this->adapter()->exposedBuildQueryString($config);
+
+        $this->assertStringContainsString("1 AS `x'`, 'z' AS lit", $sql);
+    }
 }

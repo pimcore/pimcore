@@ -178,23 +178,7 @@ class Sql extends AbstractAdapter
     private function validateSqlFragment(string $sql): void
     {
         // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
-        //
-        // The backslash alternative must be tried before the catch-all "any non-quote char" one:
-        // MySQL's default (non-NO_BACKSLASH_ESCAPES) lexer treats a backslash as escaping exactly
-        // the next character, so "\\" is one escaped backslash and the following quote closes the
-        // string. Matching "\\." first consumes both bytes of that escape as a unit; matching the
-        // backslash on its own via "[^']" first (as this used to) leaves the second backslash to
-        // combine with the real closing quote into a bogus "escaped quote", desynchronizing this
-        // regex from MySQL's lexer and letting it scan past the string's actual end.
-        $sqlForValidation = preg_replace(
-            [
-                "/'(?:\\\\.|''|[^'])*'/s",
-                '/"(?:\\\\.|""|[^"])*"/s',
-                '/`[^`]*`/s',
-            ],
-            ["''", '""', '``'],
-            $sql
-        ) ?? $sql;
+        $sqlForValidation = $this->stripQuotedRegionsForValidation($sql);
 
         // Normalize whitespace/newlines for consistent boundary checking
         $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
@@ -224,6 +208,82 @@ class Sql extends AbstractAdapter
                 throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, DDL/DML, and file access functions are not allowed).');
             }
         }
+    }
+
+    /**
+     * Replaces every quoted region (single-quoted string, double-quoted string, backtick
+     * identifier) with a short placeholder, so the denylist above never sees a forbidden
+     * token that only occurs inside one of them.
+     *
+     * This must be a single left-to-right scan carrying one "which quote type is currently
+     * open" state, not three independent regexes run one after another: a quote character
+     * belonging to one region type can occur inside a region owned by a different type (e.g.
+     * a "'" inside a backtick identifier, or inside a double-quoted string). Three sequential
+     * patterns each only know their own quote character, so whichever pattern runs first
+     * treats that nested quote as its own opener and keeps consuming past the region's real
+     * end, erasing whatever forbidden token followed from the text the denylist inspects -
+     * while MySQL's lexer never saw a string there at all.
+     *
+     * Per MySQL's default (non-NO_BACKSLASH_ESCAPES) lexer: inside '...' and "...", a
+     * backslash escapes the next character and the delimiter can also be doubled to escape
+     * itself; inside `...`, only doubling the backtick escapes it - there is no backslash
+     * escaping for identifiers.
+     */
+    private function stripQuotedRegionsForValidation(string $sql): string
+    {
+        $result = '';
+        $buffer = '';
+        $length = strlen($sql);
+        $openQuote = null;
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $sql[$i];
+
+            if ($openQuote === null) {
+                if ($char === "'" || $char === '"' || $char === '`') {
+                    $openQuote = $char;
+                    $buffer = $char;
+                } else {
+                    $result .= $char;
+                }
+
+                continue;
+            }
+
+            $buffer .= $char;
+
+            if ($openQuote !== '`' && $char === '\\' && $i + 1 < $length) {
+                // Backslash escapes the next byte; consume it as a unit so a real closing
+                // quote right after it is not mistaken for an escaped one (or vice versa).
+                $i++;
+                $buffer .= $sql[$i];
+
+                continue;
+            }
+
+            if ($char === $openQuote) {
+                if ($i + 1 < $length && $sql[$i + 1] === $openQuote) {
+                    // Doubled delimiter escapes itself within the region.
+                    $i++;
+                    $buffer .= $sql[$i];
+
+                    continue;
+                }
+
+                // Properly closed region: collapse it to a short placeholder.
+                $result .= $openQuote . $openQuote;
+                $openQuote = null;
+                $buffer = '';
+            }
+        }
+
+        // An unterminated quoted region is not a region at all as far as the denylist is
+        // concerned - keep its raw content visible rather than assume it is safe.
+        if ($openQuote !== null) {
+            $result .= $buffer;
+        }
+
+        return $result;
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array
