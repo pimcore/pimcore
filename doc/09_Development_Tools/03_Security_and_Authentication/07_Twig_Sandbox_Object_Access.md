@@ -75,7 +75,8 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   exact name, because the setters are generated dynamically and several methods write
   directly without a later `save()` call. By default every method whose name starts with
   `set`, `save`, `delete`, `dump`, `update`, `create`, `unlock`, `add`, `remove`, `clear`,
-  `clean`, `correct`, `trigger`, `rename`, `generate`, `rewrite`, `enable` or `disable`
+  `clean`, `correct`, `trigger`, `rename`, `generate`, `rewrite`, `enable`, `disable`, `batch`,
+  `import`, `lock`, `restore` or `flush`
   (case-insensitive, e.g. `setKey`, `saveIndex`, `deleteAutoSaveVersions`, `dumpClass`, the
   static `create()` factories, `unlockPropagate`, `addMetadata`, `removeProperty`,
   `clearThumbnails`) is blocked on `Pimcore\Model\AbstractModel`, the common base class of
@@ -256,7 +257,7 @@ pimcore:
                 # of blocked_classes/allowed_classes; merged with this default.
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
-                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i'
                         - '/editmode/i'

@@ -33,7 +33,11 @@ use Pimcore\Model\DataObject\Listing as DataObjectListing;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
+use Pimcore\Model\Element\Editlock;
+use Pimcore\Model\Element\Recyclebin;
+use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Property;
+use Pimcore\Model\Translation;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
 use ReflectionClassConstant;
@@ -311,6 +315,14 @@ final class SecurityPolicyTest extends TestCase
         yield 'ClassDefinition::generateClassFiles' => [new ClassDefinition(), 'generateClassFiles'];
         yield 'Dependency::cleanAllForElement' => [new Dependency(), 'cleanAllForElement'];
         yield 'Dependency::clean' => [new Dependency(), 'clean'];
+        // models reachable through functions/getters whose persisting methods are not named like a setter
+        // (static methods can also be invoked through an instance)
+        yield 'Element\\Tag::batchAssignTagsToElement' => [new Tag(), 'batchAssignTagsToElement'];
+        yield 'Element\\Tag::BATCHASSIGNTAGSTOELEMENT' => [new Tag(), 'BATCHASSIGNTAGSTOELEMENT'];
+        yield 'Element\\Editlock::lock' => [new Editlock(), 'lock'];
+        yield 'Element\\Recyclebin::flush' => [new Recyclebin(), 'flush'];
+        yield 'Translation::importTranslationsFromFile' => [new Translation(), 'importTranslationsFromFile'];
+        yield 'Element\\Recyclebin\\Item::restore' => [new Recyclebin\Item(), 'restore'];
         yield 'Property::setData' => [new Property(), 'setData'];
         // persistence gateways reached through allowed getters: dump*/update* write through the
         // DAO or the definition files without a later `save()` call

@@ -431,7 +431,7 @@ pimcore:
                 # hard_blocked_methods instead (e.g. Image::getDimensions).
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
-                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'
                     # field definitions reachable via ClassDefinition::getFieldDefinition() (their
                     # save()/delete()/classSaved() persist immediately; verifyPassword() can rehash and save the
                     # object, calculateDelta() inserts relation rows)
