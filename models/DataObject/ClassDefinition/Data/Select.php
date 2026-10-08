@@ -420,7 +420,7 @@ class Select extends Data implements
     {
         // the default is resolved at runtime (options provider), the configured default value alone does not tell
         return parent::hasApplicableDefaultValue($object, $context)
-            || ($this->getMandatory() && !$this->isEmpty($this->doGetDefaultValue($object, $context)));
+            || !$this->isEmpty($this->doGetDefaultValue($object, $context));
     }
 
     public function jsonSerialize(): mixed

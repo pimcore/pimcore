@@ -274,7 +274,12 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         }
     }
 
-    public function testNonMandatoryFieldsDoNotResolveARuntimeDefaultForTheGuard(): void
+    /**
+     * The hook reports whether a default will be applied, independent of
+     * whether the field happens to be mandatory - the same as it does for a
+     * configured default.
+     */
+    public function testRuntimeDefaultIsReportedRegardlessOfTheMandatoryFlag(): void
     {
         $date = new Date();
         $date->setUseCurrentDate(true);
@@ -284,9 +289,11 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         $select->setOptionsProviderClass(DefaultingOptionsProvider::class);
 
         foreach ([$date, $select] as $field) {
-            $this->assertFalse(
+            $field->setMandatory(false);
+
+            $this->assertTrue(
                 $this->fieldHasApplicableDefault($field),
-                $field::class . ' is not mandatory, so there is no mandatory check to waive'
+                $field::class . ' resolves a default, so it must be reported whether or not it is mandatory'
             );
         }
     }

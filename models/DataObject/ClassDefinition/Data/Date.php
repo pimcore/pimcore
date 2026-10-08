@@ -329,7 +329,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         // the default is resolved at runtime (use current date), the configured default value alone does not tell
         return parent::hasApplicableDefaultValue($object, $context)
-            || ($this->getMandatory() && !$this->isEmpty($this->doGetDefaultValue($object, $context)));
+            || !$this->isEmpty($this->doGetDefaultValue($object, $context));
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
