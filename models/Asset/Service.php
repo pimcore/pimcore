@@ -525,7 +525,7 @@ class Service extends Model\Element\Service
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
             if ($actualFileExtension !== $config['file_extension']
-                && ($pathReference['type'] ?? '') !== 'asset'
+                && ($pathReference['type'] ?? '') === 'thumbnail'
                 && in_array(
                     strtolower((string) $config['file_extension']),
                     Config::getSystemConfiguration('assets')['thumbnails']['allowed_formats'],
@@ -536,9 +536,10 @@ class Service extends Model\Element\Service
                 // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                 // is set to auto-optimized format so the resulting thumbnail can be jpeg
                 //
-                // a pass-through path reference (type === 'asset') points directly at the original
-                // asset's bytes, so it must never be mirrored into thumbnail storage under a
-                // caller-chosen extension, and the requested extension must be an allowed format
+                // only a generated thumbnail (type === 'thumbnail') may be mirrored; e.g. a pass-through
+                // path reference (type === 'asset') points directly at the original asset's bytes and
+                // must never be copied into thumbnail storage under a caller-chosen extension. Any other
+                // or missing type is rejected, and the requested extension must be an allowed format
                 $requestedFile = preg_replace(
                     '/\.' . preg_quote($actualFileExtension, '/') . '$/',
                     '.' . strtolower((string) $config['file_extension']),

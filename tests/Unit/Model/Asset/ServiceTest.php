@@ -101,6 +101,33 @@ class ServiceTest extends TestCase
         $this->assertInstanceOf(StreamedResponse::class, $response);
     }
 
+    public function testGetStreamedResponseFromImageThumbnailDoesNotMirrorUnknownPathReferenceType(): void
+    {
+        // the guard is fail-closed: only a generated thumbnail (type === 'thumbnail') may be
+        // mirrored, so a custom or future path reference type must not reach the storage write
+        $thumbnail = $this->createMock(ThumbnailInterface::class);
+        $thumbnail->method('getPathReference')->willReturn([
+            'type' => 'custom-type',
+            'src' => '/testimage/1/image-thumb__1__unittest/testimage.jpeg',
+        ]);
+        $thumbnail->method('getStream')->willReturn(fopen('php://memory', 'r+'));
+        $thumbnail->method('getMimeType')->willReturn('image/jpeg');
+        $thumbnail->method('getFileSize')->willReturn(0);
+
+        $storageMock = $this->createMock(FilesystemOperator::class);
+        $storageMock->expects($this->never())->method('fileExists');
+        $storageMock->expects($this->never())->method('writeStream');
+        $storageMock->expects($this->never())->method('readStream');
+
+        $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseFromImageThumbnail($thumbnail, [
+            'type' => 'image',
+            // an allowed format, so only the positive type check can prevent the copy
+            'filename' => 'testimage.png',
+        ]));
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+    }
+
     public function testGetStreamedResponseFromImageThumbnailDoesNotWriteDisallowedRequestedFormat(): void
     {
         // even for a real generated thumbnail (not a pass-through), the requested extension
