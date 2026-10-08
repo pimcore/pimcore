@@ -405,6 +405,9 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
+                    # getDimensions($path, true) persists dimensions read from a caller-chosen path
+                    Pimcore\Model\Asset\Image:
+                        - getDimensions
                     # AbstractObject (not Concrete) so that DataObject folders are covered as well
                     Pimcore\Model\DataObject\AbstractObject:
                         - delete
@@ -414,16 +417,22 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
-                # Method families that cannot be enumerated by exact name: the dynamically
-                # generated `setXxx` setters and every other persistent mutator that writes
-                # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions, the static
-                # create() factories, unlockPropagate, addMetadata/removeProperty, clearThumbnails).
-                # Keyed by the common model base class so that models reachable through allowed
-                # getters (e.g. Concrete::getClass() => ClassDefinition, getVersions(),
-                # getDependencies()) cannot be mutated either.
+                # Deny-by-default read surface for persisted models: on every Pimcore model
+                # (AbstractModel - elements, ClassDefinition, Dependency, Version, Property, ...)
+                # and on class-definition field definitions, only `get*`, `is*` and `has*`
+                # methods are callable. Every other method name is blocked, so mutators that
+                # cannot be enumerated (the dynamically generated `setXxx` setters, saveIndex,
+                # deleteAutoSaveVersions, dumpClass, the static create() factories,
+                # unlockPropagate, addMetadata/removeProperty, clearThumbnails, ...) and any
+                # future mutator name stay unreachable, including on models reached through
+                # allowed getters (Concrete::getClass(), getVersions(), getDependencies()).
+                # `get*` methods that persist as a side effect are listed in
+                # hard_blocked_methods instead (e.g. Image::getDimensions).
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
-                        - '/^(set|save|delete|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
+                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                    Pimcore\Model\DataObject\ClassDefinition\Data:
+                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

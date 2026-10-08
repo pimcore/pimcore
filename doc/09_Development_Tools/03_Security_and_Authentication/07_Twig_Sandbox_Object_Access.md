@@ -69,18 +69,23 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
 - `hard_blocked_methods` blocks `delete`, `save` and `saveVersion` on
   `Pimcore\Model\DataObject\AbstractObject` (which covers concrete objects **and**
   DataObject folders), `Pimcore\Model\Asset` and `Pimcore\Model\Document`.
-- `hard_blocked_method_patterns` blocks method *families* that cannot be enumerated by
-  exact name, because the setters are generated dynamically and several
-  methods write directly without a later `save()` call. By default every method whose
-  name starts with `set`, `save`, `delete`, `create`, `unlock`, `add`, `remove`,
-  `clear`, `clean`, `correct`, `trigger`, `rename`, `generate`, `rewrite`, `enable` or
-  `disable` (case-insensitive, e.g. `setKey`, `saveIndex`,
-  `deleteAutoSaveVersions`, the static `create()` factories, `unlockPropagate`,
-  `addMetadata`, `removeProperty`, `clearThumbnails`) is blocked on
-  `Pimcore\Model\AbstractModel`, the common base class of all Pimcore models. This
-  covers not only elements but also every model a template can reach through an allowed
-  getter (e.g. `getClass()` => `ClassDefinition`, `getVersions()`, `getDependencies()`),
-  so these cannot be used to bypass the rules above.
+- `hard_blocked_method_patterns` defines a **deny-by-default read surface**. Mutators cannot
+  be enumerated by name (the setters are generated dynamically, several methods write
+  directly without a later `save()` call, and new ones can be added at any time), so
+  instead of listing the dangerous names the default allows only `get*`, `is*` and
+  `has*` methods on `Pimcore\Model\AbstractModel`, the common base class of all Pimcore
+  models, and on `Pimcore\Model\DataObject\ClassDefinition\Data` (the field definitions
+  reachable through `ClassDefinition::getFieldDefinition()`). Every other method name
+  is blocked (case-insensitive), e.g. `setKey`, `saveIndex`, `deleteAutoSaveVersions`,
+  `dumpClass`, the static `create()` factories, `unlockPropagate`, `addMetadata`,
+  `removeProperty`, `clearThumbnails` or `load`. This covers not only elements but also every
+  model a template can reach through an allowed getter (e.g. `getClass()` =>
+  `ClassDefinition`, `getVersions()`, `getDependencies()`), so these cannot be used
+  to bypass the rules above.
+- A few `get*` methods persist as a side effect and cannot be told apart by name. They are
+  listed in `hard_blocked_methods` instead: `Pimcore\Model\Asset\Image::getDimensions()`
+  stores dimensions read from a caller-chosen file path. Use `getWidth()` / `getHeight()`
+  in templates.
 
 `hard_blocked_method_patterns` is a FQCN => list-of-PCRE-patterns map. Keys are matched
 with `instanceof` exactly like `hard_blocked_methods`, a pattern is matched against
@@ -92,7 +97,7 @@ when the configuration is loaded and a malformed pattern is rejected (the policy
 closed instead of silently ignoring a broken deny rule); a PCRE runtime error while
 matching also denies the call.
 
-Read access (`getId`, `getKey`, `getFilename`, ...) is unaffected.
+Read access through `get*`, `is*` and `has*` methods (`getId`, `getKey`, `getFilename`, `isPublished`, ...) is unaffected.
 
 ## Function access
 
@@ -208,6 +213,8 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
+                    Pimcore\Model\Asset\Image:
+                        - getDimensions
                     Pimcore\Model\DataObject\AbstractObject:
                         - delete
                         - save
@@ -216,12 +223,14 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
-                # FQCN => PCRE patterns for method families that can't be listed by exact
-                # name (dynamic setters, save*/delete* variants). Never callable, regardless
-                # of blocked_classes/allowed_classes; merged with this default.
+                # FQCN => PCRE patterns. The default is deny-by-default: only get*/is*/has*
+                # methods are callable on models and field definitions. Never callable,
+                # regardless of blocked_classes/allowed_classes; merged with this default.
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
-                        - '/^(set|save|delete|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
+                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                    Pimcore\Model\DataObject\ClassDefinition\Data:
+                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
 ```
 
 ### Example: allowlist mode

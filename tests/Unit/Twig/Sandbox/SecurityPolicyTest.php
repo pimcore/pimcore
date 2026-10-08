@@ -17,7 +17,9 @@ namespace Pimcore\Tests\Unit\Twig\Sandbox;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Dependency;
@@ -300,6 +302,77 @@ final class SecurityPolicyTest extends TestCase
         yield 'Dependency::cleanAllForElement' => [new Dependency(), 'cleanAllForElement'];
         yield 'Dependency::clean' => [new Dependency(), 'clean'];
         yield 'Property::setData' => [new Property(), 'setData'];
+        // persistence gateways that are not covered by any name prefix: the policy is
+        // deny-by-default for everything that is not a get*/is*/has* method
+        yield 'ClassDefinition::dumpClass' => [new ClassDefinition(), 'dumpClass'];
+        yield 'ClassDefinition::DUMPCLASS' => [new ClassDefinition(), 'DUMPCLASS'];
+        yield 'Asset::updateCustomSettings' => [new Asset(), 'updateCustomSettings'];
+        yield 'Asset::futureMutatorWithAnyName' => [new Asset(), 'futureMutatorWithAnyName'];
+        yield 'DataObject\Concrete::futureMutatorWithAnyName' => [new Concrete(), 'futureMutatorWithAnyName'];
+        // magic dispatch entry points are not part of the read surface either
+        yield 'Asset::__call' => [new Asset(), '__call'];
+        // field definitions reached through ClassDefinition::getFieldDefinition() are not
+        // AbstractModel instances but are covered by their own entry
+        yield 'ClassDefinition\\Data::setName' => [new Input(), 'setName'];
+        yield 'ClassDefinition\\Data::setMandatory' => [new Input(), 'setMandatory'];
+    }
+
+    /**
+     * `get*` methods that persist as a side effect cannot be told apart by name, so they are
+     * hard-blocked by exact name.
+     */
+    public function testImageGetDimensionsIsHardBlockedByDefault(): void
+    {
+        // getDimensions($path, true) stores dimensions read from a caller-chosen path
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Image(), 'getDimensions');
+    }
+
+    public function testImageGetDimensionsSurvivesAllowlistMode(): void
+    {
+        $policy = new SecurityPolicy(
+            allowedClasses: [Image::class],
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Image(), 'getDimensions');
+    }
+
+    /**
+     * End-to-end chain: every hop of a template such as
+     * `object.getClass().getFieldDefinition('x').setName('y')` or
+     * `object.getClass().dumpClass()` is checked individually by Twig, so the getters
+     * must stay reachable while the final mutating call must not.
+     */
+    public function testChainedClassDefinitionPersistenceIsBlockedWhileReadsStayReachable(): void
+    {
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        // hops that must keep working
+        $policy->checkMethodAllowed(new Concrete(), 'getClass');
+        $policy->checkMethodAllowed(new ClassDefinition(), 'getFieldDefinition');
+        $policy->checkMethodAllowed(new Input(), 'getName');
+        $policy->checkMethodAllowed(new Input(), 'isMandatory');
+        $this->addToAssertionCount(4);
+
+        // hops that persist or mutate
+        foreach ([[new ClassDefinition(), 'dumpClass'], [new Input(), 'setName']] as [$instance, $method]) {
+            try {
+                $policy->checkMethodAllowed($instance, $method);
+                $this->fail(sprintf('%s::%s must be blocked', $instance::class, $method));
+            } catch (SecurityNotAllowedMethodError) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     /**
@@ -334,7 +407,12 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Document(), 'getKey');
         $policy->checkMethodAllowed(new ClassDefinition(), 'getId');
         $policy->checkMethodAllowed(new Dependency(), 'getRequires');
-        $this->addToAssertionCount(9);
+        // is*/has* and the generic `get($fieldName)` accessor are part of the read surface
+        $policy->checkMethodAllowed(new Document(), 'isPublished');
+        $policy->checkMethodAllowed(new Document(), 'hasChildren');
+        $policy->checkMethodAllowed(new Concrete(), 'get');
+        $policy->checkMethodAllowed(new Image(), 'getWidth');
+        $this->addToAssertionCount(13);
     }
 
     /**
