@@ -408,6 +408,9 @@ pimcore:
                     # getDimensions($path, true) persists dimensions read from a caller-chosen path
                     Pimcore\Model\Asset\Image:
                         - getDimensions
+                    # UrlSlug::getAction() deletes the slug row when its field definition is gone
+                    Pimcore\Model\DataObject\Data\UrlSlug:
+                        - getAction
                     # AbstractObject (not Concrete) so that DataObject folders are covered as well
                     Pimcore\Model\DataObject\AbstractObject:
                         - delete
@@ -419,7 +422,7 @@ pimcore:
                         - saveVersion
                 # Deny-by-default read surface for persisted models: on every Pimcore model
                 # (AbstractModel - elements, ClassDefinition, Dependency, Version, Property, ...)
-                # and on class-definition field definitions, only `get*`, `is*` and `has*`
+                # on class-definition field definitions and on persisted URL slugs, only `get*`, `is*` and `has*`
                 # methods are callable. Every other method name is blocked, so mutators that
                 # cannot be enumerated (the dynamically generated `setXxx` setters, saveIndex,
                 # deleteAutoSaveVersions, dumpClass, the static create() factories,
@@ -432,6 +435,9 @@ pimcore:
                     Pimcore\Model\AbstractModel:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
+                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                    # persisted data values returned by generated getters that are not models
+                    Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
 
     gotenberg:

@@ -21,6 +21,7 @@ use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
@@ -313,6 +314,12 @@ final class SecurityPolicyTest extends TestCase
         yield 'Asset::__call' => [new Asset(), '__call'];
         // field definitions reached through ClassDefinition::getFieldDefinition() are not
         // AbstractModel instances but are covered by their own entry
+        // URL slug values (generated getters return them) are persisted but not AbstractModel
+        yield 'Data\\UrlSlug::delete' => [new UrlSlug('x'), 'delete'];
+        yield 'Data\\UrlSlug::DELETE' => [new UrlSlug('x'), 'DELETE'];
+        yield 'Data\\UrlSlug::setSlug' => [new UrlSlug('x'), 'setSlug'];
+        yield 'Data\\UrlSlug::createFromDataRow' => [new UrlSlug('x'), 'createFromDataRow'];
+        yield 'Data\\UrlSlug::handleClassDeleted' => [new UrlSlug('x'), 'handleClassDeleted'];
         yield 'ClassDefinition\\Data::setName' => [new Input(), 'setName'];
         yield 'ClassDefinition\\Data::setMandatory' => [new Input(), 'setMandatory'];
     }
@@ -376,6 +383,31 @@ final class SecurityPolicyTest extends TestCase
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * `UrlSlug::getAction()` deletes the slug row when its field definition is gone, so a
+     * read-looking getter can still destroy data.
+     */
+    public function testUrlSlugGetActionIsHardBlockedWhileOtherReadsStayReachable(): void
+    {
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $policy->checkMethodAllowed(new UrlSlug('x'), 'getSlug');
+        $policy->checkMethodAllowed(new UrlSlug('x'), 'getSiteId');
+        $this->addToAssertionCount(2);
+
+        foreach (['getAction', 'GETACTION'] as $method) {
+            try {
+                $policy->checkMethodAllowed(new UrlSlug('x'), $method);
+                $this->fail($method . ' must be blocked');
+            } catch (SecurityNotAllowedMethodError) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     public function testImageGetDimensionsSurvivesAllowlistMode(): void

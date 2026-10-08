@@ -75,7 +75,9 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   instead of listing the dangerous names the default allows only `get*`, `is*` and
   `has*` methods on `Pimcore\Model\AbstractModel`, the common base class of all Pimcore
   models, and on `Pimcore\Model\DataObject\ClassDefinition\Data` (the field definitions
-  reachable through `ClassDefinition::getFieldDefinition()`). Every other method name
+  reachable through `ClassDefinition::getFieldDefinition()`) and on
+  `Pimcore\Model\DataObject\Data\UrlSlug` (URL slug values, which are persisted but not
+  models). Every other method name
   is blocked (case-insensitive), e.g. `setKey`, `saveIndex`, `deleteAutoSaveVersions`,
   `dumpClass`, the static `create()` factories, `unlockPropagate`, `addMetadata`,
   `removeProperty`, `clearThumbnails` or `load`. This covers not only elements but also every
@@ -84,8 +86,9 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   to bypass the rules above.
 - A few `get*` methods persist as a side effect and cannot be told apart by name. They are
   listed in `hard_blocked_methods` instead: `Pimcore\Model\Asset\Image::getDimensions()`
-  stores dimensions read from a caller-chosen file path. Use `getWidth()` / `getHeight()`
-  in templates.
+  stores dimensions read from a caller-chosen file path (use `getWidth()` / `getHeight()` in
+  templates), and `Pimcore\Model\DataObject\Data\UrlSlug::getAction()` deletes the slug
+  when its field definition no longer exists.
 
 `hard_blocked_method_patterns` is a FQCN => list-of-PCRE-patterns map. Keys are matched
 with `instanceof` exactly like `hard_blocked_methods`, a pattern is matched against
@@ -215,6 +218,8 @@ pimcore:
                         - saveVersion
                     Pimcore\Model\Asset\Image:
                         - getDimensions
+                    Pimcore\Model\DataObject\Data\UrlSlug:
+                        - getAction
                     Pimcore\Model\DataObject\AbstractObject:
                         - delete
                         - save
@@ -230,6 +235,8 @@ pimcore:
                     Pimcore\Model\AbstractModel:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
+                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                    Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
 ```
 
