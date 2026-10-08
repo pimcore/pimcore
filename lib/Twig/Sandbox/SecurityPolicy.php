@@ -283,7 +283,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
                 continue;
             }
 
-            if ($obj instanceof $class && in_array($method, $methods, true)) {
+            // PHP method names are case-insensitive: `GETPASSWORD` reaches `getPassword`
+            if ($obj instanceof $class && in_array(strtolower($method), array_map('strtolower', $methods), true)) {
                 $objClass = $obj::class;
 
                 throw new SecurityNotAllowedMethodError(

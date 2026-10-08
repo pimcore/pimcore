@@ -333,6 +333,51 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Image(), 'getDimensions');
     }
 
+    /**
+     * PHP method names are case-insensitive, so the exact-name hard blocks must be too.
+     *
+     * @return iterable<string, array{object, string}>
+     */
+    public static function differentlyCasedHardBlockedMethodsProvider(): iterable
+    {
+        yield 'Image::GETDIMENSIONS' => [new Image(), 'GETDIMENSIONS'];
+        yield 'Image::getdimensions' => [new Image(), 'getdimensions'];
+        yield 'Asset::GetData' => [new Asset(), 'GetData'];
+        yield 'Asset::GETLOCALFILE' => [new Asset(), 'GETLOCALFILE'];
+        yield 'User::GETPASSWORD' => [new User(), 'GETPASSWORD'];
+        yield 'User::getpasswordrecoverytoken' => [new User(), 'getpasswordrecoverytoken'];
+        yield 'Asset::SAVE' => [new Asset(), 'SAVE'];
+        yield 'Document::Delete' => [new Document(), 'Delete'];
+    }
+
+    /**
+     * @dataProvider differentlyCasedHardBlockedMethodsProvider
+     */
+    public function testHardBlockedMethodsAreMatchedCaseInsensitively(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * @dataProvider differentlyCasedHardBlockedMethodsProvider
+     */
+    public function testCaseInsensitiveHardBlocksSurviveAllowlistMode(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(
+            allowedClasses: [$instance::class],
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
     public function testImageGetDimensionsSurvivesAllowlistMode(): void
     {
         $policy = new SecurityPolicy(
