@@ -13,10 +13,12 @@ Both are enforced by `Pimcore\Twig\Sandbox\SecurityPolicy` and are configurable 
 denylist and an allowlist mode, described below; function access is denylist-only.
 Every built-in denylist described in this document (`blocked_classes`,
 `blocked_functions`, `hard_blocked_methods`, `hard_blocked_method_patterns`) is defined as the *default value* of
-its config option in `bundles/CoreBundle/config/pimcore/default.yaml`, not hardcoded
-in `SecurityPolicy` - a site's own config for the same option is merged with (appended
-to) that default, not substituted for it, so extending one of these options cannot
-accidentally drop the shipped defaults.
+its config option in `bundles/CoreBundle/config/pimcore/default.yaml` - a site's own config for the
+same option is merged with (appended to) that default, not substituted for it, so extending one of
+these options cannot accidentally drop the shipped defaults. The one exception is code that builds
+`SecurityPolicy` itself without passing `hardBlockedMethodPatterns`: the class then applies a built-in
+copy of the `hard_blocked_method_patterns` default (kept identical to the configuration default by a test)
+so that such consumers are protected as well.
 
 ## Object access: two modes
 
@@ -80,7 +82,8 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   all Pimcore models. This covers not only elements but also every model a template can
   reach through an allowed getter (e.g. `getClass()` => `ClassDefinition`, `getVersions()`,
   `getDependencies()`), so these cannot be used to bypass the rules above. The same verbs
-  (plus `classSaved` and `classDeleted`) are blocked on
+  (plus `classSaved`, `classDeleted`, `verify*` and `calculate*`: `verifyPassword()` can rehash and save
+  the object, `calculateDelta()` inserts relation rows) are blocked on
   `Pimcore\Model\DataObject\ClassDefinition\Data` (field definitions reachable through
   `getFieldDefinition()`, whose `save($object)`/`delete($object)` persist immediately), and the mutating methods of
   `Pimcore\Model\DataObject\Data\UrlSlug` (persisted URL slug values, which are not models)
@@ -255,7 +258,7 @@ pimcore:
                     Pimcore\Model\AbstractModel:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
-                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted))/i'
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i'
                         - '/editmode/i'
                     Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(set|save|delete|create|handle)/i'

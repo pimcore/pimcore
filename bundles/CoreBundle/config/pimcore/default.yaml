@@ -433,9 +433,10 @@ pimcore:
                     Pimcore\Model\AbstractModel:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable)/i'
                     # field definitions reachable via ClassDefinition::getFieldDefinition() (their
-                    # save()/delete()/classSaved() persist immediately)
+                    # save()/delete()/classSaved() persist immediately; verifyPassword() can rehash and save the
+                    # object, calculateDelta() inserts relation rows)
                     Pimcore\Model\DataObject\ClassDefinition\Data:
-                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted))/i'
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i'
                         # admin-UI (de)serialisation entry points: read-looking, but they take
                         # caller-supplied data and may persist (Consent writes Notes)
                         - '/editmode/i'

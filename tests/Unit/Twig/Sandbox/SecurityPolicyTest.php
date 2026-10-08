@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Folder;
@@ -333,6 +335,11 @@ final class SecurityPolicyTest extends TestCase
         yield 'ClassDefinition\\Data\\Localizedfields::DELETE' => [new Localizedfields(), 'DELETE'];
         yield 'ClassDefinition\\Data\\Classificationstore::classSaved' => [new Classificationstore(), 'classSaved'];
         yield 'ClassDefinition\\Data\\Classificationstore::CLASSDELETED' => [new Classificationstore(), 'CLASSDELETED'];
+        // verifyPassword() rehashes and saves the object (and is a password oracle); calculateDelta() inserts rows
+        yield 'ClassDefinition\\Data\\Password::verifyPassword' => [new Password(), 'verifyPassword'];
+        yield 'ClassDefinition\\Data\\Password::VERIFYPASSWORD' => [new Password(), 'VERIFYPASSWORD'];
+        yield 'ClassDefinition\\Data\\ManyToManyRelation::calculateDelta' => [new ManyToManyRelation(), 'calculateDelta'];
+        yield 'ClassDefinition\\Data\\ManyToManyRelation::CalculateDelta' => [new ManyToManyRelation(), 'CalculateDelta'];
         yield 'ClassDefinition\\Data::setName' => [new Input(), 'setName'];
         yield 'ClassDefinition\\Data::setMandatory' => [new Input(), 'setMandatory'];
     }
@@ -608,6 +615,19 @@ final class SecurityPolicyTest extends TestCase
     public function testBuiltInPatternsApplyWhenNoPatternsArePassed(object $instance, string $method): void
     {
         $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * A site that allowlists a field-definition class must not get its persistence entry points back.
+     *
+     * @dataProvider contentModelSetterMethodsProvider
+     */
+    public function testBuiltInPatternsSurviveAllowlistModeForTheInstanceClass(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(allowedClasses: [$instance::class]);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed($instance, $method);
