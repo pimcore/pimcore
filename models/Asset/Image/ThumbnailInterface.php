@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Image;
 
-use Pimcore\Model\Asset;
-use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Thumbnail\ThumbnailInterface as BaseThumbnailInterface;
 use Pimcore\Model\Asset\Thumbnail\ThumbnailMediaInterface;
 
@@ -31,11 +29,4 @@ interface ThumbnailInterface extends BaseThumbnailInterface, ThumbnailMediaInter
     public function getHtml(array $options = []): string;
 
     public function getImageTag(array $options = [], array $removeAttributes = []): string;
-
-    /**
-     * An image thumbnail is always backed by its image asset.
-     *
-     * @return Image
-     */
-    public function getAsset(): ?Asset;
 }

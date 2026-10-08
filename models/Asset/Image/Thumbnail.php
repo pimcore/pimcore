@@ -45,17 +45,6 @@ final class Thumbnail implements ThumbnailInterface
         $this->config = $this->createConfig($config ?? []);
     }
 
-    /**
-     * Always set: an image thumbnail can only be constructed with an image asset.
-     */
-    public function getAsset(): Image
-    {
-        /** @var Image $asset */
-        $asset = $this->asset;
-
-        return $asset;
-    }
-
     public function getPath(array $args = []): string
     {
         // set defaults
