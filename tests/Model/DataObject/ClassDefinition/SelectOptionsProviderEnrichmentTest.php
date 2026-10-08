@@ -31,25 +31,28 @@ class SelectOptionsProviderEnrichmentTest extends ModelTestCase
 {
     private const CONFIG_ID = 'EnrichmentStatus';
 
-    private ?Config $config = null;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->config = (new Config())
+        (new Config())
             ->setId(self::CONFIG_ID)
             ->setSelectOptions(
                 new SelectOption('open', 'Open', 'Open'),
                 new SelectOption('closed', 'Closed', 'Closed'),
-            );
-        $this->config->save();
+            )
+            ->save();
+
+        $this->assertNotNull(
+            Config::getById(self::CONFIG_ID),
+            'select options configuration must be loadable after saving (check config_location.select_options)'
+        );
     }
 
     protected function tearDown(): void
     {
-        $this->config?->delete();
-        $this->config = null;
+        // delete through a loaded instance, as only that knows the data source to delete from
+        Config::getById(self::CONFIG_ID)?->delete();
 
         parent::tearDown();
     }
