@@ -405,12 +405,6 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
-                    # getDimensions($path, true) persists dimensions read from a caller-chosen path
-                    Pimcore\Model\Asset\Image:
-                        - getDimensions
-                    # UrlSlug::getAction() deletes the slug row when its field definition is gone
-                    Pimcore\Model\DataObject\Data\UrlSlug:
-                        - getAction
                     # AbstractObject (not Concrete) so that DataObject folders are covered as well
                     Pimcore\Model\DataObject\AbstractObject:
                         - delete
@@ -428,7 +422,7 @@ pimcore:
                 # reachable through allowed getters (e.g. Concrete::getClass() =>
                 # ClassDefinition, getVersions(), getDependencies()) cannot be mutated either.
                 # `get*` methods that persist as a side effect are listed in
-                # hard_blocked_methods instead (e.g. Image::getDimensions).
+                # listed by exact name in the patterns below (e.g. Image::getDimensions).
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'
@@ -440,9 +434,14 @@ pimcore:
                         # admin-UI (de)serialisation entry points: read-looking, but they take
                         # caller-supplied data and may persist (Consent writes Notes)
                         - '/editmode/i'
-                    # persisted data values returned by generated getters that are not models
+                    # getDimensions($path, true) persists dimensions read from a caller-chosen path
+                    Pimcore\Model\Asset\Image:
+                        - '/^getDimensions$/iD'
+                    # persisted data values returned by generated getters that are not models;
+                    # getAction() deletes the slug row when its field definition is gone
                     Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(set|save|delete|create|handle)/i'
+                        - '/^getAction$/iD'
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

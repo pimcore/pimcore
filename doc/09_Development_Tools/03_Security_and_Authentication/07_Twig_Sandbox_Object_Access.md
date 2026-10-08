@@ -93,7 +93,8 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   contains `editmode`, e.g. `getDataFromEditmode`) are blocked too: they accept
   caller-supplied data and can persist (the `Consent` field definition writes a `Note`).
 - A few `get*` methods persist as a side effect and cannot be told apart by name. They are
-  listed in `hard_blocked_methods` instead: `Pimcore\Model\Asset\Image::getDimensions()`
+  blocked by exact name through `hard_blocked_method_patterns` (case-insensitive, and part of the
+  built-in defaults): `Pimcore\Model\Asset\Image::getDimensions()`
   stores dimensions read from a caller-chosen file path (use `getWidth()` / `getHeight()` in
   templates), and `Pimcore\Model\DataObject\Data\UrlSlug::getAction()` deletes the slug
   when its field definition no longer exists.
@@ -240,10 +241,6 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
-                    Pimcore\Model\Asset\Image:
-                        - getDimensions
-                    Pimcore\Model\DataObject\Data\UrlSlug:
-                        - getAction
                     Pimcore\Model\DataObject\AbstractObject:
                         - delete
                         - save
@@ -261,8 +258,11 @@ pimcore:
                     Pimcore\Model\DataObject\ClassDefinition\Data:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i'
                         - '/editmode/i'
+                    Pimcore\Model\Asset\Image:
+                        - '/^getDimensions$/iD'
                     Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(set|save|delete|create|handle)/i'
+                        - '/^getAction$/iD'
 ```
 
 ### Example: allowlist mode

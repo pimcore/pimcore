@@ -446,7 +446,7 @@ final class SecurityPolicyTest extends TestCase
     {
         $policy = new SecurityPolicy(
             allowedClasses: [Image::class],
-            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
         );
 
         $this->expectException(SecurityNotAllowedMethodError::class);
@@ -647,6 +647,42 @@ final class SecurityPolicyTest extends TestCase
      * @dataProvider contentModelSetterMethodsProvider
      */
     public function testBuiltInPatternsSurviveAllowlistModeForTheInstanceClass(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy(allowedClasses: [$instance::class]);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * The two `get*` methods that persist as a side effect must be blocked for consumers that
+     * build their own policy and pass nothing, in default and allowlist mode.
+     *
+     * @return iterable<string, array{object, string}>
+     */
+    public static function persistingGettersProvider(): iterable
+    {
+        yield 'Image::getDimensions' => [new Image(), 'getDimensions'];
+        yield 'Image::GETDIMENSIONS' => [new Image(), 'GETDIMENSIONS'];
+        yield 'UrlSlug::getAction' => [new UrlSlug('x'), 'getAction'];
+        yield 'UrlSlug::GETACTION' => [new UrlSlug('x'), 'GETACTION'];
+    }
+
+    /**
+     * @dataProvider persistingGettersProvider
+     */
+    public function testPersistingGettersAreBlockedWhenNothingIsPassed(object $instance, string $method): void
+    {
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($instance, $method);
+    }
+
+    /**
+     * @dataProvider persistingGettersProvider
+     */
+    public function testPersistingGettersAreBlockedInAllowlistModeWhenNothingElseIsPassed(object $instance, string $method): void
     {
         $policy = new SecurityPolicy(allowedClasses: [$instance::class]);
 
