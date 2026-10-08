@@ -41,6 +41,19 @@ final class SecurityPolicy implements SecurityPolicyInterface
         'Pimcore\\Model\\DataObject\\Data\\UrlSlug' => ['/^(set|save|delete|create|handle)/i', '/^getAction$/iD'],
     ];
 
+    /**
+     * Read operations that listings delegate to their DAO and that are therefore not declared on the
+     * model, lower-cased. Everything else a model forwards through `AbstractModel::__call()` is denied.
+     */
+    private const DAO_DELEGATED_READ_METHODS = [
+        'load',
+        'loadidlist',
+        'loadidpathlist',
+        'gettotalcount',
+        'getcount',
+        'count',
+    ];
+
     private array $allowedTags;
 
     private array $allowedFilters;
@@ -350,12 +363,14 @@ final class SecurityPolicy implements SecurityPolicyInterface
 
     /**
      * `AbstractModel::__call()` delegates every method the model does not declare to its DAO
-     * (`beginTransaction()`, `commit()`, `rollBack()`, `moveThumbnailCache()`, ...), so those calls
-     * reach the database layer under the model's class and bypass a check on the DAO class itself.
-     * Calling the magic methods themselves (`__call`, `__get`, ...) is denied for the same reason.
-     * No template needs that: only the delegated read operations (`get*`/`is*`/`has*` magic
-     * accessors, and `load*`/`count*` as used by listings, whose `load()` lives in the DAO) are
-     * let through, everything else delegated to the DAO is denied.
+     * (`beginTransaction()`, `commit()`, `rollBack()`, `moveThumbnailCache()`, `getVersionCountForUpdate()`
+     * - which takes row locks -, ...), so those calls reach the database layer under the model's class
+     * and bypass a check on the DAO class itself. Calling the magic methods themselves (`__call`, `__get`,
+     * ...) is denied for the same reason.
+     *
+     * Only the delegated read operations that listings need are let through (see
+     * DAO_DELEGATED_READ_METHODS). Models that serve their own magic accessors through an overridden
+     * `__call()` (e.g. ObjectMetadata) keep their `get*`/`is*`/`has*`/`load*`/`count*` accessors.
      *
      * @param object $obj
      * @param string $method
@@ -366,12 +381,22 @@ final class SecurityPolicy implements SecurityPolicyInterface
             return;
         }
 
-        // the magic methods are public: `asset.__call('delete', [])` would hand any method name to the
-        // DAO while every other check only sees `__call`. Templates have no use for them.
         $isMagicMethod = str_starts_with($method, '__');
 
-        if (!$isMagicMethod && (method_exists($obj, $method) || 1 === preg_match('/^(get|is|has|load|count)/i', $method))) {
+        if (!$isMagicMethod && method_exists($obj, $method)) {
             return;
+        }
+
+        if (!$isMagicMethod) {
+            $delegatesToDao = (new \ReflectionMethod($obj, '__call'))->getDeclaringClass()->getName() === AbstractModel::class;
+
+            $allowed = $delegatesToDao
+                ? in_array(strtolower($method), self::DAO_DELEGATED_READ_METHODS, true)
+                : 1 === preg_match('/^(get|is|has|load|count)/i', $method);
+
+            if ($allowed) {
+                return;
+            }
         }
 
         $objClass = $obj::class;

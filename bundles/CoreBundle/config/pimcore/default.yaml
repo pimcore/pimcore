@@ -421,8 +421,8 @@ pimcore:
                 # clearThumbnails). Keyed by the common model base class so that models
                 # reachable through allowed getters (e.g. Concrete::getClass() =>
                 # ClassDefinition, getVersions(), getDependencies()) cannot be mutated either.
-                # `get*` methods that persist as a side effect are listed in
-                # listed by exact name in the patterns below (e.g. Image::getDimensions).
+                # `get*` methods that persist as a side effect are blocked by exact name in the
+                # patterns below (e.g. Image::getDimensions).
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'

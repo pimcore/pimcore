@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Listing as DataObjectListing;
@@ -523,8 +524,8 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Concrete(), 'get');
         $policy->checkMethodAllowed(new Image(), 'getWidth');
         // established read operations of listings and editables on models
-        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'count');
-        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'load');
+        $policy->checkMethodAllowed(new DataObjectListing(), 'count');
+        $policy->checkMethodAllowed(new DataObjectListing(), 'load');
         $policy->checkMethodAllowed($this->createStub(Editable\Input::class), 'render');
         $policy->checkMethodAllowed($this->createStub(Editable\Areablock::class), 'renderIndex');
         $this->addToAssertionCount(17);
@@ -580,6 +581,15 @@ final class SecurityPolicyTest extends TestCase
         yield 'Asset::__get' => [new Asset(), '__get'];
         yield 'Asset::__set' => [new Asset(), '__set'];
         yield 'Asset::__clone' => [new Asset(), '__clone'];
+        // DAO getters that take row locks or load and mutate the object: not the audited listing reads
+        yield 'Asset::getVersionCountForUpdate' => [new Asset(), 'getVersionCountForUpdate'];
+        yield 'Document::getVersionCountForUpdate' => [new Document(), 'getVersionCountForUpdate'];
+        yield 'DataObject\\Concrete::getVersionCountForUpdate' => [new Concrete(), 'getVersionCountForUpdate'];
+        yield 'DataObject\\Concrete::getCurrentFullPathForUpdate' => [new Concrete(), 'getCurrentFullPathForUpdate'];
+        yield 'DataObject\\Folder::GETCURRENTFULLPATHFORUPDATE' => [new Folder(), 'GETCURRENTFULLPATHFORUPDATE'];
+        yield 'Asset::getSomethingDelegatedToTheDao' => [new Asset(), 'getSomethingDelegatedToTheDao'];
+        yield 'DataObject\\Listing::getQueryBuilder' => [new DataObjectListing(), 'getQueryBuilder'];
+        yield 'DataObject\\Listing::getDataArray' => [new DataObjectListing(), 'getDataArray'];
         yield 'Document::updateChildPaths' => [new Document(), 'updateChildPaths'];
         yield 'DataObject\\Concrete::beginTransaction' => [new Concrete(), 'beginTransaction'];
         yield 'DataObject\\Folder::moveSomethingInTheDao' => [new Folder(), 'moveSomethingInTheDao'];
@@ -607,24 +617,21 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed($instance, $method);
     }
 
-    public function testDeclaredMethodsAndMagicAccessorsAreNotAffectedByDaoDelegationCheck(): void
+    public function testAuditedDelegatedListingReadsAndOwnMagicAccessorsStayReachable(): void
     {
         $policy = new SecurityPolicy(
             hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
             hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
         );
 
-        // declared methods outside the blocked verbs and outside get*/is*/has* stay callable
-        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'load');
-        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'count');
-        // undeclared get*/is*/has* calls are the magic accessors (generated or DAO-backed reads)
-        $policy->checkMethodAllowed(new Asset(), 'getSomethingMagic');
-        $policy->checkMethodAllowed(new Concrete(), 'getByMagicField');
-        $policy->checkMethodAllowed(new Concrete(), 'hasSomethingMagic');
-        // Listing::load() is not declared on the class: it is delegated to the DAO
-        $policy->checkMethodAllowed(new Concrete(), 'loadSomethingDelegated');
-        $policy->checkMethodAllowed(new Concrete(), 'countSomethingDelegated');
-        $this->addToAssertionCount(7);
+        // Listing::load() & co. are not declared on the class: they are delegated to the DAO
+        foreach (['count', 'load', 'loadIdList', 'loadIdPathList', 'getTotalCount', 'getCount', 'GETTOTALCOUNT'] as $method) {
+            $policy->checkMethodAllowed(new DataObjectListing(), $method);
+        }
+
+        // a model with its own __call() serves its own accessors (not delegated to the DAO)
+        $policy->checkMethodAllowed(new ObjectMetadata('field', ['col']), 'getCol');
+        $this->addToAssertionCount(8);
     }
 
     /**
