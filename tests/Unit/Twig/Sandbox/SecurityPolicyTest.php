@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
@@ -320,6 +321,11 @@ final class SecurityPolicyTest extends TestCase
         yield 'Data\\UrlSlug::setSlug' => [new UrlSlug('x'), 'setSlug'];
         yield 'Data\\UrlSlug::createFromDataRow' => [new UrlSlug('x'), 'createFromDataRow'];
         yield 'Data\\UrlSlug::handleClassDeleted' => [new UrlSlug('x'), 'handleClassDeleted'];
+        // read-looking admin-UI deserialisers that persist (Consent field definition writes Notes)
+        yield 'ClassDefinition\\Data\\Consent::getDataFromEditmode' => [new Consent(), 'getDataFromEditmode'];
+        yield 'ClassDefinition\\Data\\Consent::getDiffDataFromEditmode' => [new Consent(), 'getDiffDataFromEditmode'];
+        yield 'ClassDefinition\\Data\\Consent::GETDATAFROMEDITMODE' => [new Consent(), 'GETDATAFROMEDITMODE'];
+        yield 'ClassDefinition\\Data\\Input::getDataForEditmode' => [new Input(), 'getDataForEditmode'];
         yield 'ClassDefinition\\Data::setName' => [new Input(), 'setName'];
         yield 'ClassDefinition\\Data::setMandatory' => [new Input(), 'setMandatory'];
     }
@@ -439,7 +445,8 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new ClassDefinition(), 'getFieldDefinition');
         $policy->checkMethodAllowed(new Input(), 'getName');
         $policy->checkMethodAllowed(new Input(), 'isMandatory');
-        $this->addToAssertionCount(4);
+        $policy->checkMethodAllowed(new Consent(), 'getName');
+        $this->addToAssertionCount(5);
 
         // hops that persist or mutate
         foreach ([[new ClassDefinition(), 'dumpClass'], [new Input(), 'setName']] as [$instance, $method]) {

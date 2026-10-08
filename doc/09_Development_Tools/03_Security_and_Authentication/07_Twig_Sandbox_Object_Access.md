@@ -84,6 +84,9 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   model a template can reach through an allowed getter (e.g. `getClass()` =>
   `ClassDefinition`, `getVersions()`, `getDependencies()`), so these cannot be used
   to bypass the rules above.
+- On field definitions the admin-UI (de)serialisation methods (every method whose name
+  contains `editmode`, e.g. `getDataFromEditmode`) are blocked as well: they accept
+  caller-supplied data and can persist (the `Consent` field definition writes a `Note`).
 - A few `get*` methods persist as a side effect and cannot be told apart by name. They are
   listed in `hard_blocked_methods` instead: `Pimcore\Model\Asset\Image::getDimensions()`
   stores dimensions read from a caller-chosen file path (use `getWidth()` / `getHeight()` in
@@ -236,6 +239,7 @@ pimcore:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        - '/editmode/i'
                     Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
 ```

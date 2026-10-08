@@ -436,6 +436,9 @@ pimcore:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        # admin-UI (de)serialisation entry points: read-looking, but they take
+                        # caller-supplied data and may persist (Consent writes Notes)
+                        - '/editmode/i'
                     # persisted data values returned by generated getters that are not models
                     Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
