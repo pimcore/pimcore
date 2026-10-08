@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -54,5 +55,65 @@ class SelectTest extends TestCase
             ['key' => 'Open', 'value' => 'open'],
             ['key' => 'Closed', 'value' => 'closed'],
         ], $serialized['options']);
+    }
+
+    public function testEmptyStringDefaultValueIsStoredAsNull(): void
+    {
+        $select = new Select();
+        $select->setName('status');
+        $select->setDefaultValue('');
+
+        $this->assertNull($select->getDefaultValue());
+    }
+
+    public function testConfiguredDefaultValueIsKept(): void
+    {
+        $select = new Select();
+        $select->setName('status');
+        $select->setDefaultValue('open');
+
+        $this->assertSame('open', $select->getDefaultValue());
+
+        $select->setDefaultValue(null);
+
+        $this->assertNull($select->getDefaultValue());
+    }
+
+    /**
+     * Definition files written with an empty default are rehydrated through __set_state(),
+     * so they must not bring the empty string back.
+     */
+    public function testEmptyStringDefaultValueInStoredDefinitionIsLoadedAsNull(): void
+    {
+        /** @var Select $select */
+        $select = Select::__set_state([
+            'name' => 'status',
+            'defaultValue' => '',
+            'optionsProviderType' => 'class',
+        ]);
+
+        $this->assertNull($select->getDefaultValue());
+    }
+
+    public function testEmptyStringDefaultValueFromLayoutConfigIsLoadedAsNull(): void
+    {
+        $layout = Service::generateLayoutTreeFromArray([
+            'fieldtype' => 'panel',
+            'datatype' => 'layout',
+            'name' => 'root',
+            'children' => [
+                [
+                    'fieldtype' => 'select',
+                    'datatype' => 'data',
+                    'name' => 'status',
+                    'defaultValue' => '',
+                ],
+            ],
+        ], true);
+
+        /** @var Select $select */
+        $select = $layout->getChildren()[0];
+
+        $this->assertNull($select->getDefaultValue());
     }
 }

@@ -305,7 +305,10 @@ class Select extends Data implements
 
     public function setDefaultValue(?string $defaultValue): void
     {
-        $this->defaultValue = $defaultValue;
+        // An empty default means "no default". Keeping '' would make a new object start with an
+        // empty string instead of null, which e.g. a single-state workflow marking store reads as
+        // an (invalid) place instead of falling back to its initial place.
+        $this->defaultValue = $defaultValue === '' ? null : $defaultValue;
     }
 
     public function enrichFieldDefinition(array $context = []): static
