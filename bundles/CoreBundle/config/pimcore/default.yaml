@@ -392,6 +392,8 @@ pimcore:
                     # - pimcore_site_current
                     - pimcore_user
                     - pimcore_file_exists
+                    - pimcore_asset_version_preview
+                    - pimcore_image_version_preview
                 hard_blocked_methods:
                     Pimcore\Model\User:
                         - getPassword

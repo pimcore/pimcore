@@ -483,6 +483,23 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * A missing table holds no rows: on a removal ($isUpdate = false) the cleanup of the fields continues, on an
+     * update the exception leads to the creation of the table and a retry of the save.
+     *
+     * @throws TableNotFoundException
+     */
+    private function deleteFromTable(string $table, array $criteria, bool $isUpdate): void
+    {
+        try {
+            $this->db->delete($table, $criteria);
+        } catch (TableNotFoundException $e) {
+            if ($isUpdate) {
+                throw $e;
+            }
+        }
+    }
+
+    /**
      * Creates a query/store table that does not exist yet (deferred creation, e.g. when a new language
      * was added or for object bricks) and signals DataObject::save() to retry the whole save.
      *
@@ -533,16 +550,16 @@ class Dao extends Model\Dao\AbstractDao
                 $id = $object->getId();
                 $tablename = $this->getTableName();
                 if (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
-                    $this->db->delete($tablename, ['ooo_id' => $id, 'fieldname' => $context['fieldname']]);
+                    $this->deleteFromTable($tablename, ['ooo_id' => $id, 'fieldname' => $context['fieldname']], $isUpdate);
                 } else {
-                    $this->db->delete($tablename, ['ooo_id' => $id]);
+                    $this->deleteFromTable($tablename, ['ooo_id' => $id], $isUpdate);
                 }
 
                 if (!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition) {
                     $validLanguages = Tool::getValidLanguages();
                     foreach ($validLanguages as $language) {
                         $queryTable = $this->getQueryTableName().'_'.$language;
-                        $this->db->delete($queryTable, ['ooo_id' => $id]);
+                        $this->deleteFromTable($queryTable, ['ooo_id' => $id], $isUpdate);
                     }
                 }
             }
@@ -578,10 +595,9 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->markLanguageAsDirtyByFallback();
         }
 
-        if (!DataObject::isDirtyDetectionDisabled()) {
-            if (!$this->model->hasDirtyFields()) {
-                return false;
-            }
+        // a removal ($isUpdate = false) cleans up regardless of the dirty state
+        if ($isUpdate && !DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+            return false;
         }
 
         $db = Db::get();
@@ -604,19 +620,16 @@ class Dao extends Model\Dao\AbstractDao
             $dirtyLanguageCondition = ' AND position IN('.implode(',', $languageList).')';
         }
 
+        // also matches object bricks, their definition extends the field collection definition
         if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
-            $index = $context['index'] ?? $context['containerKey'] ?? null;
-            $containerName = $context['fieldname'];
             if (!$context['containerType']) {
                 throw new Exception('no container type set');
             }
 
             $sql = Helper::quoteInto($this->db, 'src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
-                .Helper::quoteInto($this->db,
-                    'ownername LIKE ?',
-                    '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
-                ).$dirtyLanguageCondition;
+                .Helper::quoteInto($this->db, 'ownername LIKE ?', ContainerOwnerName::likePattern($context))
+                .$dirtyLanguageCondition;
 
             if ($deleteQuery || $context['containerType'] === 'fieldcollection') {
                 // Fieldcollection don't support delta updates, so we delete the relations and insert them later again

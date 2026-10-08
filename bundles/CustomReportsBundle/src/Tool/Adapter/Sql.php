@@ -178,10 +178,18 @@ class Sql extends AbstractAdapter
     private function validateSqlFragment(string $sql): void
     {
         // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
+        //
+        // The backslash alternative must be tried before the catch-all "any non-quote char" one:
+        // MySQL's default (non-NO_BACKSLASH_ESCAPES) lexer treats a backslash as escaping exactly
+        // the next character, so "\\" is one escaped backslash and the following quote closes the
+        // string. Matching "\\." first consumes both bytes of that escape as a unit; matching the
+        // backslash on its own via "[^']" first (as this used to) leaves the second backslash to
+        // combine with the real closing quote into a bogus "escaped quote", desynchronizing this
+        // regex from MySQL's lexer and letting it scan past the string's actual end.
         $sqlForValidation = preg_replace(
             [
-                "/'(?:''|\\\\'|[^'])*'/s",
-                '/"(?:""|\\\\"|[^"])*"/s',
+                "/'(?:\\\\.|''|[^'])*'/s",
+                '/"(?:\\\\.|""|[^"])*"/s',
                 '/`[^`]*`/s',
             ],
             ["''", '""', '``'],
