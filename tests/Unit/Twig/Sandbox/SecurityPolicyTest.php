@@ -502,6 +502,36 @@ final class SecurityPolicyTest extends TestCase
         $policy->setHardBlockedMethodPatterns([stdClass::class => ['not-a-pattern']]);
     }
 
+    public function testScalarPatternListIsRejectedByConstructor(): void
+    {
+        // easy-to-make mistake: a bare pattern instead of a list of patterns must not fail open
+        $this->expectException(\InvalidArgumentException::class);
+        new SecurityPolicy(hardBlockedMethodPatterns: [stdClass::class => '/^set/']);
+    }
+
+    public function testScalarPatternListIsRejectedBySetter(): void
+    {
+        $policy = new SecurityPolicy();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $policy->setHardBlockedMethodPatterns([stdClass::class => '/^set/']);
+    }
+
+    public function testRejectedPatternsLeaveThePreviousPatternsInEffect(): void
+    {
+        $policy = new SecurityPolicy(hardBlockedMethodPatterns: [stdClass::class => ['/^set/']]);
+
+        try {
+            $policy->setHardBlockedMethodPatterns([stdClass::class => '/^get/']);
+            $this->fail('a scalar pattern list must be rejected');
+        } catch (\InvalidArgumentException) {
+            $this->addToAssertionCount(1);
+        }
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new stdClass(), 'setAnything');
+    }
+
     public function testHardBlockedMethodPatternsCanBeSetAtRuntime(): void
     {
         $policy = new SecurityPolicy();

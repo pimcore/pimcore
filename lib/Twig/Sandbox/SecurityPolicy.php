@@ -145,6 +145,14 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function setHardBlockedMethodPatterns(array $hardBlockedMethodPatterns): void
     {
         foreach ($hardBlockedMethodPatterns as $class => $patterns) {
+            if (!is_array($patterns)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid hard-blocked method patterns for class "%s": expected a list of patterns, got %s',
+                    $class,
+                    get_debug_type($patterns),
+                ));
+            }
+
             foreach ($patterns as $pattern) {
                 if (!is_string($pattern) || @preg_match($pattern, '') === false) {
                     throw new \InvalidArgumentException(sprintf(
