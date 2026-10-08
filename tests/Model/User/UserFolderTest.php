@@ -126,6 +126,21 @@ class UserFolderTest extends ModelTestCase
         $this->assertNotNull($user->getId());
     }
 
+    public function testGetByNameReturnsOldestMatchForDuplicateFolderNames(): void
+    {
+        $parentA = $this->createEntity(Folder::class, self::NAME_PREFIX . 'gbn_a');
+        $parentB = $this->createEntity(Folder::class, self::NAME_PREFIX . 'gbn_b');
+
+        $first = $this->createEntity(Folder::class, self::NAME_PREFIX . 'gbn_child', $parentA->getId());
+        $this->createEntity(Folder::class, self::NAME_PREFIX . 'gbn_child', $parentB->getId());
+
+        $resolved = Folder::getByName(self::NAME_PREFIX . 'gbn_child');
+
+        $this->assertNotNull($resolved);
+        $this->assertSame($first->getId(), $resolved->getId());
+        $this->assertSame($parentA->getId(), $resolved->getParentId());
+    }
+
     public function testFolderCanBeMovedToAnotherParent(): void
     {
         $parentA = $this->createEntity(Folder::class, self::NAME_PREFIX . 'move_a');
