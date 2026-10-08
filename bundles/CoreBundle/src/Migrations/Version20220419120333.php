@@ -24,6 +24,11 @@ final class Version20220419120333 extends AbstractMigration
         return 'Add index to versions.stackTrace to accelerate maintenance task "VersionsCleanupStackTraceDbTask"';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $versionsTable = $schema->getTable('versions');

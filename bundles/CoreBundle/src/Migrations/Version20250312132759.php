@@ -39,6 +39,11 @@ final class Version20250312132759 extends AbstractMigration
      * @throws JsonException
      * @throws Exception
      */
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->migrateAssets();

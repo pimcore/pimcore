@@ -36,6 +36,11 @@ final class Version20230616085142 extends AbstractMigration
         return 'Migrate object_metadata schema to have a auto increment column';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('SET foreign_key_checks = 0');

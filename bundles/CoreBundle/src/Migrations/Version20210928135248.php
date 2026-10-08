@@ -24,6 +24,11 @@ final class Version20210928135248 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->hasTable('sanitycheck')) {

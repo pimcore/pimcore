@@ -25,6 +25,11 @@ final class Version20220908113752 extends AbstractMigration
         return 'Renames Application Logger DB tables from prefix_MM_YYYY to prefix_YYYY_MM';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $tableList = $this->connection->fetchAllAssociative("SHOW TABLES LIKE '" . ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . "%'");

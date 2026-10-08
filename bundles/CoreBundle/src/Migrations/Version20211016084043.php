@@ -24,6 +24,11 @@ final class Version20211016084043 extends AbstractMigration
         return 'Add setAsFavourite to gridconfigs to allow admins to set gridconfig as favorite for users';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('gridconfigs')->hasColumn('setAsFavourite')) {

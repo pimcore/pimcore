@@ -27,6 +27,11 @@ final class Version20210330132354 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql("ALTER TABLE `users_workspaces_asset` CHANGE `cpath` `cpath` varchar(765) COLLATE 'utf8_bin' NULL AFTER `cid`;");

@@ -28,6 +28,11 @@ final class Version20240606165618 extends AbstractMigration
         return 'Adds the Date Time Locale column to the Users table.';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('users')->hasColumn('datetimeLocale')) {
