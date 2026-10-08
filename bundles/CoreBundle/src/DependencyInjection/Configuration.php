@@ -2241,7 +2241,7 @@ final class Configuration implements ConfigurationInterface
                                 method whose name matches one of the patterns, with the same guarantee as
                                 `hard_blocked_methods` (not bypassed by allowed_classes). Used for method families
                                 that cannot be enumerated by exact name. The default is deny-by-default: only
-                                `get*`, `is*` and `has*` methods are callable on `AbstractModel` instances and on
+                                `get*`, `is*` and `has*` (plus `count`, `load*` and `render*` on models) methods are callable on `AbstractModel` instances and on
                                 class-definition field definitions, so no mutator can be reached through them.
                                 A site can extend the map with further classes/patterns on top of that default.
                                 Malformed patterns are rejected.')

@@ -423,7 +423,8 @@ pimcore:
                 # Deny-by-default read surface for persisted models: on every Pimcore model
                 # (AbstractModel - elements, ClassDefinition, Dependency, Version, Property, ...)
                 # on class-definition field definitions and on persisted URL slugs, only `get*`, `is*` and `has*`
-                # methods are callable. Every other method name is blocked, so mutators that
+                # methods are callable (models also keep `count`, `load*` and `render*`, which
+                # listings and editables need). Every other method name is blocked, so mutators that
                 # cannot be enumerated (the dynamically generated `setXxx` setters, saveIndex,
                 # deleteAutoSaveVersions, dumpClass, the static create() factories,
                 # unlockPropagate, addMetadata/removeProperty, clearThumbnails, ...) and any
@@ -432,8 +433,10 @@ pimcore:
                 # `get*` methods that persist as a side effect are listed in
                 # hard_blocked_methods instead (e.g. Image::getDimensions).
                 hard_blocked_method_patterns:
+                    # models additionally keep the read operations of listings and editables:
+                    # count() (Listing), load*() (Listing::load, lazy loaders), render*() (Editable)
                     Pimcore\Model\AbstractModel:
-                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        - '/^(?!(?:get|is|has|count|load|render)(?:[a-z0-9_]|$))/iD'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
                         # admin-UI (de)serialisation entry points: read-looking, but they take

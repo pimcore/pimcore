@@ -24,8 +24,10 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\Listing as DataObjectListing;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
@@ -313,6 +315,10 @@ final class SecurityPolicyTest extends TestCase
         yield 'DataObject\Concrete::futureMutatorWithAnyName' => [new Concrete(), 'futureMutatorWithAnyName'];
         // magic dispatch entry points are not part of the read surface either
         yield 'Asset::__call' => [new Asset(), '__call'];
+        // the extra read verbs apply to models only, never to field definitions
+        yield 'ClassDefinition\\Data\\Input::load' => [new Input(), 'load'];
+        yield 'ClassDefinition\\Data\\Input::render' => [new Input(), 'render'];
+        yield 'ClassDefinition\\Data\\Input::count' => [new Input(), 'count'];
         // field definitions reached through ClassDefinition::getFieldDefinition() are not
         // AbstractModel instances but are covered by their own entry
         // URL slug values (generated getters return them) are persisted but not AbstractModel
@@ -496,7 +502,12 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Document(), 'hasChildren');
         $policy->checkMethodAllowed(new Concrete(), 'get');
         $policy->checkMethodAllowed(new Image(), 'getWidth');
-        $this->addToAssertionCount(13);
+        // established read operations of listings and editables on models
+        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'count');
+        $policy->checkMethodAllowed($this->createStub(DataObjectListing::class), 'load');
+        $policy->checkMethodAllowed($this->createStub(Editable\Input::class), 'render');
+        $policy->checkMethodAllowed($this->createStub(Editable\Input::class), 'renderIndex');
+        $this->addToAssertionCount(17);
     }
 
     /**

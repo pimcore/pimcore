@@ -74,13 +74,14 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   directly without a later `save()` call, and new ones can be added at any time), so
   instead of listing the dangerous names the default allows only `get*`, `is*` and
   `has*` methods on `Pimcore\Model\AbstractModel`, the common base class of all Pimcore
-  models, and on `Pimcore\Model\DataObject\ClassDefinition\Data` (the field definitions
+  models (plus `count`, `load*` and `render*` there, which listings and editables need,
+  e.g. `object.getChildren().count()` or `editable.render()`), and on `Pimcore\Model\DataObject\ClassDefinition\Data` (the field definitions
   reachable through `ClassDefinition::getFieldDefinition()`) and on
   `Pimcore\Model\DataObject\Data\UrlSlug` (URL slug values, which are persisted but not
   models). Every other method name
   is blocked (case-insensitive), e.g. `setKey`, `saveIndex`, `deleteAutoSaveVersions`,
   `dumpClass`, the static `create()` factories, `unlockPropagate`, `addMetadata`,
-  `removeProperty`, `clearThumbnails` or `load`. This covers not only elements but also every
+  `removeProperty` or `clearThumbnails`. This covers not only elements but also every
   model a template can reach through an allowed getter (e.g. `getClass()` =>
   `ClassDefinition`, `getVersions()`, `getDependencies()`), so these cannot be used
   to bypass the rules above.
@@ -102,6 +103,11 @@ in your own patterns: PHP method names are case-insensitive. Patterns are valida
 when the configuration is loaded and a malformed pattern is rejected (the policy fails
 closed instead of silently ignoring a broken deny rule); a PCRE runtime error while
 matching also denies the call.
+
+**Behaviour change:** methods outside this read surface (for example the setters of a
+`Listing`, such as `setCondition()` or `setLimit()`, or any custom non-`get*` helper on a model)
+can no longer be called from a sandboxed template, and allowlist mode does not bring them back.
+Fetch such data in PHP and pass the result to the template.
 
 Read access through `get*`, `is*` and `has*` methods (`getId`, `getKey`, `getFilename`, `isPublished`, ...) is unaffected.
 
@@ -236,7 +242,7 @@ pimcore:
                 # regardless of blocked_classes/allowed_classes; merged with this default.
                 hard_blocked_method_patterns:
                     Pimcore\Model\AbstractModel:
-                        - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
+                        - '/^(?!(?:get|is|has|count|load|render)(?:[a-z0-9_]|$))/iD'
                     Pimcore\Model\DataObject\ClassDefinition\Data:
                         - '/^(?!(?:get|is|has)(?:[a-z0-9_]|$))/iD'
                         - '/editmode/i'
