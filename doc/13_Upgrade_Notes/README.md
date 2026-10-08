@@ -5,9 +5,6 @@
 ### [Workflow]
 - [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
 
-### [Assets]
-- [Thumbnails] `ImageThumbnailInterface::getAsset()` and the implementing `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail can be constructed without a backing asset (e.g. via a raw path reference), in which case `getAsset()` returned `null` and thus violated its own non-nullable return type with a `TypeError`. Code typed against `ImageThumbnailInterface`, `Video\ImageThumbnailInterface` or `Document\ImageThumbnailInterface` must now handle a possible `null` return value. Image thumbnails are unaffected: `Image\Thumbnail::getAsset()` keeps returning the (always set) `Image`, and `Image\ThumbnailInterface::getAsset()` is documented as returning `Image`.
-
 ## Pimcore 2026.3.2
 
 ### [Security]
