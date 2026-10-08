@@ -72,6 +72,8 @@ class Model extends AbstractDefinitionHelper
                 ->setClasses(['RelationTest'])
             );
 
+            $panel->addChild($this->createDataChild('manyToManyAssetRelation', 'assetRelations'));
+
             $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
@@ -85,6 +87,11 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
                 ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
+            $panel->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'advancedAssetRelations')
+                ->setAllowMultipleAssignments(false)
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
@@ -101,6 +108,8 @@ class Model extends AbstractDefinitionHelper
                 ->setClasses(['RelationTest'])
             );
 
+            $lFields->addChild($this->createDataChild('manyToManyAssetRelation', 'lassetRelations'));
+
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
@@ -113,6 +122,11 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
+            $lFields->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'ladvancedAssetRelations')
+                ->setAllowMultipleAssignments(false)
                 ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
@@ -149,6 +163,11 @@ class Model extends AbstractDefinitionHelper
                 ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
+            $block->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'blockadvancedAssetRelations')
+                ->setAllowMultipleAssignments(false)
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
             $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
@@ -176,6 +195,11 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
+            $blockLazyLoaded->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'blockadvancedAssetRelationsLazyLoaded')
+                ->setAllowMultipleAssignments(false)
                 ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
@@ -800,6 +824,11 @@ class Model extends AbstractDefinitionHelper
                 ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
+            $panel->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'advancedAssetRelations')
+                ->setAllowMultipleAssignments(false)
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
@@ -853,6 +882,11 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
+            $lFields->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'ladvancedAssetRelations')
+                ->setAllowMultipleAssignments(false)
                 ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
@@ -1016,6 +1050,11 @@ class Model extends AbstractDefinitionHelper
                 ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
+            $panel->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'advancedAssetRelations')
+                ->setAllowMultipleAssignments(false)
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
@@ -1070,6 +1109,11 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
+                ]));
+
+            $lFields->addChild($this->createDataChild('advancedManyToManyAssetRelation', 'ladvancedAssetRelations')
+                ->setAllowMultipleAssignments(false)
                 ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
