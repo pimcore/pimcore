@@ -61,7 +61,10 @@ final class Version20261008090000 extends AbstractMigration
         if ($table->hasIndex('type_name')) {
             $this->addSql('ALTER TABLE `users` DROP KEY `type_name`');
         }
+    }
 
+    public function postUp(Schema $schema): void
+    {
         $this->resetValidTableColumnsCache('users');
     }
 
@@ -91,7 +94,10 @@ final class Version20261008090000 extends AbstractMigration
         if ($table->hasColumn('uniqueName')) {
             $this->addSql('ALTER TABLE `users` DROP COLUMN `uniqueName`');
         }
+    }
 
+    public function postDown(Schema $schema): void
+    {
         $this->resetValidTableColumnsCache('users');
     }
 
