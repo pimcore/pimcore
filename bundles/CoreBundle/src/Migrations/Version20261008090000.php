@@ -46,7 +46,7 @@ final class Version20261008090000 extends AbstractMigration
 
         if (!$table->hasColumn('uniqueName')) {
             $this->addSql(
-                "ALTER TABLE `users` ADD COLUMN `uniqueName` varchar(64) GENERATED ALWAYS AS " .
+                'ALTER TABLE `users` ADD COLUMN `uniqueName` varchar(64) GENERATED ALWAYS AS ' .
                 "(IF(`type` IN ('userfolder', 'rolefolder'), CONCAT(IFNULL(`parentId`, 0), '/', `name`), `name`)) " .
                 'STORED AFTER `name`'
             );
