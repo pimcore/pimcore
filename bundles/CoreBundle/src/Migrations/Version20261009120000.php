@@ -34,6 +34,6 @@ final class Version20261009120000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql("DELETE FROM users_permission_definitions WHERE `key` = 'gdpr_data_extractor'");
+        $this->write('Nothing to revert: this permission may predate the migration and is safe for earlier versions.');
     }
 }
