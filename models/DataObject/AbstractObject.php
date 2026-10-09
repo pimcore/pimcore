@@ -483,12 +483,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $updatedChildren = [];
         $differentOldPath = '';
         $hideUnpublishedBackup = false;
+        /** @var AbstractObject|null $parent */
+        $parent = null;
 
         $this->retryableFunction(
             beforeRetryables: function () use (
                 &$isUpdate,
                 &$parameters,
-                &$isDirtyDetectionDisabled
+                &$isDirtyDetectionDisabled,
+                &$parent
             ) {
                 $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
                 $preEvent = new DataObjectEvent($this, $parameters);
@@ -503,13 +506,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $parameters = $preEvent->getArguments();
 
                 $this->correctPath();
+
+                // load the parent outside of the save transaction: a non-locking read in the transaction before this
+                // object's row lock would let the relation rows (see below) be read from an outdated snapshot. This
+                // does not help when save() runs inside an outer transaction that already read from the database.
+                if ($isUpdate) {
+                    $parent = DataObject::getById($this->getParentId());
+                }
             },
             retryableFunc: function () use (
                 &$isUpdate,
                 &$parameters,
                 &$updatedChildren,
                 &$differentOldPath,
-                &$hideUnpublishedBackup
+                &$hideUnpublishedBackup,
+                &$parent
             ) {
                 $hideUnpublishedBackup = self::getHideUnpublished();
                 self::setHideUnpublished(false);
@@ -520,13 +531,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                 if (!$isUpdate) {
                     $this->getDao()->create();
+                    // a new object has no relations yet, see the reset of the raw relation data below
+                    $this->__rawRelationData = [];
                 }
 
                 // get the old path from the database before the update is done
                 $oldPath = null;
                 if ($isUpdate) {
-                    $parent = DataObject::getById($this->getParentId());
-
                     // lock this object's and the new parent's row in a fixed order (ascending id) so that
                     // two concurrent moves affecting the same pair of objects (e.g. A becomes a child of B
                     // while B becomes a child of A) are serialized instead of racing past each other's check
@@ -539,6 +550,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     }
 
                     $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
+
+                    // relations are saved as a delta against the raw relation data, which might be outdated (read
+                    // before a concurrent save, or copied from another object by cloning). Reset it before update()
+                    // lazy loads any relation field, so the delta is calculated against the current database state.
+                    $this->__rawRelationData = null;
                 }
 
                 // if the old path is different from the new path, update all children

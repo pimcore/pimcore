@@ -360,17 +360,21 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             $data['path'] = $data['id'];
         }
 
-        $video = Asset::getByPath((string)$data['path']);
-        if ($video instanceof Asset\Video) {
-            $this->id = $video->getId();
-        } else {
-            $this->id = $data['path'];
+        // only scalar paths can be resolved, anything else (e.g. an object sent by the UI) is treated as no video
+        $path = $data['path'] ?? null;
+        $this->id = null;
+        if (is_string($path) || is_int($path)) {
+            $video = Asset::getByPath((string) $path);
+            $this->id = $video instanceof Asset\Video ? $video->getId() : $path;
         }
 
         $this->poster = null;
-        $poster = Asset::getByPath($data['poster']);
-        if ($poster instanceof Asset\Image) {
-            $this->poster = $poster->getId();
+        $posterPath = $data['poster'] ?? null;
+        if (is_string($posterPath) && $posterPath !== '') {
+            $poster = Asset::getByPath($posterPath);
+            if ($poster instanceof Asset\Image) {
+                $this->poster = $poster->getId();
+            }
         }
 
         return $this;

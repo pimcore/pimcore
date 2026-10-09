@@ -311,6 +311,28 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * A mandatory field whose default is resolved at runtime - the current date
+     * for a date/datetime, the options provider's default for a select/multiselect -
+     * must not block publishing a brand-new object, and the default must be persisted.
+     */
+    public function testMandatoryRuntimeResolvedDefaultsSavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+        $data = $latestVersion->getData();
+
+        $this->assertNotNull($data->getMandatoryDateWithCurrentDate(), 'Expected the current date to be applied to the date field');
+        $this->assertSame(date('Y-m-d'), $data->getMandatoryDateWithCurrentDate()->format('Y-m-d'));
+        $this->assertNotNull($data->getMandatoryDatetimeWithCurrentDate(), 'Expected the current date to be applied to the datetime field');
+        $this->assertSame('a', $data->getMandatorySelectWithProviderDefault());
+        $this->assertSame(['a'], $data->getMandatoryMultiselectWithProviderDefault());
+    }
+
+    /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning(): void
