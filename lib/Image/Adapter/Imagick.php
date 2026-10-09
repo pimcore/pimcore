@@ -147,9 +147,18 @@ class Imagick extends Adapter
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
 
-                    // Save and reload the cut-out image as PNG32.
-                    // Keep alpha pixels. Remove the active ImageMagick mask.
-                    $this->materializeClipPath();
+                    // clipImage() leaves a write mask (IM7) / clip mask (IM6) on the image which every later
+                    // operation (resize, crop, ...) still honours. Imagick cannot unset it, so rebuild the image
+                    // from an in-memory MIFF blob: lossless for pixels, alpha, colorspace and profiles, but the
+                    // mask is not serialized.
+                    $format = $i->getImageFormat();
+                    $i->setImageFormat('miff');
+                    $materialized = new \Imagick();
+                    $materialized->readImageBlob($i->getImageBlob());
+                    $materialized->setImageFormat($format);
+                    $this->resource = $materialized;
+                    $this->setIsAlphaPossible(true);
+                    $i->clear();
                     $unclipped->clear();
                 } catch (Exception $e) {
                     // the image is entirely transparent at this point, so restore the copy instead of
@@ -228,7 +237,7 @@ class Imagick extends Adapter
 
             if ($i->getImageAlphaChannel()) {
                 // Imagick version compatibility
-                $alphaChannel = \Imagick::ALPHACHANNEL_OPAQUE;
+                $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
                 if (defined('Imagick::ALPHACHANNEL_REMOVE')) {
                     // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
                     $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
@@ -1162,39 +1171,5 @@ class Imagick extends Adapter
         } catch (Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * Materializes the active clipping path by saving and reloading the image.
-     *
-     * @return void
-     * @throws Exception
-     */
-    private function materializeClipPath(): void
-    {
-        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '_pimcore_image_tmp_file.png';
-        $this->tmpFiles[] = $tmpFile;
-        $this->save($tmpFile, 'png32');
-        $this->setIsAlphaPossible(true);
-
-        $prevResource = $this->resource;
-        $this->resource = null;
-
-        try {
-            $this->reinitializing = true;
-
-            if (!$this->load($tmpFile)) {
-                throw new Exception('Failed to reinitialize image from temporary file');
-            }
-        } catch (Exception $e) {
-            $this->destroy();
-            $this->resource = $prevResource;
-
-            throw $e;
-        } finally {
-            $this->reinitializing = false;
-        }
-
-        $prevResource->clear();
     }
 }
