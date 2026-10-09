@@ -18,6 +18,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -412,5 +413,64 @@ class ServiceTest extends TestCase
 
         $this->assertEquals($object->getKey() . '_copy', $clonedObject->getKey());
         $this->assertEquals('valueA', $clonedObject->getProperty('propertyA'));
+    }
+
+    /**
+     * Regression test: a legitimate editmode/preview round-trip through saveElementToSession()
+     * and getElementFromSession() must keep working.
+     *
+     * @see \Pimcore\Model\Element\Service::saveElementToSession()
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionReturnsLegitimatelySavedObject(): void
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $object->setProperty('propertyA', 'input', 'valueA');
+        $object->save();
+
+        $sessionId = 'session-roundtrip-' . $object->getId();
+
+        Service::saveElementToSession($object, $sessionId);
+
+        $restored = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertInstanceOf(DataObject\AbstractObject::class, $restored);
+        $this->assertEquals($object->getId(), $restored->getId());
+        $this->assertEquals('valueA', $restored->getProperty('propertyA'));
+
+        TmpStore::delete(Service::getSessionKey('object', $object->getId(), $sessionId));
+    }
+
+    /**
+     * Regression test: the `tmp_store` row read by getElementFromSession() is not necessarily
+     * written by saveElementToSession() - anyone with a raw DB write primitive against that
+     * table can forge one. getElementFromSession() must reject a forged payload that references
+     * a class outside Pimcore's own namespace instead of instantiating it, and must never run
+     * that class's magic methods while doing so.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionRejectsForgedPayloadOutsidePimcoreNamespace(): void
+    {
+        require_once __DIR__ . '/UntrustedClassProbe.php';
+        \UntrustedClassProbe::$wasInstantiated = false;
+
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+
+        $sessionId = 'session-forged-' . $object->getId();
+        $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
+
+        TmpStore::set($tmpStoreKey, serialize(new \UntrustedClassProbe()), 'object-session');
+
+        $result = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertNull($result, 'A forged payload referencing a non-Pimcore class must be rejected.');
+        $this->assertFalse(
+            \UntrustedClassProbe::$wasInstantiated,
+            'getElementFromSession() must never instantiate a class outside the Pimcore namespace.'
+        );
+
+        TmpStore::delete($tmpStoreKey);
     }
 }
