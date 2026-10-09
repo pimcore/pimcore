@@ -1671,10 +1671,6 @@ class Service extends Model\AbstractModel
         array &$seenObjectIds = [],
         array &$seenReferenceIds = []
     ): bool {
-        if ($value instanceof __PHP_Incomplete_Class) {
-            return str_starts_with($value->__PHP_Incomplete_Class_Name, 'Pimcore\\');
-        }
-
         if (is_object($value)) {
             $objectId = spl_object_id($value);
             if (isset($seenObjectIds[$objectId])) {
@@ -1682,7 +1678,20 @@ class Service extends Model\AbstractModel
             }
             $seenObjectIds[$objectId] = true;
 
-            foreach ((array) $value as $propertyValue) {
+            $properties = (array) $value;
+
+            if ($value instanceof __PHP_Incomplete_Class) {
+                // Reading the name as a property on an incomplete object raises a warning and yields null,
+                // so it has to be taken from the array cast. The properties are walked afterwards because
+                // every object of the probe is incomplete, nested ones included.
+                $className = $properties['__PHP_Incomplete_Class_Name'] ?? null;
+                if (!is_string($className) || !str_starts_with($className, 'Pimcore\\')) {
+                    return false;
+                }
+                unset($properties['__PHP_Incomplete_Class_Name']);
+            }
+
+            foreach ($properties as $propertyValue) {
                 if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds)) {
                     return false;
                 }

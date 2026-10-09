@@ -453,7 +453,7 @@ class ServiceTest extends TestCase
     public function testGetElementFromSessionRejectsForgedPayloadOutsidePimcoreNamespace(): void
     {
         require_once __DIR__ . '/UntrustedClassProbe.php';
-        UntrustedClassProbe::$wasInstantiated = false;
+        \UntrustedClassProbe::$wasInstantiated = false;
 
         $object = TestHelper::createEmptyObject('', false);
         $object->save();
@@ -461,13 +461,13 @@ class ServiceTest extends TestCase
         $sessionId = 'session-forged-' . $object->getId();
         $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
 
-        TmpStore::set($tmpStoreKey, serialize(new UntrustedClassProbe()), 'object-session');
+        TmpStore::set($tmpStoreKey, serialize(new \UntrustedClassProbe()), 'object-session');
 
         $result = Service::getElementFromSession('object', $object->getId(), $sessionId);
 
         $this->assertNull($result, 'A forged payload referencing a non-Pimcore class must be rejected.');
         $this->assertFalse(
-            UntrustedClassProbe::$wasInstantiated,
+            \UntrustedClassProbe::$wasInstantiated,
             'getElementFromSession() must never instantiate a class outside the Pimcore namespace.'
         );
 
