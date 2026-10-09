@@ -112,7 +112,7 @@ class OutdatedRelationDataTest extends ModelTestCase
         $current->save();
 
         // changes another field only, the outdated version count makes this a full save of all fields
-        $outdated->setMultipleManyToManyObject($this->metadata([$z]));
+        $outdated->setMultipleManyToManyObject($this->metadata([$z], 'multipleManyToManyObject'));
         $outdated->save();
 
         $this->assertSame($this->ids([$x, $y]), $this->storedRelationIds($object->getId()));
@@ -143,10 +143,10 @@ class OutdatedRelationDataTest extends ModelTestCase
      *
      * @return ObjectMetadata[]
      */
-    private function metadata(array $relations): array
+    private function metadata(array $relations, string $field = self::FIELD): array
     {
         return array_map(
-            static fn (RelationTest $relation) => new ObjectMetadata(self::FIELD, ['meta'], $relation),
+            static fn (RelationTest $relation) => new ObjectMetadata($field, ['meta'], $relation),
             $relations
         );
     }
