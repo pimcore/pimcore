@@ -66,6 +66,9 @@ class Processor
             'tif' => 'tiff',
         ];
 
+        // file extensions are not normalized (e.g. photo.JPG), the mapping and allow-lists are lowercase
+        $format = strtolower($format);
+
         if (isset($typeMappings[$format])) {
             $format = $typeMappings[$format];
         }
