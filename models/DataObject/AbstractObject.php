@@ -520,6 +520,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                 if (!$isUpdate) {
                     $this->getDao()->create();
+                    // a new object has no relations yet, see the reset of the raw relation data below
+                    $this->__rawRelationData = [];
                 }
 
                 // get the old path from the database before the update is done
@@ -539,6 +541,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     }
 
                     $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
+
+                    // relations are saved as a delta against the raw relation data, which might be outdated (read
+                    // before a concurrent save, or copied from another object by cloning). Reset it before update()
+                    // lazy loads any relation field, so the delta is calculated against the current database state.
+                    $this->__rawRelationData = null;
                 }
 
                 // if the old path is different from the new path, update all children
@@ -550,12 +557,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $this->getDao()->updateWorkspaces();
                     $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
                 }
-
-                // relations are saved as a delta against the raw relation data, which might be outdated (read
-                // before a concurrent save, or copied from another object by cloning). Reset it before update()
-                // lazy loads any relation field, so the delta is calculated against the current database state.
-                // A new object has no relations yet.
-                $this->__rawRelationData = $isUpdate ? null : [];
 
                 $this->update($isUpdate, $parameters);
 
