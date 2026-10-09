@@ -14,10 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Exception;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
+use Pimcore\Tool\Storage;
 use Sabre\DAV;
 
 /**
@@ -46,15 +49,47 @@ class Folder extends DAV\Collection
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         $childrenList->filterAccessibleByUser($user, $this->asset);
 
+        $fileSizes = $this->getFileSizes();
+
         foreach ($childrenList as $child) {
             try {
-                $children[] = $this->getChild($child);
+                if ($child instanceof Asset\Folder) {
+                    $children[] = new Asset\WebDAV\Folder($child);
+                } else {
+                    $children[] = new Asset\WebDAV\File($child, $fileSizes[$child->getRealFullPath()] ?? null);
+                }
             } catch (Exception $e) {
                 Logger::warning((string) $e);
             }
         }
 
         return $children;
+    }
+
+    /**
+     * Reads the size of every file in this folder with a single storage listing.
+     *
+     * A PROPFIND asks for the size of each child, and asking the storage per file costs one
+     * request per child on remote storage (S3, Azure Blob, ...), which does not finish in time
+     * for large folders. Children missing from the listing fall back to the per-file lookup.
+     *
+     * @return array<string, int> file sizes in bytes, keyed by the asset's full path
+     */
+    private function getFileSizes(): array
+    {
+        $fileSizes = [];
+
+        try {
+            foreach (Storage::get('asset')->listContents($this->asset->getRealFullPath(), false) as $item) {
+                if ($item instanceof FileAttributes && $item->fileSize() !== null) {
+                    $fileSizes['/' . ltrim($item->path(), '/')] = $item->fileSize();
+                }
+            }
+        } catch (FilesystemException $e) {
+            Logger::warning('Unable to list the contents of asset folder ' . $this->asset->getRealFullPath() . ': ' . $e);
+        }
+
+        return $fileSizes;
     }
 
     /**
