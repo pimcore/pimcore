@@ -16,6 +16,9 @@ namespace Pimcore\Tests\Unit\ApplicationLoggerBundle\Maintenance;
 use DateTimeImmutable;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToDeleteDirectory;
+use League\Flysystem\UnableToDeleteFile;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask;
 use Pimcore\Config;
@@ -177,9 +180,87 @@ final class LogArchiveTaskTest extends TestCase
         $this->assertArchivedExactlyOnce($ids);
     }
 
-    private function runTask(): void
+    public function testAFileObjectDeletedByAConcurrentRunDoesNotFailTheRun(): void
     {
-        (new LogArchiveTask($this->db, new Config(), new NullLogger(), $this->lockFactory))->execute();
+        $ids = $this->insertSourceLogs(1, [], 'gone/by/now.log');
+        $this->createArchiveTable();
+
+        // the file is still there when it is looked at and gone when it is deleted
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->expects($this->exactly(2))->method('fileExists')
+            ->with('gone/by/now.log')->willReturnOnConsecutiveCalls(true, false);
+        $storage->expects($this->once())->method('delete')
+            ->with('gone/by/now.log')->willThrowException(UnableToDeleteFile::atLocation('gone/by/now.log'));
+        $storage->method('directoryExists')->willReturn(false);
+
+        $this->runTask($storage);
+
+        $this->assertArchivedExactlyOnce($ids);
+        $this->assertSame(0, $this->countSourceRows(), 'The run must complete and clear the source table.');
+    }
+
+    public function testAFileObjectThatCannotBeDeletedStillFailsTheRun(): void
+    {
+        $this->insertSourceLogs(1, [], 'stuck/file.log');
+        $this->createArchiveTable();
+
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->expects($this->exactly(2))->method('fileExists')->with('stuck/file.log')->willReturn(true);
+        $storage->expects($this->once())->method('delete')
+            ->with('stuck/file.log')->willThrowException(UnableToDeleteFile::atLocation('stuck/file.log'));
+
+        $this->expectException(UnableToDeleteFile::class);
+
+        try {
+            $this->runTask($storage);
+        } finally {
+            $this->assertSame(1, $this->countSourceRows(), 'A failed deletion must leave the entries retryable.');
+        }
+    }
+
+    public function testAnArchiveDirectoryDeletedByAConcurrentRunDoesNotFailTheRun(): void
+    {
+        $oldMonth = (new DateTimeImmutable('-24 months'));
+        $oldTable = $this->db->quoteIdentifier(
+            ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . $oldMonth->format('Y') . '_' . $oldMonth->format('m')
+        );
+        $this->db->executeStatement('CREATE TABLE IF NOT EXISTS ' . $oldTable . ' (id BIGINT(20) NOT NULL)');
+
+        $storage = $this->createMock(FilesystemOperator::class);
+        // any other expired archive table in the test database goes through the same path, so the
+        // calls are tracked per directory rather than by position
+        $checked = [];
+        $storage->method('directoryExists')->willReturnCallback(
+            static function (string $path) use (&$checked): bool {
+                $checked[$path] = ($checked[$path] ?? 0) + 1;
+
+                return $checked[$path] === 1;
+            }
+        );
+        $deleted = [];
+        $storage->method('deleteDirectory')->willReturnCallback(
+            static function (string $path) use (&$deleted): void {
+                $deleted[] = $path;
+
+                throw UnableToDeleteDirectory::atLocation($path);
+            }
+        );
+
+        try {
+            $this->runTask($storage);
+
+            $this->assertNotEmpty($deleted, 'The deletion must have been attempted.');
+            foreach ($deleted as $path) {
+                $this->assertSame(2, $checked[$path], 'The directory must be checked again after the failure.');
+            }
+        } finally {
+            $this->db->executeStatement('DROP TABLE IF EXISTS ' . $oldTable);
+        }
+    }
+
+    private function runTask(?FilesystemOperator $storage = null): void
+    {
+        (new LogArchiveTask($this->db, new Config(), new NullLogger(), $this->lockFactory, $storage))->execute();
     }
 
     /**
@@ -187,25 +268,26 @@ final class LogArchiveTaskTest extends TestCase
      *
      * @return int[]
      */
-    private function insertSourceLogs(int $amount, array $reuseIds = []): array
+    private function insertSourceLogs(int $amount, array $reuseIds = [], ?string $fileObject = null): array
     {
         $timestamp = new DateTimeImmutable('-' . self::ARCHIVE_THRESHOLD_EXCEEDING_DAYS . ' days');
         $ids = [];
 
         for ($i = 0; $i < $amount; $i++) {
-            $ids[] = $this->insertSourceLog($timestamp, $reuseIds[$i] ?? null);
+            $ids[] = $this->insertSourceLog($timestamp, $reuseIds[$i] ?? null, $fileObject);
         }
 
         return $ids;
     }
 
-    private function insertSourceLog(DateTimeImmutable $timestamp, ?int $id = null): int
+    private function insertSourceLog(DateTimeImmutable $timestamp, ?int $id = null, ?string $fileObject = null): int
     {
         $data = [
             'timestamp' => $timestamp->format('Y-m-d H:i:s'),
             'message' => 'log archive task test',
             'priority' => 'info',
             'component' => 'log-archive-task-test',
+            'fileobject' => $fileObject,
         ];
 
         if ($id !== null) {
