@@ -57,7 +57,7 @@ class StaticPageGenerator
                 foreach ($directories as $directory) {
                     $pathString .= '/' . $directory;
                     $doc = Document::getByPath($pathString);
-                    $site = Site::getByRootId($doc->getId());
+                    $site = $doc ? Site::getByRootId($doc->getId()) : null;
                     if ($site instanceof Site) {
                         $mainDomain = '/' . $site->getMainDomain();
                     } else {
