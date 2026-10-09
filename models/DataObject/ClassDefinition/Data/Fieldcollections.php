@@ -330,7 +330,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         // CalculatedValue does not contribute dependencies, so there is no reason to evaluate the calculator
-                        if ($fd instanceof CalculatedValue) {
+                        // (exact class only: a subclass may override resolveDependencies())
+                        if ($fd::class === CalculatedValue::class) {
                             continue;
                         }
 

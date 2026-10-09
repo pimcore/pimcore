@@ -108,7 +108,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         foreach ($fieldDefinitions as $fd) {
             // CalculatedValue::checkValidity() is a no-op, so evaluating the calculator here would only produce a discarded value
-            if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+            // (exact class only: a subclass may override checkValidity())
+            if ($fd::class === DataObject\ClassDefinition\Data\CalculatedValue::class) {
                 continue;
             }
 
@@ -397,7 +398,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
             // CalculatedValue does not contribute dependencies, so there is no reason to evaluate the calculator
-            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+            // (exact class only: a subclass may override resolveDependencies())
+            if ($field::class === DataObject\ClassDefinition\Data\CalculatedValue::class) {
                 continue;
             }
 
