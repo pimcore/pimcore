@@ -1672,9 +1672,7 @@ class Service extends Model\AbstractModel
         array &$seenReferenceIds = []
     ): bool {
         if ($value instanceof __PHP_Incomplete_Class) {
-            $className = $value->__PHP_Incomplete_Class_Name ?? null;
-
-            return is_string($className) && str_starts_with($className, 'Pimcore\\');
+            return str_starts_with($value->__PHP_Incomplete_Class_Name, 'Pimcore\\');
         }
 
         if (is_object($value)) {
