@@ -20,8 +20,12 @@ use Pimcore\Model\DataObject\Data\CalculatedValue;
 
 class Calculator implements CalculatorClassInterface
 {
+    public const EVALUATION_COUNTER = 'modeltest.testCalculatedValue.evaluations';
+
     public function compute(Concrete $object, CalculatedValue $context): string
     {
+        RuntimeCache::set(self::EVALUATION_COUNTER, (int)(RuntimeCache::isRegistered(self::EVALUATION_COUNTER) ? RuntimeCache::get(self::EVALUATION_COUNTER) : 0) + 1);
+
         $value = '';
         if (RuntimeCache::isRegistered('modeltest.testCalculatedValue.value')) {
             $value = RuntimeCache::get('modeltest.testCalculatedValue.value');

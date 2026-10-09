@@ -107,6 +107,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $validationExceptions = [];
 
         foreach ($fieldDefinitions as $fd) {
+            // CalculatedValue::checkValidity() is a no-op, so evaluating the calculator here would only produce a discarded value
+            if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                continue;
+            }
+
             try {
                 if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $this->__objectAwareFields['localizedfields'] = true;
@@ -391,6 +396,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            // CalculatedValue does not contribute dependencies, so there is no reason to evaluate the calculator
+            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                continue;
+            }
+
             $key = $field->getName();
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());
