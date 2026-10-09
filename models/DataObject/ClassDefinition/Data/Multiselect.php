@@ -611,4 +611,11 @@ class Multiselect extends Data implements
 
         return $this->getDefaultValue();
     }
+
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        // the default is resolved at runtime (options provider), the configured default value alone does not tell
+        return parent::hasApplicableDefaultValue($object, $context)
+            || !$this->isEmpty($this->doGetDefaultValue($object, $context));
+    }
 }
