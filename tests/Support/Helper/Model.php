@@ -973,63 +973,6 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
-     * Sets up a field collection holding a calculated value
-     *
-     * @throws Exception
-     */
-    public function setupFieldcollection_CalculatedValueItem(
-        string $name = 'CalculatedValueItem',
-        string $filename = 'calculated/fieldcollection_CalculatedValueItem_export.json'
-    ): ?Definition {
-        /** @var ClassManager $cm */
-        $cm = $this->getClassManager();
-
-        if (!$definition = $cm->getFieldcollection($name)) {
-            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
-            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
-            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
-            $rootPanel->addChild($panel);
-
-            $panel->addChild($this->createDataChild('input', 'fieldinput'));
-
-            $fieldCalculated = $this->createDataChild('calculatedValue', 'fieldcalculated');
-            $fieldCalculated->setCalculatorClass('@test.calculatorservice');
-            $panel->addChild($fieldCalculated);
-
-            $root->addChild($rootPanel);
-            $definition = $this->createFieldcollection($name, $root, $filename);
-        }
-
-        return $definition;
-    }
-
-    /**
-     * Sets up a class with a field collection that holds a calculated value
-     *
-     * @throws Exception
-     */
-    public function setupPimcoreClass_CalculatedValueContainer(
-        string $name = 'CalculatedValueContainer',
-        string $filename = 'calculated/class_CalculatedValueContainer_export.json'
-    ): ?DataObject\ClassDefinitionInterface {
-        /** @var ClassManager $cm */
-        $cm = $this->getClassManager();
-
-        if (!$class = $cm->getClass($name)) {
-            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
-            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
-            $panel->addChild($this->createDataChild('input'));
-            $panel->addChild($this->createDataChild('fieldcollections', 'items')
-                ->setAllowedTypes(['CalculatedValueItem']));
-            $root->addChild($panel);
-
-            $class = $this->createClass($name, $root, $filename, false, 'CVC');
-        }
-
-        return $class;
-    }
-
-    /**
      * Sets up an object brick with a localized URL slug
      *
      * @throws Exception
