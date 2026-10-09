@@ -146,6 +146,19 @@ class Imagick extends Adapter
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+
+                    // clipImage() leaves a write mask (IM7) / clip mask (IM6) on the image which every later
+                    // operation (resize, crop, ...) still honours. Imagick cannot unset it, so rebuild the image
+                    // from an in-memory MIFF blob: lossless for pixels, alpha, colorspace and profiles, but the
+                    // mask is not serialized.
+                    $format = $i->getImageFormat();
+                    $i->setImageFormat('miff');
+                    $materialized = new \Imagick();
+                    $materialized->readImageBlob($i->getImageBlob());
+                    $materialized->setImageFormat($format);
+                    $this->resource = $materialized;
+                    $this->setIsAlphaPossible(true);
+                    $i->clear();
                     $unclipped->clear();
                 } catch (Exception $e) {
                     // the image is entirely transparent at this point, so restore the copy instead of
