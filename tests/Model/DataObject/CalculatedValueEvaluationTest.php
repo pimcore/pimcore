@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore;
-use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Version;
 use Pimcore\Tests\Support\Helper\DataType\Calculator;
@@ -38,10 +37,10 @@ class CalculatedValueEvaluationTest extends ModelTestCase
     {
         $object = TestHelper::createEmptyObject();
 
-        $this->resetEvaluationCounter();
+        Calculator::resetEvaluationCount();
         $object->resolveDependencies();
 
-        $this->assertSame(0, $this->getEvaluationCount());
+        $this->assertSame(0, Calculator::getEvaluationCount());
     }
 
     public function testSaveEvaluatesCalculatorOnlyForTheQueryTable(): void
@@ -55,23 +54,13 @@ class CalculatedValueEvaluationTest extends ModelTestCase
         Version::disable();
 
         try {
-            $this->resetEvaluationCounter();
+            Calculator::resetEvaluationCount();
             $object->save();
         } finally {
             Version::enable();
         }
 
         // the calculated value is evaluated exactly once per save, to fill the query table
-        $this->assertSame(1, $this->getEvaluationCount());
-    }
-
-    private function resetEvaluationCounter(): void
-    {
-        RuntimeCache::set(Calculator::EVALUATION_COUNTER, 0);
-    }
-
-    private function getEvaluationCount(): int
-    {
-        return (int)RuntimeCache::get(Calculator::EVALUATION_COUNTER);
+        $this->assertSame(1, Calculator::getEvaluationCount());
     }
 }
