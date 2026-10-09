@@ -180,6 +180,39 @@ class OutdatedRelationDataContainerTest extends ModelTestCase
         $this->assertSame(array_values(array_unique($rows)), $rows);
     }
 
+    public function testLocalizedRelationsOfObjectAndFieldcollectionWithSameNameAreKeptApart(): void
+    {
+        [$x, $y, $z] = $this->relationObjects;
+
+        $object = new LazyLoading();
+        $object->setParent(Service::createFolderByPath('/outdated-relations'));
+        $object->setKey('same-name-collection');
+        $object->setPublished(true);
+        $object->setLobjects([$x], 'en');
+        $object->setLobjects([$y], 'de');
+        $item = new Fieldcollection\Data\LazyLoadingLocalizedTest();
+        $item->setLobjects([$z], 'en');
+        $items = new Fieldcollection();
+        $items->add($item);
+        $object->setFieldcollection($items);
+        $object->save();
+
+        $reloaded = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertSame([$x->getId()], $this->ids($reloaded->getLobjects('en')));
+        $this->assertSame([$y->getId()], $this->ids($reloaded->getLobjects('de')));
+        $reloaded->setLobjects([$x, $y], 'en');
+        $reloaded->save();
+
+        $reloaded = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertSame([$x->getId(), $y->getId()], $this->ids($reloaded->getLobjects('en')));
+        $this->assertSame([$y->getId()], $this->ids($reloaded->getLobjects('de')));
+        $reloadedItem = $reloaded->getFieldcollection()->getItems()[0];
+        $this->assertSame([$z->getId()], $this->ids($reloadedItem->getLobjects('en')));
+
+        $rows = $this->storedRelations($object->getId());
+        $this->assertSame(array_values(array_unique($rows)), $rows);
+    }
+
     /**
      * @param RelationTest[] $relations
      */
