@@ -1036,6 +1036,48 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return empty($data);
     }
 
+    /**
+     * Decides whether a default will actually be applied when a new object is created
+     * with this field left empty - and so whether the mandatory check can be skipped for it.
+     *
+     * The base implementation probes the configured default value / default value generator.
+     * Field types that resolve their default at runtime from something else must override this
+     * and report on the *resolved* default, not on whether some accessor is configured: a default
+     * that fails to materialise must not waive the mandatory check.
+     *
+     * Overrides may only widen what this returns - a field that qualified before must keep qualifying,
+     * otherwise a save that used to succeed would start throwing a ValidationException.
+     */
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        if (method_exists($this, 'getDefaultValueGenerator') && $this->getDefaultValueGenerator() !== '') {
+            return true;
+        }
+
+        if (!method_exists($this, 'getDefaultValue')) {
+            return false;
+        }
+
+        $defaultValue = $this->getDefaultValue();
+
+        // pre-existing behaviour: any truthy configured default qualifies
+        if (!empty($defaultValue)) {
+            return true;
+        }
+
+        // Compound quantity-value fields (QuantityValue, InputQuantityValue) resolve their
+        // default from a value *and* a unit, and their isEmpty() only understands the value
+        // object, not the configured scalar - so a falsy-but-configured scalar is paired with
+        // the unit instead. The unit check mirrors doGetDefaultValue()'s own truthy check, so
+        // an empty-string unit (which it treats as "no unit") agrees here.
+        if (method_exists($this, 'getDefaultUnit')) {
+            return $defaultValue !== null && (bool) $this->getDefaultUnit();
+        }
+
+        // a type-aware emptiness check, so a default of 0 / false / '0' qualifies
+        return !$this->isEmpty($defaultValue);
+    }
+
     /** True if change is allowed in edit mode.
      *
      */
