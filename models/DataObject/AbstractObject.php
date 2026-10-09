@@ -551,6 +551,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
                 }
 
+                // relations are saved as a delta against the raw relation data, which might be outdated (read
+                // before a concurrent save, or copied from another object by cloning). Reset it before update()
+                // lazy loads any relation field, so the delta is calculated against the current database state.
+                $this->__rawRelationData = null;
+
                 $this->update($isUpdate, $parameters);
 
                 self::setHideUnpublished($hideUnpublishedBackup);
