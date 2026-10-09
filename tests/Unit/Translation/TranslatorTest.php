@@ -19,7 +19,11 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tool;
 use Pimcore\Translation\Translator;
+use ReflectionObject;
+use ReflectionProperty;
+use Symfony\Component\Translation\Translator as SymfonyTranslator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslatorTest extends TestCase
@@ -90,13 +94,70 @@ class TranslatorTest extends TestCase
         parent::setUp();
 
         $this->translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+
+        // the first catalogue Symfony's translator has to build itself (instead of reading it from its cache
+        // directory) applies the translation resources it was configured with, which discards every catalogue
+        // loaded so far - while Pimcore's translator still considers them initialized and does not merge the
+        // database translations again. Trigger that once, before the fixtures and the reset below, instead of
+        // letting it happen in the middle of a test.
+        $this->warmUpCatalogues();
+
         $this->addTranslations();
+
+        // the translator is shared with everything that ran before this test (other suites included) and
+        // builds a domain/locale catalogue only once - make sure it sees the fixtures written above and
+        // nothing that was translated earlier in the run
+        $this->resetTranslatorState();
+    }
+
+    private function warmUpCatalogues(): void
+    {
+        foreach (array_keys($this->locales) as $locale) {
+            $this->translator->getCatalogue($locale);
+        }
     }
 
     protected function tearDown(): void
     {
         $this->removeTranslations();
+        $this->resetTranslatorState();
         parent::tearDown();
+    }
+
+    private function resetTranslatorState(): void
+    {
+        $this->translator->resetCache();
+
+        $symfonyTranslator = $this->findWrappedSymfonyTranslator($this->translator);
+        if ($symfonyTranslator) {
+            (new ReflectionProperty(SymfonyTranslator::class, 'catalogues'))->setValue($symfonyTranslator, []);
+        }
+    }
+
+    /**
+     * Pimcore's translator (and, in debug mode, Symfony's data collector) wrap the Symfony translator that
+     * actually caches the catalogues; walk the "translator" properties down to it.
+     */
+    private function findWrappedSymfonyTranslator(object $translator): ?SymfonyTranslator
+    {
+        while (!$translator instanceof SymfonyTranslator) {
+            $inner = null;
+            for ($class = new ReflectionObject($translator); $class; $class = $class->getParentClass()) {
+                if ($class->hasProperty('translator')) {
+                    $inner = $class->getProperty('translator')->getValue($translator);
+
+                    break;
+                }
+            }
+
+            if (!is_object($inner)) {
+                return null;
+            }
+
+            $translator = $inner;
+        }
+
+        return $translator;
     }
 
     private function addTranslations(): void
@@ -119,6 +180,54 @@ class TranslatorTest extends TestCase
                     $t->delete();
                 }
             }
+        }
+    }
+
+    /**
+     * Guards the condition resetTranslatorState() exists for: once a locale's catalogue has been built,
+     * neither Translator::lazyInitialize() nor the wrapped Symfony translator pick up a translation saved
+     * afterwards. The "de" part only passes when the Symfony catalogues are dropped as well: "de" has no
+     * value of its own, so the first lookup stores the "en" fallback value in the "de" catalogue, and a
+     * re-initialization alone keeps that copy instead of falling back to the new "en" value.
+     */
+    public function testResetMakesTranslationsSavedAfterCatalogueInitializationVisible(): void
+    {
+        $key = 'stale_catalogue_' . uniqid();
+
+        // the test's own fixture, saved directly so that the translator never has to create the key
+        $translation = new Translation();
+        $translation->setDomain(Translation::DOMAIN_DEFAULT);
+        $translation->setKey($key);
+        foreach (Tool::getValidLanguages() as $language) {
+            $translation->addTranslation($language, '');
+        }
+        $translation->addTranslation('en', 'Old EN');
+        $translation->save();
+
+        try {
+            // prime the catalogues: "de" resolves through its "en" fallback and remembers the value
+            $this->translator->setLocale('de');
+            $this->assertSame('Old EN', $this->translator->trans($key));
+            $this->translator->setLocale('en');
+            $this->assertSame('Old EN', $this->translator->trans($key));
+
+            $translation->addTranslation('en', 'New EN');
+            $translation->save();
+
+            // the already built catalogues do not see the saved value - this is the state an earlier test
+            // leaves behind for this test class; if this assertion fails the translator no longer caches
+            // stale entries and resetTranslatorState() can go
+            $this->assertSame('Old EN', $this->translator->trans($key));
+            $this->translator->setLocale('de');
+            $this->assertSame('Old EN', $this->translator->trans($key));
+
+            $this->resetTranslatorState();
+
+            $this->assertSame('New EN', $this->translator->trans($key), 'saved "en" value not visible through the "de" fallback after reset');
+            $this->translator->setLocale('en');
+            $this->assertSame('New EN', $this->translator->trans($key), 'saved "en" value not visible after reset');
+        } finally {
+            $translation->delete();
         }
     }
 
