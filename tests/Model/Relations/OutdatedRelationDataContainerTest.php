@@ -19,7 +19,6 @@ use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
-use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
@@ -161,8 +160,9 @@ class OutdatedRelationDataContainerTest extends ModelTestCase
     }
 
     /**
-     * Sets the relations on the object level, in localized fields, in an object brick, in a localized object brick
-     * and in a field collection.
+     * Sets the relations on the object level, in localized fields, in an object brick and in a field collection.
+     * The localized object brick is left out: its localized field has the same name as the object's localized field,
+     * and object level localized relations are read without an owner name filter.
      *
      * @param RelationTest[] $relations
      */
@@ -176,10 +176,6 @@ class OutdatedRelationDataContainerTest extends ModelTestCase
         $brick = $object->getBricks()->getLazyLoadingTest() ?? new LazyLoadingTest($object);
         $brick->setObjects($relations);
         $object->getBricks()->setLazyLoadingTest($brick);
-
-        $localizedBrick = $object->getBricks()->getLazyLoadingLocalizedTest() ?? new LazyLoadingLocalizedTest($object);
-        $localizedBrick->setLObjects($relations, 'en');
-        $object->getBricks()->setLazyLoadingLocalizedTest($localizedBrick);
 
         $item = new Fieldcollection\Data\LazyLoadingTest();
         $item->setObjects($relations);
