@@ -53,10 +53,12 @@ trait ContextPersistenceTrait
                     ]
                 );
             } else {
+                // the owner name keeps localized fields of bricks and field collections with the same field name apart
                 $relations = $object->getObject()->retrieveRelationData(
                     [
                         'fieldname' => $this->getName(),
                         'ownertype' => 'localizedfield',
+                        'ownername' => 'localizedfield',
                         'position' => $params['language'],
                     ]
                 );
