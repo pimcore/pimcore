@@ -66,6 +66,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
 
         $container->setParameter('pimcore.assets.storage_operation_queue.enabled', $config['assets']['storage_operation_queue']['enabled']);
+        $container->setParameter('pimcore.assets.webdav.browser_plugin', $config['assets']['webdav']['browser_plugin']);
 
         if (!$container->hasParameter('pimcore.encryption.secret')) {
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
