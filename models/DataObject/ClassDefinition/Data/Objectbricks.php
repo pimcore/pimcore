@@ -415,6 +415,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                 if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        // CalculatedValue does not contribute dependencies, so there is no reason to evaluate the calculator
+                        if ($fd instanceof CalculatedValue) {
+                            continue;
+                        }
+
                         $key = $fd->getName();
                         $getter = 'get' . ucfirst($key);
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
@@ -525,6 +530,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            // CalculatedValue::checkValidity() is a no-op, so evaluating the calculator here would only produce a discarded value
+                            if ($fd instanceof CalculatedValue) {
+                                continue;
+                            }
+
                             $key = $fd->getName();
                             $getter = 'get' . ucfirst($key);
 
