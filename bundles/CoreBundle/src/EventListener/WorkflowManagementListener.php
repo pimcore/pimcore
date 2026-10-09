@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Exception;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
@@ -22,12 +23,16 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
 use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Workflow\Exception\LogicException;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @internal
@@ -48,6 +53,10 @@ class WorkflowManagementListener implements EventSubscriberInterface
             DocumentEvents::POST_ADD => 'onElementPostAdd',
             AssetEvents::POST_ADD => 'onElementPostAdd',
 
+            DataObjectEvents::POST_UPDATE => 'onElementPostUpdate',
+            DocumentEvents::POST_UPDATE => 'onElementPostUpdate',
+            AssetEvents::POST_UPDATE => 'onElementPostUpdate',
+
             DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
             AssetEvents::POST_DELETE => 'onElementPostDelete',
@@ -62,6 +71,8 @@ class WorkflowManagementListener implements EventSubscriberInterface
         /** @var Asset|Document|ConcreteObject $element */
         $element = $e->getElement();
 
+        $this->persistPendingWorkflowMarkings($element);
+
         foreach ($this->workflowManager->getAllWorkflows() as $workflowName) {
             $workflow = $this->workflowManager->getWorkflowIfExists($element, $workflowName);
             if (!$workflow) {
@@ -74,6 +85,89 @@ class WorkflowManagementListener implements EventSubscriberInterface
             if ($hasInitialPlaceConfig) {
                 $workflow->getMarking($element);
             }
+        }
+    }
+
+    /**
+     * Persist workflow markings that were kept pending on the element (e.g. by a
+     * transition with changePublishedState "save_version") once the element is
+     * fully saved. Version-only saves keep them pending, as they belong to the draft.
+     */
+    public function onElementPostUpdate(ElementEventInterface $e): void
+    {
+        $element = $e->getElement();
+
+        if ($e->hasArgument('saveVersionOnly')) {
+            $this->detachDraftFromRuntimeCache($element);
+
+            return;
+        }
+
+        $this->persistPendingWorkflowMarkings($element);
+    }
+
+    private function persistPendingWorkflowMarkings(ElementInterface $element): void
+    {
+        if (!$element instanceof AbstractElement) {
+            return;
+        }
+
+        foreach (array_keys($element->__getPendingWorkflowMarkings()) as $workflowName) {
+            // Resolve the workflow by name on purpose: the pending place was set while the workflow
+            // applied to the element, and re-evaluating the support strategy (e.g. an expression)
+            // against the content being published must not silently drop it.
+            $workflow = $this->getWorkflowByName($workflowName);
+            if (!$workflow) {
+                continue;
+            }
+
+            $markingStore = $workflow->getMarkingStore();
+            if ($markingStore instanceof PendingMarkingStoreInterface) {
+                $markingStore->persistPendingMarking($element);
+            }
+        }
+    }
+
+    /**
+     * After a version-only save the pending markings stay on the element: they belong to the
+     * draft that was just written. When that element is an instance the runtime cache holds
+     * (the element had no draft before, so the transition ran on the published instance), later
+     * loads in the same process would get the draft's place as if it were the published one, and
+     * a full save for an unrelated reason would even commit it. Drop the instance from the runtime
+     * cache, so that subsequent loads get the published state from the database again.
+     *
+     * The entries are found by identity rather than by key: an element can be registered under
+     * several keys (documents also under their path), and a key derived from the element's
+     * current state would miss an entry made before an unsaved rename or move.
+     */
+    private function detachDraftFromRuntimeCache(ElementInterface $element): void
+    {
+        if (!$element instanceof AbstractElement || $element->__getPendingWorkflowMarkings() === []) {
+            return;
+        }
+
+        $runtimeCache = RuntimeCache::getInstance();
+        $cacheKeys = [];
+        foreach ($runtimeCache as $cacheKey => $cached) {
+            // only this very instance: a published instance cached next to a draft that was
+            // loaded from a version is left alone
+            if ($cached === $element) {
+                $cacheKeys[] = $cacheKey;
+            }
+        }
+
+        foreach ($cacheKeys as $cacheKey) {
+            $runtimeCache->offsetUnset($cacheKey);
+        }
+    }
+
+    private function getWorkflowByName(string $workflowName): ?WorkflowInterface
+    {
+        try {
+            return $this->workflowManager->getWorkflowByName($workflowName);
+        } catch (LogicException) {
+            // the workflow the pending place belongs to is not configured (anymore)
+            return null;
         }
     }
 
