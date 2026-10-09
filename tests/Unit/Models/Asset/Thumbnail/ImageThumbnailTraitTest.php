@@ -636,8 +636,10 @@ class ImageThumbnailTraitTest extends ImageThumbnailDimensionTestCase
         self::assertTrue(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.tif'), $printConfig));
         self::assertTrue(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.tiff'), $printConfig));
         self::assertTrue(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.svg'), $printConfig));
-        self::assertFalse(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.TIFF'), $printConfig));
-        self::assertFalse(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.SVG'), $printConfig));
+        self::assertTrue(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.TIF'), $printConfig));
+        self::assertTrue(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.TIFF'), $printConfig));
+        self::assertTrue(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.SVG'), $printConfig));
+        self::assertFalse(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.PNG'), $printConfig));
         self::assertFalse(Processor::usesOriginalAssetOutput($this->image(400, 300, 'source.png'), $printConfig));
 
         $printConfig->setFormat('ORIGINAL');

@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Tests\Support\Util\OptionsProvider\DefaultingOptionsProvider;
 
 class Model extends AbstractDefinitionHelper
 {
@@ -492,6 +493,29 @@ class Model extends AbstractDefinitionHelper
             $mandatoryCheckboxWithFalseDefault = $this->createDataChild('checkbox', 'mandatoryCheckboxWithFalseDefault', true);
             $mandatoryCheckboxWithFalseDefault->setDefaultValue(0);
             $panel->addChild($mandatoryCheckboxWithFalseDefault);
+
+            // defaults that are resolved at runtime instead of being configured as a default value
+            /** @var ClassDefinition\Data\Date $mandatoryDateWithCurrentDate */
+            $mandatoryDateWithCurrentDate = $this->createDataChild('date', 'mandatoryDateWithCurrentDate', true);
+            $mandatoryDateWithCurrentDate->setUseCurrentDate(true);
+            $panel->addChild($mandatoryDateWithCurrentDate);
+
+            /** @var ClassDefinition\Data\Datetime $mandatoryDatetimeWithCurrentDate */
+            $mandatoryDatetimeWithCurrentDate = $this->createDataChild('datetime', 'mandatoryDatetimeWithCurrentDate', true);
+            $mandatoryDatetimeWithCurrentDate->setUseCurrentDate(true);
+            $panel->addChild($mandatoryDatetimeWithCurrentDate);
+
+            /** @var ClassDefinition\Data\Select $mandatorySelectWithProviderDefault */
+            $mandatorySelectWithProviderDefault = $this->createDataChild('select', 'mandatorySelectWithProviderDefault', true);
+            $mandatorySelectWithProviderDefault->setOptionsProviderType(ClassDefinition\Data\OptionsProviderInterface::TYPE_CLASS);
+            $mandatorySelectWithProviderDefault->setOptionsProviderClass(DefaultingOptionsProvider::class);
+            $panel->addChild($mandatorySelectWithProviderDefault);
+
+            /** @var ClassDefinition\Data\Multiselect $mandatoryMultiselectWithProviderDefault */
+            $mandatoryMultiselectWithProviderDefault = $this->createDataChild('multiselect', 'mandatoryMultiselectWithProviderDefault', true);
+            $mandatoryMultiselectWithProviderDefault->setOptionsProviderType(ClassDefinition\Data\OptionsProviderInterface::TYPE_CLASS);
+            $mandatoryMultiselectWithProviderDefault->setOptionsProviderClass(DefaultingOptionsProvider::class);
+            $panel->addChild($mandatoryMultiselectWithProviderDefault);
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

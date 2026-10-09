@@ -524,11 +524,27 @@ class Service extends Model\Element\Service
             $fileSize = $thumbnail->getFileSize();
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
-            if ($actualFileExtension !== $config['file_extension']) {
+            if ($actualFileExtension !== $config['file_extension']
+                && ($pathReference['type'] ?? '') === 'thumbnail'
+                && in_array(
+                    strtolower((string) $config['file_extension']),
+                    Config::getSystemConfiguration('assets')['thumbnails']['allowed_formats'],
+                    true
+                )
+            ) {
                 // create a copy/symlink to the file with the original file extension
                 // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                 // is set to auto-optimized format so the resulting thumbnail can be jpeg
-                $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $config['file_extension'], $pathReference['src']);
+                //
+                // only a generated thumbnail (type === 'thumbnail') may be mirrored; e.g. a pass-through
+                // path reference (type === 'asset') points directly at the original asset's bytes and
+                // must never be copied into thumbnail storage under a caller-chosen extension. Any other
+                // or missing type is rejected, and the requested extension must be an allowed format
+                $requestedFile = preg_replace(
+                    '/\.' . preg_quote($actualFileExtension, '/') . '$/',
+                    '.' . strtolower((string) $config['file_extension']),
+                    $pathReference['src']
+                );
 
                 //Only copy the file if not exists yet
                 if (!$storage->fileExists($requestedFile)) {
