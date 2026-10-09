@@ -116,6 +116,11 @@ class OutdatedRelationDataTest extends ModelTestCase
         $outdated->save();
 
         $this->assertSame($this->ids([$x, $y]), $this->storedRelationIds($object->getId()));
+        // the query table is written from the field value, it has to match the relation rows
+        $this->assertSame(
+            ',' . implode(',', $this->ids([$x, $y])) . ',',
+            $this->storedQueryValue($object->getId())
+        );
     }
 
     /**
@@ -171,5 +176,15 @@ class OutdatedRelationDataTest extends ModelTestCase
         );
 
         return array_map('intval', $ids);
+    }
+
+    private function storedQueryValue(int $objectId): ?string
+    {
+        $value = Db::get()->fetchOne(
+            'SELECT ' . self::FIELD . ' FROM object_query_' . MultipleAssignments::classId() . ' WHERE oo_id = ?',
+            [$objectId]
+        );
+
+        return $value === false ? null : $value;
     }
 }
