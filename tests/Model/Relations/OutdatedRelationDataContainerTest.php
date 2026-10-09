@@ -17,8 +17,10 @@ use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
+use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
@@ -144,6 +146,40 @@ class OutdatedRelationDataContainerTest extends ModelTestCase
         $this->assertSame($this->storedRelations($expectedObject->getId()), $this->storedRelations($object->getId()));
     }
 
+    public function testLocalizedRelationsOfObjectAndBrickWithSameNameAreKeptApart(): void
+    {
+        [$x, $y, $z] = $this->relationObjects;
+
+        $object = new LazyLoading();
+        $object->setParent(Service::createFolderByPath('/outdated-relations'));
+        $object->setKey('same-name');
+        $object->setPublished(true);
+        $object->setLobjects([$x], 'en');
+        $object->setLadvancedObjects([$this->metadata($x, 'object')], 'en');
+        $brick = new LazyLoadingLocalizedTest($object);
+        $brick->setLobjects([$y], 'en');
+        $brick->setLadvancedObjects([$this->metadata($y, 'brick')], 'en');
+        $object->getBricks()->setLazyLoadingLocalizedTest($brick);
+        $object->save();
+
+        $reloaded = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertSame([$x->getId()], $this->ids($reloaded->getLobjects('en')));
+        $reloaded->setLobjects([$x, $z], 'en');
+        $reloaded->setLadvancedObjects([$this->metadata($x, 'object changed')], 'en');
+        $reloaded->save();
+
+        $reloaded = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertSame([$x->getId(), $z->getId()], $this->ids($reloaded->getLobjects('en')));
+        $this->assertSame(['object changed'], $this->metadataValues($reloaded->getLadvancedObjects('en')));
+
+        $reloadedBrick = $reloaded->getBricks()->getLazyLoadingLocalizedTest();
+        $this->assertSame([$y->getId()], $this->ids($reloadedBrick->getLobjects('en')));
+        $this->assertSame(['brick'], $this->metadataValues($reloadedBrick->getLadvancedObjects('en')));
+
+        $rows = $this->storedRelations($object->getId());
+        $this->assertSame(array_values(array_unique($rows)), $rows);
+    }
+
     /**
      * @param RelationTest[] $relations
      */
@@ -160,9 +196,8 @@ class OutdatedRelationDataContainerTest extends ModelTestCase
     }
 
     /**
-     * Sets the relations on the object level, in localized fields, in an object brick and in a field collection.
-     * The localized object brick is left out: its localized field has the same name as the object's localized field,
-     * and object level localized relations are read without an owner name filter.
+     * Sets the relations on the object level, in localized fields, in an object brick, in a localized object brick
+     * and in a field collection. The localized fields of the object and of the brick use the same field name.
      *
      * @param RelationTest[] $relations
      */
@@ -177,11 +212,43 @@ class OutdatedRelationDataContainerTest extends ModelTestCase
         $brick->setObjects($relations);
         $object->getBricks()->setLazyLoadingTest($brick);
 
+        $localizedBrick = $object->getBricks()->getLazyLoadingLocalizedTest() ?? new LazyLoadingLocalizedTest($object);
+        $localizedBrick->setLobjects($relations, 'en');
+        $object->getBricks()->setLazyLoadingLocalizedTest($localizedBrick);
+
         $item = new Fieldcollection\Data\LazyLoadingTest();
         $item->setObjects($relations);
         $items = new Fieldcollection();
         $items->add($item);
         $object->setFieldcollection($items);
+    }
+
+    private function metadata(RelationTest $relation, string $value): ObjectMetadata
+    {
+        $metadata = new ObjectMetadata('ladvancedObjects', ['metadata'], $relation);
+        $metadata->setMetadata($value);
+
+        return $metadata;
+    }
+
+    /**
+     * @param RelationTest[] $relations
+     *
+     * @return int[]
+     */
+    private function ids(array $relations): array
+    {
+        return array_map(static fn (RelationTest $relation) => $relation->getId(), $relations);
+    }
+
+    /**
+     * @param ObjectMetadata[] $metadata
+     *
+     * @return string[]
+     */
+    private function metadataValues(array $metadata): array
+    {
+        return array_map(static fn (ObjectMetadata $item) => $item->getMetadata(), $metadata);
     }
 
     /**
