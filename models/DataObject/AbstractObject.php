@@ -507,8 +507,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                 $this->correctPath();
 
-                // load the parent before the transaction starts: a non-locking read inside the transaction before
-                // this object's row lock would let the relation rows (see below) be read from an outdated snapshot
+                // load the parent outside of the save transaction: a non-locking read in the transaction before this
+                // object's row lock would let the relation rows (see below) be read from an outdated snapshot. This
+                // does not help when save() runs inside an outer transaction that already read from the database.
                 if ($isUpdate) {
                     $parent = DataObject::getById($this->getParentId());
                 }

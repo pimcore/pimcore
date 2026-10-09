@@ -89,8 +89,9 @@ class OutdatedRelationDataContainerTest extends ModelTestCase
         );
 
         $this->assertSame($this->storedRelations($source->getId()), $this->storedRelations($target->getId()));
+        // the many-to-one relation is the last element of the list, i.e. the source's value
         $this->assertSame(
-            $x->getId(),
+            $y->getId(),
             LazyLoading::getById($target->getId(), ['force' => true])->getRelation()?->getId()
         );
 
