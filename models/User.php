@@ -443,7 +443,9 @@ final class User extends User\UserRole implements UserInterface
         if ($path) {
             $handle = fopen($path, 'rb');
             $storage->writeStream($originalFileStoragePath, $handle);
-            fclose($handle);
+            if (is_resource($handle)) {
+                fclose($handle);
+            }
         }
     }
 
