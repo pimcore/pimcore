@@ -140,12 +140,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     } catch (Exception $e) {
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
-                            $getInheritedValues = DataObject::doGetInheritedValues();
-                            DataObject::setGetInheritedValues(true);
-
                             try {
-                                $value = $this->$getter();
-                                $fd->checkValidity($value, $omitMandatoryCheck, $params);
+                                DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $fd->checkValidity($this->$getter(), $omitMandatoryCheck, $params)
+                                );
                             } catch (Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
@@ -155,8 +154,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;
-                            } finally {
-                                DataObject::setGetInheritedValues($getInheritedValues);
                             }
                         } else {
                             throw $e;
