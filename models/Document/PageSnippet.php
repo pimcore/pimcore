@@ -617,6 +617,9 @@ abstract class PageSnippet extends Model\Document
      */
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
+        if ($missingRequiredEditable !== $this->missingRequiredEditable) {
+            $this->missingRequiredEditableNames = [];
+        }
         $this->missingRequiredEditable = $missingRequiredEditable;
 
         return $this;
@@ -646,6 +649,8 @@ abstract class PageSnippet extends Model\Document
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 
         if ($this->getMissingRequiredEditable() === null) {
+            $this->missingRequiredEditableNames = [];
+
             /** @var EditableUsageResolver $editableUsageResolver */
             $editableUsageResolver = Pimcore::getContainer()->get(EditableUsageResolver::class);
 

@@ -548,10 +548,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }
-                                        $validationExceptions[] = $this->addBrickContext($e, $fd, $item->getType());
+                                        $validationExceptions[] = $this->addBrickContext($e, $fd, $collectionDef);
                                     }
                                 } else {
-                                    $validationExceptions[] = $this->addBrickContext($ve, $fd, $item->getType());
+                                    $validationExceptions[] = $this->addBrickContext($ve, $fd, $collectionDef);
                                 }
                             }
                         }
@@ -576,17 +576,19 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     private function addBrickContext(
         Model\Element\ValidationException $exception,
         Data $fieldDefinition,
-        string $brickType
+        DataObject\Objectbrick\Definition $brickDefinition
     ): Model\Element\ValidationException {
         $exception->addContext($this->getName());
         $title = $this->getTitle();
+        $brickTitle = $brickDefinition->getTitle();
 
         return $exception
             ->setField($fieldDefinition->getName(), $fieldDefinition->getTitle())
             ->addPathSegment(new ValidationPathSegment(
                 field: $this->getName(),
                 title: $title !== '' ? $title : null,
-                type: $brickType
+                type: $brickDefinition->getKey(),
+                typeTitle: $brickTitle !== null && $brickTitle !== '' ? $brickTitle : null
             ));
     }
 

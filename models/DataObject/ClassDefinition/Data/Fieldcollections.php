@@ -395,7 +395,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                         field: $this->getName(),
                                         title: $this->getTitle() !== '' ? $this->getTitle() : null,
                                         index: $idx,
-                                        type: $item->getType()
+                                        type: $item->getType(),
+                                        typeTitle: $collectionDef->getTitle() !== '' ? $collectionDef->getTitle() : null
                                     ));
                                 $validationExceptions[] = $ve;
                             }

@@ -652,7 +652,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $subItems[] = $this->createKeyViolation(
                                     $exception,
                                     $keyDef,
-                                    $groupDefinition->getName(),
+                                    $groupDefinition,
                                     $validLanguage
                                 );
                             }
@@ -680,7 +680,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     private function createKeyViolation(
         Exception $exception,
         Data $keyDefinition,
-        string $groupName,
+        DataObject\Classificationstore\GroupConfig $group,
         string $language
     ): Model\Element\ValidationException {
         $message = $exception->getMessage() . ' (' . $language . ')';
@@ -691,7 +691,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return $violation
             ->setField($keyDefinition->getName(), $keyDefinition->getTitle())
-            ->addPathSegment(new ValidationPathSegment(field: $groupName))
+            ->addPathSegment(new ValidationPathSegment(
+                field: $group->getName(),
+                title: $group->getDescription() !== '' ? $group->getDescription() : null
+            ))
             ->addPathSegment(new ValidationPathSegment(
                 field: $this->getName(),
                 title: $title !== '' ? $title : null,

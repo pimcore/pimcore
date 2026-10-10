@@ -25,6 +25,7 @@ final readonly class ValidationPathSegment
      * @param string|null $language language of a localized field
      * @param int|null $index zero-based item index in a field collection or block
      * @param string|null $type object brick key or field collection type
+     * @param string|null $typeTitle raw, untranslated title of the object brick or field collection definition
      */
     public function __construct(
         public string $field,
@@ -32,11 +33,19 @@ final readonly class ValidationPathSegment
         public ?string $language = null,
         public ?int $index = null,
         public ?string $type = null,
+        public ?string $typeTitle = null,
     ) {
     }
 
     /**
-     * @return array{field: string, title: ?string, language: ?string, index: ?int, type: ?string}
+     * @return array{
+     *     field: string,
+     *     title: ?string,
+     *     language: ?string,
+     *     index: ?int,
+     *     type: ?string,
+     *     typeTitle: ?string
+     * }
      */
     public function toArray(): array
     {
@@ -46,6 +55,7 @@ final readonly class ValidationPathSegment
             'language' => $this->language,
             'index' => $this->index,
             'type' => $this->type,
+            'typeTitle' => $this->typeTitle,
         ];
     }
 }

@@ -14,8 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element;
 
 use Exception;
+use function is_finite;
+use function is_float;
 use function is_scalar;
 use function is_string;
+use function mb_scrub;
 use function mb_strlen;
 use function mb_substr;
 
@@ -83,7 +86,8 @@ class ValidationException extends Exception
     /**
      * Sets a translation key and its parameters for this error, so it can be shown in the user's language.
      * The key is a fixed string from code, never derived from user input. Parameters must be scalar; strings
-     * are cut to 100 characters, other values are dropped. Never pass the value of a password or encrypted field.
+     * are cut to 100 characters and invalid UTF-8 is replaced, other values (incl. INF/NAN) are dropped.
+     * Never pass the value of a password or encrypted field.
      *
      * @param array<string, mixed> $parameters
      */
@@ -93,12 +97,16 @@ class ValidationException extends Exception
         $this->translationParameters = [];
 
         foreach ($parameters as $name => $value) {
-            if ($value !== null && !is_scalar($value)) {
+            // the parameters end up in JSON responses: no INF/NAN, no invalid UTF-8
+            if (($value !== null && !is_scalar($value)) || (is_float($value) && !is_finite($value))) {
                 continue;
             }
 
-            if (is_string($value) && mb_strlen($value) > self::MAX_PARAMETER_LENGTH) {
-                $value = mb_substr($value, 0, self::MAX_PARAMETER_LENGTH) . '…';
+            if (is_string($value)) {
+                $value = mb_scrub($value, 'UTF-8');
+                if (mb_strlen($value) > self::MAX_PARAMETER_LENGTH) {
+                    $value = mb_substr($value, 0, self::MAX_PARAMETER_LENGTH) . '…';
+                }
             }
 
             $this->translationParameters[(string) $name] = $value;
@@ -197,6 +205,7 @@ class ValidationException extends Exception
      * Creates an exception of the same class with a new message and the structured data of this one
      * (translation, field, path and violations). Message, code and previous exception follow the constructor;
      * context stack and sub items are not copied, the caller decides about those as before.
+     * Subclasses must keep the constructor signature of Exception (message, code, previous).
      */
     public function withMessage(string $message): static
     {
