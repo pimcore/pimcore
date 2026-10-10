@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use DomainException;
 use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\Objectbrick\Data\UnittestBrick;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
@@ -33,8 +35,6 @@ class ValidationTest extends ModelTestCase
 {
     private bool $inheritedValuesBackup = false;
 
-    private bool $dirtyDetectionBackup = false;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -42,14 +42,11 @@ class ValidationTest extends ModelTestCase
         Pimcore::setAdminMode();
 
         $this->inheritedValuesBackup = DataObject::doGetInheritedValues();
-        $this->dirtyDetectionBackup = DataObject::isDirtyDetectionDisabled();
     }
 
     public function tearDown(): void
     {
         DataObject::setGetInheritedValues($this->inheritedValuesBackup);
-        // a failed add of a new object leaves dirty detection disabled as well
-        DataObject::setDisableDirtyDetection($this->dirtyDetectionBackup);
         parent::tearDown();
     }
 
@@ -107,6 +104,85 @@ class ValidationTest extends ModelTestCase
             Definition::getByKey('unittestBrick')->getFieldDefinition('brickinput'),
             $inheritedValues
         );
+    }
+
+    /**
+     * The classification store has no retry, but it reads each value in inherited-values mode. That mode must be
+     * restored when the read throws.
+     *
+     * @dataProvider inheritedValuesProvider
+     */
+    public function testFailedClassificationstoreReadRestoresInheritedValues(bool $inheritedValues): void
+    {
+        $fieldDefinition = (new Inheritance())->getClass()->getFieldDefinition('teststore');
+        $this->assertInstanceOf(Data\Classificationstore::class, $fieldDefinition);
+
+        $key = null;
+        $group = null;
+        $relation = null;
+
+        try {
+            $key = new Classificationstore\KeyConfig();
+            $key->setStoreId($fieldDefinition->getStoreId());
+            $key->setName('validationTestKey');
+            $key->setType('input');
+            $key->setDefinition(json_encode(new Data\Input()));
+            $key->setEnabled(true);
+            $key->save();
+
+            $group = new Classificationstore\GroupConfig();
+            $group->setStoreId($fieldDefinition->getStoreId());
+            $group->setName('validationTestGroup');
+            $group->save();
+
+            $newRelation = new Classificationstore\KeyGroupRelation();
+            $newRelation->setGroupId($group->getId());
+            $newRelation->setKeyId($key->getId());
+            $newRelation->save();
+            $relation = $newRelation;
+
+            $store = new class([$group->getId() => true]) extends Classificationstore {
+                /**
+                 * @param array<int, bool> $groups
+                 */
+                public function __construct(private readonly array $groups)
+                {
+                    parent::__construct();
+                }
+
+                public function getActiveGroups(): array
+                {
+                    return $this->groups;
+                }
+
+                public function getLocalizedKeyValue(
+                    int $groupId,
+                    int $keyId,
+                    ?string $language = 'default',
+                    bool $ignoreFallbackLanguage = false,
+                    bool $ignoreDefaultLanguage = false
+                ): mixed {
+                    throw new DomainException('read failed');
+                }
+            };
+            $store->setObject(new Inheritance());
+
+            DataObject::setGetInheritedValues($inheritedValues);
+            $fieldDefinition->checkValidity($store);
+            $this->fail('Expected the failing read to throw');
+        } catch (DomainException $e) {
+            $this->assertSame('read failed', $e->getMessage());
+            $this->assertSame($inheritedValues, DataObject::doGetInheritedValues());
+        } finally {
+            // only delete what was actually saved
+            $relation?->delete();
+            if ($group?->getId()) {
+                $group->delete();
+            }
+            if ($key?->getId()) {
+                $key->delete();
+            }
+        }
     }
 
     private function createChildOfEmptyParent(bool $withBrick = false): Inheritance
