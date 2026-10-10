@@ -659,10 +659,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         } catch (Exception $e) {
                             if ($data->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($dataForValidityCheck[$language][$fd->getName()])) {
                                 //try again with parent data when inheritance is activated
-                                try {
-                                    $getInheritedValues = DataObject::doGetInheritedValues();
-                                    DataObject::setGetInheritedValues(true);
+                                $getInheritedValues = DataObject::doGetInheritedValues();
+                                DataObject::setGetInheritedValues(true);
 
+                                try {
                                     $value = null;
                                     $context = $data->getContext();
                                     $containerType = $context['containerType'] ?? null;
@@ -678,7 +678,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     }
 
                                     $fd->checkValidity($value, $omitMandatoryCheck, $params);
-                                    DataObject::setGetInheritedValues($getInheritedValues);
                                 } catch (Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
@@ -686,6 +685,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     $exceptionClass = get_class($e);
 
                                     throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                } finally {
+                                    DataObject::setGetInheritedValues($getInheritedValues);
                                 }
                             } else {
                                 if ($e instanceof Model\Element\ValidationException) {

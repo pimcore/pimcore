@@ -632,8 +632,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $object = $data->getObject();
                             if ($object->getClass()->getAllowInherit()) {
                                 DataObject::setGetInheritedValues(true);
-                                $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
-                                DataObject::setGetInheritedValues($getInheritedValues);
+
+                                try {
+                                    $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
+                                } finally {
+                                    DataObject::setGetInheritedValues($getInheritedValues);
+                                }
                             } else {
                                 $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
