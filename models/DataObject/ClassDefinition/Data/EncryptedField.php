@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
 /**
@@ -217,7 +218,17 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
-            $fd->checkValidity($data, $omitMandatoryCheck);
+            try {
+                $fd->checkValidity($data, $omitMandatoryCheck);
+            } catch (ValidationException $e) {
+                // never expose the plain value of an encrypted field as translation parameter
+                $key = $e->getTranslationKey();
+                if ($key !== null) {
+                    $e->setTranslation($key, array_diff_key($e->getTranslationParameters(), ['value' => true]));
+                }
+
+                throw $e;
+            }
         }
     }
 

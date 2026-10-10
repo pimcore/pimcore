@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
@@ -133,22 +134,31 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 if (strlen($slug) > 0) {
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
-                        throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
+                        throw (new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"'))
+                            ->setTranslation(ValidationMessageKey::SLUG_NOT_UNIQUE, ['value' => $slug]);
                     }
 
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
-                        throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
+                        throw (new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash'))
+                            ->setTranslation(ValidationMessageKey::SLUG_INVALID);
                     }
 
                     if (preg_match_all('([?#])', $item->getSlug(), $matches)) {
-                        throw new Model\Element\ValidationException('Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']');
+                        throw (new Model\Element\ValidationException('Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']'))
+                            ->setTranslation(
+                                ValidationMessageKey::SLUG_RESERVED_CHARACTERS,
+                                [
+                                    'characters' => implode(' ', array_unique($matches[0])),
+                                ],
+                            );
                     }
                 }
             }
         }
 
         if (!$omitMandatoryCheck && $this->getMandatory() && !$foundSlug) {
-            throw new Model\Element\ValidationException('Mandatory check failed');
+            throw (new Model\Element\ValidationException('Mandatory check failed'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         parent::checkValidity($data, $omitMandatoryCheck);

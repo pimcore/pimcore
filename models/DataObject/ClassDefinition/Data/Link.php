@@ -19,6 +19,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -207,7 +208,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                             $data->setInternalType(null);
                             $data->setInternal(null);
                         } else {
-                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                            throw (new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist'))
+                                ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                         }
                     }
                 } elseif ($data->getInternalType() == 'asset') {
@@ -217,7 +219,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                             $data->setInternalType(null);
                             $data->setInternal(null);
                         } else {
-                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                            throw (new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist'))
+                                ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                         }
                     }
                 }

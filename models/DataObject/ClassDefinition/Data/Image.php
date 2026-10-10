@@ -19,6 +19,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
@@ -109,10 +110,12 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
         if ($data !== null && !$data instanceof Asset\Image) {
-            throw new Element\ValidationException('Invalid data in field `'.$this->getName().'`');
+            throw (new Element\ValidationException('Invalid data in field `'.$this->getName().'`'))
+                ->setTranslation(ValidationMessageKey::INVALID_RELATION);
         }
     }
 

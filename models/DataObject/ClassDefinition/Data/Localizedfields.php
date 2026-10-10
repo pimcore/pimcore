@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 use stdClass;
@@ -683,9 +684,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
                                     }
-                                    $exceptionClass = get_class($e);
-
-                                    throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                    throw $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
                                 }
                             } else {
                                 if ($e instanceof Model\Element\ValidationException) {
@@ -698,6 +697,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         }
                     } catch (Model\Element\ValidationException $ve) {
                         $ve->addContext($this->getName() . '-' . $language);
+                        $ve->setField($fd->getName(), $fd->getTitle())
+                            ->addPathSegment(new ValidationPathSegment(field: $this->getName(), language: $language));
                         $validationExceptions[] = $ve;
                     }
                 }
@@ -712,7 +713,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             }
             $message = implode(' / ', $errors);
 
-            throw new Model\Element\ValidationException($message);
+            throw (new Model\Element\ValidationException($message))->addViolations(...$validationExceptions);
         }
     }
 

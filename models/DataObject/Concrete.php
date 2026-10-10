@@ -152,8 +152,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
-                                $exceptionClass = get_class($e);
-                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException = $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
                                 $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;
@@ -164,6 +163,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     }
                 }
             } catch (Model\Element\ValidationException $ve) {
+                $ve->setField($fd->getName(), $fd->getTitle());
                 $validationExceptions[] = $ve;
             }
         }
@@ -186,7 +186,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
             $message .= implode($preUpdateEvent->getArgument('separator'), $errors);
 
-            throw new Model\Element\ValidationException($message);
+            $aggregatedException = new Model\Element\ValidationException($message);
+            $aggregatedException->addViolations(...array_values($validationExceptions));
+
+            throw $aggregatedException;
         }
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();

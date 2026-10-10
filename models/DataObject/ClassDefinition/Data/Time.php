@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\ValidationMessageKey;
 
 class Time extends Model\DataObject\ClassDefinition\Data\Input
 {
@@ -79,23 +80,40 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
 
         if (is_string($data)) {
             if (!preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data) && $data !== '') {
-                throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
+                throw (new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]'))
+                    ->setTranslation(ValidationMessageKey::INVALID_TIME, ['value' => $data]);
             }
         } elseif (!empty($data)) {
-            throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
+            throw (new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::INVALID_TIME, ['value' => $data]);
         }
 
         if (!$omitMandatoryCheck && $data) {
             if (!$this->toTime($data)) {
-                throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
+                throw (new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]'))
+                    ->setTranslation(ValidationMessageKey::INVALID_TIME, ['value' => $data]);
             }
 
             if ($this->getMinValue() && $this->isEarlier($this->getMinValue(), $data)) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
+                throw (new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue()))
+                    ->setTranslation(
+                        ValidationMessageKey::MIN_VALUE,
+                        [
+                            'min' => $this->getMinValue(),
+                            'value' => $data,
+                        ],
+                    );
             }
 
             if ($this->getMaxValue() && $this->isLater($this->getMaxValue(), $data)) {
-                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue());
+                throw (new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue()))
+                    ->setTranslation(
+                        ValidationMessageKey::MAX_VALUE,
+                        [
+                            'max' => $this->getMaxValue(),
+                            'value' => $data,
+                        ],
+                    );
             }
         }
     }

@@ -22,6 +22,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
@@ -373,7 +375,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 //max limit check should be performed irrespective of omitMandatory check
                 if (!empty($this->maxItems) && $idx + 1 > $this->maxItems) {
-                    throw new Model\Element\ValidationException('Maximum limit reached for items in field collection: ' . $this->getName());
+                    throw (new Model\Element\ValidationException(
+                        'Maximum limit reached for items in field collection: ' . $this->getName()
+                    ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->maxItems]);
                 }
 
                 if (!$omitMandatoryCheck) {
@@ -386,6 +390,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                 }
                             } catch (Model\Element\ValidationException $ve) {
                                 $ve->addContext($this->getName() . '-' . $idx);
+                                $ve->setField($fd->getName(), $fd->getTitle())
+                                    ->addPathSegment(new ValidationPathSegment(
+                                        field: $this->getName(),
+                                        title: $this->getTitle() !== '' ? $this->getTitle() : null,
+                                        index: $idx,
+                                        type: $item->getType()
+                                    ));
                                 $validationExceptions[] = $ve;
                             }
                         }
@@ -401,7 +412,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 }
                 $message = implode(' / ', $errors);
 
-                throw new Model\Element\ValidationException($message);
+                throw (new Model\Element\ValidationException($message))->addViolations(...$validationExceptions);
             }
         }
     }

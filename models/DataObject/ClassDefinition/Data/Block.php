@@ -1000,7 +1000,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $blockElement = $item[$fd->getName()] ?? null;
                             if (!$blockElement) {
                                 if ($fd->getMandatory()) {
-                                    throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
+                                    throw (new Element\ValidationException(
+                                        'Block element empty [ ' . $fd->getName() . ' ]'
+                                    ))->setTranslation(ValidationMessageKey::MANDATORY);
                                 } else {
                                     continue;
                                 }
@@ -1029,6 +1031,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $fd->checkValidity($data, false, $params);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
+                            $ve->setField($fd->getName(), $fd->getTitle())
+                                ->addPathSegment(new ValidationPathSegment(
+                                    field: $this->getName(),
+                                    title: $this->getTitle() !== '' ? $this->getTitle() : null,
+                                    index: $idx
+                                ));
                             $validationExceptions[] = $ve;
                         }
                     }
@@ -1042,7 +1050,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     }
                     $message = implode(' / ', $errors);
 
-                    throw new Model\Element\ValidationException($message);
+                    throw (new Model\Element\ValidationException($message))->addViolations(...$validationExceptions);
                 }
             }
         }
