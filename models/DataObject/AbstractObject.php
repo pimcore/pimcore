@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
+use Throwable;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -632,10 +633,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     }
                 }
             );
-        } finally {
-            // an add disables the dirty detection, restore it also when the save fails outside of onFailure (e.g. an
-            // Error, which retryableFunction() does not pass to onFailure), like Concrete::save() does
+        } catch (Throwable $e) {
+            // onFailure restores the dirty detection of a failed add, but retryableFunction() passes only exceptions
+            // to it, not errors
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+
+            throw $e;
         }
 
         return $this;

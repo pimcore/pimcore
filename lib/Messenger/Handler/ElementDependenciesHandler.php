@@ -46,16 +46,16 @@ class ElementDependenciesHandler
         $getInheritedValues = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(false);
 
-        $id = $element->getId();
-        $type = Service::getElementType($element);
-
-        $this->logger->debug(sprintf('Processing dependencies of %s with ID %s ', $type, $id));
-
-        $d = new Dependency();
-        $d->setSourceType($type);
-        $d->setSourceId($id);
-
         try {
+            $id = $element->getId();
+            $type = Service::getElementType($element);
+
+            $this->logger->debug(sprintf('Processing dependencies of %s with ID %s ', $type, $id));
+
+            $d = new Dependency();
+            $d->setSourceType($type);
+            $d->setSourceId($id);
+
             foreach ($element->resolveDependencies() as $requirement) {
                 if ($requirement['id'] == $id && $requirement['type'] == $type) {
                     // dont't add a reference to yourself

@@ -26,8 +26,10 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\AbstractLogger;
 use Psr\Log\NullLogger;
 use RuntimeException;
+use Stringable;
 
 /**
  * Class DependenciesTest
@@ -221,6 +223,41 @@ class DependenciesTest extends ModelTestCase
             DataObject::setGetInheritedValues($getInheritedValues);
             DataObject::setHideUnpublished($hideUnpublished);
             RuntimeCache::set('object_' . PHP_INT_MAX, null);
+        }
+
+        $this->assertTrue($restoredGetInheritedValues);
+        $this->assertTrue($restoredHideUnpublished);
+    }
+
+    /**
+     * Regression test: the modes are restored for any failure after they were switched, not only for one of
+     * resolveDependencies().
+     */
+    public function testDependenciesHandlerRestoresStaticModesWhenLoggingFails(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $logger = new class() extends AbstractLogger {
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                throw new RuntimeException('logging failed');
+            }
+        };
+
+        $getInheritedValues = DataObject::getGetInheritedValues();
+        $hideUnpublished = DataObject::getHideUnpublished();
+        DataObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+
+        try {
+            (new ElementDependenciesHandler($logger))(new ElementDependenciesMessage('object', $object->getId()));
+            $this->fail('The handler must pass on the failure.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('logging failed', $e->getMessage());
+        } finally {
+            $restoredGetInheritedValues = DataObject::getGetInheritedValues();
+            $restoredHideUnpublished = DataObject::getHideUnpublished();
+            DataObject::setGetInheritedValues($getInheritedValues);
+            DataObject::setHideUnpublished($hideUnpublished);
         }
 
         $this->assertTrue($restoredGetInheritedValues);
