@@ -20,7 +20,7 @@ in the language of the user and point to the failed field:
 - `from()`: converts a plain `ValidationException` into a structured one with the same message, code, context
   stack and sub items, and the original exception as previous exception.
 
-The built-in data types, the containers, `Concrete::save()` and `PageSnippet` throw
+The built-in data types, the containers, `Concrete::save()`, `PageSnippet` and the image size check of `Asset` throw
 `StructuredValidationException`. Containers convert a plain `ValidationException` of a child field with `from()`,
 so it becomes a violation with field and path as well. `ValidationException` itself is unchanged, and so are the
 messages and the aggregated messages. Listeners of `DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION` receive the

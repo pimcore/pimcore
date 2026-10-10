@@ -107,6 +107,29 @@ class EncryptedFieldValidationTest extends TestCase
         }
     }
 
+    public function testShortPlainValueUnderAnotherNameIsStrippedButLimitsAreKept(): void
+    {
+        $delegate = new class() extends Input {
+            public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
+            {
+                throw (new StructuredValidationException('custom'))
+                    ->setTranslation('custom.rule', ['given' => $data, 'min' => 3, 'hint' => 'a…', 'flag' => true]);
+            }
+        };
+        $delegate->setName('secret');
+
+        $field = new EncryptedField();
+        $field->setName('secret');
+        $field->delegate = $delegate;
+
+        try {
+            $field->checkValidity('3');
+            $this->fail('Expected a StructuredValidationException');
+        } catch (StructuredValidationException $exception) {
+            $this->assertSame(['min' => 3, 'hint' => 'a…', 'flag' => true], $exception->getTranslationParameters());
+        }
+    }
+
     public function testMandatoryErrorKeepsItsTranslationKey(): void
     {
         $delegate = new Input();

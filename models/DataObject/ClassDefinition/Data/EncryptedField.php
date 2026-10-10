@@ -34,6 +34,8 @@ use Pimcore\Normalizer\NormalizerInterface;
  */
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, LayoutDefinitionEnrichmentInterface
 {
+    private const TRUNCATED_PARAMETER_LENGTH = 101;
+
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
      */
@@ -233,8 +235,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * Drops the `value` parameter and any other parameter that carries the plain value, so also custom delegate
-     * data types that report the entered value under another name cannot expose it.
+     * Drops the `value` parameter and any other string parameter that carries the plain value, so also custom
+     * delegate data types that report the entered value under another name cannot expose it. Numbers are kept:
+     * they are limits like `min` or `max` far more often than an echo of the entered value.
      */
     private function removePlainValueParameters(StructuredValidationException $exception, mixed $plain): void
     {
@@ -243,7 +246,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             return;
         }
 
-        $plainString = is_scalar($plain) ? (string) $plain : null;
+        // setTranslation() scrubs invalid UTF-8, so compare against the scrubbed plain value
+        $plainString = is_string($plain) && $plain !== '' ? mb_scrub($plain, 'UTF-8') : null;
         $parameters = array_filter(
             $exception->getTranslationParameters(),
             static fn (mixed $value, string $name): bool => $name !== 'value'
@@ -255,17 +259,18 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     private static function isPlainValue(mixed $value, ?string $plain): bool
     {
-        if ($plain === null || $plain === '' || $value === null || is_bool($value)) {
+        if ($plain === null || !is_string($value)) {
             return false;
         }
 
-        $value = (string) $value;
         if ($value === $plain) {
             return true;
         }
 
-        // setTranslation() cuts long strings and appends an ellipsis
-        return str_ends_with($value, '…') && str_starts_with($plain, mb_substr($value, 0, -1));
+        // setTranslation() cuts strings to 100 characters and appends an ellipsis
+        return mb_strlen($value) === self::TRUNCATED_PARAMETER_LENGTH
+            && str_ends_with($value, '…')
+            && str_starts_with($plain, mb_substr($value, 0, -1));
     }
 
     public function isEmpty(mixed $data): bool

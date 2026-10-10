@@ -27,7 +27,7 @@ class PageSnippetValidationTest extends ModelTestCase
 {
     private const MESSAGE = 'Prevented publishing document - missing values for required editables';
 
-    public function testFlagSetFromOutsideProducesAnAggregateWithoutField(): void
+    public function testPublishingWithMissingRequiredEditablesThrowsAKeyedErrorWithoutField(): void
     {
         $exception = $this->saveExpectingFailure($this->createPage()->setMissingRequiredEditable(true));
 
