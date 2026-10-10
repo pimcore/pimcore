@@ -66,6 +66,37 @@ class ValidationExceptionTest extends TestCase
         $this->assertNull($parameters['null']);
     }
 
+    public function testSetTranslationDropsNonFiniteFloats(): void
+    {
+        $exception = (new ValidationException('x'))->setTranslation('key', [
+            'inf' => INF,
+            'negativeInf' => -INF,
+            'nan' => NAN,
+            'zero' => 0.0,
+        ]);
+
+        $this->assertSame(['zero' => 0.0], $exception->getTranslationParameters());
+        $this->assertNotFalse(json_encode($exception->getTranslationParameters()));
+    }
+
+    public function testSetTranslationScrubsInvalidUtf8AndStillTruncates(): void
+    {
+        $exception = (new ValidationException('x'))->setTranslation('key', [
+            'short' => "ab\xC3\x28cd",
+            'long' => "\xFF" . str_repeat('a', 150),
+        ]);
+
+        $parameters = $exception->getTranslationParameters();
+        $this->assertTrue(mb_check_encoding($parameters['short'], 'UTF-8'));
+        $this->assertStringStartsWith('ab', $parameters['short']);
+        $this->assertStringEndsWith('cd', $parameters['short']);
+
+        $this->assertTrue(mb_check_encoding($parameters['long'], 'UTF-8'));
+        $this->assertSame(101, mb_strlen($parameters['long']));
+        $this->assertStringEndsWith('aaa…', $parameters['long']);
+        $this->assertNotFalse(json_encode($parameters));
+    }
+
     public function testSetFieldDoesNotOverwriteAndNormalisesEmptyTitle(): void
     {
         $exception = (new ValidationException('x'))->setField('title', '');
@@ -170,12 +201,27 @@ class ValidationExceptionTest extends TestCase
 
     public function testPathSegmentToArray(): void
     {
-        $segment = new ValidationPathSegment(field: 'items', title: 'Items', index: 0, type: 'Feature');
+        $segment = new ValidationPathSegment(
+            field: 'items',
+            title: 'Items',
+            index: 0,
+            type: 'Feature',
+            typeTitle: 'Feature Title'
+        );
 
         $this->assertSame(
-            ['field' => 'items', 'title' => 'Items', 'language' => null, 'index' => 0, 'type' => 'Feature'],
+            [
+                'field' => 'items',
+                'title' => 'Items',
+                'language' => null,
+                'index' => 0,
+                'type' => 'Feature',
+                'typeTitle' => 'Feature Title',
+            ],
             $segment->toArray()
         );
+
+        $this->assertNull((new ValidationPathSegment(field: 'items'))->toArray()['typeTitle']);
     }
 }
 

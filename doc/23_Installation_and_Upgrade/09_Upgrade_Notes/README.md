@@ -1,5 +1,30 @@
 # Upgrade Notes
 
+## Pimcore 2026.4.0
+
+### [DataObjects] Structured, translatable data on `ValidationException`
+
+`Pimcore\Model\Element\ValidationException` optionally carries structured data next to its message, so that
+clients such as Pimcore Studio can show validation errors in the language of the user and point to the failed
+field:
+
+- `setTranslation()`, `getTranslationKey()`, `getTranslationParameters()`: a translation key (a fixed string or a
+  case of the `Pimcore\Model\Element\ValidationMessageKey` enum) with scalar parameters.
+- `setField()`, `getFieldName()`, `getFieldTitle()`: the field that failed.
+- `addPathSegment()`, `getPath()`: the location of the error as a list of
+  `Pimcore\Model\Element\ValidationPathSegment` objects (localized field language, object brick, field
+  collection or block item), innermost first.
+- `addViolations()`, `getViolations()`: the leaf errors collected by an aggregate exception.
+- `withMessage()`: creates an exception of the same class with a new message and the structured data of the
+  original one.
+
+The built-in data types, the containers and `PageSnippet` fill this data. The messages, the aggregated messages
+and the existing methods of the exception are unchanged.
+
+A subclass of `ValidationException` that declares a method with one of the names above must rename it.
+`withMessage()` creates the copy with the constructor signature of `Exception` (message, code, previous), so
+subclasses must keep it.
+
 ## Pimcore 2026.3.0
 
 ### [Documents] Static page generator: frontend requests only store a static page when it is safe to share

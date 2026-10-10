@@ -17,6 +17,7 @@ use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Block;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
@@ -26,12 +27,14 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\Vv8846Fc;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Objectbrick\Data\Vv8846BrickA;
 use Pimcore\Model\DataObject\Objectbrick\Data\Vv8846BrickB;
+use Pimcore\Model\DataObject\Vv8846Inh;
 use Pimcore\Model\DataObject\Vv8846Obj;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -46,6 +49,8 @@ use Pimcore\Tool;
 class ValidationViolationsTest extends ModelTestCase
 {
     private const CLASS_NAME = 'Vv8846Obj';
+
+    private const INHERITING_CLASS_NAME = 'Vv8846Inh';
 
     private const BRICK_A = 'Vv8846BrickA';
 
@@ -66,6 +71,7 @@ class ValidationViolationsTest extends ModelTestCase
         parent::setUp();
 
         $complete = ClassDefinition::getByName(self::CLASS_NAME)
+            && ClassDefinition::getByName(self::INHERITING_CLASS_NAME)
             && Fieldcollection\Definition::getByKey(self::FIELDCOLLECTION);
         if (!$complete) {
             self::removeDefinitions();
@@ -89,6 +95,7 @@ class ValidationViolationsTest extends ModelTestCase
         }
         Fieldcollection\Definition::getByKey(self::FIELDCOLLECTION)?->delete();
         ClassDefinition::getByName(self::CLASS_NAME)?->delete();
+        ClassDefinition::getByName(self::INHERITING_CLASS_NAME)?->delete();
 
         $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
         if ($store) {
@@ -124,6 +131,14 @@ class ValidationViolationsTest extends ModelTestCase
 
         $exception = $this->saveExpectingFailure($object);
 
+        $this->assertSame(
+            'Validation failed: ' . implode(' / ', array_map(
+                static fn (string $language) => 'Empty mandatory field [ lMandatory ][ localizedfields-' . $language . ' ]',
+                Tool::getRequiredLanguages()
+            )),
+            $exception->getMessage()
+        );
+
         $expected = [];
         foreach (Tool::getRequiredLanguages() as $language) {
             $expected[] = [
@@ -147,12 +162,17 @@ class ValidationViolationsTest extends ModelTestCase
         $exception = $this->saveExpectingFailure($object);
 
         $this->assertSame(
+            'Validation failed: invalid brick bricks: Empty mandatory field [ bMandatory ][ bricks ]',
+            $exception->getMessage()
+        );
+
+        $this->assertSame(
             [[
                 'bMandatory',
                 'T_bMandatory',
                 'validation.mandatory',
                 [],
-                [$this->segment('bricks', 'T_bricks', type: self::BRICK_A)],
+                [$this->segment('bricks', 'T_bricks', type: self::BRICK_A, typeTitle: 'T_' . self::BRICK_A)],
             ]],
             $this->describe($exception)
         );
@@ -176,7 +196,7 @@ class ValidationViolationsTest extends ModelTestCase
                 [],
                 [
                     $this->segment('localizedfields', language: $language),
-                    $this->segment('bricks', 'T_bricks', type: self::BRICK_A),
+                    $this->segment('bricks', 'T_bricks', type: self::BRICK_A, typeTitle: 'T_' . self::BRICK_A),
                 ],
             ];
         }
@@ -194,12 +214,17 @@ class ValidationViolationsTest extends ModelTestCase
         $exception = $this->saveExpectingFailure($object);
 
         $this->assertSame(
+            'Validation failed: Empty mandatory field [ fcMandatory ][ fc-1 ]',
+            $exception->getMessage()
+        );
+
+        $this->assertSame(
             [[
                 'fcMandatory',
                 'T_fcMandatory',
                 'validation.mandatory',
                 [],
-                [$this->segment('fc', 'T_fc', index: 1, type: self::FIELDCOLLECTION)],
+                [$this->segment('fc', 'T_fc', index: 1, type: self::FIELDCOLLECTION, typeTitle: 'T_' . self::FIELDCOLLECTION)],
             ]],
             $this->describe($exception)
         );
@@ -273,6 +298,17 @@ class ValidationViolationsTest extends ModelTestCase
 
         $exception = $this->saveExpectingFailure($object);
 
+        $languages = array_merge(['default'], Tool::getValidLanguages());
+        $messages = array_map(
+            static fn (string $language) => 'Empty mandatory field [ vv8846key ] (' . $language . ')',
+            $languages
+        );
+        $this->assertSame(
+            'Validation failed: ' . implode(', ', $messages) . ' ('
+                . implode(', ', array_map(static fn (string $message) => $message . '[ cs ][ cs ]', $messages)) . ')',
+            $exception->getMessage()
+        );
+
         $expected = [];
         foreach (array_merge(['default'], Tool::getValidLanguages()) as $language) {
             $expected[] = [
@@ -281,7 +317,7 @@ class ValidationViolationsTest extends ModelTestCase
                 'validation.mandatory',
                 [],
                 [
-                    $this->segment(self::GROUP_NAME),
+                    $this->segment(self::GROUP_NAME, 'T_' . self::GROUP_NAME),
                     $this->segment('cs', 'T_cs', language: $language === 'default' ? null : $language),
                 ],
             ];
@@ -314,6 +350,87 @@ class ValidationViolationsTest extends ModelTestCase
     }
 
     /**
+     * Inheritance makes Concrete::validate() retry with the parent's value and rebuild the exception
+     * via withMessage(): translation, field and path must survive, the message gets the fieldname suffix.
+     */
+    public function testInheritanceRetryKeepsStructuredDataOfClassField(): void
+    {
+        $exception = $this->saveInheritingChildExpectingFailure(false);
+
+        $this->assertSame(
+            'Validation failed: Empty mandatory field [ inhPlain ] fieldname=inhPlain',
+            $exception->getMessage()
+        );
+        $this->assertSame(
+            [['inhPlain', 'T_inhPlain', 'validation.mandatory', [], []]],
+            $this->describe($exception)
+        );
+        $this->assertStringEndsWith(' fieldname=inhPlain', $exception->getViolations()[0]->getMessage());
+    }
+
+    /**
+     * Same for the retry in Localizedfields::checkValidity().
+     */
+    public function testInheritanceRetryKeepsStructuredDataOfLocalizedField(): void
+    {
+        $exception = $this->saveInheritingChildExpectingFailure(true);
+
+        $expected = [];
+        foreach (Tool::getRequiredLanguages() as $language) {
+            $expected[] = [
+                'inhLocal',
+                'T_inhLocal',
+                'validation.mandatory',
+                [],
+                [$this->segment('localizedfields', language: $language)],
+            ];
+        }
+        $this->assertSame($expected, $this->describe($exception));
+        $this->assertSame(
+            'Validation failed: ' . implode(' / ', array_map(
+                static fn (string $language) => 'Empty mandatory field [ inhLocal ] fieldname=inhLocal'
+                    . '[ localizedfields-' . $language . ' ]',
+                Tool::getRequiredLanguages()
+            )),
+            $exception->getMessage()
+        );
+        foreach ($exception->getViolations() as $violation) {
+            $this->assertStringEndsWith(' fieldname=inhLocal', $violation->getMessage());
+        }
+    }
+
+    private function saveInheritingChildExpectingFailure(bool $plainFilled): ValidationException
+    {
+        $inheritedValues = DataObject::doGetInheritedValues();
+
+        try {
+            $parent = new Vv8846Inh();
+            $parent->setParentId(1);
+            $parent->setKey('vv8846-parent-' . ++self::$objectCounter . '-' . uniqid());
+            $parent->setPublished(true);
+            $parent->setOmitMandatoryCheck(true);
+            $parent->save();
+
+            $child = new Vv8846Inh();
+            $child->setParentId($parent->getId());
+            $child->setKey('vv8846-child-' . ++self::$objectCounter . '-' . uniqid());
+            $child->setPublished(true);
+            if ($plainFilled) {
+                $child->setInhPlain('x');
+            } else {
+                foreach (Tool::getRequiredLanguages() as $language) {
+                    $child->setInhLocal('x', $language);
+                }
+            }
+
+            return $this->saveExpectingFailure($child);
+        } finally {
+            // the validation retry switches inheritance on and does not switch it off when it fails
+            DataObject::setGetInheritedValues($inheritedValues);
+        }
+    }
+
+    /**
      * @return list<array{string|null, string|null, string|null, array<string, mixed>, list<array<string, mixed>>}>
      */
     private function describe(ValidationException $exception): array
@@ -336,14 +453,22 @@ class ValidationViolationsTest extends ModelTestCase
     }
 
     /**
-     * @return array{field: string, title: ?string, language: ?string, index: ?int, type: ?string}
+     * @return array{
+     *     field: string,
+     *     title: ?string,
+     *     language: ?string,
+     *     index: ?int,
+     *     type: ?string,
+     *     typeTitle: ?string
+     * }
      */
     private function segment(
         string $field,
         ?string $title = null,
         ?string $language = null,
         ?int $index = null,
-        ?string $type = null
+        ?string $type = null,
+        ?string $typeTitle = null
     ): array {
         return [
             'field' => $field,
@@ -351,10 +476,11 @@ class ValidationViolationsTest extends ModelTestCase
             'language' => $language,
             'index' => $index,
             'type' => $type,
+            'typeTitle' => $typeTitle,
         ];
     }
 
-    private function saveExpectingFailure(Vv8846Obj $object): ValidationException
+    private function saveExpectingFailure(Concrete $object): ValidationException
     {
         try {
             $object->save();
@@ -436,6 +562,7 @@ class ValidationViolationsTest extends ModelTestCase
         $group = new Classificationstore\GroupConfig();
         $group->setStoreId($store->getId());
         $group->setName(self::GROUP_NAME);
+        $group->setDescription('T_' . self::GROUP_NAME);
         $group->save();
 
         $key = new Classificationstore\KeyConfig();
@@ -495,6 +622,7 @@ class ValidationViolationsTest extends ModelTestCase
 
         $fcDefinition = new Fieldcollection\Definition();
         $fcDefinition->setKey(self::FIELDCOLLECTION);
+        $fcDefinition->setTitle('T_' . self::FIELDCOLLECTION);
         $fcDefinition->setLayoutDefinitions($this->panel([$this->input('fcMandatory', true)]));
         $fcDefinition->save();
 
@@ -503,6 +631,17 @@ class ValidationViolationsTest extends ModelTestCase
         $class->getFieldDefinition('fc')->setAllowedTypes([self::FIELDCOLLECTION]);
         $class->save();
 
+        $inheriting = new ClassDefinition();
+        $inheriting->setName(self::INHERITING_CLASS_NAME);
+        $inheriting->setId(self::INHERITING_CLASS_NAME);
+        $inheriting->setUserOwner(1);
+        $inheriting->setAllowInherit(true);
+        $inheriting->setLayoutDefinitions($this->panel([
+            $this->input('inhPlain', true),
+            $this->localizedfields('inhLocal'),
+        ]));
+        $inheriting->save();
+
         RuntimeCache::clear();
     }
 
@@ -510,6 +649,7 @@ class ValidationViolationsTest extends ModelTestCase
     {
         $brick = new Objectbrick\Definition();
         $brick->setKey($key);
+        $brick->setTitle('T_' . $key);
         $brick->setLayoutDefinitions($layout);
         $brick->setClassDefinitions([['classname' => self::CLASS_NAME, 'fieldname' => 'bricks']]);
         $brick->save();
