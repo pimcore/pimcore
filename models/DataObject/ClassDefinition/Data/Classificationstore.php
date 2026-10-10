@@ -607,7 +607,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
         $subItems = [];
-        $getInheritedValues = DataObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
@@ -631,9 +630,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                             $object = $data->getObject();
                             if ($object->getClass()->getAllowInherit()) {
-                                DataObject::setGetInheritedValues(true);
-                                $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
-                                DataObject::setGetInheritedValues($getInheritedValues);
+                                $value = DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                );
                             } else {
                                 $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
