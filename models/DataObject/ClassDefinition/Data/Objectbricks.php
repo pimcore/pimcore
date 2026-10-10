@@ -22,6 +22,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 use stdClass;
@@ -515,7 +518,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     //max limit check should be performed irrespective of omitMandatory check
                     if (!empty($this->maxItems) && $itemCount > $this->maxItems) {
-                        throw new Model\Element\ValidationException('Maximum limit reached for items in brick: ' . $this->getName());
+                        throw (new StructuredValidationException(
+                            'Maximum limit reached for items in brick: ' . $this->getName()
+                        ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->maxItems]);
                     }
 
                     //needed when new brick is added but not saved yet - then validity check fails.
@@ -544,12 +549,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }
-                                        $e->addContext($this->getName());
-                                        $validationExceptions[] = $e;
+                                        $validationExceptions[] = $this->addBrickContext($e, $fd, $collectionDef);
                                     }
                                 } else {
-                                    $ve->addContext($this->getName());
-                                    $validationExceptions[] = $ve;
+                                    $validationExceptions[] = $this->addBrickContext($ve, $fd, $collectionDef);
                                 }
                             }
                         }
@@ -559,15 +562,35 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
             if ($validationExceptions) {
                 $errors = [];
-                /** @var Model\Element\ValidationException $e */
+                /** @var StructuredValidationException $e */
                 foreach ($validationExceptions as $e) {
                     $errors[] = $e->getAggregatedMessage();
                 }
                 $message = implode(' / ', $errors);
 
-                throw new Model\Element\ValidationException('invalid brick ' . $this->getName().': '.$message);
+                throw (new StructuredValidationException('invalid brick ' . $this->getName().': '.$message))
+                    ->addViolations(...$validationExceptions);
             }
         }
+    }
+
+    private function addBrickContext(
+        Model\Element\ValidationException $exception,
+        Data $fieldDefinition,
+        DataObject\Objectbrick\Definition $brickDefinition
+    ): StructuredValidationException {
+        $exception->addContext($this->getName());
+        $title = $this->getTitle();
+        $brickTitle = $brickDefinition->getTitle();
+
+        return StructuredValidationException::from($exception)
+            ->setField($fieldDefinition->getName(), $fieldDefinition->getTitle())
+            ->addPathSegment(new ValidationPathSegment(
+                field: $this->getName(),
+                title: $title !== '' ? $title : null,
+                type: $brickDefinition->getKey(),
+                typeTitle: $brickTitle !== null && $brickTitle !== '' ? $brickTitle : null
+            ));
     }
 
     /**

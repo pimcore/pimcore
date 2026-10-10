@@ -17,7 +17,9 @@ use Exception;
 use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -326,7 +328,8 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
                 || $data->getUnitId() === null
             )
         ) {
-            throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
+            throw (new StructuredValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName)))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if ($minimum || $maximum) {
@@ -336,9 +339,10 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             }
 
             if ($minimum > $maximum) {
-                throw new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
-                );
+                ))
+                    ->setTranslation(ValidationMessageKey::RANGE_START_AFTER_END);
             }
         }
     }

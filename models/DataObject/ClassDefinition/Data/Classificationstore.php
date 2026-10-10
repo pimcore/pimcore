@@ -23,6 +23,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
@@ -611,9 +614,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
-                throw new Model\Element\ValidationException(
+                throw (new StructuredValidationException(
                     'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
-                );
+                ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->getMaxItems()]);
             }
 
             foreach ($activeGroups as $activeGroupId => $enabled) {
@@ -647,10 +650,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             try {
                                 $keyDef->checkValidity($value, false, $params);
                             } catch (Exception $exception) {
-                                $subItems[] = new Model\Element\ValidationException(
-                                    $exception->getMessage() . ' (' . $validLanguage . ')',
-                                    $exception->getCode(),
-                                    $exception->getPrevious()
+                                $subItems[] = $this->createKeyViolation(
+                                    $exception,
+                                    $keyDef,
+                                    $groupDefinition,
+                                    $validLanguage
                                 );
                             }
                         }
@@ -666,11 +670,37 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $validationException->getMessage();
             }, $subItems);
 
-            $validationException = new Model\Element\ValidationException(implode(', ', $messages));
+            $validationException = new StructuredValidationException(implode(', ', $messages));
             $validationException->setSubItems($subItems);
+            $validationException->addViolations(...$subItems);
 
             throw $validationException;
         }
+    }
+
+    private function createKeyViolation(
+        Exception $exception,
+        Data $keyDefinition,
+        DataObject\Classificationstore\GroupConfig $group,
+        string $language
+    ): StructuredValidationException {
+        $message = $exception->getMessage() . ' (' . $language . ')';
+        $violation = $exception instanceof StructuredValidationException
+            ? $exception->withMessage($message)
+            : new StructuredValidationException($message, $exception->getCode(), $exception->getPrevious());
+        $title = $this->getTitle();
+
+        return $violation
+            ->setField($keyDefinition->getName(), $keyDefinition->getTitle())
+            ->addPathSegment(new ValidationPathSegment(
+                field: $group->getName(),
+                title: $group->getDescription() !== '' ? $group->getDescription() : null
+            ))
+            ->addPathSegment(new ValidationPathSegment(
+                field: $this->getName(),
+                title: $title !== '' ? $title : null,
+                language: $language !== 'default' ? $language : null
+            ));
     }
 
     /**

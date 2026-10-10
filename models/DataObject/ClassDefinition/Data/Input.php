@@ -16,6 +16,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Input extends Data implements
@@ -212,12 +214,24 @@ class Input extends Data implements
                 }
 
                 if ($throwException) {
-                    throw new Model\Element\ValidationException('Value in field [ '.$this->getName()." ] doesn't match input validation '".$this->getRegex()."'");
+                    throw (new StructuredValidationException(
+                        'Value in field [ '.$this->getName()." ] doesn't match input validation '".$this->getRegex()."'"
+                    ))
+                        ->setTranslation(
+                            ValidationMessageKey::REGEX_MISMATCH,
+                            [
+                                'regex' => $this->getRegex(),
+                                'value' => $data,
+                            ],
+                        );
                 }
             }
 
             if ($this->getColumnLength() && mb_strlen($data) > $this->getColumnLength()) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is longer than '.$this->getColumnLength().' characters');
+                throw (new StructuredValidationException(
+                    'Value in field [ '.$this->getName().' ] is longer than '.$this->getColumnLength().' characters'
+                ))
+                    ->setTranslation(ValidationMessageKey::MAX_LENGTH, ['max' => $this->getColumnLength()]);
             }
         }
 

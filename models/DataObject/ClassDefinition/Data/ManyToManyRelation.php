@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
@@ -388,7 +390,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         $allow = true;
@@ -407,12 +410,19 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
+                    throw (new StructuredValidationException(
+                        sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype())
+                    ))
+                        ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                 }
             }
 
             if ($this->getMaxItems() && count($data) > $this->getMaxItems()) {
-                throw new Element\ValidationException('Number of allowed relations in field `' . $this->getName() . '` exceeded (max. ' . $this->getMaxItems() . ')');
+                throw (new StructuredValidationException(
+                    'Number of allowed relations in field `' . $this->getName() . '` exceeded (max. '
+                        . $this->getMaxItems() . ')'
+                ))
+                    ->setTranslation(ValidationMessageKey::MAX_RELATIONS, ['max' => $this->getMaxItems()]);
             }
         }
     }

@@ -17,6 +17,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -213,11 +215,13 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ] '.(string)$data);
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ] '.(string)$data))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if (!empty($data) && !is_numeric($data)) {
-            throw new Model\Element\ValidationException('invalid slider data');
+            throw (new StructuredValidationException('invalid slider data'))
+                ->setTranslation(ValidationMessageKey::NOT_NUMERIC, ['value' => $data]);
         }
     }
 

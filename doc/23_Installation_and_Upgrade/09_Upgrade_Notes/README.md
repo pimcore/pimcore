@@ -1,5 +1,38 @@
 # Upgrade Notes
 
+## Pimcore 2026.4.0
+
+### [DataObjects] Structured, translatable validation errors
+
+The new `Pimcore\Model\Element\StructuredValidationException` extends `Pimcore\Model\Element\ValidationException`
+and carries structured data next to its message, so that clients such as Pimcore Studio can show validation errors
+in the language of the user and point to the failed field:
+
+- `setTranslation()`, `getTranslationKey()`, `getTranslationParameters()`: a translation key (a fixed string or a
+  case of the `Pimcore\Model\Element\ValidationMessageKey` enum) with scalar parameters.
+- `setField()`, `getFieldName()`, `getFieldTitle()`: the field that failed.
+- `addPathSegment()`, `getPath()`: the location of the error as a list of
+  `Pimcore\Model\Element\ValidationPathSegment` objects (localized field language, object brick, field
+  collection or block item, classification store and its group), innermost first.
+- `addViolations()`, `getViolations()`: the leaf errors collected by an aggregate exception.
+- `withMessage()`: creates an exception of the same class with a new message and the structured data of the
+  original one.
+- `from()`: converts a plain `ValidationException` into a structured one with the same message, code, context
+  stack and sub items, and the original exception as previous exception.
+
+The built-in data types, the containers, `Concrete::save()`, `PageSnippet` and the image size check of `Asset` throw
+`StructuredValidationException`. Containers convert a plain `ValidationException` of a child field with `from()`,
+so it becomes a violation with field and path as well. `ValidationException` itself is unchanged, and so are the
+messages and the aggregated messages. Listeners of `DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION` receive the
+exceptions as thrown by the data types.
+
+Code that compares the exact class, for example `$e::class === ValidationException::class` or
+`get_class($e) === ValidationException::class`, sees `StructuredValidationException` for these errors.
+`catch (ValidationException $e)` and `instanceof ValidationException` keep working.
+
+`StructuredValidationException` can be extended. `withMessage()` creates the copy with the constructor signature
+of `Exception` (message, code, previous), so subclasses must keep it.
+
 ## Pimcore 2026.3.0
 
 ### [Documents] Static page generator: frontend requests only store a static page when it is safe to share
