@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Error;
 use Exception;
 use Normalizer;
 use Pimcore;
@@ -662,4 +663,34 @@ class ObjectTest extends ModelTestCase
 
         $this->assertFalse($dirtyDetectionDisabledInListener);
     }
+
+    /**
+     * Regression test: retryableFunction() passes only exceptions to onFailure. A failed add that ends with a PHP
+     * Error must restore the dirty detection as well.
+     */
+    public function testFolderAddFailingWithErrorRestoresDirtyDetection(): void
+    {
+        $folder = TestHelper::createObjectFolder('', false);
+
+        $listener = static function (): void {
+            throw new Error('listener failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::PRE_ADD, $listener);
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            $folder->save();
+            $this->fail('Saving the folder must fail.');
+        } catch (Error $e) {
+            $this->assertSame('listener failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::PRE_ADD, $listener);
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
+    }
 }
+
