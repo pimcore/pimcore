@@ -114,7 +114,8 @@ class LocalizedfieldDaoTest extends ModelTestCase
 
         /** @var Dao $dao */
         $dao = $localizedfield->getDao();
-        Db::get()->executeStatement('DROP TABLE ' . $dao->getQueryTableName() . '_en');
+        $db = Db::get();
+        $db->executeStatement('DROP TABLE ' . $db->quoteIdentifier($dao->getQueryTableName() . '_en'));
 
         // the CLI bootstrap enables the fallback values, Studio requests run without them
         $originalFallbackValues = Localizedfield::getGetFallbackValues();

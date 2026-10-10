@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Exception;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
@@ -312,5 +313,62 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('SOMEINPUT', $result[0]['input']);
 
         var_dump($result);
+    }
+
+    /**
+     * Regression test: saving localized fields caches the inheritance tree of each language while the save runs. A
+     * failed save must clear that cache, otherwise the next save reuses the tree read in the failed (rolled back) run
+     * and propagates values based on outdated data, here overwriting a value a child has set in the meantime.
+     */
+    public function testFailedSaveDoesNotLeaveStaleInheritanceTree(): void
+    {
+        $one = new Inheritance();
+        $one->setKey('one');
+        $one->setParentId(1);
+        $one->setPublished(true);
+        $one->save();
+
+        $two = new Inheritance();
+        $two->setKey('two');
+        $two->setParentId($one->getId());
+        $two->setPublished(true);
+        $two->save();
+
+        $db = Db::get();
+        $classId = $one->getClassId();
+        $storeTable = $db->quoteIdentifier('object_localized_data_' . $classId);
+        $queryTableEn = $db->quoteIdentifier('object_localized_query_' . $classId . '_en');
+        $queryTableDe = $db->quoteIdentifier('object_localized_query_' . $classId . '_de');
+
+        // break the query table of the language processed after "en", so the save fails after the tree of "en" was
+        // built and cached
+        $column = $db->fetchAssociative('SHOW COLUMNS FROM ' . $queryTableDe . ' WHERE Field = ' . $db->quote('input'));
+        $db->executeStatement('ALTER TABLE ' . $queryTableDe . ' CHANGE input input_broken ' . $column['Type']);
+
+        try {
+            $one->setInput('first', 'en');
+            $one->setInput('first', 'de');
+            $one->save();
+            $this->fail('Saving must fail with the broken query table.');
+        } catch (InvalidFieldNameException) {
+            // expected
+        } finally {
+            $db->executeStatement('ALTER TABLE ' . $queryTableDe . ' CHANGE input_broken input ' . $column['Type']);
+        }
+
+        // two gets an own value without a save of the localized fields, which would clear the cache
+        $db->update($storeTable, ['input' => 'own'], ['ooo_id' => $two->getId(), 'language' => 'en']);
+        $db->update($queryTableEn, ['input' => 'own'], ['ooo_id' => $two->getId()]);
+
+        try {
+            $one->setInput('second', 'en');
+            $one->save();
+        } finally {
+            DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
+            DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
+        }
+
+        $result = $db->fetchOne('SELECT input FROM ' . $queryTableEn . ' WHERE ooo_id = ' . $two->getId());
+        $this->assertSame('own', $result);
     }
 }

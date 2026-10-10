@@ -620,18 +620,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     }
 
                 },
-                onFailure: function ($e) use (&$isUpdate, &$parameters) {
+                onFailure: function ($e) use (&$isUpdate, &$parameters, &$isDirtyDetectionDisabled) {
                     $failureEvent = new DataObjectEvent($this, $parameters);
                     $failureEvent->setArgument('exception', $e);
                     if ($isUpdate) {
                         $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
                     } else {
+                        // like POST_ADD, POST_ADD_FAILURE listeners run with the dirty detection restored
+                        self::setDisableDirtyDetection($isDirtyDetectionDisabled);
                         $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
                     }
                 }
             );
         } finally {
-            // an add disables the dirty detection, restore it also when the save fails (like Concrete::save())
+            // an add disables the dirty detection, restore it also when the save fails outside of onFailure (e.g. an
+            // Error, which retryableFunction() does not pass to onFailure), like Concrete::save() does
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
 

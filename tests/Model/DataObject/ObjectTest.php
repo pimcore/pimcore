@@ -15,8 +15,10 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Exception;
 use Normalizer;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Db\Helper as DbHelper;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Service as DataObjectService;
@@ -628,5 +630,36 @@ class ObjectTest extends ModelTestCase
         }
 
         $this->assertFalse($dirtyDetectionDisabled);
+    }
+
+    /**
+     * Regression test: like POST_ADD listeners, POST_ADD_FAILURE listeners run with the dirty detection restored,
+     * so objects they save are not saved with the dirty detection of the failed add.
+     */
+    public function testPostAddFailureListenersRunWithDirtyDetectionRestored(): void
+    {
+        $existing = TestHelper::createObjectFolder();
+
+        $duplicate = TestHelper::createObjectFolder('', false);
+        $duplicate->setParentId($existing->getParentId());
+        $duplicate->setKey($existing->getKey());
+
+        $dirtyDetectionDisabledInListener = null;
+        $listener = static function () use (&$dirtyDetectionDisabledInListener): void {
+            $dirtyDetectionDisabledInListener = DataObject::isDirtyDetectionDisabled();
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::POST_ADD_FAILURE, $listener);
+
+        try {
+            $duplicate->save();
+            $this->fail('Saving a folder with a duplicate path must fail.');
+        } catch (DuplicateFullPathException) {
+            // expected
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::POST_ADD_FAILURE, $listener);
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabledInListener);
     }
 }
