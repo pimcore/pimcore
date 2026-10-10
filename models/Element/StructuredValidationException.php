@@ -186,6 +186,24 @@ class StructuredValidationException extends ValidationException
     }
 
     /**
+     * Copy of a validation exception with a new message, as the inheritance retries of the containers need it:
+     * a structured exception keeps its data (see withMessage()), a plain one is rebuilt with its own class,
+     * code and previous exception, as before.
+     *
+     * @internal
+     */
+    public static function copyWithMessage(ValidationException $exception, string $message): ValidationException
+    {
+        if ($exception instanceof self) {
+            return $exception->withMessage($message);
+        }
+
+        $exceptionClass = $exception::class;
+
+        return new $exceptionClass($message, $exception->getCode(), $exception->getPrevious());
+    }
+
+    /**
      * Creates an exception of the same class with a new message and the structured data of this one
      * (translation, field, path and violations). Message, code and previous exception follow the constructor;
      * context stack and sub items are not copied, the caller decides about those.

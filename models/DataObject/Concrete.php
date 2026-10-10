@@ -156,16 +156,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
-                                if ($e instanceof StructuredValidationException) {
-                                    $newException = $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
-                                } else {
-                                    $exceptionClass = get_class($e);
-                                    $newException = new $exceptionClass(
-                                        $e->getMessage() . ' fieldname=' . $fd->getName(),
-                                        $e->getCode(),
-                                        $e->getPrevious()
-                                    );
-                                }
+                                $newException = StructuredValidationException::copyWithMessage(
+                                    $e,
+                                    $e->getMessage() . ' fieldname=' . $fd->getName()
+                                );
                                 $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;

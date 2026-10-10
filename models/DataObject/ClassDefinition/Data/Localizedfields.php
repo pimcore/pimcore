@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Model\Element;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -685,12 +684,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
                                     }
-                                    if ($e instanceof StructuredValidationException) {
-                                        throw $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
-                                    }
-                                    $exceptionClass = get_class($e);
 
-                                    throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                    throw StructuredValidationException::copyWithMessage(
+                                        $e,
+                                        $e->getMessage() . ' fieldname=' . $fd->getName()
+                                    );
                                 }
                             } else {
                                 if ($e instanceof Model\Element\ValidationException) {
