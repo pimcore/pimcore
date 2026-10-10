@@ -74,9 +74,8 @@ enum ValidationMessageKey: string
     case SLUG_RESERVED_CHARACTERS = 'validation.slug_reserved_characters';
 
     case UNIQUE_CONSTRAINT = 'validation.unique_constraint';
-    case MISSING_REQUIRED_EDITABLE = 'validation.missing_required_editable';
 
-    /** the document is missing required editables, which ones is unknown */
+    /** a document is published with empty required editables */
     case MISSING_REQUIRED_EDITABLES = 'validation.missing_required_editables';
 
     /** parameters: filename, max_megapixels, suggested_width, suggested_height */

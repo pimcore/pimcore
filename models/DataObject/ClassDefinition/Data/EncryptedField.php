@@ -224,7 +224,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             } catch (StructuredValidationException $e) {
                 // never expose the plain value of an encrypted field as translation parameter
                 foreach ([$e, ...$e->getViolations()] as $exception) {
-                    $this->removeValueParameter($exception);
+                    $this->removePlainValueParameters($exception, $data);
                 }
 
                 throw $e;
@@ -232,15 +232,40 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
     }
 
-    private function removeValueParameter(StructuredValidationException $exception): void
+    /**
+     * Drops the `value` parameter and any other parameter that carries the plain value, so also custom delegate
+     * data types that report the entered value under another name cannot expose it.
+     */
+    private function removePlainValueParameters(StructuredValidationException $exception, mixed $plain): void
     {
         $key = $exception->getTranslationKey();
-        if ($key !== null) {
-            $exception->setTranslation(
-                $key,
-                array_diff_key($exception->getTranslationParameters(), ['value' => true])
-            );
+        if ($key === null) {
+            return;
         }
+
+        $plainString = is_scalar($plain) ? (string) $plain : null;
+        $parameters = array_filter(
+            $exception->getTranslationParameters(),
+            static fn (mixed $value, string $name): bool => $name !== 'value'
+                && !self::isPlainValue($value, $plainString),
+            ARRAY_FILTER_USE_BOTH
+        );
+        $exception->setTranslation($key, $parameters);
+    }
+
+    private static function isPlainValue(mixed $value, ?string $plain): bool
+    {
+        if ($plain === null || $plain === '' || $value === null || is_bool($value)) {
+            return false;
+        }
+
+        $value = (string) $value;
+        if ($value === $plain) {
+            return true;
+        }
+
+        // setTranslation() cuts long strings and appends an ellipsis
+        return str_ends_with($value, '…') && str_starts_with($plain, mb_substr($value, 0, -1));
     }
 
     public function isEmpty(mixed $data): bool

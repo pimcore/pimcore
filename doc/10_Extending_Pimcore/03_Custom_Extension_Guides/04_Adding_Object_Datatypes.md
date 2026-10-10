@@ -72,6 +72,8 @@ throw (new StructuredValidationException('Value in field [ ' . $this->getName() 
 - Parameters must be scalar (`string`, `int`, `float`, `bool` or `null`). Other values are dropped, strings are
   cut to 100 characters and invalid UTF-8 is replaced.
 - Parameters must never contain secrets. Do not pass the value of a password or an encrypted field.
+- Pass the entered value as `value`. When the data type is used inside an encrypted field, the encrypted field
+  removes `value` and any other parameter that equals the entered value.
 - The built-in keys are listed in the `Pimcore\Model\Element\ValidationMessageKey` enum, which `setTranslation()`
   accepts as well.
 

@@ -13,7 +13,7 @@ in the language of the user and point to the failed field:
 - `setField()`, `getFieldName()`, `getFieldTitle()`: the field that failed.
 - `addPathSegment()`, `getPath()`: the location of the error as a list of
   `Pimcore\Model\Element\ValidationPathSegment` objects (localized field language, object brick, field
-  collection or block item), innermost first.
+  collection or block item, classification store and its group), innermost first.
 - `addViolations()`, `getViolations()`: the leaf errors collected by an aggregate exception.
 - `withMessage()`: creates an exception of the same class with a new message and the structured data of the
   original one.
@@ -25,6 +25,10 @@ The built-in data types, the containers, `Concrete::save()` and `PageSnippet` th
 so it becomes a violation with field and path as well. `ValidationException` itself is unchanged, and so are the
 messages and the aggregated messages. Listeners of `DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION` receive the
 exceptions as thrown by the data types.
+
+Code that compares the exact class, for example `$e::class === ValidationException::class` or
+`get_class($e) === ValidationException::class`, sees `StructuredValidationException` for these errors.
+`catch (ValidationException $e)` and `instanceof ValidationException` keep working.
 
 `StructuredValidationException` can be extended. `withMessage()` creates the copy with the constructor signature
 of `Exception` (message, code, previous), so subclasses must keep it.

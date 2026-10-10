@@ -89,9 +89,6 @@ abstract class PageSnippet extends Model\Document
      */
     protected ?bool $missingRequiredEditable = null;
 
-    /** @var list<string> */
-    private array $missingRequiredEditableNames = [];
-
     /**
      * @internal
      */
@@ -132,7 +129,9 @@ abstract class PageSnippet extends Model\Document
         // before the database transaction, see also https://github.com/pimcore/pimcore/issues/8992
         $this->checkMissingRequiredEditable();
         if ($this->getMissingRequiredEditable() && $this->getPublished()) {
-            throw $this->createMissingRequiredEditableException();
+            throw (new StructuredValidationException(
+                'Prevented publishing document - missing values for required editables'
+            ))->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLES);
         }
 
         return parent::save($parameters);
@@ -618,9 +617,6 @@ abstract class PageSnippet extends Model\Document
      */
     public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
-        if ($missingRequiredEditable !== $this->missingRequiredEditable) {
-            $this->missingRequiredEditableNames = [];
-        }
         $this->missingRequiredEditable = $missingRequiredEditable;
 
         return $this;
@@ -650,8 +646,6 @@ abstract class PageSnippet extends Model\Document
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 
         if ($this->getMissingRequiredEditable() === null) {
-            $this->missingRequiredEditableNames = [];
-
             /** @var EditableUsageResolver $editableUsageResolver */
             $editableUsageResolver = Pimcore::getContainer()->get(EditableUsageResolver::class);
 
@@ -666,7 +660,8 @@ abstract class PageSnippet extends Model\Document
                             $editableConfig = $editable->getConfig();
                             if ($editable->isEmpty() && isset($editableConfig['required']) && $editableConfig['required'] == true) {
                                 $this->setMissingRequiredEditable(true);
-                                $this->missingRequiredEditableNames[] = $editableName;
+
+                                break;
                             }
                         }
                     }
@@ -675,30 +670,6 @@ abstract class PageSnippet extends Model\Document
                 // noting to do, as rendering the document failed for whatever reason
             }
         }
-    }
-
-    private function createMissingRequiredEditableException(): StructuredValidationException
-    {
-        $exception = new StructuredValidationException(
-            'Prevented publishing document - missing values for required editables'
-        );
-
-        if ($this->missingRequiredEditableNames === []) {
-            // the flag was set from outside, the editables are unknown
-            return $exception->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLES);
-        }
-
-        foreach ($this->missingRequiredEditableNames as $editableName) {
-            $exception->addViolations(
-                (new StructuredValidationException(
-                    sprintf('Missing value for required editable [ %s ]', $editableName)
-                ))
-                    ->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLE)
-                    ->setField($editableName)
-            );
-        }
-
-        return $exception;
     }
 
     public function getStaticGeneratorEnabled(): ?bool

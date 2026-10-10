@@ -82,6 +82,31 @@ class EncryptedFieldValidationTest extends TestCase
         }
     }
 
+    public function testPlainValueUnderAnotherNameIsStripped(): void
+    {
+        $plain = str_repeat('s3cret-', 20);
+        $delegate = new class() extends Input {
+            public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
+            {
+                throw (new StructuredValidationException('custom'))
+                    ->setTranslation('custom.rule', ['given' => $data, 'echo' => $data, 'max' => 5]);
+            }
+        };
+        $delegate->setName('secret');
+
+        $field = new EncryptedField();
+        $field->setName('secret');
+        $field->delegate = $delegate;
+
+        try {
+            $field->checkValidity($plain);
+            $this->fail('Expected a StructuredValidationException');
+        } catch (StructuredValidationException $exception) {
+            // also the truncated copy of a long value is recognised
+            $this->assertSame(['max' => 5], $exception->getTranslationParameters());
+        }
+    }
+
     public function testMandatoryErrorKeepsItsTranslationKey(): void
     {
         $delegate = new Input();

@@ -107,7 +107,10 @@ class ValidationViolationsTest extends ModelTestCase
     {
         foreach (self::$autoIncrements as $table => $autoIncrement) {
             // InnoDB keeps the value above the highest id in use, so this cannot clash with other rows
-            Db::get()->executeStatement(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d', $table, $autoIncrement));
+            $db = Db::get();
+            $db->executeStatement(
+                sprintf('ALTER TABLE %s AUTO_INCREMENT = %d', $db->quoteIdentifier($table), $autoIncrement)
+            );
         }
         self::$autoIncrements = [];
         RuntimeCache::clear();
