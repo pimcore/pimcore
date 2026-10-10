@@ -55,16 +55,19 @@ class ElementDependenciesHandler
         $d->setSourceType($type);
         $d->setSourceId($id);
 
-        foreach ($element->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $id && $requirement['type'] == $type) {
-                // dont't add a reference to yourself
-                continue;
-            }
+        try {
+            foreach ($element->resolveDependencies() as $requirement) {
+                if ($requirement['id'] == $id && $requirement['type'] == $type) {
+                    // dont't add a reference to yourself
+                    continue;
+                }
 
-            $d->addRequirement($requirement['id'], $requirement['type']);
+                $d->addRequirement($requirement['id'], $requirement['type']);
+            }
+        } finally {
+            $this->resetHideUnpublished($element, $hideUnpublished);
+            AbstractObject::setGetInheritedValues($getInheritedValues);
         }
-        $this->resetHideUnpublished($element, $hideUnpublished);
-        AbstractObject::setGetInheritedValues($getInheritedValues);
 
         $d->save();
 

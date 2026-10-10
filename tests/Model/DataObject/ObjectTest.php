@@ -20,6 +20,7 @@ use Pimcore\Db\Helper as DbHelper;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Service as DataObjectService;
+use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -599,5 +600,33 @@ class ObjectTest extends ModelTestCase
             DataObjectService::pathExists($nfdLookupPath),
             'pathExists() must return true for the same NFD path that getByPath() resolves.'
         );
+    }
+
+    /**
+     * Regression test: AbstractObject::save() disables the dirty detection while a new element is added. A failed
+     * add must restore it, otherwise every later save in the same process (CLI imports, workers) runs without it.
+     * Concrete::save() restores the flag on its own, folders rely on AbstractObject::save().
+     */
+    public function testFailedFolderAddRestoresDirtyDetection(): void
+    {
+        $existing = TestHelper::createObjectFolder();
+
+        $duplicate = TestHelper::createObjectFolder('', false);
+        $duplicate->setParentId($existing->getParentId());
+        $duplicate->setKey($existing->getKey());
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            $duplicate->save();
+            $this->fail('Saving a folder with a duplicate path must fail.');
+        } catch (DuplicateFullPathException) {
+            // expected
+        } finally {
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
     }
 }

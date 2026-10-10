@@ -15,8 +15,11 @@ namespace Pimcore\Tests\Model\Document;
 
 use Exception;
 use Normalizer;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Db\Helper as DbHelper;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
@@ -27,6 +30,7 @@ use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use RuntimeException;
 
 /**
  * Class DocumentTest
@@ -590,4 +594,40 @@ class DocumentTest extends ModelTestCase
             'pathExists() must return true for the same NFD path that getByPath() resolves.'
         );
     }
+
+    /**
+     * Regression test: deleting a document shows unpublished documents while it deletes the children. A failed
+     * child delete must restore the hide unpublished flag, otherwise frontend requests in the same process
+     * would show unpublished documents afterwards.
+     */
+    public function testFailedChildDeleteRestoresHideUnpublished(): void
+    {
+        $parent = TestHelper::createEmptyDocumentPage();
+        $child = TestHelper::createEmptyDocumentPage('', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $listener = static function (DocumentEvent $event) use ($child): void {
+            if ($event->getDocument()->getId() === $child->getId()) {
+                throw new RuntimeException('child delete failed');
+            }
+        };
+        Pimcore::getEventDispatcher()->addListener(DocumentEvents::PRE_DELETE, $listener);
+        $originalHideUnpublished = Document::doHideUnpublished();
+        Document::setHideUnpublished(true);
+
+        try {
+            $parent->delete();
+            $this->fail('Deleting the parent must fail when a child cannot be deleted.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('child delete failed', $e->getMessage());
+        } finally {
+            $hideUnpublished = Document::doHideUnpublished();
+            Document::setHideUnpublished($originalHideUnpublished);
+            Pimcore::getEventDispatcher()->removeListener(DocumentEvents::PRE_DELETE, $listener);
+        }
+
+        $this->assertTrue($hideUnpublished);
+    }
 }
+
