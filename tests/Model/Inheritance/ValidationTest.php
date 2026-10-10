@@ -18,12 +18,16 @@ use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Inheritance;
+use Pimcore\Model\DataObject\LazyLoading;
+use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\UnittestBrick;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool;
 
 /**
  * When a mandatory field is empty, validation retries with the parent's data in inherited-values mode.
@@ -35,19 +39,37 @@ class ValidationTest extends ModelTestCase
 {
     private bool $inheritedValuesBackup = false;
 
+    private bool $adminModeBackup = false;
+
     public function setUp(): void
     {
+        // captured first, so tearDown() restores the real state even if the setup below fails
+        $this->adminModeBackup = Pimcore::inAdmin();
+        $this->inheritedValuesBackup = DataObject::doGetInheritedValues();
+
         parent::setUp();
         TestHelper::cleanUp();
         Pimcore::setAdminMode();
-
-        $this->inheritedValuesBackup = DataObject::doGetInheritedValues();
     }
 
     public function tearDown(): void
     {
         DataObject::setGetInheritedValues($this->inheritedValuesBackup);
+        if (!$this->adminModeBackup) {
+            Pimcore::unsetAdminMode();
+        }
+        TestHelper::cleanUp();
         parent::tearDown();
+    }
+
+    protected function setUpTestClasses(): void
+    {
+        // class with inheritance and a brick holding localized fields
+        $this->tester->setupPimcoreClass_RelationTest();
+        $this->tester->setupFieldcollection_LazyLoadingTest();
+        $this->tester->setupFieldcollection_LazyLoadingLocalizedTest();
+        $this->tester->setupPimcoreClass_LazyLoading();
+        $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
     }
 
     /**
@@ -104,6 +126,37 @@ class ValidationTest extends ModelTestCase
             Definition::getByKey('unittestBrick')->getFieldDefinition('brickinput'),
             $inheritedValues
         );
+    }
+
+    /**
+     * @dataProvider inheritedValuesProvider
+     */
+    public function testFailedRetryRestoresInheritedValuesForLocalizedFieldInObjectbrick(bool $inheritedValues): void
+    {
+        $child = $this->createLocalizedBrickChild(null);
+
+        $this->assertInheritedValuesRestoredAfterFailedSave($child, $this->getLocalizedBrickInput(), $inheritedValues);
+    }
+
+    /**
+     * The retry must read the value of the parent's brick, so the child passes the mandatory check.
+     */
+    public function testRetryReadsInheritedValueForLocalizedFieldInObjectbrick(): void
+    {
+        $child = $this->createLocalizedBrickChild('parenttext');
+        $fieldDefinition = $this->getLocalizedBrickInput();
+        $mandatory = $fieldDefinition->getMandatory();
+        $fieldDefinition->setMandatory(true);
+        DataObject::setGetInheritedValues(false);
+
+        try {
+            $child->save();
+        } finally {
+            $fieldDefinition->setMandatory($mandatory);
+        }
+
+        $this->assertNotNull($child->getId());
+        $this->assertFalse(DataObject::doGetInheritedValues());
     }
 
     /**
@@ -185,6 +238,39 @@ class ValidationTest extends ModelTestCase
         }
     }
 
+    private function createLocalizedBrickChild(?string $parentValue): LazyLoading
+    {
+        // unpublished, so the parent itself skips the mandatory check
+        $parent = new LazyLoading();
+        $parent->setKey('parent');
+        $parent->setParentId(1);
+        $parent->setPublished(false);
+        $parentBrick = new LazyLoadingLocalizedTest($parent);
+        foreach (Tool::getValidLanguages() as $language) {
+            $parentBrick->setLinput($parentValue, $language);
+        }
+        $parent->getBricks()->setLazyLoadingLocalizedTest($parentBrick);
+        $parent->save();
+
+        $child = new LazyLoading();
+        $child->setKey('child');
+        $child->setParentId($parent->getId());
+        $child->setPublished(true);
+        $child->getBricks()->setLazyLoadingLocalizedTest(new LazyLoadingLocalizedTest($child));
+
+        return $child;
+    }
+
+    private function getLocalizedBrickInput(): Data
+    {
+        $localizedFields = Definition::getByKey('LazyLoadingLocalizedTest')->getFieldDefinition('localizedfields');
+        $this->assertInstanceOf(Data\Localizedfields::class, $localizedFields);
+        $fieldDefinition = $localizedFields->getFieldDefinition('linput');
+        $this->assertNotNull($fieldDefinition);
+
+        return $fieldDefinition;
+    }
+
     private function createChildOfEmptyParent(bool $withBrick = false): Inheritance
     {
         // unpublished, so the parent itself skips the mandatory check
@@ -206,7 +292,7 @@ class ValidationTest extends ModelTestCase
     }
 
     private function assertInheritedValuesRestoredAfterFailedSave(
-        Inheritance $child,
+        Concrete $child,
         ?Data $fieldDefinition,
         bool $inheritedValues
     ): void {
