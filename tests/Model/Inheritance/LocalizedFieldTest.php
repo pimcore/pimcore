@@ -17,12 +17,14 @@ use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Exception;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete\Dao\InheritanceHelper;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool;
+use ReflectionProperty;
 
 class LocalizedFieldTest extends ModelTestCase
 {
@@ -356,6 +358,10 @@ class LocalizedFieldTest extends ModelTestCase
             $db->executeStatement('ALTER TABLE ' . $queryTableDe . ' CHANGE input_broken input ' . $column['Type']);
         }
 
+        // the runtime cache is shared with the object level inheritance (Concrete\Dao), it must be off and empty
+        $this->assertFalse((new ReflectionProperty(InheritanceHelper::class, 'useRuntimeCache'))->getValue());
+        $this->assertSame([], (new ReflectionProperty(InheritanceHelper::class, 'runtimeCache'))->getValue());
+
         // two gets an own value without a save of the localized fields, which would clear the cache
         $db->update($storeTable, ['input' => 'own'], ['ooo_id' => $two->getId(), 'language' => 'en']);
         $db->update($queryTableEn, ['input' => 'own'], ['ooo_id' => $two->getId()]);
@@ -364,11 +370,11 @@ class LocalizedFieldTest extends ModelTestCase
             $one->setInput('second', 'en');
             $one->save();
         } finally {
-            DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
-            DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
+            InheritanceHelper::setUseRuntimeCache(false);
+            InheritanceHelper::clearRuntimeCache();
         }
 
-        $result = $db->fetchOne('SELECT input FROM ' . $queryTableEn . ' WHERE ooo_id = ' . $two->getId());
+        $result = $db->fetchOne('SELECT input FROM ' . $queryTableEn . ' WHERE ooo_id = ?', [$two->getId()]);
         $this->assertSame('own', $result);
     }
 }
