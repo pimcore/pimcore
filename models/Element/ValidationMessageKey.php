@@ -73,7 +73,6 @@ enum ValidationMessageKey: string
     case SLUG_RESERVED_CHARACTERS = 'validation.slug_reserved_characters';
 
     case UNIQUE_CONSTRAINT = 'validation.unique_constraint';
-
     case MISSING_REQUIRED_EDITABLE = 'validation.missing_required_editable';
 
     /** parameters: filename, max_megapixels, suggested_width, suggested_height */
