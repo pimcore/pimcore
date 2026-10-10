@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -209,7 +210,7 @@ class Geopoint extends AbstractGeo implements
         }
 
         if ($isEmpty && !$omitMandatoryCheck && $this->getMandatory()) {
-            throw (new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
                 ->setTranslation(ValidationMessageKey::MANDATORY);
         }
     }

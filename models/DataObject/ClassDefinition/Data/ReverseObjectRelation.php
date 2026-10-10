@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 
 class ReverseObjectRelation extends ManyToManyObjectRelation
@@ -144,7 +145,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     {
         //TODO
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw (new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
                 ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
@@ -152,7 +153,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             foreach ($data as $o) {
                 $allowClass = $this->allowObjectRelation($o);
                 if (!$allowClass || !($o instanceof DataObject\Concrete)) {
-                    throw (new Model\Element\ValidationException('Invalid non owner object relation to object ['.$o->getId().']'))
+                    throw (new StructuredValidationException(
+                        'Invalid non owner object relation to object ['.$o->getId().']'
+                    ))
                         ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                 }
             }

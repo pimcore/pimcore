@@ -24,6 +24,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\SystemSettingsConfig;
 
@@ -676,9 +677,9 @@ abstract class PageSnippet extends Model\Document
         }
     }
 
-    private function createMissingRequiredEditableException(): Model\Element\ValidationException
+    private function createMissingRequiredEditableException(): StructuredValidationException
     {
-        $exception = new Model\Element\ValidationException(
+        $exception = new StructuredValidationException(
             'Prevented publishing document - missing values for required editables'
         );
 
@@ -689,7 +690,7 @@ abstract class PageSnippet extends Model\Document
 
         foreach ($this->missingRequiredEditableNames as $editableName) {
             $exception->addViolations(
-                (new Model\Element\ValidationException(
+                (new StructuredValidationException(
                     sprintf('Missing value for required editable [ %s ]', $editableName)
                 ))
                     ->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLE)

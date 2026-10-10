@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -168,7 +169,10 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
             if ($data !== null && mb_strlen($data) > $this->getMaxLength()) {
-                throw (new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] longer than max length of '" . $this->getMaxLength() . "'"))
+                throw (new StructuredValidationException(
+                    'Value in field [ ' . $this->getName() . " ] longer than max length of '"
+                        . $this->getMaxLength() . "'"
+                ))
                     ->setTranslation(ValidationMessageKey::MAX_LENGTH, ['max' => $this->getMaxLength()]);
             }
         }

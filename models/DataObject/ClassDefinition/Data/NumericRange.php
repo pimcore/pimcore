@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -398,7 +399,7 @@ class NumericRange extends Data implements
         $fieldName = $this->getName();
 
         if (true === $isEmpty && false === $omitMandatoryCheck && $this->getMandatory()) {
-            throw (new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName)))
+            throw (new StructuredValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName)))
                 ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
@@ -411,7 +412,7 @@ class NumericRange extends Data implements
             }
 
             if ($this->getInteger() && str_contains((string) $data, '.')) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Either the minimum or maximum value in field [ %s ] is not an integer', $fieldName)
                 ))
                     ->setTranslation(ValidationMessageKey::NOT_INTEGER, ['value' => (string) $data]);
@@ -420,7 +421,7 @@ class NumericRange extends Data implements
             $minimumThreshold = $this->getMinValue();
 
             if (null !== $minimumThreshold && $minimum < $minimumThreshold) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Minimum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
                 ))
                     ->setTranslation(
@@ -433,7 +434,7 @@ class NumericRange extends Data implements
             }
 
             if (null !== $minimumThreshold && $maximum < $minimumThreshold) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Maximum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
                 ))
                     ->setTranslation(
@@ -448,7 +449,7 @@ class NumericRange extends Data implements
             $maximumThreshold = $this->getMaxValue();
 
             if (null !== $maximumThreshold && $minimum > $maximumThreshold) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Minimum value in field [ %s ] is bigger than %d', $fieldName, $maximumThreshold)
                 ))
                     ->setTranslation(
@@ -461,7 +462,7 @@ class NumericRange extends Data implements
             }
 
             if (null !== $maximumThreshold && $maximum > $maximumThreshold) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Maximum value in field [ %s ] is bigger than %s', $fieldName, $maximumThreshold)
                 ))
                     ->setTranslation(
@@ -474,14 +475,14 @@ class NumericRange extends Data implements
             }
 
             if ($minimum > $maximum) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
                 ))
                     ->setTranslation(ValidationMessageKey::RANGE_START_AFTER_END);
             }
 
             if ($minimum < 0 && $this->getUnsigned()) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Value in field [ %s ] is not unsigned (bigger than 0)', $fieldName)
                 ))
                     ->setTranslation(ValidationMessageKey::NOT_UNSIGNED, ['value' => $minimum]);

@@ -2,11 +2,11 @@
 
 ## Pimcore 2026.4.0
 
-### [DataObjects] Structured, translatable data on `ValidationException`
+### [DataObjects] Structured, translatable validation errors
 
-`Pimcore\Model\Element\ValidationException` optionally carries structured data next to its message, so that
-clients such as Pimcore Studio can show validation errors in the language of the user and point to the failed
-field:
+The new `Pimcore\Model\Element\StructuredValidationException` extends `Pimcore\Model\Element\ValidationException`
+and carries structured data next to its message, so that clients such as Pimcore Studio can show validation errors
+in the language of the user and point to the failed field:
 
 - `setTranslation()`, `getTranslationKey()`, `getTranslationParameters()`: a translation key (a fixed string or a
   case of the `Pimcore\Model\Element\ValidationMessageKey` enum) with scalar parameters.
@@ -17,13 +17,17 @@ field:
 - `addViolations()`, `getViolations()`: the leaf errors collected by an aggregate exception.
 - `withMessage()`: creates an exception of the same class with a new message and the structured data of the
   original one.
+- `from()`: converts a plain `ValidationException` into a structured one with the same message, code, context
+  stack and sub items, and the original exception as previous exception.
 
-The built-in data types, the containers and `PageSnippet` fill this data. The messages, the aggregated messages
-and the existing methods of the exception are unchanged.
+The built-in data types, the containers, `Concrete::save()` and `PageSnippet` throw
+`StructuredValidationException`. Containers convert a plain `ValidationException` of a child field with `from()`,
+so it becomes a violation with field and path as well. `ValidationException` itself is unchanged, and so are the
+messages and the aggregated messages. Listeners of `DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION` receive the
+exceptions as thrown by the data types.
 
-A subclass of `ValidationException` that declares a method with one of the names above must rename it.
-`withMessage()` creates the copy with the constructor signature of `Exception` (message, code, previous), so
-subclasses must keep it.
+`StructuredValidationException` can be extended. `withMessage()` creates the copy with the constructor signature
+of `Exception` (message, code, previous), so subclasses must keep it.
 
 ## Pimcore 2026.3.0
 

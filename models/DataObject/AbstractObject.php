@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 
 /**
@@ -576,7 +577,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 self::setHideUnpublished($hideUnpublishedBackup);
 
                 if ($e instanceof UniqueConstraintViolationException) {
-                    throw (new Element\ValidationException('unique constraint violation', 0, $e))
+                    throw (new StructuredValidationException('unique constraint violation', 0, $e))
                         ->setTranslation(ValidationMessageKey::UNIQUE_CONSTRAINT);
                 }
             },

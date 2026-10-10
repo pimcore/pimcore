@@ -15,15 +15,18 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Block;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -36,6 +39,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\Vv8846BrickA;
 use Pimcore\Model\DataObject\Objectbrick\Data\Vv8846BrickB;
 use Pimcore\Model\DataObject\Vv8846Inh;
 use Pimcore\Model\DataObject\Vv8846Obj;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tool;
@@ -64,26 +68,49 @@ class ValidationViolationsTest extends ModelTestCase
 
     private const CS_KEY_NAME = 'vv8846key';
 
+    private const TOO_BIG_NUMBER = 1e20;
+
+    private const TOO_BIG_MESSAGE = 'Value exceeds PHP_INT_MAX please use an input data type instead of numeric!';
+
     private static int $objectCounter = 0;
 
+    /**
+     * Auto-increment values of the classification store tables before this test created its rows. Other tests
+     * look up their store config with the default store id 1, so the ids must be handed back.
+     *
+     * @var array<string, int>
+     */
+    private static array $autoIncrements = [];
+
+    /**
+     * The definitions are created and removed for every test: Codeception runs tearDownAfterClass() only at the
+     * end of the whole suite, so class-level fixtures would leak into the tests that follow.
+     */
     protected function setUp(): void
     {
         parent::setUp();
 
-        $complete = ClassDefinition::getByName(self::CLASS_NAME)
-            && ClassDefinition::getByName(self::INHERITING_CLASS_NAME)
-            && Fieldcollection\Definition::getByKey(self::FIELDCOLLECTION);
-        if (!$complete) {
-            self::removeDefinitions();
-            $this->createDefinitions();
-        }
+        // leftovers of an aborted run, only definitions with the names of this test
+        self::removeDefinitions();
+        $this->createDefinitions();
     }
 
-    public static function tearDownAfterClass(): void
+    protected function tearDown(): void
     {
         self::removeDefinitions();
+        self::restoreAutoIncrements();
 
-        parent::tearDownAfterClass();
+        parent::tearDown();
+    }
+
+    private static function restoreAutoIncrements(): void
+    {
+        foreach (self::$autoIncrements as $table => $autoIncrement) {
+            // InnoDB keeps the value above the highest id in use, so this cannot clash with other rows
+            Db::get()->executeStatement(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d', $table, $autoIncrement));
+        }
+        self::$autoIncrements = [];
+        RuntimeCache::clear();
     }
 
     private static function removeDefinitions(): void
@@ -133,7 +160,8 @@ class ValidationViolationsTest extends ModelTestCase
 
         $this->assertSame(
             'Validation failed: ' . implode(' / ', array_map(
-                static fn (string $language) => 'Empty mandatory field [ lMandatory ][ localizedfields-' . $language . ' ]',
+                static fn (string $language) => 'Empty mandatory field [ lMandatory ][ localizedfields-'
+                    . $language . ' ]',
                 Tool::getRequiredLanguages()
             )),
             $exception->getMessage()
@@ -224,7 +252,13 @@ class ValidationViolationsTest extends ModelTestCase
                 'T_fcMandatory',
                 'validation.mandatory',
                 [],
-                [$this->segment('fc', 'T_fc', index: 1, type: self::FIELDCOLLECTION, typeTitle: 'T_' . self::FIELDCOLLECTION)],
+                [$this->segment(
+                    'fc',
+                    'T_fc',
+                    index: 1,
+                    type: self::FIELDCOLLECTION,
+                    typeTitle: 'T_' . self::FIELDCOLLECTION
+                )],
             ]],
             $this->describe($exception)
         );
@@ -350,6 +384,72 @@ class ValidationViolationsTest extends ModelTestCase
     }
 
     /**
+     * A data type that throws a plain ValidationException (e.g. a custom data type) inside a container: the
+     * container converts it, so it still becomes a violation with field and path, and the message is unchanged.
+     */
+    public function testPlainValidationExceptionInContainer(): void
+    {
+        $language = Tool::getRequiredLanguages()[0];
+        $object = $this->createObject();
+        $object->setLNumeric(self::TOO_BIG_NUMBER, $language);
+
+        $exception = $this->saveExpectingFailure($object);
+
+        $this->assertSame(
+            'Validation failed: ' . self::TOO_BIG_MESSAGE . '[ localizedfields-' . $language . ' ]',
+            $exception->getMessage()
+        );
+        $this->assertSame(
+            [['lNumeric', 'T_lNumeric', null, [], [$this->segment('localizedfields', language: $language)]]],
+            $this->describe($exception)
+        );
+
+        $original = $exception->getViolations()[0]->getPrevious();
+        $this->assertSame(ValidationException::class, $original::class);
+        $this->assertSame(self::TOO_BIG_MESSAGE, $original->getMessage());
+    }
+
+    /**
+     * Listeners of PRE_UPDATE_VALIDATION_EXCEPTION get the exceptions exactly as thrown by the data types,
+     * plain ones are converted only for the violations of the final exception.
+     */
+    public function testListenerReceivesOriginalExceptions(): void
+    {
+        $object = $this->createObject(['plainMandatory' => null]);
+        $object->setPlainNumeric(self::TOO_BIG_NUMBER);
+
+        $received = [];
+        $listener = static function (DataObjectEvent $event) use (&$received): void {
+            $received = $event->getArgument('validationExceptions');
+        };
+        $dispatcher = Pimcore::getEventDispatcher();
+        $dispatcher->addListener(DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION, $listener);
+
+        try {
+            $exception = $this->saveExpectingFailure($object);
+        } finally {
+            $dispatcher->removeListener(DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION, $listener);
+        }
+
+        $this->assertCount(2, $received);
+        $violations = $exception->getViolations();
+        $this->assertSame($received[0], $violations[0], 'a structured exception is passed on as is');
+        $this->assertSame(ValidationException::class, $received[1]::class, 'a plain exception is not converted');
+        $this->assertSame($received[1], $violations[1]->getPrevious());
+        $this->assertSame(
+            [
+                ['plainMandatory', 'T_plainMandatory', 'validation.mandatory', [], []],
+                ['plainNumeric', 'T_plainNumeric', null, [], []],
+            ],
+            $this->describe($exception)
+        );
+        $this->assertSame(
+            'Validation failed: Empty mandatory field [ plainMandatory ] / ' . self::TOO_BIG_MESSAGE,
+            $exception->getMessage()
+        );
+    }
+
+    /**
      * Inheritance makes Concrete::validate() retry with the parent's value and rebuild the exception
      * via withMessage(): translation, field and path must survive, the message gets the fieldname suffix.
      */
@@ -399,7 +499,7 @@ class ValidationViolationsTest extends ModelTestCase
         }
     }
 
-    private function saveInheritingChildExpectingFailure(bool $plainFilled): ValidationException
+    private function saveInheritingChildExpectingFailure(bool $plainFilled): StructuredValidationException
     {
         $inheritedValues = DataObject::doGetInheritedValues();
 
@@ -433,7 +533,7 @@ class ValidationViolationsTest extends ModelTestCase
     /**
      * @return list<array{string|null, string|null, string|null, array<string, mixed>, list<array<string, mixed>>}>
      */
-    private function describe(ValidationException $exception): array
+    private function describe(StructuredValidationException $exception): array
     {
         $result = [];
         foreach ($exception->getViolations() as $violation) {
@@ -480,15 +580,15 @@ class ValidationViolationsTest extends ModelTestCase
         ];
     }
 
-    private function saveExpectingFailure(Concrete $object): ValidationException
+    private function saveExpectingFailure(Concrete $object): StructuredValidationException
     {
         try {
             $object->save();
-        } catch (ValidationException $exception) {
+        } catch (StructuredValidationException $exception) {
             return $exception;
         }
 
-        $this->fail('Expected a ValidationException');
+        $this->fail('Expected a StructuredValidationException');
     }
 
     /**
@@ -535,11 +635,20 @@ class ValidationViolationsTest extends ModelTestCase
         return $input;
     }
 
-    private function localizedfields(string $name): Localizedfields
+    private function numeric(string $name): Numeric
+    {
+        $numeric = new Numeric();
+        $numeric->setName($name);
+        $numeric->setTitle('T_' . $name);
+
+        return $numeric;
+    }
+
+    private function localizedfields(string $name, Data ...$children): Localizedfields
     {
         $localizedfields = new Localizedfields();
         $localizedfields->setName('localizedfields');
-        $localizedfields->setChildren([$this->input($name, true)]);
+        $localizedfields->setChildren([$this->input($name, true), ...$children]);
 
         return $localizedfields;
     }
@@ -558,12 +667,14 @@ class ValidationViolationsTest extends ModelTestCase
         $store = new Classificationstore\StoreConfig();
         $store->setName(self::STORE_NAME);
         $store->save();
+        self::$autoIncrements['classificationstore_stores'] = $store->getId();
 
         $group = new Classificationstore\GroupConfig();
         $group->setStoreId($store->getId());
         $group->setName(self::GROUP_NAME);
         $group->setDescription('T_' . self::GROUP_NAME);
         $group->save();
+        self::$autoIncrements['classificationstore_groups'] = $group->getId();
 
         $key = new Classificationstore\KeyConfig();
         $key->setStoreId($store->getId());
@@ -572,6 +683,7 @@ class ValidationViolationsTest extends ModelTestCase
         $key->setType('input');
         $key->setDefinition((string) json_encode($this->input(self::CS_KEY_NAME, false)));
         $key->save();
+        self::$autoIncrements['classificationstore_keys'] = $key->getId();
 
         $relation = new Classificationstore\KeyGroupRelation();
         $relation->setGroupId($group->getId());
@@ -608,7 +720,8 @@ class ValidationViolationsTest extends ModelTestCase
         $class->setLayoutDefinitions($this->panel([
             $this->input('plainMandatory', true),
             $this->input('plainMandatory2', true),
-            $this->localizedfields('lMandatory'),
+            $this->numeric('plainNumeric'),
+            $this->localizedfields('lMandatory', $this->numeric('lNumeric')),
             $bricks,
             $fc,
             $block,

@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 
 /**
@@ -326,7 +327,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw (new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
                 ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
@@ -346,13 +347,19 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                         $id = '??';
                     }
 
-                    throw (new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId()))
+                    throw (new StructuredValidationException(
+                        'Invalid object relation to object [' . $id . '] in field ' . $this->getName()
+                            . ' , tried to assign ' . $o->getId()
+                    ))
                         ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                 }
             }
 
             if ($this->getMaxItems() && count($data) > $this->getMaxItems()) {
-                throw (new Element\ValidationException('Number of allowed relations in field `' . $this->getName() . '` exceeded (max. ' . $this->getMaxItems() . ')'))
+                throw (new StructuredValidationException(
+                    'Number of allowed relations in field `' . $this->getName() . '` exceeded (max. '
+                        . $this->getMaxItems() . ')'
+                ))
                     ->setTranslation(ValidationMessageKey::MAX_RELATIONS, ['max' => $this->getMaxItems()]);
             }
         }

@@ -14,7 +14,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element;
 
 /**
- * Translation keys of the validation errors raised by Pimcore core, see ValidationException::setTranslation().
+ * Translation keys of the validation errors raised by Pimcore core,
+ * see StructuredValidationException::setTranslation().
  * The field itself is never a parameter: Pimcore Studio injects the translated field label as `field`.
  */
 enum ValidationMessageKey: string

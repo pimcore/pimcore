@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Pimcore\Model;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 
 class Email extends Model\DataObject\ClassDefinition\Data\Input
@@ -25,7 +26,9 @@ class Email extends Model\DataObject\ClassDefinition\Data\Input
         if (!$omitMandatoryCheck && is_string($data) && strlen($data) > 0) {
             $validator = new EmailValidator();
             if (!$validator->isValid($data, new RFCValidation())) {
-                throw (new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] isn't a valid email address"))
+                throw (new StructuredValidationException(
+                    'Value in field [ ' . $this->getName() . " ] isn't a valid email address"
+                ))
                     ->setTranslation(ValidationMessageKey::INVALID_EMAIL, ['value' => $data]);
             }
         }

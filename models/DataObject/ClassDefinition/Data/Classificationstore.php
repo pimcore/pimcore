@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -613,7 +614,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
-                throw (new Model\Element\ValidationException(
+                throw (new StructuredValidationException(
                     'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
                 ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->getMaxItems()]);
             }
@@ -669,7 +670,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $validationException->getMessage();
             }, $subItems);
 
-            $validationException = new Model\Element\ValidationException(implode(', ', $messages));
+            $validationException = new StructuredValidationException(implode(', ', $messages));
             $validationException->setSubItems($subItems);
             $validationException->addViolations(...$subItems);
 
@@ -682,11 +683,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         Data $keyDefinition,
         DataObject\Classificationstore\GroupConfig $group,
         string $language
-    ): Model\Element\ValidationException {
+    ): StructuredValidationException {
         $message = $exception->getMessage() . ' (' . $language . ')';
-        $violation = $exception instanceof Model\Element\ValidationException
+        $violation = $exception instanceof StructuredValidationException
             ? $exception->withMessage($message)
-            : new Model\Element\ValidationException($message, $exception->getCode(), $exception->getPrevious());
+            : new StructuredValidationException($message, $exception->getCode(), $exception->getPrevious());
         $title = $this->getTitle();
 
         return $violation

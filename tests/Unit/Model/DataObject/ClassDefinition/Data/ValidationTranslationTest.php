@@ -19,7 +19,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Textarea;
-use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Tests\Support\Test\TestCase;
 
@@ -173,14 +173,14 @@ class ValidationTranslationTest extends TestCase
         $this->assertArrayNotHasKey('value', $exception->getTranslationParameters());
     }
 
-    private function capture(callable $callback): ValidationException
+    private function capture(callable $callback): StructuredValidationException
     {
         try {
             $callback();
-        } catch (ValidationException $exception) {
+        } catch (StructuredValidationException $exception) {
             return $exception;
         }
 
-        $this->fail('Expected a ValidationException');
+        $this->fail('Expected a StructuredValidationException');
     }
 }

@@ -55,12 +55,12 @@ configuration in a config file that is
 
 ### Translatable Validation Errors (optional)
 
-`checkValidity()` signals an invalid value by throwing a
-`Pimcore\Model\Element\ValidationException`. The exception message stays the plain English text. To let
-Pimcore Studio show the error in the language of the user, attach a translation key and its parameters:
+`checkValidity()` signals an invalid value by throwing a `Pimcore\Model\Element\ValidationException`. The
+exception message is the plain English text. To let Pimcore Studio show the error in the language of the user,
+throw a `Pimcore\Model\Element\StructuredValidationException` and attach a translation key and its parameters:
 
 ```php
-throw (new ValidationException('Value in field [ ' . $this->getName() . ' ] is too long'))
+throw (new StructuredValidationException('Value in field [ ' . $this->getName() . ' ] is too long'))
     ->setTranslation('my_bundle.validation.too_long', ['max' => 5]);
 ```
 
@@ -75,8 +75,11 @@ throw (new ValidationException('Value in field [ ' . $this->getName() . ' ] is t
 - The built-in keys are listed in the `Pimcore\Model\Element\ValidationMessageKey` enum, which `setTranslation()`
   accepts as well.
 
-Containers (localized fields, object bricks, field collections, blocks, classification store) add the field and
-its location to the exception, so a custom data type does not need to take care of that.
+`StructuredValidationException` extends `ValidationException`, so code that catches `ValidationException` keeps
+working. Containers (localized fields, object bricks, field collections, blocks, classification store) and data
+objects add the field and its location to the exception, so a custom data type does not need to take care of
+that. A plain `ValidationException` is converted with `StructuredValidationException::from()` and gets field and
+location as well, only without a translation key.
 
 ---
 

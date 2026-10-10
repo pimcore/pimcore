@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use ReflectionMethod;
 
@@ -124,7 +125,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
-            throw (new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
                 ->setTranslation(ValidationMessageKey::MANDATORY);
         }
     }

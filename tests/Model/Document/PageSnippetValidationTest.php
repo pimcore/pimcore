@@ -15,7 +15,7 @@ namespace Pimcore\Tests\Model\Document;
 
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionProperty;
@@ -51,7 +51,7 @@ class PageSnippetValidationTest extends ModelTestCase
         $violations = $exception->getViolations();
         $this->assertCount(2, $violations);
         $this->assertSame(['headline', 'teaser'], array_map(
-            static fn (ValidationException $violation) => $violation->getFieldName(),
+            static fn (StructuredValidationException $violation) => $violation->getFieldName(),
             $violations
         ));
         $this->assertSame('Missing value for required editable [ headline ]', $violations[0]->getMessage());
@@ -93,15 +93,15 @@ class PageSnippetValidationTest extends ModelTestCase
         return $page;
     }
 
-    private function saveExpectingFailure(Page $page): ValidationException
+    private function saveExpectingFailure(Page $page): StructuredValidationException
     {
         try {
             $page->save();
-        } catch (ValidationException $exception) {
+        } catch (StructuredValidationException $exception) {
             return $exception;
         }
 
-        $this->fail('Expected a ValidationException');
+        $this->fail('Expected a StructuredValidationException');
     }
 
     /**

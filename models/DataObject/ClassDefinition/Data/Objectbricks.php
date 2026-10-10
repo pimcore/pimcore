@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -517,7 +518,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     //max limit check should be performed irrespective of omitMandatory check
                     if (!empty($this->maxItems) && $itemCount > $this->maxItems) {
-                        throw (new Model\Element\ValidationException(
+                        throw (new StructuredValidationException(
                             'Maximum limit reached for items in brick: ' . $this->getName()
                         ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->maxItems]);
                     }
@@ -561,13 +562,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
             if ($validationExceptions) {
                 $errors = [];
-                /** @var Model\Element\ValidationException $e */
+                /** @var StructuredValidationException $e */
                 foreach ($validationExceptions as $e) {
                     $errors[] = $e->getAggregatedMessage();
                 }
                 $message = implode(' / ', $errors);
 
-                throw (new Model\Element\ValidationException('invalid brick ' . $this->getName().': '.$message))
+                throw (new StructuredValidationException('invalid brick ' . $this->getName().': '.$message))
                     ->addViolations(...$validationExceptions);
             }
         }
@@ -577,12 +578,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         Model\Element\ValidationException $exception,
         Data $fieldDefinition,
         DataObject\Objectbrick\Definition $brickDefinition
-    ): Model\Element\ValidationException {
+    ): StructuredValidationException {
         $exception->addContext($this->getName());
         $title = $this->getTitle();
         $brickTitle = $brickDefinition->getTitle();
 
-        return $exception
+        return StructuredValidationException::from($exception)
             ->setField($fieldDefinition->getName(), $fieldDefinition->getTitle())
             ->addPathSegment(new ValidationPathSegment(
                 field: $this->getName(),

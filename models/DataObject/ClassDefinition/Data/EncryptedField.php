@@ -22,7 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
 /**
@@ -221,15 +221,25 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
             try {
                 $fd->checkValidity($data, $omitMandatoryCheck);
-            } catch (ValidationException $e) {
+            } catch (StructuredValidationException $e) {
                 // never expose the plain value of an encrypted field as translation parameter
-                $key = $e->getTranslationKey();
-                if ($key !== null) {
-                    $e->setTranslation($key, array_diff_key($e->getTranslationParameters(), ['value' => true]));
+                foreach ([$e, ...$e->getViolations()] as $exception) {
+                    $this->removeValueParameter($exception);
                 }
 
                 throw $e;
             }
+        }
+    }
+
+    private function removeValueParameter(StructuredValidationException $exception): void
+    {
+        $key = $exception->getTranslationKey();
+        if ($key !== null) {
+            $exception->setTranslation(
+                $key,
+                array_diff_key($exception->getTranslationParameters(), ['value' => true])
+            );
         }
     }
 

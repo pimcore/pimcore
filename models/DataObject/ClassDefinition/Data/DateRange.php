@@ -20,6 +20,7 @@ use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -254,7 +255,7 @@ class DateRange extends Data implements
         $fieldName = $this->getName();
 
         if (true === $isEmpty && false === $omitMandatoryCheck && $this->getMandatory()) {
-            throw (new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName)))
+            throw (new StructuredValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName)))
                 ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
@@ -269,7 +270,7 @@ class DateRange extends Data implements
             }
 
             if ($startDate->greaterThan($endDate)) {
-                throw (new ValidationException(
+                throw (new StructuredValidationException(
                     sprintf('Start value in field [ %s ] is bigger than the end value', $fieldName)
                 ))
                     ->setTranslation(ValidationMessageKey::RANGE_START_AFTER_END);

@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -1002,7 +1003,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $blockElement = $item[$fd->getName()] ?? null;
                             if (!$blockElement) {
                                 if ($fd->getMandatory()) {
-                                    throw (new Element\ValidationException(
+                                    throw (new StructuredValidationException(
                                         'Block element empty [ ' . $fd->getName() . ' ]'
                                     ))->setTranslation(ValidationMessageKey::MANDATORY);
                                 } else {
@@ -1033,26 +1034,26 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $fd->checkValidity($data, false, $params);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
-                            $ve->setField($fd->getName(), $fd->getTitle())
+                            $validationExceptions[] = StructuredValidationException::from($ve)
+                                ->setField($fd->getName(), $fd->getTitle())
                                 ->addPathSegment(new ValidationPathSegment(
                                     field: $this->getName(),
                                     title: $this->getTitle() !== '' ? $this->getTitle() : null,
                                     index: $idx
                                 ));
-                            $validationExceptions[] = $ve;
                         }
                     }
                 }
 
                 if ($validationExceptions) {
                     $errors = [];
-                    /** @var Element\ValidationException $e */
+                    /** @var StructuredValidationException $e */
                     foreach ($validationExceptions as $e) {
                         $errors[] = $e->getAggregatedMessage();
                     }
                     $message = implode(' / ', $errors);
 
-                    throw (new Model\Element\ValidationException($message))->addViolations(...$validationExceptions);
+                    throw (new StructuredValidationException($message))->addViolations(...$validationExceptions);
                 }
             }
         }

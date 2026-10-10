@@ -45,8 +45,8 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
-use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\SystemSettingsConfig;
@@ -445,7 +445,8 @@ class Asset extends Element\AbstractElement
 
                 $mp = $maxPixels / 1_000_000;
 
-                throw (new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
+                throw (new StructuredValidationException(
+                    "<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
 <p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>
 <p>Suggestion: resize to <code>{$suggestion_0}&times;{$suggestion_1}</code> pixels or smaller.</p>"))
                     ->setTranslation(

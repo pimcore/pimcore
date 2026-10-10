@@ -27,7 +27,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\SystemSettingsConfig;
+use SplObjectStorage;
 
 /**
  * @method Model\DataObject\Concrete\Dao getDao()
@@ -105,6 +107,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
+        /** @var SplObjectStorage<Model\Element\ValidationException, ClassDefinition\Data> $failedFields */
+        $failedFields = new SplObjectStorage();
 
         foreach ($fieldDefinitions as $fd) {
             try {
@@ -152,7 +156,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
-                                $newException = $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
+                                if ($e instanceof StructuredValidationException) {
+                                    $newException = $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
+                                } else {
+                                    $exceptionClass = get_class($e);
+                                    $newException = new $exceptionClass(
+                                        $e->getMessage() . ' fieldname=' . $fd->getName(),
+                                        $e->getCode(),
+                                        $e->getPrevious()
+                                    );
+                                }
                                 $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;
@@ -163,7 +176,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     }
                 }
             } catch (Model\Element\ValidationException $ve) {
-                $ve->setField($fd->getName(), $fd->getTitle());
+                $failedFields[$ve] = $fd;
                 $validationExceptions[] = $ve;
             }
         }
@@ -186,10 +199,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
             $message .= implode($preUpdateEvent->getArgument('separator'), $errors);
 
-            $aggregatedException = new Model\Element\ValidationException($message);
-            $aggregatedException->addViolations(...array_values($validationExceptions));
-
-            throw $aggregatedException;
+            throw $this->createAggregatedValidationException($message, $validationExceptions, $failedFields);
         }
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
@@ -214,6 +224,32 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
+    }
+
+    /**
+     * Builds the exception thrown by update() from the (possibly listener-modified) list of validation exceptions.
+     * Each one becomes a violation, named after the field it was caught for.
+     *
+     * @param Model\Element\ValidationException[] $validationExceptions
+     * @param SplObjectStorage<Model\Element\ValidationException, ClassDefinition\Data> $failedFields
+     */
+    private function createAggregatedValidationException(
+        string $message,
+        array $validationExceptions,
+        SplObjectStorage $failedFields
+    ): StructuredValidationException {
+        $aggregatedException = new StructuredValidationException($message);
+
+        foreach ($validationExceptions as $validationException) {
+            $violation = StructuredValidationException::from($validationException);
+            if ($failedFields->contains($validationException)) {
+                $fieldDefinition = $failedFields[$validationException];
+                $violation->setField($fieldDefinition->getName(), $fieldDefinition->getTitle());
+            }
+            $aggregatedException->addViolations($violation);
+        }
+
+        return $aggregatedException;
     }
 
     private function saveChildData(): void

@@ -14,17 +14,18 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\Element;
 
 use Exception;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Tests\Support\Test\TestCase;
 use stdClass;
 
-class ValidationExceptionTest extends TestCase
+class StructuredValidationExceptionTest extends TestCase
 {
     public function testLeafWithoutStructuredData(): void
     {
-        $exception = new ValidationException('Empty mandatory field [ title ]');
+        $exception = new StructuredValidationException('Empty mandatory field [ title ]');
 
         $this->assertNull($exception->getTranslationKey());
         $this->assertSame([], $exception->getTranslationParameters());
@@ -36,7 +37,7 @@ class ValidationExceptionTest extends TestCase
 
     public function testSetTranslationAcceptsEnumAndCustomKey(): void
     {
-        $exception = (new ValidationException('x'))->setTranslation(ValidationMessageKey::MAX_LENGTH, ['max' => 5]);
+        $exception = (new StructuredValidationException('x'))->setTranslation(ValidationMessageKey::MAX_LENGTH, ['max' => 5]);
         $this->assertSame('validation.max_length', $exception->getTranslationKey());
         $this->assertSame(['max' => 5], $exception->getTranslationParameters());
 
@@ -47,7 +48,7 @@ class ValidationExceptionTest extends TestCase
 
     public function testSetTranslationKeepsOnlyScalarParametersAndTruncatesStrings(): void
     {
-        $exception = (new ValidationException('x'))->setTranslation('key', [
+        $exception = (new StructuredValidationException('x'))->setTranslation('key', [
             'string' => str_repeat('ä', 150),
             'int' => 3,
             'float' => 1.5,
@@ -68,7 +69,7 @@ class ValidationExceptionTest extends TestCase
 
     public function testSetTranslationDropsNonFiniteFloats(): void
     {
-        $exception = (new ValidationException('x'))->setTranslation('key', [
+        $exception = (new StructuredValidationException('x'))->setTranslation('key', [
             'inf' => INF,
             'negativeInf' => -INF,
             'nan' => NAN,
@@ -81,7 +82,7 @@ class ValidationExceptionTest extends TestCase
 
     public function testSetTranslationScrubsInvalidUtf8AndStillTruncates(): void
     {
-        $exception = (new ValidationException('x'))->setTranslation('key', [
+        $exception = (new StructuredValidationException('x'))->setTranslation('key', [
             'short' => "ab\xC3\x28cd",
             'long' => "\xFF" . str_repeat('a', 150),
         ]);
@@ -99,7 +100,7 @@ class ValidationExceptionTest extends TestCase
 
     public function testSetFieldDoesNotOverwriteAndNormalisesEmptyTitle(): void
     {
-        $exception = (new ValidationException('x'))->setField('title', '');
+        $exception = (new StructuredValidationException('x'))->setField('title', '');
         $this->assertSame('title', $exception->getFieldName());
         $this->assertNull($exception->getFieldTitle());
 
@@ -110,12 +111,12 @@ class ValidationExceptionTest extends TestCase
 
     public function testAggregateCollectsAndFlattensViolations(): void
     {
-        $first = new ValidationException('first');
-        $second = new ValidationException('second');
-        $third = new ValidationException('third');
+        $first = new StructuredValidationException('first');
+        $second = new StructuredValidationException('second');
+        $third = new StructuredValidationException('third');
 
-        $inner = (new ValidationException('inner'))->addViolations($first, $second);
-        $outer = (new ValidationException('outer'))->addViolations($inner, $third);
+        $inner = (new StructuredValidationException('inner'))->addViolations($first, $second);
+        $outer = (new StructuredValidationException('outer'))->addViolations($inner, $third);
 
         $this->assertSame([$first, $second], $inner->getViolations());
         $this->assertSame([$first, $second, $third], $outer->getViolations());
@@ -123,9 +124,9 @@ class ValidationExceptionTest extends TestCase
 
     public function testFieldAndPathPropagateToViolations(): void
     {
-        $named = (new ValidationException('named'))->setField('name', 'Name');
-        $unnamed = new ValidationException('max items');
-        $aggregate = (new ValidationException('aggregate'))->addViolations($named, $unnamed);
+        $named = (new StructuredValidationException('named'))->setField('name', 'Name');
+        $unnamed = new StructuredValidationException('max items');
+        $aggregate = (new StructuredValidationException('aggregate'))->addViolations($named, $unnamed);
 
         $localized = new ValidationPathSegment(field: 'localizedfields', language: 'en');
         $brick = new ValidationPathSegment(field: 'attributes', title: 'Attributes', type: 'SaleInformation');
@@ -141,8 +142,8 @@ class ValidationExceptionTest extends TestCase
 
     public function testAddContextDoesNotPropagate(): void
     {
-        $leaf = new ValidationException('leaf');
-        $aggregate = (new ValidationException('aggregate'))->addViolations($leaf);
+        $leaf = new StructuredValidationException('leaf');
+        $aggregate = (new StructuredValidationException('aggregate'))->addViolations($leaf);
         $aggregate->addContext('brick');
 
         $this->assertSame(['brick'], $aggregate->getContextStack());
@@ -152,7 +153,7 @@ class ValidationExceptionTest extends TestCase
     public function testWithMessageKeepsClassAndStructuredData(): void
     {
         $previous = new Exception('previous');
-        $leaf = new ValidationException('leaf');
+        $leaf = new StructuredValidationException('leaf');
         $original = (new TestValidationException('original', 7, $previous))
             ->setTranslation(ValidationMessageKey::MANDATORY, ['a' => 'b'])
             ->setField('title', 'Title')
@@ -179,16 +180,16 @@ class ValidationExceptionTest extends TestCase
 
     public function testWithMessageOfLeafReturnsItselfAsViolation(): void
     {
-        $copy = (new ValidationException('leaf'))->withMessage('leaf fieldname=title');
+        $copy = (new StructuredValidationException('leaf'))->withMessage('leaf fieldname=title');
 
         $this->assertSame([$copy], $copy->getViolations());
     }
 
     public function testLegacyAggregatedMessageIsUnchanged(): void
     {
-        $sub = new ValidationException('Empty mandatory field [ key ] (en)');
+        $sub = new StructuredValidationException('Empty mandatory field [ key ] (en)');
         $sub->addContext('store');
-        $aggregate = new ValidationException('Empty mandatory field [ key ] (en)');
+        $aggregate = new StructuredValidationException('Empty mandatory field [ key ] (en)');
         $aggregate->setSubItems([$sub]);
         $aggregate->addViolations($sub);
         $aggregate->addPathSegment(new ValidationPathSegment(field: 'store', language: 'en'));
@@ -197,6 +198,74 @@ class ValidationExceptionTest extends TestCase
             'Empty mandatory field [ key ] (en) (Empty mandatory field [ key ] (en)[ store ][ store ])',
             $aggregate->getAggregatedMessage()
         );
+    }
+
+    public function testBaseClassIsUnchanged(): void
+    {
+        $methods = [
+            'from',
+            'setTranslation',
+            'getTranslationKey',
+            'getTranslationParameters',
+            'setField',
+            'getFieldName',
+            'getFieldTitle',
+            'addPathSegment',
+            'getPath',
+            'addViolations',
+            'getViolations',
+            'withMessage',
+        ];
+
+        foreach ($methods as $method) {
+            $this->assertFalse(method_exists(ValidationException::class, $method), $method);
+            $this->assertTrue(method_exists(StructuredValidationException::class, $method), $method);
+        }
+    }
+
+    public function testFromReturnsStructuredExceptionUnchanged(): void
+    {
+        $exception = new TestValidationException('structured');
+
+        $this->assertSame($exception, StructuredValidationException::from($exception));
+    }
+
+    public function testFromCopiesPlainException(): void
+    {
+        $previous = new Exception('previous');
+        $sub = new ValidationException('sub');
+        $sub->addContext('subContext');
+        $plain = new ValidationException('Empty mandatory field [ title ]', 3, $previous);
+        $plain->addContext('localizedfields-en');
+        $plain->addContext('outer');
+        $plain->setSubItems([$sub, new Exception('other')]);
+
+        $structured = StructuredValidationException::from($plain);
+
+        $this->assertSame(StructuredValidationException::class, $structured::class);
+        $this->assertSame('Empty mandatory field [ title ]', $structured->getMessage());
+        $this->assertSame(3, $structured->getCode());
+        $this->assertSame($plain, $structured->getPrevious());
+        $this->assertSame(['localizedfields-en', 'outer'], $structured->getContextStack());
+        $this->assertSame($plain->getSubItems(), $structured->getSubItems());
+        $this->assertSame($plain->getAggregatedMessage(), $structured->getAggregatedMessage());
+        $this->assertNull($structured->getTranslationKey());
+        $this->assertSame([$structured], $structured->getViolations());
+    }
+
+    public function testAddViolationsConvertsPlainExceptions(): void
+    {
+        $plain = new ValidationException('plain');
+        $plain->addContext('context');
+        $structured = new StructuredValidationException('structured');
+
+        $aggregate = (new StructuredValidationException('aggregate'))->addViolations($plain, $structured);
+        $violations = $aggregate->getViolations();
+
+        $this->assertCount(2, $violations);
+        $this->assertSame($plain, $violations[0]->getPrevious());
+        $this->assertSame('plain[ context ]', $violations[0]->getAggregatedMessage());
+        $this->assertSame($structured, $violations[1]);
     }
 
     public function testPathSegmentToArray(): void
@@ -228,6 +297,6 @@ class ValidationExceptionTest extends TestCase
 /**
  * @internal
  */
-final class TestValidationException extends ValidationException
+final class TestValidationException extends StructuredValidationException
 {
 }

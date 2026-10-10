@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
@@ -684,8 +685,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
                                     }
+                                    if ($e instanceof StructuredValidationException) {
+                                        throw $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
+                                    }
+                                    $exceptionClass = get_class($e);
 
-                                    throw $e->withMessage($e->getMessage() . ' fieldname=' . $fd->getName());
+                                    throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                                 }
                             } else {
                                 if ($e instanceof Model\Element\ValidationException) {
@@ -698,9 +703,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         }
                     } catch (Model\Element\ValidationException $ve) {
                         $ve->addContext($this->getName() . '-' . $language);
-                        $ve->setField($fd->getName(), $fd->getTitle())
+                        $validationExceptions[] = StructuredValidationException::from($ve)
+                            ->setField($fd->getName(), $fd->getTitle())
                             ->addPathSegment(new ValidationPathSegment(field: $this->getName(), language: $language));
-                        $validationExceptions[] = $ve;
                     }
                 }
             }
@@ -708,13 +713,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         if (count($validationExceptions) > 0) {
             $errors = [];
-            /** @var Element\ValidationException $e */
+            /** @var StructuredValidationException $e */
             foreach ($validationExceptions as $e) {
                 $errors[] = $e->getAggregatedMessage();
             }
             $message = implode(' / ', $errors);
 
-            throw (new Model\Element\ValidationException($message))->addViolations(...$validationExceptions);
+            throw (new StructuredValidationException($message))->addViolations(...$validationExceptions);
         }
     }
 

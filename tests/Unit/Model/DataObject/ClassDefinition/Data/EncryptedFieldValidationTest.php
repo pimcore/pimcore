@@ -15,7 +15,7 @@ namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
-use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Tests\Support\Test\TestCase;
 
@@ -33,8 +33,8 @@ class EncryptedFieldValidationTest extends TestCase
         // the delegate alone reports the value, which is what the wrapper has to strip
         try {
             $delegate->checkValidity('s3cret-plain');
-            $this->fail('Expected a ValidationException');
-        } catch (ValidationException $exception) {
+            $this->fail('Expected a StructuredValidationException');
+        } catch (StructuredValidationException $exception) {
             $this->assertSame('s3cret-plain', $exception->getTranslationParameters()['value']);
         }
 
@@ -44,10 +44,41 @@ class EncryptedFieldValidationTest extends TestCase
 
         try {
             $field->checkValidity('s3cret-plain');
-            $this->fail('Expected a ValidationException');
-        } catch (ValidationException $exception) {
+            $this->fail('Expected a StructuredValidationException');
+        } catch (StructuredValidationException $exception) {
             $this->assertSame(ValidationMessageKey::REGEX_MISMATCH->value, $exception->getTranslationKey());
             $this->assertSame(['regex' => '^[0-9]+$'], $exception->getTranslationParameters());
+        }
+    }
+
+    public function testValueIsStrippedFromNestedViolations(): void
+    {
+        $delegate = new class() extends Input {
+            public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
+            {
+                $leaf = (new StructuredValidationException('leaf'))
+                    ->setTranslation(ValidationMessageKey::REGEX_MISMATCH, ['regex' => '^a$', 'value' => $data]);
+
+                throw (new StructuredValidationException('aggregate'))
+                    ->setTranslation('custom.aggregate', ['value' => $data])
+                    ->addViolations($leaf);
+            }
+        };
+        $delegate->setName('secret');
+
+        $field = new EncryptedField();
+        $field->setName('secret');
+        $field->delegate = $delegate;
+
+        try {
+            $field->checkValidity('s3cret-plain');
+            $this->fail('Expected a StructuredValidationException');
+        } catch (StructuredValidationException $exception) {
+            $this->assertSame([], $exception->getTranslationParameters());
+            $this->assertCount(1, $exception->getViolations());
+            $leaf = $exception->getViolations()[0];
+            $this->assertSame(ValidationMessageKey::REGEX_MISMATCH->value, $leaf->getTranslationKey());
+            $this->assertSame(['regex' => '^a$'], $leaf->getTranslationParameters());
         }
     }
 
@@ -63,8 +94,8 @@ class EncryptedFieldValidationTest extends TestCase
 
         try {
             $field->checkValidity('');
-            $this->fail('Expected a ValidationException');
-        } catch (ValidationException $exception) {
+            $this->fail('Expected a StructuredValidationException');
+        } catch (StructuredValidationException $exception) {
             $this->assertSame(ValidationMessageKey::MANDATORY->value, $exception->getTranslationKey());
             $this->assertSame([], $exception->getTranslationParameters());
         }
