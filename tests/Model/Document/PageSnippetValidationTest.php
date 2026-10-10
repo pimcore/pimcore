@@ -34,7 +34,7 @@ class PageSnippetValidationTest extends ModelTestCase
         $exception = $this->saveExpectingFailure($this->createPage()->setMissingRequiredEditable(true));
 
         $this->assertSame(self::MESSAGE, $exception->getMessage());
-        $this->assertSame(ValidationMessageKey::MISSING_REQUIRED_EDITABLE->value, $exception->getTranslationKey());
+        $this->assertSame(ValidationMessageKey::MISSING_REQUIRED_EDITABLES->value, $exception->getTranslationKey());
         $this->assertNull($exception->getFieldName());
         $this->assertSame([$exception], $exception->getViolations());
     }

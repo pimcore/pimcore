@@ -685,7 +685,7 @@ abstract class PageSnippet extends Model\Document
 
         if ($this->missingRequiredEditableNames === []) {
             // the flag was set from outside, the editables are unknown
-            return $exception->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLE);
+            return $exception->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLES);
         }
 
         foreach ($this->missingRequiredEditableNames as $editableName) {

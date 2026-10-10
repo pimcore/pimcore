@@ -76,6 +76,9 @@ enum ValidationMessageKey: string
     case UNIQUE_CONSTRAINT = 'validation.unique_constraint';
     case MISSING_REQUIRED_EDITABLE = 'validation.missing_required_editable';
 
+    /** the document is missing required editables, which ones is unknown */
+    case MISSING_REQUIRED_EDITABLES = 'validation.missing_required_editables';
+
     /** parameters: filename, max_megapixels, suggested_width, suggested_height */
     case IMAGE_TOO_LARGE = 'validation.image_too_large';
 }
