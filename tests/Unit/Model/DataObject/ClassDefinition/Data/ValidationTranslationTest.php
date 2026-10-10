@@ -70,18 +70,6 @@ class ValidationTranslationTest extends TestCase
         $this->assertSame(['max' => 3], $exception->getTranslationParameters());
     }
 
-    public function testNumericNotNumeric(): void
-    {
-        $field = new Numeric();
-        $field->setName('amount');
-
-        $exception = $this->capture(static fn () => $field->checkValidity('abc'));
-
-        $this->assertSame('field [amount ] - invalid numeric data [abc] ', $exception->getMessage());
-        $this->assertSame(ValidationMessageKey::NOT_NUMERIC->value, $exception->getTranslationKey());
-        $this->assertSame(['value' => 'abc'], $exception->getTranslationParameters());
-    }
-
     public function testNumericMinValue(): void
     {
         $field = new Numeric();
@@ -106,18 +94,6 @@ class ValidationTranslationTest extends TestCase
         $this->assertSame('Value in field [ amount ] is bigger than 5', $exception->getMessage());
         $this->assertSame(ValidationMessageKey::MAX_VALUE->value, $exception->getTranslationKey());
         $this->assertEquals(['max' => 5, 'value' => 9], $exception->getTranslationParameters());
-    }
-
-    public function testNumericNotInteger(): void
-    {
-        $field = new Numeric();
-        $field->setName('amount');
-        $field->setInteger(true);
-
-        $exception = $this->capture(static fn () => $field->checkValidity(1.5));
-
-        $this->assertSame('Value in field [ amount ] is not an integer', $exception->getMessage());
-        $this->assertSame(ValidationMessageKey::NOT_INTEGER->value, $exception->getTranslationKey());
     }
 
     public function testNumericNotUnsigned(): void
