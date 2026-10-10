@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
+use Pimcore\Messenger\ElementDependenciesMessage;
+use Pimcore\Messenger\Handler\ElementDependenciesHandler;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -23,6 +26,10 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\AbstractLogger;
+use Psr\Log\NullLogger;
+use RuntimeException;
+use Stringable;
 
 /**
  * Class DependenciesTest
@@ -183,4 +190,78 @@ class DependenciesTest extends ModelTestCase
         $targets[2]->setMultihref([$source]);
         $targets[2]->save();
     }
+
+    /**
+     * Regression test: the dependencies handler shows unpublished elements and switches off the inherited values
+     * while it resolves the dependencies. A failure must restore both modes, the handler runs in long-lived
+     * messenger workers.
+     */
+    public function testDependenciesHandlerRestoresStaticModesOnFailure(): void
+    {
+        $object = new class() extends Unittest {
+            public function resolveDependencies(): array
+            {
+                throw new RuntimeException('resolving dependencies failed');
+            }
+        };
+        $object->setId(PHP_INT_MAX);
+        RuntimeCache::set('object_' . PHP_INT_MAX, $object);
+
+        $getInheritedValues = DataObject::getGetInheritedValues();
+        $hideUnpublished = DataObject::getHideUnpublished();
+        DataObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+
+        try {
+            (new ElementDependenciesHandler(new NullLogger()))(new ElementDependenciesMessage('object', PHP_INT_MAX));
+            $this->fail('The handler must pass on the failure.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('resolving dependencies failed', $e->getMessage());
+        } finally {
+            $restoredGetInheritedValues = DataObject::getGetInheritedValues();
+            $restoredHideUnpublished = DataObject::getHideUnpublished();
+            DataObject::setGetInheritedValues($getInheritedValues);
+            DataObject::setHideUnpublished($hideUnpublished);
+            RuntimeCache::set('object_' . PHP_INT_MAX, null);
+        }
+
+        $this->assertTrue($restoredGetInheritedValues);
+        $this->assertTrue($restoredHideUnpublished);
+    }
+
+    /**
+     * Regression test: the modes are restored for any failure after they were switched, not only for one of
+     * resolveDependencies().
+     */
+    public function testDependenciesHandlerRestoresStaticModesWhenLoggingFails(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $logger = new class() extends AbstractLogger {
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                throw new RuntimeException('logging failed');
+            }
+        };
+
+        $getInheritedValues = DataObject::getGetInheritedValues();
+        $hideUnpublished = DataObject::getHideUnpublished();
+        DataObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+
+        try {
+            (new ElementDependenciesHandler($logger))(new ElementDependenciesMessage('object', $object->getId()));
+            $this->fail('The handler must pass on the failure.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('logging failed', $e->getMessage());
+        } finally {
+            $restoredGetInheritedValues = DataObject::getGetInheritedValues();
+            $restoredHideUnpublished = DataObject::getHideUnpublished();
+            DataObject::setGetInheritedValues($getInheritedValues);
+            DataObject::setHideUnpublished($hideUnpublished);
+        }
+
+        $this->assertTrue($restoredGetInheritedValues);
+        $this->assertTrue($restoredHideUnpublished);
+    }
 }
+

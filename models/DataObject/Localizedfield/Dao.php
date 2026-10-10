@@ -150,12 +150,6 @@ class Dao extends Model\Dao\AbstractDao
             ['suppressEnrichment' => true]
         );
 
-        /**
-         * We temporary enable the runtime cache so we don't have to calculate the tree for each language
-         * which is a great performance gain if you have a lot of languages
-         */
-        DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
-
         $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
         if (!$ignoreLocalizedQueryFallback) {
             $this->model->markLanguageAsDirtyByFallback();
@@ -163,323 +157,331 @@ class Dao extends Model\Dao\AbstractDao
 
         $flag = DataObject\Localizedfield::getGetFallbackValues();
 
-        if (!$ignoreLocalizedQueryFallback) {
-            DataObject\Localizedfield::setGetFallbackValues(true);
-        }
+        try {
+            /**
+             * We temporary enable the runtime cache so we don't have to calculate the tree for each language
+             * which is a great performance gain if you have a lot of languages
+             */
+            DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
 
-        $inheritanceEnabled = $object->getClass()->getAllowInherit();
-
-        foreach ($validLanguages as $language) {
-            if (empty($params['newParent'])
-                && !empty($params['isUpdate'])
-                && !$this->model->isLanguageDirty($language)
-                && !$forceUpdate
-            ) {
-                continue;
+            if (!$ignoreLocalizedQueryFallback) {
+                DataObject\Localizedfield::setGetFallbackValues(true);
             }
 
-            $inheritedValues = DataObject::doGetInheritedValues();
+            $inheritanceEnabled = $object->getClass()->getAllowInherit();
 
-            try {
-                DataObject::setGetInheritedValues(false);
-
-                $insertData = [
-                    'ooo_id' => $this->model->getObject()->getId(),
-                    'language' => $language,
-                ];
-
-                if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
-                    $insertData['fieldname'] = $context['fieldname'];
-                    $insertData['index'] = $context['index'] ?? 0;
+            foreach ($validLanguages as $language) {
+                if (empty($params['newParent'])
+                    && !empty($params['isUpdate'])
+                    && !$this->model->isLanguageDirty($language)
+                    && !$forceUpdate
+                ) {
+                    continue;
                 }
 
-                foreach ($fieldDefinitions as $fieldName => $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        // for fieldtypes which have their own save algorithm eg. relational data types, ...
-                        $context = $this->model->getContext() ? $this->model->getContext() : [];
-                        if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                            $context['subContainerType'] = 'localizedfield';
-                        }
-
-                        $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
-                        $childParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => $isUpdate, 'context' => $context]);
-
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                            $saveLocalizedRelations = $forceUpdate || ($params['saveRelationalData']['saveLocalizedRelations'] ?? false);
-                            if (($saveLocalizedRelations && $container instanceof DataObject\Fieldcollection\Definition)
-                                || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
-                                        && $this->model->isLanguageDirty($language))
-                                    || $saveLocalizedRelations)) {
-                                if ($saveLocalizedRelations) {
-                                    $childParams['forceSave'] = true;
-                                }
-                                $fd->save($this->model, $childParams);
-                            }
-                        } else {
-                            $fd->save($this->model, $childParams);
-                        }
-                    }
-                    if ($fd instanceof ResourcePersistenceAwareInterface) {
-                        if (is_array($fd->getColumnType())) {
-                            $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
-                            $insertDataArray = $fd->getDataForResource(
-                                $this->model->getLocalizedValue($fieldName, $language, true),
-                                $object,
-                                $fieldDefinitionParams
-                            );
-                            $insertData = array_merge($insertData, $insertDataArray);
-                            $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams), $language, false);
-                        } else {
-                            $isUpdate = $params['isUpdate'] ?? false;
-                            if ($context['containerType'] === 'fieldcollection') {
-                                $isUpdate = $this->model->getDirtyLanguages() === null;
-                            }
-                            $fieldDefinitionParams = $this->getFieldDefinitionParams(
-                                $fieldName,
-                                $language,
-                                ['isUpdate' => $isUpdate]
-                            );
-                            $insertData[$fd->getName()] = $fd->getDataForResource(
-                                $this->model->getLocalizedValue($fieldName, $language, true),
-                                $object,
-                                $fieldDefinitionParams
-                            );
-                            $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertData[$fd->getName()], $object, $fieldDefinitionParams), $language, false);
-                        }
-                    }
-                }
-
-                $storeTable = $this->getTableName();
-                $queryTable = $this->getQueryTableName().'_'.$language;
+                $inheritedValues = DataObject::doGetInheritedValues();
 
                 try {
-                    if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
-                        $language
-                    )) {
-                        // on an update the language row normally exists and updateOrInsert() is a single
-                        // UPDATE; a new object's rows are plain inserts either way. isUpdate describes the
-                        // object, not the language: a language written for the first time on an existing
-                        // object (added to the object, or configured after it was created) misses the UPDATE
-                        // and is inserted by the fallback - one extra UPDATE and one SELECT, once per object
-                        // and language. A per-language existence signal is not available here for objects
-                        // that come from the cache without a load(), and a SELECT per save would cost more
-                        // than that one-time miss.
-                        if (!empty($params['isUpdate'])) {
-                            Helper::updateOrInsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
-                        } else {
-                            Helper::upsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
-                        }
-                    }
-                } catch (TableNotFoundException $e) {
-                    // if the table doesn't exist -> create it! deferred creation for object bricks ...
-                    $this->createMissingTableAndRetry();
-                }
+                    DataObject::setGetInheritedValues(false);
 
-                if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
-                    // query table
-                    $data = [];
-                    $data['ooo_id'] = $this->model->getObject()->getId();
-                    $data['language'] = $language;
+                    $insertData = [
+                        'ooo_id' => $this->model->getObject()->getId(),
+                        'language' => $language,
+                    ];
 
-                    $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper(
-                        $object->getClassId(),
-                        'ooo_id',
-                        $storeTable,
-                        $queryTable
-                    );
-                    $this->inheritanceHelper->resetFieldsToCheck();
-
-                    // get fields which shouldn't be updated
-                    $untouchable = [];
-
-                    // @TODO: currently we do not support lazyloading in localized fields
-
-                    $oldData = [];
-                    $parentData = null;
-
-                    // both the currently stored data and the data of the parent object are only needed to
-                    // determine which fields have to be propagated to the child objects, so there is no point
-                    // in reading the query table at all if inheritance is disabled. this saves one SELECT per
-                    // language and object on every save.
-                    if ($inheritanceEnabled) {
-                        $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
-                        )." AND language = '".$language."'";
-
-                        try {
-                            $oldData = $this->db->fetchAssociative($sql);
-                        } catch (TableNotFoundException $e) {
-                            // if the table doesn't exist -> create it! this gives us the flexibility to add new
-                            // languages on the fly without saving all classes having localized fields
-                            $this->createMissingTableAndRetry();
-                        }
-
-                        // get the next suitable parent for inheritance
-                        $parentForInheritance = $object->getNextParentForInheritance();
-                        if ($parentForInheritance) {
-                            // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                            // we cannot DataObject\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
-                            // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
-                            // so the data of the parent cannot be changed while this transaction is on progress
-                            $parentData = $this->db->fetchAssociative(
-                                'SELECT * FROM '.$queryTable.' WHERE ooo_id = ? AND language = ? FOR UPDATE',
-                                [$parentForInheritance->getId(), $language]
-                            );
-                        }
+                    if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+                        $insertData['fieldname'] = $context['fieldname'];
+                        $insertData['index'] = $context['index'] ?? 0;
                     }
 
-                    $nonInheritableColumns = [];
+                    foreach ($fieldDefinitions as $fieldName => $fd) {
+                        if ($fd instanceof CustomResourcePersistingInterface) {
+                            // for fieldtypes which have their own save algorithm eg. relational data types, ...
+                            $context = $this->model->getContext() ? $this->model->getContext() : [];
+                            if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
+                                $context['subContainerType'] = 'localizedfield';
+                            }
 
-                    foreach ($fieldDefinitions as $fd) {
-                        if ($fd instanceof QueryResourcePersistenceAwareInterface) {
-                            $key = $fd->getName();
+                            $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
+                            $childParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => $isUpdate, 'context' => $context]);
 
-                            // exclude untouchables if value is not an array - this means data has not been loaded
-                            if (!in_array($key, $untouchable)) {
-                                $localizedValue = $this->model->getLocalizedValue($key, $language, $ignoreLocalizedQueryFallback);
-                                $insertData = $fd->getDataForQueryResource(
-                                    $localizedValue,
-                                    $object,
-                                    $this->getFieldDefinitionParams($key, $language)
-                                );
-                                $isEmpty = $fd->isEmpty($localizedValue);
-
-                                if (is_array($insertData)) {
-                                    $columnNames = array_keys($insertData);
-                                    $data = array_merge($data, $insertData);
-                                } else {
-                                    $columnNames = [$key];
-                                    $data[$key] = $insertData;
-                                }
-
-                                if (!$fd->supportsInheritance()) {
-                                    $nonInheritableColumns = array_merge($nonInheritableColumns, $columnNames);
-                                }
-
-                                // if the current value is empty and we have data from the parent, we just use it
-                                if ($isEmpty && $parentData && $fd->supportsInheritance()) {
-                                    foreach ($columnNames as $columnName) {
-                                        if (array_key_exists($columnName, $parentData)) {
-                                            $data[$columnName] = $parentData[$columnName];
-                                            if (is_array($insertData)) {
-                                                $insertData[$columnName] = $parentData[$columnName];
-                                            } else {
-                                                $insertData = $parentData[$columnName];
-                                            }
-                                        }
+                            if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                                $saveLocalizedRelations = $forceUpdate || ($params['saveRelationalData']['saveLocalizedRelations'] ?? false);
+                                if (($saveLocalizedRelations && $container instanceof DataObject\Fieldcollection\Definition)
+                                    || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
+                                            && $this->model->isLanguageDirty($language))
+                                        || $saveLocalizedRelations)) {
+                                    if ($saveLocalizedRelations) {
+                                        $childParams['forceSave'] = true;
                                     }
-                                }
-
-                                if ($inheritanceEnabled && $fd->supportsInheritance()) {
-                                    //get changed fields for inheritance
-                                    if ($fd->isRelationType()) {
-                                        if (is_array($insertData)) {
-                                            $doInsert = false;
-                                            foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                                $oldDataValue = $oldData[$insertDataKey] ?? null;
-                                                $parentDataValue = $parentData[$insertDataKey] ?? null;
-                                                if ($isEmpty && $oldDataValue == $parentDataValue) {
-                                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                                } elseif ($oldDataValue != $insertDataValue) {
-                                                    $doInsert = true;
-
-                                                    break;
-                                                }
-                                            }
-
-                                            if ($doInsert) {
-                                                $this->inheritanceHelper->addRelationToCheck(
-                                                    $key,
-                                                    $fd,
-                                                    array_keys($insertData)
-                                                );
-                                            }
-                                        } else {
-                                            $oldDataValue = $oldData[$key] ?? null;
-                                            $parentDataValue = $parentData[$key] ?? null;
-                                            if ($isEmpty && $oldDataValue == $parentDataValue) {
-                                                // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                            } elseif ($oldDataValue != $insertData) {
-                                                $this->inheritanceHelper->addRelationToCheck($key, $fd);
-                                            }
-                                        }
-                                    } else {
-                                        if (is_array($insertData)) {
-                                            foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                                $oldDataValue = $oldData[$insertDataKey] ?? null;
-                                                $parentDataValue = $parentData[$insertDataKey] ?? null;
-                                                if ($isEmpty && $oldDataValue == $parentDataValue) {
-                                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                                } elseif ($oldDataValue != $insertDataValue) {
-                                                    $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
-                                                }
-                                            }
-                                        } else {
-                                            $oldDataValue = $oldData[$key] ?? null;
-                                            $parentDataValue = $parentData[$key] ?? null;
-                                            if ($isEmpty && $oldDataValue == $parentDataValue) {
-                                                // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                            } elseif ($oldDataValue != $insertData) {
-                                                // data changed, do check and update
-                                                $this->inheritanceHelper->addFieldToCheck($key, $fd);
-                                            }
-                                        }
-                                    }
+                                    $fd->save($this->model, $childParams);
                                 }
                             } else {
-                                Logger::debug(
-                                    'Excluding untouchable query value for object [ '.$this->model->getObjectId() ." ]  key [ $key ] because it has not been loaded"
+                                $fd->save($this->model, $childParams);
+                            }
+                        }
+                        if ($fd instanceof ResourcePersistenceAwareInterface) {
+                            if (is_array($fd->getColumnType())) {
+                                $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
+                                $insertDataArray = $fd->getDataForResource(
+                                    $this->model->getLocalizedValue($fieldName, $language, true),
+                                    $object,
+                                    $fieldDefinitionParams
                                 );
+                                $insertData = array_merge($insertData, $insertDataArray);
+                                $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams), $language, false);
+                            } else {
+                                $isUpdate = $params['isUpdate'] ?? false;
+                                if ($context['containerType'] === 'fieldcollection') {
+                                    $isUpdate = $this->model->getDirtyLanguages() === null;
+                                }
+                                $fieldDefinitionParams = $this->getFieldDefinitionParams(
+                                    $fieldName,
+                                    $language,
+                                    ['isUpdate' => $isUpdate]
+                                );
+                                $insertData[$fd->getName()] = $fd->getDataForResource(
+                                    $this->model->getLocalizedValue($fieldName, $language, true),
+                                    $object,
+                                    $fieldDefinitionParams
+                                );
+                                $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertData[$fd->getName()], $object, $fieldDefinitionParams), $language, false);
                             }
                         }
                     }
 
+                    $storeTable = $this->getTableName();
                     $queryTable = $this->getQueryTableName().'_'.$language;
 
                     try {
-                        // as for the store table above: the query row of a language written for the first
-                        // time on an existing object misses the UPDATE once and is inserted by the fallback
-                        if (!empty($params['isUpdate'])) {
-                            Helper::updateOrInsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
-                        } else {
-                            Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
+                            $language
+                        )) {
+                            // on an update the language row normally exists and updateOrInsert() is a single
+                            // UPDATE; a new object's rows are plain inserts either way. isUpdate describes the
+                            // object, not the language: a language written for the first time on an existing
+                            // object (added to the object, or configured after it was created) misses the UPDATE
+                            // and is inserted by the fallback - one extra UPDATE and one SELECT, once per object
+                            // and language. A per-language existence signal is not available here for objects
+                            // that come from the cache without a load(), and a SELECT per save would cost more
+                            // than that one-time miss.
+                            if (!empty($params['isUpdate'])) {
+                                Helper::updateOrInsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
+                            } else {
+                                Helper::upsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
+                            }
                         }
                     } catch (TableNotFoundException $e) {
-                        // with inheritance disabled this is the first statement touching the query table,
-                        // so the deferred creation of a missing language table has to be handled here as well
+                        // if the table doesn't exist -> create it! deferred creation for object bricks ...
                         $this->createMissingTableAndRetry();
                     }
 
-                    if ($inheritanceEnabled) {
-                        $context = isset($params['context']) ? $params['context'] : [];
-                        if ($context['containerType'] === 'objectbrick') {
-                            $inheritanceRelationContext = [
-                                'ownertype' => 'localizedfield',
-                                'ownername' => '/objectbrick~' . $context['fieldname'] . '/' . $context['containerKey'] . '/localizedfield~localizedfield',
-                            ];
-                        } else {
-                            $inheritanceRelationContext = [
-                                'ownertype' => 'localizedfield',
-                                'ownername' => 'localizedfield',
-                            ];
-                        }
-                        $this->inheritanceHelper->doUpdate($object->getId(), true, [
-                            'language' => $language,
-                            'inheritanceRelationContext' => $inheritanceRelationContext,
-                            'nonInheritableColumns' => $nonInheritableColumns,
-                        ]);
-                    }
-                    $this->inheritanceHelper->resetFieldsToCheck();
-                }
-            } finally {
-                DataObject::setGetInheritedValues($inheritedValues);
-            }
-        } // foreach language
+                    if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
+                        // query table
+                        $data = [];
+                        $data['ooo_id'] = $this->model->getObject()->getId();
+                        $data['language'] = $language;
 
-        if (!$ignoreLocalizedQueryFallback) {
-            DataObject\Localizedfield::setGetFallbackValues($flag);
+                        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper(
+                            $object->getClassId(),
+                            'ooo_id',
+                            $storeTable,
+                            $queryTable
+                        );
+                        $this->inheritanceHelper->resetFieldsToCheck();
+
+                        // get fields which shouldn't be updated
+                        $untouchable = [];
+
+                        // @TODO: currently we do not support lazyloading in localized fields
+
+                        $oldData = [];
+                        $parentData = null;
+
+                        // both the currently stored data and the data of the parent object are only needed to
+                        // determine which fields have to be propagated to the child objects, so there is no point
+                        // in reading the query table at all if inheritance is disabled. this saves one SELECT per
+                        // language and object on every save.
+                        if ($inheritanceEnabled) {
+                            $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
+                            )." AND language = '".$language."'";
+
+                            try {
+                                $oldData = $this->db->fetchAssociative($sql);
+                            } catch (TableNotFoundException $e) {
+                                // if the table doesn't exist -> create it! this gives us the flexibility to add new
+                                // languages on the fly without saving all classes having localized fields
+                                $this->createMissingTableAndRetry();
+                            }
+
+                            // get the next suitable parent for inheritance
+                            $parentForInheritance = $object->getNextParentForInheritance();
+                            if ($parentForInheritance) {
+                                // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
+                                // we cannot DataObject\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
+                                // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
+                                // so the data of the parent cannot be changed while this transaction is on progress
+                                $parentData = $this->db->fetchAssociative(
+                                    'SELECT * FROM '.$queryTable.' WHERE ooo_id = ? AND language = ? FOR UPDATE',
+                                    [$parentForInheritance->getId(), $language]
+                                );
+                            }
+                        }
+
+                        $nonInheritableColumns = [];
+
+                        foreach ($fieldDefinitions as $fd) {
+                            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+                                $key = $fd->getName();
+
+                                // exclude untouchables if value is not an array - this means data has not been loaded
+                                if (!in_array($key, $untouchable)) {
+                                    $localizedValue = $this->model->getLocalizedValue($key, $language, $ignoreLocalizedQueryFallback);
+                                    $insertData = $fd->getDataForQueryResource(
+                                        $localizedValue,
+                                        $object,
+                                        $this->getFieldDefinitionParams($key, $language)
+                                    );
+                                    $isEmpty = $fd->isEmpty($localizedValue);
+
+                                    if (is_array($insertData)) {
+                                        $columnNames = array_keys($insertData);
+                                        $data = array_merge($data, $insertData);
+                                    } else {
+                                        $columnNames = [$key];
+                                        $data[$key] = $insertData;
+                                    }
+
+                                    if (!$fd->supportsInheritance()) {
+                                        $nonInheritableColumns = array_merge($nonInheritableColumns, $columnNames);
+                                    }
+
+                                    // if the current value is empty and we have data from the parent, we just use it
+                                    if ($isEmpty && $parentData && $fd->supportsInheritance()) {
+                                        foreach ($columnNames as $columnName) {
+                                            if (array_key_exists($columnName, $parentData)) {
+                                                $data[$columnName] = $parentData[$columnName];
+                                                if (is_array($insertData)) {
+                                                    $insertData[$columnName] = $parentData[$columnName];
+                                                } else {
+                                                    $insertData = $parentData[$columnName];
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if ($inheritanceEnabled && $fd->supportsInheritance()) {
+                                        //get changed fields for inheritance
+                                        if ($fd->isRelationType()) {
+                                            if (is_array($insertData)) {
+                                                $doInsert = false;
+                                                foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                                    $oldDataValue = $oldData[$insertDataKey] ?? null;
+                                                    $parentDataValue = $parentData[$insertDataKey] ?? null;
+                                                    if ($isEmpty && $oldDataValue == $parentDataValue) {
+                                                        // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                                    } elseif ($oldDataValue != $insertDataValue) {
+                                                        $doInsert = true;
+
+                                                        break;
+                                                    }
+                                                }
+
+                                                if ($doInsert) {
+                                                    $this->inheritanceHelper->addRelationToCheck(
+                                                        $key,
+                                                        $fd,
+                                                        array_keys($insertData)
+                                                    );
+                                                }
+                                            } else {
+                                                $oldDataValue = $oldData[$key] ?? null;
+                                                $parentDataValue = $parentData[$key] ?? null;
+                                                if ($isEmpty && $oldDataValue == $parentDataValue) {
+                                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                                } elseif ($oldDataValue != $insertData) {
+                                                    $this->inheritanceHelper->addRelationToCheck($key, $fd);
+                                                }
+                                            }
+                                        } else {
+                                            if (is_array($insertData)) {
+                                                foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                                    $oldDataValue = $oldData[$insertDataKey] ?? null;
+                                                    $parentDataValue = $parentData[$insertDataKey] ?? null;
+                                                    if ($isEmpty && $oldDataValue == $parentDataValue) {
+                                                        // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                                    } elseif ($oldDataValue != $insertDataValue) {
+                                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                                                    }
+                                                }
+                                            } else {
+                                                $oldDataValue = $oldData[$key] ?? null;
+                                                $parentDataValue = $parentData[$key] ?? null;
+                                                if ($isEmpty && $oldDataValue == $parentDataValue) {
+                                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                                } elseif ($oldDataValue != $insertData) {
+                                                    // data changed, do check and update
+                                                    $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Logger::debug(
+                                        'Excluding untouchable query value for object [ '.$this->model->getObjectId() ." ]  key [ $key ] because it has not been loaded"
+                                    );
+                                }
+                            }
+                        }
+
+                        $queryTable = $this->getQueryTableName().'_'.$language;
+
+                        try {
+                            // as for the store table above: the query row of a language written for the first
+                            // time on an existing object misses the UPDATE once and is inserted by the fallback
+                            if (!empty($params['isUpdate'])) {
+                                Helper::updateOrInsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                            } else {
+                                Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                            }
+                        } catch (TableNotFoundException $e) {
+                            // with inheritance disabled this is the first statement touching the query table,
+                            // so the deferred creation of a missing language table has to be handled here as well
+                            $this->createMissingTableAndRetry();
+                        }
+
+                        if ($inheritanceEnabled) {
+                            $context = isset($params['context']) ? $params['context'] : [];
+                            if ($context['containerType'] === 'objectbrick') {
+                                $inheritanceRelationContext = [
+                                    'ownertype' => 'localizedfield',
+                                    'ownername' => '/objectbrick~' . $context['fieldname'] . '/' . $context['containerKey'] . '/localizedfield~localizedfield',
+                                ];
+                            } else {
+                                $inheritanceRelationContext = [
+                                    'ownertype' => 'localizedfield',
+                                    'ownername' => 'localizedfield',
+                                ];
+                            }
+                            $this->inheritanceHelper->doUpdate($object->getId(), true, [
+                                'language' => $language,
+                                'inheritanceRelationContext' => $inheritanceRelationContext,
+                                'nonInheritableColumns' => $nonInheritableColumns,
+                            ]);
+                        }
+                        $this->inheritanceHelper->resetFieldsToCheck();
+                    }
+                } finally {
+                    DataObject::setGetInheritedValues($inheritedValues);
+                }
+            } // foreach language
+        } finally {
+            if (!$ignoreLocalizedQueryFallback) {
+                DataObject\Localizedfield::setGetFallbackValues($flag);
+            }
+            DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
+            DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
         }
-        DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
-        DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
     }
 
     /**
