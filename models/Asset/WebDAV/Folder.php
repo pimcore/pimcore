@@ -105,15 +105,27 @@ class Folder extends DAV\Collection
      */
     public function createFile($name, $data = null)
     {
+        // check authentication and permission before touching the disk, so an unauthorized
+        // request never causes a temp-file write
+        $user = AdminTool::getCurrentUser();
+        if ($user === null) {
+            throw new DAV\Exception\Forbidden('No authenticated user available');
+        }
+
+        if (!$this->asset->isAllowed('create')) {
+            throw new DAV\Exception\Forbidden('Missing "create" permission');
+        }
+
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
         if (is_resource($data)) {
             @rewind($data);
         }
-        file_put_contents($tmpFile, $data);
 
-        $user = AdminTool::getCurrentUser();
+        try {
+            if (file_put_contents($tmpFile, $data) === false) {
+                throw new DAV\Exception('Unable to write temporary file');
+            }
 
-        if ($this->asset->isAllowed('create')) {
             Asset::create($this->asset->getId(), [
                 'filename' => Element\Service::getValidKey($name, 'asset'),
                 'sourcePath' => $tmpFile,
@@ -121,14 +133,12 @@ class Folder extends DAV\Collection
                 'userOwner' => $user->getId(),
             ]);
 
-            unlink($tmpFile);
-
             return null;
+        } finally {
+            if (file_exists($tmpFile)) {
+                unlink($tmpFile);
+            }
         }
-
-        unlink($tmpFile);
-
-        throw new DAV\Exception\Forbidden('Missing "create" permission');
     }
 
     /**
@@ -139,6 +149,9 @@ class Folder extends DAV\Collection
     public function createDirectory($name): void
     {
         $user = AdminTool::getCurrentUser();
+        if ($user === null) {
+            throw new DAV\Exception\Forbidden('No authenticated user available');
+        }
 
         if ($this->asset->isAllowed('create')) {
             $asset = Asset::create($this->asset->getId(), [
