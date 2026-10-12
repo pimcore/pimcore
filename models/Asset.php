@@ -1195,10 +1195,10 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns the full path of the asset (listener aware)
-     *
-     *
-     * @internal
+     * Returns the frontend URL path of the asset: the full path prefixed with
+     * `pimcore.assets.frontend_prefixes.source` and passed through the FrontendEvents::ASSET_PATH
+     * event, regardless of the current context (frontend request, admin, CLI, workers).
+     * getFullPath() returns the same value in a frontend context only.
      */
     public function getFrontendFullPath(): string
     {
