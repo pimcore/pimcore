@@ -343,11 +343,38 @@ final class SqlTest extends TestCase
         $this->assertStringContainsString("1 AS `a``b`, 'LOAD_FILE(x)' AS lit", $sql);
     }
 
-    public function testRejectsForbiddenFunctionInsideUnterminatedQuotedRegion(): void
+    public function testRejectsUnterminatedQuotedRegion(): void
     {
-        // An unterminated quote is not a quoted region as far as validation is concerned,
-        // so what follows it is still scanned.
-        $config = $this->configWith('sql', "1 AS 'a, LOAD_FILE(b)");
+        // An unterminated quote is never part of a valid fragment, whatever follows it.
+        foreach (["1 AS 'a, LOAD_FILE(b)", '1 AS "a', '1 AS `a', "1 AS 'a\\'"] as $fragment) {
+            try {
+                $this->adapter()->exposedBuildQueryString($this->configWith('sql', $fragment));
+                $this->fail('Expected unterminated quoted region to be rejected: ' . $fragment);
+            } catch (InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function testRejectsQuoteOpenedInOneFragmentAndClosedInAnother(): void
+    {
+        // The fragments are validated one by one but concatenated into a single statement, so a
+        // quoted region must never be able to span two of them.
+        $config = new stdClass();
+        $config->sql = "SELECT 'x";
+        $config->from = "', LOAD_FILE('/etc/hostname') AS leak, 'z'";
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsQuoteOpenedInWhereAndClosedInGroupBy(): void
+    {
+        $config = new stdClass();
+        $config->sql = 'SELECT id';
+        $config->from = 'my_table';
+        $config->where = "name = 'x";
+        $config->groupby = "', LOAD_FILE('/etc/hostname')";
 
         $this->expectException(InvalidArgumentException::class);
         $this->adapter()->exposedBuildQueryString($config);

@@ -224,11 +224,16 @@ class Sql extends AbstractAdapter
      * backslash escapes the next character and the delimiter can also be doubled to escape
      * itself; inside `...`, only doubling the backtick escapes it - there is no backslash
      * escaping for identifiers.
+     *
+     * An unterminated quoted region is rejected: no valid fragment contains one, and the
+     * fragments are validated separately but concatenated afterwards, so an opening quote in
+     * one fragment could otherwise be closed by a quote in another.
+     *
+     * @throws InvalidArgumentException
      */
     private function stripQuotedRegionsForValidation(string $sql): string
     {
         $result = '';
-        $buffer = '';
         $length = strlen($sql);
         $openQuote = null;
 
@@ -238,7 +243,6 @@ class Sql extends AbstractAdapter
             if ($openQuote === null) {
                 if ($char === "'" || $char === '"' || $char === '`') {
                     $openQuote = $char;
-                    $buffer = $char;
                 } else {
                     $result .= $char;
                 }
@@ -246,13 +250,10 @@ class Sql extends AbstractAdapter
                 continue;
             }
 
-            $buffer .= $char;
-
             if ($openQuote !== '`' && $char === '\\' && $i + 1 < $length) {
                 // Backslash escapes the next byte; consume it as a unit so a real closing
                 // quote right after it is not mistaken for an escaped one (or vice versa).
                 $i++;
-                $buffer .= $sql[$i];
 
                 continue;
             }
@@ -261,7 +262,6 @@ class Sql extends AbstractAdapter
                 if ($i + 1 < $length && $sql[$i + 1] === $openQuote) {
                     // Doubled delimiter escapes itself within the region.
                     $i++;
-                    $buffer .= $sql[$i];
 
                     continue;
                 }
@@ -269,14 +269,11 @@ class Sql extends AbstractAdapter
                 // Properly closed region: collapse it to a short placeholder.
                 $result .= $openQuote . $openQuote;
                 $openQuote = null;
-                $buffer = '';
             }
         }
 
-        // An unterminated quoted region is not a region at all as far as the denylist is
-        // concerned - keep its raw content visible rather than assume it is safe.
         if ($openQuote !== null) {
-            $result .= $buffer;
+            throw new InvalidArgumentException('Unsafe SQL fragment detected (unterminated quoted string or identifier).');
         }
 
         return $result;
