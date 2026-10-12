@@ -215,14 +215,10 @@ class Sql extends AbstractAdapter
      * identifier) with a short placeholder, so the denylist above never sees a forbidden
      * token that only occurs inside one of them.
      *
-     * This must be a single left-to-right scan carrying one "which quote type is currently
-     * open" state, not three independent regexes run one after another: a quote character
-     * belonging to one region type can occur inside a region owned by a different type (e.g.
-     * a "'" inside a backtick identifier, or inside a double-quoted string). Three sequential
-     * patterns each only know their own quote character, so whichever pattern runs first
-     * treats that nested quote as its own opener and keeps consuming past the region's real
-     * end, erasing whatever forbidden token followed from the text the denylist inspects -
-     * while MySQL's lexer never saw a string there at all.
+     * This is a single left-to-right scan carrying one "which quote type is currently open"
+     * state: a quote character of a different type inside an open region (e.g. a "'" inside a
+     * backtick identifier or a double-quoted string) is ordinary content of that region, never
+     * the opener of a new one.
      *
      * Per MySQL's default (non-NO_BACKSLASH_ESCAPES) lexer: inside '...' and "...", a
      * backslash escapes the next character and the delimiter can also be doubled to escape

@@ -228,12 +228,9 @@ final class SqlTest extends TestCase
 
     public function testRejectsForbiddenFunctionAfterQuoteNestedInBacktickIdentifier(): void
     {
-        // GHSA-6r57-mhj4-5gmr: the old validator stripped quoted regions with three
-        // independent regexes (single-quote, then double-quote, then backtick), run in that
-        // fixed order and each blind to the regions the others own. A "'" inside a backtick
-        // identifier opened a string for the single-quote pattern, which then consumed
-        // everything up to the next unrelated "'" - erasing a forbidden token in between from
-        // the text the denylist scans, while MySQL's lexer never saw a string there at all.
+        // A quote character of another type inside a backtick identifier is ordinary content
+        // of that identifier, so the forbidden function after it is still outside any quoted
+        // region and must be rejected.
         $config = $this->configWith(
             'sql',
             "1 AS `x'`, LOAD_FILE('/etc/hostname') AS leak, 'z'"
@@ -245,8 +242,8 @@ final class SqlTest extends TestCase
 
     public function testRejectsForbiddenFunctionAfterQuoteNestedInDoubleQuotedString(): void
     {
-        // Same desync, with the nested quote living inside a double-quoted string instead of
-        // a backtick identifier.
+        // Same, with the nested quote living inside a double-quoted string instead of a
+        // backtick identifier.
         $config = $this->configWith(
             'sql',
             "1 AS \"a'b\", LOAD_FILE('/etc/hostname') AS leak, 'z'"
@@ -287,5 +284,72 @@ final class SqlTest extends TestCase
         $sql = $this->adapter()->exposedBuildQueryString($config);
 
         $this->assertStringContainsString("1 AS `x'`, 'z' AS lit", $sql);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubleQuoteNestedInSingleQuotedString(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            "1 AS 'a\"b', LOAD_FILE('/etc/hostname') AS leak, \"z\""
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterBacktickNestedInDoubleQuotedString(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            "1 AS \"a`b\", LOAD_FILE('/etc/hostname') AS leak, `z`"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubledDelimiterInsideString(): void
+    {
+        $config = $this->configWith('sql', "'it''s' AS a, LOAD_FILE('/tmp/x') AS b");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterBackslashEscapedQuoteInsideString(): void
+    {
+        $config = $this->configWith('sql', "'it\\'s' AS a, LOAD_FILE('/tmp/x') AS b");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubledBacktickInsideIdentifier(): void
+    {
+        $config = $this->configWith('sql', "1 AS `a``b`, LOAD_FILE('/tmp/x') AS leak");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testForbiddenTokenInsideQuotedRegionAfterDoubledBacktickIsStillAccepted(): void
+    {
+        // The doubled backtick is part of the identifier; the string after it is a literal
+        // whose content must not be mistaken for a function call.
+        $config = $this->configWith('sql', "1 AS `a``b`, 'LOAD_FILE(x)' AS lit");
+
+        $sql = $this->adapter()->exposedBuildQueryString($config);
+
+        $this->assertStringContainsString("1 AS `a``b`, 'LOAD_FILE(x)' AS lit", $sql);
+    }
+
+    public function testRejectsForbiddenFunctionInsideUnterminatedQuotedRegion(): void
+    {
+        // An unterminated quote is not a quoted region as far as validation is concerned,
+        // so what follows it is still scanned.
+        $config = $this->configWith('sql', "1 AS 'a, LOAD_FILE(b)");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
     }
 }
