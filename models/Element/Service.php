@@ -196,6 +196,19 @@ class Service extends Model\AbstractModel
     private const REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME = 60;
 
     /**
+     * Classes outside the `Pimcore\` namespace that legitimately occur in a serialized element graph
+     * (date field values) and are accepted by {@see self::safelyUnserializeSessionElement()}. Matched by
+     * exact class name, never by prefix.
+     */
+    private const SESSION_ELEMENT_ALLOWED_VALUE_CLASSES = [
+        \Carbon\Carbon::class,
+        \Carbon\CarbonImmutable::class,
+        \DateTime::class,
+        \DateTimeImmutable::class,
+        \DateTimeZone::class,
+    ];
+
+    /**
      * In-process memo of scanRequiredByVisibility() results, keyed by cache key - avoids
      * re-scanning within a single request when both getRequiredByVisibleTotalCount() and
      * getRequiredByHasHiddenDependencies() are called for the same element+user, since
@@ -1624,10 +1637,11 @@ class Service extends Model\AbstractModel
      *
      * Every class that can legitimately occur in a serialized element graph - the element itself,
      * field data wrappers, and generated class/fieldcollection/objectbrick classes alike - lives under
-     * the `Pimcore\` namespace. A first pass unserializes with `allowed_classes => false`, so PHP
-     * reconstructs the full structure without instantiating any real class (every would-be object
+     * the `Pimcore\` namespace, apart from the date value classes listed in
+     * {@see self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES} (date fields hold `Carbon` instances). A first
+     * pass unserializes with `allowed_classes => false`, so PHP reconstructs the full structure without instantiating any real class (every would-be object
      * becomes a harmless `__PHP_Incomplete_Class` and no magic method ever runs); that result is only
-     * used to confirm every class referenced anywhere in the graph is `Pimcore\`-namespaced. Only then
+     * used to confirm every class referenced anywhere in the graph is allowed. Only then
      * is the payload unserialized for real. Anything else - a third-party gadget class - is rejected
      * outright, mirroring the fail-closed behaviour already used for other `tmp_store` data in
      * {@see \Pimcore\Model\Tool\TmpStore\Dao::getById()}.
@@ -1685,7 +1699,9 @@ class Service extends Model\AbstractModel
                 // so it has to be taken from the array cast. The properties are walked afterwards because
                 // every object of the probe is incomplete, nested ones included.
                 $className = $properties['__PHP_Incomplete_Class_Name'] ?? null;
-                if (!is_string($className) || !str_starts_with($className, 'Pimcore\\')) {
+                if (!is_string($className)
+                    || (!str_starts_with($className, 'Pimcore\\') && !in_array($className, self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES, true))
+                ) {
                     return false;
                 }
                 unset($properties['__PHP_Incomplete_Class_Name']);
