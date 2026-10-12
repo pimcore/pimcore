@@ -14,13 +14,17 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
 use Pimcore;
+use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function implode;
+use function sprintf;
 
 /**
  * @internal
@@ -31,6 +35,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class AddToUpdateTaskQueueCommand extends AbstractCommand
 {
+    /**
+     * Custom settings which are written by the asset update task, grouped by asset type.
+     * If one of them is not set at all, the asset was never processed successfully by the update task
+     * and therefore is missing (meta-)data.
+     */
+    private const METADATA_CUSTOM_SETTINGS = [
+        'image' => ['embeddedMetaDataExtracted', 'imageDimensionsCalculated'],
+        'video' => ['embeddedMetaDataExtracted', 'duration', 'videoWidth', 'videoHeight'],
+        'document' => ['document_page_count'],
+    ];
+
+    private const ASSETS_PER_LOOP = 10;
+
     protected array $types = ['image', 'video', 'document'];
 
     protected function configure(): void
@@ -59,11 +76,71 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
                 'f',
                 InputOption::VALUE_NONE,
                 'retry assets that previously failed to be processed'
+            )
+            ->addOption(
+                'missing-metadata',
+                'm',
+                InputOption::VALUE_NONE,
+                'only add assets that are missing meta-data (embedded meta-data, image dimensions, video duration, ' .
+                'page count), e.g. to backfill assets that were uploaded before the update task queue was ' .
+                'processed. Assets that previously failed to be processed are only included if --retry-failed is ' .
+                'used as well'
             );
 
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        try {
+            [$conditions, $conditionVariables] = $this->buildConditions($input);
+        } catch (InvalidOptionException $e) {
+            $this->writeError($e->getMessage());
+
+            return 1;
+        }
+
+        $list = new Asset\Listing();
+        $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
+        $list->setOrderKey('id');
+        $list->setOrder('ASC');
+        $list->setLimit(self::ASSETS_PER_LOOP);
+
+        $this->output->writeln(sprintf('Found %d asset(s) to add to the update task queue ...', $list->getTotalCount()));
+
+        // the update task writes the very custom settings that are filtered on here, so the result set can shrink
+        // while the queue is being consumed - paginate by ID instead of by offset, which would skip assets
+        $lastId = 0;
+        $count = 0;
+
+        do {
+            $list->setCondition(
+                implode(' AND ', [...$conditions, 'id > ?']),
+                [...$conditionVariables, $lastId]
+            );
+
+            $assets = $list->load();
+            foreach ($assets as $asset) {
+                $lastId = (int) $asset->getId();
+                $this->output->writeln(
+                    sprintf('Adding asset %s (%s) to the update task queue', $asset->getId(), $asset->getRealFullPath()),
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
+                $asset->triggerUpdateTask();
+                $count++;
+            }
+
+            Pimcore::collectGarbage();
+        } while (count($assets) === self::ASSETS_PER_LOOP);
+
+        $this->output->writeln(sprintf('Added %d asset(s) to the update task queue', $count));
+
+        return 0;
+    }
+
+    /**
+     * @return array{0: string[], 1: array<int, mixed>}
+     */
+    protected function buildConditions(InputInterface $input): array
     {
         $conditionVariables = [];
 
@@ -76,9 +153,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             if ($parent instanceof Asset\Folder) {
                 $conditions[] = "path LIKE '" . Helper::escapeLike($parent->getRealFullPath()) . "/%'";
             } else {
-                $this->writeError($input->getOption('parent') . ' is not a valid asset folder ID!');
-
-                return 1;
+                throw new InvalidOptionException($input->getOption('parent') . ' is not a valid asset folder ID!');
             }
         }
 
@@ -91,29 +166,75 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             $conditionVariables[] = $regex;
         }
 
-        if ($input->getOption('retry-failed')) {
+        $retryFailed = (bool) $input->getOption('retry-failed');
+        $missingMetadata = (bool) $input->getOption('missing-metadata');
+
+        if ($retryFailed && $missingMetadata) {
+            // everything that still needs processing: never processed before, or failed while doing so
             $conditions[] = sprintf(
-                "customSettings LIKE '%%%s%%'",
-                '"' . Asset::CUSTOM_SETTING_PROCESSING_FAILED . '":true'
+                '(%s OR %s)',
+                $this->buildMissingMetadataCondition(),
+                $this->buildProcessingFailedCondition(true)
+            );
+        } elseif ($retryFailed) {
+            $conditions[] = $this->buildProcessingFailedCondition(true);
+        } elseif ($missingMetadata) {
+            $conditions[] = $this->buildMissingMetadataCondition();
+            // assets that are flagged as failed are not missing their meta-data because they were never
+            // processed, but because processing them did not work - they'd just fail again on every run
+            $conditions[] = $this->buildProcessingFailedCondition(false);
+        }
+
+        return [$conditions, $conditionVariables];
+    }
+
+    private function buildMissingMetadataCondition(): string
+    {
+        $typeConditions = [];
+
+        foreach (self::METADATA_CUSTOM_SETTINGS as $type => $customSettings) {
+            if ($type === 'document' && !$this->isPageCountProcessingEnabled()) {
+                // without page count processing there's no meta-data written for documents at all
+                continue;
+            }
+
+            $missingCustomSettings = [];
+            foreach ($customSettings as $customSetting) {
+                $missingCustomSettings[] = $this->buildMissingCustomSettingCondition($customSetting);
+            }
+
+            $typeConditions[] = sprintf(
+                "(`type` = '%s' AND (%s))",
+                $type,
+                implode(' OR ', $missingCustomSettings)
             );
         }
 
-        $list = new Asset\Listing();
-        $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
-        $total = $list->getTotalCount();
-        $perLoop = 10;
+        return '(' . implode(' OR ', $typeConditions) . ')';
+    }
 
-        for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
-            $list->setLimit($perLoop);
-            $list->setOffset($i * $perLoop);
-            $assets = $list->load();
-            foreach ($assets as $asset) {
-                $asset->triggerUpdateTask();
-            }
+    private function buildMissingCustomSettingCondition(string $customSetting): string
+    {
+        return sprintf('JSON_EXTRACT(customSettings, \'$."%s"\') IS NULL', $customSetting);
+    }
 
-            Pimcore::collectGarbage();
-        }
+    /**
+     * The custom setting is only ever set to `true` or removed again, so a missing value means "not failed".
+     * `JSON_UNQUOTE()` is used instead of comparing to a JSON boolean, as MySQL renders JSON columns with a
+     * space after the colon (`{"key": true}`) while MariaDB stores them verbatim, which makes a plain LIKE
+     * on the serialized column unreliable.
+     */
+    private function buildProcessingFailedCondition(bool $failed): string
+    {
+        return sprintf(
+            'COALESCE(JSON_UNQUOTE(JSON_EXTRACT(customSettings, \'$."%s"\')), \'false\') %s \'true\'',
+            Asset::CUSTOM_SETTING_PROCESSING_FAILED,
+            $failed ? '=' : '<>'
+        );
+    }
 
-        return 0;
+    protected function isPageCountProcessingEnabled(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('assets')['document']['process_page_count'] ?? false);
     }
 }
