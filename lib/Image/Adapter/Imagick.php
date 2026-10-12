@@ -151,14 +151,18 @@ class Imagick extends Adapter
                     // operation (resize, crop, ...) still honours. Imagick cannot unset it, so rebuild the image
                     // from an in-memory MIFF blob: lossless for pixels, alpha, colorspace and profiles, but the
                     // mask is not serialized.
-                    $format = $i->getImageFormat();
-                    $i->setImageFormat('miff');
-                    $materialized = new \Imagick();
-                    $materialized->readImageBlob($i->getImageBlob());
-                    $materialized->setImageFormat($format);
-                    $this->resource = $materialized;
-                    $this->setIsAlphaPossible(true);
-                    $i->clear();
+                    // Skipped when the animation handling above replaced the resource with a different image,
+                    // which was never clipped in the first place - the blob would only hold a single frame.
+                    if ($this->resource === $i) {
+                        $format = $i->getImageFormat();
+                        $i->setImageFormat('miff');
+                        $materialized = new \Imagick();
+                        $materialized->readImageBlob($i->getImageBlob());
+                        $materialized->setImageFormat($format);
+                        $this->resource = $materialized;
+                        $this->setIsAlphaPossible(true);
+                        $i->clear();
+                    }
                     $unclipped->clear();
                 } catch (Exception $e) {
                     // the image is entirely transparent at this point, so restore the copy instead of

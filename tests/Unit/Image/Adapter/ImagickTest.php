@@ -179,6 +179,27 @@ final class ImagickTest extends TestCase
         $this->assertPixelTransparent($result, 2, 5);
     }
 
+    /**
+     * Asserts the cause directly instead of its effect on a resized image: no write mask may be
+     * left on the loaded image (ImageMagick 6 has no write mask API).
+     */
+    public function testClippingLeavesNoWriteMaskOnTheImage(): void
+    {
+        if (!defined('Imagick::PIXELMASK_WRITE')) {
+            $this->markTestSkipped('The current ImageMagick installation has no write mask API.');
+        }
+
+        $path = $this->createImageWithClippingPath();
+        $this->assertClippingPathIsSupported($path);
+
+        // keep the adapter alive - its destructor clears the resource
+        $adapter = $this->adapter($path, false);
+        $resource = $adapter->getResource();
+
+        $this->assertInstanceOf(\Imagick::class, $resource);
+        $this->assertNull($resource->getImageMask(\Imagick::PIXELMASK_WRITE));
+    }
+
     private function adapter(string $path, bool $preserveColor): Imagick
     {
         $adapter = new Imagick();
