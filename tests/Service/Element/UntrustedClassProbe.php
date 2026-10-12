@@ -13,11 +13,9 @@ declare(strict_types=1);
  */
 
 /**
- * Deliberately declared with no namespace (i.e. outside `Pimcore\`), and deliberately not
- * autoloaded via PSR-4 - every real class in this suite lives under `Pimcore\Tests\`, which
- * would satisfy the namespace allowlist and defeat the point of this fixture. It stands in for
- * any class with a side-effecting magic method that must never be instantiated when reading
- * forged/untrusted `tmp_store` session data (see ServiceTest::testGetElementFromSessionRejects...).
+ * Stands in for any class with a side-effecting magic method that must never be instantiated when
+ * reading unsigned/untrusted `tmp_store` session data (see ServiceTest::testGetElementFromSessionRejects...).
+ * Deliberately declared with no namespace and not autoloaded via PSR-4, so the test controls when it is loaded.
  */
 class UntrustedClassProbe
 {

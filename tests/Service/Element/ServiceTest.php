@@ -450,13 +450,13 @@ class ServiceTest extends TestCase
     /**
      * Regression test: the `tmp_store` row read by getElementFromSession() is not necessarily
      * written by saveElementToSession() - anyone with a raw DB write primitive against that
-     * table can forge one. getElementFromSession() must reject a forged payload that references
-     * a class outside Pimcore's own namespace instead of instantiating it, and must never run
-     * that class's magic methods while doing so.
+     * table can forge one. getElementFromSession() must reject a payload that carries no valid
+     * signature instead of instantiating its classes, and must never run their magic methods
+     * while doing so.
      *
      * @see \Pimcore\Model\Element\Service::getElementFromSession()
      */
-    public function testGetElementFromSessionRejectsForgedPayloadOutsidePimcoreNamespace(): void
+    public function testGetElementFromSessionRejectsUnsignedPayload(): void
     {
         require_once __DIR__ . '/UntrustedClassProbe.php';
         UntrustedClassProbe::$wasInstantiated = false;
@@ -471,10 +471,10 @@ class ServiceTest extends TestCase
 
         $result = Service::getElementFromSession('object', $object->getId(), $sessionId);
 
-        $this->assertNull($result, 'A forged payload referencing a non-Pimcore class must be rejected.');
+        $this->assertNull($result, 'An unsigned payload must be rejected.');
         $this->assertFalse(
             UntrustedClassProbe::$wasInstantiated,
-            'getElementFromSession() must never instantiate a class outside the Pimcore namespace.'
+            'getElementFromSession() must never instantiate the classes of an unsigned payload.'
         );
 
         TmpStore::delete($tmpStoreKey);
@@ -571,12 +571,12 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * Regression test: element session data that is unsigned (e.g. written by an earlier version) or
-     * whose content was modified after signing is treated as missing.
+     * Regression test: element session data that is unsigned (e.g. written by an earlier version), was
+     * modified after signing or was moved to another session key is treated as missing.
      *
      * @see \Pimcore\Model\Element\Service::getElementFromSession()
      */
-    public function testGetElementFromSessionRejectsUnsignedAndModifiedElementData(): void
+    public function testGetElementFromSessionRejectsUnsignedModifiedAndMovedElementData(): void
     {
         $object = TestHelper::createEmptyObject('', false);
         $object->save();
@@ -596,6 +596,13 @@ class ServiceTest extends TestCase
         TmpStore::set($tmpStoreKey, serialize($object), 'object-session');
         $this->assertNull(Service::getElementFromSession('object', $object->getId(), $sessionId));
 
+        // valid signed data under another session key
+        $otherSessionId = $sessionId . '-other';
+        $otherTmpStoreKey = Service::getSessionKey('object', $object->getId(), $otherSessionId);
+        TmpStore::set($otherTmpStoreKey, $signed, 'object-session');
+        $this->assertNull(Service::getElementFromSession('object', $object->getId(), $otherSessionId));
+
         TmpStore::delete($tmpStoreKey);
+        TmpStore::delete($otherTmpStoreKey);
     }
 }

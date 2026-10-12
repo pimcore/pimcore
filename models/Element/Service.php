@@ -1586,7 +1586,7 @@ class Service extends Model\AbstractModel
         if ($tmpStore) {
             $data = $tmpStore->getData();
             if ($data) {
-                $element = self::unserializeSignedSessionElement($data);
+                $element = self::unserializeSignedSessionElement($data, $tmpStoreKey);
                 if ($element === null) {
                     return null;
                 }
@@ -1627,12 +1627,13 @@ class Service extends Model\AbstractModel
      * `__destruct()` do harm, third-party and first-party alike (PHP object injection). The classes of an
      * element graph cannot be enumerated (generated data object classes, application value objects), so
      * the payload is authenticated instead: `saveElementToSession()` signs it with a key derived from the
-     * application secret and only a payload with a valid signature is unserialized. Unsigned, tampered or
-     * legacy rows are rejected and treated as missing.
+     * application secret and only a payload with a valid signature is unserialized. The signature also
+     * covers the `tmp_store` key, so a valid payload cannot be moved to another row (other session, element
+     * type, element or postfix). Unsigned, tampered, moved or legacy rows are rejected and treated as missing.
      *
      * @internal
      */
-    private static function unserializeSignedSessionElement(string $data): Asset|Document|AbstractObject|null
+    private static function unserializeSignedSessionElement(string $data, string $tmpStoreKey): Asset|Document|AbstractObject|null
     {
         $prefixLength = strlen(self::SESSION_ELEMENT_SIGNATURE_PREFIX);
         // prefix + hex sha256 hmac (64 chars) + separator
@@ -1649,7 +1650,7 @@ class Service extends Model\AbstractModel
         $payload = substr($data, $headerLength);
 
         try {
-            $expectedSignature = self::signSessionElementPayload($payload);
+            $expectedSignature = self::signSessionElementPayload($payload, $tmpStoreKey);
         } catch (Throwable) {
             return null;
         }
@@ -1676,14 +1677,17 @@ class Service extends Model\AbstractModel
      *
      * @internal
      */
-    private static function signSessionElementPayload(string $payload): string
+    private static function signSessionElementPayload(string $payload, string $tmpStoreKey): string
     {
         $secret = Pimcore::getContainer()->getParameter('secret');
         if ($secret === '') {
             throw new LogicException('The application secret is required to sign element session data.');
         }
 
-        return hash_hmac('sha256', $payload, hash_hmac('sha256', 'pimcore.element_session', $secret, true));
+        // length-prefixed key, so key and payload cannot be shifted against each other
+        $message = strlen($tmpStoreKey) . ':' . $tmpStoreKey . $payload;
+
+        return hash_hmac('sha256', $message, hash_hmac('sha256', 'pimcore.element_session', $secret, true));
     }
 
     /**
@@ -1730,7 +1734,7 @@ class Service extends Model\AbstractModel
         }
 
         $serializedData = Serialize::serialize($element);
-        $serializedData = self::SESSION_ELEMENT_SIGNATURE_PREFIX . self::signSessionElementPayload($serializedData) . ':' . $serializedData;
+        $serializedData = self::SESSION_ELEMENT_SIGNATURE_PREFIX . self::signSessionElementPayload($serializedData, $tmpStoreKey) . ':' . $serializedData;
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);
     }
