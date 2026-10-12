@@ -15,6 +15,7 @@ namespace Pimcore\Model\Element;
 
 use __PHP_Incomplete_Class;
 use Carbon\CarbonPeriod;
+use DateInterval;
 use DatePeriod;
 use DateTime;
 use DateTimeImmutable;
@@ -206,6 +207,9 @@ class Service extends Model\AbstractModel
     private const SESSION_ELEMENT_ALLOWED_VALUE_CLASSES = [
         \Carbon\Carbon::class,
         \Carbon\CarbonImmutable::class,
+        \Carbon\CarbonInterval::class,
+        \Carbon\CarbonPeriod::class,
+        DateInterval::class,
         DateTime::class,
         DateTimeImmutable::class,
         DateTimeZone::class,

@@ -477,6 +477,32 @@ class ServiceTest extends TestCase
     }
 
     /**
+     * Regression test: date values (`DateRange` fields hold a `CarbonPeriod`) are not in the `Pimcore\` namespace
+     * and must keep surviving the saveElementToSession() -> getElementFromSession() round trip.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionKeepsDateRangeValues(): void
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $object->setDateRange(new \Carbon\CarbonPeriod('2018-04-21', '3 days', '2018-04-27'));
+        $object->save();
+
+        $sessionId = 'session-daterange-' . $object->getId();
+
+        Service::saveElementToSession($object, $sessionId);
+
+        $restored = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertInstanceOf(DataObject\AbstractObject::class, $restored);
+        $this->assertInstanceOf(\Carbon\CarbonPeriod::class, $restored->getDateRange());
+        $this->assertEquals('2018-04-21', $restored->getDateRange()->getStartDate()->format('Y-m-d'));
+        $this->assertEquals('2018-04-27', $restored->getDateRange()->getEndDate()->format('Y-m-d'));
+
+        TmpStore::delete(Service::getSessionKey('object', $object->getId(), $sessionId));
+    }
+
+    /**
      * Regression test: application classes registered via `pimcore.tmp_store.unserialize_allowed_classes`
      * (e.g. value objects returned by a custom marshalVersion() implementation) must keep surviving the
      * saveElementToSession() -> getElementFromSession() round trip.
