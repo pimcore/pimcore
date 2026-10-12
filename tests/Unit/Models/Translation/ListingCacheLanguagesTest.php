@@ -55,13 +55,16 @@ final class ListingCacheLanguagesTest extends TestCase
 
     protected function tearDown(): void
     {
+        // delete the fixture and invalidate its cache entries first (both mark the tags as cleared) ...
+        Translation::getByKey(self::TRANSLATION_KEY)?->delete();
+        Cache::clearTags(['translator', 'translate']);
+
+        // ... then restore the shared handler state, so later tests can write these tags again
         Cache::getHandler()
+            ->removeClearedTags(['translator', 'translate'])
             ->setHandleCli(false)
             ->setForceImmediateWrite(false);
-        Cache::clearTags(['translator', 'translate']);
         Cache::disable();
-
-        Translation::getByKey(self::TRANSLATION_KEY)?->delete();
 
         parent::tearDown();
     }
