@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Service\Element;
 
-use ConfiguredSessionClassProbe;
+use ApplicationValueObjectProbe;
 use Normalizer;
+use Pimcore\Document\Adapter;
+use Pimcore\Document\Adapter\Ghostscript;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -22,6 +24,8 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use ReflectionClass;
+use ReflectionProperty;
 use UntrustedClassProbe;
 
 class ServiceTest extends TestCase
@@ -503,29 +507,95 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * Regression test: application classes registered via `pimcore.tmp_store.unserialize_allowed_classes`
-     * (e.g. value objects returned by a custom marshalVersion() implementation) must keep surviving the
-     * saveElementToSession() -> getElementFromSession() round trip.
+     * Regression test: application value objects inside an element (e.g. returned by a custom
+     * marshalVersion() implementation) must keep surviving the saveElementToSession() ->
+     * getElementFromSession() round trip.
      *
      * @see \Pimcore\Model\Element\Service::getElementFromSession()
      */
-    public function testGetElementFromSessionAcceptsClassesConfiguredForTmpStore(): void
+    public function testGetElementFromSessionKeepsApplicationValueObjects(): void
     {
-        require_once __DIR__ . '/ConfiguredSessionClassProbe.php';
+        require_once __DIR__ . '/ApplicationValueObjectProbe.php';
 
         $object = TestHelper::createEmptyObject('', false);
         $object->save();
-        $object->setProperty('configuredProbe', 'text', new ConfiguredSessionClassProbe());
+        $object->setProperty('applicationProbe', 'text', new ApplicationValueObjectProbe());
 
-        $sessionId = 'session-configured-' . $object->getId();
+        $sessionId = 'session-application-' . $object->getId();
 
         Service::saveElementToSession($object, $sessionId);
 
         $restored = Service::getElementFromSession('object', $object->getId(), $sessionId);
 
         $this->assertInstanceOf(DataObject\AbstractObject::class, $restored);
-        $this->assertInstanceOf(ConfiguredSessionClassProbe::class, $restored->getProperty('configuredProbe'));
+        $this->assertInstanceOf(ApplicationValueObjectProbe::class, $restored->getProperty('applicationProbe'));
 
         TmpStore::delete(Service::getSessionKey('object', $object->getId(), $sessionId));
+    }
+
+    /**
+     * Regression test: element session data that was not written by saveElementToSession() is rejected
+     * even if it only references classes from the Pimcore namespace, and none of its classes is
+     * instantiated while doing so.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionRejectsUnsignedPayloadOfPimcoreClasses(): void
+    {
+        $sentinelFile = tempnam(sys_get_temp_dir(), 'session-sentinel-');
+        $this->assertFileExists($sentinelFile);
+
+        $instance = (new ReflectionClass(Ghostscript::class))->newInstanceWithoutConstructor();
+        $tmpFiles = new ReflectionProperty(Adapter::class, 'tmpFiles');
+        $tmpFiles->setValue($instance, [$sentinelFile]);
+        $payload = serialize($instance);
+        // the local instance must not touch the sentinel file when it is destroyed
+        $tmpFiles->setValue($instance, []);
+        unset($instance);
+
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+
+        $sessionId = 'session-unsigned-pimcore-' . $object->getId();
+        $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
+
+        TmpStore::set($tmpStoreKey, $payload, 'object-session');
+
+        $result = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertNull($result, 'Unsigned element session data must be rejected.');
+        $this->assertFileExists($sentinelFile, 'Unsigned element session data must not be instantiated.');
+
+        TmpStore::delete($tmpStoreKey);
+        unlink($sentinelFile);
+    }
+
+    /**
+     * Regression test: element session data that is unsigned (e.g. written by an earlier version) or
+     * whose content was modified after signing is treated as missing.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionRejectsUnsignedAndModifiedElementData(): void
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+
+        $sessionId = 'session-signature-' . $object->getId();
+        $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
+
+        Service::saveElementToSession($object, $sessionId);
+        $signed = TmpStore::get($tmpStoreKey)->getData();
+        $this->assertInstanceOf(DataObject\AbstractObject::class, Service::getElementFromSession('object', $object->getId(), $sessionId));
+
+        // modified after signing
+        TmpStore::set($tmpStoreKey, substr($signed, 0, -1) . 'x', 'object-session');
+        $this->assertNull(Service::getElementFromSession('object', $object->getId(), $sessionId));
+
+        // no signature at all
+        TmpStore::set($tmpStoreKey, serialize($object), 'object-session');
+        $this->assertNull(Service::getElementFromSession('object', $object->getId(), $sessionId));
+
+        TmpStore::delete($tmpStoreKey);
     }
 }

@@ -4,9 +4,6 @@ imports:
     - { resource: 'local/' }
 
 pimcore:
-    tmp_store:
-        unserialize_allowed_classes:
-            - ConfiguredSessionClassProbe
     email:
         sender:
             name: pimcore

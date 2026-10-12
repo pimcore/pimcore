@@ -15,11 +15,7 @@ namespace Pimcore\Model\Element;
 
 use __PHP_Incomplete_Class;
 use Carbon\CarbonPeriod;
-use DateInterval;
 use DatePeriod;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeZone;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
@@ -32,6 +28,7 @@ use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
 use InvalidArgumentException;
 use League\Csv\EscapeFormula;
+use LogicException;
 use Normalizer;
 use Pimcore;
 use Pimcore\Cache;
@@ -57,7 +54,6 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use ReflectionProperty;
-use ReflectionReference;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -200,20 +196,10 @@ class Service extends Model\AbstractModel
     private const REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME = 60;
 
     /**
-     * Classes outside the `Pimcore\` namespace that legitimately occur in a serialized element graph
-     * (date field values) and are accepted by {@see self::safelyUnserializeSessionElement()}. Matched by
-     * exact class name, never by prefix.
+     * Marks element session data in `tmp_store` that carries an HMAC signature, see
+     * {@see self::unserializeSignedSessionElement()}.
      */
-    private const SESSION_ELEMENT_ALLOWED_VALUE_CLASSES = [
-        \Carbon\Carbon::class,
-        \Carbon\CarbonImmutable::class,
-        \Carbon\CarbonInterval::class,
-        \Carbon\CarbonPeriod::class,
-        DateInterval::class,
-        DateTime::class,
-        DateTimeImmutable::class,
-        DateTimeZone::class,
-    ];
+    private const SESSION_ELEMENT_SIGNATURE_PREFIX = 'pimcore-session-v1:';
 
     /**
      * In-process memo of scanRequiredByVisibility() results, keyed by cache key - avoids
@@ -1600,7 +1586,7 @@ class Service extends Model\AbstractModel
         if ($tmpStore) {
             $data = $tmpStore->getData();
             if ($data) {
-                $element = self::safelyUnserializeSessionElement($data);
+                $element = self::unserializeSignedSessionElement($data);
                 if ($element === null) {
                     return null;
                 }
@@ -1636,46 +1622,44 @@ class Service extends Model\AbstractModel
 
     /**
      * The `tmp_store` row read above can be forged by anyone with a raw DB write primitive against
-     * that table (e.g. an authenticated SQL injection elsewhere) - `saveElementToSession()` is not
-     * the only possible writer from an attacker's point of view, even though it is the only one Pimcore
-     * itself uses. `$data` must therefore be treated as untrusted, and `allowed_classes => true` would
-     * let a forged payload instantiate any autoloadable class, including third-party gadget classes
-     * with dangerous `__wakeup()`/`__destruct()` methods (PHP object injection).
-     *
-     * Every class that can legitimately occur in a serialized element graph - the element itself,
-     * field data wrappers, and generated class/fieldcollection/objectbrick classes alike - lives under
-     * the `Pimcore\` namespace, apart from the date value classes listed in
-     * {@see self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES} (date fields hold `Carbon` instances) and any class
-     * an application opted into via `pimcore.tmp_store.unserialize_allowed_classes`. A first
-     * pass unserializes with `allowed_classes => false`, so PHP reconstructs the full structure without instantiating any real class (every would-be object
-     * becomes a harmless `__PHP_Incomplete_Class` and no magic method ever runs); that result is only
-     * used to confirm every class referenced anywhere in the graph is allowed. Only then
-     * is the payload unserialized for real. Anything else - a third-party gadget class - is rejected
-     * outright, mirroring the fail-closed behaviour already used for other `tmp_store` data in
-     * {@see \Pimcore\Model\Tool\TmpStore\Dao::getById()}.
+     * that table (e.g. an authenticated SQL injection elsewhere), and `allowed_classes => true` would let
+     * a forged payload instantiate any autoloadable class - including classes whose `__wakeup()` or
+     * `__destruct()` do harm, third-party and first-party alike (PHP object injection). The classes of an
+     * element graph cannot be enumerated (generated data object classes, application value objects), so
+     * the payload is authenticated instead: `saveElementToSession()` signs it with a key derived from the
+     * application secret and only a payload with a valid signature is unserialized. Unsigned, tampered or
+     * legacy rows are rejected and treated as missing.
      *
      * @internal
      */
-    private static function safelyUnserializeSessionElement(string $data): Asset|Document|AbstractObject|null
+    private static function unserializeSignedSessionElement(string $data): Asset|Document|AbstractObject|null
     {
+        $prefixLength = strlen(self::SESSION_ELEMENT_SIGNATURE_PREFIX);
+        // prefix + hex sha256 hmac (64 chars) + separator
+        $headerLength = $prefixLength + 64 + 1;
+
+        if (strlen($data) <= $headerLength
+            || !str_starts_with($data, self::SESSION_ELEMENT_SIGNATURE_PREFIX)
+            || $data[$headerLength - 1] !== ':'
+        ) {
+            return null;
+        }
+
+        $signature = substr($data, $prefixLength, 64);
+        $payload = substr($data, $headerLength);
+
         try {
-            $probe = Serialize::unserialize($data, false);
+            $expectedSignature = self::signSessionElementPayload($payload);
         } catch (Throwable) {
             return null;
         }
 
-        if ($probe === false && $data !== serialize(false)) {
-            return null;
-        }
-
-        $seenObjectIds = [];
-        $seenReferenceIds = [];
-        if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($probe, $seenObjectIds, $seenReferenceIds, self::getSessionElementExtraAllowedClasses())) {
+        if (!hash_equals($expectedSignature, $signature)) {
             return null;
         }
 
         try {
-            $element = Serialize::unserialize($data, true);
+            $element = Serialize::unserialize($payload, true);
         } catch (Throwable) {
             return null;
         }
@@ -1688,95 +1672,18 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * Additional classes an application opted into via `pimcore.tmp_store.unserialize_allowed_classes`
-     * (the same setting {@see \Pimcore\Model\Tool\TmpStore\Dao::getById()} honours), e.g. value objects
-     * returned by a custom `CustomVersionMarshalInterface::marshalVersion()` implementation.
-     * Lower-cased, as PHP class names are case-insensitive.
-     *
-     * @return string[]
+     * @throws LogicException if the application secret is not available
      *
      * @internal
      */
-    private static function getSessionElementExtraAllowedClasses(): array
+    private static function signSessionElementPayload(string $payload): string
     {
-        $extraAllowedClasses = [];
-        if (Pimcore::hasContainer()) {
-            try {
-                $extraAllowedClasses = (array) Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
-            } catch (InvalidArgumentException) {
-                // parameter not configured
-            }
+        $secret = Pimcore::getContainer()->getParameter('secret');
+        if ($secret === '') {
+            throw new LogicException('The application secret is required to sign element session data.');
         }
 
-        return array_values(array_unique(array_map('strtolower', array_filter($extraAllowedClasses, 'is_string'))));
-    }
-
-    /**
-     * @param string[] $extraAllowedClasses lower-cased class names accepted in addition to the `Pimcore\` namespace
-     *
-     * @internal
-     */
-    private static function sessionElementGraphUsesOnlyAllowedNamespaces(
-        mixed $value,
-        array &$seenObjectIds,
-        array &$seenReferenceIds,
-        array $extraAllowedClasses
-    ): bool {
-        if (is_object($value)) {
-            $objectId = spl_object_id($value);
-            if (isset($seenObjectIds[$objectId])) {
-                return true;
-            }
-            $seenObjectIds[$objectId] = true;
-
-            $properties = (array) $value;
-
-            if ($value instanceof __PHP_Incomplete_Class) {
-                // Reading the name as a property on an incomplete object raises a warning and yields null,
-                // so it has to be taken from the array cast. The properties are walked afterwards because
-                // every object of the probe is incomplete, nested ones included.
-                $className = $properties['__PHP_Incomplete_Class_Name'] ?? null;
-                if (!is_string($className)
-                    || (
-                        !str_starts_with($className, 'Pimcore\\')
-                        && !in_array($className, self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES, true)
-                        && !in_array(strtolower($className), $extraAllowedClasses, true)
-                    )
-                ) {
-                    return false;
-                }
-                unset($properties['__PHP_Incomplete_Class_Name']);
-            }
-
-            foreach ($properties as $propertyValue) {
-                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds, $extraAllowedClasses)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        if (is_array($value)) {
-            foreach ($value as $key => $propertyValue) {
-                $reference = ReflectionReference::fromArrayElement($value, $key);
-                if ($reference) {
-                    $referenceId = $reference->getId();
-                    if (isset($seenReferenceIds[$referenceId])) {
-                        continue;
-                    }
-                    $seenReferenceIds[$referenceId] = true;
-                }
-
-                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds, $extraAllowedClasses)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        return true;
+        return hash_hmac('sha256', $payload, hash_hmac('sha256', 'pimcore.element_session', $secret, true));
     }
 
     /**
@@ -1823,6 +1730,7 @@ class Service extends Model\AbstractModel
         }
 
         $serializedData = Serialize::serialize($element);
+        $serializedData = self::SESSION_ELEMENT_SIGNATURE_PREFIX . self::signSessionElementPayload($serializedData) . ':' . $serializedData;
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);
     }

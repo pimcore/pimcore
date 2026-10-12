@@ -13,11 +13,11 @@ declare(strict_types=1);
  */
 
 /**
- * Stands in for an application value object that lives outside the `Pimcore\` namespace and is
- * registered via `pimcore.tmp_store.unserialize_allowed_classes` (see `.github/ci/files/config/config.yaml`).
+ * Stands in for an application value object that lives outside the `Pimcore\` namespace and ends up
+ * inside an element (e.g. returned by a custom `marshalVersion()` implementation).
  * Deliberately declared with no namespace and not autoloaded via PSR-4, like `UntrustedClassProbe`.
  */
-class ConfiguredSessionClassProbe
+class ApplicationValueObjectProbe
 {
-    public string $value = 'configured';
+    public string $value = 'application';
 }
