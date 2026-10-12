@@ -16,6 +16,9 @@ namespace Pimcore\Model\Element;
 use __PHP_Incomplete_Class;
 use Carbon\CarbonPeriod;
 use DatePeriod;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
@@ -203,9 +206,9 @@ class Service extends Model\AbstractModel
     private const SESSION_ELEMENT_ALLOWED_VALUE_CLASSES = [
         \Carbon\Carbon::class,
         \Carbon\CarbonImmutable::class,
-        \DateTime::class,
-        \DateTimeImmutable::class,
-        \DateTimeZone::class,
+        DateTime::class,
+        DateTimeImmutable::class,
+        DateTimeZone::class,
     ];
 
     /**
@@ -1638,7 +1641,8 @@ class Service extends Model\AbstractModel
      * Every class that can legitimately occur in a serialized element graph - the element itself,
      * field data wrappers, and generated class/fieldcollection/objectbrick classes alike - lives under
      * the `Pimcore\` namespace, apart from the date value classes listed in
-     * {@see self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES} (date fields hold `Carbon` instances). A first
+     * {@see self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES} (date fields hold `Carbon` instances) and any class
+     * an application opted into via `pimcore.tmp_store.unserialize_allowed_classes`. A first
      * pass unserializes with `allowed_classes => false`, so PHP reconstructs the full structure without instantiating any real class (every would-be object
      * becomes a harmless `__PHP_Incomplete_Class` and no magic method ever runs); that result is only
      * used to confirm every class referenced anywhere in the graph is allowed. Only then
@@ -1660,7 +1664,9 @@ class Service extends Model\AbstractModel
             return null;
         }
 
-        if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($probe)) {
+        $seenObjectIds = [];
+        $seenReferenceIds = [];
+        if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($probe, $seenObjectIds, $seenReferenceIds, self::getSessionElementExtraAllowedClasses())) {
             return null;
         }
 
@@ -1678,12 +1684,39 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * Additional classes an application opted into via `pimcore.tmp_store.unserialize_allowed_classes`
+     * (the same setting {@see \Pimcore\Model\Tool\TmpStore\Dao::getById()} honours), e.g. value objects
+     * returned by a custom `CustomVersionMarshalInterface::marshalVersion()` implementation.
+     * Lower-cased, as PHP class names are case-insensitive.
+     *
+     * @return string[]
+     *
+     * @internal
+     */
+    private static function getSessionElementExtraAllowedClasses(): array
+    {
+        $extraAllowedClasses = [];
+        if (Pimcore::hasContainer()) {
+            try {
+                $extraAllowedClasses = (array) Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+            } catch (InvalidArgumentException) {
+                // parameter not configured
+            }
+        }
+
+        return array_values(array_unique(array_map('strtolower', array_filter($extraAllowedClasses, 'is_string'))));
+    }
+
+    /**
+     * @param string[] $extraAllowedClasses lower-cased class names accepted in addition to the `Pimcore\` namespace
+     *
      * @internal
      */
     private static function sessionElementGraphUsesOnlyAllowedNamespaces(
         mixed $value,
-        array &$seenObjectIds = [],
-        array &$seenReferenceIds = []
+        array &$seenObjectIds,
+        array &$seenReferenceIds,
+        array $extraAllowedClasses
     ): bool {
         if (is_object($value)) {
             $objectId = spl_object_id($value);
@@ -1700,7 +1733,11 @@ class Service extends Model\AbstractModel
                 // every object of the probe is incomplete, nested ones included.
                 $className = $properties['__PHP_Incomplete_Class_Name'] ?? null;
                 if (!is_string($className)
-                    || (!str_starts_with($className, 'Pimcore\\') && !in_array($className, self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES, true))
+                    || (
+                        !str_starts_with($className, 'Pimcore\\')
+                        && !in_array($className, self::SESSION_ELEMENT_ALLOWED_VALUE_CLASSES, true)
+                        && !in_array(strtolower($className), $extraAllowedClasses, true)
+                    )
                 ) {
                     return false;
                 }
@@ -1708,7 +1745,7 @@ class Service extends Model\AbstractModel
             }
 
             foreach ($properties as $propertyValue) {
-                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds)) {
+                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds, $extraAllowedClasses)) {
                     return false;
                 }
             }
@@ -1727,7 +1764,7 @@ class Service extends Model\AbstractModel
                     $seenReferenceIds[$referenceId] = true;
                 }
 
-                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds)) {
+                if (!self::sessionElementGraphUsesOnlyAllowedNamespaces($propertyValue, $seenObjectIds, $seenReferenceIds, $extraAllowedClasses)) {
                     return false;
                 }
             }

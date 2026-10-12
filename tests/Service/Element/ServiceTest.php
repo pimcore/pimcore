@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Service\Element;
 
+use ConfiguredSessionClassProbe;
 use Normalizer;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
@@ -21,6 +22,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use UntrustedClassProbe;
 
 class ServiceTest extends TestCase
 {
@@ -453,7 +455,7 @@ class ServiceTest extends TestCase
     public function testGetElementFromSessionRejectsForgedPayloadOutsidePimcoreNamespace(): void
     {
         require_once __DIR__ . '/UntrustedClassProbe.php';
-        \UntrustedClassProbe::$wasInstantiated = false;
+        UntrustedClassProbe::$wasInstantiated = false;
 
         $object = TestHelper::createEmptyObject('', false);
         $object->save();
@@ -461,16 +463,43 @@ class ServiceTest extends TestCase
         $sessionId = 'session-forged-' . $object->getId();
         $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
 
-        TmpStore::set($tmpStoreKey, serialize(new \UntrustedClassProbe()), 'object-session');
+        TmpStore::set($tmpStoreKey, serialize(new UntrustedClassProbe()), 'object-session');
 
         $result = Service::getElementFromSession('object', $object->getId(), $sessionId);
 
         $this->assertNull($result, 'A forged payload referencing a non-Pimcore class must be rejected.');
         $this->assertFalse(
-            \UntrustedClassProbe::$wasInstantiated,
+            UntrustedClassProbe::$wasInstantiated,
             'getElementFromSession() must never instantiate a class outside the Pimcore namespace.'
         );
 
         TmpStore::delete($tmpStoreKey);
+    }
+
+    /**
+     * Regression test: application classes registered via `pimcore.tmp_store.unserialize_allowed_classes`
+     * (e.g. value objects returned by a custom marshalVersion() implementation) must keep surviving the
+     * saveElementToSession() -> getElementFromSession() round trip.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionAcceptsClassesConfiguredForTmpStore(): void
+    {
+        require_once __DIR__ . '/ConfiguredSessionClassProbe.php';
+
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+        $object->setProperty('configuredProbe', 'text', new ConfiguredSessionClassProbe());
+
+        $sessionId = 'session-configured-' . $object->getId();
+
+        Service::saveElementToSession($object, $sessionId);
+
+        $restored = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertInstanceOf(DataObject\AbstractObject::class, $restored);
+        $this->assertInstanceOf(ConfiguredSessionClassProbe::class, $restored->getProperty('configuredProbe'));
+
+        TmpStore::delete(Service::getSessionKey('object', $object->getId(), $sessionId));
     }
 }

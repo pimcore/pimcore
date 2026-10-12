@@ -60,3 +60,7 @@ pimcore:
 
 The classes listed here are **merged** with Pimcore's built-in defaults, so you do not need to repeat
 the core classes.
+
+The same list also applies to element data stored for editmode/preview sessions: besides classes in the
+`Pimcore\` namespace and date values, only classes registered here are accepted when such an element is read
+back, e.g. application value objects returned by a custom `CustomVersionMarshalInterface::marshalVersion()`.
