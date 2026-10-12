@@ -22,6 +22,13 @@ namespace Pimcore\Asset\StorageQueue;
  * this resolver only affects URL generation and performs no storage I/O (most specific covering row
  * wins, without an existence check).
  *
+ * The translation is only correct when the prefix bypasses Pimcore. A prefix that is served
+ * through Pimcore itself (e.g. a route loading the asset by its path via Asset::getByPath())
+ * needs the logical path, because the queue-aware adapter already resolves the physical location
+ * on read - such installs disable the translation via
+ * `pimcore.assets.storage_operation_queue.resolve_frontend_paths`, which turns this resolver into
+ * an identity.
+ *
  * @internal
  */
 final class FrontendPathResolver
@@ -29,6 +36,7 @@ final class FrontendPathResolver
     public function __construct(
         private readonly StorageOperationQueueRepositoryInterface $repository,
         private readonly bool $enabled,
+        private readonly bool $resolveFrontendPaths = true,
     ) {
     }
 
@@ -41,7 +49,7 @@ final class FrontendPathResolver
      */
     public function resolvePhysicalPath(string $logicalPath, ?int $modificationTimestamp = null): string
     {
-        if (!$this->enabled) {
+        if (!$this->enabled || !$this->resolveFrontendPaths) {
             return $logicalPath;
         }
 
