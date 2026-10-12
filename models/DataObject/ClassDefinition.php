@@ -1200,13 +1200,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             ));
         }
 
-        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
-            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
-            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*\z/', $propertyValue)) {
-                throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
-                    $this->getParentClass()));
-            }
-        }
+        $this->validateInheritanceProperties();
 
         $isUpdate = $this->exists();
 
@@ -1256,6 +1250,22 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     }
 
     /**
+     * @throws Exception
+     *
+     * @internal
+     */
+    private function validateInheritanceProperties(): void
+    {
+        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
+            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
+            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*\z/', $propertyValue)) {
+                throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
+                    $this->getParentClass()));
+            }
+        }
+    }
+
+    /**
      *
      * @throws Exception
      *
@@ -1265,6 +1275,8 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         bool $generateDefinitionFile = true,
         bool $dumpPHPClasses = true
     ): void {
+        $this->validateInheritanceProperties();
+
         if ($dumpPHPClasses) {
             Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
         }
