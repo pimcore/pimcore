@@ -162,6 +162,7 @@ services:
         arguments:
             - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
             - '%pimcore.assets.storage_operation_queue.enabled%'
+            - '%pimcore.assets.storage_operation_queue.resolve_frontend_paths%'
 
     # Static wiring: the queue-aware adapters always decorate the flysystem adapters; the runtime
     # `enabled` flag (last argument) makes every public method a pass-through when the feature is
