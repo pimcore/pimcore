@@ -225,6 +225,12 @@ class Sql extends AbstractAdapter
      * itself; inside `...`, only doubling the backtick escapes it - there is no backslash
      * escaping for identifiers.
      *
+     * The backslash handling relies on the connection's sql_mode not containing
+     * NO_BACKSLASH_ESCAPES (with it, a backslash is a literal character and this scan would
+     * read strings differently from MySQL). Core guarantees that through the connection's
+     * init command "SET sql_mode = ''" in bundles/CoreBundle/config/pimcore/default.yaml; keep
+     * the two in sync if that setting is ever changed or overridden.
+     *
      * An unterminated quoted region is rejected: no valid fragment contains one, and the
      * fragments are validated separately but concatenated afterwards, so an opening quote in
      * one fragment could otherwise be closed by a quote in another.
