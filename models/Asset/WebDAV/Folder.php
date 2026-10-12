@@ -15,7 +15,6 @@ namespace Pimcore\Model\Asset\WebDAV;
 
 use Exception;
 use League\Flysystem\FileAttributes;
-use League\Flysystem\FilesystemException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -41,26 +40,27 @@ class Folder extends DAV\Collection
      */
     public function getChildren(): array
     {
-        $children = [];
-
         $childrenList = new Asset\Listing();
 
         $childrenList->addConditionParam('parentId = ?', [$this->asset->getId()]);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         $childrenList->filterAccessibleByUser($user, $this->asset);
 
-        $fileSizes = $this->getFileSizes();
+        $assets = $childrenList->getAssets();
 
-        foreach ($childrenList as $child) {
-            try {
-                if ($child instanceof Asset\Folder) {
-                    $children[] = new Asset\WebDAV\Folder($child);
-                } else {
-                    $children[] = new Asset\WebDAV\File($child, $fileSizes[$child->getRealFullPath()] ?? null);
-                }
-            } catch (Exception $e) {
-                Logger::warning((string) $e);
+        // only files have a size, so a folder without any needs no storage listing
+        $fileSizes = [];
+        foreach ($assets as $child) {
+            if (!$child instanceof Asset\Folder) {
+                $fileSizes = $this->getFileSizes();
+
+                break;
             }
+        }
+
+        $children = [];
+        foreach ($assets as $child) {
+            $children[] = $this->createNode($child, $fileSizes[$child->getRealFullPath()] ?? null);
         }
 
         return $children;
@@ -71,7 +71,8 @@ class Folder extends DAV\Collection
      *
      * A PROPFIND asks for the size of each child, and asking the storage per file costs one
      * request per child on remote storage (S3, Azure Blob, ...), which does not finish in time
-     * for large folders. Children missing from the listing fall back to the per-file lookup.
+     * for large folders. Children missing from the listing fall back to the per-file lookup, and
+     * so does every child if the listing fails, e.g. at a symbolic link on local storage.
      *
      * @return array<string, int> file sizes in bytes, keyed by the asset's full path
      */
@@ -85,11 +86,20 @@ class Folder extends DAV\Collection
                     $fileSizes['/' . ltrim($item->path(), '/')] = $item->fileSize();
                 }
             }
-        } catch (FilesystemException $e) {
-            Logger::warning('Unable to list the contents of asset folder ' . $this->asset->getRealFullPath() . ': ' . $e);
+        } catch (Exception $e) {
+            Logger::info('Unable to list the contents of asset folder ' . $this->asset->getRealFullPath() . ', falling back to a per-file size lookup: ' . $e);
         }
 
         return $fileSizes;
+    }
+
+    private function createNode(Asset $asset, ?int $size = null): File|Folder
+    {
+        if ($asset instanceof Asset\Folder) {
+            return new Asset\WebDAV\Folder($asset);
+        }
+
+        return new Asset\WebDAV\File($asset, $size);
     }
 
     /**
@@ -115,11 +125,7 @@ class Folder extends DAV\Collection
         }
 
         if ($asset instanceof Asset) {
-            if ($asset instanceof Asset\Folder) {
-                return new Asset\WebDAV\Folder($asset);
-            }
-
-            return new Asset\WebDAV\File($asset);
+            return $this->createNode($asset);
         }
 
         throw new DAV\Exception\NotFound('File not found: ' . $name);

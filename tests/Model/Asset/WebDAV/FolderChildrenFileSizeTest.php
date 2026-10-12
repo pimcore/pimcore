@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset\WebDAV;
 
+use League\Flysystem\DirectoryListing;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Pimcore;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\WebDAV\File;
@@ -23,7 +27,10 @@ use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use Psr\Container\ContainerInterface;
 use ReflectionProperty;
+use RuntimeException;
+use Sabre\DAV\INode;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -98,6 +105,55 @@ class FolderChildrenFileSizeTest extends ModelTestCase
         $this->assertSame(5, (new File($asset))->getSize());
     }
 
+    public function testChildrenFallBackToPerFileLookupsWhenTheListingFails(): void
+    {
+        $folder = TestHelper::createAssetFolder('webdav-sizes-');
+        $this->createAsset($folder, 'a.txt', 'abc');
+        $this->createAsset($folder, 'b.txt', 'hello');
+
+        // not a FilesystemException, and thrown before any iteration: it must not fail the request
+        $storage = $this->assetStorage();
+        $storage->method('listContents')->willThrowException(new RuntimeException('listing unavailable'));
+
+        $sizes = $this->withAssetStorage($storage, fn (): array => $this->fileSizes((new Folder($folder))->getChildren()));
+
+        $this->assertSame(['a.txt' => 3, 'b.txt' => 5], $sizes);
+    }
+
+    public function testChildMissingFromTheListingFallsBackToAPerFileLookup(): void
+    {
+        $folder = TestHelper::createAssetFolder('webdav-sizes-');
+        $listed = $this->createAsset($folder, 'listed.txt', 'abc');
+        $this->createAsset($folder, 'unlisted.txt', 'hello');
+
+        // the listed size is deliberately wrong, so the result shows which source each size came from
+        $storage = $this->assetStorage();
+        $storage->method('listContents')->willReturn(new DirectoryListing([
+            new FileAttributes(ltrim($listed->getRealFullPath(), '/'), 999),
+        ]));
+
+        $sizes = $this->withAssetStorage($storage, fn (): array => $this->fileSizes((new Folder($folder))->getChildren()));
+
+        $this->assertSame(['listed.txt' => 999, 'unlisted.txt' => 5], $sizes);
+    }
+
+    public function testFolderWithoutFilesIsNotListed(): void
+    {
+        $folder = TestHelper::createAssetFolder('webdav-sizes-');
+        $subfolder = new Asset\Folder();
+        $subfolder->setParent($folder);
+        $subfolder->setFilename('subfolder');
+        $subfolder->save();
+
+        $storage = $this->assetStorage();
+        $storage->expects($this->never())->method('listContents');
+
+        $children = $this->withAssetStorage($storage, fn (): array => (new Folder($folder))->getChildren());
+
+        $this->assertCount(1, $children);
+        $this->assertInstanceOf(Folder::class, $children[0]);
+    }
+
     public function testPutDiscardsTheListedSize(): void
     {
         $folder = TestHelper::createAssetFolder('webdav-sizes-');
@@ -127,6 +183,77 @@ class FolderChildrenFileSizeTest extends ModelTestCase
         $asset->save();
 
         return $asset;
+    }
+
+    /**
+     * @param array<INode> $children
+     *
+     * @return array<string, int> sizes of the File children, keyed by name
+     */
+    private function fileSizes(array $children): array
+    {
+        $sizes = [];
+        foreach ($children as $child) {
+            if ($child instanceof File) {
+                $sizes[$child->getName()] = $child->getSize();
+            }
+        }
+        ksort($sizes);
+
+        return $sizes;
+    }
+
+    /**
+     * A stand-in for the asset storage whose per-file size lookups go to the real storage. Each
+     * test configures listContents() itself.
+     */
+    private function assetStorage(): FilesystemOperator&MockObject
+    {
+        $real = Storage::get('asset');
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->method('fileSize')->willReturnCallback(static fn (string $path): int => $real->fileSize($path));
+
+        return $storage;
+    }
+
+    /**
+     * Runs $callback with Storage::get('asset') returning $storage. Storage resolves its
+     * filesystems through a private service locator, so the swap goes through that locator.
+     *
+     * @template T
+     *
+     * @param callable(): T $callback
+     *
+     * @return T
+     */
+    private function withAssetStorage(FilesystemOperator $storage, callable $callback): mixed
+    {
+        $service = Pimcore::getContainer()->get(Storage::class);
+        $locator = new ReflectionProperty(Storage::class, 'locator');
+        $original = $locator->getValue($service);
+        $locator->setValue($service, new class($original, $storage) implements ContainerInterface {
+            public function __construct(
+                private readonly ContainerInterface $inner,
+                private readonly FilesystemOperator $assetStorage
+            ) {
+            }
+
+            public function get(string $id): mixed
+            {
+                return $id === 'pimcore.asset.storage' ? $this->assetStorage : $this->inner->get($id);
+            }
+
+            public function has(string $id): bool
+            {
+                return $this->inner->has($id);
+            }
+        });
+
+        try {
+            return $callback();
+        } finally {
+            $locator->setValue($service, $original);
+        }
     }
 
     private function loginAsAdmin(): void
