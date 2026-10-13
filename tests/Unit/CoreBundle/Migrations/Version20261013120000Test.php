@@ -45,6 +45,9 @@ class Version20261013120000Test extends TestCase
         $connection->method('createSchemaManager')->willReturn($this->createStub(AbstractSchemaManager::class));
         $connection->method('fetchAssociative')->willReturn($column);
         $connection->method('fetchOne')->willReturn($dateRows);
+        $connection->method('quote')->willReturnCallback(
+            static fn (string $value): string => "'" . str_replace("'", "''", $value) . "'"
+        );
 
         return new Version20261013120000($connection, new NullLogger());
     }
@@ -114,6 +117,37 @@ class Version20261013120000Test extends TestCase
         );
     }
 
+    public function testUpKeepsCharsetCollationAndCommentOfTheColumn(): void
+    {
+        $migration = $this->createMigration([
+            'COLUMN_TYPE' => self::LEGACY_TYPE,
+            'IS_NULLABLE' => 'YES',
+            'CHARACTER_SET_NAME' => 'utf8mb4',
+            'COLLATION_NAME' => 'utf8mb4_bin',
+            'COLUMN_COMMENT' => "owner's note",
+        ]);
+        $migration->up($this->createStub(Schema::class));
+
+        $this->assertSame(
+            ["ALTER TABLE `properties` MODIFY `type` enum('text','document','asset','object','bool','select','date') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'owner''s note'"],
+            $this->planSql($migration)
+        );
+    }
+
+    public function testUpNeverInterpolatesAnUnexpectedCharsetName(): void
+    {
+        $migration = $this->createMigration([
+            'COLUMN_TYPE' => self::LEGACY_TYPE,
+            'IS_NULLABLE' => 'YES',
+            'CHARACTER_SET_NAME' => 'utf8mb4; DROP TABLE `users`',
+            'COLLATION_NAME' => 'utf8mb4_bin',
+        ]);
+        $migration->up($this->createStub(Schema::class));
+
+        $this->assertStringNotContainsString('DROP TABLE', $this->planSql($migration)[0]);
+        $this->assertStringNotContainsString('CHARACTER SET', $this->planSql($migration)[0]);
+    }
+
     public function testUpKeepsNotNullColumns(): void
     {
         $migration = $this->createMigration(['COLUMN_TYPE' => self::LEGACY_TYPE, 'IS_NULLABLE' => 'NO']);
@@ -175,6 +209,17 @@ class Version20261013120000Test extends TestCase
             ["ALTER TABLE `properties` MODIFY `type` enum('text','prefix''date') DEFAULT NULL"],
             $this->planSql($migration)
         );
+    }
+
+    public function testDownAbortsWhenDateIsTheOnlyMember(): void
+    {
+        // an enum without members is invalid SQL
+        $migration = $this->createMigration(['COLUMN_TYPE' => "enum('date')", 'IS_NULLABLE' => 'YES']);
+
+        $this->expectException(AbortMigration::class);
+        $this->expectExceptionMessageMatches('/only member/i');
+
+        $migration->down($this->createStub(Schema::class));
     }
 
     public function testDownLeavesAColumnWithACustomDefaultUntouched(): void

@@ -19,6 +19,7 @@ use Doctrine\Migrations\AbstractMigration;
 use function array_map;
 use function implode;
 use function in_array;
+use function preg_match;
 use function preg_match_all;
 use function str_ends_with;
 use function str_replace;
@@ -37,14 +38,18 @@ use function substr;
  *
  * The member is appended to the column's current definition instead of replacing it with a
  * hardcoded list, so members a project added itself survive. Appending at the end of the list is
- * a metadata-only change for MariaDB/MySQL (no table rebuild). A column with a custom default
- * value is left untouched (with a log line) instead of having that default reset by the ALTER.
+ * a metadata-only change for MariaDB/MySQL (no table rebuild). The ALTER re-states the column's
+ * current character set, collation and comment, so MODIFY does not fall back to the table
+ * defaults. A column with a custom default value is left untouched (with a log line) instead of
+ * having that default reset by the ALTER.
  * Rows that were already saved with the coerced '' type are left untouched: their former type
  * cannot be told apart from other values reliably.
  */
 final class Version20261013120000 extends AbstractMigration
 {
     private const MEMBER = 'date';
+
+    private const IDENTIFIER = '/^[A-Za-z0-9_]+$/';
 
     public function getDescription(): string
     {
@@ -58,7 +63,7 @@ final class Version20261013120000 extends AbstractMigration
             return;
         }
 
-        $this->alterType(substr($column['type'], 0, -1) . ",'" . self::MEMBER . "')", $column['nullable']);
+        $this->alterType(substr($column['type'], 0, -1) . ",'" . self::MEMBER . "')", $column);
     }
 
     public function down(Schema $schema): void
@@ -82,12 +87,35 @@ final class Version20261013120000 extends AbstractMigration
             }
         }
 
-        $this->alterType('enum(' . implode(',', $remaining) . ')', $column['nullable']);
+        // an enum needs at least one member
+        $this->abortIf(
+            $remaining === [],
+            "Cannot remove the 'date' member from properties.type: it is the only member of the column."
+        );
+
+        $this->alterType('enum(' . implode(',', $remaining) . ')', $column);
     }
 
-    private function alterType(string $enumType, bool $nullable): void
+    /**
+     * @param array{nullable: bool, charset: string|null, collation: string|null, comment: string} $column
+     */
+    private function alterType(string $enumType, array $column): void
     {
-        $this->addSql('ALTER TABLE `properties` MODIFY `type` ' . $enumType . ($nullable ? ' DEFAULT NULL' : ' NOT NULL'));
+        $sql = 'ALTER TABLE `properties` MODIFY `type` ' . $enumType;
+
+        // names come from information_schema; only plain identifiers are ever interpolated
+        if ($column['charset'] !== null && $column['collation'] !== null
+            && preg_match(self::IDENTIFIER, $column['charset']) === 1 && preg_match(self::IDENTIFIER, $column['collation']) === 1) {
+            $sql .= ' CHARACTER SET ' . $column['charset'] . ' COLLATE ' . $column['collation'];
+        }
+
+        $sql .= $column['nullable'] ? ' DEFAULT NULL' : ' NOT NULL';
+
+        if ($column['comment'] !== '') {
+            $sql .= ' COMMENT ' . $this->connection->quote($column['comment']);
+        }
+
+        $this->addSql($sql);
     }
 
     /**
@@ -109,14 +137,14 @@ final class Version20261013120000 extends AbstractMigration
     }
 
     /**
-     * @return array{type: string, tokens: string[], members: string[], nullable: bool, default: string|null}|null
+     * @return array{type: string, tokens: string[], members: string[], nullable: bool, default: string|null, charset: string|null, collation: string|null, comment: string}|null
      *         null when the column is missing or not an enum. `tokens` are the quoted members as reported by
      *         the database, `members` the same members unquoted ('' decoded to ').
      */
     private function getTypeColumn(): ?array
     {
         $column = $this->connection->fetchAssociative(
-            'SELECT COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM information_schema.COLUMNS'
+            'SELECT COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT, CHARACTER_SET_NAME, COLLATION_NAME, COLUMN_COMMENT FROM information_schema.COLUMNS'
             . " WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'properties' AND COLUMN_NAME = 'type'"
         );
 
@@ -138,6 +166,9 @@ final class Version20261013120000 extends AbstractMigration
             'members' => array_map(static fn (string $member): string => str_replace("''", "'", $member), $matches[1]),
             'nullable' => $column['IS_NULLABLE'] === 'YES',
             'default' => isset($column['COLUMN_DEFAULT']) ? (string) $column['COLUMN_DEFAULT'] : null,
+            'charset' => isset($column['CHARACTER_SET_NAME']) ? (string) $column['CHARACTER_SET_NAME'] : null,
+            'collation' => isset($column['COLLATION_NAME']) ? (string) $column['COLLATION_NAME'] : null,
+            'comment' => (string) ($column['COLUMN_COMMENT'] ?? ''),
         ];
     }
 }
