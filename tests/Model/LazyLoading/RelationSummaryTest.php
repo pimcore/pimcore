@@ -114,7 +114,7 @@ class RelationSummaryTest extends AbstractLazyLoadingTest
         $db = Db::get();
         $table = 'object_relations_' . $object->getClassId();
         foreach ([[$asset->getId(), 'asset', 1], [$document->getId(), 'document', 2], [999999999, 'object', 3]] as [$id, $type, $index]) {
-            $db->insert($table, [
+            $db->insert($table, Db\Helper::quoteDataIdentifiers($db, [
                 'src_id' => $object->getId(),
                 'dest_id' => $id,
                 'type' => $type,
@@ -123,7 +123,7 @@ class RelationSummaryTest extends AbstractLazyLoadingTest
                 'ownertype' => 'object',
                 'ownername' => '',
                 'position' => '0',
-            ]);
+            ]));
         }
 
         $object = $this->reload($object);
