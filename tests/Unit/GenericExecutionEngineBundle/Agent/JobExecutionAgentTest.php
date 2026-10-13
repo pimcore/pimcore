@@ -21,6 +21,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecut
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStep;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunElementCounterInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
@@ -29,6 +30,7 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
 use Psr\Log\NullLogger;
 use ReflectionProperty;
+use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class JobExecutionAgentTest extends TestCase
@@ -46,18 +48,15 @@ class JobExecutionAgentTest extends TestCase
         $jobRun = $this->createRunningJobRun($elements);
 
         $processedElementsInDatabase = 0;
-        $repository = $this->makeEmpty(JobRunRepositoryInterface::class, [
-            'getJobRunById' => $jobRun,
-            'update' => $jobRun,
-            'incrementProcessedElementsForStep' => static function (JobRun $jobRun) use (
-                &$processedElementsInDatabase
-            ): int {
+        $counter = $this->createMock(JobRunElementCounterInterface::class);
+        $counter->method('incrementProcessedElementsForStep')->willReturnCallback(
+            static function (JobRun $jobRun) use (&$processedElementsInDatabase): int {
                 $jobRun->setProcessedElementsForStep(++$processedElementsInDatabase);
 
                 return $processedElementsInDatabase;
-            },
-        ]);
-        $agent = $this->createAgent($repository);
+            }
+        );
+        $agent = $this->createAgent($this->createRepository($jobRun), $counter);
 
         $agent->continueJobMessageExecution($this->createMessage($elements[0]));
         $this->assertSame(JobRunStates::RUNNING, $jobRun->getState());
@@ -75,16 +74,66 @@ class JobExecutionAgentTest extends TestCase
         $elements = [new ElementDescriptor('object', 1), new ElementDescriptor('object', 2)];
         $jobRun = $this->createRunningJobRun($elements);
 
-        $repository = $this->makeEmpty(JobRunRepositoryInterface::class, [
-            'getJobRunById' => $jobRun,
-            'update' => $jobRun,
-            'incrementProcessedElementsForStep' => 1,
-        ]);
-        $agent = $this->createAgent($repository);
+        $counter = $this->createMock(JobRunElementCounterInterface::class);
+        $counter->method('incrementProcessedElementsForStep')->willReturn(1);
+        $agent = $this->createAgent($this->createRepository($jobRun), $counter);
 
         $agent->continueJobMessageExecution($this->createMessage($elements[0]));
 
         $this->assertSame(JobRunStates::RUNNING, $jobRun->getState());
+    }
+
+    /**
+     * The error bookkeeping of a failed element flushes the job run. Once the final element count
+     * is reached, another worker may complete the job run, so the bookkeeping must be persisted
+     * before the element is counted, otherwise it could flush a completed job run back to running.
+     */
+    public function testErrorBookkeepingIsPersistedBeforeTheFailedElementIsCounted(): void
+    {
+        $elements = [new ElementDescriptor('object', 1), new ElementDescriptor('object', 2)];
+        $jobRun = $this->createRunningJobRun($elements);
+
+        $calls = [];
+        $repository = $this->createMock(JobRunRepositoryInterface::class);
+        $repository->method('getJobRunById')->willReturn($jobRun);
+        $repository->method('update')->willReturnCallback(
+            static function (JobRun $jobRun) use (&$calls): JobRun {
+                $calls[] = 'update';
+
+                return $jobRun;
+            }
+        );
+        $counter = $this->createMock(JobRunElementCounterInterface::class);
+        $counter->method('incrementProcessedElementsForStep')->willReturnCallback(
+            static function () use (&$calls): int {
+                $calls[] = 'increment';
+
+                return 2;
+            }
+        );
+        $agent = $this->createAgent($repository, $counter);
+
+        $agent->continueJobMessageExecution(
+            $this->createMessage($elements[1]),
+            new RuntimeException('element failed')
+        );
+
+        $this->assertContains('update', $calls);
+        $this->assertGreaterThan(
+            array_search('update', $calls, true),
+            array_search('increment', $calls, true),
+            'The job run must be flushed before the element is counted'
+        );
+        $this->assertSame(JobRunStates::FAILED, $jobRun->getState());
+    }
+
+    private function createRepository(JobRun $jobRun): JobRunRepositoryInterface
+    {
+        $repository = $this->createMock(JobRunRepositoryInterface::class);
+        $repository->method('getJobRunById')->willReturn($jobRun);
+        $repository->method('update')->willReturn($jobRun);
+
+        return $repository;
     }
 
     /**
@@ -109,17 +158,20 @@ class JobExecutionAgentTest extends TestCase
         return $jobRun;
     }
 
-    private function createAgent(JobRunRepositoryInterface $repository): JobExecutionAgent
-    {
+    private function createAgent(
+        JobRunRepositoryInterface $repository,
+        JobRunElementCounterInterface $counter
+    ): JobExecutionAgent {
         return new JobExecutionAgent(
             'test',
             ErrorHandlingMode::CONTINUE_ON_ERROR->value,
-            $this->makeEmpty(ExecutionContextInterface::class),
+            $this->createMock(ExecutionContextInterface::class),
             $repository,
-            $this->makeEmpty(JobRunErrorLogRepositoryInterface::class),
+            $this->createMock(JobRunErrorLogRepositoryInterface::class),
+            $counter,
             new NullLogger(),
-            $this->makeEmpty(MessageBusInterface::class),
-            $this->makeEmpty(Translator::class)
+            $this->createMock(MessageBusInterface::class),
+            $this->createMock(Translator::class)
         );
     }
 

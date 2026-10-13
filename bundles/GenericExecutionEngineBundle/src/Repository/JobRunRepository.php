@@ -68,38 +68,6 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
     /**
      * @throws Exception
      * @throws ORMException
-     */
-    public function incrementProcessedElementsForStep(JobRun $jobRun): int
-    {
-        $processedElements = $this->db->transactional(
-            static function (Connection $connection) use ($jobRun): int {
-                $processedElements = (int) $connection->fetchOne(
-                    'SELECT processedElementsForStep FROM ' . TableConstants::JOB_RUN_TABLE .
-                    ' WHERE id = :id FOR UPDATE',
-                    ['id' => $jobRun->getId()]
-                ) + 1;
-
-                $connection->executeStatement(
-                    'UPDATE ' . TableConstants::JOB_RUN_TABLE .
-                    ' SET processedElementsForStep = :processedElements WHERE id = :id',
-                    [
-                        'processedElements' => $processedElements,
-                        'id' => $jobRun->getId(),
-                    ]
-                );
-
-                return $processedElements;
-            }
-        );
-
-        $this->pimcoreEntityManager->refresh($jobRun);
-
-        return $processedElements;
-    }
-
-    /**
-     * @throws Exception
-     * @throws ORMException
      *
      * @internal
      */
