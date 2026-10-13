@@ -59,11 +59,43 @@ class Version20261013120000Test extends TestCase
 
     public function testUpAppendsDateToTheExistingEnum(): void
     {
-        $migration = $this->createMigration(['COLUMN_TYPE' => self::LEGACY_TYPE, 'IS_NULLABLE' => 'YES']);
+        $migration = $this->createMigration(['COLUMN_TYPE' => self::LEGACY_TYPE, 'IS_NULLABLE' => 'YES', 'COLUMN_DEFAULT' => null]);
         $migration->up($this->createStub(Schema::class));
 
         $this->assertSame(
             ["ALTER TABLE `properties` MODIFY `type` enum('text','document','asset','object','bool','select','date') DEFAULT NULL"],
+            $this->planSql($migration)
+        );
+    }
+
+    public function testUpTreatsTheMariaDbNullDefaultAsNoDefault(): void
+    {
+        // MariaDB reports `DEFAULT NULL` as the string 'NULL', MySQL as SQL NULL
+        $migration = $this->createMigration(['COLUMN_TYPE' => self::LEGACY_TYPE, 'IS_NULLABLE' => 'YES', 'COLUMN_DEFAULT' => 'NULL']);
+        $migration->up($this->createStub(Schema::class));
+
+        $this->assertCount(1, $this->planSql($migration));
+    }
+
+    public function testUpLeavesAColumnWithACustomDefaultUntouched(): void
+    {
+        $migration = $this->createMigration(['COLUMN_TYPE' => self::LEGACY_TYPE, 'IS_NULLABLE' => 'YES', 'COLUMN_DEFAULT' => "'text'"]);
+        $migration->up($this->createStub(Schema::class));
+
+        $this->assertSame([], $this->planSql($migration));
+    }
+
+    public function testUpAddsDateWhenAnotherMemberOnlyContainsItAsQuotedFragment(): void
+    {
+        // the member `prefix'date` is reported as 'prefix''date' and contains the token 'date'
+        $migration = $this->createMigration([
+            'COLUMN_TYPE' => "enum('text','prefix''date')",
+            'IS_NULLABLE' => 'YES',
+        ]);
+        $migration->up($this->createStub(Schema::class));
+
+        $this->assertSame(
+            ["ALTER TABLE `properties` MODIFY `type` enum('text','prefix''date','date') DEFAULT NULL"],
             $this->planSql($migration)
         );
     }
@@ -129,6 +161,32 @@ class Version20261013120000Test extends TestCase
             ["ALTER TABLE `properties` MODIFY `type` enum('text','document','asset','object','bool','select') DEFAULT NULL"],
             $this->planSql($migration)
         );
+    }
+
+    public function testDownOnlyRemovesTheExactDateMember(): void
+    {
+        $migration = $this->createMigration([
+            'COLUMN_TYPE' => "enum('text','prefix''date','date')",
+            'IS_NULLABLE' => 'YES',
+        ]);
+        $migration->down($this->createStub(Schema::class));
+
+        $this->assertSame(
+            ["ALTER TABLE `properties` MODIFY `type` enum('text','prefix''date') DEFAULT NULL"],
+            $this->planSql($migration)
+        );
+    }
+
+    public function testDownLeavesAColumnWithACustomDefaultUntouched(): void
+    {
+        $migration = $this->createMigration([
+            'COLUMN_TYPE' => "enum('text','date')",
+            'IS_NULLABLE' => 'YES',
+            'COLUMN_DEFAULT' => "'text'",
+        ]);
+        $migration->down($this->createStub(Schema::class));
+
+        $this->assertSame([], $this->planSql($migration));
     }
 
     public function testDownAbortsInsteadOfCoercingExistingDateRows(): void
