@@ -264,4 +264,3 @@ class DependenciesTest extends ModelTestCase
         $this->assertTrue($restoredHideUnpublished);
     }
 }
-

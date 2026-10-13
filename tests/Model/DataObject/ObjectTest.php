@@ -693,4 +693,3 @@ class ObjectTest extends ModelTestCase
         $this->assertFalse($dirtyDetectionDisabled);
     }
 }
-

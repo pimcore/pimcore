@@ -447,4 +447,3 @@ class ServiceTest extends TestCase
         $this->assertFalse($dirtyDetectionDisabled);
     }
 }
-

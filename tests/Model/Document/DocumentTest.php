@@ -630,4 +630,3 @@ class DocumentTest extends ModelTestCase
         $this->assertTrue($hideUnpublished);
     }
 }
-
