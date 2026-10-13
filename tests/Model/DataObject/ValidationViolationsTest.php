@@ -528,7 +528,7 @@ class ValidationViolationsTest extends ModelTestCase
 
             return $this->saveExpectingFailure($child);
         } finally {
-            // the validation retry switches inheritance on and does not switch it off when it fails
+            // keep the inherited-values mode of later tests independent of this one
             DataObject::setGetInheritedValues($inheritedValues);
         }
     }
