@@ -30,6 +30,11 @@ class JobRunElementCounterTest extends TestCase
 {
     private EntityManagerInterface $entityManager;
 
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

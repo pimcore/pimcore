@@ -227,10 +227,9 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     }
 
     /**
-     * @throws Exception
-     */
-    /**
      * @return bool whether the execution of the job run continues
+     *
+     * @throws Exception
      */
     private function handleJobExecutionError(
         GenericExecutionEngineMessageInterface $message,
