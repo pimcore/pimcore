@@ -114,14 +114,22 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
         $v = ParameterBagHelper::getInt($request->query, 'v');
         if ($v) {
-            if ($version = Version::getById($v)) {
-                if ($version->getPublic()) {
+            if ($version = $this->loadVersion($v)) {
+                if ($version->getPublic()
+                    && $version->getCtype() === 'document'
+                    && (int) $version->getCid() === $document->getId()
+                ) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
                         'document' => $document->getFullPath(),
                     ]);
 
                     $document = $version->getData();
+                } else {
+                    $this->logger->notice('Denying version {version} for document {document}: not public or not its version', [
+                        'version' => $version->getId(),
+                        'document' => $document->getFullPath(),
+                    ]);
                 }
             } else {
                 $this->logger->notice('Failed to load {version} for document {document}', [
