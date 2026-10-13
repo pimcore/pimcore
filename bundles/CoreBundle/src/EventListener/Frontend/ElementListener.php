@@ -219,6 +219,12 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             }
         }
 
+        // substituting the latest (possibly unpublished) version requires the "versions" grant,
+        // same as browsing historical versions by id via pimcore_version (GHSA-v36c-r89g-2226)
+        if (!$document->isAllowed('versions', $user)) {
+            return $document;
+        }
+
         $this->logger->debug('Loading editmode document {document} from latest version', [
             'document' => $document->getFullPath(),
         ]);
@@ -297,6 +303,12 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     private function handleDocumentStudioPreview(Document $document, User $user): Document
     {
+        // substituting the latest (possibly unpublished) version requires the "versions" grant,
+        // same as browsing historical versions by id via pimcore_version (GHSA-v36c-r89g-2226)
+        if (!$document->isAllowed('versions', $user)) {
+            return $document;
+        }
+
         $this->logger->debug('Loading preview document {document} from latest version', [
             'document' => $document->getFullPath(),
         ]);
