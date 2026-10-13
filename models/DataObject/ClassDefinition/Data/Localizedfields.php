@@ -660,25 +660,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             if ($data->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($dataForValidityCheck[$language][$fd->getName()])) {
                                 //try again with parent data when inheritance is activated
                                 try {
-                                    $getInheritedValues = DataObject::doGetInheritedValues();
-                                    DataObject::setGetInheritedValues(true);
-
-                                    $value = null;
-                                    $context = $data->getContext();
-                                    $containerType = $context['containerType'] ?? null;
-                                    if ($containerType === 'objectbrick') {
-                                        $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
-                                        $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
-                                        if ($brick) {
-                                            $value = $brick->{'get' . ucfirst($fd->getName())}($language);
-                                        }
-                                    } elseif ($containerType === null || $containerType === 'object') {
-                                        $getter = 'get' . ucfirst($fd->getName());
-                                        $value = $data->getObject()->$getter($language);
-                                    }
-
-                                    $fd->checkValidity($value, $omitMandatoryCheck, $params);
-                                    DataObject::setGetInheritedValues($getInheritedValues);
+                                    DataObject\Service::useInheritedValues(
+                                        true,
+                                        fn () => $fd->checkValidity(
+                                            $this->getValueForInheritanceCheck($data, $fd, $language),
+                                            $omitMandatoryCheck,
+                                            $params
+                                        )
+                                    );
                                 } catch (Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
@@ -714,6 +703,25 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
             throw new Model\Element\ValidationException($message);
         }
+    }
+
+    private function getValueForInheritanceCheck(Localizedfield $data, Data $fd, string $language): mixed
+    {
+        $value = null;
+        $context = $data->getContext();
+        $containerType = $context['containerType'] ?? null;
+        if ($containerType === 'objectbrick') {
+            $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
+            $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
+            if ($brick) {
+                $value = $brick->{'get' . ucfirst($fd->getName())}($language);
+            }
+        } elseif ($containerType === null || $containerType === 'object') {
+            $getter = 'get' . ucfirst($fd->getName());
+            $value = $data->getObject()->$getter($language);
+        }
+
+        return $value;
     }
 
     private function getDataForValidity(Localizedfield $localizedObject, array $languages): array
