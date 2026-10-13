@@ -97,17 +97,19 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
+        $processedElements = 0;
         if ($jobRun->getTotalElements() > 0) {
-            $this->incrementProcessedElements($jobRun);
+            // atomic counter: several workers may process elements of the same job run in parallel
+            $processedElements = $this->jobRunRepository->incrementProcessedElementsForStep($jobRun);
         }
 
         if (!$throwable) {
-            $this->handleNextMessage($message);
+            $this->handleNextMessage($message, $processedElements);
 
             return;
         }
 
-        $this->handleJobExecutionError($message, $throwable);
+        $this->handleJobExecutionError($message, $throwable, $processedElements);
     }
 
     public function isInteractionAllowed(int $jobRunId, int $ownerId): bool
@@ -164,12 +166,14 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     /**
      * @throws Exception
      */
-    private function handleNextMessage(GenericExecutionEngineMessageInterface $message): void
-    {
+    private function handleNextMessage(
+        GenericExecutionEngineMessageInterface $message,
+        int $processedElements
+    ): void {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
 
         if ($this->getSelectionProcessingModeFromJobRun($jobRun) === SelectionProcessingMode::ONCE ||
-            $jobRun->getProcessedElementsForStep() === $jobRun->getTotalElements()) {
+            $processedElements === $jobRun->getTotalElements()) {
             $this->continueJobStepExecution($message);
         }
     }
@@ -225,7 +229,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
      */
     private function handleJobExecutionError(
         GenericExecutionEngineMessageInterface $message,
-        Throwable $throwable
+        Throwable $throwable,
+        int $processedElements
     ): void {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
 
@@ -257,7 +262,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $this->continueJobExecutionOnError(
                 $jobRun,
                 $message,
-                $errorMessage
+                $errorMessage,
+                $processedElements
             )
         };
     }
@@ -284,7 +290,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     private function continueJobExecutionOnError(
         JobRun $jobRun,
         GenericExecutionEngineMessageInterface $message,
-        string $errorMessage
+        string $errorMessage,
+        int $processedElements
     ): void {
         $this->setJobRunError(
             $jobRun,
@@ -295,7 +302,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         );
 
         $this->setJobStepState($jobRun, JobStepStates::FAILED);
-        $this->handleNextMessage($message);
+        $this->handleNextMessage($message, $processedElements);
     }
 
     /**
@@ -313,14 +320,6 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             'gee_job_failed',
             $this->getLogParams($jobRun)
         );
-    }
-
-    private function incrementProcessedElements(JobRun $jobRun): void
-    {
-        $currentElementCount = $jobRun->getProcessedElementsForStep() + 1;
-
-        $jobRun->setProcessedElementsForStep($currentElementCount);
-        $this->jobRunRepository->update($jobRun);
     }
 
     /**

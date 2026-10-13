@@ -25,6 +25,13 @@ interface JobRunRepositoryInterface
 
     public function update(JobRun $jobRun): JobRun;
 
+    /**
+     * Atomically increments the processed elements counter of the current job step
+     * and returns the new value. Safe to call from several workers processing the
+     * same job run in parallel.
+     */
+    public function incrementProcessedElementsForStep(JobRun $jobRun): int;
+
     public function updateLogLocalized(
         JobRun $jobRun,
         string $message,
