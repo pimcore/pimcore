@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -76,6 +77,68 @@ trait ManyToManyRelationTrait
         }
 
         return $data;
+    }
+
+    /**
+     * @see LightweightRelationLoadingInterface::loadRelationSummaries()
+     */
+    public function loadRelationSummaries(Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
+    {
+        $relations = $this->loadRelationRows($object, $params);
+
+        $idsByType = [];
+        foreach ($relations as $relation) {
+            $idsByType[$relation['type']][] = (int) $relation['dest_id'];
+        }
+
+        $db = Db::get();
+        $columns = [
+            'object' => 'SELECT `id`, `path`, `key` AS `filename`, `type`, `className`, `published` FROM `objects`',
+            'asset' => 'SELECT `id`, `path`, `filename`, `type`, NULL AS `className`, 1 AS `published` FROM `assets`',
+            'document' => 'SELECT `id`, `path`, `key` AS `filename`, `type`, NULL AS `className`, `published` FROM `documents`',
+        ];
+
+        $summaries = [];
+        foreach ($idsByType as $type => $ids) {
+            if (!isset($columns[$type])) {
+                continue;
+            }
+
+            foreach (array_chunk(array_unique($ids), 1000) as $chunk) {
+                $rows = $db->fetchAllAssociative(
+                    $columns[$type] . ' WHERE `id` IN (?)',
+                    [$chunk],
+                    [ArrayParameterType::INTEGER]
+                );
+
+                foreach ($rows as $row) {
+                    $id = (int) $row['id'];
+                    $isObject = $type === 'object';
+                    $summaries[$type . ':' . $id] = [
+                        'id' => $id,
+                        'type' => $type,
+                        'subtype' => $row['type'],
+                        'className' => $isObject && $row['type'] !== 'folder' ? $row['className'] : null,
+                        'fullpath' => $id === 1 && $isObject ? '/' : $row['path'] . $row['filename'],
+                        'filename' => $row['filename'],
+                        'published' => (bool) $row['published'],
+                    ];
+                }
+            }
+        }
+
+        $hideUnpublished = DataObject::doHideUnpublished();
+        $result = [];
+        foreach ($relations as $relation) {
+            $summary = $summaries[$relation['type'] . ':' . $relation['dest_id']] ?? null;
+            if ($summary === null || ($hideUnpublished && !$summary['published'])) {
+                continue;
+            }
+
+            $result[] = $summary;
+        }
+
+        return $result;
     }
 
     /**

@@ -162,20 +162,30 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             return [];
         }
 
+        $data = $this->loadData($this->loadRelationRows($object, $params), $object, $params);
+        $object->markFieldDirty($this->getName(), false);
+
+        return $data['data'];
+    }
+
+    /**
+     * @internal
+     */
+    protected function loadRelationRows(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
+    {
+        if ($this->getOwnerClassId() === null) {
+            return [];
+        }
+
         $db = Db::get();
         $relations = $db->fetchAllAssociative('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
 
-        $relations = array_map(static function ($relation) {
+        return array_map(static function ($relation) {
             $relation['dest_id'] = $relation['src_id'];
             unset($relation['src_id']);
 
             return $relation;
         }, $relations);
-
-        $data = $this->loadData($relations, $object, $params);
-        $object->markFieldDirty($this->getName(), false);
-
-        return $data['data'];
     }
 
     public function getCacheTags(mixed $data, array $tags = []): array
