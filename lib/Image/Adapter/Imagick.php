@@ -523,6 +523,8 @@ class Imagick extends Adapter
                     'x' => ($width / $this->getWidth()) * 96,
                     'y' => ($height / $this->getHeight()) * 96,
                 ];
+                // drop the original rendering, otherwise it is kept next to the re-rendered image below
+                $this->resource->removeImage();
             }
 
             $this->resource->setResolution($res['x'], $res['y']);

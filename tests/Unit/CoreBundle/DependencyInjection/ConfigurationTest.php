@@ -83,4 +83,27 @@ final class ConfigurationTest extends TestCase
 
         $this->processSkipInitialVersion('maybe');
     }
+
+    public function testStorageOperationQueueResolveFrontendPathsDefaultsToTrue(): void
+    {
+        $config = $this->process([[]]);
+
+        $this->assertFalse($config['assets']['storage_operation_queue']['enabled']);
+        $this->assertTrue($config['assets']['storage_operation_queue']['resolve_frontend_paths']);
+    }
+
+    public function testStorageOperationQueueResolveFrontendPathsCanBeDisabled(): void
+    {
+        $config = $this->process([[
+            'assets' => [
+                'storage_operation_queue' => [
+                    'enabled' => true,
+                    'resolve_frontend_paths' => false,
+                ],
+            ],
+        ]]);
+
+        $this->assertTrue($config['assets']['storage_operation_queue']['enabled']);
+        $this->assertFalse($config['assets']['storage_operation_queue']['resolve_frontend_paths']);
+    }
 }
