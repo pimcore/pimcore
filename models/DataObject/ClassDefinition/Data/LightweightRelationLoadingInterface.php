@@ -31,10 +31,11 @@ interface LightweightRelationLoadingInterface
      * unpublished elements are omitted when {@see \Pimcore\Model\DataObject::doHideUnpublished()} is active,
      * exactly like the regular getter does.
      *
-     * `subtype` is the element type as returned by `getType()` (e.g. `object`, `folder`, `variant`, `image`, `page`),
-     * `className` the data object class name for objects of type `object` and `variant`, null otherwise.
+     * `parentId` is null for root elements. `subtype` is the element type as returned by `getType()`
+     * (e.g. `object`, `folder`, `variant`, `image`, `page`), `className` the data object class name for objects of
+     * type `object` and `variant`, null otherwise.
      *
-     * @return list<array{id: int, type: string, subtype: string, className: string|null, fullpath: string, filename: string, published: bool}>
+     * @return list<array{id: int, parentId: int|null, type: string, subtype: string, className: string|null, fullpath: string, filename: string, published: bool}>
      */
     public function loadRelationSummaries(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array;
 }

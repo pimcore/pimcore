@@ -93,9 +93,9 @@ trait ManyToManyRelationTrait
 
         $db = Db::get();
         $columns = [
-            'object' => 'SELECT `id`, `path`, `key` AS `filename`, `type`, `className`, `published` FROM `objects`',
-            'asset' => 'SELECT `id`, `path`, `filename`, `type`, NULL AS `className`, 1 AS `published` FROM `assets`',
-            'document' => 'SELECT `id`, `path`, `key` AS `filename`, `type`, NULL AS `className`, `published` FROM `documents`',
+            'object' => 'SELECT `id`, `parentId`, `path`, `key` AS `filename`, `type`, `className`, `published` FROM `objects`',
+            'asset' => 'SELECT `id`, `parentId`, `path`, `filename`, `type`, NULL AS `className`, 1 AS `published` FROM `assets`',
+            'document' => 'SELECT `id`, `parentId`, `path`, `key` AS `filename`, `type`, NULL AS `className`, `published` FROM `documents`',
         ];
 
         $summaries = [];
@@ -116,6 +116,7 @@ trait ManyToManyRelationTrait
                     $isObject = $type === 'object';
                     $summaries[$type . ':' . $id] = [
                         'id' => $id,
+                        'parentId' => $row['parentId'] !== null ? (int) $row['parentId'] : null,
                         'type' => $type,
                         'subtype' => $row['type'],
                         'className' => $isObject && $row['type'] !== 'folder' ? $row['className'] : null,

@@ -50,6 +50,7 @@ class RelationSummaryTest extends AbstractLazyLoadingTest
         foreach ($summaries as $i => $summary) {
             $this->assertSame($related[$i]->getId(), $summary['id']);
             $this->assertSame('object', $summary['type']);
+            $this->assertSame($related[$i]->getParentId(), $summary['parentId']);
             $this->assertSame($related[$i]->getType(), $summary['subtype']);
             $this->assertSame($related[$i]->getClassName(), $summary['className']);
             $this->assertSame($related[$i]->getRealFullPath(), $summary['fullpath']);
@@ -136,10 +137,12 @@ class RelationSummaryTest extends AbstractLazyLoadingTest
         [, $assetSummary, $documentSummary] = $summaries;
         $this->assertSame('image', $assetSummary['subtype']);
         $this->assertNull($assetSummary['className']);
+        $this->assertSame($asset->getParentId(), $assetSummary['parentId']);
         $this->assertSame($asset->getRealFullPath(), $assetSummary['fullpath']);
         $this->assertSame($asset->getFilename(), $assetSummary['filename']);
         $this->assertTrue($assetSummary['published']);
         $this->assertSame('page', $documentSummary['subtype']);
+        $this->assertSame($document->getParentId(), $documentSummary['parentId']);
         $this->assertSame($document->getRealFullPath(), $documentSummary['fullpath']);
         $this->assertSame($document->isPublished(), $documentSummary['published']);
     }
