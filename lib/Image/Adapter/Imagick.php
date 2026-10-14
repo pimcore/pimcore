@@ -192,7 +192,7 @@ class Imagick extends Adapter
             // mask there and leave the whole image transparent (ImageMagick/ImageMagick#8778), so the mask is
             // copied into the alpha channel directly instead.
             $image->clipImage();
-            // getImageMask() is available since Imagick 3.4.4 on ImageMagick 7 builds, but missing from the stubs
+            // getImageMask() is available since Imagick 3.5.0 on ImageMagick 7 builds, but missing from the stubs
             // @phpstan-ignore-next-line
             $mask = $image->getImageMask(\Imagick::PIXELMASK_WRITE);
 
