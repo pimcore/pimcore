@@ -21,7 +21,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
@@ -31,7 +31,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
 
-    private static HtmlSanitizer $pimcoreWysiwygSanitizer;
+    private static HtmlSanitizerInterface $pimcoreWysiwygSanitizer;
 
     /**
      * @internal
@@ -56,7 +56,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    private static function getWysiwygSanitizer(): HtmlSanitizer
+    private static function getWysiwygSanitizer(): HtmlSanitizerInterface
     {
         return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
@@ -318,6 +318,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
-        return self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
+        $sanitized = self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
+
+        return Text::wysiwygText($sanitized, array_merge($params, [
+            'object' => $object,
+            'context' => $this,
+        ])) ?? '';
     }
 }

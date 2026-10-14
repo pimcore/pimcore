@@ -31,8 +31,12 @@ final class ThrowingStorageOperationQueueRepository implements StorageOperationQ
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
     }
 
-    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
-    {
+    public function repointMoves(
+        string $storage,
+        string $movedPrefix,
+        string $newPrefix,
+        ?array $copyOptions = null
+    ): void {
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
     }
 

@@ -300,16 +300,11 @@ abstract class AbstractRelations extends Data implements
         } elseif ($object instanceof DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
-                $fieldname = $context['fieldname'] ?? null;
-                if ($context['containerType'] === 'fieldcollection') {
-                    $index = $context['index'] ?? null;
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
-                } else {
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
-                }
+                $filter = DataObject\Localizedfield\ContainerOwnerName::filter($context);
                 $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
             } else {
-                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
+                // the owner name keeps localized fields of bricks and field collections with the same field name apart
+                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => 'localizedfield', 'position' => $params['language']]);
             }
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'objectbrick', 'ownername' => $object->getFieldname(), 'position' => $object->getType()]);
