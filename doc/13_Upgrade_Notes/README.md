@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.3
+
+### [Generic Execution Engine]
+- [Job runs] The processed elements of a job step are now counted with an atomic database update (new `@internal` service `JobRunElementCounterInterface`) instead of a read-modify-write on the `JobRun` entity, and the error bookkeeping of a failed element is persisted before the element is counted. With more than one `messenger:consume` worker on the `pimcore_generic_execution_engine` transport, concurrent increments were lost, so a job run with several selected elements (e.g. a Studio batch edit) never reached its element count, stayed `running` forever and never published its finished state, although every element had been processed. `JobRunRepositoryInterface` is unchanged.
+
 ## Pimcore 2026.3.2
 
 ### [Assets]
