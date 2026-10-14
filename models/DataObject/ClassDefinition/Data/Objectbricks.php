@@ -415,6 +415,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                 if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            // a calculated value cannot own a dependency: it is computed on read and
+                            // CalculatedValue does not override Data::resolveDependencies(), which
+                            // returns an empty array. Calling the getter would run the calculator
+                            // for nothing.
+                            continue;
+                        }
+
                         $key = $fd->getName();
                         $getter = 'get' . ucfirst($key);
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
@@ -525,6 +533,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            if ($fd instanceof CalculatedValue) {
+                                // a calculated value is computed on read and never persisted from
+                                // user input, and CalculatedValue::checkValidity() is a no-op for
+                                // that reason. Calling the getter here would run the calculator
+                                // only to discard the result. Fieldcollections::checkValidity()
+                                // has skipped calculated values the same way since #3962.
+                                continue;
+                            }
+
                             $key = $fd->getName();
                             $getter = 'get' . ucfirst($key);
 

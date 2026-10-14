@@ -6,6 +6,11 @@
 - `Pimcore\Workflow\Manager::getDeniedActionsInWorkflow()` returns, for a list of permission types, whether the element's workflows deny each of them, resolving the element's workflow permissions only once. `isDeniedInWorkflow()` now delegates to it with unchanged results; callers that check several permission types for the same element should switch to the new method.
 - [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
 
+## Pimcore 2026.3.3
+
+### [Generic Execution Engine]
+- [Job runs] The processed elements of a job step are now counted with an atomic database update (new `@internal` service `JobRunElementCounterInterface`) instead of a read-modify-write on the `JobRun` entity, and the error bookkeeping of a failed element is persisted before the element is counted. With more than one `messenger:consume` worker on the `pimcore_generic_execution_engine` transport, concurrent increments were lost, so a job run with several selected elements (e.g. a Studio batch edit) never reached its element count, stayed `running` forever and never published its finished state, although every element had been processed. `JobRunRepositoryInterface` is unchanged.
+
 ## Pimcore 2026.3.2
 
 ### [Assets]
@@ -23,6 +28,7 @@
 - [Object Bricks] Removing a brick also removes the relation metadata and URL slugs of its localized fields. Such slugs no longer keep routing to the object and no longer come back when the brick is added again. URL slugs of localized fields in bricks resolve their action from their own brick, so resolving such a slug no longer deletes it when the first allowed brick has no field of that name.
 - [Object Bricks] Removing a brick only removes the metadata of the advanced many-to-many relations placed directly in that brick. Before, it removed the metadata of all advanced many-to-many relations with the same field name on the object, also in other bricks and on the object itself.
 - [Object Bricks] The migration `Version20261007120000` adds the brick type to URL slugs of localized fields in bricks that were stored without it (before Pimcore 11). A slug is left unchanged, and reported by the migration, when more than one brick of the object has a localized URL slug field with that name, or when the brick already has a current slug for that field.
+- [Select] An empty default value of a select field is now stored as `null` instead of an empty string. This also applies to an empty default returned by a dynamic options provider. `Select::getDefaultValue()` and exported class definitions therefore show `null` for such fields, and code that compares the default strictly against `''` needs adjusting. Definitions that already contain an empty default are normalized when they are loaded.
 
 ## Pimcore 2026.3.1
 
