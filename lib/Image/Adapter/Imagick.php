@@ -15,6 +15,7 @@ namespace Pimcore\Image\Adapter;
 
 use Exception;
 use ImagickDraw;
+use ImagickException;
 use ImagickPixel;
 use Pimcore\Cache;
 use Pimcore\Config;
@@ -139,43 +140,24 @@ class Imagick extends Adapter
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                 // if there's a clipping path embedded, apply the first one
                 // clipping overwrites the alpha channel of the image, so keep a copy of the unclipped image
-                // around: it is the only way to still deliver the image when the clipping fails
-                $unclipped = clone $i;
+                // around: it is the only way to still deliver the image when the clipping fails.
+                // Skipped when the animation handling above replaced the resource with a different image:
+                // clipping $i would have no effect on the resource anyway.
+                if ($this->resource === $i) {
+                    $unclipped = clone $i;
 
-                try {
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
-                    $i->clipImage();
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
-
-                    // clipImage() leaves a write mask (IM7) / clip mask (IM6) on the image which every later
-                    // operation (resize, crop, ...) still honours. Imagick cannot unset it, so rebuild the image
-                    // from an in-memory MIFF blob: lossless for pixels, alpha, colorspace and profiles, but the
-                    // mask is not serialized.
-                    // Skipped when the animation handling above replaced the resource with a different image,
-                    // which was never clipped in the first place - the blob would only hold a single frame.
-                    if ($this->resource === $i) {
-                        $format = $i->getImageFormat();
-                        $i->setImageFormat('miff');
-                        $materialized = new \Imagick();
-                        $materialized->readImageBlob($i->getImageBlob());
-                        $materialized->setImageFormat($format);
-                        $this->resource = $materialized;
+                    try {
+                        $this->resource = $this->applyClippingPath($i);
                         $this->setIsAlphaPossible(true);
                         $i->clear();
-                    }
-                    $unclipped->clear();
-                } catch (Exception $e) {
-                    // the image is entirely transparent at this point, so restore the copy instead of
-                    // just resetting the alpha channel, which would drop any pre-existing transparency
-                    if ($this->resource === $i) {
-                        $this->resource = $unclipped;
-                    } else {
-                        // the animation handling above replaced the resource with a different image,
-                        // which was never clipped in the first place
                         $unclipped->clear();
-                    }
+                    } catch (Exception $e) {
+                        // $i may be entirely transparent at this point, so restore the copy instead of
+                        // just resetting the alpha channel, which would drop any pre-existing transparency
+                        $this->resource = $unclipped;
 
-                    Logger::error(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                        Logger::error(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                    }
                 }
                 //}
             }
@@ -188,6 +170,53 @@ class Imagick extends Adapter
         $this->setModified(false);
 
         return $this;
+    }
+
+    /**
+     * Applies the embedded clipping path to the alpha channel and returns the result as a new image.
+     *
+     * clipImage() leaves a write mask (ImageMagick 7) / clip mask (ImageMagick 6) on the image which every later
+     * operation (resize, crop, ...) still honours, see pimcore/platform-version#348. Imagick cannot unset it, so
+     * the clipped image is rebuilt from an in-memory MIFF blob: lossless for pixels, alpha, colorspace, depth and
+     * profiles, but the mask is not serialized.
+     *
+     * @throws ImagickException when the image has no usable clipping path
+     */
+    private function applyClippingPath(\Imagick $image): \Imagick
+    {
+        $mask = null;
+
+        if (defined('Imagick::PIXELMASK_WRITE')) {
+            // ImageMagick 7: clipImage() only installs the write mask rendered from the path and relies on the
+            // following alpha channel change to write through it. ImageMagick 7.1.2-23 and 7.1.2-24 ignore the
+            // mask there and leave the whole image transparent (ImageMagick/ImageMagick#8778), so the mask is
+            // copied into the alpha channel directly instead.
+            $image->clipImage();
+            $mask = $image->getImageMask(\Imagick::PIXELMASK_WRITE);
+
+            if (!$mask instanceof \Imagick) {
+                throw new ImagickException('clipImage() did not provide a clip mask');
+            }
+        } else {
+            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+            $image->clipImage();
+            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+        }
+
+        $format = $image->getImageFormat();
+        $image->setImageFormat('miff');
+        $clipped = new \Imagick();
+        $clipped->readImageBlob($image->getImageBlob());
+        $clipped->setImageFormat($format);
+
+        if ($mask instanceof \Imagick) {
+            $clipped->setImageAlphaChannel(\Imagick::ALPHACHANNEL_SET);
+            $mask->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OFF);
+            $clipped->compositeImage($mask, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
+            $mask->clear();
+        }
+
+        return $clipped;
     }
 
     private function has8BIMClippingPath(): bool

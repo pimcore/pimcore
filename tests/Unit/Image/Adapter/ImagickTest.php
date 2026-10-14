@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Image\Adapter;
 
+use ImagickException;
 use ImagickPixel;
 use Pimcore\Image\Adapter\Imagick;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -298,7 +299,7 @@ final class ImagickTest extends TestCase
         try {
             $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
             $image->clipImage();
-        } catch (\ImagickException) {
+        } catch (ImagickException) {
             $this->markTestSkipped('The current ImageMagick installation does not support clipping paths.');
         } finally {
             $image->clear();
