@@ -43,7 +43,9 @@ class HousekeepingTask implements TaskInterface
         foreach (['dev'] as $environment) {
             $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
 
-            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime, $this->profilerTime);
+            // The profiler keeps its single-retention behaviour: a directory that was stale
+            // before the walk is removed in the same run that empties it.
+            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime, $this->profilerTime, true);
         }
 
         // Prune empty directories too: without a directory cutoff the system temp tree only
@@ -61,8 +63,18 @@ class HousekeepingTask implements TaskInterface
     /**
      * @param int $seconds retention for files
      * @param ?int $dirSeconds retention for empty directories, null = leave directories alone
+     * @param bool $judgeDirectoriesBeforeWalk decide on the directory time captured before the
+     *                                         walk only (the original profiler behaviour), so a
+     *                                         stale directory emptied by this run is removed in
+     *                                         the same run; skips the mutation deferral and the
+     *                                         re-stat before rmdir()
      */
-    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, ?int $dirSeconds): void
+    private function deleteFilesInFolderOlderThanSeconds(
+        string $folder,
+        int $seconds,
+        ?int $dirSeconds,
+        bool $judgeDirectoriesBeforeWalk = false
+    ): void
     {
         if (!is_dir($folder)) {
             return;
@@ -75,7 +87,7 @@ class HousekeepingTask implements TaskInterface
         $dirTimes = [];
 
         $directory = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
-        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff, $pruneDirectories, &$dirTimes) {
+        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff, $pruneDirectories, $judgeDirectoriesBeforeWalk, &$dirTimes) {
             if (str_contains($current->getFilename(), '-low-quality-preview.svg') && $current->isFile()) {
                 return false;
             }
@@ -121,7 +133,10 @@ class HousekeepingTask implements TaskInterface
                 if (!array_key_exists($path, $dirTimes)) {
                     $stat = @stat($path);
                     $dirTimes[$path] = $stat ? [
-                        'time' => max($stat['mtime'], $stat['ctime']),
+                        // the pre-walk mode keeps the expression it has always used
+                        'time' => $judgeDirectoriesBeforeWalk
+                            ? ($stat['mtime'] ?: $stat['ctime'])
+                            : max($stat['mtime'], $stat['ctime']),
                         'dev' => $stat['dev'],
                         'ino' => $stat['ino'],
                         // set once this run has unlink()ed or rmdir()ed an entry of it
@@ -168,6 +183,12 @@ class HousekeepingTask implements TaskInterface
                 unset($dirTimes[$path]);
 
                 if (!$dir || $dir['time'] >= $dirCutoff) {
+                    continue;
+                }
+
+                if ($judgeDirectoriesBeforeWalk) {
+                    @rmdir($path);
+
                     continue;
                 }
 

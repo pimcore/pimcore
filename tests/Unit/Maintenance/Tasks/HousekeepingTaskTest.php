@@ -176,6 +176,33 @@ final class HousekeepingTaskTest extends TestCase
         );
     }
 
+    public function testProfilerModePrunesDirectoryEmptiedByTheSameRun(): void
+    {
+        $this->makeDir('profiler/ab/cd');
+        $this->makeFile('profiler/ab/cd/token');
+        $this->age();
+
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0, judgeDirectoriesBeforeWalk: true);
+
+        // The profiler directory keeps its original single-retention behaviour: directories
+        // are judged on their time before the walk, so a stale tree is emptied and removed
+        // in one run instead of one level per run.
+        $this->assertDirectoryDoesNotExist($this->root . '/profiler', 'a stale profiler tree should be removed in one run');
+        $this->assertDirectoryExists($this->root, 'the folder being cleaned must never be removed');
+    }
+
+    public function testProfilerModeKeepsDirectoryYoungerThanCutoff(): void
+    {
+        $this->makeFile('stale.tmp');
+        $this->age();
+        touch($this->makeDir('fresh'), time() + 3600);
+
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0, judgeDirectoriesBeforeWalk: true);
+
+        $this->assertFileDoesNotExist($this->root . '/stale.tmp');
+        $this->assertDirectoryExists($this->root . '/fresh');
+    }
+
     public function testKeepsDirectoriesWhenDirectoryPruningIsDisabled(): void
     {
         $this->makeDir('temp_like/nested');
@@ -266,12 +293,12 @@ final class HousekeepingTaskTest extends TestCase
         $this->assertFileDoesNotExist($this->root . '/regular.tmp');
     }
 
-    private function runHousekeeping(int $seconds, ?int $dirSeconds): void
+    private function runHousekeeping(int $seconds, ?int $dirSeconds, bool $judgeDirectoriesBeforeWalk = false): void
     {
         $task = new HousekeepingTask(86400, 1800, 604800);
 
         $method = new ReflectionMethod($task, 'deleteFilesInFolderOlderThanSeconds');
-        $method->invoke($task, $this->root, $seconds, $dirSeconds);
+        $method->invoke($task, $this->root, $seconds, $dirSeconds, $judgeDirectoriesBeforeWalk);
     }
 
     private function makeDir(string $relativePath): string
