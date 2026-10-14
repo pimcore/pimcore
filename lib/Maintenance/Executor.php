@@ -53,6 +53,7 @@ final class Executor implements ExecutorInterface
         ]);
 
         $startedAt = hrtime(true);
+
         try {
             $task->execute();
 
