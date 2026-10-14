@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Document\Editable;
 
 use Exception;
+use Pimcore\Document\Editable\Exception\InvalidControllerReferenceException;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
@@ -428,13 +429,21 @@ class EditableHandler implements LoggerAwareInterface
         return $templateReference;
     }
 
+    /**
+     * @throws InvalidControllerReferenceException
+     */
     public function renderAction(string $controller, array $attributes = [], array $query = []): string|Response
     {
+        $this->assertValidControllerReference($controller);
+
         $document = $attributes['document'] ?? null;
         if ($document && $document instanceof PageSnippet) {
             unset($attributes['document']);
             $attributes = $this->addDocumentAttributes($document, $attributes);
         }
+
+        // see assertValidControllerReference() - set last, so that the editable config can't switch it off
+        $attributes['_check_controller_is_allowed'] = true;
 
         $uri = new ControllerReference($controller, $attributes, $query);
 
@@ -448,6 +457,33 @@ class EditableHandler implements LoggerAwareInterface
             $this->requestStack->pop();
 
             return $response;
+        }
+    }
+
+    /**
+     * Every documented/legitimate editable controller reference is a "Class::method" (or
+     * "service_id::method") string - see doc/01_Documents/02_Templates/03_Editables/28_Renderlet.md.
+     * Symfony's controller resolver also accepts a bare global function name (e.g. "system") as a
+     * raw PHP callable when the string contains no "::", which would let an attacker who controls
+     * an editable's `controller` config (e.g. via the `pimcore_renderlet` Twig function on
+     * attacker-controlled template source) execute arbitrary PHP callables. Reject that form here,
+     * before it reaches the fragment renderer / controller resolver.
+     *
+     * A "Class::method" string can still name any public method, e.g. a static one that runs a shell
+     * command. So renderAction() also sets Symfony's "_check_controller_is_allowed" request attribute,
+     * which makes the controller resolver accept only registered controllers (services tagged with
+     * "controller.service_arguments", subclasses of AbstractController or classes with #[AsController]).
+     *
+     * @throws InvalidControllerReferenceException
+     */
+    private function assertValidControllerReference(string $controller): void
+    {
+        if (!str_contains($controller, '::')) {
+            throw new InvalidControllerReferenceException(sprintf(
+                'Invalid controller reference "%s": expected the "Class::method" (or "service_id::method") ' .
+                'format. A bare function/callable name is not allowed as an editable controller.',
+                $controller,
+            ));
         }
     }
 

@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\Document\Editable;
 use PHPUnit\Framework\MockObject\MockObject;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Document\Editable\EditableHandler;
+use Pimcore\Document\Editable\Exception\InvalidControllerReferenceException;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
@@ -27,10 +28,16 @@ use Pimcore\Model\Document\Editable\Areablock;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool;
+use Pimcore\Tool\Console;
 use Pimcore\Translation\Translator;
 use ReflectionClassConstant;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -350,6 +357,110 @@ final class EditableHandlerTest extends TestCase
         self::assertSame('', $areas['teaser']['description']);
     }
 
+    /**
+     * GHSA-hf99-42jw-j5hp: a "controller" config value without "::" resolves, via Symfony's
+     * controller resolver, to a bare global PHP function - e.g. a Twig-injected
+     * `pimcore_renderlet(..., {'controller': 'system', 'command': '...'})` would otherwise
+     * execute `system()` with attacker-controlled arguments.
+     *
+     * @return iterable<string, array{string}>
+     */
+    public static function bareCallableControllerReferencesProvider(): iterable
+    {
+        yield 'system' => ['system'];
+        yield 'exec' => ['exec'];
+        yield 'passthru' => ['passthru'];
+        yield 'no separator at all' => ['DefaultController'];
+    }
+
+    /**
+     * @dataProvider bareCallableControllerReferencesProvider
+     */
+    public function testRenderActionRejectsBareCallableControllerReference(string $controller): void
+    {
+        $this->expectException(InvalidControllerReferenceException::class);
+
+        $this->createHandler()->renderAction($controller, ['command' => 'id > /tmp/pwned']);
+    }
+
+    public function testRenderActionAllowsAnExplicitClassMethodController(): void
+    {
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('hasCurrentRequest')->willReturn(false);
+        $requestHelper->method('createRequestWithContext')->willReturn(Request::create('/'));
+
+        $fragmentRenderer = $this->createMock(FragmentRendererInterface::class);
+        $fragmentRenderer->expects($this->once())
+            ->method('render')
+            ->willReturn(new Response('ok'));
+
+        $handler = $this->createHandler(requestHelper: $requestHelper, fragmentRenderer: $fragmentRenderer);
+
+        $response = $handler->renderAction('App\\Controller\\FooController::barAction');
+
+        self::assertSame('ok', $response->getContent());
+    }
+
+    /**
+     * pimcore/pimcore#19477: a "Class::method" reference passes the shape check above, but can still
+     * name a public static method like Console::execInBackground(string $cmd), and Renderlet passes
+     * every config key - so also "cmd" - as request attribute to the argument resolver. The
+     * controller resolver has to accept registered controllers only, whatever the config says.
+     */
+    public function testRenderActionOnlyAllowsRegisteredControllers(): void
+    {
+        $controller = Console::class . '::execInBackground';
+        $reference = $this->renderActionAndCaptureReference($controller, [
+            'cmd' => 'id > /tmp/pwned',
+            '_check_controller_is_allowed' => false,
+        ]);
+
+        self::assertSame($controller, $reference->controller);
+        self::assertTrue($reference->attributes['_check_controller_is_allowed']);
+
+        $request = Request::create('/');
+        $request->attributes->add($reference->attributes);
+        $request->attributes->set('_controller', $reference->controller);
+
+        $this->expectException(BadRequestException::class);
+        (new ControllerResolver())->getController($request);
+    }
+
+    public function testControllerResolverWouldResolveTheConsoleGadgetWithoutTheCheck(): void
+    {
+        // pins down why the attribute is needed: without it, the qualified callable is resolved
+        $request = Request::create('/');
+        $request->attributes->set('_controller', Console::class . '::execInBackground');
+
+        $callable = (new ControllerResolver())->getController($request);
+
+        self::assertIsCallable($callable);
+    }
+
+    private function renderActionAndCaptureReference(string $controller, array $attributes): ControllerReference
+    {
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('hasCurrentRequest')->willReturn(false);
+        $requestHelper->method('createRequestWithContext')->willReturn(Request::create('/'));
+
+        $reference = null;
+        $fragmentRenderer = $this->createMock(FragmentRendererInterface::class);
+        $fragmentRenderer->expects($this->once())
+            ->method('render')
+            ->willReturnCallback(function (ControllerReference $uri) use (&$reference): Response {
+                $reference = $uri;
+
+                return new Response('ok');
+            });
+
+        $this->createHandler(requestHelper: $requestHelper, fragmentRenderer: $fragmentRenderer)
+            ->renderAction($controller, $attributes);
+
+        self::assertInstanceOf(ControllerReference::class, $reference);
+
+        return $reference;
+    }
+
     private function catalogue(string $locale): MessageCatalogue
     {
         return $this->catalogues[$locale] ??= new MessageCatalogue($locale);
@@ -389,7 +500,9 @@ final class EditableHandlerTest extends TestCase
     private function createHandler(
         ?EditmodeResolver $editmodeResolver = null,
         string $description = 'A teaser brick',
-        string $name = 'Teaser'
+        string $name = 'Teaser',
+        ?RequestHelper $requestHelper = null,
+        ?FragmentRendererInterface $fragmentRenderer = null,
     ): EditableHandler {
         $brick = $this->createMock(AreabrickInterface::class);
         $brick->method('getId')->willReturn('teaser');
@@ -406,12 +519,12 @@ final class EditableHandlerTest extends TestCase
             $this->createMock(EngineInterface::class),
             $this->createMock(BundleLocatorInterface::class),
             $this->createMock(WebPathResolver::class),
-            $this->createMock(RequestHelper::class),
+            $requestHelper ?? $this->createMock(RequestHelper::class),
             $this->translator,
             $this->createMock(ResponseStack::class),
             $editmodeResolver ?? $this->editmodeResolver,
             new HttpKernelRuntime(new FragmentHandler(new RequestStack())),
-            $this->createMock(FragmentRendererInterface::class),
+            $fragmentRenderer ?? $this->createMock(FragmentRendererInterface::class),
             new RequestStack()
         );
     }

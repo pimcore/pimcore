@@ -447,6 +447,7 @@ CREATE TABLE `users` (
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('user','userfolder','role','rolefolder') NOT NULL DEFAULT 'user',
   `name` varchar(50) DEFAULT NULL,
+  `uniqueName` varchar(64) GENERATED ALWAYS AS (IF(`type` IN ('userfolder','rolefolder'), CONCAT(IFNULL(`parentId`, 0), '/', `name`), `name`)) STORED,
   `password` varchar(190) DEFAULT NULL,
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
@@ -476,7 +477,7 @@ CREATE TABLE `users` (
   `passwordRecoveryToken` varchar(290) DEFAULT NULL,
   `lastPasswordReset` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `type_name` (`type`,`name`),
+  UNIQUE KEY `type_uniqueName` (`type`,`uniqueName`),
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)

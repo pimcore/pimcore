@@ -8,6 +8,28 @@
 -   Directories have a retention of their own, configured via the new `pimcore.maintenance.housekeeping.cleanup_tmp_directories_older_than` parameter (default 7 days), separate from `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` (which continues to govern files, default 1 day). A directory is removed only once it is both empty and untouched for that long, so a directory a request is still writing into is not pulled out from under it. The retention applies to the directory itself, not to its former contents: a directory the task empties is left in place by that run and removed by a later one, once the directory has been untouched for the retention period (so a nested empty tree is removed one level per run). The profiler directory is unaffected and keeps its existing single-retention behaviour.
 -   This reaches long-lived directories that a tool manages for itself, not only transient scratch directories. LibreOffice keeps its user profile under `var/tmp/libreoffice`, and empty subdirectories in it that nothing touches are pruned once they pass the retention; LibreOffice rebuilds whatever is missing on its next run. Code that creates a stable directory under `var/tmp` should create it immediately before writing into it, rather than ahead of a long-running operation - otherwise the directory can be pruned in between.
 
+### [Documents] Static page generator: frontend requests only store a static page when it is safe to share
+
+When a frontend request renders a document that has the static page generator enabled, the
+response is only stored as its static page if all of the following apply:
+
+- the response status is `200` and its `Cache-Control` header has no `no-store` directive,
+- the request has neither a query string nor an `Authorization` header,
+- the request carries no session data (the same check the full page cache uses; session keys
+  can be excluded via the `FullPageCacheEvents::IGNORED_SESSION_KEYS` event),
+- the resolved document is the one addressed by the request path. A sub-path that falls back
+  to an ancestor document, or a static route rendered with a document, no longer overwrites
+  that document's static page.
+
+Requests that do not qualify still render normally; the static page is written by the next
+qualifying request, the maintenance job or `pimcore:documents:generate-static-pages`.
+
+If the static page router (`pimcore.documents.static_page_router`) is enabled, requests with
+a query string or an `Authorization` header are no longer answered from the stored static pages
+and are rendered instead.
+Static pages delivered directly by the web server, as configured in the documentation, are not
+affected.
+
 ## Pimcore 2026.2.11
 
 ### [Assets] Storage operation queue: `pimcore:assets:storage-queue:process` now stops at the first failing row

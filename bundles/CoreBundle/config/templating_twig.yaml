@@ -81,6 +81,7 @@ services:
             $allowedClasses: '%pimcore.templating.twig.sandbox_security_policy.allowed_classes%'
             $blockedFunctions: '%pimcore.templating.twig.sandbox_security_policy.blocked_functions%'
             $hardBlockedMethods: '%pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods%'
+            $hardBlockedMethodPatterns: '%pimcore.templating.twig.sandbox_security_policy.hard_blocked_method_patterns%'
 
     Twig\Extension\SandboxExtension:
         arguments:

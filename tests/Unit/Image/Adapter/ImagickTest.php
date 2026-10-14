@@ -27,6 +27,10 @@ use Pimcore\Tests\Support\Test\TestCase;
  *
  * #184 (platform-version): images carrying a plain Photoshop path were clipped as
  * if that path was a clipping path, which left the thumbnails empty.
+ *
+ * #540 (platform-version): resizing an SVG re-rendered it at a higher density, but
+ * kept the original rendering next to the new one and then dropped the new one, so
+ * the following steps worked on the stale rendering - cover() ended up with 1x1 px.
  */
 final class ImagickTest extends TestCase
 {
@@ -156,6 +160,63 @@ final class ImagickTest extends TestCase
         $this->assertPixelTransparent($result, 2, 2);
     }
 
+    public function testResizeOfAnSvgKeepsOnlyTheReRenderedImage(): void
+    {
+        $adapter = $this->svgAdapter();
+        $this->assertTrue($adapter->isVectorGraphic(), 'The SVG fixture is not treated as a vector graphic.');
+
+        $adapter->resize(400, 200);
+
+        /** @var \Imagick $resource */
+        $resource = $adapter->getResource();
+        $this->assertSame(1, $resource->getNumberImages());
+        $this->assertSame(400, $resource->getImageWidth());
+        $this->assertSame(200, $resource->getImageHeight());
+    }
+
+    public function testCoverOfAnSvgProducesTheRequestedDimensions(): void
+    {
+        $adapter = $this->svgAdapter();
+        $adapter->cover(50, 50);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        $this->assertSame(50, $result->getImageWidth());
+        $this->assertSame(50, $result->getImageHeight());
+        // the SVG is scaled to 100x50 and the center is cropped, so the left half of
+        // the result is the red and the right half the blue part of the image
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 10, 25, self::DELTA);
+        $this->assertPixelColor([0, 0, 255], $result, 40, 25, self::DELTA);
+    }
+
+    /**
+     * The crop area of an upscaling cover() lies outside of the original rendering, which is
+     * what made the thumbnails of #540 collapse to 1x1 px.
+     */
+    public function testUpscalingCoverOfAnSvgProducesTheRequestedDimensions(): void
+    {
+        $adapter = $this->svgAdapter();
+        $adapter->cover(400, 400);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        $this->assertSame(400, $result->getImageWidth());
+        $this->assertSame(400, $result->getImageHeight());
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 100, 200, self::DELTA);
+        $this->assertPixelColor([0, 0, 255], $result, 300, 200, self::DELTA);
+    }
+
+    /**
+     * Uses the default options of a thumbnail, so that the intermediate images are kept as PNG.
+     */
+    private function svgAdapter(): Imagick
+    {
+        $adapter = new Imagick();
+        $adapter->load($this->createSvgImage());
+
+        return $adapter;
+    }
+
     private function adapter(string $path, bool $preserveColor): Imagick
     {
         $adapter = new Imagick();
@@ -195,6 +256,25 @@ final class ImagickTest extends TestCase
             $fixture->getImageProfiles('icc', true),
             'The test fixture was created without an ICC profile.'
         );
+
+        return $path;
+    }
+
+    /**
+     * Creates a 200x100 SVG with a red left half and a blue right half.
+     */
+    private function createSvgImage(): string
+    {
+        $svg = sprintf(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100">'
+            . '<rect x="0" y="0" width="100" height="100" fill="rgb(%d,%d,%d)"/>'
+            . '<rect x="100" y="0" width="100" height="100" fill="rgb(0,0,255)"/>'
+            . '</svg>',
+            ...self::SOURCE_RGB
+        );
+
+        $path = $this->tmpFile('svg');
+        file_put_contents($path, $svg);
 
         return $path;
     }
