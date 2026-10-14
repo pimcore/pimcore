@@ -23,6 +23,11 @@ use Pimcore\Model\Element\ValidationException;
 class Helper
 {
     /**
+     * Inserts a row, or updates the rows matching $keys if the insert hits a unique constraint.
+     *
+     * This runs an INSERT and, on a duplicate, an UPDATE ... WHERE $keys - two statements and an
+     * exception on every update of an existing row. Where the row usually exists,
+     * {@see self::updateOrInsert()} addresses the same rows with a single UPDATE.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
@@ -59,6 +64,113 @@ class Helper
 
             return null;
         }
+    }
+
+    /**
+     * Updates the rows matching $keys, or inserts the row if none matched.
+     *
+     * The rows addressed are those of {@see self::upsert()} - $keys are the criteria of an
+     * UPDATE ... WHERE, no other row is ever touched, no trigger runs on a row the criteria do
+     * not match - but the UPDATE runs first. Where the row usually exists and changes, as for
+     * the main element tables whose DAOs insert the row in create() before every update(), or
+     * the class store tables on an update, this is a single statement without the duplicate
+     * key exception, on any connection: with CLIENT_FOUND_ROWS the UPDATE of an unchanged row
+     * reports 1, which is equally correct here.
+     *
+     * If the UPDATE changes no row, the row is missing or it matched but nothing changed (it
+     * already holds these values, or a BEFORE UPDATE trigger reset them), and the affected-rows
+     * value cannot tell the two apart. The UPDATE therefore records that it matched a row: one
+     * of its assignments evaluates LAST_INSERT_ID(<token>) - a random token, in an expression
+     * that depends on the row and whose result is compared rather than null-tested, so it is
+     * evaluated per matched row on MariaDB and MySQL alike and never optimized away - and a
+     * matched row leaves the token in the connection's LAST_INSERT_ID(), read back with
+     * one cheap SELECT only on this path. Matched means done, without touching the row (or its
+     * triggers) a second time; not matched means missing, and the insert goes through upsert(),
+     * whose duplicate handling also covers a row inserted concurrently since the UPDATE.
+     *
+     * Where the row usually does not exist, upsert() is the better choice - a plain INSERT -
+     * as the UPDATE would be a wasted round trip. A null or missing key value skips the UPDATE
+     * and goes to upsert().
+     *
+     * Two things differ from upsert(), both observable only by custom triggers or by reading
+     * the connection's last insert id after an update. On the update of a row whose values
+     * change, upsert()'s INSERT failed on the duplicate and ran the table's BEFORE INSERT
+     * triggers first (their effects rolled back with the failed statement); this method runs
+     * them only when it actually tries to insert. And the UPDATE sets LAST_INSERT_ID() to the
+     * token: the assignments are evaluated before the row's BEFORE UPDATE and AFTER UPDATE
+     * triggers run, so a trigger reading LAST_INSERT_ID() sees the token, and so does a
+     * lastInsertId() read after the update - which nothing in core does, the DAOs read it after
+     * their own INSERT in create(). upsert() left the value alone (the MySQL documentation
+     * calls it undefined after a failed statement). A trigger's own INSERT into a table with
+     * an auto-increment column does not disturb the detection: the server restores
+     * LAST_INSERT_ID() when a trigger ends. Custom update triggers must not rely on
+     * LAST_INSERT_ID() carrying the id of an earlier insert.
+     *
+     * @param string $table Used as given, exactly as upsert() and DBAL's insert()/update() use it:
+     * $quoteIdentifiers applies to the column names in $data and $keys only. A table name that
+     * needs quoting, or a schema-qualified one, is passed already quoted.
+     * @param array<string, mixed> $data The data to be inserted or updated into the database table.
+     * Array key corresponds to the database column, array value to the actual value.
+     * @param string[] $keys The columns used as criteria/condition for the where clause, typically
+     * the primary key columns. The values for the specified keys are read from the $data parameter.
+     *
+     * @return int|string|null last insert id if a row was inserted, null if a row was updated.
+     */
+    public static function updateOrInsert(
+        Connection $connection,
+        string $table,
+        array $data,
+        array $keys,
+        bool $quoteIdentifiers = true
+    ): int|string|null {
+        $quotedData = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+
+        // a null or missing key value (e.g. the id of a new auto-increment row) cannot match a
+        // row, so the UPDATE is skipped and upsert() handles the call exactly as before
+        $criteria = [];
+        foreach ($keys as $key) {
+            $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
+            if (!isset($quotedData[$key])) {
+                $criteria = [];
+
+                break;
+            }
+            $criteria[$key] = $quotedData[$key];
+        }
+
+        if ($criteria === []) {
+            return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);
+        }
+
+        // the first key column's assignment also records the match: LAST_INSERT_ID(<token>) is
+        // evaluated for every matched row and, as the token is never 0, the column is assigned
+        // its value as usual. The LENGTH() of the column keeps the argument from being folded
+        // into a constant, and the comparison with 0 (rather than IS NULL, which MySQL folds to
+        // false for a function that cannot return NULL) keeps the call from being optimized away
+        $token = random_int(1, PHP_INT_MAX);
+        $matchKey = array_key_first($criteria);
+        $assignments = [];
+        foreach (array_keys($quotedData) as $column) {
+            $assignments[] = $column === $matchKey
+                ? $column . ' = IF(LAST_INSERT_ID(' . $token . ' + 0 * LENGTH(' . $column . ')) = 0, ' . $column . ', ?)'
+                : $column . ' = ?';
+        }
+        $affectedRows = (int) $connection->executeStatement(
+            'UPDATE ' . $table
+            . ' SET ' . implode(', ', $assignments)
+            . ' WHERE ' . implode(' AND ', array_map(static fn (string $key): string => $key . ' = ?', array_keys($criteria))),
+            [...array_values($quotedData), ...array_values($criteria)]
+        );
+        if ($affectedRows > 0) {
+            return null;
+        }
+
+        // 0 changed rows: matched but unchanged (done), or missing - the token tells
+        if ((string) $connection->fetchOne('SELECT LAST_INSERT_ID()') === (string) $token) {
+            return null;
+        }
+
+        return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);
     }
 
     public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array

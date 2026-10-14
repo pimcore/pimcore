@@ -8,11 +8,6 @@ services:
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreApplicationLoggerBundle')"
 
-    Pimcore\Bundle\ApplicationLoggerBundle\Controller\:
-        resource: '../src/Controller'
-        public: true
-        tags: ['controller.service_arguments']
-
     #
     # APPLICATION LOGGER
     #
@@ -80,6 +75,3 @@ services:
             - '@doctrine.dbal.default_connection'
         tags:
             - { name: pimcore.maintenance.task, type: logmaintenance }
-
-    Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface:
-        class: Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationService

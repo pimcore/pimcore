@@ -35,7 +35,7 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
     /**
      * @internal
      */
-    public string $fieldLabel;
+    public string $fieldLabel = '';
 
     /**
      * @return $this

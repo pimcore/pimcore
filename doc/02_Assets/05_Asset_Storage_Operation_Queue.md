@@ -78,14 +78,22 @@ CREATE TABLE `asset_storage_operation_queue` (
     `source_prefix` VARCHAR(765) NOT NULL,
     `target_prefix` VARCHAR(765) DEFAULT NULL,
     `created_at` DATETIME NOT NULL,
+    `copy_options` JSON DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 ```
 
-This is the single source of truth for the table's schema — there is no migration or
-install.sql entry to keep in sync with it. Running the commands below against a
-database that doesn't have this table yet fails with a clear error pointing back at
-this section, rather than a raw SQL error.
+Tables created before the `copy_options` column existed are upgraded by the
+`Version20260918090000` migration, which skips installs that never created the table.
+See [Copy options](#copy-options) for what the column carries and when an existing
+queue needs a one-off backfill.
+
+This is the single source of truth for the table's schema: creating it stays manual and
+there is no install.sql entry to keep in sync with it. Later column additions do ship as
+migrations, which skip installs that never created the table, so keep this statement and
+those migrations in agreement. Running the commands below against a database that doesn't
+have this table yet fails with a clear error pointing back at this section, rather than a
+raw SQL error.
 
 ### 2. Enable the flag
 
@@ -101,6 +109,18 @@ pimcore:
 
 When disabled (the default), asset storages behave exactly as they did before this
 feature was introduced — there is no behavior change.
+
+If `pimcore.assets.frontend_prefixes.source` is configured and the prefix is served
+through Pimcore rather than pointing straight at the storage, also set
+`resolve_frontend_paths: false` — see [Frontend URLs](#frontend-urls):
+
+```yaml
+pimcore:
+    assets:
+        storage_operation_queue:
+            enabled: true
+            resolve_frontend_paths: false
+```
 
 ### 3. Verify the setup
 
@@ -129,6 +149,20 @@ during low-traffic hours — nothing runs it automatically.** Options:
 - `--id`: process only the given queue row.
 - `--max-runtime`: stop cleanly after this many seconds; any unfinished rows stay
   queued for the next run.
+- `--continue-on-error`: keep going after a failing row instead of ending the run.
+
+  **The default is to stop at the first error.** These operations are destructive and
+  the command normally runs unattended, so a failure is worth looking at before
+  thousands of further rows are attempted in the same state. A failure here is usually
+  the backend being unhappy - credentials, a permission the endpoint does not serve, a
+  quota - rather than one odd row, which means the rows after it would fail the same
+  way. The command exits non-zero and names the row it stopped on; everything it had
+  not reached stays queued for the next run.
+
+  Pass this option when an operator is watching a large one-off migration and would
+  rather the bulk proceeded, to read the errors afterwards. Note that even then a move
+  which could not complete still keeps an overlapping delete deferred - that delete
+  would otherwise destroy content the move has not relocated yet.
 
 A single run is guarded by a 24-hour, non-refreshing lock, so it is safe to schedule
 the command frequently — a run that finds the lock held (a previous run still in
@@ -155,6 +189,57 @@ row is older than `--warn-age` hours (default `48`) — the signal that the proc
 cron is missing or has stopped running — or when pending rows exist while the feature
 flag is disabled.
 
+## Copy options
+
+A queued move is applied later, by the processing command, on the storage's *undecorated*
+adapter. That adapter is not the configured filesystem, so the per-storage Flysystem
+settings (`visibility`, `directory_visibility`, `retain_visibility`) do not reach it on
+their own. Left to its own defaults a Flysystem adapter copies with `retain_visibility`
+enabled, which means it reads the source object's visibility before every copy. On S3-
+compatible backends that is a `GetObjectAcl` request per file, and on gateways that do not
+implement the `?acl` subresource it fails outright, surfacing as `UnableToCopyFile`.
+
+The queue therefore records those settings when the row is written. `Filesystem::move()`
+resolves the storage configuration before calling the adapter, so the effective values are
+already known at that point and are stored in `copy_options` as JSON. The processing
+command replays them, and a deferred move ends up applying the same visibility rules as an
+immediate one. Nothing needs to be configured for this: it follows whatever the storage
+already declares.
+
+A `NULL` column means nothing was recorded, and the copy uses Flysystem's own defaults.
+That is the case for rows queued before the column existed, and for storages that declare
+none of the three settings.
+
+### Backfilling an existing queue
+
+The migration adds the column but does not fill it, so rows already in the queue keep
+`NULL` and keep the previous behaviour. If those rows are stuck because the backend cannot serve the visibility read,
+fill the column once to match the storage configuration, for example for a storage declared
+with `visibility: public` and `retain_visibility: false`:
+
+```sql
+UPDATE `asset_storage_operation_queue`
+   SET `copy_options` = '{"visibility":"public","retain_visibility":false}'
+ WHERE `storage` = 'asset'
+   AND `operation` = 'move'
+   AND `copy_options` IS NULL;
+```
+
+Run one statement per storage, and only ever against a storage whose configuration matches
+the JSON you are writing. The three storages are configured independently, so `thumbnail`
+and `asset_cache` may well declare different visibility settings than `asset`; a single
+statement covering several of them would persist the wrong options for the others.
+
+Run the equivalent `SELECT` first to see how many rows are affected. The `copy_options IS
+NULL` predicate keeps the statement idempotent and stops it overwriting values the adapter
+recorded itself.
+
+Write the JSON as a string literal. Building it with `JSON_OBJECT('retain_visibility',
+FALSE)` stores `0` rather than `false`, which is not the same value once decoded.
+
+Delete rows never carry copy options: a sweep has no visibility to preserve. Converting a
+pending move into a delete clears the column along with the target prefix.
+
 ## Behavior During the Pending Window
 
 Between the moment an operation is queued and the moment it is processed:
@@ -180,13 +265,33 @@ Between the moment an operation is queued and the moment it is processed:
 ## Frontend URLs
 
 With `pimcore.assets.frontend_prefixes.source` configured, frontend URLs for original
-asset files — `Asset::getFrontendFullPath()`, and thumbnails that pass through the
-original file unmodified (for example an SVG thumbnail falling back to the source file)
-— point straight at the storage (e.g. a CDN or bucket) rather than being served through
-Pimcore. For such a URL under a pending move, the path is built from the still-valid
-physical (pre-move) path instead of the logical (post-move) path, so it keeps resolving
-correctly for the duration of the pending window, and automatically switches back to the
-logical path once the move is processed.
+asset files — `Asset::getFrontendFullPath()` (and `Asset::getFullPath()` in a frontend
+context), and thumbnails that pass through the original file unmodified (for example an
+SVG thumbnail falling back to the source file) — typically point straight at the storage
+(e.g. a CDN or bucket) rather than being served through Pimcore. For such a URL under a
+pending move, the path is built from the still-valid physical (pre-move) path instead of
+the logical (post-move) path, so it keeps resolving correctly for the duration of the
+pending window, and automatically switches back to the logical path once the move is
+processed.
+
+This translation is only correct when the prefix bypasses Pimcore. If the prefix is
+instead served **through Pimcore** — for example a route or controller that loads the
+asset by its path via `Asset::getByPath()` and streams it — the URL has to carry the
+current logical path: the asset is looked up by that path, and the queue-aware storage
+adapter resolves the physical location on read. For such installs disable the
+translation; frontend URLs then always reflect the current asset path, during a pending
+window as well as after processing:
+
+```yaml
+pimcore:
+    assets:
+        storage_operation_queue:
+            enabled: true
+            resolve_frontend_paths: false
+```
+
+`pimcore.assets.storage_operation_queue.resolve_frontend_paths` defaults to `true` and
+has no effect without a configured `frontend_prefixes.source`.
 
 `pimcore.assets.frontend_prefixes.thumbnail` URLs need no queue-awareness at all: a
 thumbnail requested at its post-move path is simply a not-yet-generated thumbnail, no

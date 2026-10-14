@@ -34,4 +34,15 @@ final class WorkflowEvents
      * @var string
      */
     const POST_GLOBAL_ACTION = 'pimcore.workflow.postGlobalAction';
+
+    /**
+     * Fired BEFORE the notifications configured on a workflow transition are sent - once per
+     * notification setting, ahead of every channel that setting configures. Use this to adjust the
+     * recipients, i.e. to add the subject's owner to the list of notified users.
+     *
+     * @Event("Pimcore\Event\Workflow\WorkflowNotificationEvent")
+     *
+     * @var string
+     */
+    const PRE_NOTIFICATION_SENDING = 'pimcore.workflow.preNotificationSending';
 }

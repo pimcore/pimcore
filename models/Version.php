@@ -28,6 +28,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Version\Adapter\ElementTypeAwareStorageTypeInterface;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
@@ -184,8 +185,13 @@ final class Version extends AbstractModel
             $this->setBinaryFileHash(hash_final($ctx));
         }
 
-        $this->setStorageType($this->storageAdapter->getStorageType(strlen($dataString),
-            $isAsset ? $data->getfileSize() : null));
+        $metaDataSize = strlen($dataString);
+        $binaryDataSize = $isAsset ? $data->getfileSize() : null;
+
+        // the storage type may depend on the element type, see ElementDelegateVersionStorageAdapter
+        $this->setStorageType($this->storageAdapter instanceof ElementTypeAwareStorageTypeInterface
+            ? $this->storageAdapter->getStorageTypeForElementType($this->getCtype(), $metaDataSize, $binaryDataSize)
+            : $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize));
 
         if ($isAsset) {
             $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
