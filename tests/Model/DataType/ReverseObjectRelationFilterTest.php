@@ -47,7 +47,7 @@ class ReverseObjectRelationFilterTest extends ModelTestCase
         $this->assertStringContainsString('SELECT dest_id FROM object_relations_ABC', $condition);
         $this->assertStringContainsString("ownertype = 'object'", $condition);
         $this->assertStringContainsString(
-            "type = 'object'",
+            "AND type = 'object'",
             $condition,
             'the destination type must be constrained, or an asset dest_id sharing an object id excludes that object'
         );
@@ -67,6 +67,7 @@ class ReverseObjectRelationFilterTest extends ModelTestCase
 
         $this->assertStringContainsString('o_.id IN (', $condition);
         $this->assertStringContainsString('`src_id` = ', $condition);
+        $this->assertStringContainsString("AND type = 'object'", $condition);
     }
 
     /**
