@@ -34,8 +34,12 @@ final class MissingTableStorageOperationQueueRepository implements StorageOperat
         throw self::exception();
     }
 
-    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
-    {
+    public function repointMoves(
+        string $storage,
+        string $movedPrefix,
+        string $newPrefix,
+        ?array $copyOptions = null
+    ): void {
         throw self::exception();
     }
 

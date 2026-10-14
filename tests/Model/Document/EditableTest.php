@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Document;
 
 use InvalidArgumentException;
+use Pimcore\Model\Document\Editable\Image;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -78,6 +79,66 @@ class EditableTest extends ModelTestCase
 
         $this->reloadPage();
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
+    }
+
+    /**
+     * Studio sends marker/hotspot relations as element id, or null for an empty field,
+     * while the classic editmode sends the full path. All of them must save and reload.
+     */
+    public function testImageMarkerRelationsByIdPathOrEmpty(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $object = TestHelper::createEmptyObject();
+        $document = TestHelper::createEmptyDocumentPage();
+
+        $editable = new Image();
+        $editable->setName('image');
+        $editable->setDataFromEditmode([
+            'id' => $asset->getId(),
+            'marker' => [
+                [
+                    'name' => 'marker',
+                    'top' => 50, 'left' => 60,
+                    'data' => [
+                        ['name' => 'objectById', 'type' => 'object', 'value' => $object->getId()],
+                        ['name' => 'documentByNumericString', 'type' => 'document', 'value' => (string) $document->getId()],
+                        ['name' => 'assetByPath', 'type' => 'asset', 'value' => $asset->getFullPath()],
+                        ['name' => 'emptyObject', 'type' => 'object', 'value' => null],
+                        ['name' => 'emptyAsset', 'type' => 'asset', 'value' => ''],
+                    ],
+                ],
+            ],
+            'hotspots' => [
+                [
+                    'name' => 'hotspot',
+                    'top' => 10, 'left' => 20, 'width' => 30, 'height' => 40,
+                    'data' => [
+                        ['name' => 'emptyDocument', 'type' => 'document', 'value' => null],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->testPage = TestHelper::createEmptyDocumentPage();
+        $this->testPage->setEditable($editable);
+        $this->testPage->save();
+
+        $this->reloadPage();
+
+        $editable = $this->testPage->getEditable('image');
+        $this->assertInstanceOf(Image::class, $editable);
+
+        $markerValues = array_column($editable->getDataEditmode()['marker'][0]['data'], 'value', 'name');
+        $this->assertSame([
+            'objectById' => $object->getRealFullPath(),
+            'documentByNumericString' => $document->getRealFullPath(),
+            'assetByPath' => $asset->getRealFullPath(),
+            'emptyObject' => null,
+            'emptyAsset' => '',
+        ], $markerValues);
+
+        $hotspotValues = array_column($editable->getDataEditmode()['hotspots'][0]['data'], 'value', 'name');
+        $this->assertSame(['emptyDocument' => null], $hotspotValues);
     }
 
     public function testInput(): void

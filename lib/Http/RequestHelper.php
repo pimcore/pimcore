@@ -160,6 +160,21 @@ class RequestHelper
     }
 
     /**
+     * Like isFrontendRequestByAdmin(), but additionally requires a valid, authenticated admin
+     * session. isFrontendRequestByAdmin() only checks for the presence of admin-related
+     * query/request parameters, which is spoofable by any client, so it must not be used on its
+     * own for security-relevant decisions (e.g. skipping site resolution or site-membership
+     * checks).
+     */
+    public function isAuthenticatedFrontendRequestByAdmin(?Request $request = null): bool
+    {
+        $request = $this->getRequest($request);
+
+        return $this->isFrontendRequestByAdmin($request)
+            && Authentication::isValidUser(Authentication::authenticateSession($request));
+    }
+
+    /**
      * Get an anonymized client IP from the request
      *
      * @internal

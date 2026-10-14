@@ -229,8 +229,11 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
-            . Helper::quoteInto($this->db, 'ownername LIKE ?', '/fieldcollection~'
-                . $this->model->getFieldname() . '/%')
+            . Helper::quoteInto(
+                $this->db,
+                'ownername LIKE ?',
+                Helper::escapeLike('/fieldcollection~' . $this->model->getFieldname() . '/') . '%'
+            )
             . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
