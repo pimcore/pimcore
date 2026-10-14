@@ -27,15 +27,16 @@ interface LightweightRelationLoadingInterface
 {
     /**
      * Reads the relations of this field for the given container with a few bulk queries and returns a plain
-     * description of each related element in relation order. Elements that no longer exist are omitted;
-     * unpublished elements are omitted when {@see \Pimcore\Model\DataObject::doHideUnpublished()} is active,
-     * exactly like the regular getter does.
+     * description of each related element, in the same order as the regular getter: the order of the field for
+     * forward relations, the order in which the referencing relations were stored for reverse relations.
+     * Elements that no longer exist are omitted; unpublished elements are omitted when
+     * {@see \Pimcore\Model\DataObject::doHideUnpublished()} is active, exactly like the regular getter does.
      *
-     * `parentId` is null for root elements. `subtype` is the element type as returned by `getType()`
-     * (e.g. `object`, `folder`, `variant`, `image`, `page`), `className` the data object class name for objects of
-     * type `object` and `variant`, null otherwise.
+     * `parentId` is 0 for root elements, like `getParentId()`. `subtype` is the element type as returned by
+     * `getType()` (e.g. `object`, `folder`, `variant`, `image`, `page`), `className` the data object class name for
+     * objects of type `object` and `variant`, null otherwise.
      *
-     * @return list<array{id: int, parentId: int|null, type: string, subtype: string, className: string|null, fullpath: string, filename: string, published: bool}>
+     * @return list<array{id: int, parentId: int, type: string, subtype: string, className: string|null, fullpath: string, filename: string, published: bool}>
      */
     public function loadRelationSummaries(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array;
 }

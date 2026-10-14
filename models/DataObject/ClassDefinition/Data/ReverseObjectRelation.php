@@ -178,7 +178,8 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
 
         $db = Db::get();
-        $relations = $db->fetchAllAssociative('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
+        // the referencing relations are returned in the order in which they were stored
+        $relations = $db->fetchAllAssociative('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY id", [$object->getId(), $this->getOwnerFieldName()]);
 
         return array_map(static function ($relation) {
             $relation['dest_id'] = $relation['src_id'];

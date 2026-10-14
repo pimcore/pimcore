@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Element;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -160,6 +161,48 @@ class RelationSummaryTest extends AbstractLazyLoadingTest
         $summaries = $this->getField($object, 'advancedObjects')->loadRelationSummaries($object);
 
         $this->assertSame([$related->getId()], array_column($summaries, 'id'));
+    }
+
+    public function testReverseRelationSummariesFollowTheOrderOfTheGetter(): void
+    {
+        $target = new Unittest();
+        $target->setParentId(1);
+        $target->setKey('reverse-target');
+        $target->setPublished(true);
+        $target->save();
+
+        $owners = [];
+        foreach (['first', 'second', 'third'] as $key) {
+            $owner = new Unittest();
+            $owner->setParentId(1);
+            $owner->setKey('reverse-owner-' . $key);
+            $owner->setPublished(true);
+            $owner->save();
+            $owners[$key] = $owner;
+        }
+
+        // the relations are stored in an order that differs from the ids of the referencing objects
+        $expected = [];
+        foreach (['third', 'first', 'second'] as $key) {
+            $owners[$key]->setObjects([$target]);
+            $owners[$key]->save();
+            $expected[] = $owners[$key]->getId();
+        }
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+        $target = Unittest::getById($target->getId(), ['force' => true]);
+        $field = $target->getClass()->getFieldDefinition('nonowner');
+        $this->assertInstanceOf(LightweightRelationLoadingInterface::class, $field);
+
+        $this->assertSame($expected, array_map(static fn (Unittest $owner) => $owner->getId(), $target->getNonowner()));
+        $this->assertSame($expected, array_column($field->loadRelationSummaries($target), 'id'));
+    }
+
+    protected function setUpTestClasses(): void
+    {
+        parent::setUpTestClasses();
+        $this->tester->setupPimcoreClass_Unittest();
     }
 
     protected function reload(LazyLoading $object): LazyLoading

@@ -116,7 +116,7 @@ trait ManyToManyRelationTrait
                     $isObject = $type === 'object';
                     $summaries[$type . ':' . $id] = [
                         'id' => $id,
-                        'parentId' => $row['parentId'] !== null ? (int) $row['parentId'] : null,
+                        'parentId' => (int) $row['parentId'],
                         'type' => $type,
                         'subtype' => $row['type'],
                         'className' => $isObject && $row['type'] !== 'folder' ? $row['className'] : null,
