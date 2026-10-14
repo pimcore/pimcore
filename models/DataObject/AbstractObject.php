@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
+use Throwable;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -486,149 +487,159 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         /** @var AbstractObject|null $parent */
         $parent = null;
 
-        $this->retryableFunction(
-            beforeRetryables: function () use (
-                &$isUpdate,
-                &$parameters,
-                &$isDirtyDetectionDisabled,
-                &$parent
-            ) {
-                $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
-                $preEvent = new DataObjectEvent($this, $parameters);
-                if ($this->getId()) {
-                    $isUpdate = true;
-                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
-                } else {
-                    self::disableDirtyDetection();
-                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
-                }
-
-                $parameters = $preEvent->getArguments();
-
-                $this->correctPath();
-
-                // load the parent outside of the save transaction: a non-locking read in the transaction before this
-                // object's row lock would let the relation rows (see below) be read from an outdated snapshot. This
-                // does not help when save() runs inside an outer transaction that already read from the database.
-                if ($isUpdate) {
-                    $parent = DataObject::getById($this->getParentId());
-                }
-            },
-            retryableFunc: function () use (
-                &$isUpdate,
-                &$parameters,
-                &$updatedChildren,
-                &$differentOldPath,
-                &$hideUnpublishedBackup,
-                &$parent
-            ) {
-                $hideUnpublishedBackup = self::getHideUnpublished();
-                self::setHideUnpublished(false);
-
-                if (!in_array($this->getType(), self::$types)) {
-                    throw new Exception('invalid object type given: [' . $this->getType() . ']');
-                }
-
-                if (!$isUpdate) {
-                    $this->getDao()->create();
-                    // a new object has no relations yet, see the reset of the raw relation data below
-                    $this->__rawRelationData = [];
-                }
-
-                // get the old path from the database before the update is done
-                $oldPath = null;
-                if ($isUpdate) {
-                    // lock this object's and the new parent's row in a fixed order (ascending id) so that
-                    // two concurrent moves affecting the same pair of objects (e.g. A becomes a child of B
-                    // while B becomes a child of A) are serialized instead of racing past each other's check
-                    if ($parent && $this->getId() > $parent->getId()) {
-                        $parentFullPath = $parent->getDao()->getCurrentFullPathForUpdate();
-                        $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+        try {
+            $this->retryableFunction(
+                beforeRetryables: function () use (
+                    &$isUpdate,
+                    &$parameters,
+                    &$isDirtyDetectionDisabled,
+                    &$parent
+                ) {
+                    $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+                    $preEvent = new DataObjectEvent($this, $parameters);
+                    if ($this->getId()) {
+                        $isUpdate = true;
+                        $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
                     } else {
-                        $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
-                        $parentFullPath = $parent?->getDao()->getCurrentFullPathForUpdate();
+                        self::disableDirtyDetection();
+                        $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
                     }
 
-                    $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
+                    $parameters = $preEvent->getArguments();
 
-                    // relations are saved as a delta against the raw relation data, which might be outdated (read
-                    // before a concurrent save, or copied from another object by cloning). Reset it before update()
-                    // lazy loads any relation field, so the delta is calculated against the current database state.
-                    $this->__rawRelationData = null;
-                }
+                    $this->correctPath();
 
-                // if the old path is different from the new path, update all children
-                // we need to do the update of the children's path before $this->update() because the
-                // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
-                $updatedChildren = [];
-                if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                    $differentOldPath = $oldPath;
-                    $this->getDao()->updateWorkspaces();
-                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
-                }
+                    // load the parent outside of the save transaction: a non-locking read in the transaction before this
+                    // object's row lock would let the relation rows (see below) be read from an outdated snapshot. This
+                    // does not help when save() runs inside an outer transaction that already read from the database.
+                    if ($isUpdate) {
+                        $parent = DataObject::getById($this->getParentId());
+                    }
+                },
+                retryableFunc: function () use (
+                    &$isUpdate,
+                    &$parameters,
+                    &$updatedChildren,
+                    &$differentOldPath,
+                    &$hideUnpublishedBackup,
+                    &$parent
+                ) {
+                    $hideUnpublishedBackup = self::getHideUnpublished();
+                    self::setHideUnpublished(false);
 
-                $this->update($isUpdate, $parameters);
+                    if (!in_array($this->getType(), self::$types)) {
+                        throw new Exception('invalid object type given: [' . $this->getType() . ']');
+                    }
 
-                self::setHideUnpublished($hideUnpublishedBackup);
-            },
-            onBeforeRetry: function ($e) use (&$hideUnpublishedBackup) {
-                self::setHideUnpublished($hideUnpublishedBackup);
+                    if (!$isUpdate) {
+                        $this->getDao()->create();
+                        // a new object has no relations yet, see the reset of the raw relation data below
+                        $this->__rawRelationData = [];
+                    }
 
-                if ($e instanceof UniqueConstraintViolationException) {
-                    throw new Element\ValidationException('unique constraint violation', 0, $e);
-                }
-            },
-            onCommit: function () use (
-                &$isUpdate,
-                &$parameters,
-                &$differentOldPath,
-                &$updatedChildren,
-                &$isDirtyDetectionDisabled
-            ) {
-                $additionalTags = [];
+                    // get the old path from the database before the update is done
+                    $oldPath = null;
+                    if ($isUpdate) {
+                        // lock this object's and the new parent's row in a fixed order (ascending id) so that
+                        // two concurrent moves affecting the same pair of objects (e.g. A becomes a child of B
+                        // while B becomes a child of A) are serialized instead of racing past each other's check
+                        if ($parent && $this->getId() > $parent->getId()) {
+                            $parentFullPath = $parent->getDao()->getCurrentFullPathForUpdate();
+                            $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+                        } else {
+                            $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+                            $parentFullPath = $parent?->getDao()->getCurrentFullPathForUpdate();
+                        }
 
-                foreach ($updatedChildren as $objectId) {
-                    $tag = 'object_' . $objectId;
-                    $additionalTags[] = $tag;
+                        $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
 
-                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                    RuntimeCache::set($tag, null);
-                }
+                        // relations are saved as a delta against the raw relation data, which might be outdated (read
+                        // before a concurrent save, or copied from another object by cloning). Reset it before update()
+                        // lazy loads any relation field, so the delta is calculated against the current database state.
+                        $this->__rawRelationData = null;
+                    }
 
-                $this->clearDependentCache($additionalTags);
+                    // if the old path is different from the new path, update all children
+                    // we need to do the update of the children's path before $this->update() because the
+                    // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
+                    $updatedChildren = [];
+                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $differentOldPath = $oldPath;
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
+                    }
 
-                if ($differentOldPath) {
-                    $this->renewInheritedProperties();
-                }
+                    $this->update($isUpdate, $parameters);
 
-                // add to queue that saves dependencies
-                $this->addToDependenciesQueue();
+                    self::setHideUnpublished($hideUnpublishedBackup);
+                },
+                onBeforeRetry: function ($e) use (&$hideUnpublishedBackup) {
+                    self::setHideUnpublished($hideUnpublishedBackup);
 
-                //Reset Relational data to force a reload
-                $this->__rawRelationData = null;
+                    if ($e instanceof UniqueConstraintViolationException) {
+                        throw new Element\ValidationException('unique constraint violation', 0, $e);
+                    }
+                },
+                onCommit: function () use (
+                    &$isUpdate,
+                    &$parameters,
+                    &$differentOldPath,
+                    &$updatedChildren,
+                    &$isDirtyDetectionDisabled
+                ) {
+                    $additionalTags = [];
 
-                $postEvent = new DataObjectEvent($this, $parameters);
-                if ($isUpdate) {
+                    foreach ($updatedChildren as $objectId) {
+                        $tag = 'object_' . $objectId;
+                        $additionalTags[] = $tag;
+
+                        // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                        RuntimeCache::set($tag, null);
+                    }
+
+                    $this->clearDependentCache($additionalTags);
+
                     if ($differentOldPath) {
-                        $postEvent->setArgument('oldPath', $differentOldPath);
+                        $this->renewInheritedProperties();
                     }
-                    $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
-                } else {
-                    self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                    $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
-                }
 
-            },
-            onFailure: function ($e) use (&$isUpdate, &$parameters) {
-                $failureEvent = new DataObjectEvent($this, $parameters);
-                $failureEvent->setArgument('exception', $e);
-                if ($isUpdate) {
-                    $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
-                } else {
-                    $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
+                    // add to queue that saves dependencies
+                    $this->addToDependenciesQueue();
+
+                    //Reset Relational data to force a reload
+                    $this->__rawRelationData = null;
+
+                    $postEvent = new DataObjectEvent($this, $parameters);
+                    if ($isUpdate) {
+                        if ($differentOldPath) {
+                            $postEvent->setArgument('oldPath', $differentOldPath);
+                        }
+                        $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
+                    } else {
+                        self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                        $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
+                    }
+
+                },
+                onFailure: function ($e) use (&$isUpdate, &$parameters, &$isDirtyDetectionDisabled) {
+                    $failureEvent = new DataObjectEvent($this, $parameters);
+                    $failureEvent->setArgument('exception', $e);
+                    if ($isUpdate) {
+                        $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
+                    } else {
+                        // like POST_ADD, POST_ADD_FAILURE listeners run with the dirty detection restored
+                        self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                        $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
+                    }
                 }
-            }
-        );
+            );
+        } catch (Throwable $e) {
+            // onFailure restores the dirty detection of a failed add, but retryableFunction() passes only exceptions
+            // to it, not errors
+            self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+
+            throw $e;
+        }
 
         return $this;
     }

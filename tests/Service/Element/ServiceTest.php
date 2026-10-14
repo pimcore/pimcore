@@ -15,8 +15,10 @@ namespace Pimcore\Tests\Service\Element;
 
 use ApplicationValueObjectProbe;
 use Normalizer;
+use Pimcore;
 use Pimcore\Document\Adapter;
 use Pimcore\Document\Adapter\Ghostscript;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -26,6 +28,7 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionClass;
 use ReflectionProperty;
+use RuntimeException;
 use UntrustedClassProbe;
 
 class ServiceTest extends TestCase
@@ -604,5 +607,35 @@ class ServiceTest extends TestCase
 
         TmpStore::delete($tmpStoreKey);
         TmpStore::delete($otherTmpStoreKey);
+    }
+
+    /**
+     * Regression test: copyAsChild() disables the dirty detection while it copies. A failed copy must restore it,
+     * the copy also runs in long-lived messenger workers.
+     */
+    public function testFailedCopyAsChildRestoresDirtyDetection(): void
+    {
+        $folder = TestHelper::createObjectFolder('copy-target-');
+        $source = TestHelper::createEmptyObject('copy-source-');
+
+        $listener = static function (): void {
+            throw new RuntimeException('copy failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::PRE_COPY, $listener);
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            (new DataObject\Service())->copyAsChild($folder, $source);
+            $this->fail('The copy must fail.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('copy failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::PRE_COPY, $listener);
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
     }
 }

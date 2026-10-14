@@ -420,8 +420,9 @@ trait ImageThumbnailTrait
             } elseif ($type === 'asset') {
                 $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
                 if ($prefix !== '' && $prefix !== null) {
-                    // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
-                    // folder move is pending the bytes still live under the pre-move prefix
+                    // a prefix pointing straight at the storage (CDN/bucket) needs the pre-move physical
+                    // path while a queued folder move is pending; a prefix served through Pimcore keeps
+                    // the logical path (storage_operation_queue.resolve_frontend_paths: false)
                     $path = Pimcore::getContainer()->get(\Pimcore\Asset\StorageQueue\FrontendPathResolver::class)
                         ->resolvePhysicalPath($path, $this->getAsset()->getModificationDate());
                 }

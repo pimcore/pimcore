@@ -160,22 +160,24 @@ class Service extends Model\Element\Service
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
         DataObject::setDisableDirtyDetection(true);
 
-        //load properties
-        $source->getProperties();
+        try {
+            //load properties
+            $source->getProperties();
 
-        //load all in case of lazy loading fields
-        self::loadAllObjectFields($source);
+            //load all in case of lazy loading fields
+            self::loadAllObjectFields($source);
 
-        // triggers actions before object cloning
-        $event = new DataObjectEvent($source, [
-            'target_element' => $target,
-        ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
-        $target = $event->getArgument('target_element');
+            // triggers actions before object cloning
+            $event = new DataObjectEvent($source, [
+                'target_element' => $target,
+            ]);
+            Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+            $target = $event->getArgument('target_element');
 
-        $new = $this->copy($source, $target);
-
-        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            $new = $this->copy($source, $target);
+        } finally {
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
 
         $this->updateChildren($target, $new);
 
