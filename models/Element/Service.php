@@ -1693,6 +1693,8 @@ class Service extends Model\AbstractModel
     /**
      * @param bool $clone save a copy
      *
+     * @throws LogicException if the application secret needed to sign the session data is not available
+     *
      * @internal
      */
     public static function saveElementToSession(ElementInterface $element, string $sessionId, string $postfix = '', bool $clone = true): void
