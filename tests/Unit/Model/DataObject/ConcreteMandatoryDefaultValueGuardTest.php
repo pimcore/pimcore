@@ -77,11 +77,11 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
     }
 
     /**
-     * Regression guard: a naive `$fd->getDefaultValue() !== null` check (an
-     * earlier draft of this fix) would have treated a Select field's empty
-     * string default as "has a default" and incorrectly bypassed the
-     * mandatory check, potentially letting a mandatory field stay empty on
-     * publish.
+     * Regression guard: a check that only looked at `$fd->getDefaultValue() !== null`
+     * could treat an empty select default as "has a default" and incorrectly bypass
+     * the mandatory check, potentially letting a mandatory field stay empty on
+     * publish. The select stores an empty default as null, and the check must still
+     * not recognise it as a default.
      */
     public function testSelectFieldWithEmptyStringDefaultIsNotRecognizedAsHavingADefault(): void
     {
@@ -90,7 +90,7 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         $field->setMandatory(true);
         $field->setDefaultValue('');
 
-        $this->assertNotNull($field->getDefaultValue(), 'Sanity check: the stored default is an empty string, not null');
+        $this->assertNull($field->getDefaultValue(), 'Sanity check: an empty default is stored as null');
         $this->assertFalse(
             $this->fieldHasApplicableDefault($field),
             'A mandatory select field with a genuinely empty default must not get the create-time mandatory-check bypass'
