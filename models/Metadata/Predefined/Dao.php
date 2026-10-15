@@ -114,6 +114,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             }
         }
         $this->saveData($this->model->getId(), $data);
+        Model\Metadata\Predefined::clearRuntimeCache();
     }
 
     /**
@@ -122,6 +123,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function delete(): void
     {
         $this->deleteData($this->model->getId());
+        Model\Metadata\Predefined::clearRuntimeCache();
     }
 
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed

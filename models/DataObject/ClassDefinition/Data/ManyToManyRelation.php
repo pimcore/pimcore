@@ -26,9 +26,10 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use DataObject\ClassDefinition\Data\Relations\VisibleFieldsTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
@@ -595,6 +596,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->assetTypes = $mainDefinition->assetTypes;
         $this->documentsAllowed = $mainDefinition->documentsAllowed;
         $this->documentTypes = $mainDefinition->documentTypes;
+        $this->visibleFields = $mainDefinition->visibleFields;
     }
 
     protected function getPhpdocType(): string
