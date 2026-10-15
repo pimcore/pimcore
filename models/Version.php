@@ -35,6 +35,7 @@ use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
+use Stringable;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
@@ -315,7 +316,7 @@ final class Version extends AbstractModel
         }
 
         if (!$this->isSerializationSafeCalculatedValue($value)) {
-            if ($value instanceof \Stringable) {
+            if ($value instanceof Stringable) {
                 $value = (string) $value;
             } else {
                 // value cannot be stored safely in the serialized version data (e.g. objects,
