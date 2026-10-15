@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element\Traits;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Pimcore\Model\Element\Service;
 
 /**
@@ -27,13 +29,33 @@ trait ScheduledTasksDaoTrait
      */
     public function deleteAllTasks(array $ignoreIds = []): void
     {
-        $type = Service::getElementType($this->model);
-        if ($this->model->getId()) {
-            $where = '`cid` = ' . $this->model->getId() . ' AND `ctype` = ' . $this->db->quote($type);
-            if ($ignoreIds) {
-                $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
-            }
-            $this->db->executeStatement('DELETE FROM schedule_tasks WHERE ' . $where);
+        $elementId = $this->model->getId();
+        if (!$elementId) {
+            return;
         }
+
+        // The ids are read first (a non-locking consistent read) and the rows are then deleted by primary key.
+        // A DELETE filtered by cid and ctype may be executed through the ctype index, which locks every scanned
+        // row of that element type until the transaction commits and serializes concurrent saves of other elements.
+        $sql = 'SELECT id FROM schedule_tasks WHERE cid = ? AND ctype = ?';
+        $params = [$elementId, Service::getElementType($this->model)];
+        $types = [ParameterType::INTEGER, ParameterType::STRING];
+
+        if ($ignoreIds !== []) {
+            $sql .= ' AND id NOT IN (?)';
+            $params[] = $ignoreIds;
+            $types[] = ArrayParameterType::INTEGER;
+        }
+
+        $taskIds = array_map('intval', $this->db->fetchFirstColumn($sql, $params, $types));
+        if ($taskIds === []) {
+            return;
+        }
+
+        $this->db->executeStatement(
+            'DELETE FROM schedule_tasks WHERE id IN (?)',
+            [$taskIds],
+            [ArrayParameterType::INTEGER]
+        );
     }
 }

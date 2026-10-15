@@ -333,7 +333,7 @@ CREATE TABLE `schedule_tasks` (
   `active` tinyint(1) unsigned DEFAULT '0',
   `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
+  KEY `cid_ctype` (`cid`,`ctype`),
   KEY `ctype` (`ctype`),
   KEY `active` (`active`),
   KEY `version` (`version`)
