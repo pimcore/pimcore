@@ -366,13 +366,13 @@ class ScheduledTasksTest extends ModelTestCase
     private function attachDeleteCountingDao(Asset|Page|Concrete $element): DeleteAllTasksCountingDaoInterface
     {
         $dao = match (true) {
-            $element instanceof Asset => new class () extends AssetDao implements DeleteAllTasksCountingDaoInterface {
+            $element instanceof Asset => new class() extends AssetDao implements DeleteAllTasksCountingDaoInterface {
                 use DeleteAllTasksCountingDaoTrait;
             },
-            $element instanceof Page => new class () extends PageDao implements DeleteAllTasksCountingDaoInterface {
+            $element instanceof Page => new class() extends PageDao implements DeleteAllTasksCountingDaoInterface {
                 use DeleteAllTasksCountingDaoTrait;
             },
-            $element instanceof Concrete => new class () extends ConcreteDao implements
+            $element instanceof Concrete => new class() extends ConcreteDao implements
                 DeleteAllTasksCountingDaoInterface {
                 use DeleteAllTasksCountingDaoTrait;
             },
