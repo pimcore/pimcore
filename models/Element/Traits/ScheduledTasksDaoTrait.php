@@ -34,9 +34,11 @@ trait ScheduledTasksDaoTrait
             return;
         }
 
-        // The ids are read first (a non-locking consistent read) and the rows are then deleted by primary key.
+        // The ids are read with a locking read and the rows are then deleted by primary key.
         // A DELETE filtered by cid and ctype may be executed through the ctype index, which locks every scanned
         // row of that element type until the transaction commits and serializes concurrent saves of other elements.
+        // The locking read resolves to the (cid, ctype) index, so only the element's own rows are locked, and it is
+        // a current read, so tasks committed by another transaction in the meantime are removed as well.
         $sql = 'SELECT id FROM schedule_tasks WHERE cid = ? AND ctype = ?';
         $params = [$elementId, Service::getElementType($this->model)];
         $types = [ParameterType::INTEGER, ParameterType::STRING];
@@ -47,7 +49,7 @@ trait ScheduledTasksDaoTrait
             $types[] = ArrayParameterType::INTEGER;
         }
 
-        $taskIds = array_map('intval', $this->db->fetchFirstColumn($sql, $params, $types));
+        $taskIds = array_map('intval', $this->db->fetchFirstColumn($sql . ' FOR UPDATE', $params, $types));
         if ($taskIds === []) {
             return;
         }

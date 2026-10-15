@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Dao as AssetDao;
@@ -22,6 +25,7 @@ use Pimcore\Model\DataObject\Concrete\Dao as ConcreteDao;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Page\Dao as PageDao;
+use Pimcore\Model\Element\Dao as ElementDao;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Tests\Support\Helper\Element\DeleteAllTasksCountingDaoInterface;
@@ -183,6 +187,97 @@ class ScheduledTasksTest extends ModelTestCase
         $this->assertSame(0, $this->countTasks($second));
     }
 
+    /**
+     * Regression test for the locking behaviour: with a DELETE filtered by cid and ctype the second cleanup
+     * waited for the first transaction to commit, because the scanned rows of the whole element type were locked.
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testCleanupOfOneElementDoesNotWaitForAnOpenCleanupOfAnotherElement(string $type): void
+    {
+        $first = $this->createFreshElement($type);
+        $first->setScheduledTasks([$this->createTask()]);
+        $first->save();
+
+        $second = $this->createFreshElement($type);
+        $second->setScheduledTasks([$this->createTask()]);
+        $second->save();
+
+        $connection = Db::get();
+        $otherConnection = $this->openSecondConnection();
+        $otherConnection->executeStatement('SET SESSION innodb_lock_wait_timeout = 2');
+
+        $connection->beginTransaction();
+        $otherConnection->beginTransaction();
+
+        try {
+            // real deletion in the first transaction, which stays open
+            $first->getDao()->deleteAllTasks();
+            $this->assertSame(0, $this->countTasks($first, $connection));
+
+            $otherDao = $this->createDao($second);
+            $otherDao->db = $otherConnection;
+
+            try {
+                $otherDao->deleteAllTasks();
+            } catch (LockWaitTimeoutException $e) {
+                $this->fail(
+                    'Cleaning up the scheduled tasks of one element waited for the open cleanup of another element'
+                );
+            }
+
+            $this->assertSame(0, $this->countTasks($second, $otherConnection));
+        } finally {
+            $otherConnection->rollBack();
+            $otherConnection->close();
+            $connection->rollBack();
+        }
+
+        $this->assertSame(1, $this->countTasks($first));
+        $this->assertSame(1, $this->countTasks($second));
+    }
+
+    /**
+     * The cleanup must be a current read: a task committed by another transaction after this transaction
+     * took its snapshot is removed as well, as it was with the previous DELETE.
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testCleanupRemovesTasksCommittedByAnotherTransactionAfterTheSnapshot(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $connection = Db::get();
+        $otherConnection = $this->openSecondConnection();
+
+        $connection->beginTransaction();
+
+        try {
+            // establishes the snapshot of this transaction
+            $this->assertSame(0, $this->countTasks($element, $connection));
+
+            $otherConnection->insert('schedule_tasks', [
+                'cid' => $element->getId(),
+                'ctype' => $type,
+                'date' => time() + 3600,
+                'action' => 'delete',
+                'active' => 1,
+            ]);
+            $this->assertSame(1, $this->countTasks($element, $otherConnection));
+            $this->assertSame(0, $this->countTasks($element, $connection));
+
+            $element->getDao()->deleteAllTasks();
+
+            $connection->commit();
+        } finally {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            $otherConnection->close();
+        }
+
+        $this->assertSame(0, $this->countTasks($element));
+    }
+
     public function testScheduleTasksTableHasCompositeCidCtypeIndex(): void
     {
         $indexes = Db::get()->fetchAllAssociative('SHOW INDEX FROM schedule_tasks');
@@ -232,12 +327,36 @@ class ScheduledTasksTest extends ModelTestCase
         ]);
     }
 
-    private function countTasks(Asset|Page|Concrete $element): int
+    private function countTasks(Asset|Page|Concrete $element, ?Connection $connection = null): int
     {
-        return (int) Db::get()->fetchOne(
+        return (int) ($connection ?? Db::get())->fetchOne(
             'SELECT COUNT(*) FROM schedule_tasks WHERE cid = ? AND ctype = ?',
             [$element->getId(), Service::getElementType($element)]
         );
+    }
+
+    private function openSecondConnection(): Connection
+    {
+        return DriverManager::getConnection(Db::get()->getParams());
+    }
+
+    /**
+     * Creates a DAO for the element without attaching it to the element
+     */
+    private function createDao(Asset|Page|Concrete $element): ElementDao
+    {
+        $dao = match (true) {
+            $element instanceof Asset => new AssetDao(),
+            $element instanceof Page => new PageDao(),
+            $element instanceof Concrete => new ConcreteDao(),
+        };
+        $dao->setModel($element);
+        $dao->configure();
+        if (method_exists($dao, 'init')) {
+            $dao->init();
+        }
+
+        return $dao;
     }
 
     /**
