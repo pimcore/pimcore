@@ -48,6 +48,12 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     protected ?Image $imageAsset = null;
 
+    /**
+     * set when the path reference is delegated to a poster image asset's thumbnail,
+     * whose asset owns the thumbnail files and status cache entries
+     */
+    private ?Image $thumbnailStatusCacheOwner = null;
+
     public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config|null $config = null, ?int $timeOffset = null, ?Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
@@ -96,6 +102,8 @@ final class ImageThumbnail implements ImageThumbnailInterface
             $cs = $this->asset->getCustomSetting('image_thumbnail_time');
             $im = $this->asset->getCustomSetting('image_thumbnail_asset');
 
+            $this->thumbnailStatusCacheOwner = null;
+
             if ($im || $this->imageAsset) {
                 if ($this->imageAsset) {
                     $im = $this->imageAsset;
@@ -106,6 +114,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 if ($im instanceof Image) {
                     $imageThumbnail = $im->getThumbnail($this->getConfig());
                     $this->pathReference = $imageThumbnail->getPathReference();
+                    $this->thumbnailStatusCacheOwner = $im;
                 }
             }
 
@@ -222,6 +231,14 @@ final class ImageThumbnail implements ImageThumbnailInterface
         $storage->write($cacheFilePath, $tempFileContent);
 
         return true;
+    }
+
+    /**
+     * @internal
+     */
+    protected function getThumbnailStatusCacheOwner(): ?Model\Asset
+    {
+        return $this->thumbnailStatusCacheOwner ?? $this->asset;
     }
 
     /**

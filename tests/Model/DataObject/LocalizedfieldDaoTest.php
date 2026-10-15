@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore\Db;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Localizedfield\Dao;
@@ -96,5 +98,38 @@ class LocalizedfieldDaoTest extends ModelTestCase
             $dao->getPrimaryKey($dao->getTableName(), false),
             $dao->getTableKeyColumns()
         );
+    }
+
+    /**
+     * Regression test: a missing language table is created on the fly and the save is retried. The first, failed
+     * run must restore the fallback values flag, otherwise the retry takes the leaked value as the one to restore
+     * and it stays switched on for the rest of the process.
+     */
+    public function testRetryAfterMissingLanguageTableRestoresFallbackValues(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $localizedfield = new Localizedfield();
+        $localizedfield->setObject($object);
+
+        /** @var Dao $dao */
+        $dao = $localizedfield->getDao();
+        $db = Db::get();
+        $db->executeStatement('DROP TABLE ' . $db->quoteIdentifier($dao->getQueryTableName() . '_en'));
+
+        // the CLI bootstrap enables the fallback values, Studio requests run without them
+        $originalFallbackValues = Localizedfield::getGetFallbackValues();
+        Localizedfield::setGetFallbackValues(false);
+
+        try {
+            $object->setLinput('some value', 'en');
+            $object->save();
+        } finally {
+            $fallbackValues = Localizedfield::getGetFallbackValues();
+            Localizedfield::setGetFallbackValues($originalFallbackValues);
+        }
+
+        $this->assertFalse($fallbackValues);
+        $this->assertSame('some value', Concrete::getById($object->getId(), ['force' => true])->getLinput('en'));
     }
 }

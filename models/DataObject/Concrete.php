@@ -112,6 +112,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $this->__objectAwareFields['localizedfields'] = true;
                 }
 
+                if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    // a calculated value is computed on read and never persisted from user input,
+                    // and CalculatedValue::checkValidity() is a no-op for that reason - including
+                    // for the mandatory check. Calling the getter here would run the calculator
+                    // for every calculated field on every save, only to discard the result.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -119,19 +127,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
-                    // when adding a new object, skip check on mandatory for fields
-                    // with default value or default value or default value generator
-                    if (!$omitMandatoryCheck && empty($value) && !$isUpdate &&
-                        (
-                            (
-                                method_exists($fd, 'getDefaultValue') &&
-                                !empty($fd->getDefaultValue())
-                            ) || (
-                                method_exists($fd, 'getDefaultValueGenerator') &&
-                                $fd->getDefaultValueGenerator() !== ''
-                            )
-                        )
-                    ) {
+                    // When adding a new object, skip the mandatory check for fields that will
+                    // get a default value or default value generator applied anyway.
+                    // "Empty" is deliberately a superset of the plain empty() this replaced:
+                    // it adds the values empty() misjudges (a quantity-value object whose value
+                    // and unit are both unset) without dropping any it already accepted, so
+                    // widening it can only skip a check a default is about to satisfy.
+                    $valueIsEmpty = empty($value) || $fd->isEmpty($value);
+
+                    if (!$omitMandatoryCheck && $valueIsEmpty && !$isUpdate && $fd->hasApplicableDefaultValue($this)) {
                         $omitMandatoryCheck = true;
                     }
 
@@ -145,13 +149,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
-                                $getInheritedValues = DataObject::doGetInheritedValues();
-                                DataObject::setGetInheritedValues(true);
-
-                                $value = $this->$getter();
-                                $fd->checkValidity($value, $omitMandatoryCheck, $params);
-
-                                DataObject::setGetInheritedValues($getInheritedValues);
+                                DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $fd->checkValidity($this->$getter(), $omitMandatoryCheck, $params)
+                                );
                             } catch (Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
@@ -355,6 +356,21 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                // a calculated value cannot own a dependency: it is computed on read and
+                // CalculatedValue does not override Data::resolveDependencies(), which returns
+                // an empty array. Calling the getter would run the calculator for nothing.
+                continue;
+            }
+
+            if ($field instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                // a reverse relation cannot own a dependency either - the relation is recorded
+                // on the owning object - and ReverseObjectRelation::resolveDependencies() says so
+                // by returning an empty array. Its getter is never memoised, so calling it here
+                // would query the relation table and load every owning object for nothing.
+                continue;
+            }
+
             $key = $field->getName();
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());

@@ -61,12 +61,60 @@ The following code will create an array containing the available languages for t
 $languages = \Pimcore\Tool::getValidLanguages();
 ```
 
-### Disable Fallback languages ###
+### Enable / Disable Fallback languages ###
 
-You can disable the Fallback languages
+Whether getters return the value of the fallback language when the requested language has no value is controlled by
+the static flag `\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues()`.
+
+Its default depends on where the code runs:
+
+| Context | Fallback values | Set by |
+|---------|-----------------|--------|
+| Website and other HTTP requests | enabled | `PimcoreContextListener` |
+| Pimcore Studio API requests (`/pimcore-studio/api`) | disabled | `ApiContextSubscriber` of the Studio Backend Bundle |
+| CLI commands, scripts and messenger workers | enabled | `\Pimcore\Bootstrap` |
+| Code that runs before any of the above | disabled | default value of the flag |
+
+With fallback values disabled, a getter returns no value for a language without data, even if a fallback language is
+configured. Inherited values still apply, see [Inheritance](#inheritance). Event listeners run in the context that
+triggered them: in a `DataObjectEvents::POST_UPDATE` listener for a save in Pimcore Studio, fallback values are
+disabled.
+
+You can change the behavior at any time:
 
 ```php
+// disable fallback values, e.g. on the website
 \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(false);
+
+// enable fallback values, e.g. in a Pimcore Studio API request
+\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(true);
+
+// check the current state
+$fallbackEnabled = \Pimcore\Model\DataObject\Localizedfield::getGetFallbackValues();
+```
+
+The flag is global for the whole PHP process. Restore the previous value in a `finally` block, so an exception does not
+leave it changed for the rest of the request or for later messages in a messenger worker:
+
+```php
+$fallbackEnabled = \Pimcore\Model\DataObject\Localizedfield::getGetFallbackValues();
+\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(true);
+
+try {
+    // ... code that relies on fallback values ...
+} finally {
+    \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues($fallbackEnabled);
+}
+```
+
+The flag only affects getters. Listings filter on the localized query tables, which Pimcore fills with fallback values
+on every save, regardless of the flag. A listing for German can therefore match an object whose German getter returns
+no value. To store only the actual values in the query tables, disable this:
+
+```yaml
+pimcore:
+    objects:
+        ignore_localized_query_fallback: true
 ```
 
 ### Accessing the data

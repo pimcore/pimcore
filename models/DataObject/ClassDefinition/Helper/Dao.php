@@ -12,6 +12,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+use InvalidArgumentException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
@@ -87,8 +88,26 @@ trait Dao
         }
     }
 
-    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null): void
+    /**
+     * Column/query column types (Date, Datetime, DateRange) are emitted verbatim into
+     * ALTER TABLE DDL, so they must be restricted to a plain SQL type expression instead
+     * of accepting arbitrary strings. Kept here rather than on Data - the documented
+     * extension base for custom field types - so a name collision in a third-party
+     * subclass can never turn this internal DDL guard into a BC break.
+     */
+    protected function validateColumnType(string $columnType): void
     {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_]*(\(\s*\d+\s*(,\s*\d+\s*)?\))?(\s+(?:unsigned|zerofill))*\z/i', $columnType)) {
+            throw new InvalidArgumentException(sprintf('Invalid column type "%s"', $columnType));
+        }
+    }
+
+    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null, Data $field): void
+    {
+        if ($field instanceof DataObject\ClassDefinition\Data\UserDefinedColumnTypeInterface) {
+            $this->validateColumnType($type);
+        }
+
         $existingColumns = $this->getValidTableColumns($table, false);
 
         $existingColName = null;
@@ -118,7 +137,11 @@ trait Dao
         foreach ($columnsToRemove as $value) {
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+                // quoteIdentifier() splits on '.' and quotes each part as a separate qualified-name
+                // segment; StructuredTable keys may legitimately contain a literal '.', so that would
+                // silently turn one physical column into an unquoted, dot-joined multi-part reference.
+                // quoteSingleIdentifier() quotes the whole string as one identifier instead.
+                $dropColumns[] = 'DROP COLUMN ' . $this->db->quoteSingleIdentifier($value);
 
                 if (
                     str_ends_with(strtolower($value), '__unit') &&
@@ -138,7 +161,7 @@ trait Dao
         }
 
         if ($dropColumns) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
+            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteSingleIdentifier($table) . ' ' . implode(', ', $dropColumns) . ';');
             $this->resetValidTableColumnsCache($table);
         }
     }
@@ -189,7 +212,9 @@ trait Dao
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $lowerCaseColumns) && $this->indexExists($table, 'u_index_', $value)) {
-                    $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                    // See removeUnusedColumns(): quoteSingleIdentifier() keeps a literal '.' inside
+                    // the value as part of one identifier instead of splitting it as a qualified name.
+                    $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteSingleIdentifier($table) . ' DROP INDEX ' . $this->db->quoteSingleIdentifier('u_index_' . $value) . ';');
                 }
             }
             $this->resetValidTableColumnsCache($table);

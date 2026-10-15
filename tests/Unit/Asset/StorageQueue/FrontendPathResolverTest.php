@@ -168,4 +168,28 @@ class FrontendPathResolverTest extends Unit
 
         $this->assertSame('/Campaigns/x.jpg', $resolver->resolvePhysicalPath('/Archive/Campaigns/x.jpg'));
     }
+
+    public function testResolutionDisabledKeepsLogicalPath(): void
+    {
+        // PEES-1814: the source prefix is served through Pimcore (e.g. a route resolving the asset
+        // via Asset::getByPath()), so the URL must carry the current logical path - the
+        // queue-aware adapter resolves the physical location on read
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+        $resolver = new FrontendPathResolver($this->repository, true, false);
+
+        $this->assertSame('/Archive/Campaigns/a.jpg', $resolver->resolvePhysicalPath('/Archive/Campaigns/a.jpg'));
+        $this->assertSame('/Archive/Campaigns', $resolver->resolvePhysicalPath('/Archive/Campaigns'));
+        $this->assertSame(
+            '/Archive/Campaigns/a.jpg',
+            $resolver->resolvePhysicalPath('/Archive/Campaigns/a.jpg', time() - 3600)
+        );
+    }
+
+    public function testResolutionDefaultsToEnabled(): void
+    {
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+        $resolver = new FrontendPathResolver($this->repository, true);
+
+        $this->assertSame('/Campaigns/a.jpg', $resolver->resolvePhysicalPath('/Archive/Campaigns/a.jpg'));
+    }
 }

@@ -157,7 +157,8 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
+        Helper::updateOrInsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -296,6 +297,26 @@ class Dao extends Model\Element\Dao
         }
 
         return $path;
+    }
+
+    /**
+     * Checks whether at least one version exists for this asset.
+     *
+     * Acquires the row lock of the asset first (like getVersionCountForUpdate()), so that concurrent saves of the
+     * same asset are serialized at this point, and uses a locking read, which returns the latest committed versions
+     * regardless of the transaction isolation level. Must be called inside a transaction to be effective.
+     *
+     * @internal
+     */
+    public function hasVersionsForUpdate(): bool
+    {
+        if (!$this->model->getId()) {
+            return false;
+        }
+
+        $this->db->fetchOne('SELECT id FROM assets WHERE id = ? FOR UPDATE', [$this->model->getId()]);
+
+        return (bool) $this->db->fetchOne("SELECT 1 FROM versions WHERE cid = ? AND ctype = 'asset' LIMIT 1 FOR UPDATE", [$this->model->getId()]);
     }
 
     public function getVersionCountForUpdate(): int

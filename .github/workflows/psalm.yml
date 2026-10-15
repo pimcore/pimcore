@@ -7,21 +7,31 @@ on:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
     push:
+        paths-ignore:
+            - 'doc/**'
+            - 'bundles/**/public/**'
+            - '**.md'
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
 jobs:
     psalm:
         name: Psalm
         runs-on: ubuntu-latest
+        timeout-minutes: 30
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
 
             - name: Psalm
-              uses: docker://ghcr.io/psalm/psalm-github-actions
+              # Pinned by digest to the Psalm 6.19.1 image: the upstream "latest" and "6.19.1" tags now ship Psalm 7.0.0-rc1
+              uses: docker://ghcr.io/psalm/psalm-github-actions@sha256:9d3d149bb9b993237fc98206f1ef1b01b83609d0505d592db05fdbd6c3166c62
               with:
                 security_analysis: true
                 composer_ignore_platform_reqs: true

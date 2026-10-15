@@ -68,7 +68,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $lastInsertId = Helper::upsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
+            // an existing tag is a single UPDATE; a new one (null id) is a plain insert
+            $lastInsertId = Helper::updateOrInsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
             if ($lastInsertId !== null && !$this->model->getId()) {
                 $this->model->setId((int) $lastInsertId);
             }

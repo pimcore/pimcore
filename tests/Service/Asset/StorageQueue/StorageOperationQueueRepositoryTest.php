@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Service\Asset\StorageQueue;
 
 use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\ConnectionLost;
 use Pimcore;
 use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Asset\StorageQueue\StorageOperation;
@@ -48,6 +51,7 @@ class StorageOperationQueueRepositoryTest extends TestCase
                 `source_prefix` VARCHAR(765) NOT NULL,
                 `target_prefix` VARCHAR(765) DEFAULT NULL,
                 `created_at` DATETIME NOT NULL,
+                `copy_options` JSON DEFAULT NULL,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;'
         );
@@ -372,5 +376,170 @@ class StorageOperationQueueRepositoryTest extends TestCase
         // and the mapping itself against the REAL repository (bypassing the bool):
         $enabledResolver = new FrontendPathResolver($this->repository, true);
         $this->assertSame('/WiredSource/a.jpg', $enabledResolver->resolvePhysicalPath('/WiredTarget/a.jpg'));
+    }
+
+    public function testCopyOptionsRoundTripThroughTheDatabase(): void
+    {
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'Campaigns',
+            'Archive/Campaigns',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $stored = $this->repository->all();
+
+        $this->assertCount(1, $stored);
+        $this->assertSame(
+            ['visibility' => 'public', 'retain_visibility' => false],
+            $stored[0]->getCopyOptions(),
+            'retain_visibility must come back as a boolean, not as 0'
+        );
+    }
+
+    public function testARowWithoutCopyOptionsHydratesAsNull(): void
+    {
+        $this->repository->add($this->move('asset', 'Campaigns', 'Archive/Campaigns'));
+
+        $stored = $this->repository->all();
+
+        $this->assertCount(1, $stored);
+        $this->assertNull($stored[0]->getCopyOptions());
+    }
+
+    public function testConvertingAMoveToADeleteDropsItsCopyOptions(): void
+    {
+        // A sweep has no visibility to preserve, and leaving the options behind would carry
+        // settings from an operation that no longer exists.
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'Campaigns',
+            'Archive/Campaigns',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Delete, 'Archive', null, new DateTimeImmutable()
+        ));
+
+        foreach ($this->repository->all() as $operation) {
+            $this->assertSame(StorageOperationType::Delete, $operation->getType());
+            $this->assertNull($operation->getCopyOptions());
+        }
+    }
+
+    public function testRemoveIfUnchangedRefusesWhenOnlyTheCopyOptionsChanged(): void
+    {
+        // A live repoint can rewrite copy_options while leaving the target alone, so the row the
+        // processor applied is no longer the row in the table. Deleting it from the stale
+        // snapshot would drop an operation nobody has carried out under its current settings.
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+        $stale = $this->repository->all()[0];
+
+        $this->repository->repointMoves('asset', 'B', 'B', ['visibility' => 'private', 'retain_visibility' => false]);
+
+        $this->assertFalse($this->repository->removeIfUnchanged($stale));
+        $this->assertCount(1, $this->repository->all(), 'the row stays queued for the retry');
+
+        // completeMove() refreshes and retries; against the current row the deletion goes through
+        $this->assertTrue($this->repository->removeIfUnchanged($this->repository->all()[0]));
+        $this->assertSame([], $this->repository->all());
+    }
+
+    /**
+     * A repository on a connection of its own whose server-side session times out after one
+     * second - the failure a drain hits when it spends longer than the server's wait_timeout on
+     * storage requests without querying the database (seen on object storage taking seconds per
+     * write request).
+     *
+     * @return array{0: StorageOperationQueueRepository, 1: Connection}
+     */
+    private function repositoryOnAConnectionThatTimesOut(): array
+    {
+        $connection = DriverManager::getConnection(Db::get()->getParams());
+        $connection->executeStatement('SET SESSION wait_timeout = 1');
+
+        return [new StorageOperationQueueRepository($connection), $connection];
+    }
+
+    private function letTheConnectionTimeOut(): void
+    {
+        sleep(3);
+    }
+
+    public function testTheSimulatedTimeoutReallyDropsTheConnection(): void
+    {
+        // guards the tests below against passing vacuously: without a retry, the first query
+        // after the timeout fails
+        [, $connection] = $this->repositoryOnAConnectionThatTimesOut();
+        $this->letTheConnectionTimeOut();
+
+        $this->expectException(ConnectionLost::class);
+        $connection->fetchOne('SELECT 1');
+    }
+
+    public function testReadsRecoverFromALostConnection(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        $id = (int) $this->repository->all()[0]->getId();
+        [$repository] = $this->repositoryOnAConnectionThatTimesOut();
+
+        $this->letTheConnectionTimeOut();
+        $this->assertSame('B', $repository->findById($id)?->getTargetPrefix());
+
+        $this->letTheConnectionTimeOut();
+        $this->assertCount(1, $repository->all());
+    }
+
+    public function testRemoveIfUnchangedRecoversFromALostConnection(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        [$repository] = $this->repositoryOnAConnectionThatTimesOut();
+        $operation = $repository->all()[0];
+
+        $this->letTheConnectionTimeOut();
+
+        $this->assertTrue($repository->removeIfUnchanged($operation));
+        $this->assertSame([], $this->repository->all());
+    }
+
+    public function testRemoveRecoversFromALostConnection(): void
+    {
+        $this->repository->add($this->delete('asset', 'A'));
+        $id = (int) $this->repository->all()[0]->getId();
+        [$repository] = $this->repositoryOnAConnectionThatTimesOut();
+
+        $this->letTheConnectionTimeOut();
+        $repository->remove($id);
+
+        $this->assertSame([], $this->repository->all());
+    }
+
+    public function testALostConnectionInsideTheCallersTransactionIsNotRetried(): void
+    {
+        // reconnecting would silently drop the caller's open transaction - it must see the failure
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        $id = (int) $this->repository->all()[0]->getId();
+        [$repository, $connection] = $this->repositoryOnAConnectionThatTimesOut();
+        $connection->beginTransaction();
+
+        $this->letTheConnectionTimeOut();
+
+        $this->expectException(ConnectionLost::class);
+        $repository->findById($id);
     }
 }
