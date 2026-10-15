@@ -973,7 +973,8 @@ class Service extends Model\Element\Service
         int $objectId,
         ?User $user = null
     ): array {
-        $layoutDefinitions = $class->getLayoutDefinitions();
+        // work on a copy, the class definition is shared and callers modify the returned layout
+        $layoutDefinitions = self::cloneDefinition($class->getLayoutDefinitions());
 
         $result = [
             'layoutDefinition' => $layoutDefinitions,
