@@ -18,6 +18,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -243,7 +244,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                 $resConfig->setHighResolution($resolution);
                 $thumbnailsToGenerate[] = $resConfig;
 
-                if ($resConfig->getFormat() === 'SOURCE') {
+                if (Config::isAutoFormat($resConfig->getFormat())) {
                     foreach ($resConfig->getAutoFormatThumbnailConfigs() as $autoFormat => $autoFormatThumbnailConfig) {
                         if (!$input->getOption('skip-' . $autoFormat)) {
                             $thumbnailsToGenerate[] = $autoFormatThumbnailConfig;

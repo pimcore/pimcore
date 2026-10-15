@@ -1,5 +1,74 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.3
+
+### [Core] `schedule_tasks` indexes: the migration waits for open transactions
+
+Migration `Version20261015100000` replaces the single-column `cid` and `ctype` indexes on `schedule_tasks` with a
+composite `(cid, ctype)` index. It does this in a single `ALTER TABLE` statement, so the table is never without an
+index for lookups by element while the migration runs, and InnoDB performs the change in place without rebuilding
+the table.
+
+The statement does need a metadata lock on `schedule_tasks`. It **waits for every open transaction that has used
+the table**, and every element save (asset, document, data object) holds such a transaction until it commits.
+While the migration waits, new statements on `schedule_tasks`, and with them new element saves, queue behind it.
+On an installation with continuous saves (imports, API clients, messenger workers) run the migration while those
+are paused, or expect a short stall of element saves until the open transactions have committed. The change itself
+takes well under a second once the lock is granted.
+
+If your own code queries `schedule_tasks` by `ctype` alone, note that this index no longer exists; the composite
+index serves lookups by `cid` and by `cid` and `ctype`.
+
+Saving an element whose scheduled tasks were neither loaded nor set no longer deletes and rewrites its rows in
+`schedule_tasks`. A save that sets the scheduled tasks explicitly, and deleting an element, still remove the
+element's rows, including rows another transaction committed in the meantime.
+
+## Pimcore 2026.3.0
+
+### [Documents] Static page generator: frontend requests only store a static page when it is safe to share
+
+When a frontend request renders a document that has the static page generator enabled, the
+response is only stored as its static page if all of the following apply:
+
+- the response status is `200` and its `Cache-Control` header has no `no-store` directive,
+- the request has neither a query string nor an `Authorization` header,
+- the request carries no session data (the same check the full page cache uses; session keys
+  can be excluded via the `FullPageCacheEvents::IGNORED_SESSION_KEYS` event),
+- the resolved document is the one addressed by the request path. A sub-path that falls back
+  to an ancestor document, or a static route rendered with a document, no longer overwrites
+  that document's static page.
+
+Requests that do not qualify still render normally; the static page is written by the next
+qualifying request, the maintenance job or `pimcore:documents:generate-static-pages`.
+
+If the static page router (`pimcore.documents.static_page_router`) is enabled, requests with
+a query string or an `Authorization` header are no longer answered from the stored static pages
+and are rendered instead.
+Static pages delivered directly by the web server, as configured in the documentation, are not
+affected.
+
+## Pimcore 2026.2.11
+
+### [Assets] Storage operation queue: `pimcore:assets:storage-queue:process` now stops at the first failing row
+
+The draining command of the opt-in asset storage operation queue used to log a failing
+row and carry on with the rest of the queue. It now **ends the run at the first error**:
+it exits non-zero, names the row it stopped on, and leaves every row it had not reached
+queued for the next run. Nothing is retried automatically.
+
+The reason is that rows are not independent. A folder move that could not complete still
+holds the content its later delete would sweep, and a failure in this job is rarely
+row-specific - credentials, a permission the endpoint does not serve, a quota - so the rows
+after it would fail the same way. Stopping turns thousands of identical errors into one
+diagnosable failure, which suits a command that is meant to run unattended overnight.
+
+If you schedule this command, expect a run that used to finish "with failures" to now fail
+early instead; fix the cause and rerun. Existing invocations remain valid as written, but
+if yours relied on the rows *after* a failure still being processed in the same run, add
+the new `--continue-on-error` option to keep that behaviour. It is also the option to use
+for a supervised one-off migration where you want the bulk to proceed and read the errors
+afterwards. No option controlled this before, so nothing else in the command line changes.
+
 ## Pimcore 2026.2.10
 
 ### [Assets]

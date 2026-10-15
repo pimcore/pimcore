@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
+use Pimcore\Asset\StorageQueue\StorageQueueProcessingResult;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,7 +49,17 @@ final class StorageQueueProcessCommand extends AbstractCommand
     {
         $this
             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'Process only the given queue row')
-            ->addOption('max-runtime', null, InputOption::VALUE_REQUIRED, 'Stop cleanly after this many seconds; unfinished rows stay queued');
+            ->addOption('max-runtime', null, InputOption::VALUE_REQUIRED, 'Stop cleanly after this many seconds; unfinished rows stay queued')
+            ->addOption(
+                'continue-on-error',
+                null,
+                InputOption::VALUE_NONE,
+                'Keep going after a failing row instead of ending the run. The default is to stop at '
+                . 'the first error: these operations are destructive and this command normally runs '
+                . 'unattended, so a failure is worth a look before thousands more rows are attempted '
+                . 'in the same state. Use this when you are watching a large one-off migration and '
+                . 'would rather the bulk proceeded and read the errors afterwards.'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -83,14 +94,19 @@ final class StorageQueueProcessCommand extends AbstractCommand
                 // catches and logs it, letting the run finish rather than aborting mid-drain
                 // (single-host semantics: a second concurrent run is prevented by the acquire() above,
                 // not by this heartbeat).
-                $result = $this->processor->process($id, $maxRuntime, static fn () => $lock->refresh());
+                $result = $this->processor->process(
+                    $id,
+                    $maxRuntime,
+                    static fn () => $lock->refresh(),
+                    (bool) $input->getOption('continue-on-error')
+                );
 
                 $output->writeln(sprintf(
                     '%d processed, %d failed, %d pending%s',
                     $result->getProcessedRows(),
                     $result->getFailedRows(),
                     $result->getPendingRows(),
-                    $result->isTimedOut() ? ' (stopped at max-runtime)' : ''
+                    $this->outcomeSuffix($result)
                 ));
                 if ($id !== null && $result->getProcessedRows() === 0 && $result->getFailedRows() === 0) {
                     $output->writeln(sprintf(
@@ -114,5 +130,14 @@ final class StorageQueueProcessCommand extends AbstractCommand
 
             return self::FAILURE;
         }
+    }
+
+    private function outcomeSuffix(StorageQueueProcessingResult $result): string
+    {
+        if ($result->isStoppedOnError()) {
+            return ' (stopped at the first error - remaining rows stay queued; --continue-on-error works through them)';
+        }
+
+        return $result->isTimedOut() ? ' (stopped at max-runtime)' : '';
     }
 }

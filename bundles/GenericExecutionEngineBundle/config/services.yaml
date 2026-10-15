@@ -39,6 +39,11 @@ services:
         arguments:
             $pimcoreEntityManager: "@doctrine.orm.default_entity_manager"
 
+    Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunElementCounterInterface:
+        class: Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunElementCounter
+        arguments:
+            $pimcoreEntityManager: "@doctrine.orm.default_entity_manager"
+
     Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepository
         arguments:

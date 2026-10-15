@@ -15,8 +15,10 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\Element\Service;
 
-class Document extends Data
+class Document extends Data implements IdRewriterInterface
 {
+    use IdRewriterTrait;
+
     public function normalize(mixed $value, array $params = []): mixed
     {
         $element = $value;

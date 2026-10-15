@@ -15,8 +15,11 @@ namespace Pimcore\Telemetry\Snapshot;
 
 use Exception;
 use Pimcore;
+
 use Pimcore\Tool;
 use Pimcore\Version;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
 use function count;
 use function is_string;
@@ -39,9 +42,12 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
     public function __construct(
         private ActiveBundles $activeBundles,
         private SnapshotQueryRunner $queryRunner,
+        private CacheAdapterKindInterface $cacheAdapterKind,
         private string $environment,
         private bool $debugMode = false,
         private string $timezone = '',
+        #[Autowire(service: 'pimcore.cache.pool')]
+        private ?CacheItemPoolInterface $cachePool = null,
     ) {
     }
 
@@ -55,7 +61,7 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
         // Only first-party bundles are named; customer/agency bundles are counted (see ActiveBundles).
         $bundles = $this->activeBundles->firstPartyNames();
 
-        return [
+        $metrics = [
             'pimcore_version' => Version::getVersion(),
             'pimcore_major_version' => Version::getMajorVersion(),
             'pimcore_platform_version' => Version::getPlatformVersion(),
@@ -72,6 +78,14 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             'bundles' => $bundles,
             'third_party_bundle_count' => $this->activeBundles->thirdPartyCount(),
         ];
+
+        if ($this->cachePool !== null) {
+            // the storage behind pimcore.cache.pool as a kind (redis, filesystem, database, ...) - never a
+            // class name; absent when no pool is wired, see CacheAdapterKind
+            $metrics['cache_adapter'] = $this->cacheAdapterKind->of($this->cachePool);
+        }
+
+        return $metrics;
     }
 
     /**

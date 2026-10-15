@@ -243,7 +243,13 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::upsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+            // $isBrickUpdate says whether the row exists: then updateOrInsert() is a single UPDATE, else a
+            // plain insert either way
+            if ($isBrickUpdate) {
+                Helper::updateOrInsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+            } else {
+                Helper::upsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+            }
 
             if ($inheritanceEnabled) {
                 $this->inheritanceHelper->doUpdate($object->getId(), true,
@@ -305,7 +311,8 @@ class Dao extends Model\Dao\AbstractDao
                         'fieldname' => $this->model->getFieldname(),
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
-                    $localizedFieldDao->delete();
+                    // a removal, not an update: also clean up when the brick's localized fields are not dirty
+                    $localizedFieldDao->delete(true, false);
 
                     continue;
                 }
@@ -322,7 +329,13 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     if ($fd instanceof CustomResourcePersistingInterface) {
-                        $fd->delete($object);
+                        $fd->delete($object, [
+                            'context' => [
+                                'containerType' => 'objectbrick',
+                                'containerKey' => $this->model->getType(),
+                                'fieldname' => $this->model->getFieldname(),
+                            ],
+                        ]);
                     }
                 }
             }

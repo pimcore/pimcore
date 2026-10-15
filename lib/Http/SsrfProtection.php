@@ -181,18 +181,60 @@ final class SsrfProtection
     {
         $ip = self::normalizeIp($ip);
 
-        return filter_var(
-            $ip,
-            FILTER_VALIDATE_IP,
-            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-        ) !== false;
+        if (self::isLocalUseNat64($ip) || self::isDeprecatedSiteLocal($ip)) {
+            return false;
+        }
+
+        // FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE only implements the RFC 3330-era
+        // reserved space and misses later registrations such as RFC 6598 (CGNAT, 100.64.0.0/10 -
+        // which carries the Alibaba Cloud metadata endpoint 100.100.100.200) and several RFC 6890
+        // special-purpose ranges. FILTER_FLAG_GLOBAL_RANGE checks the RFC 6890 "Globally
+        // Reachable" attribute directly and covers those gaps.
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_GLOBAL_RANGE) !== false;
     }
 
     /**
-     * Unwraps an IPv4-mapped IPv6 address (e.g. ::ffff:127.0.0.1) to its plain
-     * IPv4 form. filter_var()'s range flags do not otherwise recognize the
-     * embedded IPv4 address, which would let a mapped loopback/metadata address
-     * bypass the check.
+     * 64:ff9b:1::/48 is the RFC 8215 local-use NAT64 prefix. IANA lists it as not globally
+     * reachable, but FILTER_FLAG_GLOBAL_RANGE still accepts it. Its embedded IPv4 address sits at a
+     * position that depends on the prefix length the operator chose (RFC 6052, /48 to /96), so it
+     * cannot be decoded unambiguously and the whole range is rejected instead.
+     */
+    private static function isLocalUseNat64(string $ip): bool
+    {
+        $packed = @inet_pton($ip);
+
+        return $packed !== false
+            && strlen($packed) === 16
+            && str_starts_with($packed, "\x00\x64\xff\x9b\x00\x01");
+    }
+
+    /**
+     * fec0::/10 is the deprecated IPv6 site-local range (RFC 3879). FILTER_FLAG_GLOBAL_RANGE still
+     * accepts it, but it can be routed to internal services and is not a public destination.
+     */
+    private static function isDeprecatedSiteLocal(string $ip): bool
+    {
+        $packed = @inet_pton($ip);
+
+        return $packed !== false
+            && strlen($packed) === 16
+            && ord($packed[0]) === 0xfe
+            && (ord($packed[1]) & 0xc0) === 0xc0;
+    }
+
+    /**
+     * Unwraps an IPv6 address that carries an embedded IPv4 address to its plain IPv4 form:
+     * an IPv4-mapped address (e.g. ::ffff:127.0.0.1), a NAT64 address under the 64:ff9b::/96
+     * well-known prefix (e.g. 64:ff9b::a9fe:a9fe, RFC 6052), or a 6to4 address under 2002::/16
+     * (e.g. 2002:7f00:1::1, RFC 3056). filter_var()'s range flags - including
+     * FILTER_FLAG_GLOBAL_RANGE - validate only the outer IPv6 address and do not decode the
+     * embedded IPv4, which would let a mapped/tunnelled loopback or metadata address bypass the
+     * check even though the address they actually reach is not globally routable.
+     *
+     * Known limitation: operator-specific NAT64 prefixes (RFC 6052 network-specific Pref64, /32 to
+     * /96) are ordinary global IPv6 addresses and cannot be told apart from native IPv6 here. Where a
+     * NAT64 gateway is reachable from the application server, block access to metadata endpoints at
+     * the gateway / network level.
      */
     private static function normalizeIp(string $ip): string
     {
@@ -203,12 +245,26 @@ final class SsrfProtection
 
         // first 10 bytes zero, followed by 0xff 0xff marks an IPv4-mapped address
         if (str_starts_with($packed, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff")) {
-            $ipv4 = inet_ntop(substr($packed, 12));
-            if ($ipv4 !== false) {
-                return $ipv4;
-            }
+            return self::unpackEmbeddedIpv4($packed, 12) ?? $ip;
+        }
+
+        // 64:ff9b::/96 is the NAT64 well-known prefix; the trailing 4 bytes are the embedded IPv4
+        if (str_starts_with($packed, "\x00\x64\xff\x9b\x00\x00\x00\x00\x00\x00\x00\x00")) {
+            return self::unpackEmbeddedIpv4($packed, 12) ?? $ip;
+        }
+
+        // 2002::/16 is the 6to4 prefix (RFC 3056); the next 4 bytes are the embedded IPv4
+        if (str_starts_with($packed, "\x20\x02")) {
+            return self::unpackEmbeddedIpv4($packed, 2) ?? $ip;
         }
 
         return $ip;
+    }
+
+    private static function unpackEmbeddedIpv4(string $packed, int $offset): ?string
+    {
+        $ipv4 = inet_ntop(substr($packed, $offset, 4));
+
+        return $ipv4 === false ? null : $ipv4;
     }
 }

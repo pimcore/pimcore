@@ -190,7 +190,7 @@ class Text
                         $text = str_replace($oldTag, '', $text);
                     } elseif ($matches[1][$i] == 'a') {
                         // just display the text for links
-                        $text = preg_replace('@' . preg_quote($oldTag, '@') . '([^\<]+)\</a\>@i', '$1', $text);
+                        $text = preg_replace('@' . preg_quote($oldTag, '@') . '[^>]*>(.*?)\</a\>@is', '$1', $text);
                     }
                 }
             }
