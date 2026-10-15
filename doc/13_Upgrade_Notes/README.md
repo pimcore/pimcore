@@ -3,7 +3,7 @@
 ## Pimcore 2026.4.0
 
 ### [DataObjects]
-- [Select] Filtering a select field for an empty value (`=` with `''`, e.g. in the grid) now matches objects whose select has no value as well: the condition built by `Select::getFilterConditionExt()` is `(<column> IS NULL OR <column> = '')` instead of `<column> = ''`. Before, objects with an unset select (stored as `NULL`) could not be found this way. Code that filters a listing on a select field with `= ''` now also gets the objects without a value.
+- [Select] The filter condition that `Select::getFilterCondition()` / `getFilterConditionExt()` build for an empty value (`=` with `''`, e.g. the admin grid filter) is now `(<column> IS NULL OR <column> = '')` instead of `<column> = ''`, so it also matches objects whose select has no value. Code that builds such a condition for `''` now also gets the objects without a value. Generated listing filters (`filterBy<Field>('')`, which use `addListingFilter()`) are not affected and still compare with `= ''`.
 
 ### [Workflow]
 - `Pimcore\Workflow\Manager::getDeniedActionsInWorkflow()` returns, for a list of permission types, whether the element's workflows deny each of them, resolving the element's workflow permissions only once. `isDeniedInWorkflow()` now delegates to it with unchanged results; callers that check several permission types for the same element should switch to the new method.
