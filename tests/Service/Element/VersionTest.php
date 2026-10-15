@@ -19,6 +19,7 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
+use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\User;
@@ -319,6 +320,146 @@ class VersionTest extends TestCase
 
         $this->assertNull($objectFromVersion->getCalculatedValueSnapshot(), 'auto-save versions must not capture calculated values');
         $this->assertSame('currentValue', $objectFromVersion->getCalculatedValue(), 'auto-save versions must fall back to live computation');
+    }
+
+    public function testCalculatedValueSnapshotPreservedWhenExistingVersionIsSavedAgain(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+        $version = $this->getNewestVersion($object->getId());
+
+        // e.g. SanityCheckHandler and the version note endpoints write an existing version again
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+        $version->setNote('written again');
+        $version->save();
+
+        /** @var Unittest $objectFromVersion */
+        $objectFromVersion = Version::getById($version->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertSame('historicValue', $objectFromVersion->getCalculatedValue(), 'writing an existing version again must keep its stored values');
+    }
+
+    public function testCalculatedValueSnapshotNotCarriedIntoAutoSaveOfRestoredObject(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        /** @var Unittest $restoredObject */
+        $restoredObject = $this->getNewestVersion($object->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+        $this->assertNotNull($restoredObject->getCalculatedValueSnapshot());
+
+        // auto-saving a loaded draft calls saveVersion() directly, update() never runs
+        $autoSaveVersion = $restoredObject->saveVersion(true, true, null, true);
+        $this->assertNotNull($autoSaveVersion);
+
+        /** @var Unittest $objectFromAutoSave */
+        $objectFromAutoSave = $autoSaveVersion->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertNull($objectFromAutoSave->getCalculatedValueSnapshot(), 'an auto-save version must not inherit the snapshot of the restored object');
+        $this->assertSame('currentValue', $objectFromAutoSave->getCalculatedValue());
+    }
+
+    public function testCalculatedValueSnapshotNotCarriedIntoNewVersionWhenOptionIsDisabled(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        /** @var Unittest $restoredObject */
+        $restoredObject = $this->getNewestVersion($object->getId())->loadData();
+        $this->assertNotNull($restoredObject->getCalculatedValueSnapshot());
+
+        Config::setSystemConfiguration($this->originalObjectsConfig, 'objects');
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+        $draftVersion = $restoredObject->saveVersion();
+        $this->assertNotNull($draftVersion);
+
+        /** @var Unittest $objectFromDraft */
+        $objectFromDraft = $draftVersion->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertNull($objectFromDraft->getCalculatedValueSnapshot(), 'with the option disabled a new version must not carry an old snapshot');
+        $this->assertSame('currentValue', $objectFromDraft->getCalculatedValue());
+    }
+
+    public function testCalculatedValueEditModeComputesDependentFieldsFreshly(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        /** @var Unittest $restoredObject */
+        $restoredObject = $this->getNewestVersion($object->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertSame('historicValue dependent', $restoredObject->getCalculatedValueDependent(), 'the getter returns the snapshot of the dependent field');
+
+        $context = new CalculatedValue('calculatedValueDependent');
+        $context->setContextualData('object', null, null, null);
+        $this->assertSame(
+            'currentValue dependent',
+            DataObjectService::getCalculatedFieldValueForEditMode($restoredObject, [], $context),
+            'in edit mode an expression reading another calculated field must see its live value, not the snapshot'
+        );
+        $this->assertSame('historicValue dependent', $restoredObject->getCalculatedValueDependent(), 'the snapshot must be restored after the edit mode evaluation');
+    }
+
+    public function testCalculatedValueSnapshotNotUsedForLocalizedFieldOfFieldcollectionItem(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+        $item = new Fieldcollection\Data\Unittestfieldcollection();
+        $object->setFieldcollection(new Fieldcollection([$item], 'fieldcollection'));
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        /** @var Unittest $restoredObject */
+        $restoredObject = $this->getNewestVersion($object->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertSame('historicValue', $restoredObject->getLcalculatedValue('en'), 'the localized field of the object itself returns the snapshot');
+
+        /** @var Fieldcollection\Data\Unittestfieldcollection $restoredItem */
+        $restoredItem = $restoredObject->getFieldcollection()->get(0);
+        $this->assertSame(
+            'currentValue',
+            $restoredItem->getLcalculatedValue('en'),
+            'the same-named localized field of the field collection item must not return the snapshot of the object'
+        );
+        $this->assertSame(
+            'currentValue',
+            $restoredItem->getLocalizedfields()->getLocalizedValue('lcalculatedValue', 'en'),
+            'the localized value lookup of the item must not return the snapshot of the object either'
+        );
     }
 
     /**

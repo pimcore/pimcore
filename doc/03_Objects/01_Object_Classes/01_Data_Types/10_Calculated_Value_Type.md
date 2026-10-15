@@ -291,10 +291,12 @@ pimcore:
 With the option enabled, the current values of all calculated fields on object level and in localized fields are
 computed when a version is created and stored as part of the version. Version previews and comparisons then show the
 value as of the snapshot, and objects restored from a version return the snapshot values from the calculated-field
-getters until they are saved again. The edit view is not affected: it always shows freshly computed values, also when
-a draft version is loaded. The value is still computed live in the following cases: for versions created while the
-option was disabled, for auto-save versions (which never capture calculated values), for calculated fields inside
-field collections, object bricks or classification stores, and for values that cannot be stored safely in the version
+getters until they are saved again. A version that is written again later (for example when its note is changed)
+keeps the values it stored. The edit view is not affected: it always shows freshly computed values, also when a draft
+version is loaded, and so do calculators and expressions that read other calculated fields while it is rendered. The
+value is still computed live in the following cases: for versions created while the option was disabled, for auto-save
+versions (which never capture calculated values), for calculated fields inside field collections, object bricks or
+classification stores (including their localized fields), and for values that cannot be stored safely in the version
 (objects or arrays containing objects; `Stringable` values are stored as strings).
 
 Keep the cost in mind before enabling it: every calculator of the class runs on every version creation except

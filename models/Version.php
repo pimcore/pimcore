@@ -236,13 +236,17 @@ final class Version extends AbstractModel
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
         $newData = $copier->copy($data);
 
-        if (
-            $data instanceof Concrete
-            && $newData instanceof Concrete
-            && !$this->isAutoSave()
-            && self::isCalculatedValueSnapshotEnabled()
-        ) {
-            $this->captureCalculatedValueSnapshot($data, $newData);
+        if ($data instanceof Concrete && $newData instanceof Concrete) {
+            if ($this->getId() !== null && $newData->getCalculatedValueSnapshot() !== null) {
+                // an existing version is written again (e.g. note or version count changed):
+                // keep the values it stored, they are its historical state
+            } elseif (!$this->isAutoSave() && self::isCalculatedValueSnapshotEnabled()) {
+                $this->captureCalculatedValueSnapshot($data, $newData);
+            } else {
+                // never carry the snapshot of an object that was restored from a version into a new
+                // version that does not capture (auto-save, option disabled): its values would be stale
+                $newData->setCalculatedValueSnapshot(null);
+            }
         }
 
         return $newData;
@@ -269,10 +273,7 @@ final class Version extends AbstractModel
         // compute with the snapshot of $source temporarily disabled, so values are computed
         // freshly even if $source itself was restored from a version; only the serialized
         // $target receives the new snapshot, $source is left untouched
-        $originalSnapshot = $source->getCalculatedValueSnapshot();
-        $source->setCalculatedValueSnapshot(null);
-
-        try {
+        DataObject\Service::computeWithoutCalculatedValueSnapshot($source, function () use (&$snapshot, $source): void {
             foreach ($source->getClass()->getFieldDefinitions() as $fieldName => $fieldDefinition) {
                 if ($fieldDefinition instanceof Data\CalculatedValue) {
                     $context = new DataObject\Data\CalculatedValue($fieldName);
@@ -290,9 +291,7 @@ final class Version extends AbstractModel
                     }
                 }
             }
-        } finally {
-            $source->setCalculatedValueSnapshot($originalSnapshot);
-        }
+        });
 
         $target->setCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
     }
