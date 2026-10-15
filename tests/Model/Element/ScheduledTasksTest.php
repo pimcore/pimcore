@@ -278,7 +278,7 @@ class ScheduledTasksTest extends ModelTestCase
         $this->assertSame(0, $this->countTasks($element));
     }
 
-    public function testScheduleTasksTableHasCompositeCidCtypeIndex(): void
+    public function testScheduleTasksTableHasOnlyTheCompositeCidCtypeIndex(): void
     {
         $indexes = Db::get()->fetchAllAssociative('SHOW INDEX FROM schedule_tasks');
 
@@ -290,6 +290,7 @@ class ScheduledTasksTest extends ModelTestCase
         $this->assertArrayHasKey('cid_ctype', $columnsByIndex);
         $this->assertSame([1 => 'cid', 2 => 'ctype'], $columnsByIndex['cid_ctype']);
         $this->assertArrayNotHasKey('cid', $columnsByIndex);
+        $this->assertArrayNotHasKey('ctype', $columnsByIndex);
     }
 
     private function createFreshElement(string $type): Asset|Page|Concrete

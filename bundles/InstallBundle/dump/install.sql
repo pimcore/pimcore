@@ -334,7 +334,6 @@ CREATE TABLE `schedule_tasks` (
   `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cid_ctype` (`cid`,`ctype`),
-  KEY `ctype` (`ctype`),
   KEY `active` (`active`),
   KEY `version` (`version`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
