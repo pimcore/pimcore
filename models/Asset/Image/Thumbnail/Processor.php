@@ -66,6 +66,9 @@ class Processor
             'tif' => 'tiff',
         ];
 
+        // file extensions are not normalized (e.g. photo.JPG), the mapping and allow-lists are lowercase
+        $format = strtolower($format);
+
         if (isset($typeMappings[$format])) {
             $format = $typeMappings[$format];
         }
@@ -108,7 +111,7 @@ class Processor
         $fileExt = pathinfo($asset->getFilename(), PATHINFO_EXTENSION);
 
         // simple detection for source type if SOURCE is selected
-        if ($format == 'source' || empty($format)) {
+        if ($format === '' || Config::isAutoFormat($format)) {
             $optimizedFormat = true;
             $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
             if ($format === 'jpeg') {
@@ -122,18 +125,15 @@ class Processor
             $optimizedFormat = $optimizeContent = false;
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
-            if (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
-                // return a webformat in admin -> tiff cannot be displayed in browser
-                $format = 'png';
-                $deferred = false; // deferred is default, but it's not possible when using isFrontendRequestByAdmin()
-            } elseif (
-                ($format == 'tiff' && self::containsTransformationType($config, 'tifforiginal'))
-                || $format == 'svg'
-            ) {
+            if (self::usesOriginalAssetOutput($asset, $config)) {
                 return [
                     'src' => $asset->getRealFullPath(),
                     'type' => 'asset',
                 ];
+            } elseif (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
+                // return a webformat in admin -> tiff cannot be displayed in browser
+                $format = 'png';
+                $deferred = false; // deferred is default, but it's not possible when using isFrontendRequestByAdmin()
             }
         } elseif ($format == 'tiff') {
             $optimizedFormat = $optimizeContent = false;
@@ -356,16 +356,16 @@ class Processor
                     $format = $image->getContentOptimizedFormat();
                 }
 
-                $tmpFsPath = File::getLocalTempFilePath($fileExtension);
-
-                $fileHandle = null;
-
                 if ($format === 'original') {
-                    $fileHandle = fopen($asset->getLocalFile(), 'rb');
+                    // the source file is streamed to the storage as-is, so it is also
+                    // the file the status cache entry below has to be built from
+                    $tmpFsPath = $asset->getLocalFile();
                 } else {
+                    $tmpFsPath = File::getLocalTempFilePath($fileExtension);
                     $image->save($tmpFsPath, $format, $config->getQuality());
-                    $fileHandle = fopen($tmpFsPath, 'rb');
                 }
+
+                $fileHandle = fopen($tmpFsPath, 'rb');
 
                 $storage->writeStream($storagePath, $fileHandle);
 
@@ -419,17 +419,27 @@ class Processor
         ];
     }
 
-    private static function applyTransformations(Adapter $image, Asset $asset, Config $config, ?array $transformations): void
-    {
+    /**
+     * @internal
+     */
+    public static function applyTransformations(
+        Adapter $image,
+        Asset $asset,
+        Config $config,
+        ?array $transformations,
+        bool $useHighResolution = true,
+        ?int $knownSourceWidth = null,
+        ?int $knownSourceHeight = null
+    ): void {
         if ($transformations) {
-            $sourceImageWidth = PHP_INT_MAX;
-            $sourceImageHeight = PHP_INT_MAX;
-            if ($asset instanceof Asset\Image) {
+            $sourceImageWidth = $knownSourceWidth ?? PHP_INT_MAX;
+            $sourceImageHeight = $knownSourceHeight ?? PHP_INT_MAX;
+            if (($knownSourceWidth === null || $knownSourceHeight === null) && $asset instanceof Asset\Image) {
                 $sourceImageWidth = $asset->getWidth();
                 $sourceImageHeight = $asset->getHeight();
             }
 
-            $highResFactor = $config->getHighResolution();
+            $highResFactor = $useHighResolution ? $config->getHighResolution() : null;
             $imageCropped = false;
 
             $calculateMaxFactor = function ($factor, $original, $new) {
@@ -487,17 +497,20 @@ class Processor
                                     }
                                 }
 
-                                // inject the focal point
-                                if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
-                                    $value = [
-                                        'x' => $asset->getCustomSetting('focalPointX'),
-                                        'y' => $asset->getCustomSetting('focalPointY'),
-                                    ];
-                                }
-
                                 $arguments[$position] = $value;
                             }
                         }
+                    }
+
+                    // inject the focal point - it is stored on the asset and therefore overrules the
+                    // positioning of a cover transformation. This has to happen outside of the loop
+                    // above, as `positioning` is an optional argument that does not have to be part
+                    // of the thumbnail configuration at all
+                    if ($transformation['method'] === 'cover'
+                        && $asset instanceof Asset\Image
+                        && ($focalPoint = $asset->getFocalPoint()) !== null
+                    ) {
+                        $arguments[(int)array_search('positioning', $mapping, true)] = $focalPoint;
                     }
 
                     ksort($arguments);
@@ -510,6 +523,40 @@ class Processor
                 }
             }
         }
+    }
+
+    /**
+     * @internal
+     */
+    public static function hasTransformationArgumentMapping(string $method): bool
+    {
+        return array_key_exists($method, self::$argumentMapping);
+    }
+
+    /**
+     * Whether Processor returns the source asset instead of generating a thumbnail-storage file for this asset/configuration pair.
+     *
+     * @internal
+     */
+    public static function usesOriginalAssetOutput(Asset $asset, Config $config): bool
+    {
+        if (strtolower($config->getFormat()) !== 'print') {
+            return false;
+        }
+
+        $sourceFormat = self::getAllowedFormat(
+            pathinfo($asset->getFilename(), PATHINFO_EXTENSION),
+            ['svg', 'jpeg', 'png', 'tiff'],
+            'png'
+        );
+
+        if ($sourceFormat === 'svg') {
+            return true;
+        }
+
+        return $sourceFormat === 'tiff'
+            && !\Pimcore\Tool::isFrontendRequestByAdmin()
+            && self::containsTransformationType($config, 'tifforiginal');
     }
 
     private static function containsTransformationType(Config $config, string $transformationType): bool

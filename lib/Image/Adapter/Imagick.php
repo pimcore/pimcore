@@ -15,6 +15,7 @@ namespace Pimcore\Image\Adapter;
 
 use Exception;
 use ImagickDraw;
+use ImagickException;
 use ImagickPixel;
 use Pimcore\Cache;
 use Pimcore\Config;
@@ -138,12 +139,25 @@ class Imagick extends Adapter
                 //$identifyRaw = $i->identifyImage(true)['rawOutput'];
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                 // if there's a clipping path embedded, apply the first one
-                try {
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
-                    $i->clipImage();
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
-                } catch (Exception $e) {
-                    Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                // clipping overwrites the alpha channel of the image, so keep a copy of the unclipped image
+                // around: it is the only way to still deliver the image when the clipping fails.
+                // Skipped when the animation handling above replaced the resource with a different image:
+                // clipping $i would have no effect on the resource anyway.
+                if ($this->resource === $i) {
+                    $unclipped = clone $i;
+
+                    try {
+                        $this->resource = $this->applyClippingPath($i);
+                        $this->setIsAlphaPossible(true);
+                        $i->clear();
+                        $unclipped->clear();
+                    } catch (Exception $e) {
+                        // $i may be entirely transparent at this point, so restore the copy instead of
+                        // just resetting the alpha channel, which would drop any pre-existing transparency
+                        $this->resource = $unclipped;
+
+                        Logger::error(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                    }
                 }
                 //}
             }
@@ -158,6 +172,55 @@ class Imagick extends Adapter
         return $this;
     }
 
+    /**
+     * Applies the embedded clipping path to the alpha channel and returns the result as a new image.
+     *
+     * clipImage() leaves a write mask (ImageMagick 7) / clip mask (ImageMagick 6) on the image which every later
+     * operation (resize, crop, ...) still honours, see pimcore/platform-version#348. Imagick cannot unset it, so
+     * the clipped image is rebuilt from an in-memory MIFF blob: lossless for pixels, alpha, colorspace, depth and
+     * profiles, but the mask is not serialized.
+     *
+     * @throws ImagickException when the image has no usable clipping path
+     */
+    private function applyClippingPath(\Imagick $image): \Imagick
+    {
+        $mask = null;
+
+        if (defined('Imagick::PIXELMASK_WRITE')) {
+            // ImageMagick 7: clipImage() only installs the write mask rendered from the path and relies on the
+            // following alpha channel change to write through it. ImageMagick 7.1.2-23 and 7.1.2-24 ignore the
+            // mask there and leave the whole image transparent (ImageMagick/ImageMagick#8778), so the mask is
+            // copied into the alpha channel directly instead.
+            $image->clipImage();
+            // getImageMask() is available since Imagick 3.5.0 on ImageMagick 7 builds, but missing from the stubs
+            // @phpstan-ignore-next-line
+            $mask = $image->getImageMask(\Imagick::PIXELMASK_WRITE);
+
+            if (!$mask instanceof \Imagick) {
+                throw new ImagickException('clipImage() did not provide a clip mask');
+            }
+        } else {
+            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+            $image->clipImage();
+            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+        }
+
+        $format = $image->getImageFormat();
+        $image->setImageFormat('miff');
+        $clipped = new \Imagick();
+        $clipped->readImageBlob($image->getImageBlob());
+        $clipped->setImageFormat($format);
+
+        if ($mask instanceof \Imagick) {
+            $clipped->setImageAlphaChannel(\Imagick::ALPHACHANNEL_SET);
+            $mask->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OFF);
+            $clipped->compositeImage($mask, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
+            $mask->clear();
+        }
+
+        return $clipped;
+    }
+
     private function has8BIMClippingPath(): bool
     {
         $handle = fopen($this->imagePath, 'rb');
@@ -165,13 +228,12 @@ class Imagick extends Adapter
         fclose($handle);
 
         // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
-        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
-        // and the first path information which is 8BIM 2000 (decimal) or 0x07D0 in hex
-        if (preg_match('/8BIM\x0b\xb7/', $chunk) || preg_match('/8BIM\x07\xd0/', $chunk)) {
-            return true;
-        }
-
-        return false;
+        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex.
+        // The path information resources (8BIM 2000 - 2998 / 0x07D0 - 0x0BB6) must not be taken into account here:
+        // they hold every path saved with the image, no matter whether it was designated as the clipping path or
+        // not. Clipping an image by an arbitrary Photoshop path (e.g. a guide or an unrelated shape) removes the
+        // entire image content, which resulted in empty thumbnails.
+        return (bool) preg_match('/8BIM\x0b\xb7/', $chunk);
     }
 
     public function getContentOptimizedFormat(): string
@@ -509,6 +571,8 @@ class Imagick extends Adapter
                     'x' => ($width / $this->getWidth()) * 96,
                     'y' => ($height / $this->getHeight()) * 96,
                 ];
+                // drop the original rendering, otherwise it is kept next to the re-rendered image below
+                $this->resource->removeImage();
             }
 
             $this->resource->setResolution($res['x'], $res['y']);
@@ -629,8 +693,40 @@ class Imagick extends Adapter
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
         $newImage->setImageFormat($this->resource->getImageFormat());
+        $this->inheritColorspace($newImage);
 
         return $newImage;
+    }
+
+    /**
+     * A canvas created by \Imagick::newImage() is always sRGB. Compositing a source image with a
+     * different colorspace (eg. CMYK) onto it copies the raw channel data without any conversion,
+     * which results in an sRGB image containing CMYK data - the colors appear inverted.
+     * Converting the canvas to the colorspace of the source image and transferring its embedded
+     * ICC profile keeps both images in the same color space. For images that were already
+     * converted to sRGB while loading (preserveColor = false) this is a no-op.
+     */
+    private function inheritColorspace(\Imagick $newImage): void
+    {
+        $colorspace = $this->resource->getImageColorspace();
+        if ($colorspace === \Imagick::COLORSPACE_UNDEFINED || $colorspace === $newImage->getImageColorspace()) {
+            return;
+        }
+
+        if ($newImage->getImageAlphaChannel()) {
+            // A canvas that is (partly) transparent has to be flattened onto the background color
+            // when the thumbnail is written, and save() does that with \Imagick::ALPHACHANNEL_REMOVE,
+            // which applies the background color as raw channel data. That only yields the intended
+            // result in an RGB colorspace, so such a canvas is left untouched.
+            return;
+        }
+
+        $newImage->transformImageColorspace($colorspace);
+
+        $profiles = $this->resource->getImageProfiles('icc', true);
+        if (isset($profiles['icc'])) {
+            $newImage->setImageProfile('icc', $profiles['icc']);
+        }
     }
 
     /**

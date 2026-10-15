@@ -160,22 +160,24 @@ class Service extends Model\Element\Service
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
         DataObject::setDisableDirtyDetection(true);
 
-        //load properties
-        $source->getProperties();
+        try {
+            //load properties
+            $source->getProperties();
 
-        //load all in case of lazy loading fields
-        self::loadAllObjectFields($source);
+            //load all in case of lazy loading fields
+            self::loadAllObjectFields($source);
 
-        // triggers actions before object cloning
-        $event = new DataObjectEvent($source, [
-            'target_element' => $target,
-        ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
-        $target = $event->getArgument('target_element');
+            // triggers actions before object cloning
+            $event = new DataObjectEvent($source, [
+                'target_element' => $target,
+            ]);
+            Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+            $target = $event->getArgument('target_element');
 
-        $new = $this->copy($source, $target);
-
-        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            $new = $this->copy($source, $target);
+        } finally {
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
 
         $this->updateChildren($target, $new);
 
@@ -817,6 +819,13 @@ class Service extends Model\Element\Service
         foreach ($permissionList as $permissionSet) {
             $allowedLayoutIds = self::getLayoutPermissions($classId, $permissionSet);
             if (is_array($allowedLayoutIds)) {
+                // layout id 0 is the class' main layout, i.e. the user is not restricted to custom
+                // layouts - same as in getValidLayouts(). The grid must not be reduced to the
+                // intersection of the remaining custom layouts then.
+                if (isset($allowedLayoutIds[0])) {
+                    continue;
+                }
+
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
                     if ($allowedLayoutId) {
                         if (!isset($layoutDefinitions[$allowedLayoutId])) {
@@ -1198,6 +1207,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        $data->setCalculatorData($fd->getCalculatorData());
+
         // no snapshot lookup here on purpose: the admin edit view always shows freshly computed values,
         // version snapshots are only used by getCalculatedFieldValue() (version previews/comparisons, getters)
         return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
@@ -1256,6 +1267,8 @@ class Service extends Model\Element\Service
         ) {
             $object = $object->getObject();
         }
+
+        $data->setCalculatorData($fd->getCalculatorData());
 
         if ($object instanceof Concrete) {
             $snapshot = $object->getCalculatedValueSnapshot();

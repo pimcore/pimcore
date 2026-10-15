@@ -21,6 +21,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStep;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepStates;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunElementCounterInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
@@ -51,6 +52,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         private readonly ExecutionContextInterface $executionContext,
         private readonly JobRunRepositoryInterface $jobRunRepository,
         private readonly JobRunErrorLogRepositoryInterface $jobRunErrorLogRepository,
+        private readonly JobRunElementCounterInterface $jobRunElementCounter,
         private readonly LoggerInterface $genericExecutionEngineLogger,
         private readonly MessageBusInterface $executionEngineBus,
         private readonly Translator $translator
@@ -97,17 +99,19 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
-        if ($jobRun->getTotalElements() > 0) {
-            $this->incrementProcessedElements($jobRun);
-        }
-
-        if (!$throwable) {
-            $this->handleNextMessage($message);
-
+        // the error bookkeeping flushes the job run, so it has to happen before the element is
+        // counted: once the final count is reached, another worker may complete the job run
+        if ($throwable && !$this->handleJobExecutionError($message, $throwable)) {
             return;
         }
 
-        $this->handleJobExecutionError($message, $throwable);
+        $processedElements = 0;
+        if ($jobRun->getTotalElements() > 0) {
+            // counted atomically: several workers may process elements of the same job run in parallel
+            $processedElements = $this->jobRunElementCounter->incrementProcessedElementsForStep($jobRun);
+        }
+
+        $this->handleNextMessage($message, $processedElements);
     }
 
     public function isInteractionAllowed(int $jobRunId, int $ownerId): bool
@@ -164,12 +168,14 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     /**
      * @throws Exception
      */
-    private function handleNextMessage(GenericExecutionEngineMessageInterface $message): void
-    {
+    private function handleNextMessage(
+        GenericExecutionEngineMessageInterface $message,
+        int $processedElements
+    ): void {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
 
         if ($this->getSelectionProcessingModeFromJobRun($jobRun) === SelectionProcessingMode::ONCE ||
-            $jobRun->getProcessedElementsForStep() === $jobRun->getTotalElements()) {
+            $processedElements === $jobRun->getTotalElements()) {
             $this->continueJobStepExecution($message);
         }
     }
@@ -221,12 +227,14 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     }
 
     /**
+     * @return bool whether the execution of the job run continues
+     *
      * @throws Exception
      */
     private function handleJobExecutionError(
         GenericExecutionEngineMessageInterface $message,
         Throwable $throwable
-    ): void {
+    ): bool {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
 
         $this->genericExecutionEngineLogger->error("[JobRun {$jobRun->getId()}]: " . $throwable);
@@ -241,25 +249,20 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $errorMessage,
         );
 
-        match
-        (
-            $this->getErrorHandlingMode(
-                $jobRun,
-                $this->getSelectionProcessingModeFromJobRun($jobRun)
-            )
-        ) {
-            ErrorHandlingMode::STOP_ON_FIRST_ERROR =>
-            $this->stopJobExecutionOnError(
-                $jobRun,
-                $errorMessage
-            ),
-            ErrorHandlingMode::CONTINUE_ON_ERROR =>
-            $this->continueJobExecutionOnError(
-                $jobRun,
-                $message,
-                $errorMessage
-            )
-        };
+        $errorHandlingMode = $this->getErrorHandlingMode(
+            $jobRun,
+            $this->getSelectionProcessingModeFromJobRun($jobRun)
+        );
+
+        if ($errorHandlingMode === ErrorHandlingMode::STOP_ON_FIRST_ERROR) {
+            $this->stopJobExecutionOnError($jobRun, $errorMessage);
+
+            return false;
+        }
+
+        $this->continueJobExecutionOnError($jobRun, $errorMessage);
+
+        return true;
     }
 
     private function getErrorHandlingMode(
@@ -283,9 +286,10 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
      */
     private function continueJobExecutionOnError(
         JobRun $jobRun,
-        GenericExecutionEngineMessageInterface $message,
         string $errorMessage
     ): void {
+        // the failed step state is persisted together with the error
+        $this->setJobStepState($jobRun, JobStepStates::FAILED);
         $this->setJobRunError(
             $jobRun,
             $errorMessage,
@@ -293,9 +297,6 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             false,
             JobRunStates::RUNNING
         );
-
-        $this->setJobStepState($jobRun, JobStepStates::FAILED);
-        $this->handleNextMessage($message);
     }
 
     /**
@@ -313,14 +314,6 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             'gee_job_failed',
             $this->getLogParams($jobRun)
         );
-    }
-
-    private function incrementProcessedElements(JobRun $jobRun): void
-    {
-        $currentElementCount = $jobRun->getProcessedElementsForStep() + 1;
-
-        $jobRun->setProcessedElementsForStep($currentElementCount);
-        $this->jobRunRepository->update($jobRun);
     }
 
     /**

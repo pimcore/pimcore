@@ -18,6 +18,7 @@ use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Controller\Config\Template\TemplateProviderInterface;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -435,6 +436,19 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                    ->arrayNode('storage_operation_queue')
+                        ->addDefaultsIfNotSet()
+                        ->info('Defers the physical part of asset folder moves/deletes on storages that cannot rename directories natively (e.g. object storage such as S3). Operations are recorded in the asset_storage_operation_queue table and applied by the pimcore:assets:storage-queue:process command, which must be scheduled (e.g. nightly cron) when this feature is enabled.')
+                        ->children()
+                            ->booleanNode('enabled')
+                                ->defaultFalse()
+                            ->end()
+                            ->booleanNode('resolve_frontend_paths')
+                                ->info('Only relevant with a configured assets.frontend_prefixes.source. When true (default), frontend URLs of original asset files under a pending folder move are built from the pre-move physical path, which is what a prefix pointing straight at the storage (CDN, bucket) needs. Set to false when the prefix is served through Pimcore itself (e.g. a route resolving the asset by its path via Asset::getByPath()), so that URLs always carry the current logical path and the queue-aware storage adapter resolves the physical location on read.')
+                                ->defaultTrue()
+                            ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('frontend_prefixes')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -685,6 +699,18 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->defaultFalse()
                             ->end()
+                            ->booleanNode('skip_initial_version')
+                                ->info('Do not create a version when an asset is created (uploaded). The persisted state is versioned lazily when the asset is modified for the first time, so write-once assets never occupy version storage while the original state of edited assets stays restorable.')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        // "false", "off", "no", "0" and "" are false; anything unrecognized (e.g. an
+                                        // env placeholder) is passed through for the node to handle
+                                        return filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $v;
+                                    })
+                                ->end()
+                                ->defaultFalse()
+                            ->end()
                         ->end()
                     ->end()
                     ->scalarNode('icc_rgb_profile')
@@ -796,6 +822,13 @@ final class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->append($this->createLinkSanitizerNode(
+                            'Reject javascript:/vbscript:/script-executing data: URL schemes and event-handler or malformed '
+                            .'attributes in the free-form "attributes" string rendered by the DataObject Link data type '
+                            .'(getHtml()/__toString()), closing GHSA-h78x-47qg-qjmq. Independent of the Document Link editable '
+                            .'setting. Defaults to false to preserve existing behavior; the permissive default is deprecated '
+                            .'since 2026.3 and will be removed in 2027.1. See Pimcore\\Model\\DataObject\\Data\\Link\\SanitizerPolicy.'
+                        ))
                         ->booleanNode('ignore_localized_query_fallback')
                             ->beforeNormalization()
                             ->ifString()
@@ -1045,6 +1078,13 @@ final class Configuration implements ConfigurationInterface
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
                         ->end()
+                        ->append($this->createLinkSanitizerNode(
+                            'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
+                            .'event-handler attributes (e.g. onclick) in the Link editable, closing GHSA-9g27-c28m-8xg5, '
+                            .'and stop emitting its internal data (linktype, path, text, ...) as <a> attributes. '
+                            .'Defaults to false to preserve existing behavior; the permissive default is deprecated since '
+                            .'2026.3 and will be removed in 2027.1. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
+                        ))
                     ->end()
                 ->end()
                 ->arrayNode('areas')
@@ -1101,6 +1141,73 @@ final class Configuration implements ConfigurationInterface
     /**
      * Add implementation node config (map, prefixes)
      */
+    /**
+     * Builds the "link_sanitizer" node shared by the Document Link editable (pimcore.documents.editables)
+     * and the DataObject Link data type (pimcore.objects). The two settings are independent, but
+     * share this schema so a future policy change cannot update one and leave the other inconsistent.
+     * Only the help text of "strict" differs.
+     */
+    private function createLinkSanitizerNode(string $strictInfo): ArrayNodeDefinition
+    {
+        $node = new ArrayNodeDefinition('link_sanitizer');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('strict')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            // casting the string itself to bool would make "false"/"no"/"off"
+                            // (any non-empty string) evaluate to true; parse recognized
+                            // boolean strings and leave anything else for booleanNode's own
+                            // type check to reject
+                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                            return $parsed ?? $v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                    ->info(
+                        $strictInfo
+                    )
+                ->end()
+                ->arrayNode('blocked_url_schemes')
+                    ->prototype('scalar')
+                        // entries are matched as URL prefixes, so anything that isn't a scheme
+                        // name plus ":" (e.g. 123, or "java" without the colon) would silently
+                        // block unrelated URLs such as a relative "java-tips" path
+                        ->validate()
+                            ->ifTrue(fn ($v) => !is_string($v) || !preg_match('/^[a-z][a-z0-9+.\-]*:$/i', $v))
+                            ->thenInvalid('Each blocked URL scheme must be a scheme name followed by ":", e.g. "javascript:", got %s.')
+                        ->end()
+                    ->end()
+                    ->defaultValue(AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES)
+                    ->info(
+                        'The URL scheme prefixes (including the trailing ":") rejected when "strict" is true. '
+                        .'Override to add or remove schemes without writing PHP; has no effect while "strict" is false.'
+                    )
+                ->end()
+                ->booleanNode('block_unsafe_data_urls')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                            return $parsed ?? $v;
+                        })
+                    ->end()
+                    ->defaultTrue()
+                    ->info(
+                        'Also reject script-executing data: URLs when "strict" is true (data:image/* other than '
+                        .'data:image/svg+xml stays allowed, e.g. for a downloadable data-uri image). '
+                        .'Has no effect while "strict" is false.'
+                    )
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
     private function addImplementationLoaderNode(ArrayNodeDefinition $node, string $name): void
     {
         $node
@@ -1216,7 +1323,7 @@ final class Configuration implements ConfigurationInterface
         $prototype = $contextNode->prototype('array');
 
         // define routes child on each context entry
-        $this->addRoutesChild($prototype, 'routes');
+        $this->addRoutesChild($prototype, 'routes', supportsRoute: false);
     }
 
     private function addSecurityNode(ArrayNodeDefinition $rootNode): void
@@ -1318,32 +1425,33 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('toolbar')
                 ->addDefaultsIfNotSet();
 
-        $this->addRoutesChild($toolbarNode, 'excluded_routes');
+        $this->addRoutesChild($toolbarNode, 'excluded_routes', supportsRoute: true);
     }
 
     /**
      * Add a route prototype child
      */
-    private function addRoutesChild(ArrayNodeDefinition $parent, string $name): void
+    private function addRoutesChild(ArrayNodeDefinition $parent, string $name, bool $supportsRoute): void
     {
-        $node = $parent->children()->arrayNode($name);
-
-        /** @var ArrayNodeDefinition $prototype */
-        $prototype = $node->prototype('array');
-        $prototype
-            ->beforeNormalization()
-                ->ifNull()->then(function () {
-                    return [];
-                })
-            ->end()
+        $node = $parent
             ->children()
-                ->scalarNode('path')->defaultFalse()->end()
-                ->scalarNode('route')->defaultFalse()->end()
-                ->scalarNode('host')->defaultFalse()->end()
-                ->arrayNode('methods')
-                    ->prototype('scalar')->end()
-                ->end()
-            ->end();
+                ->arrayNode($name)
+                    ->prototype('array')
+                        ->beforeNormalization()
+                            ->ifNull()->then(function () {
+                                return [];
+                            })
+                        ->end()
+                        ->children()
+                            ->scalarNode('path')->defaultFalse()->end()
+                            ->scalarNode('host')->defaultFalse()->end()
+                            ->arrayNode('methods')
+                                ->prototype('scalar')->end()
+                            ->end();
+
+        if ($supportsRoute) {
+            $node->scalarNode('route')->defaultFalse();
+        }
     }
 
     /**
@@ -2149,20 +2257,51 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('blocked_functions')
                                 ->info('`pimcore_*` function names that must not be covered by the blanket
                                 `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
-                                functions that look up and return a live model instance by id/path, or that
-                                expose a filesystem/state oracle (e.g. `pimcore_file_exists`) - a site can
-                                append further function names on top of that default.')
+                                functions that look up and return a live model instance by id/path, expose a
+                                filesystem/state oracle (e.g. `pimcore_file_exists`), or read and delete an
+                                arbitrary file (`pimcore_asset_version_preview`,
+                                `pimcore_image_version_preview`) - a site can append further function names on
+                                top of that default.')
                                 ->scalarPrototype()->end()
                             ->end()
                             ->arrayNode('hard_blocked_methods')
                                 ->info('FQCN => list-of-method-names map. Methods listed here can never be called
                                 on a matching instance from a sandboxed twig template, regardless of the
                                 blocked_classes/allowed_classes configuration. Defaults to a small set of
-                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) and
+                                the mutation methods of the content-model classes (e.g. `Asset::delete`) -
                                 a site can extend the map with further classes/methods on top of that default.')
                                 ->useAttributeAsKey('class')
                                 ->arrayPrototype()
                                     ->scalarPrototype()->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_method_patterns')
+                                ->info('FQCN => list-of-PCRE-patterns map. A matching instance may never call a
+                                method whose name matches one of the patterns, with the same guarantee as
+                                `hard_blocked_methods` (not bypassed by allowed_classes). Used for method families
+                                that cannot be enumerated by exact name, e.g. the dynamically-generated `setXxx` setters
+                                and the `save*`/`delete*`/`create*`/`unlock*`/`add*`/`remove*`/`clear*`/... families of
+                                models (the default targets the common `AbstractModel` base class, plus the setters
+                                of class-definition field definitions and URL slug values). A site can extend the map
+                                with further classes/patterns on top of that default. Malformed patterns are rejected.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
+                                ->validate()
+                                    ->ifTrue(static function (array $classes): bool {
+                                        foreach ($classes as $patterns) {
+                                            foreach ($patterns as $pattern) {
+                                                if (!is_string($pattern) || @preg_match($pattern, '') === false) {
+                                                    return true;
+                                                }
+                                            }
+                                        }
+
+                                        return false;
+                                    })
+                                    ->thenInvalid('Every entry of "hard_blocked_method_patterns" must be a valid PCRE pattern (including delimiters).')
                                 ->end()
                             ->end()
                         ->end()

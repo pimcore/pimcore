@@ -27,6 +27,29 @@ use Sabre\DAV\Exception\Forbidden;
 class Tree extends DAV\Tree
 {
     /**
+     * Resolves a node for the node-based WebDAV operations (PROPFIND, LOCK, GET, PUT, DELETE, MKCOL,
+     * MOVE, ...). Anonymous requests never reach a node this way, so operations - like PROPFIND and
+     * LOCK - that don't call any of the permission-gated Folder/File methods themselves can no longer
+     * leak asset metadata or place locks without authentication. This is an authentication check
+     * only; it does not add per-asset "view" authorization to those operations.
+     *
+     * Operations that never resolve a node (UNLOCK only talks to the lock backend) are guarded by
+     * AuthenticationPlugin, which rejects anonymous requests before Sabre dispatches any method.
+     *
+     * @param string $path
+     *
+     * @throws Forbidden
+     */
+    public function getNodeForPath($path): DAV\INode
+    {
+        if (Admin::getCurrentUser() === null) {
+            throw new Forbidden('No authenticated user available');
+        }
+
+        return parent::getNodeForPath($path);
+    }
+
+    /**
      * Moves a file/directory
      *
      * @param string $sourcePath
@@ -81,6 +104,15 @@ class Tree extends DAV\Tree
                 if (!$asset) {
                     $asset = Asset::getByPath('/' . $sourcePath);
                 }
+
+                // Only require the "rename" permission when the filename actually changes. On the
+                // overwrite paths above $asset is resolved from the destination, so setFilename()
+                // below is a no-op there and the MOVE is not a rename - gating it would break the
+                // safe-save flow of third party software described above.
+                if ($asset->getFilename() !== basename($destinationPath) && !$asset->isAllowed('rename', $user)) {
+                    throw new Forbidden('Missing "rename" permission');
+                }
+
                 $asset->setFilename(basename($destinationPath));
             } else {
                 $asset = Asset::getByPath('/' . $sourcePath);

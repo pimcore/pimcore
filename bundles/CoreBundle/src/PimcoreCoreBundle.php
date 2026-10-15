@@ -33,6 +33,8 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPas
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
+use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -68,6 +70,77 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new TranslationSanitizerPass());
         $container->addCompilerPass(new SerializerPass());
         $container->addCompilerPass(new ImageAdapterAliasPass());
+    }
+
+    public function boot(): void
+    {
+        $this->bootDocumentLinkSanitizer();
+        $this->bootDataObjectLinkSanitizer();
+    }
+
+    private function bootDocumentLinkSanitizer(): void
+    {
+        if (AttributeSanitizer::isConfigured()) {
+            // an application bundle already installed an explicit policy (e.g. via its own
+            // boot() calling AttributeSanitizer::setInstance()). Application bundles register at
+            // the default priority (0, see BundleCollection::addBundle()) while this bundle
+            // registers at -10 (see Kernel::registerCoreBundlesToCollection()), and bundles boot
+            // in descending-priority order (BundleCollection::getItems()), so application bundles
+            // have already booted by the time this runs - respect their choice instead of
+            // overwriting it with the config-driven default below.
+            return;
+        }
+
+        if (!$this->container->getParameter('pimcore.documents.editables.link_sanitizer.strict')) {
+            AttributeSanitizer::setInstance(null);
+
+            return;
+        }
+
+        AttributeSanitizer::setInstance(new AttributeSanitizer(
+            blockedUrlSchemes: $this->container->getParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes'),
+            blockUnsafeDataUrls: $this->container->getParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls'),
+            blockEditorSuppliedEventHandlerAttributes: true,
+            requireConventionalAttributeNameShape: true,
+            omitInternalDataAttributes: true,
+        ));
+    }
+
+    /**
+     * Same as bootDocumentLinkSanitizer(), for the independent policy of the DataObject Link data
+     * type (pimcore.objects.link_sanitizer.*, GHSA-h78x-47qg-qjmq).
+     */
+    private function bootDataObjectLinkSanitizer(): void
+    {
+        if (SanitizerPolicy::isConfigured()) {
+            // an application bundle already installed an explicit policy via SanitizerPolicy::setInstance()
+            return;
+        }
+
+        if (!$this->container->getParameter('pimcore.objects.link_sanitizer.strict')) {
+            SanitizerPolicy::setInstance(null);
+
+            return;
+        }
+
+        SanitizerPolicy::setInstance(new AttributeSanitizer(
+            blockedUrlSchemes: $this->container->getParameter('pimcore.objects.link_sanitizer.blocked_url_schemes'),
+            blockUnsafeDataUrls: $this->container->getParameter('pimcore.objects.link_sanitizer.block_unsafe_data_urls'),
+            blockEditorSuppliedEventHandlerAttributes: true,
+            requireConventionalAttributeNameShape: true,
+        ));
+    }
+
+    public function shutdown(): void
+    {
+        // Pimcore's own test suite boots multiple kernels/containers within the same PHP process
+        // (see lib/Kernel.php's shutdown-function comment). Without this, a policy installed by
+        // this bundle's boot() (or by an application bundle) for one kernel would leak into the
+        // next kernel's boot() and be mistaken there for an already-configured application policy,
+        // silently bypassing that kernel's own "strict" config. Reset on shutdown so every kernel
+        // lifecycle starts from a clean slate.
+        AttributeSanitizer::setInstance(null);
+        SanitizerPolicy::setInstance(null);
     }
 
     public function getPath(): string
