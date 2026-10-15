@@ -16,6 +16,7 @@ namespace Pimcore\Model;
 use __PHP_Incomplete_Class;
 use Exception;
 use Pimcore;
+use Pimcore\Config;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
@@ -234,11 +235,24 @@ final class Version extends AbstractModel
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
         $newData = $copier->copy($data);
 
-        if ($data instanceof Concrete && $newData instanceof Concrete && !$this->isAutoSave()) {
+        if (
+            $data instanceof Concrete
+            && $newData instanceof Concrete
+            && !$this->isAutoSave()
+            && self::isCalculatedValueSnapshotEnabled()
+        ) {
             $this->captureCalculatedValueSnapshot($data, $newData);
         }
 
         return $newData;
+    }
+
+    /**
+     * Whether `pimcore.objects.versions.calculated_value_snapshot` is enabled (opt-in).
+     */
+    private static function isCalculatedValueSnapshotEnabled(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('objects')['versions']['calculated_value_snapshot'] ?? false);
     }
 
     /**

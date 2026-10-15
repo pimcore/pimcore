@@ -858,6 +858,16 @@ final class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->defaultFalse()
                                 ->end()
+                                ->booleanNode('calculated_value_snapshot')
+                                    ->info('Compute the values of calculated fields (object level and localized fields) when a version of a data object is created and store them in the version. Version previews/comparisons and objects restored from a version then return the value as of the snapshot instead of recomputing it. Calculators are then invoked on every version creation except auto-saves (manual drafts included), which costs time and database queries proportional to the number of calculated fields.')
+                                    ->beforeNormalization()
+                                    ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                ->end()
                             ->end()
                         ->end()
                         ->arrayNode('custom_layouts')

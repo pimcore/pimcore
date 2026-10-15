@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Service\Element;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
 use Pimcore\Model\DataObject\Service as DataObjectService;
@@ -37,6 +38,8 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class VersionTest extends TestCase
 {
+    private ?array $originalObjectsConfig = null;
+
     protected function mockFileSystemStorageAdapter(): mixed
     {
         return $this->getMockBuilder(FileSystemVersionStorageAdapter::class)
@@ -150,11 +153,31 @@ class VersionTest extends TestCase
         $this->assertCount(1, $multihref, 'expected 1 target element');
     }
 
+    public function testCalculatedValueSnapshotIsOptIn(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'valueAtSaveTime');
+        $object->save();
+        $version = $this->getNewestVersion($object->getId());
+
+        /** @var Unittest $objectFromVersion */
+        $objectFromVersion = $version->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertNull($objectFromVersion->getCalculatedValueSnapshot(), 'no snapshot must be captured unless pimcore.objects.versions.calculated_value_snapshot is enabled');
+        $this->assertSame('currentValue', $objectFromVersion->getCalculatedValue(), 'without the option the value must be computed live, as before');
+    }
+
     /**
      * Test for https://github.com/pimcore/pimcore/issues/18533
      */
     public function testCalculatedValueSnapshot(): void
     {
+        $this->enableCalculatedValueSnapshot();
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
 
         /** @var Unittest $object */
@@ -196,6 +219,7 @@ class VersionTest extends TestCase
 
     public function testCalculatedValueSnapshotLocalized(): void
     {
+        $this->enableCalculatedValueSnapshot();
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
 
         /** @var Unittest $object */
@@ -224,6 +248,7 @@ class VersionTest extends TestCase
 
     public function testCalculatedValueEditModeStaysFresh(): void
     {
+        $this->enableCalculatedValueSnapshot();
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
 
         /** @var Unittest $object */
@@ -250,6 +275,7 @@ class VersionTest extends TestCase
 
     public function testCalculatedValueSnapshotClearedOnSave(): void
     {
+        $this->enableCalculatedValueSnapshot();
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
 
         /** @var Unittest $object */
@@ -275,6 +301,7 @@ class VersionTest extends TestCase
 
     public function testCalculatedValueSnapshotSkippedForAutoSave(): void
     {
+        $this->enableCalculatedValueSnapshot();
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
 
         /** @var Unittest $object */
@@ -686,8 +713,22 @@ class VersionTest extends TestCase
     {
         parent::tearDown();
 
+        if ($this->originalObjectsConfig !== null) {
+            Config::setSystemConfiguration($this->originalObjectsConfig, 'objects');
+            $this->originalObjectsConfig = null;
+        }
+
         $db = Db::get();
         $db->executeStatement('DROP TABLE versionsData');
+    }
+
+    private function enableCalculatedValueSnapshot(): void
+    {
+        $this->originalObjectsConfig ??= Config::getSystemConfiguration('objects') ?? [];
+
+        $config = $this->originalObjectsConfig;
+        $config['versions']['calculated_value_snapshot'] = true;
+        Config::setSystemConfiguration($config, 'objects');
     }
 
     protected function needsDb(): bool
