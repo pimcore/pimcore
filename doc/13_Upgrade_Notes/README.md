@@ -6,6 +6,9 @@
 - `Pimcore\Workflow\Manager::getDeniedActionsInWorkflow()` returns, for a list of permission types, whether the element's workflows deny each of them, resolving the element's workflow permissions only once. `isDeniedInWorkflow()` now delegates to it with unchanged results; callers that check several permission types for the same element should switch to the new method.
 - [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
 
+### [Security]
+- [2FA] When `pimcore.general.domain` is configured, it is now used as the default `scheb_two_factor.google.server_name`, so new Google Authenticator enrolments show the account as `<username>@<domain>` instead of just the username. The issuer is not changed. Existing enrolments keep working, as the shared secret is unchanged and only the label of new QR codes is affected. An explicitly configured `scheb_two_factor.google.server_name` still takes precedence. Without a configured domain nothing changes.
+
 ## Pimcore 2026.3.3
 
 ### [Generic Execution Engine]
