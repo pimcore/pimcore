@@ -70,6 +70,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     */
+    private static bool $disableLocking = false;
+
+    /**
+     * @internal
      *
      * @var string[]
      */
@@ -188,7 +193,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      *
-     * @param array{force?: bool, ...} $params
+     * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
      */
     public static function getById(int $id, array $params = []): ?static
     {
@@ -198,6 +205,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = self::getCacheKey($id);
 
+        $lock = self::getLockParam($params);
+        unset($params['lock']);
         $params = Model\Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
@@ -223,7 +232,18 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
-                    $object->getDao()->getById($id);
+
+                    $wasLockingDisabled = self::isLockingDisabled();
+                    if (!$lock) {
+                        self::disableLocking();
+                    }
+
+                    try {
+                        $object->getDao()->getById($id);
+                    } finally {
+                        self::setDisableLocking($wasLockingDisabled);
+                    }
+
                     if ($object->getModificationDate() !== null) {
                         $object->__setDataVersionTimestamp($object->getModificationDate());
                     }
@@ -260,6 +280,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $object;
     }
 
+    /**
+     * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
+     */
     public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
@@ -267,6 +292,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         $path = Model\Element\Service::correctPath($path);
+
+        $lock = self::getLockParam($params);
+        unset($params['lock']);
 
         try {
             $object = new static();
@@ -276,7 +304,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $path
             );
 
-            return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
+            $preparedParams = Model\Element\Service::prepareGetByIdParams($params);
+            $preparedParams['lock'] = $lock;
+
+            return static::getById($object->getId(), $preparedParams);
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
@@ -976,6 +1007,56 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(false);
+    }
+
+    /**
+     * Returns whether the FOR UPDATE row lock during object hydration is currently disabled.
+     */
+    public static function isLockingDisabled(): bool
+    {
+        return self::$disableLocking;
+    }
+
+    /**
+     * Enables or disables the FOR UPDATE row lock during object hydration.
+     */
+    public static function setDisableLocking(bool $disableLocking): void
+    {
+        self::$disableLocking = $disableLocking;
+    }
+
+    /**
+     * Disables the FOR UPDATE row lock during object hydration, e.g. for read-only batch processing.
+     */
+    public static function disableLocking(): void
+    {
+        self::setDisableLocking(true);
+    }
+
+    /**
+     * Re-enables the FOR UPDATE row lock during object hydration.
+     */
+    public static function enableLocking(): void
+    {
+        self::setDisableLocking(false);
+    }
+
+    /**
+     * Extracts and validates the 'lock' option from the given params.
+     *
+     * @param array<string, mixed> $params
+     */
+    private static function getLockParam(array $params): bool
+    {
+        if (!array_key_exists('lock', $params)) {
+            return true;
+        }
+
+        if (!is_bool($params['lock'])) {
+            throw new InvalidArgumentException('The "lock" parameter must be of type boolean');
+        }
+
+        return $params['lock'];
     }
 
     /**
