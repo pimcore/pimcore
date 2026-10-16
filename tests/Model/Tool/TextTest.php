@@ -99,6 +99,46 @@ class TextTest extends ModelTestCase
         $this->assertEquals($expected, Text::wysiwygText($text));
     }
 
+    public function testWysiwygTextKeepsLinkToUnpublishedDocumentWhenRequested(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing-keep', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener">Link text</a>',
+            $unpublishedDocument->getId()
+        );
+
+        $this->assertEquals($text, Text::wysiwygText($text, [], true));
+        $this->assertEquals('Link to a document Link text', Text::wysiwygText($text));
+    }
+
+    public function testWysiwygTextStillRewritesPublishedLinkWhenKeepingUnpublished(): void
+    {
+        RuntimeCache::clear();
+
+        $text = sprintf(
+            'Link to a document <a href="/old" pimcore_id="%s" pimcore_type="document">The link</a>',
+            $this->testingDocument->getId()
+        );
+        $expected = sprintf(
+            'Link to a document <a href="http://example2.com/testing" pimcore_id="%s" pimcore_type="document">The link</a>',
+            $this->testingDocument->getId()
+        );
+
+        $this->assertEquals($expected, Text::wysiwygText($text, [], true));
+    }
+
+    public function testWysiwygTextStillRemovesLinkToDeletedElementWhenKeepingUnpublished(): void
+    {
+        RuntimeCache::clear();
+
+        $text = 'Link to a document <a href="/some/path" pimcore_id="99999999" pimcore_type="document">Link text</a>';
+
+        $this->assertEquals('Link to a document Link text', Text::wysiwygText($text, [], true));
+    }
+
     private function createDocument(string $key, int $parentId, bool $published = true): Document\Page
     {
         $document = new Document\Page();

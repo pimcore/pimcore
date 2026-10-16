@@ -111,7 +111,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
-        ]);
+        ], true);
     }
 
     /**
@@ -125,7 +125,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
-        ]);
+        ], true);
     }
 
     /**
@@ -219,11 +219,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = $container->getObjectVar($this->getName());
         }
 
+        // the editor and the save requests (admin mode) must see and keep links to unpublished elements,
+        // everywhere else (frontend, CLI) they are reduced to their text
         return Text::wysiwygText($data, [
                 'object' => $container,
                 'context' => $this,
                 'language' => $params['language'] ?? null,
-            ]);
+            ], Pimcore::inAdmin());
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
