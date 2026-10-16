@@ -134,9 +134,9 @@ class Block extends Model\Document\Editable implements BlockInterface
                 'editables' => $templateEditableDefinitions,
             ];
 
-            $editableDefCollector->add($this);
-
             $this->indices = $indicesBackup;
+
+            $editableDefCollector->add($this);
         }
     }
 

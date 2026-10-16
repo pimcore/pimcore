@@ -33,6 +33,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPas
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
+use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -73,6 +74,12 @@ class PimcoreCoreBundle extends Bundle
 
     public function boot(): void
     {
+        $this->bootDocumentLinkSanitizer();
+        $this->bootDataObjectLinkSanitizer();
+    }
+
+    private function bootDocumentLinkSanitizer(): void
+    {
         if (AttributeSanitizer::isConfigured()) {
             // an application bundle already installed an explicit policy (e.g. via its own
             // boot() calling AttributeSanitizer::setInstance()). Application bundles register at
@@ -99,6 +106,31 @@ class PimcoreCoreBundle extends Bundle
         ));
     }
 
+    /**
+     * Same as bootDocumentLinkSanitizer(), for the independent policy of the DataObject Link data
+     * type (pimcore.objects.link_sanitizer.*, GHSA-h78x-47qg-qjmq).
+     */
+    private function bootDataObjectLinkSanitizer(): void
+    {
+        if (SanitizerPolicy::isConfigured()) {
+            // an application bundle already installed an explicit policy via SanitizerPolicy::setInstance()
+            return;
+        }
+
+        if (!$this->container->getParameter('pimcore.objects.link_sanitizer.strict')) {
+            SanitizerPolicy::setInstance(null);
+
+            return;
+        }
+
+        SanitizerPolicy::setInstance(new AttributeSanitizer(
+            blockedUrlSchemes: $this->container->getParameter('pimcore.objects.link_sanitizer.blocked_url_schemes'),
+            blockUnsafeDataUrls: $this->container->getParameter('pimcore.objects.link_sanitizer.block_unsafe_data_urls'),
+            blockEditorSuppliedEventHandlerAttributes: true,
+            requireConventionalAttributeNameShape: true,
+        ));
+    }
+
     public function shutdown(): void
     {
         // Pimcore's own test suite boots multiple kernels/containers within the same PHP process
@@ -108,6 +140,7 @@ class PimcoreCoreBundle extends Bundle
         // silently bypassing that kernel's own "strict" config. Reset on shutdown so every kernel
         // lifecycle starts from a clean slate.
         AttributeSanitizer::setInstance(null);
+        SanitizerPolicy::setInstance(null);
     }
 
     public function getPath(): string

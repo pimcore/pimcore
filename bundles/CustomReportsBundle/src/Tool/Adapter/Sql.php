@@ -178,15 +178,7 @@ class Sql extends AbstractAdapter
     private function validateSqlFragment(string $sql): void
     {
         // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
-        $sqlForValidation = preg_replace(
-            [
-                "/'(?:''|\\\\'|[^'])*'/s",
-                '/"(?:""|\\\\"|[^"])*"/s',
-                '/`[^`]*`/s',
-            ],
-            ["''", '""', '``'],
-            $sql
-        ) ?? $sql;
+        $sqlForValidation = $this->stripQuotedRegionsForValidation($sql);
 
         // Normalize whitespace/newlines for consistent boundary checking
         $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
@@ -216,6 +208,81 @@ class Sql extends AbstractAdapter
                 throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, DDL/DML, and file access functions are not allowed).');
             }
         }
+    }
+
+    /**
+     * Replaces every quoted region (single-quoted string, double-quoted string, backtick
+     * identifier) with a short placeholder, so the denylist above never sees a forbidden
+     * token that only occurs inside one of them.
+     *
+     * This is a single left-to-right scan carrying one "which quote type is currently open"
+     * state: a quote character of a different type inside an open region (e.g. a "'" inside a
+     * backtick identifier or a double-quoted string) is ordinary content of that region, never
+     * the opener of a new one.
+     *
+     * Per MySQL's default (non-NO_BACKSLASH_ESCAPES) lexer: inside '...' and "...", a
+     * backslash escapes the next character and the delimiter can also be doubled to escape
+     * itself; inside `...`, only doubling the backtick escapes it - there is no backslash
+     * escaping for identifiers.
+     *
+     * The backslash handling relies on the connection's sql_mode not containing
+     * NO_BACKSLASH_ESCAPES (with it, a backslash is a literal character and this scan would
+     * read strings differently from MySQL). Core guarantees that through the connection's
+     * init command "SET sql_mode = ''" in bundles/CoreBundle/config/pimcore/default.yaml; keep
+     * the two in sync if that setting is ever changed or overridden.
+     *
+     * An unterminated quoted region is rejected: no valid fragment contains one, and the
+     * fragments are validated separately but concatenated afterwards, so an opening quote in
+     * one fragment could otherwise be closed by a quote in another.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function stripQuotedRegionsForValidation(string $sql): string
+    {
+        $result = '';
+        $length = strlen($sql);
+        $openQuote = null;
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $sql[$i];
+
+            if ($openQuote === null) {
+                if ($char === "'" || $char === '"' || $char === '`') {
+                    $openQuote = $char;
+                } else {
+                    $result .= $char;
+                }
+
+                continue;
+            }
+
+            if ($openQuote !== '`' && $char === '\\' && $i + 1 < $length) {
+                // Backslash escapes the next byte; consume it as a unit so a real closing
+                // quote right after it is not mistaken for an escaped one (or vice versa).
+                $i++;
+
+                continue;
+            }
+
+            if ($char === $openQuote) {
+                if ($i + 1 < $length && $sql[$i + 1] === $openQuote) {
+                    // Doubled delimiter escapes itself within the region.
+                    $i++;
+
+                    continue;
+                }
+
+                // Properly closed region: collapse it to a short placeholder.
+                $result .= $openQuote . $openQuote;
+                $openQuote = null;
+            }
+        }
+
+        if ($openQuote !== null) {
+            throw new InvalidArgumentException('Unsafe SQL fragment detected (unterminated quoted string or identifier).');
+        }
+
+        return $result;
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array

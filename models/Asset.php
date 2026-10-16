@@ -1195,10 +1195,10 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns the full path of the asset (listener aware)
-     *
-     *
-     * @internal
+     * Returns the frontend URL path of the asset: the full path prefixed with
+     * `pimcore.assets.frontend_prefixes.source` and passed through the FrontendEvents::ASSET_PATH
+     * event, regardless of the current context (frontend request, admin, CLI, workers).
+     * getFullPath() returns the same value in a frontend context only.
      */
     public function getFrontendFullPath(): string
     {
@@ -1206,8 +1206,9 @@ class Asset extends Element\AbstractElement
 
         $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
         if ($prefix !== '' && $prefix !== null) {
-            // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
-            // folder move is pending the bytes still live under the pre-move prefix
+            // a prefix pointing straight at the storage (CDN/bucket) needs the pre-move physical
+            // path while a queued folder move is pending; a prefix served through Pimcore keeps
+            // the logical path (storage_operation_queue.resolve_frontend_paths: false)
             $path = Pimcore::getContainer()->get(FrontendPathResolver::class)->resolvePhysicalPath($path, $this->getModificationDate());
         }
 
@@ -1871,10 +1872,16 @@ class Asset extends Element\AbstractElement
 
         foreach ($this->metadata as $md) {
             if ($md['name'] == $name) {
-                if ($language == $md['language'] || (empty($md['language']) && !$strictMatchLanguage)) {
+                if ($language == $md['language']) {
                     $data = $md;
 
                     break;
+                }
+
+                // Keep scanning for an exact language match before settling for the
+                // language-less fallback, since it may appear earlier in the array.
+                if ($data === null && empty($md['language']) && !$strictMatchLanguage) {
+                    $data = $md;
                 }
             }
         }

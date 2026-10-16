@@ -109,7 +109,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
-        $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
+        // the languages are not part of the query, they are applied when hydrating each translation below
+        $languages = $this->model->getLanguages();
+        $cacheKey = $this->getDatabaseTableName().'_data_' . md5(
+            (string)$queryBuilder . (is_array($languages) ? '_' . implode('-', $languages) : '')
+        );
         $translations = Cache::load($cacheKey);
 
         if (

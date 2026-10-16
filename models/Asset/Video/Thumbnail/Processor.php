@@ -249,7 +249,10 @@ class Processor
                     }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
 
-                    fclose($source);
+                    // some storage adapters close the passed stream themselves inside writeStream()
+                    if (is_resource($source)) {
+                        fclose($source);
+                    }
 
                     unlink($converter->getDestinationFile());
 

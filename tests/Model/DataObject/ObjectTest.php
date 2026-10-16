@@ -13,13 +13,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Error;
 use Exception;
 use Normalizer;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Db\Helper as DbHelper;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Service as DataObjectService;
+use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -311,6 +315,28 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * A mandatory field whose default is resolved at runtime - the current date
+     * for a date/datetime, the options provider's default for a select/multiselect -
+     * must not block publishing a brand-new object, and the default must be persisted.
+     */
+    public function testMandatoryRuntimeResolvedDefaultsSavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+        $data = $latestVersion->getData();
+
+        $this->assertNotNull($data->getMandatoryDateWithCurrentDate(), 'Expected the current date to be applied to the date field');
+        $this->assertSame(date('Y-m-d'), $data->getMandatoryDateWithCurrentDate()->format('Y-m-d'));
+        $this->assertNotNull($data->getMandatoryDatetimeWithCurrentDate(), 'Expected the current date to be applied to the datetime field');
+        $this->assertSame('a', $data->getMandatorySelectWithProviderDefault());
+        $this->assertSame(['a'], $data->getMandatoryMultiselectWithProviderDefault());
+    }
+
+    /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning(): void
@@ -577,5 +603,93 @@ class ObjectTest extends ModelTestCase
             DataObjectService::pathExists($nfdLookupPath),
             'pathExists() must return true for the same NFD path that getByPath() resolves.'
         );
+    }
+
+    /**
+     * Regression test: AbstractObject::save() disables the dirty detection while a new element is added. A failed
+     * add must restore it, otherwise every later save in the same process (CLI imports, workers) runs without it.
+     * Concrete::save() restores the flag on its own, folders rely on AbstractObject::save().
+     */
+    public function testFailedFolderAddRestoresDirtyDetection(): void
+    {
+        $existing = TestHelper::createObjectFolder();
+
+        $duplicate = TestHelper::createObjectFolder('', false);
+        $duplicate->setParentId($existing->getParentId());
+        $duplicate->setKey($existing->getKey());
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            $duplicate->save();
+            $this->fail('Saving a folder with a duplicate path must fail.');
+        } catch (DuplicateFullPathException) {
+            // expected
+        } finally {
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
+    }
+
+    /**
+     * Regression test: like POST_ADD listeners, POST_ADD_FAILURE listeners run with the dirty detection restored,
+     * so objects they save are not saved with the dirty detection of the failed add.
+     */
+    public function testPostAddFailureListenersRunWithDirtyDetectionRestored(): void
+    {
+        $existing = TestHelper::createObjectFolder();
+
+        $duplicate = TestHelper::createObjectFolder('', false);
+        $duplicate->setParentId($existing->getParentId());
+        $duplicate->setKey($existing->getKey());
+
+        $dirtyDetectionDisabledInListener = null;
+        $listener = static function () use (&$dirtyDetectionDisabledInListener): void {
+            $dirtyDetectionDisabledInListener = DataObject::isDirtyDetectionDisabled();
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::POST_ADD_FAILURE, $listener);
+
+        try {
+            $duplicate->save();
+            $this->fail('Saving a folder with a duplicate path must fail.');
+        } catch (DuplicateFullPathException) {
+            // expected
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::POST_ADD_FAILURE, $listener);
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabledInListener);
+    }
+
+    /**
+     * Regression test: retryableFunction() passes only exceptions to onFailure. A failed add that ends with a PHP
+     * Error must restore the dirty detection as well.
+     */
+    public function testFolderAddFailingWithErrorRestoresDirtyDetection(): void
+    {
+        $folder = TestHelper::createObjectFolder('', false);
+
+        $listener = static function (): void {
+            throw new Error('listener failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::PRE_ADD, $listener);
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            $folder->save();
+            $this->fail('Saving the folder must fail.');
+        } catch (Error $e) {
+            $this->assertSame('listener failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::PRE_ADD, $listener);
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
     }
 }

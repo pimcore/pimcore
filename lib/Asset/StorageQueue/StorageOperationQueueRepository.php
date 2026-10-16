@@ -17,6 +17,7 @@ namespace Pimcore\Asset\StorageQueue;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\ConnectionLost;
 use Pimcore\Cache\RuntimeCache;
 
 /**
@@ -162,17 +163,19 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
      */
     public function all(): array
     {
-        $rows = $this->db->fetchAllAssociative('SELECT * FROM ' . self::TABLE . ' ORDER BY `id` ASC');
+        $rows = $this->retryOnConnectionLost(
+            fn (): array => $this->db->fetchAllAssociative('SELECT * FROM ' . self::TABLE . ' ORDER BY `id` ASC')
+        );
 
         return array_map($this->hydrate(...), $rows);
     }
 
     public function findById(int $id): ?StorageOperation
     {
-        $row = $this->db->fetchAssociative(
+        $row = $this->retryOnConnectionLost(fn (): array|false => $this->db->fetchAssociative(
             'SELECT * FROM ' . self::TABLE . ' WHERE `id` = :id',
             ['id' => $id]
-        );
+        ));
 
         return $row === false ? null : $this->hydrate($row);
     }
@@ -180,7 +183,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     public function remove(int $id): void
     {
         $operation = $this->findById($id);
-        $this->db->delete(self::TABLE, ['id' => $id]);
+        $this->retryOnConnectionLost(fn (): int|string => $this->db->delete(self::TABLE, ['id' => $id]));
 
         if ($operation !== null) {
             $this->invalidateHasOperationsCache($operation->getStorage());
@@ -199,7 +202,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         // the same options differently. So the row is read and compared in PHP - under FOR UPDATE,
         // inside the same transaction as the DELETE, so a concurrent repoint cannot slip between
         // the two. completeMove() refreshes and retries when this returns false.
-        $removed = (bool) $this->db->transactional(function () use ($operation): bool {
+        $removed = (bool) $this->retryOnConnectionLost(fn (): bool => $this->db->transactional(function () use ($operation): bool {
             $row = $this->db->fetchAssociative(
                 'SELECT * FROM ' . self::TABLE
                 . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
@@ -225,7 +228,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
                 . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
                 $this->identityParameters($operation)
             ) > 0;
-        });
+        }));
 
         if ($removed) {
             $this->invalidateHasOperationsCache($operation->getStorage());
@@ -372,6 +375,42 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         $decoded = json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
 
         return is_array($decoded) && $decoded !== [] ? $decoded : null;
+    }
+
+    /**
+     * Runs a query of the processor's path once more when the server dropped the connection.
+     *
+     * The processor can spend a long time on storage requests between two queries - on object
+     * storage that takes seconds per write request, the 100 files between two row checks can
+     * exceed the server's wait_timeout. The server then closes the idle connection and the next
+     * query fails with ConnectionLost; DBAL reconnects on the following call, so one retry is
+     * enough. Every wrapped call is a read or an idempotent delete, so repeating it is safe: an
+     * idle drop surfaces on the first statement, before anything ran, and in the unlikely case of
+     * a drop during the commit of removeIfUnchanged(), the retry finds the row gone and returns
+     * false, which completeMove() already treats as "re-read and leave it".
+     *
+     * Never retried inside a transaction the caller opened: the reconnect would silently discard
+     * it, so the caller has to see the failure.
+     *
+     * @template T
+     *
+     * @param callable(): T $query
+     *
+     * @return T
+     */
+    private function retryOnConnectionLost(callable $query): mixed
+    {
+        $inCallerTransaction = $this->db->isTransactionActive();
+
+        try {
+            return $query();
+        } catch (ConnectionLost $e) {
+            if ($inCallerTransaction) {
+                throw $e;
+            }
+
+            return $query();
+        }
     }
 
     /**

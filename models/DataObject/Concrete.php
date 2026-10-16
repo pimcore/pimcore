@@ -112,6 +112,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $this->__objectAwareFields['localizedfields'] = true;
                 }
 
+                if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    // a calculated value is computed on read and never persisted from user input,
+                    // and CalculatedValue::checkValidity() is a no-op for that reason - including
+                    // for the mandatory check. Calling the getter here would run the calculator
+                    // for every calculated field on every save, only to discard the result.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -127,7 +135,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     // widening it can only skip a check a default is about to satisfy.
                     $valueIsEmpty = empty($value) || $fd->isEmpty($value);
 
-                    if (!$omitMandatoryCheck && $valueIsEmpty && !$isUpdate && self::fieldHasApplicableDefault($fd)) {
+                    if (!$omitMandatoryCheck && $valueIsEmpty && !$isUpdate && $fd->hasApplicableDefaultValue($this)) {
                         $omitMandatoryCheck = true;
                     }
 
@@ -141,13 +149,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
-                                $getInheritedValues = DataObject::doGetInheritedValues();
-                                DataObject::setGetInheritedValues(true);
-
-                                $value = $this->$getter();
-                                $fd->checkValidity($value, $omitMandatoryCheck, $params);
-
-                                DataObject::setGetInheritedValues($getInheritedValues);
+                                DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $fd->checkValidity($this->$getter(), $omitMandatoryCheck, $params)
+                                );
                             } catch (Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
@@ -211,46 +216,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
-    }
-
-    /**
-     * Decides whether a mandatory field has a configured default that will
-     * actually be applied when a new object is created with that field left
-     * empty - and so whether the mandatory check can be skipped for it.
-     *
-     * The condition is deliberately a *superset* of the one this replaced:
-     * every default that qualified before still qualifies. It only adds the
-     * cases PHP's empty() got wrong, so no configuration that saved
-     * successfully before can start failing here.
-     */
-    private static function fieldHasApplicableDefault(DataObject\ClassDefinition\Data $fd): bool
-    {
-        if (method_exists($fd, 'getDefaultValueGenerator') && $fd->getDefaultValueGenerator() !== '') {
-            return true;
-        }
-
-        if (!method_exists($fd, 'getDefaultValue')) {
-            return false;
-        }
-
-        $defaultValue = $fd->getDefaultValue();
-
-        // pre-existing behaviour: any truthy configured default qualifies
-        if (!empty($defaultValue)) {
-            return true;
-        }
-
-        // Compound quantity-value fields (QuantityValue, InputQuantityValue) resolve their
-        // default from a value *and* a unit, and their isEmpty() only understands the value
-        // object, not the configured scalar - so a falsy-but-configured scalar is paired with
-        // the unit instead. The unit check mirrors doGetDefaultValue()'s own truthy check, so
-        // an empty-string unit (which it treats as "no unit") agrees here.
-        if (method_exists($fd, 'getDefaultUnit')) {
-            return $defaultValue !== null && (bool) $fd->getDefaultUnit();
-        }
-
-        // the fix: a type-aware emptiness check, so a default of 0 / false / '0' qualifies
-        return !$fd->isEmpty($defaultValue);
     }
 
     private function saveChildData(): void
@@ -391,6 +356,21 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                // a calculated value cannot own a dependency: it is computed on read and
+                // CalculatedValue does not override Data::resolveDependencies(), which returns
+                // an empty array. Calling the getter would run the calculator for nothing.
+                continue;
+            }
+
+            if ($field instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                // a reverse relation cannot own a dependency either - the relation is recorded
+                // on the owning object - and ReverseObjectRelation::resolveDependencies() says so
+                // by returning an empty array. Its getter is never memoised, so calling it here
+                // would query the relation table and load every owning object for nothing.
+                continue;
+            }
+
             $key = $field->getName();
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());

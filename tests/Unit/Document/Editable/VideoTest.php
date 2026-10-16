@@ -83,6 +83,54 @@ final class VideoTest extends TestCase
         );
     }
 
+    public function testSetDataFromEditmodeIgnoresNonStringPoster(): void
+    {
+        $video = new Video();
+        $video->setDataFromEditmode([
+            'type' => Video::TYPE_YOUTUBE,
+            'path' => '',
+            'poster' => ['id' => 42, 'type' => 'asset', 'fullPath' => '/poster.jpg'],
+        ]);
+
+        $this->assertNull($video->getPoster());
+        $this->assertSame('', $video->getId());
+        $this->assertSame(Video::TYPE_YOUTUBE, $video->getVideoType());
+    }
+
+    public function testSetDataFromEditmodeWithNullPoster(): void
+    {
+        $video = new Video();
+        $video->setDataFromEditmode([
+            'type' => Video::TYPE_YOUTUBE,
+            'path' => '',
+            'poster' => null,
+        ]);
+
+        $this->assertNull($video->getPoster());
+    }
+
+    public function testSetDataFromEditmodeIgnoresNonStringPath(): void
+    {
+        $video = new Video();
+        $video->setDataFromEditmode([
+            'type' => Video::TYPE_ASSET,
+            'path' => ['id' => 42, 'type' => 'asset', 'fullPath' => '/video.mp4'],
+            'poster' => '',
+        ]);
+
+        $this->assertNull($video->getId());
+        $this->assertNull($video->getPoster());
+    }
+
+    public function testSetDataFromEditmodeWithMissingPathAndPoster(): void
+    {
+        $video = new Video();
+        $video->setDataFromEditmode(['type' => Video::TYPE_YOUTUBE]);
+
+        $this->assertNull($video->getId());
+        $this->assertNull($video->getPoster());
+    }
+
     /**
      * Builds a Video editable with the given type/id without going through
      * setDataFromEditmode(), which would otherwise resolve the id against the Asset backend.

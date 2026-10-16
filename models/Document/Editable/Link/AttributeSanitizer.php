@@ -176,6 +176,17 @@ class AttributeSanitizer
         ) ?? $url;
     }
 
+    /**
+     * Whether this policy rejects any editor-supplied attribute key (event handlers, or keys that
+     * are not shaped like an attribute name). Callers that render a free-form attribute string
+     * (e.g. the DataObject Link data type) use it to decide between passing the string through
+     * unchanged and parsing it key by key.
+     */
+    public function rejectsEditorSuppliedAttributeKeys(): bool
+    {
+        return $this->blockEditorSuppliedEventHandlerAttributes || $this->requireConventionalAttributeNameShape;
+    }
+
     public function isAttributeKeyAllowed(string $key, bool $editorControlled): bool
     {
         // HTML attribute names are delimited by raw whitespace, `"`, `'`, `=`, `<`, `>` and `/` -
