@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2027.1.0
+
+### [Assets]
+- [Thumbnails] **BC break:** `ImageThumbnailInterface::getAsset()` and the implementing `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail can be constructed without a backing asset (e.g. via a raw path reference), in which case `getAsset()` returned `null` and thus violated its own non-nullable return type with a `TypeError`. Code calling `getAsset()` on thumbnails typed against `ImageThumbnailInterface`, `Video\ImageThumbnailInterface` or `Document\ImageThumbnailInterface` must now handle a possible `null` return value (static analysis will flag unguarded calls), and test doubles created via `createStub()`/`createMock()` of these interfaces now return `null` from `getAsset()` instead of an `Asset` double unless configured explicitly. Image thumbnails are unaffected: `Image\Thumbnail::getAsset()` keeps returning the (always set) `Image`, and `Image\ThumbnailInterface::getAsset()` is documented as returning `Image`.
+
 ## Pimcore 2026.4.0
 
 ### [Workflow]
