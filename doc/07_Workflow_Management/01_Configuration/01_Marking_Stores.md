@@ -13,6 +13,20 @@ The default marking store. Place information is stored in the `element_workflow_
 Use this for assets and documents. For data objects, the other marking store options
 store data directly in the data object model as attributes.
 
+The place is written to the table as soon as a transition is applied. There is one exception: when a
+transition with `changePublishedState: save_version` is applied through the workflow manager
+(`Manager::applyWithAdditionalData()` with `$saveSubject = true`, which is how Pimcore Studio applies
+transitions), only a draft (version) of the element is saved, so the new place is kept with the draft
+and is written to the table once the draft gets published. Discarding the draft discards the place
+change as well, just like it does with the attribute based marking stores below. Consumers reading the
+`element_workflow_state` table directly (workflow reports, the workflow filter of the search index, ...)
+therefore see the state of the published element while such a draft exists.
+
+Transitions applied directly via `$workflow->apply()`, or through the manager without letting it save
+the subject (`$saveSubject = false`), write the place to the table immediately regardless of their
+`changePublishedState`: a custom caller that saves a draft itself must not expect the draft's place to
+be kept out of the table.
+
 ##### Configuration Example
 ```yaml
    marking_store:

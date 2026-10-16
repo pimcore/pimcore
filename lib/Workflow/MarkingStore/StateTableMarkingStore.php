@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\MarkingStore;
 
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
-use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
-class StateTableMarkingStore implements MarkingStoreInterface
+class StateTableMarkingStore implements PendingMarkingStoreInterface
 {
     private string $workflowName;
 
@@ -33,6 +33,31 @@ class StateTableMarkingStore implements MarkingStoreInterface
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
+        // a marking pending on the subject (draft) takes precedence over the persisted one
+        return $this->getPendingMarking($subject) ?? $this->getPersistedMarking($subject);
+    }
+
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
+    {
+        $subject = $this->checkIfSubjectIsValid($subject);
+
+        if (!empty($context[self::CONTEXT_SAVE_VERSION]) && $subject instanceof AbstractElement) {
+            // the subject is only saved as a version (draft) after this transition:
+            // keep the place with the draft instead of committing it to the state table
+            $this->setPendingMarking($subject, $marking);
+
+            return;
+        }
+
+        $this->persistPlaces($subject, array_keys($marking->getPlaces()));
+
+        // a directly persisted marking supersedes whatever was pending on the subject; it is
+        // cleared only now, so that a failed write leaves the draft's place in memory
+        $this->setPendingMarking($subject, null);
+    }
+
+    public function getPersistedMarking(ElementInterface $subject): Marking
+    {
         $placeName = '';
 
         if ($workflowState = WorkflowState::getByPrimary($subject->getId(), Service::getElementType($subject), $this->workflowName)) {
@@ -43,18 +68,57 @@ class StateTableMarkingStore implements MarkingStoreInterface
             return new Marking();
         }
 
-        $placeName = explode(',', $placeName);
-        $places = [];
-        foreach ($placeName as $place) {
-            $places[$place] = 1;
-        }
-
-        return new Marking($places);
+        return $this->createMarking(explode(',', $placeName));
     }
 
-    public function setMarking(object $subject, Marking $marking, array $context = []): void
+    public function getPendingMarking(ElementInterface $subject): ?Marking
     {
-        $subject = $this->checkIfSubjectIsValid($subject);
+        if (!$subject instanceof AbstractElement) {
+            return null;
+        }
+
+        $places = $subject->__getPendingWorkflowMarking($this->workflowName);
+
+        return $places === null ? null : $this->createMarking($places);
+    }
+
+    public function setPendingMarking(ElementInterface $subject, ?Marking $marking): void
+    {
+        if (!$subject instanceof AbstractElement) {
+            if ($marking !== null) {
+                throw new LogicException('A marking can only be kept pending on elements extending ' . AbstractElement::class);
+            }
+
+            return;
+        }
+
+        $subject->__setPendingWorkflowMarking(
+            $this->workflowName,
+            $marking === null ? null : array_keys($marking->getPlaces())
+        );
+    }
+
+    public function persistPendingMarking(ElementInterface $subject): void
+    {
+        $marking = $this->getPendingMarking($subject);
+        if ($marking === null) {
+            return;
+        }
+
+        $this->persistPlaces($subject, array_keys($marking->getPlaces()));
+        $this->setPendingMarking($subject, null);
+    }
+
+    public function getProperty(): string
+    {
+        return $this->workflowName;
+    }
+
+    /**
+     * @param string[] $places
+     */
+    protected function persistPlaces(ElementInterface $subject, array $places): void
+    {
         $type = Service::getElementType($subject);
 
         if (!$workflowState = WorkflowState::getByPrimary($subject->getId(), $type, $this->workflowName)) {
@@ -64,13 +128,21 @@ class StateTableMarkingStore implements MarkingStoreInterface
             $workflowState->setWorkflow($this->workflowName);
         }
 
-        $workflowState->setPlace(implode(',', array_keys($marking->getPlaces())));
+        $workflowState->setPlace(implode(',', $places));
         $workflowState->save();
     }
 
-    public function getProperty(): string
+    /**
+     * @param string[] $placeNames
+     */
+    private function createMarking(array $placeNames): Marking
     {
-        return $this->workflowName;
+        $places = [];
+        foreach ($placeNames as $place) {
+            $places[$place] = 1;
+        }
+
+        return new Marking($places);
     }
 
     /**
