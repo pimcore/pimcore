@@ -247,6 +247,12 @@ class Version20260729120000Test extends TestCase
         $this->assertStringNotContainsString('`lock_keys` CONVERT', $sql);
     }
 
+    public function testIsNotTransactional(): void
+    {
+        // DDL implicitly commits on MySQL/MariaDB, desynchronizing DBAL's transaction nesting level
+        $this->assertFalse($this->createMigration()->isTransactional());
+    }
+
     public function testDownIsIrreversible(): void
     {
         $migration = $this->createMigration();

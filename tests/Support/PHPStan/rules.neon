@@ -1,0 +1,13 @@
+services:
+    -
+        class: Pimcore\Tests\Support\PHPStan\MigrationDdlCollector
+        tags:
+            - phpstan.collector
+    -
+        class: Pimcore\Tests\Support\PHPStan\NonTransactionalMigrationCollector
+        tags:
+            - phpstan.collector
+    -
+        class: Pimcore\Tests\Support\PHPStan\TransactionalMigrationWithDdlRule
+        tags:
+            - phpstan.rules.rule

@@ -24,6 +24,11 @@ final class Version20220718162200 extends AbstractMigration
         return 'Improve object url slugs loading performance';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('object_url_slugs')->hasIndex('fieldname_ownertype_position_objectId')) {
