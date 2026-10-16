@@ -18,6 +18,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
@@ -346,11 +348,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if (!$this->isEmpty($data) && !is_numeric($data)) {
-            throw new Model\Element\ValidationException('field ['.$this->getName().' ] - invalid numeric data [' . $data . '] ');
+            throw (new StructuredValidationException(
+                'field ['.$this->getName().' ] - invalid numeric data [' . $data . '] '
+            ))
+                ->setTranslation(ValidationMessageKey::NOT_NUMERIC, ['value' => $data]);
         }
 
         if (!$this->isEmpty($data) && !$omitMandatoryCheck) {
@@ -361,19 +367,41 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             }
 
             if ($this->getInteger() && str_contains((string)$data, '.')) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
+                throw (new StructuredValidationException('Value in field [ '.$this->getName().' ] is not an integer'))
+                    ->setTranslation(ValidationMessageKey::NOT_INTEGER, ['value' => $data]);
             }
 
             if ($this->getMinValue() !== null && $this->getMinValue() > $data) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
+                throw (new StructuredValidationException(
+                    'Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue()
+                ))
+                    ->setTranslation(
+                        ValidationMessageKey::MIN_VALUE,
+                        [
+                            'min' => $this->getMinValue(),
+                            'value' => $data,
+                        ],
+                    );
             }
 
             if ($this->getMaxValue() !== null && $data > $this->getMaxValue()) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is bigger than ' . $this->getMaxValue());
+                throw (new StructuredValidationException(
+                    'Value in field [ '.$this->getName().' ] is bigger than ' . $this->getMaxValue()
+                ))
+                    ->setTranslation(
+                        ValidationMessageKey::MAX_VALUE,
+                        [
+                            'max' => $this->getMaxValue(),
+                            'value' => $data,
+                        ],
+                    );
             }
 
             if ($this->getUnsigned() && $data < 0) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not unsigned (bigger than 0)');
+                throw (new StructuredValidationException(
+                    'Value in field [ '.$this->getName().' ] is not unsigned (bigger than 0)'
+                ))
+                    ->setTranslation(ValidationMessageKey::NOT_UNSIGNED, ['value' => $data]);
             }
         }
     }

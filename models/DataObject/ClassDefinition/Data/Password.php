@@ -19,8 +19,11 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -252,11 +255,21 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (is_string($data) && $this->isPasswordTooLong($data)) {
-            throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is too long');
+            throw (new StructuredValidationException('Value in field [ ' . $this->getName() . ' ] is too long'))
+                ->setTranslation(
+                    ValidationMessageKey::MAX_LENGTH,
+                    [
+                        'max' => PasswordHasherInterface::MAX_PASSWORD_LENGTH,
+                    ],
+                );
         }
 
         if (!$omitMandatoryCheck && ($this->getMinimumLength() && is_string($data) && strlen($data) < $this->getMinimumLength())) {
-            throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
+            throw (new StructuredValidationException(
+                'Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength()
+                    . ' characters'
+            ))
+                ->setTranslation(ValidationMessageKey::MIN_LENGTH, ['min' => $this->getMinimumLength()]);
         }
 
         parent::checkValidity($data, $omitMandatoryCheck, $params);
