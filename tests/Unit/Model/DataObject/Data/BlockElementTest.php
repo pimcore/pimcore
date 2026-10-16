@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\Data;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\Consent;
@@ -41,8 +40,14 @@ class BlockElementTest extends TestCase
         yield 'consent' => [static fn (): object => new Consent(true, 1)];
     }
 
-    #[DataProvider('ownerAwareDataProvider')]
-    public function testRenewReferencesDoesNotCopyOwnerGraph(callable $createData): void
+    public function testRenewReferencesDoesNotCopyOwnerGraph(): void
+    {
+        foreach (self::ownerAwareDataProvider() as $name => [$createData]) {
+            $this->assertOwnerGraphIsNotCopied($createData, $name);
+        }
+    }
+
+    private function assertOwnerGraphIsNotCopied(callable $createData, string $name): void
     {
         $owner = new OwnerGraphStub();
         foreach (range(1, 3) as $i) {
@@ -62,12 +67,12 @@ class BlockElementTest extends TestCase
             $this->assertSame(
                 $element,
                 $data->_getOwner(),
-                'The renewed data must be owned by the block element it belongs to, not by a copy of it'
+                $name . ': the renewed data must be owned by the block element it belongs to, not by a copy of it'
             );
             $this->assertSame('field', $data->_getOwnerFieldname());
         }
 
-        $this->assertSame(0, OwnerGraphProbe::$clones, 'The owner graph must not be deep-copied');
+        $this->assertSame(0, OwnerGraphProbe::$clones, $name . ': the owner graph must not be deep-copied');
     }
 
     public function testRenewReferencesStillCopiesTheData(): void
