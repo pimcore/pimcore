@@ -41,6 +41,11 @@ In the following example, the workflow applies to products where the attribute "
            - "subject.getProductType() == 'article'"
 ```
 
+The expression uses the same expression language as workflow guards and permission conditions, so the current
+user is available too (for example `is_granted('ROLE_PIMCORE_ADMIN')` or `'ROLE_PIMCORE_ADMIN' in role_names`).
+See [Condition and guard expressions](./03_Permissions.md#condition-and-guard-expressions) for the full list of
+available functions and variables.
+
 ## Custom Support Strategy
 
 For custom logic, add a service that implements
