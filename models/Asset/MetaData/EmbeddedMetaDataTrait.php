@@ -66,7 +66,20 @@ trait EmbeddedMetaDataTrait
                 if ($outputArray) {
                     $embeddedMetaData = $this->flattenArray($outputArray[0]);
 
-                    foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
+                    // strip tags describing the local (temporary) file itself, as they carry no
+                    // information about the asset: location, tool version and file system attributes
+                    foreach ([
+                        'Directory',
+                        'FileName',
+                        'SourceFile',
+                        'ExifToolVersion',
+                        'FileAccessDate',
+                        'FileAttributes',
+                        'FileCreateDate',
+                        'FileInodeChangeDate',
+                        'FileModifyDate',
+                        'FilePermissions',
+                    ] as $removeKey) {
                         if (isset($embeddedMetaData[$removeKey])) {
                             unset($embeddedMetaData[$removeKey]);
                         }
