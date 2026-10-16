@@ -413,9 +413,18 @@ final class Localizedfield extends Model\AbstractModel implements
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\DataObject\Data\CalculatedValue($fieldDefinition->getName());
             $valueData->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $fieldDefinition);
-            $data = Service::getCalculatedFieldValue($this->getObject(), $valueData);
+            $object = $this->getObject();
 
-            return $data;
+            if ($object instanceof Concrete && isset($context['containerType']) && $context['containerType'] !== 'object') {
+                // localized field of a field collection item, object brick or block: the version snapshot of the
+                // object only holds its own localized fields, which may share the name, so compute without it
+                return Service::computeWithoutCalculatedValueSnapshot(
+                    $object,
+                    static fn () => Service::getCalculatedFieldValue($object, $valueData)
+                );
+            }
+
+            return Service::getCalculatedFieldValue($object, $valueData);
         }
 
         if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading() && !$this->_loadedAllLazyData) {

@@ -440,6 +440,11 @@ class Model extends AbstractDefinitionHelper
             $calculatedValueExpression->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
             $panel->addChild($calculatedValueExpression);
 
+            $calculatedValueDependent = $this->createDataChild('calculatedValue', 'calculatedValueDependent');
+            $calculatedValueDependent->setCalculatorExpression("object.getCalculatedValue() ~ ' dependent'");
+            $calculatedValueDependent->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
+            $panel->addChild($calculatedValueDependent);
+
             $calculatedValueExpressionConstant = $this->createDataChild('calculatedValue', 'calculatedValueExpressionConstant');
             $calculatedValueExpressionConstant->setCalculatorExpression("constant('PIMCORE_PROJECT_ROOT')");
             $calculatedValueExpressionConstant->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
@@ -622,6 +627,9 @@ class Model extends AbstractDefinitionHelper
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
             $lFields->setName('localizedfields');
             $lFields->addChild($this->createDataChild('input', 'linput'));
+            $lcalculatedValue = $this->createDataChild('calculatedValue', 'lcalculatedValue');
+            $lcalculatedValue->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lcalculatedValue);
             $lFields->addChild($this->createDataChild('textarea', 'ltextarea'));
             $lFields->addChild($this->createDataChild('wysiwyg', 'lwysiwyg'));
             $lFields->addChild($this->createDataChild('numeric', 'lnumber'));
@@ -775,6 +783,11 @@ class Model extends AbstractDefinitionHelper
             $lFields->setName('localizedfields');
 
             $lFields->addChild($this->createDataChild('Input', 'linput'));
+
+            // same name as the localized calculated field of the unittest class on purpose
+            $lcalculatedValue = $this->createDataChild('calculatedValue', 'lcalculatedValue');
+            $lcalculatedValue->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lcalculatedValue);
 
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])

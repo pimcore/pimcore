@@ -16,6 +16,7 @@ namespace Pimcore\Model;
 use __PHP_Incomplete_Class;
 use Exception;
 use Pimcore;
+use Pimcore\Config;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
@@ -32,7 +33,9 @@ use Pimcore\Model\Version\Adapter\ElementTypeAwareStorageTypeInterface;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
+use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
+use Stringable;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
@@ -233,7 +236,117 @@ final class Version extends AbstractModel
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
         $newData = $copier->copy($data);
 
+        if ($data instanceof Concrete && $newData instanceof Concrete) {
+            if ($this->getId() !== null && $newData->getCalculatedValueSnapshot() !== null) {
+                // an existing version is written again (e.g. note or version count changed):
+                // keep the values it stored, they are its historical state
+            } elseif (!$this->isAutoSave() && self::isCalculatedValueSnapshotEnabled()) {
+                $this->captureCalculatedValueSnapshot($data, $newData);
+            } else {
+                // never carry the snapshot of an object that was restored from a version into a new
+                // version that does not capture (auto-save, option disabled): its values would be stale
+                $newData->setCalculatedValueSnapshot(null);
+            }
+        }
+
         return $newData;
+    }
+
+    /**
+     * Whether `pimcore.objects.versions.calculated_value_snapshot` is enabled (opt-in).
+     */
+    private static function isCalculatedValueSnapshotEnabled(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('objects')['versions']['calculated_value_snapshot'] ?? false);
+    }
+
+    /**
+     * Computes the current values of all calculated fields (object level and localized fields)
+     * and stores them on the object copy that gets serialized into this version, so version
+     * views can show the values as of the snapshot instead of recomputing them later.
+     */
+    private function captureCalculatedValueSnapshot(Concrete $source, Concrete $target): void
+    {
+        /** @var array<string, scalar|array|null> $snapshot */
+        $snapshot = [];
+
+        // compute with the snapshot of $source temporarily disabled, so values are computed
+        // freshly even if $source itself was restored from a version; only the serialized
+        // $target receives the new snapshot, $source is left untouched
+        DataObject\Service::computeWithoutCalculatedValueSnapshot($source, function () use (&$snapshot, $source): void {
+            foreach ($source->getClass()->getFieldDefinitions() as $fieldName => $fieldDefinition) {
+                if ($fieldDefinition instanceof Data\CalculatedValue) {
+                    $context = new DataObject\Data\CalculatedValue($fieldName);
+                    $context->setContextualData('object', null, null, null, null, null, $fieldDefinition);
+                    $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+                } elseif ($fieldDefinition instanceof Data\Localizedfields) {
+                    foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldName => $localizedFieldDefinition) {
+                        if ($localizedFieldDefinition instanceof Data\CalculatedValue) {
+                            foreach (Tool::getValidLanguages() as $language) {
+                                $context = new DataObject\Data\CalculatedValue($localizedFieldName);
+                                $context->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $localizedFieldDefinition);
+                                $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        $target->setCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
+    }
+
+    /**
+     * @param array<string, scalar|array|null> $snapshot
+     */
+    private function addCalculatedValueSnapshotEntry(array &$snapshot, Concrete $source, DataObject\Data\CalculatedValue $context): void
+    {
+        try {
+            $value = DataObject\Service::getCalculatedFieldValue($source, $context);
+        } catch (Exception $e) {
+            Logger::warning(sprintf(
+                'Could not capture calculated value of field "%s" for version of object %d: %s',
+                $context->getFieldname(),
+                $source->getId() ?? 0,
+                $e->getMessage()
+            ));
+
+            return;
+        }
+
+        if (!$this->isSerializationSafeCalculatedValue($value)) {
+            if ($value instanceof Stringable) {
+                $value = (string) $value;
+            } else {
+                // value cannot be stored safely in the serialized version data (e.g. objects,
+                // arrays containing objects), let version views fall back to live recomputation
+                return;
+            }
+        }
+
+        $snapshot[DataObject\Service::getCalculatedValueSnapshotKey($context)] = $value;
+    }
+
+    /**
+     * @phpstan-assert-if-true scalar|array|null $value
+     */
+    private function isSerializationSafeCalculatedValue(mixed $value): bool
+    {
+        if ($value === null || is_scalar($value)) {
+            return true;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if (!$this->isSerializationSafeCalculatedValue($item)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private function unmarshalData(ElementInterface $data): mixed
