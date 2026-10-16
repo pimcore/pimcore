@@ -36,7 +36,13 @@ class Text
         return $text;
     }
 
-    public static function wysiwygText(?string $text, array $params = []): ?string
+    /**
+     * Resolves the internal references (pimcore_id / pimcore_type) of the given wysiwyg text.
+     *
+     * For the frontend, links to unpublished documents/objects and to objects without link generator are reduced to
+     * their text. With $keepUnpublished these tags are left untouched, so the stored/edited value does not lose them.
+     */
+    public static function wysiwygText(?string $text, array $params = [], bool $keepUnpublished = false): ?string
     {
         if (empty($text)) {
             return $text;
@@ -63,6 +69,10 @@ class Text
                         $path = $element->getFullPath();
 
                         if (($element instanceof Document || $element instanceof Concrete) && !$element->isPublished()) {
+                            if ($keepUnpublished) {
+                                continue;
+                            }
+
                             $path = null;
                         } elseif ($element instanceof Document) {
                             // get parameters
@@ -90,6 +100,8 @@ class Text
                                     $element,
                                     $params
                                 );
+                            } elseif ($keepUnpublished) {
+                                continue;
                             } else {
                                 // no object path without link generator!
                                 $path = null;
