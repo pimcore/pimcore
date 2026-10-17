@@ -20,6 +20,7 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Page;
 use Pimcore\Model\User;
 use Pimcore\Model\UserInterface;
 use Pimcore\Model\Version;
@@ -352,5 +353,211 @@ class ElementListenerTest extends TestCase
 
         $this->expectException(AccessDeniedHttpException::class);
         $this->runWithVersionParam($routeDocument, $version, $documentResolver, ['view']);
+    }
+
+    /**
+     * Regression coverage for GHSA-xq8x-2fg5-827p: editmode must not hand out an unpublished
+     * draft (via getLatestVersion()) to a user who holds "view" but not the "versions" grant —
+     * the same grant already required by the pimcore_version branch above.
+     */
+    public function testEditmodeDoesNotSubstituteLatestVersionWithoutVersionsPermission(): void
+    {
+        $document = $this->createMock(Page::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getId')->willReturn(10);
+        $document->method('getFullPath')->willReturn('/page');
+        $document->expects($this->never())->method('getLatestVersion');
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($document));
+
+        $document->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => $type === 'view'
+        );
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(true);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+
+        $user = new User();
+        $user->setId(42);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        // pimcore_studio=1 skips the session lookup branch in handleEditmode(), isolating the
+        // "versions" permission check under test
+        $request = Request::create('/page', 'GET', ['pimcore_studio' => '1']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testEditmodeSubstitutesLatestVersionWithVersionsPermission(): void
+    {
+        $document = $this->createMock(Page::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getId')->willReturn(10);
+        $document->method('getFullPath')->willReturn('/page');
+        $document->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, ['view', 'versions'], true)
+        );
+
+        $latestDocument = $this->createMock(Page::class);
+
+        $version = $this->createMock(Version::class);
+        $version->method('loadData')->willReturn($latestDocument);
+
+        $document->method('getLatestVersion')->with(42)->willReturn($version);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($latestDocument));
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(true);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+
+        $user = new User();
+        $user->setId(42);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_studio' => '1']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    /**
+     * Regression coverage for GHSA-xq8x-2fg5-827p: document studio preview must not hand out an
+     * unpublished draft to a user who holds "view" but not the "versions" grant.
+     */
+    public function testStudioPreviewDoesNotSubstituteLatestVersionWithoutVersionsPermission(): void
+    {
+        $document = $this->createMock(Page::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getFullPath')->willReturn('/page');
+        $document->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => $type === 'view'
+        );
+        $document->expects($this->never())->method('getLatestVersion');
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($document));
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(false);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+
+        $user = new User();
+        $user->setId(42);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testStudioPreviewSubstitutesLatestVersionWithVersionsPermission(): void
+    {
+        $document = $this->createMock(Page::class);
+        $document->method('isPublished')->willReturn(true);
+        $document->method('getFullPath')->willReturn('/page');
+        $document->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, ['view', 'versions'], true)
+        );
+
+        $latestDocument = $this->createMock(Page::class);
+
+        $version = $this->createMock(Version::class);
+        $version->method('loadData')->willReturn($latestDocument);
+
+        $document->method('getLatestVersion')->with(42)->willReturn($version);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($document);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($latestDocument));
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(false);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+
+        $user = new User();
+        $user->setId(42);
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
+            protected function handleObjectParams(Request $request, UserInterface $user): void
+            {
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        $listener->onKernelController($this->makeControllerEvent($request));
     }
 }
