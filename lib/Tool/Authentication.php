@@ -23,6 +23,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserProvider;
+use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -53,6 +54,14 @@ class Authentication
 
         if ($token instanceof TokenInterface) {
             $token = static::refreshUser($token, Pimcore::getContainer()->get(UserProvider::class));
+
+            // A token still waiting for the second factor must not be treated as a completed
+            // login: callers of authenticateSession() sit outside the firewall's own 2FA step
+            // and have no other way to tell a pending login from a finished one.
+            if ($token instanceof TokenInterface && self::isPendingTwoFactorToken($token)) {
+                return null;
+            }
+
             $user = $token->getUser();
 
             if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
@@ -129,6 +138,27 @@ class Authentication
         }
 
         return $allowedClasses;
+    }
+
+    /**
+     * Both token classes are deliberately kept on the session deserialization allowlist (see
+     * getSessionTokenAllowedClasses()) so scheb/2fa can restore them while the 2FA step itself is
+     * still in progress. authenticateSession() must still reject them: they are stored under the
+     * same session key as a completed login, but represent a user who has only supplied the
+     * first factor.
+     */
+    protected static function isPendingTwoFactorToken(TokenInterface $token): bool
+    {
+        if ($token instanceof TwoFactorTokenInterface) {
+            return true;
+        }
+
+        // The classic admin-ui-classic-bundle "/admin/login" firewall (Pimcore < 2026.1 and the
+        // LTS line) issues this subclass of PostAuthenticationToken while 2FA is pending.
+        // Referenced by name since admin-ui-classic-bundle is not a core dependency.
+        $twoFactorRequiredTokenClass = 'Pimcore\\Bundle\\AdminBundle\\Security\\Authentication\\Token\\TwoFactorRequiredToken';
+
+        return $token instanceof $twoFactorRequiredTokenClass;
     }
 
     protected static function refreshUser(TokenInterface $token, UserProvider $provider): ?TokenInterface
