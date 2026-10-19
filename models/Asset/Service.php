@@ -51,6 +51,12 @@ class Service extends Model\Element\Service
     ];
 
     /**
+     * How much of a delivered thumbnail is read to determine its dimensions, enough to reach the
+     * frame header of a JPEG that carries an embedded color profile.
+     */
+    private const STATUS_CACHE_HEAD_BYTES = 262144;
+
+    /**
      * @internal
      */
     protected ?Model\User $_user;
@@ -649,14 +655,19 @@ class Service extends Model\Element\Service
 
         if ($stream !== null) {
             $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
+            $fileSize = $storage->fileSize($storagePath);
 
-            return new StreamedResponse(function () use ($stream) {
+            // what was read from the stream to register the thumbnail is sent before the rest of it
+            $head = self::addThumbnailOnStorageToStatusCache($config, $storagePath, $stream, $fileSize);
+
+            return new StreamedResponse(function () use ($stream, $head) {
+                echo $head;
                 fpassthru($stream);
             }, 200, [
                 'Cache-Control' => 'public, max-age=' . $lifetime,
                 'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                 'Content-Type' => $storage->mimeType($storagePath),
-                'Content-Length' => $storage->fileSize($storagePath),
+                'Content-Length' => $fileSize,
                 AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
             ]);
         }
@@ -667,6 +678,56 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    /**
+     * With the status cache enabled, a deferred thumbnail is only treated as existing when it has a row in
+     * assets_image_thumbnail_cache, otherwise it is rendered with the deferred URL (and never with the
+     * frontend_prefixes.thumbnail one). A thumbnail that is already on the storage but unknown to the status
+     * cache (generated before it was enabled, copied from another environment, ...) would stay that way
+     * forever, as delivering it does not touch the cache. So the row is added here.
+     *
+     * The dimensions are read from the beginning of the delivered stream, no additional storage access is needed.
+     * A thumbnail whose dimensions cannot be read that way is delivered as before and stays unregistered.
+     *
+     * @param resource $stream
+     *
+     * @return string the bytes that were read from the stream, they still have to be sent to the client
+     */
+    private static function addThumbnailOnStorageToStatusCache(array $config, string $storagePath, $stream, int $fileSize): string
+    {
+        if ($config['type'] !== 'image'
+            || !Config::getSystemConfiguration('assets')['image']['thumbnails']['status_cache']) {
+            return '';
+        }
+
+        $asset = Asset::getById($config['asset_id']);
+        $filename = basename($storagePath);
+        if (!$asset instanceof Asset\Image || $asset->getDao()->getCachedThumbnail($config['thumbnail_name'], $filename) !== null) {
+            return '';
+        }
+
+        // the thumbnail must belong to the asset it is registered for, the request URI is user input
+        $expectedStoragePath = rtrim($asset->getRealPath(), '/') . '/' . $asset->getId()
+            . '/image-thumb__' . $asset->getId() . '__' . $config['thumbnail_name'] . '/' . $filename;
+        if (ltrim($storagePath, '/') !== ltrim($expectedStoragePath, '/')) {
+            return '';
+        }
+
+        $head = (string) stream_get_contents($stream, self::STATUS_CACHE_HEAD_BYTES);
+        $dimensions = $head !== '' ? @getimagesizefromstring($head) : false;
+        if (!$dimensions || $dimensions[0] < 1 || $dimensions[1] < 1) {
+            return $head;
+        }
+
+        try {
+            $asset->getDao()->addToThumbnailCache($config['thumbnail_name'], $filename, $fileSize, $dimensions[0], $dimensions[1]);
+        } catch (Exception $e) {
+            // the delivery must not fail because the thumbnail could not be registered, the next request tries again
+            Logger::warning('Could not add the thumbnail ' . $storagePath . ' to the status cache: ' . $e->getMessage());
+        }
+
+        return $head;
     }
 
     /**
