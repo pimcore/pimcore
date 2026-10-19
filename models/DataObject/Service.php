@@ -1278,7 +1278,7 @@ class Service extends Model\Element\Service
         $data->setCalculatorData($fd->getCalculatorData());
 
         if ($snapshotOwner !== null) {
-            $snapshot = $snapshotOwner->getCalculatedValueSnapshot();
+            $snapshot = $snapshotOwner->__getCalculatedValueSnapshot();
             if ($snapshot !== null) {
                 $snapshotKey = self::getCalculatedValueSnapshotKey($data);
                 if (array_key_exists($snapshotKey, $snapshot)) {
@@ -1316,7 +1316,7 @@ class Service extends Model\Element\Service
 
     /**
      * Builds the key under which the value of a calculated field is stored in the
-     * calculated value snapshot of a version (see Concrete::getCalculatedValueSnapshot()).
+     * calculated value snapshot of a version (see Concrete::__getCalculatedValueSnapshot()).
      *
      * @internal
      */
@@ -1339,17 +1339,17 @@ class Service extends Model\Element\Service
      */
     public static function computeWithoutCalculatedValueSnapshot(Concrete $object, Closure $closure): mixed
     {
-        $snapshot = $object->getCalculatedValueSnapshot();
+        $snapshot = $object->__getCalculatedValueSnapshot();
         if ($snapshot === null) {
             return $closure();
         }
 
-        $object->setCalculatedValueSnapshot(null);
+        $object->__setCalculatedValueSnapshot(null);
 
         try {
             return $closure();
         } finally {
-            $object->setCalculatedValueSnapshot($snapshot);
+            $object->__setCalculatedValueSnapshot($snapshot);
         }
     }
 

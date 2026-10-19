@@ -169,7 +169,7 @@ class VersionTest extends TestCase
         $objectFromVersion = $version->loadData();
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
 
-        $this->assertNull($objectFromVersion->getCalculatedValueSnapshot(), 'no snapshot must be captured unless pimcore.objects.versions.calculated_value_snapshot is enabled');
+        $this->assertNull($objectFromVersion->__getCalculatedValueSnapshot(), 'no snapshot must be captured unless pimcore.objects.versions.calculated_value_snapshot is enabled');
         $this->assertSame('currentValue', $objectFromVersion->getCalculatedValue(), 'without the option the value must be computed live, as before');
     }
 
@@ -214,7 +214,7 @@ class VersionTest extends TestCase
         $this->assertSame('Jane some calc', $objectFromSecondVersion->getCalculatedValueExpression());
 
         // versions created before snapshots were introduced have to fall back to live computation
-        $objectFromFirstVersion->setCalculatedValueSnapshot(null);
+        $objectFromFirstVersion->__setCalculatedValueSnapshot(null);
         $this->assertSame('snapshotValueTwo', $objectFromFirstVersion->getCalculatedValue(), 'without a snapshot the value must be computed live');
     }
 
@@ -318,7 +318,7 @@ class VersionTest extends TestCase
         $objectFromVersion = $autoSaveVersion->loadData();
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
 
-        $this->assertNull($objectFromVersion->getCalculatedValueSnapshot(), 'auto-save versions must not capture calculated values');
+        $this->assertNull($objectFromVersion->__getCalculatedValueSnapshot(), 'auto-save versions must not capture calculated values');
         $this->assertSame('currentValue', $objectFromVersion->getCalculatedValue(), 'auto-save versions must fall back to live computation');
     }
 
@@ -360,7 +360,7 @@ class VersionTest extends TestCase
         /** @var Unittest $restoredObject */
         $restoredObject = $this->getNewestVersion($object->getId())->loadData();
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
-        $this->assertNotNull($restoredObject->getCalculatedValueSnapshot());
+        $this->assertNotNull($restoredObject->__getCalculatedValueSnapshot());
 
         // auto-saving a loaded draft calls saveVersion() directly, update() never runs
         $autoSaveVersion = $restoredObject->saveVersion(true, true, null, true);
@@ -370,7 +370,7 @@ class VersionTest extends TestCase
         $objectFromAutoSave = $autoSaveVersion->loadData();
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
 
-        $this->assertNull($objectFromAutoSave->getCalculatedValueSnapshot(), 'an auto-save version must not inherit the snapshot of the restored object');
+        $this->assertNull($objectFromAutoSave->__getCalculatedValueSnapshot(), 'an auto-save version must not inherit the snapshot of the restored object');
         $this->assertSame('currentValue', $objectFromAutoSave->getCalculatedValue());
     }
 
@@ -387,7 +387,7 @@ class VersionTest extends TestCase
 
         /** @var Unittest $restoredObject */
         $restoredObject = $this->getNewestVersion($object->getId())->loadData();
-        $this->assertNotNull($restoredObject->getCalculatedValueSnapshot());
+        $this->assertNotNull($restoredObject->__getCalculatedValueSnapshot());
 
         Config::setSystemConfiguration($this->originalObjectsConfig, 'objects');
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
@@ -398,8 +398,37 @@ class VersionTest extends TestCase
         $objectFromDraft = $draftVersion->loadData();
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
 
-        $this->assertNull($objectFromDraft->getCalculatedValueSnapshot(), 'with the option disabled a new version must not carry an old snapshot');
+        $this->assertNull($objectFromDraft->__getCalculatedValueSnapshot(), 'with the option disabled a new version must not carry an old snapshot');
         $this->assertSame('currentValue', $objectFromDraft->getCalculatedValue());
+    }
+
+    public function testCalculatedValueSnapshotIsExcludedFromCacheSerialization(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        /** @var Unittest $restoredObject */
+        $restoredObject = $this->getNewestVersion($object->getId())->loadData();
+        $snapshot = $restoredObject->__getCalculatedValueSnapshot();
+        $this->assertNotNull($snapshot);
+
+        // serialized the way the object cache does it (not in dump state): the snapshot must not leak into the cache
+        $restoredObject->setInDumpState(false);
+        /** @var Unittest $objectFromCache */
+        $objectFromCache = unserialize(serialize($restoredObject));
+        $this->assertNull($objectFromCache->__getCalculatedValueSnapshot(), 'the snapshot must not be part of the cache serialization');
+
+        // serialized as a full dump (version): the snapshot is part of it
+        $restoredObject->setInDumpState(true);
+        /** @var Unittest $objectFromDump */
+        $objectFromDump = unserialize(serialize($restoredObject));
+        $this->assertSame($snapshot, $objectFromDump->__getCalculatedValueSnapshot(), 'the snapshot must be part of the version dump');
     }
 
     public function testCalculatedValueEditModeComputesDependentFieldsFreshly(): void

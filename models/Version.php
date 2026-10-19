@@ -237,7 +237,7 @@ final class Version extends AbstractModel
         $newData = $copier->copy($data);
 
         if ($data instanceof Concrete && $newData instanceof Concrete) {
-            if ($this->getId() !== null && $newData->getCalculatedValueSnapshot() !== null) {
+            if ($this->getId() !== null && $newData->__getCalculatedValueSnapshot() !== null) {
                 // an existing version is written again (e.g. note or version count changed):
                 // keep the values it stored, they are its historical state
             } elseif (!$this->isAutoSave() && self::isCalculatedValueSnapshotEnabled()) {
@@ -245,7 +245,7 @@ final class Version extends AbstractModel
             } else {
                 // never carry the snapshot of an object that was restored from a version into a new
                 // version that does not capture (auto-save, option disabled): its values would be stale
-                $newData->setCalculatedValueSnapshot(null);
+                $newData->__setCalculatedValueSnapshot(null);
             }
         }
 
@@ -293,7 +293,7 @@ final class Version extends AbstractModel
             }
         });
 
-        $target->setCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
+        $target->__setCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
     }
 
     /**

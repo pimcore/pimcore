@@ -98,7 +98,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var array<string, scalar|array|null>|null
      */
-    protected ?array $calculatedValueSnapshot = null;
+    protected ?array $__calculatedValueSnapshot = null;
 
     /**
      * returns the class ID of the current object class
@@ -115,7 +115,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         // an object restored from a version becomes a live object again on save,
         // so calculated fields have to be computed freshly from now on
-        $this->calculatedValueSnapshot = null;
+        $this->__calculatedValueSnapshot = null;
 
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
@@ -339,9 +339,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array<string, scalar|array|null>|null
      */
-    public function getCalculatedValueSnapshot(): ?array
+    public function __getCalculatedValueSnapshot(): ?array
     {
-        return $this->calculatedValueSnapshot;
+        return $this->__calculatedValueSnapshot;
     }
 
     /**
@@ -351,9 +351,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return $this
      */
-    public function setCalculatedValueSnapshot(?array $calculatedValueSnapshot): static
+    public function __setCalculatedValueSnapshot(?array $calculatedValueSnapshot): static
     {
-        $this->calculatedValueSnapshot = $calculatedValueSnapshot;
+        $this->__calculatedValueSnapshot = $calculatedValueSnapshot;
 
         return $this;
     }
