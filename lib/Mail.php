@@ -106,6 +106,17 @@ class Mail extends Email
     private Model\Tool\Email\Log $lastLogEntry;
 
     /**
+     * The subject, html and text body as they were produced by the last rendering in send().
+     * Such content already contains the (untrusted) param values, so it is final and must not be
+     * passed through Twig a second time.
+     */
+    private ?string $renderedSubject = null;
+
+    private ?string $renderedHtmlBody = null;
+
+    private ?string $renderedTextBody = null;
+
+    /**
      * @return $this
      */
     public function setHostUrl(string $url): static
@@ -431,15 +442,19 @@ class Mail extends Email
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
             $this->html($bodyHtmlRendered);
+            $this->renderedHtmlBody = $bodyHtmlRendered;
         }
 
         $bodyTextRendered = $this->getBodyTextRendered();
         if ($bodyTextRendered) {
             //add mime part for plain text body
             $this->text($bodyTextRendered);
+            $this->renderedTextBody = $bodyTextRendered;
         }
 
-        $this->subject($this->getSubjectRendered());
+        $subjectRendered = $this->getSubjectRendered();
+        $this->subject($subjectRendered);
+        $this->renderedSubject = $subjectRendered;
 
         // Remove the document property because it is no longer needed and makes it difficult
         // to serialize the Mail object when using the Symfony Messenger component
@@ -615,8 +630,11 @@ class Mail extends Email
         } catch (SecurityError $e) {
             Logger::err((string) $e);
 
+            // cut off the template name and line, the template is named 'pimcore_email_<context>'
+            $reason = strstr($e->getMessage(), ' in "pimcore_email_', true) ?: $e->getMessage();
+
             throw new Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
-                $context, substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string'))));
+                $context, $reason));
         } finally {
             // Restore the default escaping strategy (HTML) after rendering the subject
             if ($twig instanceof \Twig\Environment && $defaultStrategy !== null) {
@@ -642,6 +660,10 @@ class Mail extends Email
         }
 
         if ($subject) {
+            if ($subject === $this->renderedSubject) {
+                return $subject;
+            }
+
             return $this->renderParams($subject, 'subject');
         }
 
@@ -657,6 +679,11 @@ class Mail extends Email
     public function getBodyHtmlRendered(): ?string
     {
         $html = $this->getHtmlBody();
+
+        // already rendered by send(), it contains the param values and must not be rendered again
+        if ($html !== null && $html === $this->renderedHtmlBody) {
+            return $html;
+        }
 
         // if the content was manually set with $obj->setBody(); this content will be used
         // and not the content of the Document!
@@ -694,7 +721,8 @@ class Mail extends Email
 
         //if the content was manually set with $obj->text(); this content will be used
         if ($text) {
-            $content = $this->renderParams($text, 'body');
+            // a text rendered by send() already contains the param values and must not be rendered again
+            $content = $text === $this->renderedTextBody ? $text : $this->renderParams($text, 'body');
         } else {
             //creating text version from html email
             try {
