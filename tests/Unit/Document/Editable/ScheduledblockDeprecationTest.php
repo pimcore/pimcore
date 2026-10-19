@@ -16,20 +16,16 @@ namespace Pimcore\Tests\Unit\Document\Editable;
 
 use Pimcore\Model\Document\Editable\Scheduledblock;
 use Pimcore\Tests\Support\Test\TestCase;
-use Throwable;
 
 /**
  * The scheduled block editable ("time slider") is deprecated since 2026.4 (pimcore/pimcore#18756).
- * Using it in a template must emit a deprecation naming the removal version.
+ * Configuring it for a template use (EditableRenderer::getEditable()) must emit a deprecation naming the removal version.
  */
 final class ScheduledblockDeprecationTest extends TestCase
 {
-    public function testRenderingAScheduledblockIsDeprecated(): void
+    public function testUsingAScheduledblockInATemplateIsDeprecated(): void
     {
         $scheduledblock = new Scheduledblock();
-        $scheduledblock->setName('schedule');
-        $scheduledblock->setRealName('schedule');
-        $scheduledblock->setDataFromEditmode([['key' => 0, 'date' => 1000]]);
 
         $deprecations = [];
         set_error_handler(static function (int $errno, string $errstr) use (&$deprecations): bool {
@@ -39,9 +35,7 @@ final class ScheduledblockDeprecationTest extends TestCase
         }, E_USER_DEPRECATED);
 
         try {
-            $scheduledblock->start();
-        } catch (Throwable) {
-            // the markup of start() needs a fully configured editable; only the deprecation is of interest here
+            $scheduledblock->setConfig([]);
         } finally {
             restore_error_handler();
         }

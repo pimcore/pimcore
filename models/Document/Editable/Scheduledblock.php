@@ -149,12 +149,6 @@ class Scheduledblock extends Block implements BlockInterface
 
     public function start(): void
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '2026.4',
-            'The "scheduledblock" editable is deprecated since Pimcore 2026.4 and will be removed in 2027.1.'
-        );
-
         if ($this->getEditmode()) {
             // this is actually to add the block to the EditmodeEditableDefinitionCollector
             // because for the block editables __toString() is never called
@@ -233,6 +227,13 @@ class Scheduledblock extends Block implements BlockInterface
 
     public function setConfig(array $config): static
     {
+        // called once per use in a template by EditableRenderer, never when a document is loaded
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '2026.4',
+            'The "scheduledblock" editable is deprecated since Pimcore 2026.4 and will be removed in 2027.1.'
+        );
+
         $config['reload'] = true;
         parent::setConfig($config);
 

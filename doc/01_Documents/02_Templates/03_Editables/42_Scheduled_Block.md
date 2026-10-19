@@ -5,8 +5,10 @@ description: Time-based block editable that displays content items based on sche
 
 # Scheduled Block Editable
 
-> **Deprecated:** The scheduled block editable (the "time slider" editable) is deprecated since Pimcore 2026.4 and will be
-> removed in 2027.1. Using it in a template now triggers a deprecation notice.
+:::caution
+The scheduled block editable (the "time slider" editable) is deprecated since Pimcore 2026.4 and will be removed in 2027.1.
+Using it in a template now triggers a deprecation notice.
+:::
 
 ## General
 
