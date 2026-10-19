@@ -18,6 +18,7 @@ use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use DatePeriod;
 use Exception;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
@@ -482,9 +483,10 @@ class BlockTest extends ModelTestCase
         ) {
             $assertReference($sourceCache);
 
-            //reload target and fetch source
-            $target = DataObject::getById($target->getId(), ['force' => true]);
-            $assertReference($target->getHref());
+            //reload target and fetch source (runtime cache cleared, so the source comes from the persistent cache again)
+            RuntimeCache::clear();
+            $reloadedTarget = DataObject::getById($target->getId(), ['force' => true]);
+            $assertReference($reloadedTarget->getHref());
         });
     }
 

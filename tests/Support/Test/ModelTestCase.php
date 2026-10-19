@@ -71,8 +71,9 @@ abstract class ModelTestCase extends TestCase
     }
 
     /**
-     * Writes the object to the persistent cache (save() clears its cache tags, so getById() alone never does),
-     * clears the runtime cache and hands the object loaded from the cache to the callback.
+     * Writes the object to the persistent cache (save() clears its cache tags, so getById() alone does not reliably
+     * do it), clears the runtime cache and hands the object loaded from the cache to the callback. The copy
+     * force-loaded from the database for the consistency check stays in the runtime cache.
      */
     protected function forceSavingAndLoadingFromCache(Concrete $object, callable $callback): void
     {
