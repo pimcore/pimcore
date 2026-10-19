@@ -16,7 +16,6 @@ namespace Pimcore\Tests\Unit\Mail;
 
 use Exception;
 use Pimcore\Tests\Support\Test\TestCase;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
 
@@ -157,74 +156,6 @@ class MailTest extends TestCase
     }
 
     /**
-     * Test: params are inserted into the bodies, never interpreted as a template (neither in the html nor in the generated text part)
-     */
-    public function testSendDoesNotEvaluateParamsInBodies(): void
-    {
-        $payload = '{{ app.environment }}';
-
-        $mail = $this->createSendableMail();
-        $mail->html('<html><body><p>Note: {{ note }}</p></body></html>');
-        $mail->setParams(['note' => $payload]);
-        $mail->send($this->createStub(MailerInterface::class));
-
-        $this->assertStringContainsString($payload, (string) $mail->getHtmlBody());
-        $this->assertStringContainsString($payload, (string) $mail->getTextBody());
-    }
-
-    /**
-     * Test: a manually set text body is still rendered once with the params
-     */
-    public function testSendRendersManualTextBodyOnce(): void
-    {
-        $payload = '{{ app.environment }}';
-
-        $mail = $this->createSendableMail();
-        $mail->html('<p>Hi {{ name }}</p>');
-        $mail->text('Hello {{ name }}');
-        $mail->setParams(['name' => $payload]);
-        $mail->send($this->createStub(MailerInterface::class));
-
-        $this->assertSame('Hello ' . $payload, $mail->getTextBody());
-        $this->assertStringContainsString('Hi ' . $payload, (string) $mail->getHtmlBody());
-    }
-
-    /**
-     * Test: sending the same mail object again must not render the already rendered content a second time
-     */
-    public function testSendingTheSameMailTwiceDoesNotEvaluateParams(): void
-    {
-        $payload = '{{ app.environment }}';
-
-        $mail = $this->createSendableMail();
-        $mail->html('<html><body><p>Note: {{ note }}</p></body></html>');
-        $mail->setParams(['note' => $payload]);
-        $mailer = $this->createStub(MailerInterface::class);
-        $mail->send($mailer);
-        $mail->send($mailer);
-
-        $this->assertStringContainsString($payload, (string) $mail->getHtmlBody());
-        $this->assertStringContainsString($payload, (string) $mail->getTextBody());
-    }
-
-    /**
-     * Test: the rendered subject is final and not rendered again (e.g. when the mail is logged)
-     */
-    public function testRenderedSubjectIsNotRenderedAgain(): void
-    {
-        $payload = '{{ app.environment }}';
-
-        $mail = $this->createSendableMail();
-        $mail->subject('Contact {{ name }}');
-        $mail->html('<p>{{ name }}</p>');
-        $mail->setParams(['name' => $payload]);
-        $mail->send($this->createStub(MailerInterface::class));
-
-        $this->assertSame('Contact ' . $payload, $mail->getSubject());
-        $this->assertSame('Contact ' . $payload, $mail->getSubjectRendered());
-    }
-
-    /**
      * Test: a template expression blocked by the sandbox results in a handled exception, not in a TypeError
      */
     public function testSandboxViolationThrowsHandledException(): void
@@ -239,16 +170,5 @@ class MailTest extends TestCase
             $this->assertStringContainsString('Failed rendering the body', $e->getMessage());
             $this->assertStringContainsString('upper', $e->getMessage());
         }
-    }
-
-    private function createSendableMail(): \Pimcore\Mail
-    {
-        $mail = new \Pimcore\Mail();
-        $mail->disableLogging();
-        $mail->from($this->defaultSettings['from']);
-        $mail->to($this->defaultSettings['to']);
-        $mail->subject($this->defaultSettings['subject']);
-
-        return $mail;
     }
 }

@@ -42,10 +42,13 @@ class Mailer implements MailerInterface
             $message->getHeaders()->addTextHeader('X-Transport', 'main');
         }
 
-        $this->mailer->send($message, $envelope);
-
-        if ($message instanceof Mail) {
-            $this->redirectPlugin->sendPerformed($message);
+        try {
+            $this->mailer->send($message, $envelope);
+        } finally {
+            // also when sending failed: restore the original subject/body/recipients, the failed mail is logged afterwards
+            if ($message instanceof Mail) {
+                $this->redirectPlugin->sendPerformed($message);
+            }
         }
     }
 }

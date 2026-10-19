@@ -117,6 +117,38 @@ class Mail extends Email
     private ?string $renderedTextBody = null;
 
     /**
+     * Keeps the rendered-state markers when the mail is serialized (e.g. for the Symfony Messenger),
+     * otherwise content that already contains param values would be rendered again.
+     * The additional key is ignored by the positional unserialization of the parent classes.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function __serialize(): array
+    {
+        return parent::__serialize() + [
+            'pimcoreRendered' => [$this->renderedSubject, $this->renderedHtmlBody, $this->renderedTextBody],
+        ];
+    }
+
+    /**
+     * @param array<int|string, mixed> $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $rendered = $data['pimcoreRendered'] ?? null;
+        unset($data['pimcoreRendered']);
+
+        parent::__unserialize($data);
+
+        if (is_array($rendered)) {
+            $rendered = array_values($rendered) + [null, null, null];
+            $this->renderedSubject = is_string($rendered[0]) ? $rendered[0] : null;
+            $this->renderedHtmlBody = is_string($rendered[1]) ? $rendered[1] : null;
+            $this->renderedTextBody = is_string($rendered[2]) ? $rendered[2] : null;
+        }
+    }
+
+    /**
      * @return $this
      */
     public function setHostUrl(string $url): static
