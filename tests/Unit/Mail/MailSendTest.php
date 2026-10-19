@@ -18,6 +18,7 @@ use Pimcore\Mail;
 use Pimcore\Mail\Mailer;
 use Pimcore\Mail\Plugins\RedirectingPlugin;
 use Pimcore\Tests\Support\Test\TestCase;
+use ReflectionClass;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\MailerInterface;
 
@@ -134,11 +135,15 @@ class MailSendTest extends TestCase
         $failingMailer = $this->createStub(MailerInterface::class);
         $failingMailer->method('send')->willThrowException(new TransportException('transport failed'));
 
+        // the constructor would read the debug addresses from the system settings, which are not set up in the test environment
+        $plugin = (new ReflectionClass(RedirectingPlugin::class))->newInstanceWithoutConstructor();
+        $plugin->setRecipient(['debug@example.com']);
+
         Mail::setForceDebugMode(true);
 
         try {
             $this->expectException(TransportException::class);
-            (new Mailer($failingMailer, new RedirectingPlugin(['debug@example.com'])))->send($mail);
+            (new Mailer($failingMailer, $plugin))->send($mail);
         } finally {
             Mail::setForceDebugMode(false);
 
