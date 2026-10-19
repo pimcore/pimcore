@@ -22,6 +22,8 @@ use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
+ *
+ * @deprecated since 2026.4, will be removed in 2027.1. The scheduled block (time slider) editable is no longer developed further.
  */
 class Scheduledblock extends Block implements BlockInterface
 {
@@ -147,6 +149,12 @@ class Scheduledblock extends Block implements BlockInterface
 
     public function start(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '2026.4',
+            'The "scheduledblock" editable is deprecated since Pimcore 2026.4 and will be removed in 2027.1.'
+        );
+
         if ($this->getEditmode()) {
             // this is actually to add the block to the EditmodeEditableDefinitionCollector
             // because for the block editables __toString() is never called
