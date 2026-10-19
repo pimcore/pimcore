@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
+use WeakMap;
 
 /**
  * @method Localizedfield\Dao getDao()
@@ -83,6 +84,16 @@ final class Localizedfield extends Model\AbstractModel implements
     protected ?int $objectId = null;
 
     private static bool $strictMode = false;
+
+    /**
+     * Field definitions enriched while values are loaded from the database, per instance. Loading
+     * does not use the enriched options (no validation), so each field is enriched once per object
+     * instead of once per language and value. A WeakMap keeps this out of serialization and deep
+     * copies and releases it together with the instance.
+     *
+     * @var WeakMap<self, array<string, mixed>>
+     */
+    private static WeakMap $fieldDefinitionsForLoad;
 
     /**
      * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
@@ -554,7 +565,9 @@ final class Localizedfield extends Model\AbstractModel implements
 
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
-            $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
+            $fieldDefinition = $markFieldAsDirty
+                ? $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()])
+                : $this->getFieldDefinitionForLoad($localizedFieldDefinition, $name);
         }
 
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
@@ -617,6 +630,24 @@ final class Localizedfield extends Model\AbstractModel implements
         }
 
         return true;
+    }
+
+    private function getFieldDefinitionForLoad(
+        ClassDefinition\Data\Localizedfields $localizedFieldDefinition,
+        string $name
+    ): ?ClassDefinition\Data {
+        self::$fieldDefinitionsForLoad ??= new WeakMap();
+        $fieldDefinitions = self::$fieldDefinitionsForLoad[$this] ?? [];
+
+        if (!array_key_exists($name, $fieldDefinitions)) {
+            $fieldDefinitions[$name] = $localizedFieldDefinition->getFieldDefinition(
+                $name,
+                ['object' => $this->getObject()]
+            );
+            self::$fieldDefinitionsForLoad->offsetSet($this, $fieldDefinitions);
+        }
+
+        return $fieldDefinitions[$name];
     }
 
     public function __sleep(): array
