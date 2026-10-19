@@ -37,12 +37,24 @@ class Text
     }
 
     /**
-     * Resolves the internal references (pimcore_id / pimcore_type) of the given wysiwyg text.
-     *
-     * For the frontend, links to unpublished documents/objects and to objects without link generator are reduced to
-     * their text. With $keepUnpublished these tags are left untouched, so the stored/edited value does not lose them.
+     * Resolves the internal references (pimcore_id / pimcore_type) of the given wysiwyg text for the frontend:
+     * links to unpublished documents/objects and to objects without link generator are reduced to their text.
      */
-    public static function wysiwygText(?string $text, array $params = [], bool $keepUnpublished = false): ?string
+    public static function wysiwygText(?string $text, array $params = []): ?string
+    {
+        return self::resolveWysiwygText($text, $params, false);
+    }
+
+    /**
+     * Like wysiwygText(), but links to unpublished documents/objects and to objects without link generator are left
+     * untouched. For the editor and for storing the value, which must not lose these links.
+     */
+    public static function wysiwygTextKeepingLinks(?string $text, array $params = []): ?string
+    {
+        return self::resolveWysiwygText($text, $params, true);
+    }
+
+    private static function resolveWysiwygText(?string $text, array $params, bool $keepUnpublished): ?string
     {
         if (empty($text)) {
             return $text;

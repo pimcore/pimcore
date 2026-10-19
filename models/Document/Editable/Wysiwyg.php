@@ -58,10 +58,10 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     {
         $document = $this->getDocument();
 
-        return Text::wysiwygText($this->text, [
+        return Text::wysiwygTextKeepingLinks($this->text, [
             'document' => $document,
             'context' => $this,
-        ], true);
+        ]);
     }
 
     public function frontend()

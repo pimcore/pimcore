@@ -33,6 +33,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     private static HtmlSanitizerInterface $pimcoreWysiwygSanitizer;
 
+    private static bool $persisting = false;
+
     /**
      * @internal
      */
@@ -107,11 +109,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = self::getWysiwygSanitizer()->sanitizeFor('body', $data);
         }
 
-        return Text::wysiwygText($data, [
+        return Text::wysiwygTextKeepingLinks($data, [
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
-        ], true);
+        ]);
     }
 
     /**
@@ -121,11 +123,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return Text::wysiwygText($data, [
+        return Text::wysiwygTextKeepingLinks($data, [
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
-        ], true);
+        ]);
     }
 
     /**
@@ -219,13 +221,37 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = $container->getObjectVar($this->getName());
         }
 
-        // the editor and the save requests (admin mode) must see and keep links to unpublished elements,
-        // everywhere else (frontend, CLI) they are reduced to their text
-        return Text::wysiwygText($data, [
-                'object' => $container,
-                'context' => $this,
-                'language' => $params['language'] ?? null,
-            ], Pimcore::inAdmin());
+        $textParams = [
+            'object' => $container,
+            'context' => $this,
+            'language' => $params['language'] ?? null,
+        ];
+
+        // the editor and the save keep links to unpublished elements, everywhere else (frontend, CLI) they are
+        // reduced to their text
+        if (Pimcore::inAdmin() || self::$persisting) {
+            return Text::wysiwygTextKeepingLinks($data, $textParams);
+        }
+
+        return Text::wysiwygText($data, $textParams);
+    }
+
+    /**
+     * Runs the callback (the persisting of an object) so that the values read for it keep links to unpublished
+     * elements, whichever request or process saves the object (Studio batch edit, clone, scheduled publishing, import).
+     *
+     * @internal
+     */
+    public static function whilePersisting(callable $fn): mixed
+    {
+        $backup = self::$persisting;
+        self::$persisting = true;
+
+        try {
+            return $fn();
+        } finally {
+            self::$persisting = $backup;
+        }
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or

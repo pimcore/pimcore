@@ -110,7 +110,7 @@ class TextTest extends ModelTestCase
             $unpublishedDocument->getId()
         );
 
-        $this->assertEquals($text, Text::wysiwygText($text, [], true));
+        $this->assertEquals($text, Text::wysiwygTextKeepingLinks($text));
         $this->assertEquals('Link to a document Link text', Text::wysiwygText($text));
     }
 
@@ -127,7 +127,7 @@ class TextTest extends ModelTestCase
             $this->testingDocument->getId()
         );
 
-        $this->assertEquals($expected, Text::wysiwygText($text, [], true));
+        $this->assertEquals($expected, Text::wysiwygTextKeepingLinks($text));
     }
 
     public function testWysiwygTextStillRemovesLinkToDeletedElementWhenKeepingUnpublished(): void
@@ -136,7 +136,24 @@ class TextTest extends ModelTestCase
 
         $text = 'Link to a document <a href="/some/path" pimcore_id="99999999" pimcore_type="document">Link text</a>';
 
-        $this->assertEquals('Link to a document Link text', Text::wysiwygText($text, [], true));
+        $this->assertEquals('Link to a document Link text', Text::wysiwygTextKeepingLinks($text));
+    }
+
+    public function testDocumentEditableEditmodeKeepsLinkToUnpublishedDocument(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-editable', $this->testingDocument->getParentId(), false);
+        $text = sprintf(
+            '<a href="/some/path" pimcore_id="%s" pimcore_type="document">Link text</a>',
+            $unpublishedDocument->getId()
+        );
+
+        $editable = new Document\Editable\Wysiwyg();
+        $editable->setDocument($this->testingDocument);
+        $editable->setDataFromResource($text);
+
+        $this->assertEquals($text, $editable->getDataEditmode());
     }
 
     private function createDocument(string $key, int $parentId, bool $published = true): Document\Page
