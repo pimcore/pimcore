@@ -384,6 +384,7 @@ class WebDavIntegrationTest extends ModelTestCase
             // expected: the second row violates the primary key of users_workspaces_asset
         }
 
+        $this->assertNull(Asset::getById($destId), 'an unforced lookup must not serve the rolled-back asset from the runtime cache');
         $this->assertNull(Asset::getById($destId, ['force' => true]), 'the restored asset must be rolled back together with the failed workspace rows');
         $this->assertNull(Asset::getByPath($destPath));
         $this->assertSame(

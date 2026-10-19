@@ -170,6 +170,33 @@ class WebDavTest extends ModelTestCase
     }
 
     /**
+     * An allowlisted class can still throw while being unserialized (a truncated DateTime
+     * payload); the row must be skipped, like Property::setDataFromResource() does, instead of
+     * aborting the restore of an otherwise loadable asset.
+     */
+    public function testRestorePropertiesSkipsMalformedAllowlistedDatePayload(): void
+    {
+        $asset = new Asset();
+        $this->invokeRestoreProperties($asset, [
+            [
+                'name' => 'broken',
+                'type' => 'date',
+                'data' => 'O:8:"DateTime":0:{}',
+                'inheritable' => 0,
+            ],
+            [
+                'name' => 'kept',
+                'type' => 'text',
+                'data' => 'still here',
+                'inheritable' => 0,
+            ],
+        ]);
+
+        $this->assertNull($asset->getProperty('broken'), 'a malformed allowlisted payload must be skipped');
+        $this->assertSame('still here', $asset->getProperty('kept'), 'other rows must still hydrate');
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $rows
      */
     private function invokeRestoreProperties(Asset $asset, array $rows): void

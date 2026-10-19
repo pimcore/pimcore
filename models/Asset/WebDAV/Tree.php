@@ -18,10 +18,14 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
 use Pimcore;
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\PermissionCache;
+use Pimcore\Model\Element\PermissionCacheScope;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
@@ -252,18 +256,23 @@ class Tree extends DAV\Tree
                 }
             }
 
-            if (!$asset->isAllowed('publish', $user)) {
-                throw new Forbidden('No publish permission on target asset');
+            // On the restore branch isAllowed() cannot see the destination's OWN workspace rules:
+            // they were removed with the asset by the ON DELETE CASCADE on users_workspaces_asset.cid
+            // and are only re-inserted after save(). Asset\Dao::isAllowed() would therefore resolve
+            // the inherited rules alone - ignoring an explicit deny on the destination for exactly
+            // the write that replaces it, and refusing a destination grant under an inherited deny
+            // that an in-place overwrite honours. Resolve the captured rows instead and seed the
+            // per-request permission cache that AbstractElement::isAllowed() consults before the
+            // Dao, so the global permission, workflow and event checks still apply on top.
+            if (isset($restoredWorkspaces)) {
+                $snapshotVerdict = $this->resolveWorkspaceSnapshot('publish', $restoredWorkspaces, $user);
+                if ($snapshotVerdict !== null) {
+                    Pimcore::getContainer()->get(PermissionCache::class)
+                        ->set($user, $asset, 'publish', PermissionCacheScope::Single, $snapshotVerdict);
+                }
             }
 
-            // The check above cannot see the destination's OWN workspace rules on the restore
-            // branch: they were removed with the asset by the ON DELETE CASCADE on
-            // users_workspaces_asset.cid, and restoreWorkspaces() only re-inserts them after
-            // save(). isAllowed() would therefore fall back to the inherited rules and ignore an
-            // explicit deny on the destination for exactly the write that replaces it. Decide the
-            // overwrite against the captured rows instead.
-            if (isset($restoredWorkspaces)
-                && !$this->isPermittedByWorkspaceSnapshot('publish', $restoredWorkspaces, $user)) {
+            if (!$asset->isAllowed('publish', $user)) {
                 throw new Forbidden('No publish permission on target asset');
             }
 
@@ -341,6 +350,13 @@ class Tree extends DAV\Tree
         } catch (Throwable $e) {
             $db->rollBack();
 
+            // Asset::save() registered the instance in the runtime cache, and a listener may have
+            // loaded it into the persistent cache - drop both, or Asset::getById() would hand out
+            // an asset that no longer exists
+            $cacheKey = 'asset_' . $asset->getId();
+            RuntimeCache::set($cacheKey, null);
+            Cache::remove($cacheKey);
+
             throw $e;
         }
     }
@@ -410,12 +426,19 @@ class Tree extends DAV\Tree
                 // unserialize it with allowed_classes: true, so hydrate it here with an explicit
                 // allowlist instead - nothing read from the delete log may instantiate
                 // arbitrary classes. Unexpected payloads are skipped defensively.
-                $date = \Pimcore\Tool\Serialize::unserialize($data, [
-                    \Carbon\Carbon::class,
-                    \Carbon\CarbonImmutable::class,
-                    DateTime::class,
-                    DateTimeImmutable::class,
-                ]);
+                try {
+                    $date = \Pimcore\Tool\Serialize::unserialize($data, [
+                        \Carbon\Carbon::class,
+                        \Carbon\CarbonImmutable::class,
+                        DateTime::class,
+                        DateTimeImmutable::class,
+                    ]);
+                } catch (Throwable) {
+                    // even an allowlisted class can throw while being unserialized (e.g.
+                    // O:8:"DateTime":0:{}); the log holds the raw column value, so skip the row
+                    // like Property::setDataFromResource() does instead of failing the restore
+                    continue;
+                }
                 if (!$date instanceof DateTimeInterface) {
                     continue;
                 }
@@ -496,16 +519,16 @@ class Tree extends DAV\Tree
      * inherited rule - the user's own row outranks a role row, and among role rows a granting one
      * wins.
      *
-     * Returns true when the snapshot carries no rule for this user, leaving the decision to the
-     * inherited rules that Asset::isAllowed() has already evaluated. Admins are never restricted
-     * by workspaces, same as in Element\AbstractElement::isAllowed().
+     * Returns null when the snapshot carries no rule for this user, leaving the decision to the
+     * inherited rules that Asset\Dao::isAllowed() resolves, and for admins, who are never
+     * restricted by workspaces (Element\AbstractElement::isAllowed() handles them itself).
      *
      * @param array<mixed> $rows raw `users_workspaces_asset` rows from the delete log
      */
-    private function isPermittedByWorkspaceSnapshot(string $type, array $rows, User $user): bool
+    private function resolveWorkspaceSnapshot(string $type, array $rows, User $user): ?bool
     {
         if ($user->isAdmin()) {
-            return true;
+            return null;
         }
 
         $roleIds = $user->getRoles();
@@ -528,7 +551,7 @@ class Tree extends DAV\Tree
             }
         }
 
-        return $allowedByRole ?? true;
+        return $allowedByRole;
     }
 
     /**

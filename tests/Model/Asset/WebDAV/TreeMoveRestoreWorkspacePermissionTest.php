@@ -130,6 +130,33 @@ class TreeMoveRestoreWorkspacePermissionTest extends ModelTestCase
         );
     }
 
+    /**
+     * The captured rule is the destination's own and therefore the deepest one, so it must also
+     * win against an inherited deny - exactly as the live row does for an in-place overwrite.
+     * Without the captured rows the restore would see the inherited deny only and refuse a
+     * replacement that overwriting the file in place allows.
+     */
+    public function testRestoreSucceedsWhenTheDestinationGrantOverridesAnInheritedDeny(): void
+    {
+        $destination = $this->createAsset('restore-granted-target.txt', 'destination content');
+        $destinationId = $destination->getId();
+        $destinationPath = $destination->getFilename();
+        $source = $this->createAsset('restore-granted-source.txt', 'source content');
+
+        $this->loginAs($this->createUserWithWorkspaces($destination, destinationPublish: true, inheritedPublish: false));
+
+        $this->assertTrue($destination->isAllowed('publish'), 'precondition: the own grant wins for an in-place overwrite');
+
+        (new File($destination))->delete();
+
+        $this->createTree()->move($source->getFilename(), $destinationPath);
+
+        $restored = Asset::getById($destinationId, ['force' => true]);
+        $this->assertNotNull($restored, 'the captured grant must override the inherited deny, as it does for an in-place overwrite');
+        $this->assertSame('source content', $restored->getData());
+        $this->assertTrue($restored->isAllowed('publish'), 'the restored destination carries its own grant again');
+    }
+
     private function createAsset(string $filename, string $data): Asset
     {
         $asset = new Asset();
@@ -147,14 +174,14 @@ class TreeMoveRestoreWorkspacePermissionTest extends ModelTestCase
      * Asset\Dao::isAllowed() decide the overwrite. Both rules sit on a role, so the role branch of
      * the snapshot resolution is exercised rather than the direct-user one.
      */
-    private function createUserWithWorkspaces(Asset $destination, bool $destinationPublish): User
+    private function createUserWithWorkspaces(Asset $destination, bool $destinationPublish, bool $inheritedPublish = true): User
     {
         $inherited = new AssetWorkspace();
         $inherited->setCid(1);
         $inherited->setCpath(Asset::getById(1)->getRealFullPath());
         $inherited->setList(true);
         $inherited->setView(true);
-        $inherited->setPublish(true);
+        $inherited->setPublish($inheritedPublish);
         $inherited->setDelete(true);
         $inherited->setRename(true);
         $inherited->setCreate(true);
