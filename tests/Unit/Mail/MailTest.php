@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Mail;
 
+use Exception;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
@@ -152,5 +153,22 @@ class MailTest extends TestCase
         ]);
 
         $this->assertStringContainsString('Hi, John Doe.', $mail->getBodyHtmlRendered());
+    }
+
+    /**
+     * Test: a template expression blocked by the sandbox results in a handled exception, not in a TypeError
+     */
+    public function testSandboxViolationThrowsHandledException(): void
+    {
+        $mail = new \Pimcore\Mail();
+        $mail->html("<p>{{ 'a'|upper }}</p>");
+
+        try {
+            $mail->getBodyHtmlRendered();
+            $this->fail('Rendering a blocked filter must fail');
+        } catch (Exception $e) {
+            $this->assertStringContainsString('Failed rendering the body', $e->getMessage());
+            $this->assertStringContainsString('upper', $e->getMessage());
+        }
     }
 }
