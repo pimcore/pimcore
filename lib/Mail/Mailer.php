@@ -34,18 +34,18 @@ class Mailer implements MailerInterface
 
     public function send(RawMessage $message, ?Envelope $envelope = null): void
     {
-        if ($message instanceof Mail) {
-            $this->redirectPlugin->beforeSendPerformed($message);
-        }
-
-        if ($message instanceof Message && !$message->getHeaders()->has('X-Transport')) {
-            $message->getHeaders()->addTextHeader('X-Transport', 'main');
-        }
-
         try {
+            if ($message instanceof Mail) {
+                $this->redirectPlugin->beforeSendPerformed($message);
+            }
+
+            if ($message instanceof Message && !$message->getHeaders()->has('X-Transport')) {
+                $message->getHeaders()->addTextHeader('X-Transport', 'main');
+            }
+
             $this->mailer->send($message, $envelope);
         } finally {
-            // also when sending failed: restore the original subject/body/recipients, the failed mail is logged afterwards
+            // also when preparing or sending failed: restore the original subject/body, the failed mail is logged afterwards
             if ($message instanceof Mail) {
                 $this->redirectPlugin->sendPerformed($message);
             }

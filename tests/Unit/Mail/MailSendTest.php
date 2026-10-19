@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Mail;
 
+use InvalidArgumentException;
 use Pimcore\Mail;
 use Pimcore\Mail\Mailer;
 use Pimcore\Mail\Plugins\RedirectingPlugin;
@@ -125,30 +126,79 @@ class MailSendTest extends TestCase
      */
     public function testFailedSendInDebugModeRestoresRenderedContent(): void
     {
+        $mail = $this->createRenderedMail();
+        $renderedSubject = $mail->getSubject();
+
+        $this->expectException(TransportException::class);
+
+        try {
+            $this->sendInDebugMode($mail, ['debug@example.com'], new TransportException('transport failed'));
+        } finally {
+            $this->assertSame($renderedSubject, $mail->getSubject());
+            $this->assertSame($renderedSubject, $mail->getSubjectRendered());
+        }
+    }
+
+    /**
+     * Test: an invalid debug recipient fails after the subject was already decorated, which is restored as well
+     */
+    public function testInvalidDebugRecipientRestoresRenderedContent(): void
+    {
+        $mail = $this->createRenderedMail();
+        $renderedSubject = $mail->getSubject();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        try {
+            $this->sendInDebugMode($mail, ['not a mail address'], new TransportException('must not be reached'));
+        } finally {
+            $this->assertSame($renderedSubject, $mail->getSubject());
+            $this->assertSame($renderedSubject, $mail->getSubjectRendered());
+        }
+    }
+
+    /**
+     * Test: without debug information there is nothing to restore, the transport exception is not masked
+     */
+    public function testFailedSendInDebugModeWithoutDebugInformationThrowsTransportException(): void
+    {
+        $mail = $this->createRenderedMail();
+        $mail->preventDebugInformationAppending();
+
+        $this->expectException(TransportException::class);
+
+        $this->sendInDebugMode($mail, ['debug@example.com'], new TransportException('transport failed'));
+    }
+
+    private function createRenderedMail(): Mail
+    {
         $mail = $this->createSendableMail();
         $mail->subject('Contact {{ name }}');
         $mail->html('<html><body><p>Note: {{ name }}</p></body></html>');
         $mail->setParams(['name' => self::PAYLOAD]);
         $mail->send($this->createStub(MailerInterface::class));
-        $renderedSubject = $mail->getSubject();
 
+        return $mail;
+    }
+
+    /**
+     * @param string[] $debugRecipients
+     */
+    private function sendInDebugMode(Mail $mail, array $debugRecipients, TransportException $transportFailure): void
+    {
         $failingMailer = $this->createStub(MailerInterface::class);
-        $failingMailer->method('send')->willThrowException(new TransportException('transport failed'));
+        $failingMailer->method('send')->willThrowException($transportFailure);
 
         // the constructor would read the debug addresses from the system settings, which are not set up in the test environment
         $plugin = (new ReflectionClass(RedirectingPlugin::class))->newInstanceWithoutConstructor();
-        $plugin->setRecipient(['debug@example.com']);
+        $plugin->setRecipient($debugRecipients);
 
         Mail::setForceDebugMode(true);
 
         try {
-            $this->expectException(TransportException::class);
             (new Mailer($failingMailer, $plugin))->send($mail);
         } finally {
             Mail::setForceDebugMode(false);
-
-            $this->assertSame($renderedSubject, $mail->getSubject());
-            $this->assertSame($renderedSubject, $mail->getSubjectRendered());
         }
     }
 
