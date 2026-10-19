@@ -453,7 +453,7 @@ final class Configuration implements ConfigurationInterface
                         ->addDefaultsIfNotSet()
                         ->children()
                             ->booleanNode('browser_plugin')
-                                ->info('Registers the Sabre HTML browser plugin on /asset/webdav, which renders a directory listing (and a POST-based file/folder creation form) when the endpoint is opened in a regular web browser. Disabled by default so the endpoint only serves WebDAV clients; enable it if you rely on browsing assets that way.')
+                                ->info('Registers the Sabre HTML browser plugin on /asset/webdav, which renders a directory listing (and a POST-based file/folder creation form) when the endpoint is opened in a regular web browser. Disabled by default: the form posts carry no CSRF protection under the HTTP Basic authentication of the endpoint. Enable it only if you rely on browsing assets that way.')
                                 ->defaultFalse()
                             ->end()
                         ->end()
