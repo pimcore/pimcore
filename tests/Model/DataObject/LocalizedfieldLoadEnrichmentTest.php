@@ -78,6 +78,35 @@ class LocalizedfieldLoadEnrichmentTest extends ModelTestCase
         $this->assertSame('b', $loaded->get('status', $languages[1]));
     }
 
+    /**
+     * Localizedfield\Dao::save() also calls setLocalizedValue() with markFieldAsDirty = false and runs
+     * preSetData() with the definition it gets. The per-object cache must therefore end with the load,
+     * otherwise later calls use definitions that may have been replaced in the meantime.
+     */
+    public function testLoadCacheEndsWithTheLoad(): void
+    {
+        $languages = Tool::getValidLanguages();
+        $object = $this->createObject($languages);
+
+        Pimcore::setAdminMode();
+        RuntimeCache::clear();
+        $loaded = Concrete::getById($object->getId(), ['force' => true]);
+        $this->assertInstanceOf(Concrete::class, $loaded);
+
+        $localizedfield = $loaded->getObjectVar('localizedfields');
+        $this->assertInstanceOf(DataObject\Localizedfield::class, $localizedfield);
+
+        CountingOptionsProvider::$calls = 0;
+        $localizedfield->setLocalizedValue('status', 'a', $languages[0], false);
+        $localizedfield->setLocalizedValue('status', 'b', $languages[1], false);
+
+        $this->assertSame(
+            2,
+            CountingOptionsProvider::$calls,
+            'after the load, every call resolves the current (enriched) field definition again'
+        );
+    }
+
     public function testSettingValuesStillEnrichesOnEveryCall(): void
     {
         $languages = Tool::getValidLanguages();

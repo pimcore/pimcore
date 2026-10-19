@@ -86,10 +86,10 @@ final class Localizedfield extends Model\AbstractModel implements
     private static bool $strictMode = false;
 
     /**
-     * Field definitions enriched while values are loaded from the database, per instance. Loading
-     * does not use the enriched options (no validation), so each field is enriched once per object
-     * instead of once per language and value. A WeakMap keeps this out of serialization and deep
-     * copies and releases it together with the instance.
+     * Field definitions enriched while Localizedfield\Dao::load() sets the stored values, per
+     * instance. Loading does not use the enriched options (no validation), so each field is enriched
+     * once per object instead of once per language and value. The entry only exists during the load;
+     * a WeakMap keeps it out of serialization and deep copies.
      *
      * @var WeakMap<self, array<string, mixed>>
      */
@@ -565,9 +565,9 @@ final class Localizedfield extends Model\AbstractModel implements
 
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
-            $fieldDefinition = $markFieldAsDirty
-                ? $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()])
-                : $this->getFieldDefinitionForLoad($localizedFieldDefinition, $name);
+            $fieldDefinition = !$markFieldAsDirty && $this->isLoadingStoredValues()
+                ? $this->getFieldDefinitionForLoad($localizedFieldDefinition, $name)
+                : $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
         }
 
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
@@ -632,11 +632,34 @@ final class Localizedfield extends Model\AbstractModel implements
         return true;
     }
 
+    /**
+     * @internal Called by Localizedfield\Dao::load() before it sets the stored values.
+     */
+    public function startLoadingStoredValues(): void
+    {
+        self::$fieldDefinitionsForLoad ??= new WeakMap();
+        self::$fieldDefinitionsForLoad->offsetSet($this, []);
+    }
+
+    /**
+     * @internal Called by Localizedfield\Dao::load() once the stored values are set.
+     */
+    public function finishLoadingStoredValues(): void
+    {
+        if (isset(self::$fieldDefinitionsForLoad)) {
+            self::$fieldDefinitionsForLoad->offsetUnset($this);
+        }
+    }
+
+    private function isLoadingStoredValues(): bool
+    {
+        return isset(self::$fieldDefinitionsForLoad) && self::$fieldDefinitionsForLoad->offsetExists($this);
+    }
+
     private function getFieldDefinitionForLoad(
         ClassDefinition\Data\Localizedfields $localizedFieldDefinition,
         string $name
     ): ?ClassDefinition\Data {
-        self::$fieldDefinitionsForLoad ??= new WeakMap();
         $fieldDefinitions = self::$fieldDefinitionsForLoad[$this] ?? [];
 
         if (!array_key_exists($name, $fieldDefinitions)) {
