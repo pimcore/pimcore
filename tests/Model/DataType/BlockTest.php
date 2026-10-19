@@ -18,6 +18,7 @@ use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use DatePeriod;
 use Exception;
+use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
@@ -394,9 +395,10 @@ class BlockTest extends ModelTestCase
         };
 
         $this->forceSavingAndLoadingFromCache($object, function (unittestBlock $objectCache) use ($assertReferences) {
-            $assertReferences($objectCache);
+            //save the untouched cached object first, its block data should retain here
+            $objectCache->save();
 
-            $objectCache->save(); //block data should retain here
+            $assertReferences($objectCache);
 
             //reload from db
             $assertReferences(DataObject::getById($objectCache->getId(), ['force' => true]));
@@ -437,9 +439,10 @@ class BlockTest extends ModelTestCase
         };
 
         $this->forceSavingAndLoadingFromCache($object, function (unittestBlock $objectCache) use ($assertReferences) {
-            $assertReferences($objectCache);
+            //save the untouched cached object first, its block data should retain here
+            $objectCache->save();
 
-            $objectCache->save(); //block data should retain here
+            $assertReferences($objectCache);
 
             //reload from db
             $assertReferences(DataObject::getById($objectCache->getId(), ['force' => true]));
@@ -483,7 +486,13 @@ class BlockTest extends ModelTestCase
         ) {
             $assertReference($sourceCache);
 
-            //reload target and fetch source (runtime cache cleared, so the source comes from the persistent cache again)
+            //the source must be in the persistent cache, otherwise the check below silently reads the database
+            $this->assertNotFalse(
+                Cache::load(Service::getElementCacheTag('object', $sourceCache->getId())),
+                'Source must be stored in the persistent cache.'
+            );
+
+            //reload target and fetch source (runtime cache cleared, so the source comes from the persistent cache)
             RuntimeCache::clear();
             $reloadedTarget = DataObject::getById($target->getId(), ['force' => true]);
             $assertReference($reloadedTarget->getHref());
