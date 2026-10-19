@@ -160,6 +160,25 @@ class RequestHelperTest extends TestCase
         $this->assertFalse((new RequestHelper($requestStack, new RequestContext()))->isFrontendRequest($subRequest));
     }
 
+    /**
+     * Resolving the context of a fragment (e.g. in BlockStateListener) stamps "default" on it.
+     *
+     * @dataProvider backendContextProvider
+     */
+    public function testIsFrontendRequestFollowsTheMainRequestForSubRequestsWithAResolvedDefaultContext(string $context): void
+    {
+        $mainRequest = Request::create('http://example.com/pimcore-studio/');
+        $mainRequest->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, $context);
+        $subRequest = Request::create('http://example.com/_fragment');
+        $subRequest->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, PimcoreContextResolver::CONTEXT_DEFAULT);
+
+        $requestStack = new RequestStack();
+        $requestStack->push($mainRequest);
+        $requestStack->push($subRequest);
+
+        $this->assertFalse((new RequestHelper($requestStack, new RequestContext()))->isFrontendRequest($subRequest));
+    }
+
     public function testIsFrontendRequestIgnoresAnUnrelatedMainRequestContext(): void
     {
         $mainRequest = Request::create('http://example.com/some/page');

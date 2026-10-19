@@ -120,21 +120,20 @@ class RequestHelper
         }
 
         // the Studio UI and API are backend requests, but only the admin context switches the admin mode on
-        return !in_array($this->getResolvedContext($request), self::BACKEND_CONTEXTS, true);
+        return !$this->hasBackendContext($request) && !$this->hasBackendContext($this->requestStack->getMainRequest());
     }
 
     /**
-     * The context is resolved for the main request only, so sub requests fall back to its context.
+     * Sub requests are checked against the context of the main request as well, as resolving the
+     * context of a fragment stamps the default context on it.
      */
-    private function getResolvedContext(Request $request): mixed
+    private function hasBackendContext(?Request $request): bool
     {
-        $attribute = PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT;
-
-        if ($request->attributes->has($attribute)) {
-            return $request->attributes->get($attribute);
-        }
-
-        return $this->requestStack->getMainRequest()?->attributes->get($attribute);
+        return in_array(
+            $request?->attributes->get(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT),
+            self::BACKEND_CONTEXTS,
+            true
+        );
     }
 
     /**
