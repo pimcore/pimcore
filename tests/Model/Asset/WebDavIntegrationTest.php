@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore;
+use Pimcore\Config;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\WebDAV\File as WebDavFile;
 use Pimcore\Model\Asset\WebDAV\Folder as WebDavFolder;
 use Pimcore\Model\Asset\WebDAV\Service;
 use Pimcore\Model\Asset\WebDAV\Tree;
+use Pimcore\Model\Element\Tag;
 use Pimcore\Model\User;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Security\User\User as SecurityUser;
@@ -43,10 +45,14 @@ class WebDavIntegrationTest extends ModelTestCase
 
     private Asset\Folder $root;
 
+    private array $originalAssetsConfig;
+
     protected function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
+
+        $this->originalAssetsConfig = Config::getSystemConfiguration('assets');
 
         $this->seatAdminUser();
         $this->root = TestHelper::createAssetFolder();
@@ -55,6 +61,7 @@ class WebDavIntegrationTest extends ModelTestCase
     protected function tearDown(): void
     {
         $this->clearCurrentUser();
+        Config::setSystemConfiguration($this->originalAssetsConfig, 'assets');
 
         if (file_exists(Service::getDeleteLogFile())) {
             unlink(Service::getDeleteLogFile());
@@ -62,6 +69,14 @@ class WebDavIntegrationTest extends ModelTestCase
 
         TestHelper::cleanUp();
         parent::tearDown();
+    }
+
+    private function setSkipInitialVersion(bool $skip): void
+    {
+        $config = $this->originalAssetsConfig;
+        $config['versions']['skip_initial_version'] = $skip;
+
+        Config::setSystemConfiguration($config, 'assets');
     }
 
     // ---- helpers -------------------------------------------------------------------------
@@ -287,6 +302,125 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame($destId, $restored->getId(), 'delete-log restore must reuse the original destination id');
         $this->assertSame('NEW', $restored->getData());
         $this->assertNull(Asset::getByPath($this->root->getRealFullPath() . '/restore-source.txt'));
+        $this->assertArrayNotHasKey($destPath, Service::getDeleteLog(), 'the entry is consumed by the restore it drives');
+    }
+
+    /**
+     * A delete-log entry drives exactly one restore. Should an entry still name an id that is
+     * live again - a node running the previous release writes entries it never consumes - the
+     * MOVE must not reuse it: Asset::save() treats a set id as an update, so the restore would
+     * overwrite the asset holding that id wherever it is now, bypassing its own authorization.
+     */
+    public function testMoveDoesNotReuseAnIdThatIsInUseAgain(): void
+    {
+        $dest = $this->createFileAssetIn($this->root, 'stale-target.txt', 'OLD');
+        $destId = $dest->getId();
+        $destPath = $dest->getRealFullPath();
+
+        (new WebDavFile($dest))->delete();
+        $source = $this->createFileAssetIn($this->root, 'stale-source.txt', 'NEW');
+        $this->newTree()->move($this->davPath($source), ltrim($destPath, '/'));
+        $this->assertSame($destId, Asset::getByPath($destPath)?->getId(), 'precondition: the first MOVE restores the id');
+
+        // the restored asset moves on; its id stays live under the new name
+        $awayPath = $this->root->getRealFullPath() . '/stale-renamed.txt';
+        $this->newTree()->move(ltrim($destPath, '/'), ltrim($awayPath, '/'));
+        $this->assertNull(Asset::getByPath($destPath));
+
+        // an entry for the original path that still names the live id
+        Service::saveDeleteLog([
+            $destPath => ['id' => $destId, 'timestamp' => time()],
+        ]);
+
+        $third = $this->createFileAssetIn($this->root, 'stale-third.txt', 'THIRD');
+        $thirdId = $third->getId();
+        $this->newTree()->move($this->davPath($third), ltrim($destPath, '/'));
+
+        $live = Asset::getById($destId, ['force' => true]);
+        $this->assertInstanceOf(Asset::class, $live);
+        $this->assertSame($awayPath, $live->getRealFullPath(), 'the asset holding the id must stay where it is');
+        $this->assertSame('NEW', $live->getData(), 'the asset holding the id must keep its content');
+
+        $moved = Asset::getByPath($destPath);
+        $this->assertInstanceOf(Asset::class, $moved);
+        $this->assertSame($thirdId, $moved->getId(), 'a stale entry must degrade to a plain rename of the source');
+        $this->assertSame('THIRD', $moved->getData());
+        $this->assertArrayNotHasKey($destPath, Service::getDeleteLog(), 'the stale entry is dropped');
+    }
+
+    /**
+     * The restore writes the asset, its workspace rows and its tags in one transaction. When any
+     * of it fails - here a malformed snapshot whose two workspace rows collide on the
+     * (cid, userId) primary key - nothing of the destination may remain: no half-restored asset
+     * that is visible with inherited permissions only, and the source is untouched.
+     */
+    public function testFailedRestoreLeavesNoHalfRestoredDestination(): void
+    {
+        $dest = $this->createFileAssetIn($this->root, 'atomic-target.txt', 'OLD');
+        $destId = $dest->getId();
+        $destPath = $dest->getRealFullPath();
+        $dest->delete();
+
+        $row = [
+            'cid' => $destId,
+            'cpath' => $destPath,
+            'userId' => $this->user->getId(),
+            'list' => 1,
+            'view' => 1,
+            'publish' => 1,
+        ];
+        Service::saveDeleteLog([
+            $destPath => ['id' => $destId, 'timestamp' => time(), 'workspaces' => [$row, $row]],
+        ]);
+
+        $source = $this->createFileAssetIn($this->root, 'atomic-source.txt', 'NEW');
+        $sourceId = $source->getId();
+        $sourcePath = $source->getRealFullPath();
+
+        try {
+            $this->newTree()->move($this->davPath($source), ltrim($destPath, '/'));
+            $this->fail('the colliding workspace rows must fail the restore');
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+            // expected: the second row violates the primary key of users_workspaces_asset
+        }
+
+        $this->assertNull(Asset::getById($destId, ['force' => true]), 'the restored asset must be rolled back together with the failed workspace rows');
+        $this->assertNull(Asset::getByPath($destPath));
+        $this->assertSame(
+            0,
+            (int) \Pimcore\Db::get()->fetchOne('SELECT COUNT(*) FROM users_workspaces_asset WHERE cid = ?', [$destId])
+        );
+
+        $untouched = Asset::getById($sourceId, ['force' => true]);
+        $this->assertInstanceOf(Asset::class, $untouched);
+        $this->assertSame($sourcePath, $untouched->getRealFullPath(), 'the source must not be deleted after a failed restore');
+        $this->assertSame('NEW', $untouched->getData());
+    }
+
+    /**
+     * With `pimcore.assets.versions.skip_initial_version` enabled the deleted destination has no
+     * version, and the restore - an update from Asset::save()'s point of view, as the id is set -
+     * first wants to version the "persisted state" of the asset. There is none, the asset is
+     * deleted; the restore must go through and be versioned like any other update.
+     */
+    public function testMoveRestoresDestinationWhoseInitialVersionWasSkipped(): void
+    {
+        $this->setSkipInitialVersion(true);
+
+        $dest = $this->createFileAssetIn($this->root, 'skipped-target.txt', 'OLD');
+        $destId = $dest->getId();
+        $destPath = $dest->getRealFullPath();
+        $this->assertSame([], $dest->getVersions(), 'precondition: the upload created no version');
+
+        (new WebDavFile($dest))->delete();
+        $source = $this->createFileAssetIn($this->root, 'skipped-source.txt', 'NEW');
+
+        $this->newTree()->move($this->davPath($source), ltrim($destPath, '/'));
+
+        $restored = Asset::getById($destId, ['force' => true]);
+        $this->assertInstanceOf(Asset::class, $restored);
+        $this->assertSame('NEW', $restored->getData());
+        $this->assertNotEmpty($restored->getVersions(), 'the restore is versioned like an update');
     }
 
     /**
@@ -315,6 +449,13 @@ class WebDavIntegrationTest extends ModelTestCase
         $dest->save();
         $destId = $dest->getId();
         $destPath = $dest->getRealFullPath();
+
+        // tag assignments are removed by ElementTagsListener once the asset is deleted
+        $tag = new Tag();
+        $tag->setName('webdav-restore');
+        $tag->setParentId(0);
+        $tag->save();
+        Tag::addTagToElement('asset', $destId, $tag);
 
         // an explicit per-asset workspace grant/deny is removed together with the asset by the
         // ON DELETE CASCADE on users_workspaces_asset.cid and must survive the restore
@@ -362,6 +503,9 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertEquals(1, $workspaceRow['list']);
         $this->assertEquals(0, $workspaceRow['publish']);
         $this->assertEquals(1, $workspaceRow['delete'], 'the workspace row must keep its original permission flags');
+
+        $restoredTagIds = array_map(static fn (Tag $t): int => $t->getId(), Tag::getTagsForElement('asset', $destId));
+        $this->assertSame([$tag->getId()], $restoredTagIds, 'the tag assignments must survive the restore');
 
         // the deletion queued a version cleanup for this id, bounded to the versions existing at
         // delete time; versions created by the restore save (ids above that bound) must survive

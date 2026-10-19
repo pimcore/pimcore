@@ -1015,7 +1015,14 @@ class Asset extends Element\AbstractElement
         }
 
         $persisted = new Asset();
-        $persisted->getDao()->getById($this->getId());
+
+        try {
+            $persisted->getDao()->getById($this->getId());
+        } catch (NotFoundException) {
+            // the id is set, but no asset is persisted under it (Asset\WebDAV\Tree::move() re-uses the id of a just
+            // deleted asset for the destination it rebuilds), so there is no persisted state that could be versioned
+            return null;
+        }
 
         if ($persisted->getType() === 'folder') {
             return null;

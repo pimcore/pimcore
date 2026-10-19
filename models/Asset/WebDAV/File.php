@@ -104,6 +104,9 @@ class File extends DAV\File
             // only) so a restore keeps the asset's access boundary instead of silently widening
             // or narrowing it to the inherited permissions
             $workspaces = $db->fetchAllAssociative('SELECT * FROM users_workspaces_asset WHERE cid = ?', [$id]);
+            // tag assignments are removed after the deletion by ElementTagsListener::onPostAssetDelete()
+            // and nothing recreates them, whereas an in-place overwrite keeps them - snapshot the ids
+            $tags = $db->fetchFirstColumn("SELECT tagid FROM tags_assignment WHERE ctype = 'asset' AND cid = ?", [$id]);
 
             $this->asset->delete();
 
@@ -121,6 +124,7 @@ class File extends DAV\File
                 'metadata' => $metadata,
                 'customSettings' => is_string($customSettings) ? $customSettings : null,
                 'workspaces' => $workspaces,
+                'tags' => array_map('intval', $tags),
                 // rolling-deploy safety in the new-writer -> old-reader direction: the previous
                 // release reads this key unconditionally and feeds it to restoreDeletedAsset(),
                 // which returns null for an empty payload - the old node then degrades to a

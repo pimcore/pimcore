@@ -88,6 +88,28 @@ class WebDavTest extends ModelTestCase
     }
 
     /**
+     * Tree::move() consumes the entry that drove a restore; only that entry may go, and consuming
+     * an entry that is not there is a no-op.
+     */
+    public function testConsumeDeleteLogEntryRemovesOnlyThatEntry(): void
+    {
+        Service::saveDeleteLog([
+            '/consumed' => ['id' => 1, 'timestamp' => time()],
+            '/kept' => ['id' => 2, 'timestamp' => time()],
+        ]);
+
+        Service::consumeDeleteLogEntry('/consumed');
+
+        $log = Service::getDeleteLog();
+        $this->assertArrayNotHasKey('/consumed', $log);
+        $this->assertArrayHasKey('/kept', $log);
+
+        Service::consumeDeleteLogEntry('/missing');
+
+        $this->assertArrayHasKey('/kept', Service::getDeleteLog());
+    }
+
+    /**
      * A legacy date-property row (see the schema note in WebDavIntegrationTest) holds a
      * serialized datetime; the allowlisted hydration in Tree::restoreProperties() must rebuild
      * it into a real DateTimeInterface value.

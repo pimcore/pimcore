@@ -121,6 +121,19 @@ class Service
         return $log;
     }
 
+    /**
+     * Removes one entry from the delete log. Tree::move() consumes an entry with the restore it
+     * drives: an entry is good for exactly one restore. Left in the log, it would keep naming an id
+     * that is live again, and a later MOVE onto the same path within the log's lifetime would reuse
+     * that id against whatever asset holds it by then.
+     */
+    public static function consumeDeleteLogEntry(string $path): void
+    {
+        $log = self::getDeleteLog();
+        unset($log[$path]);
+        self::saveDeleteLog($log);
+    }
+
     public static function saveDeleteLog(array $log): void
     {
         // cleanup old entries
