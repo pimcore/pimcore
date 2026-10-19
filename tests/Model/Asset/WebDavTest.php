@@ -197,14 +197,31 @@ class WebDavTest extends ModelTestCase
     }
 
     /**
+     * restoreProperties() merges the restored rows over the properties the asset inherits, which
+     * the real Dao reads from the database - stub that lookup so these tests stay database-free
+     * (real inheritance is covered by WebDavIntegrationTest).
+     *
      * @param array<int, array<string, mixed>> $rows
      */
     private function invokeRestoreProperties(Asset $asset, array $rows): void
     {
+        $asset->setDao(new WebDavNoInheritedPropertiesDao());
+
         $tree = new Tree(new WebDavFolder(new Asset\Folder()));
 
         $method = new ReflectionMethod(Tree::class, 'restoreProperties');
         $method->invoke($tree, $asset, $rows);
+    }
+}
+
+/**
+ * Asset Dao whose inherited-property lookup never touches the database.
+ */
+class WebDavNoInheritedPropertiesDao extends Asset\Dao
+{
+    public function getProperties(bool $onlyInherited = false): array
+    {
+        return [];
     }
 }
 
