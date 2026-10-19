@@ -17,6 +17,7 @@ use DOMElement;
 use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
@@ -32,8 +33,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use DataObject\Traits\SimpleNormalizerTrait;
 
     private static HtmlSanitizerInterface $pimcoreWysiwygSanitizer;
-
-    private static bool $persisting = false;
 
     /**
      * @internal
@@ -229,29 +228,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
         // the editor and the save keep links to unpublished elements, everywhere else (frontend, CLI) they are
         // reduced to their text
-        if (Pimcore::inAdmin() || self::$persisting) {
+        if (Pimcore::inAdmin() || WysiwygPersistingScope::isActive()) {
             return Text::wysiwygTextKeepingLinks($data, $textParams);
         }
 
         return Text::wysiwygText($data, $textParams);
-    }
-
-    /**
-     * Runs the callback (the persisting of an object) so that the values read for it keep links to unpublished
-     * elements, whichever request or process saves the object (Studio batch edit, clone, scheduled publishing, import).
-     *
-     * @internal
-     */
-    public static function whilePersisting(callable $fn): mixed
-    {
-        $backup = self::$persisting;
-        self::$persisting = true;
-
-        try {
-            return $fn();
-        } finally {
-            self::$persisting = $backup;
-        }
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or

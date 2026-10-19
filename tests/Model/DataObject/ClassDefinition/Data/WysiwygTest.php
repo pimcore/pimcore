@@ -17,12 +17,14 @@ use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\DataObject\UnittestWysiwygBlock;
 use Pimcore\Model\Document;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use RuntimeException;
 
 class WysiwygTest extends ModelTestCase
 {
@@ -156,7 +158,7 @@ class WysiwygTest extends ModelTestCase
     }
 
     /**
-     * Saves outside a Studio request (grid batch edit job, clone, scheduled publishing, import) run without admin
+     * Saves outside a Studio request (grid batch edit job, scheduled publishing, import) run without admin
      * mode and must not lose the links either.
      */
     public function testLinksToUnpublishedElementsSurviveSaveWithoutAdminMode(): void
@@ -171,7 +173,7 @@ class WysiwygTest extends ModelTestCase
         );
         $expected = sprintf('pimcore_id="%d" pimcore_type="object">unpublished object', $unpublishedObject->getId());
 
-        // a new object, as created by an import or a clone
+        // a new object, as created by an import
         $source = TestHelper::createEmptyObject('wysiwyg-nonadmin-source-', false);
         $source->setWysiwyg($html);
         $source->setLwysiwyg($html, 'en');
@@ -224,6 +226,80 @@ class WysiwygTest extends ModelTestCase
         $reloaded = DataObject::getById($object->getId(), ['force' => true]);
         Pimcore::setAdminMode();
         $this->assertStringContainsString($expected, $reloaded->getTestblock()[0]['blockwysiwyg']->getData());
+    }
+
+    /**
+     * Copying runs in the messenger worker (Studio paste) or the CLI, without admin mode. Reading the source (which
+     * writes block values back) and rewriting the ids must not drop the links in the copy.
+     */
+    public function testLinksToUnpublishedElementsSurviveCopyAndRewriteIdsWithoutAdminMode(): void
+    {
+        RuntimeCache::clear();
+        Pimcore::unsetAdminMode();
+        $this->tester->setupPimcoreClass_WysiwygBlock();
+
+        $unpublishedObject = TestHelper::createEmptyObject('wysiwyg-copy-target-', true, false);
+        $html = sprintf(
+            '<p><a href="/x" pimcore_id="%d" pimcore_type="object">unpublished object</a></p>',
+            $unpublishedObject->getId()
+        );
+        $expected = sprintf('pimcore_id="%d" pimcore_type="object">unpublished object', $unpublishedObject->getId());
+
+        $folder = DataObject\Service::createFolderByPath('/wysiwyg-copy');
+        $object = new UnittestWysiwygBlock();
+        $object->setParent($folder);
+        $object->setKey('wysiwyg-copy-source');
+        $object->setPublished(true);
+        $object->setTestblock([['blockwysiwyg' => new BlockElement('blockwysiwyg', 'wysiwyg', $html)]]);
+        $object->save();
+
+        RuntimeCache::clear();
+        $source = DataObject::getById($object->getId(), ['force' => true]);
+        $copy = (new DataObject\Service())->copyAsChild($folder, $source);
+        $this->assertInstanceOf(UnittestWysiwygBlock::class, $copy);
+
+        // "update references" of a Studio paste
+        RuntimeCache::clear();
+        $copy = DataObject::getById($copy->getId(), ['force' => true]);
+        DataObject\Service::rewriteIds($copy, ['object' => [999999 => 999998]]);
+        $copy->save();
+
+        foreach ([$source->getId(), $copy->getId()] as $id) {
+            RuntimeCache::clear();
+            $reloaded = DataObject::getById($id, ['force' => true]);
+            Pimcore::setAdminMode();
+            $this->assertStringContainsString($expected, $reloaded->getTestblock()[0]['blockwysiwyg']->getData());
+            Pimcore::unsetAdminMode();
+        }
+
+        // the same for a plain wysiwyg field
+        $plain = TestHelper::createEmptyObject('wysiwyg-copy-plain-', false);
+        $plain->setWysiwyg($html);
+        $plain->setLwysiwyg($html, 'en');
+        $plain->save();
+        RuntimeCache::clear();
+        $plain = DataObject::getById($plain->getId(), ['force' => true]);
+        DataObject\Service::rewriteIds($plain, ['object' => [999999 => 999998]]);
+        $plain->save();
+        $this->assertStoredLinks($plain->getId(), $expected);
+    }
+
+    public function testPersistingScopeIsRestoredAfterFailure(): void
+    {
+        $this->assertFalse(WysiwygPersistingScope::isActive());
+
+        try {
+            WysiwygPersistingScope::run(function (): void {
+                $this->assertTrue(WysiwygPersistingScope::isActive());
+                WysiwygPersistingScope::run(fn () => null);
+                $this->assertTrue(WysiwygPersistingScope::isActive());
+
+                throw new RuntimeException('failed save');
+            });
+            $this->fail('The exception must pass through the scope');
+        } catch (RuntimeException) {
+            $this->assertFalse(WysiwygPersistingScope::isActive());
+        }
     }
 
     private function assertStoredLinks(int $id, string $expected): void

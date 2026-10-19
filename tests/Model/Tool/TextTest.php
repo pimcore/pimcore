@@ -99,7 +99,7 @@ class TextTest extends ModelTestCase
         $this->assertEquals($expected, Text::wysiwygText($text));
     }
 
-    public function testWysiwygTextKeepsLinkToUnpublishedDocumentWhenRequested(): void
+    public function testWysiwygTextKeepingLinksKeepsLinkToUnpublishedDocument(): void
     {
         RuntimeCache::clear();
 

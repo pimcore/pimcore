@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\SystemSettingsConfig;
 
@@ -105,7 +105,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         // the field getters used for the validation and by the dao must not reduce wysiwyg links to unpublished
         // elements, whichever request or process saves the object
-        Wysiwyg::whilePersisting(fn () => $this->updateObject($isUpdate, $params));
+        WysiwygPersistingScope::run(fn () => $this->updateObject($isUpdate, $params));
     }
 
     private function updateObject(?bool $isUpdate, array $params): void
