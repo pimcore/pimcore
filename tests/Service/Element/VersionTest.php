@@ -374,6 +374,64 @@ class VersionTest extends TestCase
         $this->assertSame('currentValue', $objectFromAutoSave->getCalculatedValue());
     }
 
+    public function testCalculatedValueSnapshotPreservedWhenReturnedVersionIsSavedAgain(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        // the Version returned by saveVersion() still holds the live object as its data, not a restored copy
+        $version = $object->saveVersion();
+        $this->assertNotNull($version);
+        $this->assertSame($object, $version->getData());
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+        $version->setNote('written again');
+        $version->save();
+
+        /** @var Unittest $objectFromVersion */
+        $objectFromVersion = Version::getById($version->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertSame('historicValue', $objectFromVersion->getCalculatedValue(), 'writing the version returned by saveVersion() again must keep its stored values');
+    }
+
+    public function testCalculatedValueSnapshotNotKeptWhenAutoSaveRowIsReused(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        /** @var Unittest $restoredObject */
+        $restoredObject = $this->getNewestVersion($object->getId())->loadData();
+        $this->assertNotNull($restoredObject->__getCalculatedValueSnapshot());
+
+        // the second auto-save of a user writes the existing auto-save row again instead of creating one
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+        $firstAutoSave = $restoredObject->saveVersion(true, true, null, true);
+        $secondAutoSave = $restoredObject->saveVersion(true, true, null, true);
+        $this->assertNotNull($firstAutoSave);
+        $this->assertNotNull($secondAutoSave);
+        $this->assertSame($firstAutoSave->getId(), $secondAutoSave->getId(), 'the auto-save row must be reused');
+
+        /** @var Unittest $objectFromAutoSave */
+        $objectFromAutoSave = Version::getById($secondAutoSave->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+
+        $this->assertNull($objectFromAutoSave->__getCalculatedValueSnapshot(), 'a reused auto-save row must not keep the snapshot of the restored object');
+        $this->assertSame('currentValue', $objectFromAutoSave->getCalculatedValue());
+    }
+
     public function testCalculatedValueSnapshotNotCarriedIntoNewVersionWhenOptionIsDisabled(): void
     {
         $this->enableCalculatedValueSnapshot();

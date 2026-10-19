@@ -72,6 +72,19 @@ final class Version extends AbstractModel
 
     protected ?string $binaryFileHash = null;
 
+    /**
+     * The calculated value snapshot this version stores, as far as it is known in this process: remembered when a
+     * snapshot is captured for the version and when its data is loaded, so that writing the version again (note,
+     * version count, ...) never replaces the stored values - also when its data is still the live object the
+     * version was created from, which saveVersion() returns and which has no snapshot of its own.
+     */
+    private bool $calculatedValueSnapshotKnown = false;
+
+    /**
+     * @var array<string, scalar|array|null>|null
+     */
+    private ?array $knownCalculatedValueSnapshot = null;
+
     protected ?int $binaryFileId = null;
 
     public static bool $disabled = false;
@@ -237,14 +250,19 @@ final class Version extends AbstractModel
         $newData = $copier->copy($data);
 
         if ($data instanceof Concrete && $newData instanceof Concrete) {
-            if ($this->getId() !== null && $newData->__getCalculatedValueSnapshot() !== null) {
-                // an existing version is written again (e.g. note or version count changed):
-                // keep the values it stored, they are its historical state
-            } elseif (!$this->isAutoSave() && self::isCalculatedValueSnapshotEnabled()) {
+            if ($this->isAutoSave()) {
+                // auto-save versions never store a snapshot; this includes the auto-save row of a user that is
+                // written again with an object restored from a version, whose copy would carry the old values
+                $newData->__setCalculatedValueSnapshot(null);
+            } elseif ($this->getId() !== null && $this->calculatedValueSnapshotKnown) {
+                // an existing version is written again (e.g. note or version count changed): keep the values
+                // it stores, they are its historical state (none if it was created without a snapshot)
+                $newData->__setCalculatedValueSnapshot($this->knownCalculatedValueSnapshot);
+            } elseif (self::isCalculatedValueSnapshotEnabled()) {
                 $this->captureCalculatedValueSnapshot($data, $newData);
             } else {
                 // never carry the snapshot of an object that was restored from a version into a new
-                // version that does not capture (auto-save, option disabled): its values would be stale
+                // version that does not capture (option disabled): its values would be stale
                 $newData->__setCalculatedValueSnapshot(null);
             }
         }
@@ -293,7 +311,17 @@ final class Version extends AbstractModel
             }
         });
 
-        $target->__setCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
+        $this->rememberCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
+        $target->__setCalculatedValueSnapshot($this->knownCalculatedValueSnapshot);
+    }
+
+    /**
+     * @param array<string, scalar|array|null>|null $snapshot
+     */
+    private function rememberCalculatedValueSnapshot(?array $snapshot): void
+    {
+        $this->calculatedValueSnapshotKnown = true;
+        $this->knownCalculatedValueSnapshot = $snapshot;
     }
 
     /**
@@ -436,6 +464,10 @@ final class Version extends AbstractModel
 
         $this->setData($data);
 
+        if ($data instanceof Concrete) {
+            $this->rememberCalculatedValueSnapshot($data->__getCalculatedValueSnapshot());
+        }
+
         return $data;
     }
 
@@ -541,6 +573,12 @@ final class Version extends AbstractModel
      */
     public function setData(mixed $data): static
     {
+        if ($data !== $this->data) {
+            // the snapshot known for this version belongs to the data it was captured from or loaded with
+            $this->calculatedValueSnapshotKnown = false;
+            $this->knownCalculatedValueSnapshot = null;
+        }
+
         $this->data = $data;
 
         return $this;
