@@ -20,6 +20,9 @@ use Pimcore\Db;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
+use Symfony\Component\Translation\Loader\ArrayLoader;
+use Symfony\Component\Translation\MessageCatalogueInterface;
+use Symfony\Component\Translation\Translator as SymfonyTranslator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslatorTest extends TestCase
@@ -289,6 +292,52 @@ class TranslatorTest extends TestCase
             )
         );
         $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($dbValue), 'Asserting translation is persisted as sanitized');
+    }
+
+    public function testDatabaseTranslationsSurviveDiscardedCatalogues(): void
+    {
+        $this->translator->setLocale('de');
+        $this->assertEquals($this->translations['de']['simple_key'], $this->translator->trans('simple_key'));
+        $this->translator->setLocale('fr');
+        $this->assertEquals($this->translations['fr']['simple_key'], $this->translator->trans('simple_key'));
+
+        // Symfony discards all loaded catalogues e.g. when a catalogue is built from scratch late in the request
+        $this->translator->setFallbackLocales($this->translator->getFallbackLocales());
+
+        $this->translator->setLocale('de');
+        $this->assertEquals($this->translations['de']['simple_key'], $this->translator->trans('simple_key'));
+        $this->translator->setLocale('en');
+        $this->assertEquals($this->translations['en']['simple_key'], $this->translator->trans('simple_key'));
+        $this->translator->setLocale('fr');
+        $this->assertEquals($this->translations['fr']['simple_key'], $this->translator->trans('simple_key'));
+    }
+
+    public function testDatabaseTranslationsSurviveCatalogueDiscardedWhileInitializingFallback(): void
+    {
+        $symfonyTranslator = new class('de') extends SymfonyTranslator {
+            private bool $discarded = false;
+
+            public function getCatalogue(?string $locale = null): MessageCatalogueInterface
+            {
+                // the first time the fallback locale is built, Symfony throws away everything loaded so far
+                if ('en' === $locale && !$this->discarded) {
+                    $this->discarded = true;
+                    $this->catalogues = [];
+                }
+
+                return parent::getCatalogue($locale);
+            }
+        };
+        $symfonyTranslator->addLoader('array', new ArrayLoader());
+        $symfonyTranslator->setFallbackLocales(['en']);
+        $symfonyTranslator->addResource('array', ['static_key' => 'EN Static'], 'en');
+        $symfonyTranslator->addResource('array', ['static_key' => 'DE Static'], 'de');
+
+        $translator = new Translator($symfonyTranslator);
+
+        $this->assertEquals($this->translations['de']['simple_key'], $translator->trans('simple_key', [], null, 'de'));
+        $this->assertEquals($this->translations['en']['simple_key'], $translator->trans('simple_key', [], null, 'en'));
+        $this->assertEquals('DE Static', $translator->trans('static_key', [], null, 'de'));
     }
 
     public function testFallbackBetweenYMLandDB(): void
