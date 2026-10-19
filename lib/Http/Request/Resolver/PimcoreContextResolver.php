@@ -28,6 +28,11 @@ class PimcoreContextResolver extends AbstractRequestResolver
 
     const CONTEXT_ADMIN = 'admin';
 
+    /**
+     * Context of the Studio UI and the Studio API, registered by the studio-ui-bundle
+     */
+    const CONTEXT_STUDIO = 'studio';
+
     const CONTEXT_DEFAULT = 'default';
 
     protected PimcoreContextGuesser $guesser;
