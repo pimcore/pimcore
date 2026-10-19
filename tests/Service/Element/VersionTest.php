@@ -18,6 +18,8 @@ use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Db;
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Service as DataObjectService;
@@ -298,6 +300,42 @@ class VersionTest extends TestCase
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
 
         $this->assertSame('valueAfterRestore', $objectFromNewVersion->getCalculatedValue(), 'the version created on restore must capture freshly computed values');
+    }
+
+    public function testCalculatedValueSnapshotClearedBeforePreUpdateListeners(): void
+    {
+        $this->enableCalculatedValueSnapshot();
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+
+        /** @var Unittest $restoredObject */
+        $restoredObject = $this->getNewestVersion($object->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+        $this->assertSame('historicValue', $restoredObject->getCalculatedValue());
+
+        // saving a restored object makes it live again, and pre-save listeners must already see that
+        $seenByListener = null;
+        $listener = static function (DataObjectEvent $event) use (&$seenByListener): void {
+            /** @var Unittest $object */
+            $object = $event->getObject();
+            $seenByListener = $object->getCalculatedValue();
+        };
+
+        $dispatcher = Pimcore::getEventDispatcher();
+        $dispatcher->addListener(DataObjectEvents::PRE_UPDATE, $listener);
+
+        try {
+            $restoredObject->save();
+        } finally {
+            $dispatcher->removeListener(DataObjectEvents::PRE_UPDATE, $listener);
+        }
+
+        $this->assertSame('currentValue', $seenByListener, 'pre-update listeners must see freshly computed values of a restored object');
     }
 
     public function testCalculatedValueSnapshotSkippedForAutoSave(): void

@@ -113,10 +113,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     protected function update(?bool $isUpdate = null, array $params = []): void
     {
-        // an object restored from a version becomes a live object again on save,
-        // so calculated fields have to be computed freshly from now on
-        $this->__calculatedValueSnapshot = null;
-
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
@@ -680,6 +676,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function save(array $parameters = []): static
     {
+        // an object restored from a version becomes a live object again when it is saved, so calculated fields
+        // have to be computed freshly from now on - before the pre-save events, so listeners already see that
+        $this->__calculatedValueSnapshot = null;
+
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
         // if the class is newer then better disable the dirty detection. This should fix issues with the query table if
