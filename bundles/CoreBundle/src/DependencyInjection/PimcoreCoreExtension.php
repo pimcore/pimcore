@@ -377,7 +377,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     {
         $domain = '';
         foreach ($container->getExtensionConfig('pimcore') as $config) {
-            $domain = $config['general']['domain'] ?? $domain;
+            // same semantics as the merged configuration: a later `domain: null` clears an earlier value
+            if (is_array($config['general'] ?? null) && array_key_exists('domain', $config['general'])) {
+                $domain = $config['general']['domain'];
+            }
         }
 
         if (!is_string($domain) || $domain === '') {

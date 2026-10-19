@@ -119,4 +119,14 @@ final class PimcoreCoreExtensionTest extends TestCase
 
         $this->assertSame([], $container->getExtensionConfig('scheb_two_factor'));
     }
+
+    public function testLaterNullDomainClearsTheDomain(): void
+    {
+        $container = $this->prepend([
+            ['general' => ['domain' => 'www.example.com']],
+            ['general' => ['domain' => null]],
+        ]);
+
+        $this->assertSame([], $container->getExtensionConfig('scheb_two_factor'));
+    }
 }
