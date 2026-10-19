@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Element;
 
 use Exception;
 use Pimcore;
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
@@ -309,5 +310,44 @@ class RecyclebinTest extends ModelTestCase
         $this->assertEquals($inputText, $restoredSourceObject->getInput(), 'Input data not restored properly');
         $this->assertEquals($relationObject->getId(), $restoredRelation[0]->getId(), 'Simple object relation not restored properly');
         $this->assertEquals($relationObject->getId(), $restoredLocalizedRelation[0]->getId(), 'Localized object relation not restored properly');
+    }
+
+    /**
+     * Regression test for https://github.com/pimcore/platform-version/issues/509: an item recycled
+     * without a user (e.g. by the scheduled-tasks maintenance job) must still be readable.
+     */
+    public function testItemRecycledWithoutUserCanBeRead(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        Item::create($object);
+        $object->delete();
+
+        $recycledItem = (new Item\Listing())->current();
+        $this->assertInstanceOf(Item::class, $recycledItem);
+        $this->assertSame('', $recycledItem->getDeletedby());
+
+        $recycledItem->delete();
+    }
+
+    /**
+     * Rows written before the fix for https://github.com/pimcore/platform-version/issues/509 have
+     * `deletedby` = NULL in the database; reading them must not fail either.
+     */
+    public function testItemWithNullDeletedbyInDatabaseCanBeRead(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $recycledItem = (new Item\Listing())->current();
+        Db::get()->update('recyclebin', ['deletedby' => null], ['id' => $recycledItem->getId()]);
+
+        $reloadedItem = Item::getById($recycledItem->getId());
+        $this->assertInstanceOf(Item::class, $reloadedItem);
+        $this->assertSame('', $reloadedItem->getDeletedby());
+
+        $reloadedItem->delete();
     }
 }

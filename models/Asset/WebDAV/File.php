@@ -27,9 +27,15 @@ class File extends DAV\File
 {
     private Asset $asset;
 
-    public function __construct(Asset $asset)
+    /**
+     * Size in bytes if already known, e.g. from the parent folder's storage listing
+     */
+    private ?int $size;
+
+    public function __construct(Asset $asset, ?int $size = null)
     {
         $this->asset = $asset;
+        $this->size = $size;
     }
 
     public function getName(): string
@@ -167,6 +173,7 @@ class File extends DAV\File
 
                 $this->asset->setStream($file);
                 $this->asset->save();
+                $this->size = null;
 
                 return null;
             } finally {
@@ -220,6 +227,6 @@ class File extends DAV\File
      */
     public function getSize(): int
     {
-        return $this->asset->getFileSize();
+        return $this->size ?? $this->asset->getFileSize();
     }
 }

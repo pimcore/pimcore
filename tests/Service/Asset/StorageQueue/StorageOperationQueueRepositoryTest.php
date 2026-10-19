@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Service\Asset\StorageQueue;
 
 use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\ConnectionLost;
 use Pimcore;
 use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Asset\StorageQueue\StorageOperation;
@@ -455,5 +458,88 @@ class StorageOperationQueueRepositoryTest extends TestCase
         // completeMove() refreshes and retries; against the current row the deletion goes through
         $this->assertTrue($this->repository->removeIfUnchanged($this->repository->all()[0]));
         $this->assertSame([], $this->repository->all());
+    }
+
+    /**
+     * A repository on a connection of its own whose server-side session times out after one
+     * second - the failure a drain hits when it spends longer than the server's wait_timeout on
+     * storage requests without querying the database (seen on object storage taking seconds per
+     * write request).
+     *
+     * @return array{0: StorageOperationQueueRepository, 1: Connection}
+     */
+    private function repositoryOnAConnectionThatTimesOut(): array
+    {
+        $connection = DriverManager::getConnection(Db::get()->getParams());
+        $connection->executeStatement('SET SESSION wait_timeout = 1');
+
+        return [new StorageOperationQueueRepository($connection), $connection];
+    }
+
+    private function letTheConnectionTimeOut(): void
+    {
+        sleep(3);
+    }
+
+    public function testTheSimulatedTimeoutReallyDropsTheConnection(): void
+    {
+        // guards the tests below against passing vacuously: without a retry, the first query
+        // after the timeout fails
+        [, $connection] = $this->repositoryOnAConnectionThatTimesOut();
+        $this->letTheConnectionTimeOut();
+
+        $this->expectException(ConnectionLost::class);
+        $connection->fetchOne('SELECT 1');
+    }
+
+    public function testReadsRecoverFromALostConnection(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        $id = (int) $this->repository->all()[0]->getId();
+        [$repository] = $this->repositoryOnAConnectionThatTimesOut();
+
+        $this->letTheConnectionTimeOut();
+        $this->assertSame('B', $repository->findById($id)?->getTargetPrefix());
+
+        $this->letTheConnectionTimeOut();
+        $this->assertCount(1, $repository->all());
+    }
+
+    public function testRemoveIfUnchangedRecoversFromALostConnection(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        [$repository] = $this->repositoryOnAConnectionThatTimesOut();
+        $operation = $repository->all()[0];
+
+        $this->letTheConnectionTimeOut();
+
+        $this->assertTrue($repository->removeIfUnchanged($operation));
+        $this->assertSame([], $this->repository->all());
+    }
+
+    public function testRemoveRecoversFromALostConnection(): void
+    {
+        $this->repository->add($this->delete('asset', 'A'));
+        $id = (int) $this->repository->all()[0]->getId();
+        [$repository] = $this->repositoryOnAConnectionThatTimesOut();
+
+        $this->letTheConnectionTimeOut();
+        $repository->remove($id);
+
+        $this->assertSame([], $this->repository->all());
+    }
+
+    public function testALostConnectionInsideTheCallersTransactionIsNotRetried(): void
+    {
+        // reconnecting would silently drop the caller's open transaction - it must see the failure
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        $id = (int) $this->repository->all()[0]->getId();
+        [$repository, $connection] = $this->repositoryOnAConnectionThatTimesOut();
+        $connection->beginTransaction();
+
+        $this->letTheConnectionTimeOut();
+
+        $this->expectException(ConnectionLost::class);
+        $repository->findById($id);
     }
 }

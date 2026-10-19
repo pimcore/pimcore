@@ -392,6 +392,8 @@ pimcore:
                     # - pimcore_site_current
                     - pimcore_user
                     - pimcore_file_exists
+                    - pimcore_asset_version_preview
+                    - pimcore_image_version_preview
                 hard_blocked_methods:
                     Pimcore\Model\User:
                         - getPassword
@@ -402,6 +404,46 @@ pimcore:
                         - getStream
                         - getLocalFile
                         - getTemporaryFile
+                        - delete
+                        - save
+                        - saveVersion
+                    # AbstractObject (not Concrete) so that DataObject folders are covered as well
+                    Pimcore\Model\DataObject\AbstractObject:
+                        - delete
+                        - save
+                        - saveVersion
+                    Pimcore\Model\Document:
+                        - delete
+                        - save
+                        - saveVersion
+                # Method families that cannot be enumerated by exact name: the dynamically
+                # generated `setXxx` setters and every other persistent mutator that writes
+                # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions, dumpClass,
+                # the static create() factories, unlockPropagate, addMetadata/removeProperty,
+                # clearThumbnails). Keyed by the common model base class so that models
+                # reachable through allowed getters (e.g. Concrete::getClass() =>
+                # ClassDefinition, getVersions(), getDependencies()) cannot be mutated either.
+                # `get*` methods that persist as a side effect are blocked by exact name in the
+                # patterns below (e.g. Image::getDimensions).
+                hard_blocked_method_patterns:
+                    Pimcore\Model\AbstractModel:
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'
+                    # field definitions reachable via ClassDefinition::getFieldDefinition() (their
+                    # save()/delete()/classSaved() persist immediately; verifyPassword() can rehash and save the
+                    # object, calculateDelta() inserts relation rows)
+                    Pimcore\Model\DataObject\ClassDefinition\Data:
+                        - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i'
+                        # admin-UI (de)serialisation entry points: read-looking, but they take
+                        # caller-supplied data and may persist (Consent writes Notes)
+                        - '/editmode/i'
+                    # getDimensions($path, true) persists dimensions read from a caller-chosen path
+                    Pimcore\Model\Asset\Image:
+                        - '/^getDimensions$/iD'
+                    # persisted data values returned by generated getters that are not models;
+                    # getAction() deletes the slug row when its field definition is gone
+                    Pimcore\Model\DataObject\Data\UrlSlug:
+                        - '/^(set|save|delete|create|handle)/i'
+                        - '/^getAction$/iD'
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

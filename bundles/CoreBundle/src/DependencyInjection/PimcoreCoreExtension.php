@@ -66,6 +66,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
 
         $container->setParameter('pimcore.assets.storage_operation_queue.enabled', $config['assets']['storage_operation_queue']['enabled']);
+        $container->setParameter('pimcore.assets.storage_operation_queue.resolve_frontend_paths', $config['assets']['storage_operation_queue']['resolve_frontend_paths']);
         $container->setParameter('pimcore.assets.webdav.browser_plugin', $config['assets']['webdav']['browser_plugin']);
 
         if (!$container->hasParameter('pimcore.encryption.secret')) {
@@ -87,6 +88,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.objects.link_sanitizer.strict', $config['objects']['link_sanitizer']['strict']);
+        $container->setParameter('pimcore.objects.link_sanitizer.blocked_url_schemes', $config['objects']['link_sanitizer']['blocked_url_schemes']);
+        $container->setParameter('pimcore.objects.link_sanitizer.block_unsafe_data_urls', $config['objects']['link_sanitizer']['block_unsafe_data_urls']);
 
         // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
         $container->setParameter('pimcore.cache.max_write_items', $config['cache']['max_write_items']);
@@ -100,6 +104,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.allowed_classes', $config['templating_engine']['twig']['sandbox_security_policy']['allowed_classes']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_functions', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_functions']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_methods']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_method_patterns', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_method_patterns']);
 
         // register pimcore config on container
         // TODO is this bad practice?

@@ -301,6 +301,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route): DocumentRoute
     {
         $route->setDefault('_controller', $document->getController());
+        // the controller is document data, not application code - let Symfony's controller resolver
+        // accept only registered controllers
+        $route->setDefault('_check_controller_is_allowed', true);
 
         if ($document->getTemplate()) {
             $route->setDefault('_template', $document->getTemplate());

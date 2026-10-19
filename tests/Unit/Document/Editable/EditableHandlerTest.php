@@ -28,12 +28,16 @@ use Pimcore\Model\Document\Editable\Areablock;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool;
+use Pimcore\Tool\Console;
 use Pimcore\Translation\Translator;
 use ReflectionClassConstant;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -395,6 +399,66 @@ final class EditableHandlerTest extends TestCase
         $response = $handler->renderAction('App\\Controller\\FooController::barAction');
 
         self::assertSame('ok', $response->getContent());
+    }
+
+    /**
+     * pimcore/pimcore#19477: a "Class::method" reference passes the shape check above, but can still
+     * name a public static method like Console::execInBackground(string $cmd), and Renderlet passes
+     * every config key - so also "cmd" - as request attribute to the argument resolver. The
+     * controller resolver has to accept registered controllers only, whatever the config says.
+     */
+    public function testRenderActionOnlyAllowsRegisteredControllers(): void
+    {
+        $controller = Console::class . '::execInBackground';
+        $reference = $this->renderActionAndCaptureReference($controller, [
+            'cmd' => 'id > /tmp/pwned',
+            '_check_controller_is_allowed' => false,
+        ]);
+
+        self::assertSame($controller, $reference->controller);
+        self::assertTrue($reference->attributes['_check_controller_is_allowed']);
+
+        $request = Request::create('/');
+        $request->attributes->add($reference->attributes);
+        $request->attributes->set('_controller', $reference->controller);
+
+        $this->expectException(BadRequestException::class);
+        (new ControllerResolver())->getController($request);
+    }
+
+    public function testControllerResolverWouldResolveTheConsoleGadgetWithoutTheCheck(): void
+    {
+        // pins down why the attribute is needed: without it, the qualified callable is resolved
+        $request = Request::create('/');
+        $request->attributes->set('_controller', Console::class . '::execInBackground');
+
+        $callable = (new ControllerResolver())->getController($request);
+
+        self::assertIsCallable($callable);
+    }
+
+    private function renderActionAndCaptureReference(string $controller, array $attributes): ControllerReference
+    {
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('hasCurrentRequest')->willReturn(false);
+        $requestHelper->method('createRequestWithContext')->willReturn(Request::create('/'));
+
+        $reference = null;
+        $fragmentRenderer = $this->createMock(FragmentRendererInterface::class);
+        $fragmentRenderer->expects($this->once())
+            ->method('render')
+            ->willReturnCallback(function (ControllerReference $uri) use (&$reference): Response {
+                $reference = $uri;
+
+                return new Response('ok');
+            });
+
+        $this->createHandler(requestHelper: $requestHelper, fragmentRenderer: $fragmentRenderer)
+            ->renderAction($controller, $attributes);
+
+        self::assertInstanceOf(ControllerReference::class, $reference);
+
+        return $reference;
     }
 
     private function catalogue(string $locale): MessageCatalogue

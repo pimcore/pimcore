@@ -1,5 +1,28 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.3
+
+### [Core] `schedule_tasks` indexes: the migration waits for open transactions
+
+Migration `Version20261015100000` replaces the single-column `cid` and `ctype` indexes on `schedule_tasks` with a
+composite `(cid, ctype)` index. It does this in a single `ALTER TABLE` statement, so the table is never without an
+index for lookups by element while the migration runs, and InnoDB performs the change in place without rebuilding
+the table.
+
+The statement does need a metadata lock on `schedule_tasks`. It **waits for every open transaction that has used
+the table**, and every element save (asset, document, data object) holds such a transaction until it commits.
+While the migration waits, new statements on `schedule_tasks`, and with them new element saves, queue behind it.
+On an installation with continuous saves (imports, API clients, messenger workers) run the migration while those
+are paused, or expect a short stall of element saves until the open transactions have committed. The change itself
+takes well under a second once the lock is granted.
+
+If your own code queries `schedule_tasks` by `ctype` alone, note that this index no longer exists; the composite
+index serves lookups by `cid` and by `cid` and `ctype`.
+
+Saving an element whose scheduled tasks were neither loaded nor set no longer deletes and rewrites its rows in
+`schedule_tasks`. A save that sets the scheduled tasks explicitly, and deleting an element, still remove the
+element's rows, including rows another transaction committed in the meantime.
+
 ## Pimcore 2026.3.0
 
 ### [Documents] Static page generator: frontend requests only store a static page when it is safe to share

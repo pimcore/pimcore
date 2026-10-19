@@ -54,7 +54,7 @@ class Item extends Model\AbstractModel
 
     protected int $date;
 
-    protected string $deletedby;
+    protected string $deletedby = '';
 
     public static function create(Element\ElementInterface $element, ?Model\User $user = null): void
     {

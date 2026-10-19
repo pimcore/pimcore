@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Exception;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
@@ -524,11 +525,27 @@ class Service extends Model\Element\Service
             $fileSize = $thumbnail->getFileSize();
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
-            if ($actualFileExtension !== $config['file_extension']) {
+            if ($actualFileExtension !== $config['file_extension']
+                && ($pathReference['type'] ?? '') === 'thumbnail'
+                && in_array(
+                    strtolower((string) $config['file_extension']),
+                    Config::getSystemConfiguration('assets')['thumbnails']['allowed_formats'],
+                    true
+                )
+            ) {
                 // create a copy/symlink to the file with the original file extension
                 // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                 // is set to auto-optimized format so the resulting thumbnail can be jpeg
-                $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $config['file_extension'], $pathReference['src']);
+                //
+                // only a generated thumbnail (type === 'thumbnail') may be mirrored; e.g. a pass-through
+                // path reference (type === 'asset') points directly at the original asset's bytes and
+                // must never be copied into thumbnail storage under a caller-chosen extension. Any other
+                // or missing type is rejected, and the requested extension must be an allowed format
+                $requestedFile = preg_replace(
+                    '/\.' . preg_quote($actualFileExtension, '/') . '$/',
+                    '.' . strtolower((string) $config['file_extension']),
+                    $pathReference['src']
+                );
 
                 //Only copy the file if not exists yet
                 if (!$storage->fileExists($requestedFile)) {
@@ -579,7 +596,20 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            return self::getStreamedResponseForThumbnail($config, $uri);
+            try {
+                return self::getStreamedResponseForThumbnail($config, $uri);
+            } catch (FilesystemException $e) {
+                // the thumbnail storage could not serve the file although the thumbnail itself
+                // resolved - a permission or I/O problem, a briefly unavailable remote adapter, or
+                // the file disappearing between two storage calls. This helper is public API for
+                // custom asset delivery and documented as returning ?StreamedResponse, so the
+                // failure must not escape to the calling project code.
+                // Logged as an error rather than debug: a plain cache miss is already absorbed by
+                // getStreamedResponseForThumbnail(), so everything arriving here is a real fault.
+                Logger::error('Could not stream thumbnail for ' . $uri . ': ' . $e->getMessage());
+
+                return null;
+            }
         }
 
         return null;

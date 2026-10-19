@@ -172,6 +172,50 @@ final class SqlTest extends TestCase
         $this->assertStringContainsString('GROUP BY', $sql);
     }
 
+    public function testRejectsSemicolonHiddenByEscapedBackslashInsideString(): void
+    {
+        // GHSA-3c7m-9rp5-j5v4: MySQL's default lexer treats "\\" inside a single-quoted
+        // string as one escaped backslash, so the string ends at the following quote and
+        // ";"/keywords after it are ordinary SQL, not string content. The old stripping
+        // regex consumed "\\" differently: it ate the first backslash as an ordinary
+        // character, then read the second backslash plus the real closing quote as a
+        // (bogus) escaped-quote, so it kept scanning as if still inside the string until
+        // the next unrelated quote further down the fragment - hiding the ";" and the DML
+        // keyword in between from the checks below.
+        $config = $this->configWith(
+            'where',
+            "1=1) OR 'x' = '\\\\'; INSERT INTO t (a,b) VALUES (1,'y')"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsSemicolonHiddenByEscapedBackslashInsideDoubleQuotedString(): void
+    {
+        // Same desync as above for the double-quoted branch: with Pimcore's default
+        // sql_mode='' double quotes delimit strings too, so the same payload must be
+        // rejected when the string is written with double quotes.
+        $config = $this->configWith(
+            'where',
+            '1=1) OR "x" = "\\\\"; INSERT INTO t (a,b) VALUES (1,"y")'
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testFragmentWithLegitimateEscapedBackslashInStringIsStillAccepted(): void
+    {
+        // A string value containing an escaped backslash (MySQL: "\\" -> one literal
+        // backslash), with nothing unsafe following it, must not be rejected.
+        $config = $this->configWith('where', "path = 'C:\\\\temp' AND 1=1");
+
+        $sql = $this->adapter()->exposedBuildQueryString($config);
+
+        $this->assertStringContainsString("path = 'C:\\\\temp' AND 1=1", $sql);
+    }
+
     public function testColumnNameResemblingForbiddenFunctionIsNotAFalsePositive(): void
     {
         // "load_file_id" must not be confused with the LOAD_FILE(...) function call.
@@ -180,5 +224,159 @@ final class SqlTest extends TestCase
         $sql = $this->adapter()->exposedBuildQueryString($config);
 
         $this->assertStringContainsString('load_file_id', $sql);
+    }
+
+    public function testRejectsForbiddenFunctionAfterQuoteNestedInBacktickIdentifier(): void
+    {
+        // A quote character of another type inside a backtick identifier is ordinary content
+        // of that identifier, so the forbidden function after it is still outside any quoted
+        // region and must be rejected.
+        $config = $this->configWith(
+            'sql',
+            "1 AS `x'`, LOAD_FILE('/etc/hostname') AS leak, 'z'"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterQuoteNestedInDoubleQuotedString(): void
+    {
+        // Same, with the nested quote living inside a double-quoted string instead of a
+        // backtick identifier.
+        $config = $this->configWith(
+            'sql',
+            "1 AS \"a'b\", LOAD_FILE('/etc/hostname') AS leak, 'z'"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubleQuoteNestedInBacktickIdentifier(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            '1 AS `x"`, LOAD_FILE(\'/etc/hostname\') AS leak, "z"'
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterBacktickNestedInSingleQuotedString(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            "1 AS 'x`', LOAD_FILE('/etc/hostname') AS leak, `z`"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testBacktickIdentifierContainingQuoteIsStillAcceptedWhenFragmentIsSafe(): void
+    {
+        // The nested-quote identifier itself is legitimate; only the companion LOAD_FILE()
+        // call made the fragments above unsafe. Without it, this must still be accepted.
+        $config = $this->configWith('sql', "1 AS `x'`, 'z' AS lit");
+
+        $sql = $this->adapter()->exposedBuildQueryString($config);
+
+        $this->assertStringContainsString("1 AS `x'`, 'z' AS lit", $sql);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubleQuoteNestedInSingleQuotedString(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            "1 AS 'a\"b', LOAD_FILE('/etc/hostname') AS leak, \"z\""
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterBacktickNestedInDoubleQuotedString(): void
+    {
+        $config = $this->configWith(
+            'sql',
+            "1 AS \"a`b\", LOAD_FILE('/etc/hostname') AS leak, `z`"
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubledDelimiterInsideString(): void
+    {
+        $config = $this->configWith('sql', "'it''s' AS a, LOAD_FILE('/tmp/x') AS b");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterBackslashEscapedQuoteInsideString(): void
+    {
+        $config = $this->configWith('sql', "'it\\'s' AS a, LOAD_FILE('/tmp/x') AS b");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsForbiddenFunctionAfterDoubledBacktickInsideIdentifier(): void
+    {
+        $config = $this->configWith('sql', "1 AS `a``b`, LOAD_FILE('/tmp/x') AS leak");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testForbiddenTokenInsideQuotedRegionAfterDoubledBacktickIsStillAccepted(): void
+    {
+        // The doubled backtick is part of the identifier; the string after it is a literal
+        // whose content must not be mistaken for a function call.
+        $config = $this->configWith('sql', "1 AS `a``b`, 'LOAD_FILE(x)' AS lit");
+
+        $sql = $this->adapter()->exposedBuildQueryString($config);
+
+        $this->assertStringContainsString("1 AS `a``b`, 'LOAD_FILE(x)' AS lit", $sql);
+    }
+
+    public function testRejectsUnterminatedQuotedRegion(): void
+    {
+        // An unterminated quote is never part of a valid fragment, whatever follows it.
+        foreach (["1 AS 'a, LOAD_FILE(b)", '1 AS "a', '1 AS `a', "1 AS 'a\\'"] as $fragment) {
+            try {
+                $this->adapter()->exposedBuildQueryString($this->configWith('sql', $fragment));
+                $this->fail('Expected unterminated quoted region to be rejected: ' . $fragment);
+            } catch (InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function testRejectsQuoteOpenedInOneFragmentAndClosedInAnother(): void
+    {
+        // The fragments are validated one by one but concatenated into a single statement, so a
+        // quoted region must never be able to span two of them.
+        $config = new stdClass();
+        $config->sql = "SELECT 'x";
+        $config->from = "', LOAD_FILE('/etc/hostname') AS leak, 'z'";
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
+    }
+
+    public function testRejectsQuoteOpenedInWhereAndClosedInGroupBy(): void
+    {
+        $config = new stdClass();
+        $config->sql = 'SELECT id';
+        $config->from = 'my_table';
+        $config->where = "name = 'x";
+        $config->groupby = "', LOAD_FILE('/etc/hostname')";
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->adapter()->exposedBuildQueryString($config);
     }
 }
