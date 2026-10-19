@@ -701,9 +701,17 @@ class Service extends Model\Element\Service
             return '';
         }
 
-        $asset = Asset::getById($config['asset_id']);
         $filename = basename($storagePath);
-        if (!$asset instanceof Asset\Image || $asset->getDao()->getCachedThumbnail($config['thumbnail_name'], $filename) !== null) {
+
+        try {
+            $asset = Asset::getById($config['asset_id']);
+            if (!$asset instanceof Asset\Image || $asset->getDao()->getCachedThumbnail($config['thumbnail_name'], $filename) !== null) {
+                return '';
+            }
+        } catch (Exception $e) {
+            // registering the thumbnail is best effort, a thumbnail that can be read from the storage is delivered anyway
+            Logger::warning('Could not check the status cache for the thumbnail ' . $storagePath . ': ' . $e->getMessage());
+
             return '';
         }
 

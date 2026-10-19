@@ -519,6 +519,40 @@ class AssetThumbnailCacheTest extends TestCase
     }
 
     /**
+     * Registering the thumbnail is best effort: a failing status cache lookup must not keep a thumbnail
+     * that can be read from the storage from being delivered.
+     */
+    public function testDeliveringAThumbnailAlreadyOnStorageDoesNotDependOnTheStatusCacheLookup(): void
+    {
+        /** @var Asset\Image $asset */
+        $asset = $this->testAsset;
+        [$filename, $storagePath] = $this->generateThumbnailWithoutStatusCacheRow();
+        $contents = Storage::get('thumbnail')->read($storagePath);
+
+        // the lookup has to ask the database, so forget what the runtime cache holds
+        $runtimeCache = new ReflectionProperty(Asset\Dao::class, 'thumbnailStatusCache');
+        $runtimeCache->setValue(null, []);
+
+        $db = Db::get();
+        $db->executeStatement('RENAME TABLE assets_image_thumbnail_cache TO assets_image_thumbnail_cache_unavailable');
+
+        try {
+            $response = (new PublicServicesController())->thumbnailAction($this->buildThumbnailRequest($asset, $filename, $storagePath));
+
+            ob_start();
+            $response->sendContent();
+            $delivered = ob_get_clean();
+        } finally {
+            $db->executeStatement('RENAME TABLE assets_image_thumbnail_cache_unavailable TO assets_image_thumbnail_cache');
+            $runtimeCache->setValue(null, []);
+        }
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame($contents, $delivered);
+        $this->assertNull($asset->getDao()->getCachedThumbnail($this->thumbnailName, $filename));
+    }
+
+    /**
      * generates the thumbnail of the test asset and removes its status cache row again, which
      * leaves what is on the storage of an installation that never registered its thumbnails
      *
