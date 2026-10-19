@@ -21,6 +21,13 @@ As display type in object editor three types are available:
 - TextArea: Multi line, displayed as read-only text area.
 - HTML: Multi line HTML content, displayed as display field.
 
+:::info Display-only alternative
+A Calculated Value is a data field: it is part of the object's data model, accessible via
+getter and API, and its result is written to the query table on save so it can be filtered
+and exported. If you only want to show computed, context-dependent text to editors and do
+not want anything persisted or exposed as data, use a
+[Dynamic Text Label](../02_Layout_Elements/01_Dynamic_Text_Labels.md) layout element instead.
+:::
 
 ## Calculation
 
