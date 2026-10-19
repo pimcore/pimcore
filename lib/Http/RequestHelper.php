@@ -15,6 +15,7 @@ namespace Pimcore\Http;
 
 use LogicException;
 use Pimcore;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,11 @@ use Symfony\Component\Routing\RequestContext;
 class RequestHelper
 {
     const ATTRIBUTE_FRONTEND_REQUEST = '_pimcore_frontend_request';
+
+    private const BACKEND_CONTEXTS = [
+        PimcoreContextResolver::CONTEXT_ADMIN,
+        PimcoreContextResolver::CONTEXT_STUDIO,
+    ];
 
     protected RequestStack $requestStack;
 
@@ -113,7 +119,22 @@ class RequestHelper
             return false;
         }
 
-        return true;
+        // the Studio UI and API are backend requests, but only the admin context switches the admin mode on
+        return !in_array($this->getResolvedContext($request), self::BACKEND_CONTEXTS, true);
+    }
+
+    /**
+     * The context is resolved for the main request only, so sub requests fall back to its context.
+     */
+    private function getResolvedContext(Request $request): mixed
+    {
+        $attribute = PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT;
+
+        if ($request->attributes->has($attribute)) {
+            return $request->attributes->get($attribute);
+        }
+
+        return $this->requestStack->getMainRequest()?->attributes->get($attribute);
     }
 
     /**
