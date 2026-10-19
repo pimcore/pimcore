@@ -15,6 +15,8 @@ namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore;
 use Pimcore\Config;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\WebDAV\File as WebDavFile;
 use Pimcore\Model\Asset\WebDAV\Folder as WebDavFolder;
@@ -47,6 +49,9 @@ class WebDavIntegrationTest extends ModelTestCase
 
     private array $originalAssetsConfig;
 
+    /** @var array<int, array{string, callable}> */
+    private array $registeredListeners = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -63,12 +68,23 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->clearCurrentUser();
         Config::setSystemConfiguration($this->originalAssetsConfig, 'assets');
 
+        foreach ($this->registeredListeners as [$eventName, $listener]) {
+            Pimcore::getEventDispatcher()->removeListener($eventName, $listener);
+        }
+        $this->registeredListeners = [];
+
         if (file_exists(Service::getDeleteLogFile())) {
             unlink(Service::getDeleteLogFile());
         }
 
         TestHelper::cleanUp();
         parent::tearDown();
+    }
+
+    private function addListener(string $eventName, callable $listener): void
+    {
+        Pimcore::getEventDispatcher()->addListener($eventName, $listener);
+        $this->registeredListeners[] = [$eventName, $listener];
     }
 
     private function setSkipInitialVersion(bool $skip): void
@@ -396,6 +412,57 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertInstanceOf(Asset::class, $untouched);
         $this->assertSame($sourcePath, $untouched->getRealFullPath(), 'the source must not be deleted after a failed restore');
         $this->assertSame('NEW', $untouched->getData());
+    }
+
+    /**
+     * The rebuilt destination must carry the properties it inherits at its path next to the
+     * restored local ones - also before it is saved, which is what workflow/permission checks
+     * and PRE_UPDATE listeners see - with a local row overriding an inherited one of the same
+     * name, exactly as for a persisted asset.
+     */
+    public function testMoveRestoresInheritedPropertiesNextToLocalOnes(): void
+    {
+        $this->root->setProperty('site', 'text', 'folder-site', inheritable: true);
+        $this->root->setProperty('brand', 'text', 'folder-brand', inheritable: true);
+        $this->root->save();
+
+        $dest = $this->createFileAssetIn($this->root, 'inherit-target.txt', 'OLD');
+        $dest->setProperty('reviewed', 'text', 'yes');
+        $dest->setProperty('brand', 'text', 'dest-brand');
+        $dest->save();
+        $destId = $dest->getId();
+        $destPath = $dest->getRealFullPath();
+
+        $seenDuringSave = null;
+        $this->addListener(AssetEvents::PRE_UPDATE, function (AssetEvent $e) use ($destId, &$seenDuringSave): void {
+            if ($e->getAsset()->getId() === $destId) {
+                $seenDuringSave = [
+                    'site' => $e->getAsset()->getProperty('site'),
+                    'brand' => $e->getAsset()->getProperty('brand'),
+                    'reviewed' => $e->getAsset()->getProperty('reviewed'),
+                ];
+            }
+        });
+
+        (new WebDavFile($dest))->delete();
+        $source = $this->createFileAssetIn($this->root, 'inherit-source.txt', 'NEW');
+
+        $this->newTree()->move($this->davPath($source), ltrim($destPath, '/'));
+
+        $this->assertSame(
+            ['site' => 'folder-site', 'brand' => 'dest-brand', 'reviewed' => 'yes'],
+            $seenDuringSave,
+            'inherited and local properties must both be present on the rebuilt instance while it is saved'
+        );
+
+        $restored = Asset::getById($destId, ['force' => true]);
+        $this->assertInstanceOf(Asset::class, $restored);
+        $properties = $restored->getProperties();
+        $this->assertSame('folder-site', $restored->getProperty('site'));
+        $this->assertTrue($properties['site']->isInherited(), 'the folder property stays inherited, not copied');
+        $this->assertSame('dest-brand', $restored->getProperty('brand'), 'the local row overrides the inherited one');
+        $this->assertFalse($properties['brand']->isInherited());
+        $this->assertSame('yes', $restored->getProperty('reviewed'));
     }
 
     /**

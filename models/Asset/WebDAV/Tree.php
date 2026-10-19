@@ -397,6 +397,13 @@ class Tree extends DAV\Tree
      * cid/cpath are intentionally not set here: Asset::update() assigns them from the target
      * asset when the properties are persisted on save().
      *
+     * The restored rows are merged over the properties the destination inherits at its path:
+     * AbstractElement::getProperties() lazily loads inherited values only while the collection is
+     * null, so installing the local rows alone would hide the folder's inheritable properties
+     * from everything that inspects the rebuilt instance before it is saved (workflow and
+     * permission checks, PRE_UPDATE listeners). A local row overrides an inherited one of the
+     * same name, as it does for a persisted asset.
+     *
      * @param array<mixed> $rows raw `properties` rows (name, type, data, inheritable) from the delete log
      */
     private function restoreProperties(Asset $asset, array $rows): void
@@ -454,7 +461,9 @@ class Tree extends DAV\Tree
         }
 
         if ($properties) {
-            $asset->setProperties($properties);
+            // read through the Dao rather than getProperties(): that would cache the collection
+            // under the restored id, which must not outlive a restore that is rolled back
+            $asset->setProperties(array_merge($asset->getDao()->getProperties(true), $properties));
         }
     }
 
