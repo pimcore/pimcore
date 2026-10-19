@@ -13,7 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Exception;
+use Pimcore;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -409,10 +413,10 @@ class Tree extends DAV\Tree
                 $date = \Pimcore\Tool\Serialize::unserialize($data, [
                     \Carbon\Carbon::class,
                     \Carbon\CarbonImmutable::class,
-                    \DateTime::class,
-                    \DateTimeImmutable::class,
+                    DateTime::class,
+                    DateTimeImmutable::class,
                 ]);
-                if (!$date instanceof \DateTimeInterface) {
+                if (!$date instanceof DateTimeInterface) {
                     continue;
                 }
                 $property->setData($date);
@@ -442,7 +446,7 @@ class Tree extends DAV\Tree
      */
     private function restoreMetadata(Asset $asset, array $rows): void
     {
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
         $metadata = [];
         foreach ($rows as $row) {
