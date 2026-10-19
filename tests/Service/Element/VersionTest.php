@@ -401,6 +401,33 @@ class VersionTest extends TestCase
         $this->assertSame('historicValue', $objectFromVersion->getCalculatedValue(), 'writing the version returned by saveVersion() again must keep its stored values');
     }
 
+    public function testCalculatedValueSnapshotNotCapturedWhenVersionCreatedWithoutOptionIsSavedAgain(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        // created while the option is disabled: the version stores no snapshot
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'historicValue');
+        $object->save();
+        $version = $object->saveVersion();
+        $this->assertNotNull($version);
+
+        // enabling the option afterwards and writing the same instance again must not capture into the old version
+        $this->enableCalculatedValueSnapshot();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
+        $version->setNote('written again');
+        $version->save();
+
+        /** @var Unittest $objectFromVersion */
+        $objectFromVersion = Version::getById($version->getId())->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'liveValue');
+
+        $this->assertNull($objectFromVersion->__getCalculatedValueSnapshot(), 'a version created without a snapshot must not get one when written again');
+        $this->assertSame('liveValue', $objectFromVersion->getCalculatedValue());
+    }
+
     public function testCalculatedValueSnapshotNotKeptWhenAutoSaveRowIsReused(): void
     {
         $this->enableCalculatedValueSnapshot();

@@ -253,6 +253,7 @@ final class Version extends AbstractModel
             if ($this->isAutoSave()) {
                 // auto-save versions never store a snapshot; this includes the auto-save row of a user that is
                 // written again with an object restored from a version, whose copy would carry the old values
+                $this->rememberCalculatedValueSnapshot(null);
                 $newData->__setCalculatedValueSnapshot(null);
             } elseif ($this->getId() !== null && $this->calculatedValueSnapshotKnown) {
                 // an existing version is written again (e.g. note or version count changed): keep the values
@@ -262,7 +263,9 @@ final class Version extends AbstractModel
                 $this->captureCalculatedValueSnapshot($data, $newData);
             } else {
                 // never carry the snapshot of an object that was restored from a version into a new
-                // version that does not capture (option disabled): its values would be stale
+                // version that does not capture (option disabled): its values would be stale; remember
+                // that too, so enabling the option later never captures into this version when it is written again
+                $this->rememberCalculatedValueSnapshot(null);
                 $newData->__setCalculatedValueSnapshot(null);
             }
         }
