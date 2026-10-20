@@ -850,11 +850,13 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locValue) {
                         $locValue->setInvisible(false);
                         $locValue->setNotEditable(false);
+                        self::resetBlockFieldDefinitions($locValue);
                     }
                     $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $def->setInvisible(false);
                     $def->setNotEditable(false);
+                    self::resetBlockFieldDefinitions($def);
                 }
             }
         }
@@ -881,15 +883,51 @@ class Service extends Model\Element\Service
 
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
+                        self::mergeBlockFieldDefinitions($mergedLocalizedFieldDefinitions[$locKey] ?? null, $customLocalizedFieldDefinitions[$locKey] ?? null);
                     }
                     $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
+                    self::mergeBlockFieldDefinitions($mergedFieldDefinition[$key] ?? null, $def);
                 }
             }
         }
 
         return $mergedFieldDefinition;
+    }
+
+    /**
+     * The children of a Block start out as visible and editable, the custom layouts restrict them afterwards
+     */
+    private static function resetBlockFieldDefinitions(ClassDefinition\Data $def): void
+    {
+        if (!$def instanceof ClassDefinition\Data\Block) {
+            return;
+        }
+
+        foreach ($def->getFieldDefinitions(['suppressEnrichment' => true]) as $blockChild) {
+            $blockChild->setInvisible(false);
+            $blockChild->setNotEditable(false);
+        }
+    }
+
+    /**
+     * Applies the children of a Block in a custom layout to the children of the merged Block
+     */
+    private static function mergeBlockFieldDefinitions(?ClassDefinition\Data $mergedDef, ?ClassDefinition\Data $customDef): void
+    {
+        if (!$mergedDef instanceof ClassDefinition\Data\Block || !$customDef instanceof ClassDefinition\Data\Block) {
+            return;
+        }
+
+        $customBlockFieldDefinitions = $customDef->getFieldDefinitions(['suppressEnrichment' => true]);
+        $mergedBlockFieldDefinitions = $mergedDef->getFieldDefinitions(['suppressEnrichment' => true]);
+
+        foreach (array_keys($mergedBlockFieldDefinitions) as $blockKey) {
+            self::mergeFieldDefinition($mergedBlockFieldDefinitions, $customBlockFieldDefinitions, (string) $blockKey);
+        }
+
+        $mergedDef->setChildren(array_values($mergedBlockFieldDefinitions));
     }
 
     /**
@@ -942,6 +980,11 @@ class Service extends Model\Element\Service
             }
 
             $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
+
+            if ($layout instanceof ClassDefinition\Data\Block && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Block) {
+                // the children of a Block are no top-level fields, they are checked against the Block's own definitions
+                $fieldDefinitions = $fieldDefinitions[$name]->getFieldDefinitions(['suppressEnrichment' => true]);
+            }
         }
 
         if (method_exists($layout, 'getChildren')) {
