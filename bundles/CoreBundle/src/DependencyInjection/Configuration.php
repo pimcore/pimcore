@@ -2242,7 +2242,7 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('blocked_classes')
                                 ->info('FQCNs that must not be traversable (method calls or property access) from
                                 sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
-                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                infrastructure layer, `Pimcore\Model\User`, the request and the `app` variable) - a site can append further FQCNs on
                                 top of that default. Ignored when `allowed_classes` is non-empty.')
                                 ->scalarPrototype()->end()
                             ->end()
@@ -2258,10 +2258,10 @@ final class Configuration implements ConfigurationInterface
                                 ->info('`pimcore_*` function names that must not be covered by the blanket
                                 `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
                                 functions that look up and return a live model instance by id/path, expose a
-                                filesystem/state oracle (e.g. `pimcore_file_exists`), or read and delete an
+                                filesystem/state oracle (e.g. `pimcore_file_exists`), read and delete an
                                 arbitrary file (`pimcore_asset_version_preview`,
-                                `pimcore_image_version_preview`) - a site can append further function names on
-                                top of that default.')
+                                `pimcore_image_version_preview`) or dump arbitrary objects (`pimcore_dump`) - a
+                                site can append further function names on top of that default.')
                                 ->scalarPrototype()->end()
                             ->end()
                             ->arrayNode('hard_blocked_methods')

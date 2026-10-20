@@ -27,9 +27,13 @@ The policy supports two mutually exclusive modes:
 - **Blocklist mode (default)** - every object is reachable *except* instances of a
   denylist of classes. Pimcore's `blocked_classes` default covers the database/
   infrastructure layer (`Pimcore\Model\Dao\AbstractDao`, `Doctrine\DBAL\Connection`,
-  `PDO`, `PDOStatement`, Symfony's `ContainerInterface`, `Process`) and
+  `PDO`, `PDOStatement`, Symfony's `ContainerInterface`, `Process`),
   `Pimcore\Model\User` (whose getters expose the password hash and password
-  recovery token). Set `blocked_classes` to add more classes to this denylist.
+  recovery token) and the current request together with the global `app`
+  variable that gives access to it (`AppVariable`, `RequestStack`, `Request`,
+  `ParameterBag`, `HeaderBag`, `SessionInterface`) - the request carries the
+  server variables including the environment, the headers, the cookies and the
+  session. Set `blocked_classes` to add more classes to this denylist.
 - **Allowlist mode** - as soon as `allowed_classes` contains at least one entry, the
   policy switches to allow only instances of the listed classes (and their
   subclasses). **The entire `blocked_classes` denylist is deactivated in this
@@ -138,7 +142,10 @@ sandboxed template. Independently, any Twig function whose name starts with
 `pimcore_` is additionally auto-allowed, except for the `blocked_functions` denylist.
 By default, that denylist contains `pimcore_user` (see
 [Hard-blocked methods](#hard-blocked-methods) above for why `User` getters are
-additionally hard-blocked at the object layer regardless), `pimcore_file_exists`,
+additionally hard-blocked at the object layer regardless), `pimcore_dump`, which
+dumps any value it is given without going through the object checks of the policy
+(so it would also dump objects whose methods and properties a template may not access),
+`pimcore_file_exists`,
 which calls PHP's `is_file()` directly on its argument and would otherwise let a
 sandboxed template use its boolean result as a filesystem-existence oracle for any
 path reachable by the PHP process (GHSA-7m33-xgw9-j3g7), and
@@ -207,10 +214,16 @@ pimcore:
                     - Symfony\Component\DependencyInjection\ContainerInterface
                     - Symfony\Component\Process\Process
                     - Pimcore\Model\User
+                    - Symfony\Bridge\Twig\AppVariable
+                    - Symfony\Component\HttpFoundation\RequestStack
+                    - Symfony\Component\HttpFoundation\Request
+                    - Symfony\Component\HttpFoundation\ParameterBag
+                    - Symfony\Component\HttpFoundation\HeaderBag
+                    - Symfony\Component\HttpFoundation\Session\SessionInterface
                 # Non-empty => object allowlist mode. Deactivates the class denylist entirely.
                 allowed_classes: []
                 # Defaults to the built-in pimcore_* function denylist - a site's own
-                # config is appended to it. Only pimcore_user, pimcore_file_exists,
+                # config is appended to it. Only pimcore_user, pimcore_dump, pimcore_file_exists,
                 # pimcore_asset_version_preview and pimcore_image_version_preview are
                 # blocked out of the box; the id/path lookup functions below are
                 # shipped commented out - uncomment them (or add the equivalent to a
@@ -233,6 +246,7 @@ pimcore:
                     - pimcore_file_exists
                     - pimcore_asset_version_preview
                     - pimcore_image_version_preview
+                    - pimcore_dump
                 # FQCN => method names that are never callable, regardless of
                 # blocked_classes/allowed_classes. Defaults to a small set of
                 # secret/content-returning getters - a site's own config is merged

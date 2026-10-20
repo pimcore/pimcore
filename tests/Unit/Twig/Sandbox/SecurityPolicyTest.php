@@ -44,6 +44,13 @@ use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
 use ReflectionClassConstant;
 use stdClass;
+use Symfony\Bridge\Twig\AppVariable;
+use Symfony\Component\HttpFoundation\HeaderBag;
+use Symfony\Component\HttpFoundation\InputBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\ServerBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
@@ -883,6 +890,57 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkSecurity([], [], ['pimcore_file_exists']);
     }
 
+    public function testPimcoreDumpIsNotAutoAllowedByDefault(): void
+    {
+        // pimcore_dump() clones whatever it is given without going through the policy, so a
+        // sandboxed template could dump objects whose methods and properties it may not access.
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_dump']);
+    }
+
+    /**
+     * @return iterable<string, array{object}>
+     */
+    public static function requestStateClassesProvider(): iterable
+    {
+        yield 'app variable' => [new AppVariable()];
+        yield 'request' => [new Request()];
+        yield 'request stack' => [new RequestStack()];
+        yield 'server bag' => [new ServerBag()];
+        yield 'input bag' => [new InputBag()];
+        yield 'header bag' => [new HeaderBag()];
+    }
+
+    /**
+     * @dataProvider requestStateClassesProvider
+     */
+    public function testRequestStateIsBlockedByDefault(object $instance): void
+    {
+        // the request (server variables incl. the environment, headers, cookies, session) must not be
+        // template-reachable, neither through the global `app` variable nor through any other object
+        $policy = new SecurityPolicy(blockedClasses: self::defaultSandboxSecurityPolicyConfig()['blocked_classes']);
+
+        try {
+            $policy->checkMethodAllowed($instance, 'get');
+            $this->fail($instance::class . ' must be blocked');
+        } catch (SecurityNotAllowedMethodError) {
+            $this->addToAssertionCount(1);
+        }
+
+        $this->expectException(SecurityNotAllowedPropertyError::class);
+        $policy->checkPropertyAllowed($instance, 'server');
+    }
+
+    public function testSessionIsBlockedByDefault(): void
+    {
+        $policy = new SecurityPolicy(blockedClasses: self::defaultSandboxSecurityPolicyConfig()['blocked_classes']);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed($this->createStub(SessionInterface::class), 'get');
+    }
+
     /**
      * @return iterable<string, array{string}>
      */
@@ -953,7 +1011,7 @@ final class SecurityPolicyTest extends TestCase
         $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
 
         // a rendering/helper pimcore_* function not on the explicit-allow list
-        $policy->checkSecurity([], [], ['pimcore_dump']);
+        $policy->checkSecurity([], [], ['pimcore_head_title']);
         $this->addToAssertionCount(1);
     }
 
@@ -969,10 +1027,10 @@ final class SecurityPolicyTest extends TestCase
     {
         $policy = new SecurityPolicy(blockedFunctions: [
             ...self::defaultSandboxSecurityPolicyConfig()['blocked_functions'],
-            'pimcore_dump',
+            'pimcore_website_config',
         ]);
 
         $this->expectException(SecurityNotAllowedFunctionError::class);
-        $policy->checkSecurity([], [], ['pimcore_dump']);
+        $policy->checkSecurity([], [], ['pimcore_website_config']);
     }
 }

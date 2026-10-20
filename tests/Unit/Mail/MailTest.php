@@ -156,6 +156,36 @@ class MailTest extends TestCase
     }
 
     /**
+     * @return iterable<string, array{string}>
+     */
+    public static function requestStateExpressionsProvider(): iterable
+    {
+        yield 'app variable' => ['{{ app.environment }}'];
+        yield 'server variable' => ["{{ app.request.server.get('APP_ENV') }}"];
+        yield 'server variables' => ['{{ app.request.server.all.APP_ENV }}'];
+        yield 'app via context' => ['{{ _context.app.environment }}'];
+        yield 'dump of the app variable' => ['{{ pimcore_dump(app) }}'];
+    }
+
+    /**
+     * Test: a template expression must not reach the request (server variables, environment) or dump it
+     *
+     * @dataProvider requestStateExpressionsProvider
+     */
+    public function testSandboxDoesNotExposeRequestState(string $expression): void
+    {
+        $mail = new \Pimcore\Mail();
+        $mail->html('<p>' . $expression . '</p>');
+
+        try {
+            $mail->getBodyHtmlRendered();
+            $this->fail('Rendering must fail: ' . $expression);
+        } catch (Exception $e) {
+            $this->assertStringContainsString('Failed rendering the body', $e->getMessage());
+        }
+    }
+
+    /**
      * Test: a template expression blocked by the sandbox results in a handled exception, not in a TypeError
      */
     public function testSandboxViolationThrowsHandledException(): void
