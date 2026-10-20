@@ -850,13 +850,13 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locValue) {
                         $locValue->setInvisible(false);
                         $locValue->setNotEditable(false);
-                        self::resetBlockFieldDefinitions($locValue);
+                        self::resetContainerFieldDefinitions($locValue);
                     }
                     $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $def->setInvisible(false);
                     $def->setNotEditable(false);
-                    self::resetBlockFieldDefinitions($def);
+                    self::resetContainerFieldDefinitions($def);
                 }
             }
         }
@@ -883,12 +883,12 @@ class Service extends Model\Element\Service
 
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
-                        self::mergeBlockFieldDefinitions($mergedLocalizedFieldDefinitions[$locKey] ?? null, $customLocalizedFieldDefinitions[$locKey] ?? null);
+                        self::mergeContainerFieldDefinitions($mergedLocalizedFieldDefinitions[$locKey] ?? null, $customLocalizedFieldDefinitions[$locKey] ?? null);
                     }
                     $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
-                    self::mergeBlockFieldDefinitions($mergedFieldDefinition[$key] ?? null, $def);
+                    self::mergeContainerFieldDefinitions($mergedFieldDefinition[$key] ?? null, $def);
                 }
             }
         }
@@ -897,37 +897,43 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * The children of a Block start out as visible and editable, the custom layouts restrict them afterwards
+     * The children of a Block (or a Localizedfields inside it) start out as visible and editable,
+     * the custom layouts restrict them afterwards
      */
-    private static function resetBlockFieldDefinitions(ClassDefinition\Data $def): void
+    private static function resetContainerFieldDefinitions(ClassDefinition\Data $def): void
     {
-        if (!$def instanceof ClassDefinition\Data\Block) {
+        if (!$def instanceof ClassDefinition\Data\Block && !$def instanceof ClassDefinition\Data\Localizedfields) {
             return;
         }
 
-        foreach ($def->getFieldDefinitions(['suppressEnrichment' => true]) as $blockChild) {
-            $blockChild->setInvisible(false);
-            $blockChild->setNotEditable(false);
+        foreach ($def->getFieldDefinitions(['suppressEnrichment' => true]) as $child) {
+            $child->setInvisible(false);
+            $child->setNotEditable(false);
+            self::resetContainerFieldDefinitions($child);
         }
     }
 
     /**
-     * Applies the children of a Block in a custom layout to the children of the merged Block
+     * Applies the children of a Block (or a Localizedfields inside it) in a custom layout to the children of the merged one
      */
-    private static function mergeBlockFieldDefinitions(?ClassDefinition\Data $mergedDef, ?ClassDefinition\Data $customDef): void
+    private static function mergeContainerFieldDefinitions(?ClassDefinition\Data $mergedDef, ?ClassDefinition\Data $customDef): void
     {
-        if (!$mergedDef instanceof ClassDefinition\Data\Block || !$customDef instanceof ClassDefinition\Data\Block) {
+        if (
+            !($mergedDef instanceof ClassDefinition\Data\Block && $customDef instanceof ClassDefinition\Data\Block)
+            && !($mergedDef instanceof ClassDefinition\Data\Localizedfields && $customDef instanceof ClassDefinition\Data\Localizedfields)
+        ) {
             return;
         }
 
-        $customBlockFieldDefinitions = $customDef->getFieldDefinitions(['suppressEnrichment' => true]);
-        $mergedBlockFieldDefinitions = $mergedDef->getFieldDefinitions(['suppressEnrichment' => true]);
+        $customFieldDefinitions = $customDef->getFieldDefinitions(['suppressEnrichment' => true]);
+        $mergedFieldDefinitions = $mergedDef->getFieldDefinitions(['suppressEnrichment' => true]);
 
-        foreach (array_keys($mergedBlockFieldDefinitions) as $blockKey) {
-            self::mergeFieldDefinition($mergedBlockFieldDefinitions, $customBlockFieldDefinitions, (string) $blockKey);
+        foreach (array_keys($mergedFieldDefinitions) as $key) {
+            self::mergeFieldDefinition($mergedFieldDefinitions, $customFieldDefinitions, (string) $key);
+            self::mergeContainerFieldDefinitions($mergedFieldDefinitions[$key] ?? null, $customFieldDefinitions[$key] ?? null);
         }
 
-        $mergedDef->setChildren(array_values($mergedBlockFieldDefinitions));
+        $mergedDef->setChildren(array_values($mergedFieldDefinitions));
     }
 
     /**
@@ -981,8 +987,12 @@ class Service extends Model\Element\Service
 
             $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
 
-            if ($layout instanceof ClassDefinition\Data\Block && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Block) {
-                // the children of a Block are no top-level fields, they are checked against the Block's own definitions
+            if (
+                ($layout instanceof ClassDefinition\Data\Block && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Block)
+                || ($layout instanceof ClassDefinition\Data\Localizedfields && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Localizedfields)
+            ) {
+                // the children of a Block or a Localizedfields inside it are no top-level fields,
+                // they are checked against the container's own definitions
                 $fieldDefinitions = $fieldDefinitions[$name]->getFieldDefinitions(['suppressEnrichment' => true]);
             }
         }

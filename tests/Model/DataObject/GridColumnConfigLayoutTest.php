@@ -28,6 +28,8 @@ class GridColumnConfigLayoutTest extends ModelTestCase
 
     private ?User $user = null;
 
+    private ?ClassDefinition $nestedClass = null;
+
     protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Block();
@@ -37,6 +39,7 @@ class GridColumnConfigLayoutTest extends ModelTestCase
     {
         $this->user?->delete();
         $this->customLayout?->delete();
+        $this->nestedClass?->delete();
         parent::tearDown();
     }
 
@@ -146,6 +149,84 @@ class GridColumnConfigLayoutTest extends ModelTestCase
         );
     }
 
+    /**
+     * A Block may contain Localizedfields. Their fields are neither top-level fields of the class nor
+     * children of the Block's own map, so they are checked against the Localizedfields' definitions.
+     */
+    public function testLocalizedfieldsInsideBlockKeepTheirChildren(): void
+    {
+        $class = $this->createBlockWithLocalizedfieldsClass();
+        $this->user = $this->createNonAdminUser($class);
+
+        $result = Service::getCustomLayoutDefinitionForGridColumnConfig($class, 1, $this->user);
+
+        $this->assertSame(
+            ['gridblock', 'blockfield', 'localizedfields', 'locfield', 'locother'],
+            $this->collectFieldNames($result['layoutDefinition'])
+        );
+    }
+
+    /**
+     * Children of a Localizedfields inside a Block that the custom layout leaves out are excluded as well.
+     */
+    public function testLocalizedfieldsInsideBlockAreFilteredByTheCustomLayout(): void
+    {
+        $class = $this->createBlockWithLocalizedfieldsClass();
+
+        $customBlock = Service::cloneDefinition($class->getFieldDefinition('gridblock'));
+        $customLocalizedfields = Service::cloneDefinition($customBlock->getFieldDefinition('localizedfields'));
+        $customLocalizedfields->setChildren([$customLocalizedfields->getFieldDefinition('locfield')]);
+        $customBlock->setChildren([$customBlock->getFieldDefinition('blockfield'), $customLocalizedfields]);
+        $customRoot = (new ClassDefinition\Layout\Panel())->setName('root');
+        $customRoot->addChild($customBlock);
+
+        $this->customLayout = CustomLayout::create([
+            'name' => 'grid-column-config-' . uniqid(),
+            'classId' => $class->getId(),
+        ]);
+        $this->customLayout->setLayoutDefinitions($customRoot);
+        $this->customLayout->save();
+
+        $this->user = $this->createNonAdminUser($class, $this->customLayout);
+
+        $result = Service::getCustomLayoutDefinitionForGridColumnConfig($class, 1, $this->user);
+
+        $this->assertSame(
+            ['gridblock', 'blockfield', 'localizedfields', 'locfield'],
+            $this->collectFieldNames($result['layoutDefinition'])
+        );
+        $this->assertSame(
+            ['locfield'],
+            array_keys($result['fieldDefinition']['gridblock']->getFieldDefinition('localizedfields')->getFieldDefinitions())
+        );
+    }
+
+    private function createBlockWithLocalizedfieldsClass(): ClassDefinition
+    {
+        $localizedfields = new ClassDefinition\Data\Localizedfields();
+        $localizedfields->setName('localizedfields');
+        foreach (['locfield', 'locother'] as $name) {
+            $localizedfields->addChild((new ClassDefinition\Data\Input())->setName($name));
+        }
+
+        $block = new ClassDefinition\Data\Block();
+        $block->setName('gridblock');
+        $block->addChild((new ClassDefinition\Data\Input())->setName('blockfield'));
+        $block->addChild($localizedfields);
+
+        $root = (new ClassDefinition\Layout\Panel())->setName('root');
+        $root->addChild($block);
+
+        $class = new ClassDefinition();
+        $class->setName('unittestGridBlockLocalizedfields');
+        $class->setLayoutDefinitions($root);
+        $class->save();
+
+        $this->nestedClass = $class;
+
+        return ClassDefinition::getByName('unittestGridBlockLocalizedfields');
+    }
+
     private function createAdminUser(): User
     {
         $admin = new User();
@@ -197,7 +278,7 @@ class GridColumnConfigLayoutTest extends ModelTestCase
      */
     private function collectFieldNames(ClassDefinition\Data|ClassDefinition\Layout|null $node): array
     {
-        if ($node instanceof ClassDefinition\Data\Block) {
+        if ($node instanceof ClassDefinition\Data\Block || $node instanceof ClassDefinition\Data\Localizedfields) {
             $names = [$node->getName()];
             foreach ($node->getChildren() as $child) {
                 array_push($names, ...$this->collectFieldNames($child));
