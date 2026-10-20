@@ -933,6 +933,8 @@ class Service extends Model\Element\Service
             self::mergeContainerFieldDefinitions($mergedFieldDefinitions[$key] ?? null, $customFieldDefinitions[$key] ?? null);
         }
 
+        // the children already hold the fields of all aggregated sections, a retained reference would add the unfiltered ones again
+        $mergedDef->setReferencedFields([]);
         $mergedDef->setChildren(array_values($mergedFieldDefinitions));
     }
 

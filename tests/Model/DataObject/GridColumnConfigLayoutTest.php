@@ -201,18 +201,61 @@ class GridColumnConfigLayoutTest extends ModelTestCase
         );
     }
 
-    private function createBlockWithLocalizedfieldsClass(): ClassDefinition
+    /**
+     * Several Localizedfields sections inside a Block are aggregated into one. Fields the custom layout leaves
+     * out must not come back through the aggregated sections.
+     */
+    public function testAggregatedLocalizedfieldsSectionsInsideBlockAreFilteredByTheCustomLayout(): void
+    {
+        $class = $this->createBlockWithLocalizedfieldsClass(true);
+
+        $customBlock = Service::cloneDefinition($class->getFieldDefinition('gridblock'));
+        $customLocalizedfields = Service::cloneDefinition($customBlock->getFieldDefinition('localizedfields'));
+        $customLocalizedfields->setReferencedFields([]);
+        $customLocalizedfields->setChildren([$customLocalizedfields->getFieldDefinition('locfield')]);
+        $customBlock->setChildren([$customBlock->getFieldDefinition('blockfield'), $customLocalizedfields]);
+        $customRoot = (new ClassDefinition\Layout\Panel())->setName('root');
+        $customRoot->addChild($customBlock);
+
+        $this->customLayout = CustomLayout::create([
+            'name' => 'grid-column-config-' . uniqid(),
+            'classId' => $class->getId(),
+        ]);
+        $this->customLayout->setLayoutDefinitions($customRoot);
+        $this->customLayout->save();
+
+        $this->user = $this->createNonAdminUser($class, $this->customLayout);
+
+        $result = Service::getCustomLayoutDefinitionForGridColumnConfig($class, 1, $this->user);
+
+        $this->assertContains('locfield', $this->collectFieldNames($result['layoutDefinition']));
+        $this->assertNotContains('locother', $this->collectFieldNames($result['layoutDefinition']));
+        $this->assertSame(
+            ['locfield'],
+            array_keys($result['fieldDefinition']['gridblock']->getFieldDefinition('localizedfields')->getFieldDefinitions())
+        );
+    }
+
+    private function createBlockWithLocalizedfieldsClass(bool $twoSections = false): ClassDefinition
     {
         $localizedfields = new ClassDefinition\Data\Localizedfields();
         $localizedfields->setName('localizedfields');
-        foreach (['locfield', 'locother'] as $name) {
-            $localizedfields->addChild((new ClassDefinition\Data\Input())->setName($name));
+        $localizedfields->addChild((new ClassDefinition\Data\Input())->setName('locfield'));
+        if (!$twoSections) {
+            $localizedfields->addChild((new ClassDefinition\Data\Input())->setName('locother'));
         }
 
         $block = new ClassDefinition\Data\Block();
         $block->setName('gridblock');
         $block->addChild((new ClassDefinition\Data\Input())->setName('blockfield'));
         $block->addChild($localizedfields);
+
+        if ($twoSections) {
+            $secondSection = new ClassDefinition\Data\Localizedfields();
+            $secondSection->setName('localizedfields');
+            $secondSection->addChild((new ClassDefinition\Data\Input())->setName('locother'));
+            $block->addChild($secondSection);
+        }
 
         $root = (new ClassDefinition\Layout\Panel())->setName('root');
         $root->addChild($block);
