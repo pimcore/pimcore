@@ -1,5 +1,29 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.4
+
+### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
+
+A WYSIWYG field (data object field and Document editable) no longer reduces `<a pimcore_id=... pimcore_type=...>` links
+to unpublished elements, or to objects whose class has no link generator, to their text when it is saved. Only the
+frontend rendering still reduces them.
+
+To make this work for every kind of save (Studio editor, batch edit, scheduled publishing, imports, copy and "update
+references"), the field getters keep these anchors in the following contexts:
+
+- while an object is saved, copied or has its references updated: validation, version and dao reads, and save
+  listeners calling the getters (a listener running outside this scope is not affected),
+- in the admin getters, in versions and in exports,
+- in the query columns, through `getDataForQueryResource()`.
+
+If your own code renders the value of such a getter publicly in one of these contexts (for example a listener that
+outputs getter content during a save, or an integration that publishes the query column), apply
+`Pimcore\Tool\Text::wysiwygText()` to it explicitly. Its signature is unchanged; the variant that keeps the anchors is
+the new `Text::wysiwygTextKeepingLinks()`.
+
+Known limit: custom code that reads a block field outside a save and then saves the object itself still writes the
+reduced text back.
+
 ## Pimcore 2026.3.3
 
 ### [Core] `schedule_tasks` indexes: the migration waits for open transactions

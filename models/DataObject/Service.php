@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -479,21 +480,24 @@ class Service extends Model\Element\Service
         $object->getProperties();
 
         if ($object instanceof Concrete) {
-            //load all in case of lazy loading fields
-            $fd = $object->getClass()->getFieldDefinitions();
-            foreach ($fd as $def) {
-                $getter = 'get' . ucfirst($def->getName());
-                if (method_exists($object, $getter)) {
-                    $value = $object->$getter();
-                    if ($value instanceof Localizedfield) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Objectbrick) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Fieldcollection) {
-                        $value->loadLazyData();
+            // the values read here are copied and stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object): void {
+                //load all in case of lazy loading fields
+                $fd = $object->getClass()->getFieldDefinitions();
+                foreach ($fd as $def) {
+                    $getter = 'get' . ucfirst($def->getName());
+                    if (method_exists($object, $getter)) {
+                        $value = $object->$getter();
+                        if ($value instanceof Localizedfield) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Objectbrick) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Fieldcollection) {
+                            $value->loadLazyData();
+                        }
                     }
                 }
-            }
+            });
         }
     }
 
@@ -583,14 +587,17 @@ class Service extends Model\Element\Service
         if ($object instanceof Concrete) {
             $fields = $object->getClass()->getFieldDefinitions();
 
-            foreach ($fields as $field) {
-                if ($field instanceof IdRewriterInterface) {
-                    $setter = 'set' . ucfirst($field->getName());
-                    if (method_exists($object, $setter)) { // check for non-owner-objects
-                        $object->$setter($field->rewriteIds($object, $rewriteConfig));
+            // the rewritten values are stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object, $fields, $rewriteConfig): void {
+                foreach ($fields as $field) {
+                    if ($field instanceof IdRewriterInterface) {
+                        $setter = 'set' . ucfirst($field->getName());
+                        if (method_exists($object, $setter)) { // check for non-owner-objects
+                            $object->$setter($field->rewriteIds($object, $rewriteConfig));
+                        }
                     }
                 }
-            }
+            });
         }
 
         // rewriting properties

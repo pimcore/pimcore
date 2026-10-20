@@ -36,7 +36,25 @@ class Text
         return $text;
     }
 
+    /**
+     * Resolves the internal references (pimcore_id / pimcore_type) of the given wysiwyg text for the frontend:
+     * links to unpublished documents/objects and to objects without link generator are reduced to their text.
+     */
     public static function wysiwygText(?string $text, array $params = []): ?string
+    {
+        return self::resolveWysiwygText($text, $params, false);
+    }
+
+    /**
+     * Like wysiwygText(), but links to unpublished documents/objects and to objects without link generator are left
+     * untouched. For the editor and for storing the value, which must not lose these links.
+     */
+    public static function wysiwygTextKeepingLinks(?string $text, array $params = []): ?string
+    {
+        return self::resolveWysiwygText($text, $params, true);
+    }
+
+    private static function resolveWysiwygText(?string $text, array $params, bool $keepUnpublished): ?string
     {
         if (empty($text)) {
             return $text;
@@ -63,6 +81,10 @@ class Text
                         $path = $element->getFullPath();
 
                         if (($element instanceof Document || $element instanceof Concrete) && !$element->isPublished()) {
+                            if ($keepUnpublished) {
+                                continue;
+                            }
+
                             $path = null;
                         } elseif ($element instanceof Document) {
                             // get parameters
@@ -90,6 +112,8 @@ class Text
                                     $element,
                                     $params
                                 );
+                            } elseif ($keepUnpublished) {
+                                continue;
                             } else {
                                 // no object path without link generator!
                                 $path = null;
