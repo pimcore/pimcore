@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Carbon\Carbon;
 use Error;
 use Exception;
 use Pimcore;
@@ -93,6 +94,25 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     protected array $referencedFields = [];
 
     /**
+     * Concrete classes a block's resource blob may legitimately contain. Child values are written
+     * by getDataForResource() through the per-fieldtype block marshallers, several of which
+     * rebuild one of these value objects before serializing (externalImage, consent, date/datetime,
+     * structuredTable), while types without a marshaller store their raw normalize() output, which
+     * can keep objects too (hotspotimage/imageGallery -> MarkerHotspotItem, dateRange -> Carbon).
+     * Passed to Serialize::unserialize() in getDataFromResource() so that known value objects are
+     * reconstructed while every other class name in the input is refused.
+     *
+     * @internal
+     */
+    private const ALLOWED_RESOURCE_CLASSES = [
+        DataObject\Data\Consent::class,
+        DataObject\Data\ExternalImage::class,
+        DataObject\Data\StructuredTable::class,
+        Element\Data\MarkerHotspotItem::class,
+        Carbon::class,
+    ];
+
+    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      *
@@ -170,18 +190,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }, $data);
             }
 
-            // A block's resource blob legitimately contains PHP objects, so object deserialization
-            // must stay enabled here. Child values are written by getDataForResource() through the
-            // per-fieldtype block marshallers, several of which rebuild a value object before
-            // serializing (externalImage, consent, date/datetime, structuredTable), while types
-            // without a marshaller store their raw normalize() output, which can keep objects too
-            // (hotspotimage/imageGallery -> MarkerHotspotItem, dateRange -> Carbon). The set is not
-            // enumerable: bundles may register further block marshallers and field definitions.
-            // Restricting this to `false` silently dropped those values to null and corrupted
-            // hotspot metadata - see pimcore/platform-version#262.
-            // Tightening this is tracked in pimcore/internal-improvements#24 and needs the write
-            // side to stop storing live objects first.
-            $unserializedData = Serialize::unserialize($data, true);
+            // A block's resource blob legitimately contains PHP objects (see
+            // self::ALLOWED_RESOURCE_CLASSES), so object deserialization must stay enabled here,
+            // but only for those known value object classes. Restricting this to `false` silently
+            // dropped those values to null and corrupted hotspot metadata - see
+            // pimcore/platform-version#262. Allowing every class (the previous `true`) let a
+            // forged resource string reach arbitrary PHP object graphs, including POP-chain
+            // gadgets, since this data can be request-controlled wherever getDataFromResource()
+            // is reachable - see GHSA-6324-x2cv-h975.
+            $unserializedData = Serialize::unserialize($data, self::ALLOWED_RESOURCE_CLASSES);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {

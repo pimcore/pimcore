@@ -35,6 +35,7 @@ use Pimcore\Model\Document\Page;
 use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool\Serialize;
 
 /**
  * Class BlockTest
@@ -358,6 +359,41 @@ class BlockTest extends ModelTestCase
         // MarkerHotspotItem is ArrayAccess; array access is exactly what broke on the stripped object.
         $this->assertSame('metaName', $metaData['name']);
         $this->assertSame('metaValue', $metaData['value']);
+    }
+
+    /**
+     * Regression test for GHSA-6324-x2cv-h975.
+     *
+     * Block::getDataFromResource() used to unserialize a block's resource blob with every class
+     * allowed. Since this blob can be request-controlled wherever getDataFromResource() is
+     * reachable (e.g. through the denylist-mode Twig sandbox, which permits calling it), a forged
+     * resource string could instantiate arbitrary PHP objects and run POP-chain gadgets via
+     * __wakeup()/__destruct(). Only the value object classes getDataForResource() can actually
+     * produce (see Block::ALLOWED_RESOURCE_CLASSES) may now be reconstructed; everything else must
+     * come back as __PHP_Incomplete_Class, which never has __wakeup() called on it.
+     *
+     * @throws Exception
+     */
+    public function testForgedResourceDataCannotWakeUpArbitraryObjects(): void
+    {
+        UnserializeWakeupProbe::$wokeUp = false;
+
+        $forged = Serialize::serialize([
+            [
+                'forgedElement' => [
+                    'name' => 'forgedElement',
+                    'type' => 'input',
+                    'data' => new UnserializeWakeupProbe(),
+                ],
+            ],
+        ]);
+
+        (new DataObject\ClassDefinition\Data\Block())->getDataFromResource($forged);
+
+        $this->assertFalse(
+            UnserializeWakeupProbe::$wokeUp,
+            'Block::getDataFromResource() must not invoke __wakeup() on a class outside its resource allowlist'
+        );
     }
 
     /**
