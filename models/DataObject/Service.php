@@ -1314,7 +1314,9 @@ class Service extends Model\Element\Service
             return;
         }
 
-        $fieldDefinitions = $fd->getFieldDefinitions();
+        // Resetting dirty flags only needs the field names, so skip the enrichment that would run
+        // dynamic options providers (without an object context) for every field.
+        $fieldDefinitions = $fd->getFieldDefinitions(['suppressEnrichment' => true]);
 
         if (is_array($fieldDefinitions)) {
             foreach ($fieldDefinitions as $fieldDefinition) {
