@@ -81,9 +81,11 @@ class Video extends Model\Asset
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration
      *
-     *
+     * @param bool|null $frontend true returns frontend paths (prefixed with assets.frontend_prefixes.thumbnail and
+     *                            URL-encoded), false returns the paths as stored, null (default) decides depending
+     *                            on whether the current request is a frontend request
      */
-    public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = []): ?array
+    public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = [], ?bool $frontend = null): ?array
     {
         $thumbnail = $this->getThumbnailConfig($thumbnailName);
 
@@ -98,11 +100,11 @@ class Video extends Model\Asset
                         if ($pathKey == 'medias') {
                             foreach ($path as &$format) {
                                 foreach ($format as &$f) {
-                                    $f = $this->enrichThumbnailPath($f);
+                                    $f = $this->enrichThumbnailPath($f, $frontend);
                                 }
                             }
                         } else {
-                            $path = $this->enrichThumbnailPath($path);
+                            $path = $this->enrichThumbnailPath($path, $frontend);
                         }
                     }
 
@@ -116,11 +118,11 @@ class Video extends Model\Asset
         return null;
     }
 
-    private function enrichThumbnailPath(string $path): string
+    private function enrichThumbnailPath(string $path, ?bool $frontend = null): string
     {
         $fullPath = rtrim($this->getRealPath(), '/') . '/' . ltrim($path, '/');
 
-        if (Tool::isFrontend()) {
+        if ($frontend ?? Tool::isFrontend()) {
             $path = urlencode_ignore_slash($fullPath);
             $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;

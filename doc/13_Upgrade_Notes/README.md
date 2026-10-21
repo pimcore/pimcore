@@ -2,6 +2,9 @@
 
 ## Pimcore 2026.4.0
 
+### [Assets]
+- [Thumbnails] `Asset\Video::getThumbnail()` has a new optional third parameter `?bool $frontend = null`. With the default `null` the behavior is unchanged: the paths are prefixed with `pimcore.assets.frontend_prefixes.thumbnail` and URL-encoded only while a frontend request is handled. Pass `true` to get the frontend paths in any other context as well (CLI, cron, Messenger worker), or `false` to always get the stored paths. Classes overriding `getThumbnail()` need to add the parameter to their signature.
+
 ### [Documents]
 - [Editables] The scheduled block editable (`Pimcore\Model\Document\Editable\Scheduledblock`, Twig function `pimcore_scheduledblock`, also known as the time slider editable) is deprecated and will be removed in Pimcore 2027.1. Using it in a template now triggers a deprecation notice. Its behaviour is unchanged until then.
 
