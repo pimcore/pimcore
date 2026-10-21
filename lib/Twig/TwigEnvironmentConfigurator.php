@@ -14,24 +14,43 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig;
 
+use Closure;
+use InvalidArgumentException;
 use Pimcore\Model\Document\Editable;
 use Symfony\Bundle\TwigBundle\DependencyInjection\Configurator\EnvironmentConfigurator;
 use Twig\Environment;
 use Twig\Runtime\EscaperRuntime;
 
 /**
+ * Decorates the `twig.configurator.environment` service to mark editables as safe for the "html" escaping strategy.
+ *
+ * Other bundles decorate the same service and type the inner service against Symfony's
+ * EnvironmentConfigurator (e.g. symfony/ux-twig-component), so this class extends it to be accepted
+ * as inner service by them. In turn, their decorators do not extend it either, so any object exposing
+ * `configure(Environment): void` is accepted as inner service here, whichever decoration order the
+ * container ends up with.
+ *
  * @internal
  */
-final class TwigEnvironmentConfigurator
+final class TwigEnvironmentConfigurator extends EnvironmentConfigurator
 {
-    public function __construct(
-        private readonly EnvironmentConfigurator $decorated,
-    ) {
+    private readonly Closure $configureDecorated;
+
+    public function __construct(object $decorated)
+    {
+        if (!method_exists($decorated, 'configure')) {
+            throw new InvalidArgumentException(sprintf(
+                'The decorated twig environment configurator must provide a configure() method, %s given.',
+                get_debug_type($decorated)
+            ));
+        }
+
+        $this->configureDecorated = $decorated->configure(...);
     }
 
     public function configure(Environment $environment): void
     {
-        $this->decorated->configure($environment);
+        ($this->configureDecorated)($environment);
 
         $environment->getRuntime(EscaperRuntime::class)->addSafeClass(Editable::class, ['html']);
     }
