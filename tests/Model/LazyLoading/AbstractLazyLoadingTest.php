@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\LazyLoading;
 
 use Exception;
-use Pimcore\Cache;
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
@@ -130,35 +128,6 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
         foreach ($needle as $item) {
             $this->assertEquals($expected, str_contains($string, $item), $messagePrefix . "Check if '$item' is occuring in serialized data.");
-        }
-    }
-
-    protected function forceSavingAndLoadingFromCache(Concrete $object, callable $callback): void
-    {
-        //enable cache
-        $cacheEnabled = Cache::isEnabled();
-        if (!$cacheEnabled) {
-            Cache::enable();
-            Cache::getHandler()->setHandleCli(true);
-        }
-
-        //save object to cache
-        Cache::getHandler()->removeClearedTags($object->getCacheTags());
-        Cache::save($object, \Pimcore\Model\Element\Service::getElementCacheTag('object', $object->getId()), [], null, 9999, true);
-
-        Cache\RuntimeCache::clear();
-        //reload from cache and check again
-        $objectCache = Concrete::getById($object->getId());
-
-        //once more reload object from database to check consistency of
-        //data object loaded from cache - see also https://github.com/pimcore/pimcore/issues/12290
-        Concrete::getById($object->getId(), ['force' => true]);
-
-        $callback($objectCache);
-
-        if (!$cacheEnabled) {
-            Cache::disable();
-            Cache::getHandler()->setHandleCli(false);
         }
     }
 }

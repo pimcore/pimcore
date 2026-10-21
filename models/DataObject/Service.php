@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Closure;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Exception;
@@ -26,6 +27,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -479,21 +481,24 @@ class Service extends Model\Element\Service
         $object->getProperties();
 
         if ($object instanceof Concrete) {
-            //load all in case of lazy loading fields
-            $fd = $object->getClass()->getFieldDefinitions();
-            foreach ($fd as $def) {
-                $getter = 'get' . ucfirst($def->getName());
-                if (method_exists($object, $getter)) {
-                    $value = $object->$getter();
-                    if ($value instanceof Localizedfield) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Objectbrick) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Fieldcollection) {
-                        $value->loadLazyData();
+            // the values read here are copied and stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object): void {
+                //load all in case of lazy loading fields
+                $fd = $object->getClass()->getFieldDefinitions();
+                foreach ($fd as $def) {
+                    $getter = 'get' . ucfirst($def->getName());
+                    if (method_exists($object, $getter)) {
+                        $value = $object->$getter();
+                        if ($value instanceof Localizedfield) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Objectbrick) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Fieldcollection) {
+                            $value->loadLazyData();
+                        }
                     }
                 }
-            }
+            });
         }
     }
 
@@ -583,14 +588,17 @@ class Service extends Model\Element\Service
         if ($object instanceof Concrete) {
             $fields = $object->getClass()->getFieldDefinitions();
 
-            foreach ($fields as $field) {
-                if ($field instanceof IdRewriterInterface) {
-                    $setter = 'set' . ucfirst($field->getName());
-                    if (method_exists($object, $setter)) { // check for non-owner-objects
-                        $object->$setter($field->rewriteIds($object, $rewriteConfig));
+            // the rewritten values are stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object, $fields, $rewriteConfig): void {
+                foreach ($fields as $field) {
+                    if ($field instanceof IdRewriterInterface) {
+                        $setter = 'set' . ucfirst($field->getName());
+                        if (method_exists($object, $setter)) { // check for non-owner-objects
+                            $object->$setter($field->rewriteIds($object, $rewriteConfig));
+                        }
                     }
                 }
-            }
+            });
         }
 
         // rewriting properties
@@ -973,7 +981,8 @@ class Service extends Model\Element\Service
         int $objectId,
         ?User $user = null
     ): array {
-        $layoutDefinitions = $class->getLayoutDefinitions();
+        // work on a copy, the class definition is shared and callers modify the returned layout
+        $layoutDefinitions = self::cloneDefinition($class->getLayoutDefinitions());
 
         $result = [
             'layoutDefinition' => $layoutDefinitions,
@@ -1209,7 +1218,9 @@ class Service extends Model\Element\Service
 
         $data->setCalculatorData($fd->getCalculatorData());
 
-        return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
+        // the edit view always shows freshly computed values: evaluate without the snapshot of the object, so
+        // calculators and expressions that read other calculated fields of a loaded draft see live values as well
+        return self::computeWithoutCalculatedValueSnapshot($object, static fn () => DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                     $className = $fd->getCalculatorClass();
@@ -1233,7 +1244,7 @@ class Service extends Model\Element\Service
                 default:
                     return null;
             }
-        });
+        }));
     }
 
     public static function getCalculatedFieldValue(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|Concrete $object, ?Data\CalculatedValue $data): mixed
@@ -1259,6 +1270,11 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        // only values requested on the object itself can come from its version snapshot (object level and
+        // localized fields, see Version::marshalData()); a field collection item or object brick asking for
+        // one of its own fields never does, even if a field of the object has the same name
+        $snapshotOwner = $object instanceof Concrete ? $object : null;
+
         if (
             $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
             $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
@@ -1267,6 +1283,16 @@ class Service extends Model\Element\Service
         }
 
         $data->setCalculatorData($fd->getCalculatorData());
+
+        if ($snapshotOwner !== null) {
+            $snapshot = $snapshotOwner->__getCalculatedValueSnapshot();
+            if ($snapshot !== null) {
+                $snapshotKey = self::getCalculatedValueSnapshotKey($data);
+                if (array_key_exists($snapshotKey, $snapshot)) {
+                    return $snapshot[$snapshotKey];
+                }
+            }
+        }
 
         return DataObject\Service::useInheritedValues(true, static function () use ($object, $fd, $data) {
             switch ($fd->getCalculatorType()) {
@@ -1295,6 +1321,45 @@ class Service extends Model\Element\Service
         });
     }
 
+    /**
+     * Builds the key under which the value of a calculated field is stored in the
+     * calculated value snapshot of a version (see Concrete::__getCalculatedValueSnapshot()).
+     *
+     * @internal
+     */
+    public static function getCalculatedValueSnapshotKey(Data\CalculatedValue $data): string
+    {
+        return implode('~', [
+            $data->getOwnerType(),
+            (string) $data->getOwnerName(),
+            (string) $data->getIndex(),
+            (string) $data->getPosition(),
+            $data->getFieldname(),
+        ]);
+    }
+
+    /**
+     * Runs $closure with the calculated value snapshot of $object temporarily disabled, so calculated
+     * fields read inside it are computed freshly, and restores the snapshot afterwards.
+     *
+     * @internal
+     */
+    public static function computeWithoutCalculatedValueSnapshot(Concrete $object, Closure $closure): mixed
+    {
+        $snapshot = $object->__getCalculatedValueSnapshot();
+        if ($snapshot === null) {
+            return $closure();
+        }
+
+        $object->__setCalculatedValueSnapshot(null);
+
+        try {
+            return $closure();
+        } finally {
+            $object->__setCalculatedValueSnapshot($snapshot);
+        }
+    }
+
     public static function getSystemFields(): array
     {
         return self::$systemFields;
@@ -1306,7 +1371,9 @@ class Service extends Model\Element\Service
             return;
         }
 
-        $fieldDefinitions = $fd->getFieldDefinitions();
+        // Resetting dirty flags only needs the field names, so skip the enrichment that would run
+        // dynamic options providers (without an object context) for every field.
+        $fieldDefinitions = $fd->getFieldDefinitions(['suppressEnrichment' => true]);
 
         if (is_array($fieldDefinitions)) {
             foreach ($fieldDefinitions as $fieldDefinition) {

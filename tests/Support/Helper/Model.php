@@ -440,6 +440,11 @@ class Model extends AbstractDefinitionHelper
             $calculatedValueExpression->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
             $panel->addChild($calculatedValueExpression);
 
+            $calculatedValueDependent = $this->createDataChild('calculatedValue', 'calculatedValueDependent');
+            $calculatedValueDependent->setCalculatorExpression("object.getCalculatedValue() ~ ' dependent'");
+            $calculatedValueDependent->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
+            $panel->addChild($calculatedValueDependent);
+
             $calculatedValueExpressionConstant = $this->createDataChild('calculatedValue', 'calculatedValueExpressionConstant');
             $calculatedValueExpressionConstant->setCalculatorExpression("constant('PIMCORE_PROJECT_ROOT')");
             $calculatedValueExpressionConstant->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
@@ -622,6 +627,9 @@ class Model extends AbstractDefinitionHelper
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
             $lFields->setName('localizedfields');
             $lFields->addChild($this->createDataChild('input', 'linput'));
+            $lcalculatedValue = $this->createDataChild('calculatedValue', 'lcalculatedValue');
+            $lcalculatedValue->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lcalculatedValue);
             $lFields->addChild($this->createDataChild('textarea', 'ltextarea'));
             $lFields->addChild($this->createDataChild('wysiwyg', 'lwysiwyg'));
             $lFields->addChild($this->createDataChild('numeric', 'lnumber'));
@@ -716,6 +724,34 @@ class Model extends AbstractDefinitionHelper
         return $class;
     }
 
+    /**
+     * Set up a class with a Block that holds a wysiwyg field.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_WysiwygBlock(string $name = 'unittestWysiwygBlock', string $filename = 'wysiwyg-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('testblock');
+            $block->addChild($this->createDataChild('wysiwyg', 'blockwysiwyg'));
+
+            $panel->addChild($block);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+
+        return $class;
+    }
+
     protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, ?string $id = null): DataObject\ClassDefinitionInterface
     {
         $cm = $this->getClassManager();
@@ -775,6 +811,11 @@ class Model extends AbstractDefinitionHelper
             $lFields->setName('localizedfields');
 
             $lFields->addChild($this->createDataChild('Input', 'linput'));
+
+            // same name as the localized calculated field of the unittest class on purpose
+            $lcalculatedValue = $this->createDataChild('calculatedValue', 'lcalculatedValue');
+            $lcalculatedValue->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lcalculatedValue);
 
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])

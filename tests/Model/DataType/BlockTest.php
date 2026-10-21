@@ -19,6 +19,7 @@ use Carbon\CarbonPeriod;
 use DatePeriod;
 use Exception;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
@@ -367,12 +368,6 @@ class BlockTest extends ModelTestCase
      */
     public function testReferencesInsideBlock(): void
     {
-        $cacheEnabled = Cache::isEnabled();
-        if (!$cacheEnabled) {
-            Cache::enable();
-            Cache::getHandler()->setHandleCli(true);
-        }
-
         $targetDocument = TestHelper::createEmptyDocumentPage();
         $asset = TestHelper::createImageAsset('', null, true);
 
@@ -388,28 +383,26 @@ class BlockTest extends ModelTestCase
         $object->setTestblock([$data]);
         $object->save();
 
-        Cache\RuntimeCache::clear();
+        $assertReferences = function (unittestBlock $loaded) use ($targetDocument, $asset): void {
+            $loadedData = $loaded->getTestblock();
 
-        //reload from cache and save again
-        $objectRef = DataObject::getById($object->getId());
-        $objectRef->save(); //block data should retain here
+            /** @var Link $loadedLink */
+            $loadedLink = $loadedData[0]['blocklink']->getData();
+            $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
-        //reload from db
-        $object = DataObject::getById($objectRef->getId(), ['force' => true]);
+            $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
+            $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
+        };
 
-        $loadedData = $object->getTestblock();
+        $this->forceSavingAndLoadingFromCache($object, function (unittestBlock $objectCache) use ($assertReferences) {
+            //save the untouched cached object first, its block data should retain here
+            $objectCache->save();
 
-        /** @var Link $loadedLink */
-        $loadedLink = $loadedData[0]['blocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
+            $assertReferences($objectCache);
 
-        $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
-        $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
-
-        if (!$cacheEnabled) {
-            Cache::disable();
-            Cache::getHandler()->setHandleCli(false);
-        }
+            //reload from db
+            $assertReferences(DataObject::getById($objectCache->getId(), ['force' => true]));
+        });
     }
 
     /**
@@ -419,12 +412,6 @@ class BlockTest extends ModelTestCase
      */
     public function testReferencesInsideLocalizedBlock(): void
     {
-        $cacheEnabled = Cache::isEnabled();
-        if (!$cacheEnabled) {
-            Cache::enable();
-            Cache::getHandler()->setHandleCli(true);
-        }
-
         $targetDocument = TestHelper::createEmptyDocumentPage();
         $asset = TestHelper::createImageAsset('', null, true);
 
@@ -440,27 +427,26 @@ class BlockTest extends ModelTestCase
         $object->setLtestblock([$data], 'de');
         $object->save();
 
-        Cache\RuntimeCache::clear();
+        $assertReferences = function (unittestBlock $loaded) use ($targetDocument, $asset): void {
+            $loadedData = $loaded->getLtestblock('de');
 
-        //reload from cache and save again
-        $objectRef = DataObject::getById($object->getId());
-        $objectRef->save(); //block data should retain here
+            /** @var Link $loadedLink */
+            $loadedLink = $loadedData[0]['lblocklink']->getData();
+            $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
-        //reload from db
-        $object = DataObject::getById($objectRef->getId(), ['force' => true]);
-        $loadedData = $object->getLtestblock('de');
+            $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
+            $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
+        };
 
-        /** @var Link $loadedLink */
-        $loadedLink = $loadedData[0]['lblocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
+        $this->forceSavingAndLoadingFromCache($object, function (unittestBlock $objectCache) use ($assertReferences) {
+            //save the untouched cached object first, its block data should retain here
+            $objectCache->save();
 
-        $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
-        $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
+            $assertReferences($objectCache);
 
-        if (!$cacheEnabled) {
-            Cache::disable();
-            Cache::getHandler()->setHandleCli(false);
-        }
+            //reload from db
+            $assertReferences(DataObject::getById($objectCache->getId(), ['force' => true]));
+        });
     }
 
     /**
@@ -470,12 +456,6 @@ class BlockTest extends ModelTestCase
      */
     public function testBlockDataFromReferences(): void
     {
-        $cacheEnabled = Cache::isEnabled();
-        if (!$cacheEnabled) {
-            Cache::enable();
-            Cache::getHandler()->setHandleCli(true);
-        }
-
         $reference = TestHelper::createEmptyObject();
         $source = $this->createBlockObject();
         $data = [
@@ -494,18 +474,29 @@ class BlockTest extends ModelTestCase
         $source->getLtestblock('de')[0]['lblockadvancedRelations']->setData([new DataObject\Data\ElementMetadata('lblockadvancedRelations', [], $referenceNew)]);
         $source->save();
 
-        //reload target and fetch source
-        $target = DataObject::getById($target->getId(), ['force' => true]);
-        $sourceFromRef = $target->getHref();
+        $assertReference = function (unittestBlock $loaded) use ($referenceNew): void {
+            $loadedReference = $loaded->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
 
-        $loadedReference = $sourceFromRef->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
+            $this->assertEquals($referenceNew->getId(), $loadedReference[0]->getElement()->getId());
+        };
 
-        $this->assertEquals($referenceNew->getId(), $loadedReference[0]->getElement()->getId());
+        $this->forceSavingAndLoadingFromCache($source, function (unittestBlock $sourceCache) use (
+            $target,
+            $assertReference
+        ) {
+            $assertReference($sourceCache);
 
-        if (!$cacheEnabled) {
-            Cache::disable();
-            Cache::getHandler()->setHandleCli(false);
-        }
+            //the source must be in the persistent cache, otherwise the check below silently reads the database
+            $this->assertNotFalse(
+                Cache::load(Service::getElementCacheTag('object', $sourceCache->getId())),
+                'Source must be stored in the persistent cache.'
+            );
+
+            //reload target and fetch source (runtime cache cleared, so the source comes from the persistent cache)
+            RuntimeCache::clear();
+            $reloadedTarget = DataObject::getById($target->getId(), ['force' => true]);
+            $assertReference($reloadedTarget->getHref());
+        });
     }
 
     /**
