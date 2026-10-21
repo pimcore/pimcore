@@ -104,6 +104,11 @@ class VideoThumbnailPathTest extends TestCase
 
     public function testGetThumbnailForwardsFrontendToAllFormats(): void
     {
+        // the processor checks for a video adapter before it looks at finished thumbnails
+        if (!\Pimcore\Video::isAvailable()) {
+            $this->markTestSkipped('No video adapter (ffmpeg) available');
+        }
+
         $video = $this->createVideoWithFinishedThumbnail();
 
         $frontend = $video->getThumbnail($this->createThumbnailConfig(), [], true);
