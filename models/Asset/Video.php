@@ -81,11 +81,27 @@ class Video extends Model\Asset
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration
      *
-     * @param bool|null $frontend true returns frontend paths (prefixed with assets.frontend_prefixes.thumbnail and
-     *                            URL-encoded), false returns the paths as stored, null (default) decides depending
-     *                            on whether the current request is a frontend request
+     *
      */
-    public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = [], ?bool $frontend = null): ?array
+    public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = []): ?array
+    {
+        return $this->resolveThumbnail($thumbnailName, $onlyFormats, null);
+    }
+
+    /**
+     * Same as getThumbnail(), but always returns frontend paths (prefixed with assets.frontend_prefixes.thumbnail and
+     * URL-encoded), regardless of whether the current request is a frontend request, e.g. in a CLI command, a cron
+     * job or a Messenger worker.
+     */
+    public function getFrontendThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = []): ?array
+    {
+        return $this->resolveThumbnail($thumbnailName, $onlyFormats, true);
+    }
+
+    /**
+     * @param bool|null $frontend null decides depending on whether the current request is a frontend request
+     */
+    private function resolveThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats, ?bool $frontend): ?array
     {
         $thumbnail = $this->getThumbnailConfig($thumbnailName);
 

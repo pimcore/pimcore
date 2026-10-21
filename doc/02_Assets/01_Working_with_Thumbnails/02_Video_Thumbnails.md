@@ -73,16 +73,17 @@ if($asset instanceof Asset\Video) {
 
 #### Frontend paths outside of a frontend request
 
-By default, `getThumbnail()` returns frontend paths (prefixed with `pimcore.assets.frontend_prefixes.thumbnail` and
+`getThumbnail()` returns frontend paths (prefixed with `pimcore.assets.frontend_prefixes.thumbnail` and
 URL-encoded) only while a frontend request is being handled. In any other context, e.g. a CLI command, a cron job or
-a Messenger worker, the paths are returned as stored. Pass `true` as third argument to get the frontend paths
-regardless of the context, or `false` to always get the stored paths:
+a Messenger worker, the paths are returned as stored. Use `getFrontendThumbnail()` to get the frontend paths
+regardless of the context:
 
 ```php
-$thumbnail = $asset->getThumbnail("myVideoThumbnail", [], true);
+$thumbnail = $asset->getFrontendThumbnail("myVideoThumbnail");
 ```
 
-The `pimcore.frontend.path.asset.video.thumbnail` event is dispatched in either case.
+It takes the same arguments as `getThumbnail()` and returns the same structure. The
+`pimcore.frontend.path.asset.video.thumbnail` event is dispatched in either case.
 
 ### Adaptive Bitrate Video-Streaming
 

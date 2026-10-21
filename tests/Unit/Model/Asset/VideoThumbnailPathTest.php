@@ -59,15 +59,12 @@ class VideoThumbnailPathTest extends TestCase
         parent::tearDown();
     }
 
-    public function testGetThumbnailOffersFrontendParameter(): void
+    public function testGetThumbnailSignatureIsUnchanged(): void
     {
+        // adding a parameter would make subclasses overriding getThumbnail() incompatible
         $parameters = (new ReflectionMethod(Video::class, 'getThumbnail'))->getParameters();
-        $frontend = end($parameters);
 
-        $this->assertSame('frontend', $frontend->getName());
-        $this->assertTrue($frontend->isOptional());
-        $this->assertNull($frontend->getDefaultValue());
-        $this->assertTrue($frontend->allowsNull());
+        $this->assertSame(['thumbnailName', 'onlyFormats'], array_map(static fn ($parameter) => $parameter->getName(), $parameters));
     }
 
     public function testDefaultOutsideFrontendRequestKeepsStoredPath(): void
@@ -102,7 +99,7 @@ class VideoThumbnailPathTest extends TestCase
         $this->assertSame(self::THUMBNAIL_PATH, $event->getArgument('frontendPath'));
     }
 
-    public function testGetThumbnailForwardsFrontendToAllFormats(): void
+    public function testGetFrontendThumbnailReturnsFrontendPathsForAllFormats(): void
     {
         // the processor checks for a video adapter before it looks at finished thumbnails
         if (!\Pimcore\Video::isAvailable()) {
@@ -111,18 +108,17 @@ class VideoThumbnailPathTest extends TestCase
 
         $video = $this->createVideoWithFinishedThumbnail();
 
-        $frontend = $video->getThumbnail($this->createThumbnailConfig(), [], true);
+        $frontend = $video->getFrontendThumbnail($this->createThumbnailConfig());
         $this->assertSame(self::PREFIX . '/my%20videos/99/video-thumb__99__teaser/my%20clip.mp4', $frontend['formats']['mp4']);
         $this->assertSame(
             self::PREFIX . '/my%20videos/99/video-thumb__99__teaser/my%20clip-small.mp4',
             $frontend['formats']['medias']['(max-width: 600px)']['mp4']
         );
 
-        foreach ([null, false] as $storedPaths) {
-            $thumbnail = $video->getThumbnail($this->createThumbnailConfig(), [], $storedPaths);
-            $this->assertSame(self::MP4_PATH, $thumbnail['formats']['mp4']);
-            $this->assertSame(self::MEDIA_PATH, $thumbnail['formats']['medias']['(max-width: 600px)']['mp4']);
-        }
+        // getThumbnail() keeps deciding by the request, which is not a frontend request here
+        $thumbnail = $video->getThumbnail($this->createThumbnailConfig());
+        $this->assertSame(self::MP4_PATH, $thumbnail['formats']['mp4']);
+        $this->assertSame(self::MEDIA_PATH, $thumbnail['formats']['medias']['(max-width: 600px)']['mp4']);
     }
 
     private function createThumbnailConfig(): Video\Thumbnail\Config
