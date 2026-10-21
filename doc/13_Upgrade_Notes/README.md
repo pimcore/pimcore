@@ -2,6 +2,9 @@
 
 ## Pimcore 2026.4.0
 
+### [Database]
+- [Doctrine] `doctrine/doctrine-bundle` 3 and `doctrine/persistence` 4 are now supported (`^2.13.2 || ^3.0` and `^3.0.3 || ^4.0`), so a `composer update` may install them. DoctrineBundle 3 removed several configuration options, and a project config that still sets one of them fails to compile the container: `use_savepoints` on a connection, `report_fields_where_declared` on an entity manager, `doctrine.orm.enable_lazy_ghost_objects`, `doctrine.orm.auto_generate_proxy_classes`, `doctrine.orm.proxy_dir`, `doctrine.orm.proxy_namespace`, `doctrine.dbal.override_url` and the `collate` default table option (use `collation`). Some of them are still in a `config/packages/doctrine.yaml` from an older Symfony Flex recipe. Setting `host`, `port`, `dbname`, `user` or `password` on a connection that also defines `url` is no longer allowed either, even when the values are `~`. Remove these keys, or keep DoctrineBundle 2 for now by requiring `doctrine/doctrine-bundle: ^2.19` in your project. DoctrineBundle 3 always uses native PHP lazy objects for Doctrine proxies. See the [DoctrineBundle 3.0 upgrade guide](https://github.com/doctrine/DoctrineBundle/blob/3.3.x/UPGRADE-3.0.md) for all changes. Pimcore 2027.1 (Symfony 8) will require DoctrineBundle 3.
+
 ### [Documents]
 - [Editables] The scheduled block editable (`Pimcore\Model\Document\Editable\Scheduledblock`, Twig function `pimcore_scheduledblock`, also known as the time slider editable) is deprecated and will be removed in Pimcore 2027.1. Using it in a template now triggers a deprecation notice. Its behaviour is unchanged until then.
 
