@@ -144,7 +144,7 @@ class SystemSettingsConfig
         $fallbackLanguages = [];
         $localizedErrorPages = [];
         $languages = explode(',', $values['general.validLanguages']);
-        $requiredLanguages = explode(',', $values['general.requiredLanguages']);
+        $requiredLanguages = array_values(array_filter(explode(',', (string) $values['general.requiredLanguages'])));
         $filteredLanguages = [];
         $existingValues = self::get();
 
