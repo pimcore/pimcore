@@ -66,15 +66,19 @@ class AssetUpdateTasksHandler
 
     private function saveAsset(Asset $asset): void
     {
-        // Version::disable() flips a process-wide flag, so it must always be re-enabled -
-        // even if save() throws - otherwise versioning stays disabled for every subsequent
-        // asset handled by this (long-running) worker.
+        // Version::disable() flips a process-wide flag, so the state it had before must be
+        // restored - even if save() throws - otherwise versioning stays disabled for every
+        // subsequent asset handled by this (long-running) worker.
+        $versioningWasEnabled = Version::isEnabled();
         Version::disable();
+
         try {
             $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
             $asset->save();
         } finally {
-            Version::enable();
+            if ($versioningWasEnabled) {
+                Version::enable();
+            }
         }
     }
 
