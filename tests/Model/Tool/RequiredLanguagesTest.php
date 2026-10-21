@@ -64,6 +64,22 @@ class RequiredLanguagesTest extends ModelTestCase
         $this->assertSame(Tool::getValidLanguages(), Tool::getRequiredLanguages());
     }
 
+    public function testSelectedMandatoryLanguagesAreReturnedAsSubset(): void
+    {
+        $subset = $this->getValidLanguagesSubset();
+        $this->storeRequiredLanguages($subset);
+
+        $this->assertSame($subset, Tool::getRequiredLanguages());
+    }
+
+    public function testEmptyEntryNextToSelectedMandatoryLanguageIsIgnored(): void
+    {
+        $subset = $this->getValidLanguagesSubset();
+        $this->storeRequiredLanguages([...$subset, '']);
+
+        $this->assertSame($subset, Tool::getRequiredLanguages());
+    }
+
     public function testSavingWithoutMandatoryLanguageStoresEmptyList(): void
     {
         $this->saveSystemSettingsFormValues(['general.requiredLanguages' => '']);
@@ -73,10 +89,23 @@ class RequiredLanguagesTest extends ModelTestCase
 
     public function testSavingKeepsSelectedMandatoryLanguages(): void
     {
-        $languages = Tool::getValidLanguages();
-        $this->saveSystemSettingsFormValues(['general.requiredLanguages' => implode(',', $languages)]);
+        $subset = $this->getValidLanguagesSubset();
+        $this->saveSystemSettingsFormValues(['general.requiredLanguages' => implode(',', $subset)]);
 
-        $this->assertSame($languages, SystemSettingsConfig::get()['general']['required_languages']);
+        $this->assertSame($subset, SystemSettingsConfig::get()['general']['required_languages']);
+    }
+
+    /**
+     * @return string[] the first valid language only, so it differs from the "all valid languages" fallback
+     */
+    private function getValidLanguagesSubset(): array
+    {
+        $validLanguages = Tool::getValidLanguages();
+        if (count($validLanguages) < 2) {
+            $this->markTestSkipped('At least two valid languages are needed to tell a subset from the fallback.');
+        }
+
+        return array_slice($validLanguages, 0, 1);
     }
 
     private function storeRequiredLanguages(array $requiredLanguages): void
