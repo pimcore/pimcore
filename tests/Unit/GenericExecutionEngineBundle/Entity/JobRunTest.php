@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\GenericExecutionEngineBundle\Entity;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Doctrine\Persistence\Mapping\RuntimeReflectionService;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Tests\Support\Test\TestCase;
 
@@ -29,6 +30,7 @@ class JobRunTest extends TestCase
     public function testContextColumnIsMappedAsNullable(): void
     {
         $metadata = new ClassMetadata(JobRun::class);
+        $metadata->initializeReflection(new RuntimeReflectionService());
         (new AttributeDriver([]))->loadMetadataForClass(JobRun::class, $metadata);
 
         $this->assertTrue($metadata->isNullable('context'));
