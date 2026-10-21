@@ -857,11 +857,13 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locValue) {
                         $locValue->setInvisible(false);
                         $locValue->setNotEditable(false);
+                        self::resetContainerFieldDefinitions($locValue);
                     }
                     $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $def->setInvisible(false);
                     $def->setNotEditable(false);
+                    self::resetContainerFieldDefinitions($def);
                 }
             }
         }
@@ -888,15 +890,59 @@ class Service extends Model\Element\Service
 
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
+                        self::mergeContainerFieldDefinitions($mergedLocalizedFieldDefinitions[$locKey] ?? null, $customLocalizedFieldDefinitions[$locKey] ?? null);
                     }
                     $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
+                    self::mergeContainerFieldDefinitions($mergedFieldDefinition[$key] ?? null, $def);
                 }
             }
         }
 
         return $mergedFieldDefinition;
+    }
+
+    /**
+     * The children of a Block (or a Localizedfields inside it) start out as visible and editable,
+     * the custom layouts restrict them afterwards
+     */
+    private static function resetContainerFieldDefinitions(ClassDefinition\Data $def): void
+    {
+        if (!$def instanceof ClassDefinition\Data\Block && !$def instanceof ClassDefinition\Data\Localizedfields) {
+            return;
+        }
+
+        foreach ($def->getFieldDefinitions(['suppressEnrichment' => true]) as $child) {
+            $child->setInvisible(false);
+            $child->setNotEditable(false);
+            self::resetContainerFieldDefinitions($child);
+        }
+    }
+
+    /**
+     * Applies the children of a Block (or a Localizedfields inside it) in a custom layout to the children of the merged one
+     */
+    private static function mergeContainerFieldDefinitions(?ClassDefinition\Data $mergedDef, ?ClassDefinition\Data $customDef): void
+    {
+        if (
+            !($mergedDef instanceof ClassDefinition\Data\Block && $customDef instanceof ClassDefinition\Data\Block)
+            && !($mergedDef instanceof ClassDefinition\Data\Localizedfields && $customDef instanceof ClassDefinition\Data\Localizedfields)
+        ) {
+            return;
+        }
+
+        $customFieldDefinitions = $customDef->getFieldDefinitions(['suppressEnrichment' => true]);
+        $mergedFieldDefinitions = $mergedDef->getFieldDefinitions(['suppressEnrichment' => true]);
+
+        foreach (array_keys($mergedFieldDefinitions) as $key) {
+            self::mergeFieldDefinition($mergedFieldDefinitions, $customFieldDefinitions, (string) $key);
+            self::mergeContainerFieldDefinitions($mergedFieldDefinitions[$key] ?? null, $customFieldDefinitions[$key] ?? null);
+        }
+
+        // the children already hold the fields of all aggregated sections, a retained reference would add the unfiltered ones again
+        $mergedDef->setReferencedFields([]);
+        $mergedDef->setChildren(array_values($mergedFieldDefinitions));
     }
 
     /**
@@ -949,6 +995,15 @@ class Service extends Model\Element\Service
             }
 
             $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
+
+            if (
+                ($layout instanceof ClassDefinition\Data\Block && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Block)
+                || ($layout instanceof ClassDefinition\Data\Localizedfields && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Localizedfields)
+            ) {
+                // the children of a Block or a Localizedfields inside it are no top-level fields,
+                // they are checked against the container's own definitions
+                $fieldDefinitions = $fieldDefinitions[$name]->getFieldDefinitions(['suppressEnrichment' => true]);
+            }
         }
 
         if (method_exists($layout, 'getChildren')) {
