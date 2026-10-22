@@ -453,9 +453,6 @@ public function getLtable (?string $language = null): array
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("ltable");
-		if ($preValue === \Pimcore\Model\DataObject\PreGetValueHookResult::ReturnNull) {
-			return null;
-		}
 		if ($preValue !== null) {
 			return $preValue;
 		}

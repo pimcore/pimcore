@@ -470,13 +470,26 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return '';
     }
 
+    private function allowsNullReturn(): bool
+    {
+        $type = $this->getReturnTypeDeclaration();
+        if ($type === null || $type === '' || $type === 'mixed' || str_starts_with($type, '?')) {
+            return true;
+        }
+
+        return in_array('null', array_map('strtolower', explode('|', $type)), true);
+    }
+
     protected function getPreGetValueHookCode(string $key): string
     {
         $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
         $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . "\n";
-        $code .= "\t\t" . 'if ($preValue === \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
-        $code .= "\t\t\t" . 'return null;' . "\n";
-        $code .= "\t\t" . '}' . "\n";
+        // only getters that can return null get the sentinel check, e.g. "array" getters would throw a TypeError
+        if ($this->allowsNullReturn()) {
+            $code .= "\t\t" . 'if ($preValue === \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
+            $code .= "\t\t\t" . 'return null;' . "\n";
+            $code .= "\t\t" . '}' . "\n";
+        }
         $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
