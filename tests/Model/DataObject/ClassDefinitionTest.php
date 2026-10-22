@@ -19,6 +19,8 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Table;
+use Pimcore\Model\DataObject\PreGetValueHookResult;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
@@ -404,6 +406,48 @@ public function setLinput(?string $linput): static
     }
 
     /**
+     * Executes the generated getters of a nullable (`?string`) and a non-nullable (`array`) field with a
+     * PreGetValueHookInterface implementation: PreGetValueHookResult::ReturnNull makes the nullable getter
+     * return null, while the non-nullable getter ignores it and returns the stored value instead of
+     * throwing a TypeError. Plain null from the hook keeps meaning "no override".
+     */
+    public function testPreGetValueHookReturnNullSentinel(): void
+    {
+        $class = new ClassDefinition();
+        $class->setName('PreGetValueHookSentinelTest');
+
+        $input = new Input();
+        $input->setName('text');
+        $table = new Table();
+        $table->setName('rows');
+
+        $code = 'namespace Pimcore\\Tests\\Model\\DataObject\\Generated;' . "\n"
+            . 'use Pimcore\\Model\\DataObject\\PreGetValueHookInterface;' . "\n"
+            . 'return new class implements PreGetValueHookInterface {' . "\n"
+            . 'public mixed $hookResult = null;' . "\n"
+            . 'public ?string $text = "stored";' . "\n"
+            . 'public array $rows = [["stored"]];' . "\n"
+            . 'public function preGetValue(string $key): mixed { return $this->hookResult; }' . "\n"
+            . $input->getGetterCode($class)
+            . $table->getGetterCode($class)
+            . '};';
+        $object = eval($code);
+
+        $this->assertStringContainsString('return null;', $input->getGetterCode($class));
+        $this->assertStringNotContainsString('return null;', $table->getGetterCode($class));
+
+        $this->assertSame('stored', $object->getText(), 'null from the hook means no override');
+        $this->assertSame([['stored']], $object->getRows());
+
+        $object->hookResult = 'overridden';
+        $this->assertSame('overridden', $object->getText());
+
+        $object->hookResult = PreGetValueHookResult::ReturnNull;
+        $this->assertNull($object->getText(), 'the sentinel makes the nullable getter return null');
+        $this->assertSame([['stored']], $object->getRows(), 'a non-nullable getter ignores the sentinel');
+    }
+
+    /**
      * Verifies that the getter code gets created properly and that the
      * PreGetValueHook is called before actually getting the data
      */
@@ -453,7 +497,7 @@ public function getLtable (?string $language = null): array
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("ltable");
-		if ($preValue !== null) {
+		if ($preValue !== null && $preValue !== \Pimcore\Model\DataObject\PreGetValueHookResult::ReturnNull) {
 			return $preValue;
 		}
 	}

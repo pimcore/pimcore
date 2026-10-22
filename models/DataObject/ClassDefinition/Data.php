@@ -484,13 +484,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
         $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . "\n";
-        // only getters that can return null get the sentinel check, e.g. "array" getters would throw a TypeError
         if ($this->allowsNullReturn()) {
             $code .= "\t\t" . 'if ($preValue === \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
             $code .= "\t\t\t" . 'return null;' . "\n";
             $code .= "\t\t" . '}' . "\n";
+            $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
+        } else {
+            // the getter cannot return null (e.g. "array" getters): the sentinel is ignored and the stored value is used
+            $code .= "\t\t" . 'if ($preValue !== null && $preValue !== \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
         }
-        $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n\n";
