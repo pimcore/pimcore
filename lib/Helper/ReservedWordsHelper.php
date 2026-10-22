@@ -54,7 +54,7 @@ class ReservedWordsHelper
         'definitionmodifier', 'fieldcollection', 'importdataserviceinterface',
         'lazyloadedfieldsinterface', 'listing', 'localizedfield', 'objectawarefieldinterface',
         'objectbrick', 'ownerawarefieldinterface', 'pregetvaluehookinterface',
-        'selectoptionsinterface', 'service',
+        'pregetvaluehookresult', 'selectoptionsinterface', 'service',
     ];
 
     /**
