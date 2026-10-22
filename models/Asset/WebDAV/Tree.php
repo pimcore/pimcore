@@ -13,13 +13,28 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Exception;
+use Pimcore;
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\PermissionCache;
+use Pimcore\Model\Element\PermissionCacheScope;
+use Pimcore\Model\Element\Tag;
+use Pimcore\Model\Property;
+use Pimcore\Model\User;
 use Pimcore\Tool\Admin;
 use Sabre\DAV;
+use Sabre\DAV\Exception\Conflict;
 use Sabre\DAV\Exception\Forbidden;
+use Sabre\DAV\Exception\NotFound;
+use Throwable;
 
 /**
  * @internal
@@ -50,7 +65,19 @@ class Tree extends DAV\Tree
     }
 
     /**
-     * Moves a file/directory
+     * Moves a file/directory.
+     *
+     * Within the same directory this handles three cases:
+     *  1. the destination still exists -> overwrite it in place (keeps its id/history);
+     *  2. the destination was just deleted and is still in the delete log -> re-create it from
+     *     the source content while reusing the deleted id (see Asset\WebDAV\File::delete());
+     *     the entry is consumed by that restore, and an entry whose id is in use again is dropped;
+     *  3. neither -> a plain rename of the source.
+     * Across directories it is a plain move of the source into the destination folder.
+     *
+     * The delete-log branch exists to support clients (e.g. Photoshop) that replace a file via
+     * delete + create + move instead of an overwrite. That log is a best-effort, ~30s-lived
+     * workaround, which is why the entries are read defensively (missing keys are tolerated).
      *
      * @param string $sourcePath
      * @param string $destinationPath
@@ -83,26 +110,123 @@ class Tree extends DAV\Tree
                     // be used elsewhere in the project that users/collaborators given only WebDav access have
                     // no control nor access.
                     $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                    if (!$sourceAsset) {
+                        throw new NotFound('Source asset not found');
+                    }
                     $asset->setData($sourceAsset->getData());
 
                 }
 
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
-                if (!$asset && array_key_exists('/' .$destinationPath, $log)) {
-                    // Returns null when the payload does not rebuild into an Asset, so the fallback
-                    // below still resolves the source asset. See restoreDeletedAsset() for why the
-                    // payload needs object deserialization.
-                    $restored = Asset\WebDAV\Service::restoreDeletedAsset($log['/' . $destinationPath]['data']);
-                    if ($restored !== null) {
-                        $asset = $restored;
+                if (!$asset && array_key_exists('/' . $destinationPath, $log)) {
+                    // The destination was already deleted (e.g. Photoshop replaces a file via
+                    // delete + create + move). Re-create it from the source content while reusing
+                    // the deleted asset's id, so hardcoded references to that id stay valid
+                    // (see persistRestoredAsset()); the source asset is removed below.
+                    $logEntry = $log['/' . $destinationPath];
+                    $restoredId = $logEntry['id'] ?? null;
+
+                    // Only an entry carrying a usable id can drive a restore. Anything else must
+                    // fall through to the plain rename below WITHOUT touching $sourceAsset:
+                    // assigning it here would alias $asset to the same asset via the fallback,
+                    // and the post-save source cleanup would then delete the just-moved file.
+                    $restoredId = is_numeric($restoredId) && (int) $restoredId > 0 ? (int) $restoredId : null;
+
+                    if ($restoredId !== null && $this->isAssetIdInUse($restoredId)) {
+                        // The entry is stale: its id belongs to a live asset again (e.g. an entry
+                        // written by a node still running the previous release, which never
+                        // consumes it). Asset::save() treats a set id as an update, so a restore
+                        // would overwrite that asset wherever it is now - drop the entry instead
+                        // and fall through to the plain rename, again without touching $sourceAsset.
+                        Logger::warning(sprintf(
+                            'WebDAV delete log: the entry for %s names asset id %d, which is in use again - moving %s without restoring the destination',
+                            '/' . $destinationPath,
+                            $restoredId,
+                            '/' . $sourcePath
+                        ));
+                        Asset\WebDAV\Service::consumeDeleteLogEntry('/' . $destinationPath);
+                        $restoredId = null;
+                    }
+
+                    if ($restoredId !== null) {
+                        $restoreFromDeleteLog = true;
                         $sourceAsset = Asset::getByPath('/' . $sourcePath);
-                        $asset->setData($sourceAsset->getData());
+                        if (!$sourceAsset) {
+                            throw new NotFound('Source asset not found');
+                        }
+
+                        // no 'type' here: Asset::create() ignores a passed type when 'data' is
+                        // present and derives the concrete class from the detected mime type
+                        $asset = Asset::create($sourceAsset->getParentId(), [
+                            'filename' => basename($destinationPath),
+                            'data' => $sourceAsset->getData(),
+                        ], false);
+                        $asset->setId($restoredId);
+                        // destination lives in the same folder as the source; set the path now
+                        // so the permission check below sees the correct workspace location
+                        $asset->setPath((string) $sourceAsset->getRealPath());
+
+                        // restore ownership and creation date from the snapshot, so the rebuilt
+                        // destination keeps them like the id (the mover only becomes the modifier)
+                        if (isset($logEntry['userOwner'])) {
+                            $asset->setUserOwner((int) $logEntry['userOwner']);
+                        }
+                        if (isset($logEntry['creationDate'])) {
+                            $asset->setCreationDate((int) $logEntry['creationDate']);
+                        }
+
+                        // restore the lock state: Asset\Dao::update() only recreates the
+                        // tree_locks row when getLocked() is set, so without this the restore
+                        // would silently unlock an asset that an in-place overwrite leaves locked
+                        $locked = $logEntry['locked'] ?? null;
+                        if (is_string($locked) && $locked !== '') {
+                            $asset->setLocked($locked);
+                        }
+
+                        // restore the deleted destination's own properties and metadata from the
+                        // scalar snapshot, so they survive the delete + create + move round-trip
+                        $properties = $logEntry['properties'] ?? [];
+                        $this->restoreProperties($asset, is_array($properties) ? $properties : []);
+
+                        // restore user-set custom settings (e.g. focal point) from the raw JSON
+                        // snapshot - setCustomSettings() decodes the JSON string itself; settings
+                        // derived from the binary are recomputed on save for the new data
+                        $customSettings = $logEntry['customSettings'] ?? null;
+                        if (is_string($customSettings) && $customSettings !== '') {
+                            $asset->setCustomSettings($customSettings);
+                        }
+
+                        // workspace rows (explicit per-asset grants/denies) can only be
+                        // re-inserted after save() has re-created the assets row (FK on cid),
+                        // so they are stashed here and applied below
+                        $workspaces = $logEntry['workspaces'] ?? null;
+                        if (is_array($workspaces) && $workspaces !== []) {
+                            $restoredWorkspaces = $workspaces;
+                        }
+
+                        // tag assignments go with the asset as well (ElementTagsListener) and are
+                        // re-assigned after save() like the workspace rows
+                        $tags = $logEntry['tags'] ?? null;
+                        $restoredTags = is_array($tags) ? $tags : [];
+
+                        // hydrate the metadata snapshot through the configured metadata types
+                        // (mirroring Asset\Dao::getById()): a bundle-defined type may transform
+                        // its stored value in getDataFromResource(), and save() converts back
+                        // via getDataForResource() - feeding the raw rows to setMetadataRaw()
+                        // directly would double-convert such types (core types are pass-through)
+                        $metadata = $logEntry['metadata'] ?? [];
+                        if (is_array($metadata) && $metadata !== []) {
+                            $this->restoreMetadata($asset, $metadata);
+                        }
                     }
                 }
 
                 if (!$asset) {
                     $asset = Asset::getByPath('/' . $sourcePath);
+                    if (!$asset) {
+                        throw new NotFound('Source asset not found');
+                    }
                 }
 
                 // Only require the "rename" permission when the filename actually changes. On the
@@ -118,6 +242,10 @@ class Tree extends DAV\Tree
                 $asset = Asset::getByPath('/' . $sourcePath);
                 $parent = Asset::getByPath('/' . dirname($destinationPath));
 
+                if (!$asset || !$parent) {
+                    throw new NotFound('Source asset or destination folder not found');
+                }
+
                 $asset->setPath($parent->getRealFullPath() . '/');
                 $asset->setParentId($parent->getId());
             }
@@ -125,6 +253,22 @@ class Tree extends DAV\Tree
             if (isset($parent)) {
                 if (!$parent->isAllowed('create', $user)) {
                     throw new Forbidden('No create permission on destination folder');
+                }
+            }
+
+            // On the restore branch isAllowed() cannot see the destination's OWN workspace rules:
+            // they were removed with the asset by the ON DELETE CASCADE on users_workspaces_asset.cid
+            // and are only re-inserted after save(). Asset\Dao::isAllowed() would therefore resolve
+            // the inherited rules alone - ignoring an explicit deny on the destination for exactly
+            // the write that replaces it, and refusing a destination grant under an inherited deny
+            // that an in-place overwrite honours. Resolve the captured rows instead and seed the
+            // per-request permission cache that AbstractElement::isAllowed() consults before the
+            // Dao, so the global permission, workflow and event checks still apply on top.
+            if (isset($restoredWorkspaces)) {
+                $snapshotVerdict = $this->resolveWorkspaceSnapshot('publish', $restoredWorkspaces, $user);
+                if ($snapshotVerdict !== null) {
+                    Pimcore::getContainer()->get(PermissionCache::class)
+                        ->set($user, $asset, 'publish', PermissionCacheScope::Single, $snapshotVerdict);
                 }
             }
 
@@ -137,7 +281,16 @@ class Tree extends DAV\Tree
             }
 
             $asset->setUserModification($user->getId());
-            $asset->save();
+
+            if (isset($restoreFromDeleteLog)) {
+                // the entry is consumed before the write, so it drives exactly one restore: a retry
+                // after a failed write finds no entry and is a plain rename (the rolled-back
+                // destination path is free again), never a second reuse of the id
+                Asset\WebDAV\Service::consumeDeleteLogEntry('/' . $destinationPath);
+                $this->persistRestoredAsset($asset, $restoredWorkspaces ?? [], $restoredTags ?? []);
+            } else {
+                $asset->save();
+            }
 
             if (isset($sourceAsset)) {
                 $sourceAsset->delete();
@@ -148,6 +301,300 @@ class Tree extends DAV\Tree
             Logger::error((string) $e);
 
             throw $e;
+        }
+    }
+
+    private function isAssetIdInUse(int $id): bool
+    {
+        return \Pimcore\Db::get()->fetchOne('SELECT id FROM assets WHERE id = ?', [$id]) !== false;
+    }
+
+    /**
+     * Persists a destination rebuilt from a delete-log entry in one database transaction, so the
+     * asset, its workspace rows and its tag assignments become visible together or not at all.
+     * The workspace rows are an access-control boundary: committed separately, another request
+     * could see the restored asset with inherited permissions only between the two writes, and a
+     * failure in between would leave it restored without its explicit grants/denies for good. Now
+     * a failure in any step rolls the whole restore back and the destination stays absent, as it
+     * was before the MOVE (the binary written to the asset storage is not transactional, as with
+     * every other failed asset save). Asset::save() nests its own transaction as a savepoint.
+     *
+     * The id is re-checked with a locking read first. Asset::save() treats a set id as an update
+     * and Asset\Dao::update() inserts the row when it is missing and updates it when it exists, so
+     * a writer that occupies the id concurrently would otherwise have its asset silently
+     * overwritten. The locking read makes a concurrent insert of that id wait for this transaction
+     * (InnoDB locks the gap the id falls into), and an id that is taken by then aborts the restore
+     * instead of updating that asset.
+     *
+     * @param array<mixed> $workspaces raw `users_workspaces_asset` rows from the delete log
+     * @param array<mixed> $tagIds tag ids from the delete log
+     *
+     * @throws Conflict if the restored id is in use by the time the asset is written
+     */
+    private function persistRestoredAsset(Asset $asset, array $workspaces, array $tagIds): void
+    {
+        $db = \Pimcore\Db::get();
+        $db->beginTransaction();
+
+        try {
+            if ($db->fetchOne('SELECT id FROM assets WHERE id = ? FOR UPDATE', [$asset->getId()]) !== false) {
+                throw new Conflict(sprintf('Asset id %d is in use, the deleted destination cannot be restored', $asset->getId()));
+            }
+
+            $asset->save();
+
+            $this->restoreWorkspaces($asset, $workspaces);
+            $this->restoreTags($asset, $tagIds);
+
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+
+            // Asset::save() registered the instance in the runtime cache, and a listener may have
+            // loaded it into the persistent cache - drop both, or Asset::getById() would hand out
+            // an asset that no longer exists
+            $cacheKey = 'asset_' . $asset->getId();
+            RuntimeCache::set($cacheKey, null);
+            Cache::remove($cacheKey);
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Re-assigns the tags captured in the delete log. ElementTagsListener::onPostAssetDelete()
+     * removes every tag assignment of a deleted asset and nothing recreates them, whereas an
+     * in-place overwrite keeps them. Tags deleted in the meantime are skipped.
+     *
+     * @param array<mixed> $tagIds tag ids from the delete log
+     */
+    private function restoreTags(Asset $asset, array $tagIds): void
+    {
+        $tags = [];
+        foreach ($tagIds as $tagId) {
+            if (!is_numeric($tagId) || (int) $tagId <= 0) {
+                continue;
+            }
+
+            $tag = Tag::getById((int) $tagId);
+            if ($tag instanceof Tag) {
+                $tags[] = $tag;
+            }
+        }
+
+        if ($tags) {
+            Tag::setTagsForElement('asset', $asset->getId(), $tags);
+        }
+    }
+
+    /**
+     * Rebuilds an asset's own properties from the scalar rows captured in the delete log
+     * (see Asset\WebDAV\File::delete()). Mirrors how Asset\Dao::getProperties() hydrates
+     * properties from the database, so setDataFromResource() receives the raw scalar value -
+     * except for date rows, whose serialized datetime is re-hydrated here with an explicit
+     * DateTime/Carbon allowlist so log content never reaches a permissive unserializer.
+     *
+     * cid/cpath are intentionally not set here: Asset::update() assigns them from the target
+     * asset when the properties are persisted on save().
+     *
+     * The restored rows are merged over the properties the destination inherits at its path:
+     * AbstractElement::getProperties() lazily loads inherited values only while the collection is
+     * null, so installing the local rows alone would hide the folder's inheritable properties
+     * from everything that inspects the rebuilt instance before it is saved (workflow and
+     * permission checks, PRE_UPDATE listeners). A local row overrides an inherited one of the
+     * same name, as it does for a persisted asset.
+     *
+     * @param array<mixed> $rows raw `properties` rows (name, type, data, inheritable) from the delete log
+     */
+    private function restoreProperties(Asset $asset, array $rows): void
+    {
+        $properties = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $data = $row['data'] ?? null;
+            if ($data !== null && !is_string($data)) {
+                // properties.data is a string column; anything else is a malformed log entry
+                continue;
+            }
+
+            $name = (string) ($row['name'] ?? '');
+            $type = (string) ($row['type'] ?? '');
+
+            $property = new Property();
+            $property->setType($type);
+            $property->setName($name);
+            $property->setCtype('asset');
+
+            if ($type === 'date' && $data !== null) {
+                // a date row holds a serialized DateTimeInterface; setDataFromResource() would
+                // unserialize it with allowed_classes: true, so hydrate it here with an explicit
+                // allowlist instead - nothing read from the delete log may instantiate
+                // arbitrary classes. Unexpected payloads are skipped defensively.
+                try {
+                    $date = \Pimcore\Tool\Serialize::unserialize($data, [
+                        \Carbon\Carbon::class,
+                        \Carbon\CarbonImmutable::class,
+                        DateTime::class,
+                        DateTimeImmutable::class,
+                    ]);
+                } catch (Throwable) {
+                    // even an allowlisted class can throw while being unserialized (e.g.
+                    // O:8:"DateTime":0:{}); the log holds the raw column value, so skip the row
+                    // like Property::setDataFromResource() does instead of failing the restore
+                    continue;
+                }
+                if (!$date instanceof DateTimeInterface) {
+                    continue;
+                }
+                $property->setData($date);
+            } else {
+                $property->setDataFromResource($data);
+            }
+
+            $property->setInherited(false);
+            $property->setInheritable((bool) ($row['inheritable'] ?? false));
+
+            $properties[$name] = $property;
+        }
+
+        if ($properties) {
+            // read through the Dao rather than getProperties(): that would cache the collection
+            // under the restored id, which must not outlive a restore that is rolled back
+            $asset->setProperties(array_merge($asset->getDao()->getProperties(true), $properties));
+        }
+    }
+
+    /**
+     * Hydrates raw `assets_metadata` rows from the delete log into the model-level metadata
+     * representation, mirroring Asset\Dao::getById(): each row's data runs through the configured
+     * metadata type's getDataFromResource(), so a bundle-defined type that transforms its stored
+     * value round-trips correctly when save() converts back with getDataForResource(). Core
+     * types are pass-through, so their behavior is unchanged.
+     *
+     * @param array<mixed> $rows raw `assets_metadata` rows (name, type, data, language) from the delete log
+     */
+    private function restoreMetadata(Asset $asset, array $rows): void
+    {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+
+        $metadata = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $type = (string) ($row['type'] ?? '');
+            if ($type === '') {
+                $type = 'input';
+            }
+
+            $item = [
+                'name' => (string) ($row['name'] ?? ''),
+                'type' => $type,
+                'data' => $row['data'] ?? null,
+                'language' => (string) ($row['language'] ?? ''),
+                // the Dao load path hands the full row - including cid - to
+                // getDataFromResource(); the snapshot drops cid, but it always equals the
+                // restored id, so provide it for types that read $params['cid']
+                'cid' => $asset->getId(),
+            ];
+
+            try {
+                /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+                $instance = $loader->build($item['type']);
+                $item['data'] = $instance->getDataFromResource($item['data'], $item);
+            } catch (UnsupportedException $e) {
+                // unknown type: keep the raw value, same as the Dao load path
+            }
+
+            // like the Dao load path: cid is not part of the model-level representation
+            unset($item['cid']);
+            $metadata[] = $item;
+        }
+
+        if ($metadata) {
+            $asset->setMetadataRaw($metadata);
+        }
+    }
+
+    /**
+     * Resolves one permission against the destination's own `users_workspaces_asset` rows as
+     * captured in the delete log, mirroring how Asset\Dao::isAllowed() resolves them: it orders by
+     * `LENGTH(cpath) DESC, FIELD(userId, <id>) DESC, <type> DESC` and takes the first row, so the
+     * deepest cpath wins - and the captured rows are the asset's own, which outrank every
+     * inherited rule - the user's own row outranks a role row, and among role rows a granting one
+     * wins.
+     *
+     * Returns null when the snapshot carries no rule for this user, leaving the decision to the
+     * inherited rules that Asset\Dao::isAllowed() resolves, and for admins, who are never
+     * restricted by workspaces (Element\AbstractElement::isAllowed() handles them itself).
+     *
+     * @param array<mixed> $rows raw `users_workspaces_asset` rows from the delete log
+     */
+    private function resolveWorkspaceSnapshot(string $type, array $rows, User $user): ?bool
+    {
+        if ($user->isAdmin()) {
+            return null;
+        }
+
+        $roleIds = $user->getRoles();
+        $allowedByRole = null;
+
+        foreach ($rows as $row) {
+            if (!is_array($row) || !array_key_exists($type, $row)) {
+                continue;
+            }
+
+            $rowUserId = (int) ($row['userId'] ?? 0);
+
+            if ($rowUserId === $user->getId()) {
+                // the user's own rule is decisive, whether it grants or denies
+                return (bool) $row[$type];
+            }
+
+            if (in_array($rowUserId, $roleIds, true)) {
+                $allowedByRole = ($allowedByRole ?? false) || (bool) $row[$type];
+            }
+        }
+
+        return $allowedByRole;
+    }
+
+    /**
+     * Re-inserts the destination's per-asset workspace rows (explicit permission grants/denies)
+     * captured in the delete log. They were removed together with the asset by the
+     * ON DELETE CASCADE on users_workspaces_asset.cid, and nothing else recreates them - without
+     * this a restored asset would silently fall back to purely inherited permissions.
+     * cid/cpath are rewritten to the restored asset; all other columns are scalar permission
+     * flags and are re-inserted as captured.
+     *
+     * @param array<mixed> $rows raw `users_workspaces_asset` rows from the delete log
+     */
+    private function restoreWorkspaces(Asset $asset, array $rows): void
+    {
+        $db = \Pimcore\Db::get();
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            foreach ($row as $value) {
+                if ($value !== null && !is_scalar($value)) {
+                    // workspace rows hold only scalar columns; anything else is malformed
+                    continue 2;
+                }
+            }
+
+            $row['cid'] = $asset->getId();
+            $row['cpath'] = $asset->getRealFullPath();
+
+            // quoting is required: the table has MySQL-reserved column names
+            // (`delete`, `rename`, `create`) - same as User\Workspace\Dao::save()
+            $db->insert('users_workspaces_asset', \Pimcore\Db\Helper::quoteDataIdentifiers($db, $row));
         }
     }
 }
