@@ -80,7 +80,6 @@
     "spatie/image-optimizer": "^1.6.2",
     "symfony-cmf/routing-bundle": "^3.0",
     "symfony/cache": "^7.4",
-    "symfony/clock": "^7.4",
     "symfony/config": "^7.4",
     "symfony/console": "^7.4",
     "symfony/contracts": "^3.2",
