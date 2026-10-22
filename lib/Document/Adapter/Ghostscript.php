@@ -194,6 +194,15 @@ class Ghostscript extends Adapter
             $process->setTimeout(240);
             $process->mustRun();
 
+            // Ghostscript exits successfully without writing anything when there is no such page,
+            // e.g. a page beyond the end of the document or a document without pages
+            clearstatcache(true, $imageTargetPath);
+            if (!is_file($imageTargetPath) || filesize($imageTargetPath) === 0) {
+                Logger::info(sprintf('Ghostscript rendered no image of page %d of %s', $page, $this->asset?->getRealFullPath() ?? $localFile));
+
+                return false;
+            }
+
             return true;
         } catch (Exception $e) {
             Logger::error((string) $e);
