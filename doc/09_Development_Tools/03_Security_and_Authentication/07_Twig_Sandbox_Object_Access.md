@@ -188,6 +188,33 @@ pimcore:
                     - pimcore_site_current
 ```
 
+### Enabling a function that is blocked by default
+
+A function that is listed explicitly in the `functions` allowlist is allowed **regardless of
+`blocked_functions`** - the allowlist is checked first, the denylist only restricts the
+`pimcore_` auto-allow. So a site can enable one of the functions that are blocked out of the
+box at any time, without having to touch the shipped denylist (which cannot be shortened by
+configuration, see [Notes](#notes)). For example, to use `pimcore_dump` while debugging a template:
+
+```yaml
+pimcore:
+    templating_engine:
+        twig:
+            sandbox_security_policy:
+                functions:
+                    - pimcore_dump
+```
+
+Clear the container cache afterwards (`bin/console cache:clear`) and remove the entry again
+when you are done.
+
+> `pimcore_dump` dumps any value it is given without going through the object checks of the
+> policy, so a sandboxed template can use it to print data that it may not access otherwise
+> (for example the `app` variable with the current request). Enable it only where the templates
+> are written by trusted people, preferably only for a debug session or in a development
+> environment (e.g. in a `when@dev` block of the config), and the same applies to every other
+> function you allow this way.
+
 ## Configuration
 
 `blocked_classes`, `blocked_functions`, `hard_blocked_methods` and `hard_blocked_method_patterns` already default to
@@ -359,7 +386,9 @@ pimcore:
   `hard_blocked_method_patterns` are Symfony
   config array nodes, so a site's own value for any of them is merged with (appended
   to) Pimcore's default rather than replacing it - there is no config-only way to
-  remove an entry from the shipped defaults.
+  remove an entry from the shipped defaults. A function that is blocked by default can
+  still be enabled by listing it in the `functions` allowlist, see
+  [Enabling a function that is blocked by default](#enabling-a-function-that-is-blocked-by-default).
 - The object and function mechanisms are independent of each other, and both are
   independent from the `tags` / `filters` allowlists, which still apply as before.
 - Changing these settings requires clearing the Symfony container cache

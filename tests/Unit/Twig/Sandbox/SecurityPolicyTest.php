@@ -1006,6 +1006,18 @@ final class SecurityPolicyTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
+    public function testDefaultBlockedFunctionCanBeEnabledViaTheFunctionAllowlist(): void
+    {
+        $policy = new SecurityPolicy(
+            allowedFunctions: ['pimcore_dump'],
+            blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions'],
+        );
+
+        // no exception expected: the explicit allowlist is checked before the denylist
+        $policy->checkSecurity([], [], ['pimcore_dump']);
+        $this->addToAssertionCount(1);
+    }
+
     public function testOtherPimcoreFunctionsRemainAutoAllowedByDefault(): void
     {
         $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
