@@ -724,6 +724,34 @@ class Model extends AbstractDefinitionHelper
         return $class;
     }
 
+    /**
+     * Set up a class with a Block that holds a wysiwyg field.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_WysiwygBlock(string $name = 'unittestWysiwygBlock', string $filename = 'wysiwyg-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('testblock');
+            $block->addChild($this->createDataChild('wysiwyg', 'blockwysiwyg'));
+
+            $panel->addChild($block);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+
+        return $class;
+    }
+
     protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, ?string $id = null): DataObject\ClassDefinitionInterface
     {
         $cm = $this->getClassManager();

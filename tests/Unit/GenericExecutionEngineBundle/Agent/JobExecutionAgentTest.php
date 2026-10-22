@@ -27,10 +27,12 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInter
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Unit\GenericExecutionEngineBundle\Agent\Support\ProcessElementMessage;
 use Pimcore\Translation\Translator;
 use Psr\Log\NullLogger;
 use ReflectionProperty;
 use RuntimeException;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class JobExecutionAgentTest extends TestCase
@@ -111,7 +113,9 @@ class JobExecutionAgentTest extends TestCase
                 return 2;
             }
         );
-        $agent = $this->createAgent($repository, $counter);
+        $errorLogRepository = $this->createMock(JobRunErrorLogRepositoryInterface::class);
+        $errorLogRepository->method('getTotalCountByJobRunId')->willReturn(1);
+        $agent = $this->createAgent($repository, $counter, $errorLogRepository);
 
         $agent->continueJobMessageExecution(
             $this->createMessage($elements[1]),
@@ -124,12 +128,144 @@ class JobExecutionAgentTest extends TestCase
             array_search('increment', $calls, true),
             'The job run must be flushed before the element is counted'
         );
+        $this->assertSame(JobRunStates::FINISHED_WITH_ERRORS, $jobRun->getState());
+    }
+
+    /**
+     * A step is marked as failed as soon as one of its elements fails, so a run in which only some
+     * elements failed must be told apart from a run in which all of them failed. The outcome must not
+     * depend on the order in which the elements are processed.
+     *
+     * @dataProvider partiallyFailedSingleStepJobProvider
+     *
+     * @param int[] $failingPositions
+     */
+    public function testSingleStepJobWithSomeFailedElementsFinishesWithErrors(array $failingPositions): void
+    {
+        $jobRun = $this->runJob(1, 5, [0 => $failingPositions]);
+
+        $this->assertSame(JobRunStates::FINISHED_WITH_ERRORS, $jobRun->getState());
+    }
+
+    /**
+     * @return array<string, array{int[]}>
+     */
+    public static function partiallyFailedSingleStepJobProvider(): array
+    {
+        return [
+            'first element fails' => [[0]],
+            'element in the middle fails' => [[2]],
+            'last element fails' => [[4]],
+            'all but one element fail' => [[0, 1, 2, 3]],
+        ];
+    }
+
+    public function testSingleStepJobWithoutFailedElementsFinishes(): void
+    {
+        $jobRun = $this->runJob(1, 5, []);
+
+        $this->assertSame(JobRunStates::FINISHED, $jobRun->getState());
+    }
+
+    public function testSingleStepJobFailsWhenEveryElementFails(): void
+    {
+        $jobRun = $this->runJob(1, 5, [0 => [0, 1, 2, 3, 4]]);
+
         $this->assertSame(JobRunStates::FAILED, $jobRun->getState());
+    }
+
+    public function testSingleStepJobWithoutSelectedElementsFailsWhenItsMessageFails(): void
+    {
+        $jobRun = $this->runJob(1, 0, [0 => [null]]);
+
+        $this->assertSame(JobRunStates::FAILED, $jobRun->getState());
+    }
+
+    public function testMultiStepJobWithSomeFailedElementsInEveryStepFinishesWithErrors(): void
+    {
+        $jobRun = $this->runJob(2, 5, [0 => [1], 1 => [3]]);
+
+        $this->assertSame(JobRunStates::FINISHED_WITH_ERRORS, $jobRun->getState());
+    }
+
+    public function testMultiStepJobWithOneEntirelyFailedStepFinishesWithErrors(): void
+    {
+        $jobRun = $this->runJob(2, 5, [0 => [0, 1, 2, 3, 4]]);
+
+        $this->assertSame(JobRunStates::FINISHED_WITH_ERRORS, $jobRun->getState());
+    }
+
+    public function testMultiStepJobFailsWhenEveryElementOfEveryStepFails(): void
+    {
+        $jobRun = $this->runJob(2, 5, [0 => [0, 1, 2, 3, 4], 1 => [0, 1, 2, 3, 4]]);
+
+        $this->assertSame(JobRunStates::FAILED, $jobRun->getState());
+    }
+
+    /**
+     * Runs a job to completion like a single worker would: the queued messages are handled in order, and a message
+     * fails when the position of its element is listed for its step.
+     *
+     * @param array<int, array<int|null>> $failingPositionsByStep null stands for the message without element
+     */
+    private function runJob(int $stepCount, int $elementCount, array $failingPositionsByStep): JobRun
+    {
+        $elements = [];
+        for ($position = 0; $position < $elementCount; $position++) {
+            $elements[] = new ElementDescriptor('object', $position + 1);
+        }
+        $jobRun = $this->createRunningJobRun($elements, $stepCount);
+
+        $queue = [];
+        $messageBus = $this->createMock(MessageBusInterface::class);
+        $messageBus->method('dispatch')->willReturnCallback(
+            static function (object $message) use (&$queue): Envelope {
+                $queue[] = $message;
+
+                return new Envelope($message);
+            }
+        );
+
+        $processedElementsByStep = [];
+        $counter = $this->createMock(JobRunElementCounterInterface::class);
+        $counter->method('incrementProcessedElementsForStep')->willReturnCallback(
+            static function (JobRun $jobRun) use (&$processedElementsByStep): int {
+                return $processedElementsByStep[$jobRun->getCurrentStep()] =
+                    ($processedElementsByStep[$jobRun->getCurrentStep()] ?? 0) + 1;
+            }
+        );
+
+        $errorLogRows = 0;
+        $errorLogRepository = $this->createMock(JobRunErrorLogRepositoryInterface::class);
+        $errorLogRepository->method('createFromJobRun')->willReturnCallback(
+            static function () use (&$errorLogRows): void {
+                $errorLogRows++;
+            }
+        );
+        $errorLogRepository->method('getTotalCountByJobRunId')->willReturnCallback(
+            static function () use (&$errorLogRows): int {
+                return $errorLogRows;
+            }
+        );
+
+        $agent = $this->createAgent($this->createRepository($jobRun), $counter, $errorLogRepository, $messageBus);
+        $agent->startJobExecution($jobRun->getJob(), 1);
+
+        while ($queue !== []) {
+            $message = array_shift($queue);
+            $position = $message->getElement() === null ? null : $message->getElement()->getId() - 1;
+            $fails = in_array($position, $failingPositionsByStep[$message->getCurrentJobStep()] ?? [], true);
+
+            $agent->continueJobMessageExecution($message, $fails ? new RuntimeException('element failed') : null);
+        }
+
+        return $jobRun;
     }
 
     private function createRepository(JobRun $jobRun): JobRunRepositoryInterface
     {
         $repository = $this->createMock(JobRunRepositoryInterface::class);
+        $repository->method('createFromJob')->willReturn($jobRun);
         $repository->method('getJobRunById')->willReturn($jobRun);
         $repository->method('update')->willReturn($jobRun);
 
@@ -139,18 +275,16 @@ class JobExecutionAgentTest extends TestCase
     /**
      * @param ElementDescriptor[] $elements
      */
-    private function createRunningJobRun(array $elements): JobRun
+    private function createRunningJobRun(array $elements, int $stepCount = 1): JobRun
     {
         $jobRun = new JobRun(1);
         // the id is normally assigned by Doctrine
         new ReflectionProperty(JobRun::class, 'id')->setValue($jobRun, self::JOB_RUN_ID);
-        $jobRun->setJob(
-            new Job(
-                'test_job',
-                [new JobStep('test_step', AbstractExecutionEngineMessage::class, '', [])],
-                $elements
-            )
-        );
+        $steps = [];
+        for ($step = 0; $step < $stepCount; $step++) {
+            $steps[] = new JobStep('test_step_' . $step, ProcessElementMessage::class, '', []);
+        }
+        $jobRun->setJob(new Job('test_job', $steps, $elements));
         $jobRun->setState(JobRunStates::RUNNING);
         $jobRun->setCurrentStep(0);
         $jobRun->setTotalElements(count($elements));
@@ -160,17 +294,19 @@ class JobExecutionAgentTest extends TestCase
 
     private function createAgent(
         JobRunRepositoryInterface $repository,
-        JobRunElementCounterInterface $counter
+        JobRunElementCounterInterface $counter,
+        ?JobRunErrorLogRepositoryInterface $errorLogRepository = null,
+        ?MessageBusInterface $messageBus = null
     ): JobExecutionAgent {
         return new JobExecutionAgent(
             'test',
             ErrorHandlingMode::CONTINUE_ON_ERROR->value,
             $this->createMock(ExecutionContextInterface::class),
             $repository,
-            $this->createMock(JobRunErrorLogRepositoryInterface::class),
+            $errorLogRepository ?? $this->createMock(JobRunErrorLogRepositoryInterface::class),
             $counter,
             new NullLogger(),
-            $this->createMock(MessageBusInterface::class),
+            $messageBus ?? $this->createMock(MessageBusInterface::class),
             $this->createMock(Translator::class)
         );
     }

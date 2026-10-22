@@ -360,11 +360,35 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     public function prepend(ContainerBuilder $container): void
     {
+        $this->prependTwoFactorServerName($container);
+
         /*$securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {
             $this->setExtensionConfig($container, 'security', $securityConfigs);
         }*/
+    }
+
+    /**
+     * Uses the main domain as default Google Authenticator server name. A `%router.request_context.host%`
+     * default can't be used for this, as the scheb_two_factor config is resolved before this extension sets
+     * that parameter from the main domain. An explicit `scheb_two_factor.google.server_name` takes precedence.
+     */
+    private function prependTwoFactorServerName(ContainerBuilder $container): void
+    {
+        $domain = '';
+        foreach ($container->getExtensionConfig('pimcore') as $config) {
+            // same semantics as the merged configuration: a later `domain: null` clears an earlier value
+            if (is_array($config['general'] ?? null) && array_key_exists('domain', $config['general'])) {
+                $domain = $config['general']['domain'];
+            }
+        }
+
+        if (!is_string($domain) || $domain === '') {
+            return;
+        }
+
+        $container->prependExtensionConfig('scheb_two_factor', ['google' => ['server_name' => $domain]]);
     }
 
     /**
