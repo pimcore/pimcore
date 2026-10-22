@@ -27,6 +27,10 @@
 
 ### [Security]
 - [2FA] When `pimcore.general.domain` is configured, it is now used as the default `scheb_two_factor.google.server_name`, so new Google Authenticator enrolments show the account as `<username>@<domain>` instead of just the username. The issuer is not changed. Existing enrolments keep working, as the shared secret is unchanged and only the label of new QR codes is affected. An explicitly configured `scheb_two_factor.google.server_name` still takes precedence. Without a configured domain nothing changes.
+## Pimcore 2026.3.4
+
+### [Documents]
+- [Page previews] `documents.preview_url_prefix` is now honoured for the page previews shown in the document tree, as it already was for version previews. `Document\Page::save()` and `pimcore:documents:generate-page-previews` (without `--urlPrefix`) used the host of the current request / the main domain for the URL Gotenberg's Chromium loads, so the setting - made for setups where Chromium cannot reach the admin hostname - had no effect there. Precedence is now: explicit `--urlPrefix` (CLI), then `documents.preview_url_prefix`, then the request host / main domain.
 
 ## Pimcore 2026.3.3
 
@@ -239,7 +243,6 @@ Pimcore 13 requires **Symfony 7.3 or higher**. All Symfony 6.x components are no
 The folder structure for email logs has changed to YYYY/MM/DD/\<log filename\>.
 Please execute the command `pimcore:migrate:mail-logs-folder-structure` to move the files into the new folder structure or move the files manually.
 
-
 #### Database Collation: utf8mb4_unicode_520_ci
 
 Pimcore 2026.1 now explicitly uses `utf8mb4_unicode_520_ci` as the collation for all `utf8mb4` tables and columns. Previous versions specified `DEFAULT CHARSET=utf8mb4` without an explicit `COLLATE` clause in `install.sql` and Dao `CREATE TABLE` statements. Due to MySQL/MariaDB behavior, this caused the charset's built-in default collation (for example `utf8mb4_general_ci` on MySQL 5.7 / MariaDB or `utf8mb4_0900_ai_ci` on MySQL 8) to be used instead of the database-level default (`utf8mb4_unicode_520_ci`).
@@ -306,7 +309,6 @@ The following bundles have been removed:
     - `calculateCellValue()`
     - `mapFieldname()`
     - `getDataForEditmode()` in `ManyToManyObjectRelation` and `AdvancedManyToManyObjectRelation` now uses `Element\Service::gridElementData()` instead of the removed `Service::gridObjectData()`. As a result, the returned data for each related object no longer includes computed grid columns (e.g. brick fields, localized fields, classification store values, or helper columns). Only the base element data (id, type, path, etc.) is returned. If you rely on additional field data being present in the editmode payload of these relations, you need to fetch it separately.
-
 
 ### [Database]
 - All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options`
