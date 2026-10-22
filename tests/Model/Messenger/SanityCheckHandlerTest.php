@@ -68,6 +68,35 @@ class SanityCheckHandlerTest extends ModelTestCase
         $this->assertSame(0, $this->countRows($id));
     }
 
+    public function testElementWhoseParentRowIsGoneIsNotSaved(): void
+    {
+        $folder = TestHelper::createObjectFolder();
+        $object = TestHelper::createEmptyObject();
+        $object->setParentId($folder->getId());
+        $object->save();
+        $id = $object->getId();
+        $versionCount = $object->getVersionCount();
+
+        $stale = Concrete::getById($id, ['force' => true]);
+        $this->assertInstanceOf(Concrete::class, $stale);
+
+        // only the parent's row disappears (the deleting process has not reached the child yet)
+        Db::get()->delete('objects', ['id' => $folder->getId()]);
+        $this->assertSame(1, $this->countRows($id));
+
+        try {
+            $this->performSanityCheck($stale);
+
+            $this->assertSame(1, $this->countRows($id));
+            $this->assertSame($versionCount, (int) Db::get()->fetchOne('SELECT versionCount FROM objects WHERE id = ?', [$id]));
+            $this->assertSame(0, (int) Db::get()->fetchOne('SELECT COUNT(*) FROM versions WHERE ctype = ? AND cid = ? AND note = ?', ['object', $id, 'Sanity Check']));
+        } finally {
+            // do not leave the orphan behind for the next test
+            Db::get()->delete('objects', ['id' => $id]);
+            Db::get()->delete('versions', ['ctype' => 'object', 'cid' => $id]);
+        }
+    }
+
     public function testExistingElementIsSaved(): void
     {
         $object = TestHelper::createEmptyObject();
