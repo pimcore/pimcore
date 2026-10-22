@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Exception;
+use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Model\Document;
@@ -40,7 +41,7 @@ class GeneratePagePreviews extends AbstractCommand
                 'urlPrefix',
                 'u',
                 InputOption::VALUE_OPTIONAL,
-                'Prefix for the document path, eg. https://example.com, if not specified, Pimcore will try use the main domain from system settings.',
+                'Prefix for the document path, eg. https://example.com, if not specified, Pimcore uses the configured documents.preview_url_prefix or the main domain from system settings.',
                 null
             )
             ->addOption(
@@ -95,6 +96,9 @@ class GeneratePagePreviews extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $hostUrl = $input->getOption('urlPrefix');
+        if (!$hostUrl) {
+            $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'] ?? null;
+        }
         if (!$hostUrl) {
             $hostUrl = Tool::getHostUrl();
         }
