@@ -301,11 +301,16 @@ class Document extends Element\AbstractElement
 
     /**
      * Queues the dependency update of the descendants whose path was rewritten together with this document.
+     * Descendants of a moved document may inherit different properties now, a rename cannot change that.
      *
      * @param array<int, array{id: int|string, path: string}> $updatedChildren
      */
-    private function addDescendantsToDependenciesQueue(string $oldPath, array $updatedChildren): void
+    private function addDescendantsToDependenciesQueue(?string $oldPath, array $updatedChildren): void
     {
+        if (!$oldPath || dirname($oldPath) === dirname($this->getRealFullPath())) {
+            return;
+        }
+
         if (!Config::getSystemConfiguration()['dependency']['enabled']) {
             return;
         }
@@ -393,12 +398,7 @@ class Document extends Element\AbstractElement
                 // add to queue that saves dependencies
                 $this->addToDependenciesQueue();
 
-                // descendants of a moved document may inherit different properties now, a rename cannot change that
-                if ($differentOldPath) {
-                    if (dirname($differentOldPath) !== dirname($this->getRealFullPath())) {
-                        $this->addDescendantsToDependenciesQueue($differentOldPath, $updatedChildren);
-                    }
-                }
+                $this->addDescendantsToDependenciesQueue($differentOldPath, $updatedChildren);
 
                 $postEvent = new DocumentEvent($this, $parameters);
                 if ($isUpdate) {
