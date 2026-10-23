@@ -1,5 +1,19 @@
 # Upgrade Notes
 
+## Pimcore 2026.4
+
+### [Core] Tag events fire for `Tag::setTagsForElement()` and `Tag::batchAssignTagsToElement()`
+
+`Tag::setTagsForElement()` and `Tag::batchAssignTagsToElement()` now dispatch the per-element tag events
+`TagEvents::PRE_ADD_TO_ELEMENT`, `POST_ADD_TO_ELEMENT`, `PRE_REMOVE_FROM_ELEMENT` and `POST_REMOVE_FROM_ELEMENT`, like
+`Tag::addTagToElement()` and `Tag::removeTagFromElement()` do. They fire only for assignments that change: a tag that
+is already assigned, or stays assigned, raises no event. `POST_BATCH_ASSIGN_TAGS_TO_ELEMENT` is still dispatched once
+at the end of a batch.
+
+Listeners on these events now also run when tags are copied with an element, removed with an asset, set through WebDAV
+or applied to many elements at once. The batch variant dispatches one event pair per changed element and tag, so a
+listener doing expensive work per event should keep that cost in mind for large batches.
+
 ## Pimcore 2026.3.4
 
 ### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
