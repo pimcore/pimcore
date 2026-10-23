@@ -258,11 +258,116 @@ class Service extends Model\Element\Service
         $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
+        $this->keepNonEditableLanguages($new, $target);
+
         $new->save();
 
         $target = Concrete::getById($new->getId());
 
         return $target;
+    }
+
+    /**
+     * Restores the localized values of the languages the user is not allowed to edit (lEdit workspace permission)
+     * from the target, in the object itself as well as in its object bricks and field collections.
+     */
+    private function keepNonEditableLanguages(Concrete $new, Concrete $target): void
+    {
+        if (!$this->_user || $this->_user->isAdmin()) {
+            return;
+        }
+
+        $editableLanguages = self::getLanguagePermissions($target, $this->_user, 'lEdit');
+        if ($editableLanguages === null) {
+            return;
+        }
+
+        self::loadAllObjectFields($target);
+
+        foreach ($new->getClass()->getFieldDefinitions() as $name => $definition) {
+            $newValue = $new->get($name);
+            $targetValue = $target->get($name);
+
+            if ($definition instanceof ClassDefinition\Data\Localizedfields) {
+                $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Objectbrick) {
+                $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Fieldcollection) {
+                $this->restoreFieldcollectionLanguages($newValue, $targetValue, $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBrickLanguages(DataObject\Objectbrick $new, mixed $target, array $editableLanguages): void
+    {
+        foreach ($new->getItems() as $brick) {
+            $targetBrick = $target instanceof DataObject\Objectbrick ? $target->get($brick->getType()) : null;
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($brick),
+                $targetBrick ? $this->getLocalizedfieldsOf($targetBrick) : null,
+                $editableLanguages
+            );
+        }
+    }
+
+    /**
+     * Items are matched by index and type.
+     *
+     * @param DataObject\Fieldcollection<DataObject\Fieldcollection\Data\AbstractData> $new
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreFieldcollectionLanguages(DataObject\Fieldcollection $new, mixed $target, array $editableLanguages): void
+    {
+        $targetItems = $target instanceof DataObject\Fieldcollection ? $target->getItems() : [];
+        foreach ($new->getItems() as $index => $item) {
+            $targetItem = $targetItems[$index] ?? null;
+            if ($targetItem?->getType() !== $item->getType()) {
+                $targetItem = null;
+            }
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($item),
+                $targetItem ? $this->getLocalizedfieldsOf($targetItem) : null,
+                $editableLanguages
+            );
+        }
+    }
+
+    /**
+     * The getter only exists on generated brick and field collection classes that define localized fields.
+     */
+    private function getLocalizedfieldsOf(Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $container): ?DataObject\Localizedfield
+    {
+        return method_exists($container, 'getLocalizedfields') ? $container->getLocalizedfields() : null;
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreLocalizedfields(mixed $new, mixed $target, array $editableLanguages): void
+    {
+        if (!$new instanceof DataObject\Localizedfield) {
+            return;
+        }
+
+        $items = $new->getItems();
+        $targetItems = $target instanceof DataObject\Localizedfield ? $target->getItems() : [];
+
+        foreach (array_unique(array_merge(array_keys($items), array_keys($targetItems))) as $language) {
+            if (isset($editableLanguages[$language])) {
+                continue;
+            }
+
+            if (isset($targetItems[$language])) {
+                $items[$language] = $targetItems[$language];
+            } else {
+                unset($items[$language]);
+            }
+        }
+
+        $new->setItems($items);
     }
 
     /**
