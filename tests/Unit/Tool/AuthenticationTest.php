@@ -20,12 +20,16 @@ use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Authentication;
 use ReflectionMethod;
+use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 
 /**
  * Regression tests for GHSA-46p3-pxr2-m4j9 — Authentication::safelyUnserialize() must not
- * instantiate arbitrary classes when deserializing the pimcore_admin session token.
+ * instantiate arbitrary classes when deserializing the pimcore_admin session token — and for
+ * GHSA-222w-cxfx-mqjp — Authentication::authenticateSession() must not treat a pending-2FA
+ * session as a completed login.
  */
 class AuthenticationTest extends TestCase
 {
@@ -35,6 +39,52 @@ class AuthenticationTest extends TestCase
         $method->setAccessible(true);
 
         return $method->invoke(null, $payload);
+    }
+
+    private function isPendingTwoFactorToken(TokenInterface $token): bool
+    {
+        $method = new ReflectionMethod(Authentication::class, 'isPendingTwoFactorToken');
+        $method->setAccessible(true);
+
+        return $method->invoke(null, $token);
+    }
+
+    public function testSchebPendingTwoFactorTokenIsRecognisedAsPending(): void
+    {
+        $pendingToken = $this->createStub(TwoFactorTokenInterface::class);
+
+        $this->assertTrue(
+            $this->isPendingTwoFactorToken($pendingToken),
+            'A scheb/2fa TwoFactorTokenInterface token (2FA step in progress) must be rejected as pending.'
+        );
+    }
+
+    public function testAdminUiClassicTwoFactorRequiredTokenIsRecognisedAsPending(): void
+    {
+        // admin-ui-classic-bundle is not a core dependency, so its TwoFactorRequiredToken class
+        // (a plain PostAuthenticationToken subclass issued while 2FA is pending) is not available
+        // here. Alias a stand-in onto the exact class name Authentication checks for by string.
+        if (!class_exists('Pimcore\\Bundle\\AdminBundle\\Security\\Authentication\\Token\\TwoFactorRequiredToken', false)) {
+            class_alias(TwoFactorRequiredTokenStub::class, 'Pimcore\\Bundle\\AdminBundle\\Security\\Authentication\\Token\\TwoFactorRequiredToken');
+        }
+
+        $tokenClass = 'Pimcore\\Bundle\\AdminBundle\\Security\\Authentication\\Token\\TwoFactorRequiredToken';
+        $token = new $tokenClass($this->createSecurityUser('admin'), 'pimcore_admin', []);
+
+        $this->assertTrue(
+            $this->isPendingTwoFactorToken($token),
+            'A TwoFactorRequiredToken (2FA pending on the classic admin-ui login) must be rejected as pending.'
+        );
+    }
+
+    public function testFullyAuthenticatedTokenIsNotRecognisedAsPending(): void
+    {
+        $token = new UsernamePasswordToken($this->createSecurityUser('admin'), 'pimcore_admin');
+
+        $this->assertFalse(
+            $this->isPendingTwoFactorToken($token),
+            'A fully authenticated control token must not be rejected as pending — legitimate logins must keep working.'
+        );
     }
 
     /**
@@ -141,4 +191,13 @@ class AuthDeserializeCanary
     {
         self::$fired = true;
     }
+}
+
+/**
+ * Stand-in for admin-ui-classic-bundle's TwoFactorRequiredToken, which is not available here
+ * since that bundle is not a core dependency (see Authentication::isPendingTwoFactorToken()).
+ * It is aliased onto the real class name for GHSA-222w-cxfx-mqjp regression testing.
+ */
+final class TwoFactorRequiredTokenStub extends PostAuthenticationToken
+{
 }
