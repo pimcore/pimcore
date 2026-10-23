@@ -12,7 +12,13 @@ at the end of a batch.
 
 Listeners on these events now also run when tags are copied with an element, removed with an asset, set through WebDAV
 or applied to many elements at once. The batch variant dispatches one event pair per changed element and tag, so a
-listener doing expensive work per event should keep that cost in mind for large batches.
+listener doing expensive work per event should keep that cost in mind for large batches. This also applies to
+subscribers that reindex on every event, such as the one in the Generic Data Index bundle: a batch can queue an
+element once per changed tag.
+
+When an asset is deleted, its remove events fire in the commit callback of the delete. A listener that throws there
+makes `Asset::delete()` fail (and dispatch `POST_DELETE_FAILURE`) although the asset is already deleted, so listeners
+on the remove events should not throw. Repeated tags or element ids in the input are ignored.
 
 ## Pimcore 2026.3.4
 

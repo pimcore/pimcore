@@ -133,12 +133,17 @@ final class Tag extends Model\AbstractModel
     {
         $tag = new Tag();
 
-        $newTagIds = array_map(static fn (Tag $tag) => $tag->getId(), $tags);
-        $oldTags = $tag->getDao()->getTagsForElement($cType, $cId);
-        $oldTagIds = array_map(static fn (Tag $tag) => $tag->getId(), $oldTags);
+        $newTags = [];
+        foreach ($tags as $newTag) {
+            $newTags[$newTag->getId()] = $newTag;
+        }
+        $oldTags = [];
+        foreach ($tag->getDao()->getTagsForElement($cType, $cId) as $oldTag) {
+            $oldTags[$oldTag->getId()] = $oldTag;
+        }
 
-        $removedTags = array_filter($oldTags, static fn (Tag $tag) => !in_array($tag->getId(), $newTagIds, true));
-        $addedTags = array_filter($tags, static fn (Tag $tag) => !in_array($tag->getId(), $oldTagIds, true));
+        $removedTags = array_diff_key($oldTags, $newTags);
+        $addedTags = array_diff_key($newTags, $oldTags);
 
         $events = self::createAssignmentEvents($cType, $cId, $addedTags, $removedTags);
         self::dispatchAssignmentEvents($events, 'pre');
@@ -163,8 +168,9 @@ final class Tag extends Model\AbstractModel
 
         $assigned = $tag->getDao()->getTagIdsForElements($cType, $cIds);
 
+        $tagIds = array_unique($tagIds);
         $events = [];
-        foreach ($cIds as $cId) {
+        foreach (array_unique($cIds) as $cId) {
             $currentTagIds = $assigned[$cId] ?? [];
             $addedTags = self::getTagsByIds(array_diff($tagIds, $currentTagIds));
             $removedTags = $replace ? self::getTagsByIds(array_diff($currentTagIds, $tagIds)) : [];

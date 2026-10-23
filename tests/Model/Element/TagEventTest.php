@@ -28,7 +28,7 @@ class TagEventTest extends ModelTestCase
     private array $registeredListeners = [];
 
     /**
-     * @var string[] event name => "tagName:elementId" entries in dispatch order
+     * @var string[] fired events in dispatch order, each "<event name> <tag name>:<element id>"
      */
     private array $fired = [];
 
@@ -72,7 +72,7 @@ class TagEventTest extends ModelTestCase
     }
 
     /**
-     * @return string[] the fired events of one kind, without the unique tag name suffix
+     * @return string[] "<tag name>:<element id>" of the fired events of one kind, without the event name prefix
      */
     private function firedOf(string $eventName): array
     {
@@ -177,12 +177,60 @@ class TagEventTest extends ModelTestCase
 
         Tag::batchAssignTagsToElement('object', [$first, $second], [$new->getId()], true);
 
+        $this->assertSame([$this->key($old, $first)], $this->firedOf(TagEvents::PRE_REMOVE_FROM_ELEMENT));
         $this->assertSame([$this->key($old, $first)], $this->firedOf(TagEvents::POST_REMOVE_FROM_ELEMENT));
+        $this->assertSame([$this->key($new, $first)], $this->firedOf(TagEvents::PRE_ADD_TO_ELEMENT));
         $this->assertSame([$this->key($new, $first)], $this->firedOf(TagEvents::POST_ADD_TO_ELEMENT));
         $this->assertSame([$new->getName()], array_map(
             static fn (Tag $tag) => $tag->getName(),
             Tag::getTagsForElement('object', $first)
         ));
+    }
+
+    public function testSetTagsForElementIgnoresDuplicateTagsInTheInput(): void
+    {
+        $id = TestHelper::createEmptyObject()->getId();
+        $tag = $this->createTag('duplicate');
+
+        Tag::setTagsForElement('object', $id, [$tag, $tag]);
+
+        $this->assertSame([$this->key($tag, $id)], $this->firedOf(TagEvents::PRE_ADD_TO_ELEMENT));
+        $this->assertSame([$this->key($tag, $id)], $this->firedOf(TagEvents::POST_ADD_TO_ELEMENT));
+        $this->assertCount(1, Tag::getTagsForElement('object', $id));
+    }
+
+    public function testBatchAssignIgnoresDuplicateTagAndElementIds(): void
+    {
+        $id = TestHelper::createEmptyObject()->getId();
+        $tag = $this->createTag('batchduplicate');
+
+        Tag::batchAssignTagsToElement('object', [$id, $id], [$tag->getId(), $tag->getId()]);
+
+        $this->assertSame([$this->key($tag, $id)], $this->firedOf(TagEvents::PRE_ADD_TO_ELEMENT));
+        $this->assertSame([$this->key($tag, $id)], $this->firedOf(TagEvents::POST_ADD_TO_ELEMENT));
+    }
+
+    public function testPreEventsFireBeforeAndPostEventsAfterTheWrite(): void
+    {
+        $id = TestHelper::createEmptyObject()->getId();
+        $tag = $this->createTag('order');
+        $seenInPre = null;
+        $seenInPost = null;
+        $pre = function () use (&$seenInPre, $id): void {
+            $seenInPre = count(Tag::getTagsForElement('object', $id));
+        };
+        $post = function () use (&$seenInPost, $id): void {
+            $seenInPost = count(Tag::getTagsForElement('object', $id));
+        };
+        Pimcore::getEventDispatcher()->addListener(TagEvents::PRE_ADD_TO_ELEMENT, $pre);
+        Pimcore::getEventDispatcher()->addListener(TagEvents::POST_ADD_TO_ELEMENT, $post);
+        $this->registeredListeners[] = [TagEvents::PRE_ADD_TO_ELEMENT, $pre];
+        $this->registeredListeners[] = [TagEvents::POST_ADD_TO_ELEMENT, $post];
+
+        Tag::setTagsForElement('object', $id, [$tag]);
+
+        $this->assertSame(0, $seenInPre);
+        $this->assertSame(1, $seenInPost);
     }
 
     public function testBatchEventIsStillFired(): void
