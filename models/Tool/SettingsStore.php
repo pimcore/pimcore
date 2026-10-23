@@ -62,6 +62,13 @@ final class SettingsStore extends Model\AbstractModel
      */
     protected static ?self $instance = null;
 
+    /**
+     * Entries of a scope as loaded by {@see self::loadScopeSnapshot()}, by scope and id.
+     *
+     * @var array<string, array<string, array<string, mixed>>>
+     */
+    private static array $scopeSnapshots = [];
+
     private static function getInstance(): self
     {
         if (!self::$instance) {
@@ -92,6 +99,7 @@ final class SettingsStore extends Model\AbstractModel
     {
         self::validateType($type);
         $instance = self::getInstance();
+        unset(self::$scopeSnapshots[(string) $scope]);
 
         return $instance->getDao()->set($id, $data, $type, $scope);
     }
@@ -99,6 +107,7 @@ final class SettingsStore extends Model\AbstractModel
     public static function delete(string $id, ?string $scope = null): int|string
     {
         $instance = self::getInstance();
+        unset(self::$scopeSnapshots[(string) $scope]);
 
         return $instance->getDao()->delete($id, $scope);
     }
@@ -124,6 +133,54 @@ final class SettingsStore extends Model\AbstractModel
         $instance = self::getInstance();
 
         return $instance->getDao()->getIdsByScope($scope);
+    }
+
+    /**
+     * Loads every entry of a scope with a single query and keeps the entries in memory,
+     * so that {@see self::getFromScopeSnapshot()} can return them without a query each.
+     *
+     * Meant for callers that list a scope and then read each of its entries, such as the
+     * configuration listings of {@see \Pimcore\Config\LocationAwareConfigRepository}.
+     * The snapshot of a scope is replaced by the next call for that scope and dropped by
+     * {@see self::set()} and {@see self::delete()} on it.
+     *
+     * @return string[] the ids of the scope, as {@see self::getIdsByScope()} returns them
+     *
+     * @internal
+     */
+    public static function loadScopeSnapshot(string $scope): array
+    {
+        $ids = [];
+        $rows = [];
+        foreach (self::getInstance()->getDao()->getRowsByScope($scope) as $row) {
+            $ids[] = $row['id'];
+            $rows[$row['id']] = $row;
+        }
+
+        self::$scopeSnapshots[$scope] = $rows;
+
+        return $ids;
+    }
+
+    /**
+     * Returns an entry from the snapshot taken by {@see self::loadScopeSnapshot()}.
+     *
+     * Null means that the entry is not in a snapshot - either no snapshot of the scope
+     * exists, or the entry did not exist when it was taken. Use {@see self::get()} then.
+     *
+     * @internal
+     */
+    public static function getFromScopeSnapshot(string $id, ?string $scope = null): ?SettingsStore
+    {
+        $row = self::$scopeSnapshots[(string) $scope][$id] ?? null;
+        if ($row === null) {
+            return null;
+        }
+
+        $item = new self();
+        $item->getDao()->assignRow($row);
+
+        return $item;
     }
 
     public function getId(): string
