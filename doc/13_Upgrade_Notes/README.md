@@ -2,6 +2,9 @@
 
 ## Pimcore 2026.3.4
 
+### [Messenger]
+- [Sanity check] The `SanityCheckHandler` (`pimcore_core` transport) no longer saves an element whose row, or whose parent's row, was deleted after the `SanityCheckMessage` was queued. `save()` re-inserted such an element (`Helper::updateOrInsert()`), so a bulk deletion with a running worker could leave orphaned objects with a broken path behind, followed by "ParentID not found" retries. The message is acknowledged and the element is skipped instead.
+
 ### [Documents]
 - [Page previews] `documents.preview_url_prefix` is now honoured for the page previews shown in the document tree, as it already was for version previews. `Document\Page::save()` and `pimcore:documents:generate-page-previews` (without `--urlPrefix`) used the host of the current request / the main domain for the URL Gotenberg's Chromium loads, so the setting - made for setups where Chromium cannot reach the admin hostname - had no effect there. Precedence is now: explicit `--urlPrefix` (CLI), then `documents.preview_url_prefix`, then the request host / main domain.
 
