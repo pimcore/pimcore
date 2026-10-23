@@ -128,6 +128,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     continue;
                 }
 
+                if ($fd instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation && !$fd->getMandatory()) {
+                    // a reverse relation is the read-only mirror of a relation stored on the owning objects;
+                    // reading it loads every owning object, only to validate objects that are not part of
+                    // this save. Only a mandatory one needs its value for the mandatory check.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {

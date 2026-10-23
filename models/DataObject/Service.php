@@ -485,6 +485,12 @@ class Service extends Model\Element\Service
                 //load all in case of lazy loading fields
                 $fd = $object->getClass()->getFieldDefinitions();
                 foreach ($fd as $def) {
+                    if ($def instanceof ClassDefinition\Data\ReverseObjectRelation) {
+                        // the owning objects are not kept on the object and not lazy loaded data of it; the getter
+                        // would only query the relation table and load every owning object to discard them
+                        continue;
+                    }
+
                     $getter = 'get' . ucfirst($def->getName());
                     if (method_exists($object, $getter)) {
                         $value = $object->$getter();
