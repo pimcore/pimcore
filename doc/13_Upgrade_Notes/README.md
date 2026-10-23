@@ -2,6 +2,10 @@
 
 ## Pimcore 2026.3.4
 
+### [DataObjects]
+- [Security] `Block::getDataFromResource()` no longer unserializes the block's stored data with every PHP class allowed (GHSA-6324-x2cv-h975). Only the value objects a block legitimately stores are reconstructed: `Consent`, `ExternalImage`, `StructuredTable`, `MarkerHotspotItem` and `Carbon`/`CarbonImmutable`. Any other object in the stored data comes back as `__PHP_Incomplete_Class`. This affects custom field definitions used inside a block whose `normalize()` output - or whose registered `block_<fieldtype>` marshaller - stores other objects: switch them to scalars/arrays (as the core marshallers do) or you will lose that data on the next load.
+- [Security] Hotspot images and image galleries inside a block now have block marshallers, so hotspot/marker metadata is stored as plain arrays with a referenced asset/document/object reduced to its id - the format the editmode and Studio already write. A `MarkerHotspotItem` built through the PHP API with the element object as value is therefore stored by id as well; after reloading, `$item['value']` (array access) still resolves to the element, while `getValue()` returns the id, exactly as for metadata saved through the admin UI. Element objects that older versions serialized into existing block data are reduced to their id on load, so nothing needs re-saving.
+
 ### [Documents]
 - [Page previews] `documents.preview_url_prefix` is now honoured for the page previews shown in the document tree, as it already was for version previews. `Document\Page::save()` and `pimcore:documents:generate-page-previews` (without `--urlPrefix`) used the host of the current request / the main domain for the URL Gotenberg's Chromium loads, so the setting - made for setups where Chromium cannot reach the admin hostname - had no effect there. Precedence is now: explicit `--urlPrefix` (CLI), then `documents.preview_url_prefix`, then the request host / main domain.
 

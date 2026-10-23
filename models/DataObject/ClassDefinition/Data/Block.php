@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Error;
 use Exception;
 use Pimcore;
@@ -98,7 +99,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * by getDataForResource() through the per-fieldtype block marshallers, several of which
      * rebuild one of these value objects before serializing (externalImage, consent, date/datetime,
      * structuredTable), while types without a marshaller store their raw normalize() output, which
-     * can keep objects too (hotspotimage/imageGallery -> MarkerHotspotItem, dateRange -> Carbon).
+     * can keep objects too (dateRange -> Carbon, or CarbonImmutable for a period built from
+     * immutable dates). MarkerHotspotItem is only found in blobs written before the hotspotimage /
+     * imageGallery block marshallers existed, which now store the metadata as plain arrays.
      * Passed to Serialize::unserialize() in getDataFromResource() so that known value objects are
      * reconstructed while every other class name in the input is refused.
      *
@@ -110,6 +113,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         DataObject\Data\StructuredTable::class,
         Element\Data\MarkerHotspotItem::class,
         Carbon::class,
+        CarbonImmutable::class,
     ];
 
     /**

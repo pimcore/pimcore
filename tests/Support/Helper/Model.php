@@ -314,6 +314,7 @@ class Model extends AbstractDefinitionHelper
             $block->addChild($this->createDataChild('input', 'blockinput'));
             $block->addChild($this->createDataChild('link', 'blocklink'));
             $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
+            $block->addChild($this->createDataChild('imageGallery', 'blockimagegallery'));
 
             $block->addChild($this->createDataChild('geopoint', 'blockgeopoint'));
             $block->addChild($this->createDataChild('geobounds', 'blockgeobounds'));
