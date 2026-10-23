@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Select extends Data implements
@@ -225,7 +227,8 @@ class Select extends Data implements
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if (!$this->isEmpty($data) && $this->isEnforceValidation()) {
@@ -239,9 +242,10 @@ class Select extends Data implements
             }
 
             if (!$this->isValidOption($data)) {
-                throw new Model\Element\ValidationException(
+                throw (new StructuredValidationException(
                     sprintf("Invalid option '%s' for field [ %s ]", $data, $this->getName())
-                );
+                ))
+                    ->setTranslation(ValidationMessageKey::INVALID_OPTION, ['value' => $data]);
             }
         }
     }

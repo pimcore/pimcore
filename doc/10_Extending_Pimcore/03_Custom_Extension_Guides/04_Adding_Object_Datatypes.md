@@ -53,6 +53,36 @@ configuration in a config file that is
 > [config.yaml](https://github.com/pimcore/studio-example-bundle/blob/main/config/pimcore/config.yaml)
 > in the example bundle.
 
+### Translatable Validation Errors (optional)
+
+`checkValidity()` signals an invalid value by throwing a `Pimcore\Model\Element\ValidationException`. The
+exception message is the plain English text. To let Pimcore Studio show the error in the language of the user,
+throw a `Pimcore\Model\Element\StructuredValidationException` and attach a translation key and its parameters:
+
+```php
+throw (new StructuredValidationException('Value in field [ ' . $this->getName() . ' ] is too long'))
+    ->setTranslation('my_bundle.validation.too_long', ['max' => 5]);
+```
+
+- Pimcore Studio translates the key from the `studio` translation domain, so the bundle ships the text in
+  `translations/studio.<locale>.yaml`, for example `my_bundle.validation.too_long: 'The value must not be longer
+  than {{max}} characters.'`.
+- Pimcore Studio injects the label of the field as `{{field}}`; the parameters only need to contain the
+  values that are specific to the rule.
+- Parameters must be scalar (`string`, `int`, `float`, `bool` or `null`). Other values are dropped, strings are
+  cut to 100 characters and invalid UTF-8 is replaced.
+- Parameters must never contain secrets. Do not pass the value of a password or an encrypted field.
+- Pass the entered value as `value`. When the data type is used inside an encrypted field, the encrypted field
+  removes `value` and any other parameter that equals the entered value.
+- The built-in keys are listed in the `Pimcore\Model\Element\ValidationMessageKey` enum, which `setTranslation()`
+  accepts as well.
+
+`StructuredValidationException` extends `ValidationException`, so code that catches `ValidationException` keeps
+working. Containers (localized fields, object bricks, field collections, blocks, classification store) and data
+objects add the field and its location to the exception, so a custom data type does not need to take care of
+that. A plain `ValidationException` is converted with `StructuredValidationException::from()` and gets field and
+location as well, only without a translation key.
+
 ---
 
 ## Generic Data Index
