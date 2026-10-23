@@ -434,6 +434,24 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
     }
 
+    /**
+     * Queues the dependency update of descendants whose path changed together with this element.
+     *
+     * @param array<int, array{id: int|string}> $children
+     */
+    protected function addChildrenToDependenciesQueue(array $children): void
+    {
+        if (!$children || !Config::getSystemConfiguration()['dependency']['enabled']) {
+            return;
+        }
+
+        $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
+        $type = Service::getElementType($this);
+        foreach ($children as $child) {
+            $bus->dispatch(new ElementDependenciesMessage($type, (int) $child['id']));
+        }
+    }
+
     public function isLocked(): bool
     {
         if ($this->getLocked()) {

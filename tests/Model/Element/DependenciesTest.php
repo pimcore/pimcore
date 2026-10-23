@@ -169,6 +169,58 @@ class DependenciesTest extends ModelTestCase
     }
 
     /**
+     * Regression test for #14699: moving a document changes the properties its descendants inherit, so their
+     * dependencies have to be resolved again, not only the ones of the moved document.
+     */
+    public function testMovingDocumentUpdatesDependenciesOfDescendants(): void
+    {
+        $snippet = new Document\Snippet();
+        $snippet->setParentId(1);
+        $snippet->setKey('snippet' . uniqid());
+        $snippet->setPublished(true);
+        $snippet->save();
+
+        $source = TestHelper::createDocumentFolder();
+        $target = TestHelper::createDocumentFolder();
+
+        $property = new Property();
+        $property->setName('sidebar');
+        $property->setType('document');
+        $property->setData($snippet);
+        $property->setInherited(false);
+        $property->setInheritable(true);
+        $source->setProperties(['sidebar' => $property]);
+        $source->save();
+
+        $folder = new Document\Folder();
+        $folder->setParentId($source->getId());
+        $folder->setKey('moved');
+        $folder->save();
+
+        $child = new Document\Page();
+        $child->setParentId($folder->getId());
+        $child->setKey('child');
+        $child->setPublished(true);
+        $child->save();
+
+        $requiredBy = static fn (): array => array_column(
+            Document::getById($snippet->getId(), ['force' => true])->getDependencies()->getRequiredBy(),
+            'id'
+        );
+        $this->assertContains($child->getId(), $requiredBy(), 'The child inherits the property before the move');
+
+        $folder = Document::getById($folder->getId(), ['force' => true]);
+        $folder->setParentId($target->getId());
+        $folder->save();
+
+        $this->assertNull(
+            Document::getById($child->getId(), ['force' => true])->getProperty('sidebar'),
+            'The child does not inherit the property any more'
+        );
+        $this->assertNotContains($child->getId(), $requiredBy(), 'The dependency of the child on the snippet is stale after the move');
+    }
+
+    /**
      * @param Concrete[] $targets
      */
     private function saveElementDependencies(ElementInterface $source, array $targets): void

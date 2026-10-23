@@ -365,6 +365,14 @@ class Document extends Element\AbstractElement
                 // add to queue that saves dependencies
                 $this->addToDependenciesQueue();
 
+                // descendants of a moved document may inherit different properties now
+                if ($differentOldPath) {
+                    $this->addChildrenToDependenciesQueue(array_filter(
+                        $updatedChildren,
+                        static fn (array $doc): bool => str_starts_with($doc['path'], $differentOldPath . '/')
+                    ));
+                }
+
                 $postEvent = new DocumentEvent($this, $parameters);
                 if ($isUpdate) {
                     if ($differentOldPath) {
