@@ -106,6 +106,7 @@ class Folder extends DAV\Collection
      * @param Asset|string $name
      *
      * @throws DAV\Exception\NotFound
+     * @throws DAV\Exception\Forbidden
      */
     public function getChild($name): File|Folder
     {
@@ -125,6 +126,15 @@ class Folder extends DAV\Collection
         }
 
         if ($asset instanceof Asset) {
+            // Direct node resolution (PROPFIND/LOCK on a known path) bypasses the "list"
+            // filtering in getChildren(), so per-asset authorization has to be enforced here too -
+            // "list" for folders (keeps traversal through list-only parents working) and "view" for
+            // files, matching File::get().
+            $requiredPermission = $asset instanceof Asset\Folder ? 'list' : 'view';
+            if (!$asset->isAllowed($requiredPermission)) {
+                throw new DAV\Exception\Forbidden(sprintf('Missing "%s" permission', $requiredPermission));
+            }
+
             return $this->createNode($asset);
         }
 
