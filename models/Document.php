@@ -394,8 +394,10 @@ class Document extends Element\AbstractElement
                 $this->addToDependenciesQueue();
 
                 // descendants of a moved document may inherit different properties now, a rename cannot change that
-                if ($differentOldPath && dirname($differentOldPath) !== dirname($this->getRealFullPath())) {
-                    $this->addDescendantsToDependenciesQueue($differentOldPath, $updatedChildren);
+                if ($differentOldPath) {
+                    if (dirname($differentOldPath) !== dirname($this->getRealFullPath())) {
+                        $this->addDescendantsToDependenciesQueue($differentOldPath, $updatedChildren);
+                    }
                 }
 
                 $postEvent = new DocumentEvent($this, $parameters);

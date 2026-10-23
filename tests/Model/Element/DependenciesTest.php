@@ -29,8 +29,10 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Psr\Log\AbstractLogger;
 use Psr\Log\NullLogger;
+use ReflectionProperty;
 use RuntimeException;
 use Stringable;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -255,7 +257,10 @@ class DependenciesTest extends ModelTestCase
         $container = Pimcore::getContainer();
         $bus = $container->get('messenger.bus.pimcore-core');
         $failingId = $child->getId();
-        $container->set('messenger.bus.pimcore-core', new class($bus, $failingId) implements MessageBusInterface {
+        // the bus is already initialized, so Container::set() would refuse to replace it
+        $services = new ReflectionProperty(Container::class, 'services');
+        $original = $services->getValue($container);
+        $services->setValue($container, ['messenger.bus.pimcore-core' => new class($bus, $failingId) implements MessageBusInterface {
             public function __construct(private MessageBusInterface $bus, private int $failingId)
             {
             }
@@ -268,13 +273,13 @@ class DependenciesTest extends ModelTestCase
 
                 return $this->bus->dispatch($message, $stamps);
             }
-        });
+        }] + $original);
 
         try {
             $folder->setParentId($target->getId());
             $folder->save();
         } finally {
-            $container->set('messenger.bus.pimcore-core', $bus);
+            $services->setValue($container, $original);
         }
 
         $this->assertSame($target->getId(), Document::getById($folder->getId(), ['force' => true])->getParentId(), 'The move is committed');
