@@ -174,6 +174,68 @@ class DependenciesTest extends ModelTestCase
      */
     public function testMovingDocumentUpdatesDependenciesOfDescendants(): void
     {
+        [$snippet, $source, $folder, $child] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet), 'The child inherits the property before the move');
+
+        $folder->setParentId($target->getId());
+        $folder->save();
+
+        $this->assertNull(
+            Document::getById($child->getId(), ['force' => true])->getProperty('sidebar'),
+            'The child does not inherit the property any more'
+        );
+        $this->assertNotContains($child->getId(), $this->getRequiredByIds($snippet), 'The dependency of the child on the snippet is stale after the move');
+    }
+
+    public function testMovingDocumentDoesNotQueueSiblingsSharingTheNamePrefix(): void
+    {
+        [$snippet, $source, $folder] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $sibling = new Document\Folder();
+        $sibling->setParentId($source->getId());
+        $sibling->setKey($folder->getKey() . '-sibling');
+        $sibling->save();
+
+        $siblingChild = new Document\Page();
+        $siblingChild->setParentId($sibling->getId());
+        $siblingChild->setKey('child');
+        $siblingChild->setPublished(true);
+        $siblingChild->save();
+
+        $this->assertContains($siblingChild->getId(), $this->getRequiredByIds($snippet));
+
+        // the sibling is not moved, so nothing may refresh its dependencies: drop them to detect a refresh
+        Db::get()->delete('dependencies', ['sourcetype' => 'document', 'sourceid' => $siblingChild->getId()]);
+
+        $folder->setParentId($target->getId());
+        $folder->save();
+
+        $this->assertNotContains($siblingChild->getId(), $this->getRequiredByIds($snippet), 'The sibling must not be queued');
+    }
+
+    public function testRenamingDocumentDoesNotQueueDescendants(): void
+    {
+        [$snippet, , $folder, $child] = $this->createInheritingDocumentTree();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet));
+
+        // a rename keeps the inherited properties, so nothing may refresh the descendants: drop their dependencies to detect a refresh
+        Db::get()->delete('dependencies', ['sourcetype' => 'document', 'sourceid' => $child->getId()]);
+
+        $folder->setKey($folder->getKey() . '-renamed');
+        $folder->save();
+
+        $this->assertNotContains($child->getId(), $this->getRequiredByIds($snippet), 'A rename must not queue the descendants');
+    }
+
+    /**
+     * @return array{Document\Snippet, Document, Document\Folder, Document\Page} snippet, property holder, moved folder, its child
+     */
+    private function createInheritingDocumentTree(): array
+    {
         $snippet = new Document\Snippet();
         $snippet->setParentId(1);
         $snippet->setKey('snippet' . uniqid());
@@ -181,7 +243,6 @@ class DependenciesTest extends ModelTestCase
         $snippet->save();
 
         $source = TestHelper::createDocumentFolder();
-        $target = TestHelper::createDocumentFolder();
 
         $property = new Property();
         $property->setName('sidebar');
@@ -194,7 +255,7 @@ class DependenciesTest extends ModelTestCase
 
         $folder = new Document\Folder();
         $folder->setParentId($source->getId());
-        $folder->setKey('moved');
+        $folder->setKey('moved' . uniqid());
         $folder->save();
 
         $child = new Document\Page();
@@ -203,21 +264,18 @@ class DependenciesTest extends ModelTestCase
         $child->setPublished(true);
         $child->save();
 
-        $requiredBy = static fn (): array => array_column(
-            Document::getById($snippet->getId(), ['force' => true])->getDependencies()->getRequiredBy(),
+        return [$snippet, $source, $folder, $child];
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getRequiredByIds(Document $document): array
+    {
+        return array_column(
+            Document::getById($document->getId(), ['force' => true])->getDependencies()->getRequiredBy(),
             'id'
         );
-        $this->assertContains($child->getId(), $requiredBy(), 'The child inherits the property before the move');
-
-        $folder = Document::getById($folder->getId(), ['force' => true]);
-        $folder->setParentId($target->getId());
-        $folder->save();
-
-        $this->assertNull(
-            Document::getById($child->getId(), ['force' => true])->getProperty('sidebar'),
-            'The child does not inherit the property any more'
-        );
-        $this->assertNotContains($child->getId(), $requiredBy(), 'The dependency of the child on the snippet is stale after the move');
     }
 
     /**

@@ -16,10 +16,12 @@ namespace Pimcore\Model;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
+use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
@@ -31,6 +33,7 @@ use Pimcore\Tool\Frontend as FrontendTool;
 use ReflectionClass;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Throwable;
 
 /**
  * @method \Pimcore\Model\Document\Dao getDao()
@@ -297,6 +300,32 @@ class Document extends Element\AbstractElement
         return $list;
     }
 
+    /**
+     * Queues the dependency update of the descendants whose path was rewritten together with this document.
+     *
+     * @param array<int, array{id: int|string, path: string}> $updatedChildren
+     */
+    private function addDescendantsToDependenciesQueue(string $oldPath, array $updatedChildren): void
+    {
+        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
+            return;
+        }
+
+        $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
+        foreach ($updatedChildren as $child) {
+            // the path query also matches siblings sharing the name prefix
+            if (!str_starts_with($child['path'], $oldPath . '/')) {
+                continue;
+            }
+
+            try {
+                $bus->dispatch(new ElementDependenciesMessage('document', (int) $child['id']));
+            } catch (Throwable $e) {
+                Logger::error('Could not queue the dependency update of document ' . $child['id'] . ': ' . $e->getMessage());
+            }
+        }
+    }
+
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
@@ -365,12 +394,9 @@ class Document extends Element\AbstractElement
                 // add to queue that saves dependencies
                 $this->addToDependenciesQueue();
 
-                // descendants of a moved document may inherit different properties now
-                if ($differentOldPath) {
-                    $this->addChildrenToDependenciesQueue(array_filter(
-                        $updatedChildren,
-                        static fn (array $doc): bool => str_starts_with($doc['path'], $differentOldPath . '/')
-                    ));
+                // descendants of a moved document may inherit different properties now, a rename cannot change that
+                if ($differentOldPath && dirname($differentOldPath) !== dirname($this->getRealFullPath())) {
+                    $this->addDescendantsToDependenciesQueue($differentOldPath, $updatedChildren);
                 }
 
                 $postEvent = new DocumentEvent($this, $parameters);
