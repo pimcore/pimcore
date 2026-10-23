@@ -200,7 +200,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-2026.x": "12.x-dev"
+      "dev-2026.x": "2026.4.x-dev"
     }
   },
   "scripts": {
