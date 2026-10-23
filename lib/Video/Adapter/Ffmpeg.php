@@ -243,6 +243,14 @@ class Ffmpeg implements AdapterInterface
             $process = new Process($cmd);
             $process->mustRun();
 
+            // FFmpeg exits successfully without writing anything when the time offset is beyond the end of the video
+            clearstatcache(true, $file);
+            if (!is_file($file) || filesize($file) === 0) {
+                Logger::info(sprintf('FFmpeg extracted no frame at %ss of %s', $timeOffset, $this->file));
+
+                return false;
+            }
+
             return true;
         } catch (Exception $e) {
             Logger::error((string) $e);
