@@ -98,8 +98,41 @@ class ReverseObjectRelationSaveTest extends ModelTestCase
         try {
             $target->save();
             $this->fail('A mandatory reverse relation without any owner must fail the validation');
-        } catch (ValidationException) {
-            $this->addToAssertionCount(1);
+        } catch (ValidationException $e) {
+            $this->assertStringContainsString('nonowner', $e->getMessage());
+        } finally {
+            $fd->setMandatory($mandatory);
+        }
+    }
+
+    /**
+     * Without the mandatory check (an unpublished object) the value of a mandatory reverse
+     * relation is not needed either, so saving must not load its owners.
+     */
+    public function testSaveWithoutMandatoryCheckDoesNotLoadAMandatoryReverseRelation(): void
+    {
+        $target = TestHelper::createEmptyObject('reverse-relation-omit-target-');
+        $owner = TestHelper::createEmptyObject('reverse-relation-omit-owner-', false);
+        $owner->setObjects([$target]);
+        $owner->save();
+
+        $target = Unittest::getById($target->getId(), ['force' => true]);
+        $target->setInput('changed');
+        $target->setOmitMandatoryCheck(true);
+        $fd = $target->getClass()->getFieldDefinition('nonowner');
+        $this->assertInstanceOf(ReverseObjectRelation::class, $fd);
+
+        $mandatory = $fd->getMandatory();
+        $fd->setMandatory(true);
+
+        try {
+            RuntimeCache::clear();
+            $target->save();
+
+            $this->assertFalse(
+                RuntimeCache::isRegistered('object_' . $owner->getId()),
+                'saving without the mandatory check must not load the objects of a mandatory reverse relation'
+            );
         } finally {
             $fd->setMandatory($mandatory);
         }
