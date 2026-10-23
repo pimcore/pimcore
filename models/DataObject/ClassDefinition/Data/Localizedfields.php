@@ -1017,7 +1017,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         if (is_array($value)) {
             $lf = new Localizedfield();
-            $lf->setObject($params['object']);
+            $lf->setObject($params['object'] ?? null);
 
             $items = [];
 

@@ -43,6 +43,14 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     const STRICT_ENABLED = 1;
 
+    /**
+     * envelope key marking a normalize() value produced with ['preserveEncryption' => true]
+     *
+     * The envelope is NOT deterministic: encrypting the same value twice produces
+     * different output, so it must not be used for equality comparison.
+     */
+    public const ENCRYPTED_NORMALIZED_KEY = 'pimcore_encrypted_value';
+
     private static int $strictMode = self::STRICT_ENABLED;
 
     /**
@@ -391,6 +399,18 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
                 $plainValue = $this->delegate->normalize($plainValue, $params);
             }
 
+            // opt-in for consumers that persist normalize() output; the default stays
+            // plain for consumers that need the value itself
+            if ($params['preserveEncryption'] ?? false) {
+                return [
+                    self::ENCRYPTED_NORMALIZED_KEY => $this->encrypt(
+                        json_encode($plainValue, JSON_THROW_ON_ERROR),
+                        null,
+                        ['asString' => true] + $params
+                    ),
+                ];
+            }
+
             return $plainValue;
         }
 
@@ -399,6 +419,15 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     public function denormalize(mixed $value, array $params = []): Model\DataObject\Data\EncryptedField
     {
+        // shape-detecting counterpart of normalize(['preserveEncryption' => true])
+        if (is_array($value) && array_key_exists(self::ENCRYPTED_NORMALIZED_KEY, $value)) {
+            $decrypted = $this->decrypt($value[self::ENCRYPTED_NORMALIZED_KEY], null, ['asString' => true] + $params);
+            // decrypt() returns null when the value cannot be decoded and strict mode is
+            // off — keep that soft failure rather than turning it into a JsonException
+            $value = $decrypted === null
+                ? null
+                : json_decode((string) $decrypted, true, 512, JSON_THROW_ON_ERROR);
+        }
         if ($this->delegate instanceof NormalizerInterface) {
             $value = $this->delegate->denormalize($value, $params);
         }
