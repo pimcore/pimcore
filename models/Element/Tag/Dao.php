@@ -12,6 +12,8 @@
 
 namespace Pimcore\Model\Element\Tag;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -136,6 +138,30 @@ class Dao extends Model\Dao\AbstractDao
         });
 
         return $tags;
+    }
+
+    /**
+     * @param int[] $cIds
+     *
+     * @return array<int, int[]> element id => ids of the tags assigned to it
+     */
+    public function getTagIdsForElements(string $cType, array $cIds): array
+    {
+        $assigned = [];
+        if (empty($cIds)) {
+            return $assigned;
+        }
+
+        $rows = $this->db->fetchAllAssociative(
+            'SELECT cid, tagid FROM tags_assignment WHERE ctype = ? AND cid IN (?)',
+            [$cType, array_map('intval', $cIds)],
+            [ParameterType::STRING, ArrayParameterType::INTEGER]
+        );
+        foreach ($rows as $row) {
+            $assigned[(int) $row['cid']][] = (int) $row['tagid'];
+        }
+
+        return $assigned;
     }
 
     public function addTagToElement(string $cType, int $cId): void

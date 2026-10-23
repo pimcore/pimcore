@@ -132,9 +132,26 @@ final class Tag extends Model\AbstractModel
     public static function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $tag = new Tag();
+
+        $newTagIds = array_map(static fn (Tag $tag) => $tag->getId(), $tags);
+        $oldTags = $tag->getDao()->getTagsForElement($cType, $cId);
+        $oldTagIds = array_map(static fn (Tag $tag) => $tag->getId(), $oldTags);
+
+        $removedTags = array_filter($oldTags, static fn (Tag $tag) => !in_array($tag->getId(), $newTagIds, true));
+        $addedTags = array_filter($tags, static fn (Tag $tag) => !in_array($tag->getId(), $oldTagIds, true));
+
+        $events = self::createAssignmentEvents($cType, $cId, $addedTags, $removedTags);
+        self::dispatchAssignmentEvents($events, 'pre');
+
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
+
+        self::dispatchAssignmentEvents($events, 'post');
     }
 
+    /**
+     * Assigns the given tags to all given elements, with $replace all other tags of these elements are removed.
+     * Fires the add/remove events for every assignment that changes, plus one batch event at the end.
+     */
     public static function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace = false): void
     {
         $tag = new Tag();
@@ -144,9 +161,70 @@ final class Tag extends Model\AbstractModel
             'elementIds' => $cIds,
         ]);
 
+        $assigned = $tag->getDao()->getTagIdsForElements($cType, $cIds);
+
+        $events = [];
+        foreach ($cIds as $cId) {
+            $currentTagIds = $assigned[$cId] ?? [];
+            $addedTags = self::getTagsByIds(array_diff($tagIds, $currentTagIds));
+            $removedTags = $replace ? self::getTagsByIds(array_diff($currentTagIds, $tagIds)) : [];
+            $events = array_merge($events, self::createAssignmentEvents($cType, (int) $cId, $addedTags, $removedTags));
+        }
+
+        self::dispatchAssignmentEvents($events, 'pre');
+
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
 
+        self::dispatchAssignmentEvents($events, 'post');
+
         $tag->dispatchEvent($event, TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT);
+    }
+
+    /**
+     * @param Tag[] $addedTags
+     * @param Tag[] $removedTags
+     *
+     * @return array<int, array{string, string, TagEvent}> list of [pre event name, post event name, event]
+     */
+    private static function createAssignmentEvents(string $cType, int $cId, array $addedTags, array $removedTags): array
+    {
+        $events = [];
+        foreach ($removedTags as $removedTag) {
+            $events[] = [
+                TagEvents::PRE_REMOVE_FROM_ELEMENT,
+                TagEvents::POST_REMOVE_FROM_ELEMENT,
+                new TagEvent($removedTag, ['elementType' => $cType, 'elementId' => $cId]),
+            ];
+        }
+        foreach ($addedTags as $addedTag) {
+            $events[] = [
+                TagEvents::PRE_ADD_TO_ELEMENT,
+                TagEvents::POST_ADD_TO_ELEMENT,
+                new TagEvent($addedTag, ['elementType' => $cType, 'elementId' => $cId]),
+            ];
+        }
+
+        return $events;
+    }
+
+    /**
+     * @param array<int, array{string, string, TagEvent}> $events
+     */
+    private static function dispatchAssignmentEvents(array $events, string $phase): void
+    {
+        foreach ($events as [$preName, $postName, $event]) {
+            $event->getTag()->dispatchEvent($event, $phase === 'pre' ? $preName : $postName);
+        }
+    }
+
+    /**
+     * @param int[] $tagIds
+     *
+     * @return Tag[]
+     */
+    private static function getTagsByIds(array $tagIds): array
+    {
+        return array_filter(array_map(static fn ($tagId) => self::getById((int) $tagId), $tagIds));
     }
 
     /**
