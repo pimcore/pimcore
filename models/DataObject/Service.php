@@ -282,13 +282,21 @@ class Service extends Model\Element\Service
             return;
         }
 
+        // like the editors: for localized fields a list with only the language-independent 'default' means
+        // "no restriction", while the classification store still limits itself to that one value
+        $restrictLocalizedfields = array_keys($editableLanguages) !== ['default'];
+
         self::loadAllObjectFields($target);
 
         foreach ($new->getClass()->getFieldDefinitions() as $name => $definition) {
             $newValue = $new->get($name);
             $targetValue = $target->get($name);
 
-            if ($definition instanceof ClassDefinition\Data\Localizedfields) {
+            if ($newValue instanceof DataObject\Classificationstore) {
+                $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
+            } elseif (!$restrictLocalizedfields) {
+                continue;
+            } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
                 $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
             } elseif ($newValue instanceof DataObject\Objectbrick) {
                 $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
@@ -296,6 +304,45 @@ class Service extends Model\Element\Service
                 $this->restoreFieldcollectionLanguages($newValue, $targetValue, $editableLanguages);
             }
         }
+    }
+
+    /**
+     * The values of a classification store are keyed by group, key and language ('default' is the
+     * language-independent value, which is only editable if the user's list contains it).
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreClassificationstoreLanguages(
+        DataObject\Classificationstore $new,
+        mixed $target,
+        array $editableLanguages
+    ): void {
+        $items = $new->getItems();
+        $targetItems = $target instanceof DataObject\Classificationstore ? $target->getItems() : [];
+        $activeGroups = $new->getActiveGroups();
+
+        foreach ($items as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $items[$groupId][$keyId] = array_intersect_key($values, $editableLanguages);
+            }
+        }
+
+        foreach ($targetItems as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $kept = array_diff_key($values, $editableLanguages);
+                if ($kept) {
+                    $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
+                    $activeGroups[$groupId] = true;
+                }
+            }
+        }
+
+        foreach ($items as $groupId => $group) {
+            $items[$groupId] = array_filter($group);
+        }
+
+        $new->setItems(array_filter($items));
+        $new->setActiveGroups($activeGroups);
     }
 
     /**

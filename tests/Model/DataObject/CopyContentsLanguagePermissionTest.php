@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
@@ -31,6 +33,17 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class CopyContentsLanguagePermissionTest extends ModelTestCase
 {
+    private const STORE_NAME = 'copycontentsstore';
+
+    /**
+     * @var User[]
+     */
+    private array $users = [];
+
+    private int $groupId;
+
+    private int $keyId;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -39,6 +52,10 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
 
     public function tearDown(): void
     {
+        foreach ($this->users as $user) {
+            $user->delete();
+        }
+        $this->users = [];
         TestHelper::cleanUp();
         parent::tearDown();
     }
@@ -53,6 +70,45 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->tester->setupPimcoreClass_LazyLoading();
         $this->tester->setupObjectbrick_LazyLoadingTest();
         $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
+        $this->tester->setupPimcoreClass_Csstore(
+            ['storeId' => $this->setUpStore()->getId()],
+            self::STORE_NAME,
+            self::STORE_NAME . '.json'
+        );
+    }
+
+    private function setUpStore(): Classificationstore\StoreConfig
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        if (!$store) {
+            $store = new Classificationstore\StoreConfig();
+            $store->setName(self::STORE_NAME);
+            $store->save();
+
+            $group = new Classificationstore\GroupConfig();
+            $group->setStoreId($store->getId());
+            $group->setName(self::STORE_NAME . 'group');
+            $group->save();
+
+            $key = new Classificationstore\KeyConfig();
+            $key->setStoreId($store->getId());
+            $key->setName('input');
+            $key->setEnabled(true);
+            $key->setType('input');
+            $key->setDefinition(json_encode(new ClassDefinition\Data\Input()));
+            $key->save();
+
+            $relation = new Classificationstore\KeyGroupRelation();
+            $relation->setKeyId($key->getId());
+            $relation->setGroupId($group->getId());
+            $relation->save();
+        }
+
+        $group = Classificationstore\GroupConfig::getByName(self::STORE_NAME . 'group', $store->getId());
+        $this->groupId = $group->getId();
+        $this->keyId = Classificationstore\KeyConfig::getByName('input', $store->getId())->getId();
+
+        return $store;
     }
 
     public function testLocalizedFieldsOfNonEditableLanguagesAreKept(): void
@@ -130,6 +186,56 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->assertSame('source de', Unittest::getById($target->getId(), ['force' => true])->getLinput('de'));
     }
 
+    public function testAllLocalizedValuesAreCopiedIfOnlyDefaultIsListed(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createUnittest(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'default'));
+
+        $result = Unittest::getById($target->getId(), ['force' => true]);
+        $this->assertSame('source en', $result->getLinput('en'));
+        $this->assertSame('source de', $result->getLinput('de'));
+    }
+
+    public function testClassificationstoreValuesOfNonEditableLanguagesAreKept(): void
+    {
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de', 'default' => 'source default']);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de', 'default' => 'target default']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+        $this->assertSame('target default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
+    }
+
+    public function testClassificationstoreLanguageIndependentValueIsCopiedIfListed(): void
+    {
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de', 'default' => 'source default']);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de', 'default' => 'target default']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'default'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
+        $this->assertSame('target en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+    }
+
+    public function testClassificationstoreValuesOfNonEditableLanguagesSurviveWhenSourceHasNoGroup(): void
+    {
+        $source = $this->createCsstore([]);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertEmpty($store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+    }
+
     public function testFieldcollectionLocalizedFieldsOfNonEditableLanguagesAreKept(): void
     {
         $source = $this->createUnittest([]);
@@ -170,6 +276,27 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $object->save();
 
         return $object;
+    }
+
+    /**
+     * @param array<string, string> $values
+     */
+    private function createCsstore(array $values): Concrete
+    {
+        $class = '\\Pimcore\\Model\\DataObject\\' . ucfirst(self::STORE_NAME);
+        $object = TestHelper::createEmptyObject('', false, true, $class);
+        $store = $object->getCsstore();
+        foreach ($values as $language => $value) {
+            $store->setLocalizedKeyValue($this->groupId, $this->keyId, $value, $language);
+        }
+        $object->save();
+
+        return $object;
+    }
+
+    private function reloadCsstore(Concrete $object): Classificationstore
+    {
+        return Concrete::getById($object->getId(), ['force' => true])->getCsstore();
     }
 
     /**
@@ -217,6 +344,7 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $workspace->setLEdit($languages);
         $user->setWorkspacesObject([$workspace]);
         $user->save();
+        $this->users[] = $user;
 
         return $user;
     }
