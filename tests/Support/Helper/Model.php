@@ -44,6 +44,7 @@ class Model extends AbstractDefinitionHelper
 
             $csField = $this->createDataChild('classificationstore', 'csstore');
             $csField->setStoreId($params['storeId']);
+            $csField->setLocalized((bool) ($params['localized'] ?? false));
             $panel->addChild($csField);
 
             $root->addChild($rootPanel);

@@ -35,6 +35,8 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
 {
     private const STORE_NAME = 'copycontentsstore';
 
+    private const PLAIN_STORE_CLASS = 'copycontentsplainstore';
+
     /**
      * @var User[]
      */
@@ -70,10 +72,16 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->tester->setupPimcoreClass_LazyLoading();
         $this->tester->setupObjectbrick_LazyLoadingTest();
         $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
+        $storeId = $this->setUpStore()->getId();
         $this->tester->setupPimcoreClass_Csstore(
-            ['storeId' => $this->setUpStore()->getId()],
+            ['storeId' => $storeId, 'localized' => true],
             self::STORE_NAME,
             self::STORE_NAME . '.json'
+        );
+        $this->tester->setupPimcoreClass_Csstore(
+            ['storeId' => $storeId],
+            self::PLAIN_STORE_CLASS,
+            self::PLAIN_STORE_CLASS . '.json'
         );
     }
 
@@ -211,6 +219,17 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->assertSame('target default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
     }
 
+    public function testNonLocalizedClassificationstoreIsCopiedForRestrictedUser(): void
+    {
+        $source = $this->createCsstore(['default' => 'source default'], self::PLAIN_STORE_CLASS);
+        $target = $this->createCsstore(['default' => 'target default'], self::PLAIN_STORE_CLASS);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
+    }
+
     public function testClassificationstoreLanguageIndependentValueIsCopiedIfListed(): void
     {
         $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de', 'default' => 'source default']);
@@ -281,9 +300,9 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
     /**
      * @param array<string, string> $values
      */
-    private function createCsstore(array $values): Concrete
+    private function createCsstore(array $values, string $className = self::STORE_NAME): Concrete
     {
-        $class = '\\Pimcore\\Model\\DataObject\\' . ucfirst(self::STORE_NAME);
+        $class = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className);
         $object = TestHelper::createEmptyObject('', false, true, $class);
         $store = $object->getCsstore();
         foreach ($values as $language => $value) {

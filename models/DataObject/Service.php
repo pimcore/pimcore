@@ -293,7 +293,10 @@ class Service extends Model\Element\Service
             $targetValue = $target->get($name);
 
             if ($newValue instanceof DataObject\Classificationstore) {
-                $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
+                // like the editors, only localized stores are limited; a store without languages only holds 'default'
+                if ($definition instanceof ClassDefinition\Data\Classificationstore && $definition->isLocalized()) {
+                    $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
+                }
             } elseif (!$restrictLocalizedfields) {
                 continue;
             } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
@@ -307,7 +310,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * The values of a classification store are keyed by group, key and language ('default' is the
+     * The values of a localized classification store are keyed by group, key and language ('default' is the
      * language-independent value, which is only editable if the user's list contains it).
      *
      * @param array<string, int> $editableLanguages
@@ -317,9 +320,11 @@ class Service extends Model\Element\Service
         mixed $target,
         array $editableLanguages
     ): void {
-        $items = $new->getItems();
-        $targetItems = $target instanceof DataObject\Classificationstore ? $target->getItems() : [];
-        $activeGroups = $new->getActiveGroups();
+        // the object is saved with inheritance off, so own values must not be mixed with the parent's
+        [$items, $activeGroups] = self::useInheritedValues(false, static fn (): array => [$new->getItems(), $new->getActiveGroups()]);
+        $targetItems = $target instanceof DataObject\Classificationstore
+            ? self::useInheritedValues(false, static fn (): array => $target->getItems())
+            : [];
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $values) {
