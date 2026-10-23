@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Error;
 use Exception;
+use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Element\MarshallerService;
@@ -103,7 +104,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * immutable dates). MarkerHotspotItem is only found in blobs written before the hotspotimage /
      * imageGallery block marshallers existed, which now store the metadata as plain arrays.
      * Passed to Serialize::unserialize() in getDataFromResource() so that known value objects are
-     * reconstructed while every other class name in the input is refused.
+     * reconstructed while every other class name in the input is refused. Projects whose own block
+     * marshallers or field definitions store further classes register them server-side through
+     * `pimcore.objects.block.unserialize_allowed_classes` (see getAllowedResourceClasses()).
      *
      * @internal
      */
@@ -177,6 +180,30 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * The built-in allowlist merged with the classes configured in
+     * `pimcore.objects.block.unserialize_allowed_classes`. Mirrors the tmp_store / session token
+     * allowlists: the configuration is trusted server-side input, never request data.
+     *
+     * @return list<class-string>
+     */
+    private function getAllowedResourceClasses(): array
+    {
+        $extraAllowedClasses = [];
+        if (Pimcore::hasContainer()) {
+            try {
+                $extraAllowedClasses = (array) Pimcore::getContainer()->getParameter('pimcore.objects.block.unserialize_allowed_classes');
+            } catch (InvalidArgumentException) {
+                // parameter not configured
+            }
+        }
+
+        return array_values(array_unique(array_merge(
+            self::ALLOWED_RESOURCE_CLASSES,
+            array_filter($extraAllowedClasses, 'is_string')
+        )));
+    }
+
+    /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      *
@@ -202,7 +229,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             // forged resource string reach arbitrary PHP object graphs, including POP-chain
             // gadgets, since this data can be request-controlled wherever getDataFromResource()
             // is reachable - see GHSA-6324-x2cv-h975.
-            $unserializedData = Serialize::unserialize($data, self::ALLOWED_RESOURCE_CLASSES);
+            $unserializedData = Serialize::unserialize($data, $this->getAllowedResourceClasses());
             $result = [];
 
             foreach ($unserializedData as $blockElements) {

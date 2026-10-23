@@ -18,6 +18,7 @@ use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use DatePeriod;
 use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
@@ -35,6 +36,7 @@ use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Element\Data\MarkerHotspotItem;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Serialize;
@@ -574,6 +576,54 @@ class BlockTest extends ModelTestCase
         $this->assertInstanceOf(DataObject\Concrete::class, $markerMetaData[0]['value']);
         $this->assertSame($linkedObject->getId(), $markerMetaData[0]['value']->getId());
         $this->assertSame($linkedObject->getId(), $markerMetaData[0]->getValue(), 'the element is stored by id, as the editmode does');
+    }
+
+    /**
+     * A project may register its own block marshaller (tag pimcore.dataobject.fielddefinition.marshaller,
+     * key block_<fieldtype>) that stores a value object of its own into the block's resource blob,
+     * exactly like the core Consent / ExternalImage marshallers do. Block::getDataFromResource()'s
+     * fixed allowlist would reduce that object to __PHP_Incomplete_Class - and because the Dao reads
+     * the written value straight back into the model after save(), the field would be emptied on a
+     * regular save. `pimcore.objects.block.unserialize_allowed_classes` is the trusted, server-side
+     * way to allow such classes; the test container registers CustomValueObject through it.
+     *
+     * @throws Exception
+     */
+    public function testCustomMarshallerValueObjectInsideBlock(): void
+    {
+        $this->assertContains(
+            CustomValueObject::class,
+            Pimcore::getContainer()->getParameter('pimcore.objects.block.unserialize_allowed_classes'),
+            'precondition: the test config registers the value object class'
+        );
+
+        $object = $this->createBlockObject();
+        $blockData = [
+            [
+                'blockcustomvalueobject' => new BlockElement('blockcustomvalueobject', 'customValueObject', new CustomValueObject('custom text')),
+            ],
+        ];
+        $object->setTestblock($blockData);
+
+        /** @var DataObject\ClassDefinition\Data\Block $blockDefinition */
+        $blockDefinition = $object->getClass()->getFieldDefinition('testblock');
+        $resourceData = $blockDefinition->getDataForResource($blockData, $object, ['owner' => $object, 'fieldname' => 'testblock']);
+        $this->assertTrue(
+            str_contains($resourceData, $this->serializedObjectHeader(new CustomValueObject(''))),
+            'precondition: the custom marshaller stores its value object in the blob'
+        );
+
+        $object->save();
+
+        // the Dao replaces the in-memory value with getDataFromResource() output right after writing it
+        $afterSave = $object->getTestblock()[0]['blockcustomvalueobject']->getData();
+        $this->assertInstanceOf(CustomValueObject::class, $afterSave);
+        $this->assertSame('custom text', $afterSave->getText());
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockcustomvalueobject']->getData();
+        $this->assertInstanceOf(CustomValueObject::class, $loaded);
+        $this->assertSame('custom text', $loaded->getText());
     }
 
     /**
