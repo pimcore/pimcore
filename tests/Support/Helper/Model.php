@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObjectField;
 use Pimcore\Tests\Support\Util\OptionsProvider\DefaultingOptionsProvider;
 
 class Model extends AbstractDefinitionHelper
@@ -314,6 +315,14 @@ class Model extends AbstractDefinitionHelper
             $block->addChild($this->createDataChild('input', 'blockinput'));
             $block->addChild($this->createDataChild('link', 'blocklink'));
             $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
+            $block->addChild($this->createDataChild('imageGallery', 'blockimagegallery'));
+
+            // Custom field type with a custom block marshaller that stores a project value object;
+            // covered by BlockTest::testCustomMarshallerValueObjectInsideBlock().
+            $customValueObject = new CustomValueObjectField();
+            $customValueObject->setName('blockcustomvalueobject');
+            $customValueObject->setTitle('blockcustomvalueobject');
+            $block->addChild($customValueObject);
 
             $block->addChild($this->createDataChild('geopoint', 'blockgeopoint'));
             $block->addChild($this->createDataChild('geobounds', 'blockgeobounds'));
