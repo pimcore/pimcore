@@ -33,7 +33,6 @@ use Pimcore\Tool\Frontend as FrontendTool;
 use ReflectionClass;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Throwable;
 
 /**
  * @method \Pimcore\Model\Document\Dao getDao()
@@ -320,7 +319,7 @@ class Document extends Element\AbstractElement
 
             try {
                 $bus->dispatch(new ElementDependenciesMessage('document', (int) $child['id']));
-            } catch (Throwable $e) {
+            } catch (Exception $e) {
                 Logger::error('Could not queue the dependency update of document ' . $child['id'] . ': ' . $e->getMessage());
             }
         }

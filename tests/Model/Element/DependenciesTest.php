@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Messenger\ElementDependenciesMessage;
@@ -30,6 +31,8 @@ use Psr\Log\AbstractLogger;
 use Psr\Log\NullLogger;
 use RuntimeException;
 use Stringable;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Class DependenciesTest
@@ -229,6 +232,55 @@ class DependenciesTest extends ModelTestCase
         $folder->save();
 
         $this->assertNotContains($child->getId(), $this->getRequiredByIds($snippet), 'A rename must not queue the descendants');
+    }
+
+    /**
+     * A failing dependency update of one descendant must neither abort the move nor keep the other descendants
+     * from being refreshed (queueing it fails).
+     */
+    public function testMovingDocumentSurvivesFailingDescendant(): void
+    {
+        [$snippet, , $folder, $child] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $second = new Document\Page();
+        $second->setParentId($folder->getId());
+        $second->setKey('second');
+        $second->setPublished(true);
+        $second->save();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet));
+        $this->assertContains($second->getId(), $this->getRequiredByIds($snippet));
+
+        $container = Pimcore::getContainer();
+        $bus = $container->get('messenger.bus.pimcore-core');
+        $failingId = $child->getId();
+        $container->set('messenger.bus.pimcore-core', new class($bus, $failingId) implements MessageBusInterface {
+            public function __construct(private MessageBusInterface $bus, private int $failingId)
+            {
+            }
+
+            public function dispatch(object $message, array $stamps = []): Envelope
+            {
+                if ($message instanceof ElementDependenciesMessage && $message->getId() === $this->failingId) {
+                    throw new RuntimeException('queueing failed');
+                }
+
+                return $this->bus->dispatch($message, $stamps);
+            }
+        });
+
+        try {
+            $folder->setParentId($target->getId());
+            $folder->save();
+        } finally {
+            $container->set('messenger.bus.pimcore-core', $bus);
+        }
+
+        $this->assertSame($target->getId(), Document::getById($folder->getId(), ['force' => true])->getParentId(), 'The move is committed');
+        $requiredBy = $this->getRequiredByIds($snippet);
+        $this->assertNotContains($second->getId(), $requiredBy, 'The other descendant is still refreshed');
+        $this->assertContains($child->getId(), $requiredBy, 'The failing descendant keeps its dependencies');
     }
 
     /**
