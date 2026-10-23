@@ -390,6 +390,38 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Set up a class with a block that contains localized fields.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LocalizedBlock(string $name = 'unittestLocalizedBlock', string $filename = 'localized-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('lfblock');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('input', 'blocklinput'));
+            $block->addChild($lFields);
+
+            $panel->addChild($block);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+
+        return $class;
+    }
+
+    /**
      * Set up a class used for Link Test.
      *
      * @throws Exception

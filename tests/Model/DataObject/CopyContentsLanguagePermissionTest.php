@@ -16,11 +16,14 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\Unittest;
+use Pimcore\Model\DataObject\UnittestLocalizedBlock;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -70,6 +73,7 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->tester->setupFieldcollection_LazyLoadingTest();
         $this->tester->setupFieldcollection_LazyLoadingLocalizedTest();
         $this->tester->setupPimcoreClass_LazyLoading();
+        $this->tester->setupPimcoreClass_LocalizedBlock();
         $this->tester->setupObjectbrick_LazyLoadingTest();
         $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
         $storeId = $this->setUpStore()->getId();
@@ -281,6 +285,42 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $brick = LazyLoading::getById($target->getId(), ['force' => true])->getBricks()->getLazyLoadingLocalizedTest();
         $this->assertSame('source en', $brick->getLinput('en'));
         $this->assertSame('target de', $brick->getLinput('de'));
+    }
+
+    public function testBlockLocalizedFieldsOfNonEditableLanguagesAreKept(): void
+    {
+        $source = $this->createLocalizedBlock(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createLocalizedBlock(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $item = UnittestLocalizedBlock::getById($target->getId(), ['force' => true])->getLfblock()[0];
+        $this->assertSame('source en', $item['localizedfields']->getData()->getLocalizedValue('blocklinput', 'en'));
+        $this->assertSame('target de', $item['localizedfields']->getData()->getLocalizedValue('blocklinput', 'de'));
+    }
+
+    /**
+     * @param array<string, string> $values
+     */
+    private function createLocalizedBlock(array $values): UnittestLocalizedBlock
+    {
+        $object = TestHelper::createEmptyObject('', false, true, UnittestLocalizedBlock::class);
+        $localizedfield = new Localizedfield();
+        $localizedfield->setObject($object);
+        $localizedfield->setContext([
+            'containerType' => 'block',
+            'fieldname' => 'lfblock',
+            'index' => 0,
+            'containerKey' => 'lfblock',
+            'classId' => $object->getClassId(),
+        ]);
+        foreach ($values as $language => $value) {
+            $localizedfield->setLocalizedValue('blocklinput', $value, $language);
+        }
+        $object->setLfblock([['localizedfields' => new BlockElement('localizedfields', 'localizedfields', $localizedfield)]]);
+        $object->save();
+
+        return $object;
     }
 
     /**

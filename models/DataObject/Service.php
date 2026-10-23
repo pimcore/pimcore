@@ -269,7 +269,7 @@ class Service extends Model\Element\Service
 
     /**
      * Restores the localized values of the languages the user is not allowed to edit (lEdit workspace permission)
-     * from the target, in the object itself as well as in its object bricks and field collections.
+     * from the target, in the object itself as well as in its object bricks, field collections and blocks.
      */
     private function keepNonEditableLanguages(Concrete $new, Concrete $target): void
     {
@@ -301,6 +301,8 @@ class Service extends Model\Element\Service
                 continue;
             } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
                 $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
+            } elseif ($definition instanceof ClassDefinition\Data\Block) {
+                $this->restoreBlockLanguages($definition, $newValue, $targetValue, $editableLanguages);
             } elseif ($newValue instanceof DataObject\Objectbrick) {
                 $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
             } elseif ($newValue instanceof DataObject\Fieldcollection) {
@@ -362,6 +364,48 @@ class Service extends Model\Element\Service
                 $targetBrick ? $this->getLocalizedfieldsOf($targetBrick) : null,
                 $editableLanguages
             );
+            $this->restoreContainerBlockLanguages($brick, $targetBrick, $editableLanguages);
+        }
+    }
+
+    /**
+     * Blocks inside an object brick or field collection item.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreContainerBlockLanguages(
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new,
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData|null $target,
+        array $editableLanguages
+    ): void {
+        foreach ($new->getDefinition()->getFieldDefinitions() as $name => $definition) {
+            if ($definition instanceof ClassDefinition\Data\Block) {
+                $this->restoreBlockLanguages($definition, $new->get($name), $target?->get($name), $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * Only blocks with a localizedfields child hold languages. Block items are matched by index.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBlockLanguages(ClassDefinition\Data\Block $definition, mixed $new, mixed $target, array $editableLanguages): void
+    {
+        if (!$definition->getFieldDefinition('localizedfields') || !is_array($new)) {
+            return;
+        }
+
+        foreach ($new as $index => $item) {
+            $element = $item['localizedfields'] ?? null;
+            $targetElement = is_array($target) ? ($target[$index]['localizedfields'] ?? null) : null;
+            if ($element instanceof DataObject\Data\BlockElement) {
+                $this->restoreLocalizedfields(
+                    $element->getData(),
+                    $targetElement instanceof DataObject\Data\BlockElement ? $targetElement->getData() : null,
+                    $editableLanguages
+                );
+            }
         }
     }
 
@@ -384,6 +428,7 @@ class Service extends Model\Element\Service
                 $targetItem ? $this->getLocalizedfieldsOf($targetItem) : null,
                 $editableLanguages
             );
+            $this->restoreContainerBlockLanguages($item, $targetItem, $editableLanguages);
         }
     }
 
