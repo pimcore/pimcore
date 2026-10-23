@@ -74,6 +74,13 @@ class Definition extends Model\AbstractModel
 
         if ($def instanceof DataObject\ClassDefinition\Data) {
             $existing = $this->getFieldDefinition($def->getName());
+
+            // same as ClassDefinition::extractDataDefinitions(): the first container must not keep the referenced
+            // fields stored in the definition file, otherwise every save appends them again
+            if (!$existing && method_exists($def, 'addReferencedField') && method_exists($def, 'setReferencedFields')) {
+                $def->setReferencedFields([]);
+            }
+
             if ($existing && method_exists($existing, 'addReferencedField')) {
                 // this is especially for localized fields which get aggregated here into one field definition
                 // in the case that there are more than one localized fields in the class definition

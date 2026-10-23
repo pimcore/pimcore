@@ -27,9 +27,13 @@ The policy supports two mutually exclusive modes:
 - **Blocklist mode (default)** - every object is reachable *except* instances of a
   denylist of classes. Pimcore's `blocked_classes` default covers the database/
   infrastructure layer (`Pimcore\Model\Dao\AbstractDao`, `Doctrine\DBAL\Connection`,
-  `PDO`, `PDOStatement`, Symfony's `ContainerInterface`, `Process`) and
+  `PDO`, `PDOStatement`, Symfony's `ContainerInterface`, `Process`),
   `Pimcore\Model\User` (whose getters expose the password hash and password
-  recovery token). Set `blocked_classes` to add more classes to this denylist.
+  recovery token) and the current request together with the global `app`
+  variable that gives access to it (`AppVariable`, `RequestStack`, `Request`,
+  `ParameterBag`, `HeaderBag`, `SessionInterface`) - the request carries the
+  server variables including the environment, the headers, the cookies and the
+  session. Set `blocked_classes` to add more classes to this denylist.
 - **Allowlist mode** - as soon as `allowed_classes` contains at least one entry, the
   policy switches to allow only instances of the listed classes (and their
   subclasses). **The entire `blocked_classes` denylist is deactivated in this
@@ -138,7 +142,10 @@ sandboxed template. Independently, any Twig function whose name starts with
 `pimcore_` is additionally auto-allowed, except for the `blocked_functions` denylist.
 By default, that denylist contains `pimcore_user` (see
 [Hard-blocked methods](#hard-blocked-methods) above for why `User` getters are
-additionally hard-blocked at the object layer regardless), `pimcore_file_exists`,
+additionally hard-blocked at the object layer regardless), `pimcore_dump`, which
+dumps any value it is given without going through the object checks of the policy
+(so it would also dump objects whose methods and properties a template may not access),
+`pimcore_file_exists`,
 which calls PHP's `is_file()` directly on its argument and would otherwise let a
 sandboxed template use its boolean result as a filesystem-existence oracle for any
 path reachable by the PHP process (GHSA-7m33-xgw9-j3g7), and
@@ -181,6 +188,33 @@ pimcore:
                     - pimcore_site_current
 ```
 
+### Enabling a function that is blocked by default
+
+A function that is listed explicitly in the `functions` allowlist is allowed **regardless of
+`blocked_functions`** - the allowlist is checked first, the denylist only restricts the
+`pimcore_` auto-allow. So a site can enable one of the functions that are blocked out of the
+box at any time, without having to touch the shipped denylist (which cannot be shortened by
+configuration, see [Notes](#notes)). For example, to use `pimcore_dump` while debugging a template:
+
+```yaml
+pimcore:
+    templating_engine:
+        twig:
+            sandbox_security_policy:
+                functions:
+                    - pimcore_dump
+```
+
+Clear the container cache afterwards (`bin/console cache:clear`) and remove the entry again
+when you are done.
+
+> `pimcore_dump` dumps any value it is given without going through the object checks of the
+> policy, so a sandboxed template can use it to print data that it may not access otherwise
+> (for example the `app` variable with the current request). Enable it only where the templates
+> are written by trusted people, preferably only for a debug session or in a development
+> environment (e.g. in a `when@dev` block of the config), and the same applies to every other
+> function you allow this way.
+
 ## Configuration
 
 `blocked_classes`, `blocked_functions`, `hard_blocked_methods` and `hard_blocked_method_patterns` already default to
@@ -207,10 +241,16 @@ pimcore:
                     - Symfony\Component\DependencyInjection\ContainerInterface
                     - Symfony\Component\Process\Process
                     - Pimcore\Model\User
+                    - Symfony\Bridge\Twig\AppVariable
+                    - Symfony\Component\HttpFoundation\RequestStack
+                    - Symfony\Component\HttpFoundation\Request
+                    - Symfony\Component\HttpFoundation\ParameterBag
+                    - Symfony\Component\HttpFoundation\HeaderBag
+                    - Symfony\Component\HttpFoundation\Session\SessionInterface
                 # Non-empty => object allowlist mode. Deactivates the class denylist entirely.
                 allowed_classes: []
                 # Defaults to the built-in pimcore_* function denylist - a site's own
-                # config is appended to it. Only pimcore_user, pimcore_file_exists,
+                # config is appended to it. Only pimcore_user, pimcore_dump, pimcore_file_exists,
                 # pimcore_asset_version_preview and pimcore_image_version_preview are
                 # blocked out of the box; the id/path lookup functions below are
                 # shipped commented out - uncomment them (or add the equivalent to a
@@ -233,6 +273,7 @@ pimcore:
                     - pimcore_file_exists
                     - pimcore_asset_version_preview
                     - pimcore_image_version_preview
+                    - pimcore_dump
                 # FQCN => method names that are never callable, regardless of
                 # blocked_classes/allowed_classes. Defaults to a small set of
                 # secret/content-returning getters - a site's own config is merged
@@ -345,7 +386,9 @@ pimcore:
   `hard_blocked_method_patterns` are Symfony
   config array nodes, so a site's own value for any of them is merged with (appended
   to) Pimcore's default rather than replacing it - there is no config-only way to
-  remove an entry from the shipped defaults.
+  remove an entry from the shipped defaults. A function that is blocked by default can
+  still be enabled by listing it in the `functions` allowlist, see
+  [Enabling a function that is blocked by default](#enabling-a-function-that-is-blocked-by-default).
 - The object and function mechanisms are independent of each other, and both are
   independent from the `tags` / `filters` allowlists, which still apply as before.
 - Changing these settings requires clearing the Symfony container cache

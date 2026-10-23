@@ -423,7 +423,9 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $message = 'gee_job_failed';
         }
 
-        if ($failedStepsCount > 0 && $totalStepsCount !== $failedStepsCount) {
+        if ($failedStepsCount > 0 &&
+            ($totalStepsCount !== $failedStepsCount || $this->hasSucceededMessages($jobRun, $jobRunSteps))
+        ) {
             $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
             $message = 'gee_job_finished_with_errors';
         }
@@ -439,6 +441,26 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $message,
             $this->getLogParams($jobRun)
         );
+    }
+
+    /**
+     * A step is marked as failed as soon as one of its elements fails, so the step states cannot tell a step that
+     * failed for some elements from a step that failed for all of them. The error log holds one row per failed
+     * message, which is compared with the number of messages the steps process.
+     *
+     * @param JobStep[] $jobRunSteps
+     */
+    private function hasSucceededMessages(JobRun $jobRun, array $jobRunSteps): bool
+    {
+        $messagesPerForEachStep = max($jobRun->getTotalElements(), 1);
+        $messageCount = 0;
+        foreach ($jobRunSteps as $jobRunStep) {
+            $messageCount += $jobRunStep->getSelectionProcessingMode() === SelectionProcessingMode::ONCE
+                ? 1
+                : $messagesPerForEachStep;
+        }
+
+        return $this->jobRunErrorLogRepository->getTotalCountByJobRunId($jobRun->getId()) < $messageCount;
     }
 
     /**

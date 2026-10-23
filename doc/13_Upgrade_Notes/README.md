@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.4
+
+### [Documents]
+- [Page previews] `documents.preview_url_prefix` is now honoured for the page previews shown in the document tree, as it already was for version previews. `Document\Page::save()` and `pimcore:documents:generate-page-previews` (without `--urlPrefix`) used the host of the current request / the main domain for the URL Gotenberg's Chromium loads, so the setting - made for setups where Chromium cannot reach the admin hostname - had no effect there. Precedence is now: explicit `--urlPrefix` (CLI), then `documents.preview_url_prefix`, then the request host / main domain.
+
 ## Pimcore 2026.3.3
 
 ### [Assets]
