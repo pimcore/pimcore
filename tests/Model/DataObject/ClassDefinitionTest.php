@@ -236,6 +236,40 @@ class ClassDefinitionTest extends ModelTestCase
     }
 
     /**
+     * generateClassFiles() writes parentClass (and the other inheritance-related properties)
+     * verbatim into the generated class file's `extends` clause. save() validates those values
+     * before generating the class file, but generateClassFiles() is itself public and can be
+     * called directly, bypassing that check entirely (incomplete fix of GHSA-g2vm-g4vq-qhwj,
+     * see GHSA-93rx-hv39-6r6r).
+     */
+    public function testGenerateClassFilesRejectsInvalidParentClass(): void
+    {
+        $class = new ClassDefinition();
+        $class->setName('GenerateClassFilesInvalidParentClassTest');
+        $class->setId('GenerateClassFilesInvalidParentClassTest');
+        $class->setParentClass('Foo {} abstract class Bar');
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Invalid parentClass value for class definition');
+
+        $class->generateClassFiles(false);
+    }
+
+    /**
+     * Negative control: generateClassFiles() must keep working for a class with a legitimate
+     * (or empty) parentClass once the validation above is in place.
+     */
+    public function testGenerateClassFilesStillWorksForValidParentClass(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+
+        $class->generateClassFiles(false);
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
      * A class name is emitted verbatim as the PHP class name in the generated class file, so a
      * PHP reserved word (e.g. "var") must be rejected at save time instead of reaching the class
      * file generator, where it produces a fatal syntax error only when an object of that class is
