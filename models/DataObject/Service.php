@@ -341,7 +341,7 @@ class Service extends Model\Element\Service
                 if ($kept) {
                     $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
                     $activeGroups[$groupId] = true;
-                    if (!$new->getGroupCollectionMapping($groupId) && $target instanceof DataObject\Classificationstore) {
+                    if (!$new->getGroupCollectionMapping($groupId)) {
                         $new->setGroupCollectionMapping($groupId, $target->getGroupCollectionMapping($groupId));
                     }
                 }
