@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DerivedValueInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
+use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -136,5 +139,75 @@ class ReverseObjectRelationSaveTest extends ModelTestCase
         } finally {
             $fd->setMandatory($mandatory);
         }
+    }
+
+    /**
+     * The skip is a capability, not tied to ReverseObjectRelation: any data type that declares its
+     * value as derived is not read on save and not by loadAllObjectFields(), a type that does not is.
+     *
+     * @dataProvider derivedProvider
+     */
+    public function testCustomDerivedDataTypeIsNotReadOnSave(bool $derived, int $expectedSaveReads, int $expectedLoadReads): void
+    {
+        $target = TestHelper::createEmptyObject('reverse-relation-custom-', false);
+        $class = $target->getClass();
+
+        $reads = new \ArrayObject();
+        $custom = new class($reads, $derived) extends ManyToManyObjectRelation implements DerivedValueInterface {
+            public function __construct(private \ArrayObject $reads, private bool $derived)
+            {
+            }
+
+            public function isValueDerived(): bool
+            {
+                return $this->derived;
+            }
+
+            public function preGetData(mixed $container, array $params = []): array
+            {
+                // frame 0 is this method, 1 the generated getter, 2 whoever called the getter
+                $this->reads->append(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[2]['function'] ?? '');
+
+                return [];
+            }
+        };
+        $custom->setName('nonowner');
+
+        $original = $class->getFieldDefinitions();
+        $class->setFieldDefinitions(['nonowner' => $custom] + $original);
+
+        try {
+            $target->setInput('changed');
+            $target->save();
+            $this->assertCount($expectedSaveReads, $this->callsFromTheCode($reads), 'getter calls while saving');
+
+            $reads->exchangeArray([]);
+            Service::loadAllObjectFields($target);
+            $this->assertCount($expectedLoadReads, $this->callsFromTheCode($reads), 'getter calls in loadAllObjectFields()');
+        } finally {
+            $class->setFieldDefinitions($original);
+        }
+    }
+
+    /**
+     * Only the reads of the validation in updateObject() and of loadAllObjectFields() are subject of
+     * the skip; the dependency resolution reads every field on purpose.
+     *
+     * @return list<string>
+     */
+    private function callsFromTheCode(\ArrayObject $reads): array
+    {
+        return array_values(array_filter(
+            $reads->getArrayCopy(),
+            static fn (string $caller) => $caller === 'updateObject' || str_contains($caller, 'loadAllObjectFields')
+        ));
+    }
+
+    public static function derivedProvider(): array
+    {
+        return [
+            'derived value is skipped' => [true, 0, 0],
+            'not derived value is read' => [false, 2, 1],
+        ];
     }
 }

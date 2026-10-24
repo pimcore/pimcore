@@ -473,7 +473,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * call the getters of each object field (except reverse relations), in case some of them are lazy loading and we need the data to be loaded
+     * call the getters of each object field (except derived values), in case some of them are lazy loading and we need the data to be loaded
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
@@ -485,9 +485,9 @@ class Service extends Model\Element\Service
                 //load all in case of lazy loading fields
                 $fd = $object->getClass()->getFieldDefinitions();
                 foreach ($fd as $def) {
-                    if ($def instanceof ClassDefinition\Data\ReverseObjectRelation) {
-                        // the owning objects are not kept on the object, so there is nothing to lazy load; the getter
-                        // would load every owning object only to discard them
+                    if ($def instanceof ClassDefinition\Data\DerivedValueInterface && $def->isValueDerived()) {
+                        // a derived value (e.g. the owning objects of a reverse relation) is not kept on the object,
+                        // so there is nothing to lazy load; the getter would load it only to discard it
                         continue;
                     }
 
