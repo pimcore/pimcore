@@ -28,10 +28,26 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DocumentListener implements EventSubscriberInterface
 {
+    /**
+     * Document id and former path of the move/rename that POST_UPDATE already created redirects for,
+     * so a POST_MOVE_ACTION dispatched right after the save (classic admin) does not create them twice.
+     *
+     * @var array{int, string}|null
+     */
+    private ?array $handledMove = null;
+
+    /**
+     * @param array<string, mixed>|null $redirectsConfig the `pimcore_seo.redirects` config, read from the container when null
+     */
+    public function __construct(private readonly ?array $redirectsConfig = null)
+    {
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
             DocumentEvents::POST_DELETE => 'onDocumentDelete',
+            DocumentEvents::POST_UPDATE => 'onDocumentUpdate',
             DocumentEvents::PAGE_POST_SAVE_ACTION => 'onPagePostSaveAction',
             DocumentEvents::POST_MOVE_ACTION => 'onPostMoveAction',
         ];
@@ -56,6 +72,27 @@ class DocumentListener implements EventSubscriberInterface
         }
     }
 
+    /**
+     * Document::save() adds the former full path to POST_UPDATE when the document was moved or renamed,
+     * regardless of who triggered it (Studio, PHP API, console).
+     */
+    public function onDocumentUpdate(DocumentEvent $event): void
+    {
+        $oldPath = $event->hasArgument('oldPath') ? $event->getArgument('oldPath') : null;
+        if (!is_string($oldPath) || $oldPath === '' || !PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
+        $document = $event->getDocument();
+        $this->handledMove = [$document->getId(), $oldPath];
+
+        $oldDocument = clone $document;
+        $oldDocument->setKey(basename($oldPath));
+        $oldDocument->setPath(rtrim(dirname($oldPath), '/') . '/');
+
+        $this->createRedirectForFormerPath($document, $oldPath, $oldDocument);
+    }
+
     public function onPagePostSaveAction(DocumentEvent $event): void
     {
         if (!PimcoreSeoBundle::isInstalled()) {
@@ -63,7 +100,7 @@ class DocumentListener implements EventSubscriberInterface
         }
 
         $page = $event->getDocument();
-        $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
+        $pimcore_seo_redirects = $this->getRedirectsConfig();
         if ($page instanceof Page && $pimcore_seo_redirects['auto_create_redirects']) {
             $oldPage = $event->getArgument('oldPage');
             $task = $event->getArgument('task');
@@ -93,14 +130,20 @@ class DocumentListener implements EventSubscriberInterface
         $document = $event->getDocument();
         $oldDocument = $event->getArgument('oldDocument');
         $oldPath = $event->getArgument('oldPath');
+        if ($this->handledMove === [$document->getId(), $oldPath]) {
+            return;
+        }
+
         $this->createRedirectForFormerPath($document, $oldPath, $oldDocument);
     }
 
     private function createRedirectForFormerPath(Document $document, string $oldPath, Document $oldDocument): void
     {
-        $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
+        $pimcore_seo_redirects = $this->getRedirectsConfig();
         if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
-            if (Pimcore\Tool\Admin::getCurrentUser()->isAllowed('redirects') && $pimcore_seo_redirects['auto_create_redirects']) {
+            // without a user (console, background worker) the opt-in flag alone decides
+            $user = Pimcore\Tool\Admin::getCurrentUser();
+            if (($user === null || $user->isAllowed('redirects')) && $pimcore_seo_redirects['auto_create_redirects']) {
                 $sourceSite = Frontend::getSiteForDocument($oldDocument);
                 if ($sourceSite) {
                     $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
@@ -138,6 +181,14 @@ class DocumentListener implements EventSubscriberInterface
                 }
             }
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getRedirectsConfig(): array
+    {
+        return $this->redirectsConfig ?? Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
     }
 
     private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite): void
