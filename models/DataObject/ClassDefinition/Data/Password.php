@@ -29,6 +29,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
 
+    private const EDITMODE_MASK = '******';
+
     public ?int $minimumLength = null;
 
     public function getMinimumLength(): ?int
@@ -153,7 +155,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return $data;
+        if ($data === null || $data === '') {
+            return null;
+        }
+
+        return self::EDITMODE_MASK;
     }
 
     /**
@@ -164,6 +170,12 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         if ($data === '') {
             return null;
+        }
+
+        if ($data === self::EDITMODE_MASK) {
+            $getter = 'get' . ucfirst($this->getName());
+
+            return $object?->$getter();
         }
 
         return $data;
