@@ -238,7 +238,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleObjectParams(Request $request, UserInterface $user): void
+    protected function handleObjectParams(Request $request, User $user): void
     {
 
         if ($request->query->has('pimcore_studio_preview')) {
@@ -265,11 +265,21 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->cacheObject($object);
     }
 
-    private function handleObjectStudioPreview(int $id, UserInterface $user): void
+    private function handleObjectStudioPreview(int $id, User $user): void
     {
         $object = $this->getLatestVersion($id, $user);
         if (!$object instanceof Concrete) {
             return;
+        }
+
+        // reads a historical version: both the view and the versions grant are required,
+        // mirroring the document branch's pimcore_version check (GHSA-v36c-r89g-2226)
+        if (!$object->isAllowed('view', $user) || !$object->isAllowed('versions', $user)) {
+            $this->logger->warning(
+                "Denying access to object {$object->getFullPath()} as the user has no view/versions permission."
+            );
+
+            throw new AccessDeniedHttpException(sprintf('Access denied for %s', $object->getFullPath()));
         }
 
         $this->logObjectLoading(
@@ -315,7 +325,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    private function getLatestVersion(int $id, UserInterface $user): ?Concrete
+    protected function getLatestVersion(int $id, UserInterface $user): ?Concrete
     {
         $dataObject = Service::getElementById('object', $id);
 

@@ -19,6 +19,7 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Model\UserInterface;
@@ -75,7 +76,7 @@ class ElementListenerTest extends TestCase
         // handleObjectParams() performs a DB lookup unrelated to the permission gate under test
         $class = $stubObjectParams
             ? new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
-                protected function handleObjectParams(Request $request, UserInterface $user): void
+                protected function handleObjectParams(Request $request, User $user): void
                 {
                 }
             }
@@ -223,7 +224,7 @@ class ElementListenerTest extends TestCase
                 return $document;
             }
 
-            protected function handleObjectParams(Request $request, UserInterface $user): void
+            protected function handleObjectParams(Request $request, User $user): void
             {
             }
         };
@@ -274,7 +275,7 @@ class ElementListenerTest extends TestCase
                 return $this->version;
             }
 
-            protected function handleObjectParams(Request $request, UserInterface $user): void
+            protected function handleObjectParams(Request $request, User $user): void
             {
             }
         };
@@ -352,5 +353,90 @@ class ElementListenerTest extends TestCase
 
         $this->expectException(AccessDeniedHttpException::class);
         $this->runWithVersionParam($routeDocument, $version, $documentResolver, ['view']);
+    }
+
+    /**
+     * @param string[] $allowedPermissions
+     */
+    private function runObjectStudioPreview(Concrete $object, array $allowedPermissions): void
+    {
+        $user = new User();
+        $user->setId(42);
+        $object->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
+        );
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn(null);
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $object) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private Concrete $object
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
+
+            protected function getLatestVersion(int $id, UserInterface $user): ?Concrete
+            {
+                return $this->object;
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1', 'pimcore_object_preview' => '2']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    /**
+     * Regression coverage for GHSA-vp7r-p7m6-76v6: handleObjectStudioPreview() must not inject an
+     * object into the runtime cache for a user who has no view permission on it.
+     */
+    public function testObjectStudioPreviewIsDeniedWithoutViewPermission(): void
+    {
+        $object = $this->createMock(Concrete::class);
+        $object->method('getFullPath')->willReturn('/objects/secret');
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($object, []);
+    }
+
+    /**
+     * Regression coverage for GHSA-vp7r-p7m6-76v6: reading a historical (non-published) version via
+     * studio preview additionally requires the "versions" grant, not just "view".
+     */
+    public function testObjectStudioPreviewIsDeniedWithoutVersionsPermission(): void
+    {
+        $object = $this->createMock(Concrete::class);
+        $object->method('getFullPath')->willReturn('/objects/secret');
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($object, ['view']);
+    }
+
+    public function testObjectStudioPreviewIsAllowedWithViewAndVersionsPermission(): void
+    {
+        $object = $this->createMock(Concrete::class);
+        $object->method('getFullPath')->willReturn('/objects/allowed');
+        $object->method('getId')->willReturn(2);
+
+        $this->runObjectStudioPreview($object, ['view', 'versions']);
+
+        // No exception means the fully-permitted user is still served the preview.
+        $this->addToAssertionCount(1);
     }
 }
