@@ -19,6 +19,7 @@ use Pimcore\Event\TagEvents;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Throwable;
 
 /**
  * @group model.element.tag
@@ -245,7 +246,7 @@ class TagEventTest extends ModelTestCase
             // 'x' is no valid element id: the first insert succeeds, the second one throws
             Tag::batchAssignTagsToElement('object', [$element, 'x'], [$new->getId()], true);
             $this->fail('The batch write should have failed');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->assertNotInstanceOf(\PHPUnit\Framework\AssertionFailedError::class, $e);
         }
 
