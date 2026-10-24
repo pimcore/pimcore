@@ -70,7 +70,7 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
     /**
      * The shared classification store tests expect their store at id 1 (GroupConfig::getByName() defaults to it), so
      * this test's store must not outlive a test (a class-level teardown would run after them) and the auto
-     * increment of the store tables must be put back, deleting a row does not do that.
+     * increment of the store table must be put back, deleting a row does not do that.
      */
     private function removeStore(): void
     {
@@ -96,10 +96,10 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
             $store->delete();
         }
 
-        $db = Db::get();
-        foreach (['stores', 'groups', 'keys'] as $table) {
-            $db->executeStatement('ALTER TABLE classificationstore_' . $table . ' AUTO_INCREMENT = 1');
-        }
+        // only the store ids: the shared tests read the store at id 1, while reused key ids would hit the static
+        // definitions cache and silently run those tests with this test's field definitions
+        Db::get()->executeStatement('ALTER TABLE classificationstore_stores AUTO_INCREMENT = 1');
+        Classificationstore\Service::clearDefinitionsCache();
     }
 
     protected function setUpTestClasses(): void
