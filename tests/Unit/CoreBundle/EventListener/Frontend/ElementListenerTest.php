@@ -353,4 +353,128 @@ class ElementListenerTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
         $this->runWithVersionParam($routeDocument, $version, $documentResolver, ['view']);
     }
+
+    private function makeAnonymousListenerWithVersion(Version $version, DocumentResolver $documentResolver): ElementListener
+    {
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(false);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn(null);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $version) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private Version $version
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
+
+            protected function loadVersion(int $versionId): ?Version
+            {
+                return $this->version;
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        return $listener;
+    }
+
+    /**
+     * Regression coverage for GHSA-q6qv-4q4h-vmq7: the unauthenticated `?v=` public-version
+     * preview must not substitute a version belonging to a different document, even when
+     * that version's `public` flag is set.
+     */
+    public function testPublicVersionOfForeignDocumentIsNotRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $foreignDocument = $this->createMock(Document::class);
+        $version = (new Version())->setCtype('document')->setCid(11)->setPublic(true)->setData($foreignDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        // the original, route-resolved document must be kept, never the foreign version's data
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($routeDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testPublicVersionOfNonDocumentElementIsNotRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $foreignData = $this->createMock(Document::class);
+        $version = (new Version())->setCtype('object')->setCid(10)->setPublic(true)->setData($foreignData);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($routeDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testPublicVersionOfSameDocumentIsRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $versionDocument = $this->createMock(Document::class);
+        $versionDocument->method('getFullPath')->willReturn('/page');
+        $version = (new Version())->setCtype('document')->setCid(10)->setPublic(true)->setData($versionDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($versionDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testNonPublicVersionOfSameDocumentIsNotRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $versionDocument = $this->createMock(Document::class);
+        $version = (new Version())->setCtype('document')->setCid(10)->setPublic(false)->setData($versionDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($routeDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
 }
