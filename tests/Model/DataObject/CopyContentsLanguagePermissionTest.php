@@ -65,6 +65,36 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         parent::tearDown();
     }
 
+    /**
+     * The shared classification store tests count all key configs, so this test's store must not outlive it.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        if ($store) {
+            $keys = new Classificationstore\KeyConfig\Listing();
+            $keys->setCondition('storeId = ?', [$store->getId()]);
+            foreach ($keys->load() as $key) {
+                $relations = new Classificationstore\KeyGroupRelation\Listing();
+                $relations->setCondition('keyId = ?', [$key->getId()]);
+                foreach ($relations->load() as $relation) {
+                    $relation->delete();
+                }
+                $key->delete();
+            }
+
+            $groups = new Classificationstore\GroupConfig\Listing();
+            $groups->setCondition('storeId = ?', [$store->getId()]);
+            foreach ($groups->load() as $group) {
+                $group->delete();
+            }
+
+            $store->delete();
+        }
+
+        parent::tearDownAfterClass();
+    }
+
     protected function setUpTestClasses(): void
     {
         $this->tester->setupFieldcollection_Unittestfieldcollection();
@@ -104,7 +134,7 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
 
             $key = new Classificationstore\KeyConfig();
             $key->setStoreId($store->getId());
-            $key->setName('input');
+            $key->setName(self::STORE_NAME . 'input');
             $key->setEnabled(true);
             $key->setType('input');
             $key->setDefinition(json_encode(new ClassDefinition\Data\Input()));
@@ -118,7 +148,7 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
 
         $group = Classificationstore\GroupConfig::getByName(self::STORE_NAME . 'group', $store->getId());
         $this->groupId = $group->getId();
-        $this->keyId = Classificationstore\KeyConfig::getByName('input', $store->getId())->getId();
+        $this->keyId = Classificationstore\KeyConfig::getByName(self::STORE_NAME . 'input', $store->getId())->getId();
 
         return $store;
     }
