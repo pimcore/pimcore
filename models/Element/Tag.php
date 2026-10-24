@@ -174,7 +174,9 @@ final class Tag extends Model\AbstractModel
             $currentTagIds = $assigned[$cId] ?? [];
             $addedTags = self::getTagsByIds(array_diff($tagIds, $currentTagIds));
             $removedTags = $replace ? self::getTagsByIds(array_diff($currentTagIds, $tagIds)) : [];
-            $events = array_merge($events, self::createAssignmentEvents($cType, (int) $cId, $addedTags, $removedTags));
+            foreach (self::createAssignmentEvents($cType, (int) $cId, $addedTags, $removedTags) as $assignmentEvent) {
+                $events[] = $assignmentEvent;
+            }
         }
 
         self::dispatchAssignmentEvents($events, 'pre');

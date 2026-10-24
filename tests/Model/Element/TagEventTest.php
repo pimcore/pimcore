@@ -233,6 +233,28 @@ class TagEventTest extends ModelTestCase
         $this->assertSame(1, $seenInPost);
     }
 
+    public function testFailingBatchAssignRollsBackAndFiresNoPostEvents(): void
+    {
+        $element = TestHelper::createEmptyObject()->getId();
+        $old = $this->createTag('old');
+        $new = $this->createTag('new');
+        Tag::addTagToElement('object', $element, $old);
+        $this->fired = [];
+
+        try {
+            // 'x' is no valid element id: the first insert succeeds, the second one throws
+            Tag::batchAssignTagsToElement('object', [$element, 'x'], [$new->getId()], true);
+            $this->fail('The batch write should have failed');
+        } catch (\Throwable $e) {
+            $this->assertNotInstanceOf(\PHPUnit\Framework\AssertionFailedError::class, $e);
+        }
+
+        $this->assertSame([], $this->firedOf(TagEvents::POST_ADD_TO_ELEMENT));
+        $this->assertSame([], $this->firedOf(TagEvents::POST_REMOVE_FROM_ELEMENT));
+        $assigned = array_map(fn (Tag $tag) => $tag->getId(), Tag::getTagsForElement('object', $element));
+        $this->assertSame([$old->getId()], $assigned);
+    }
+
     public function testBatchEventIsStillFired(): void
     {
         $id = TestHelper::createEmptyObject()->getId();

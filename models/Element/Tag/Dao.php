@@ -18,6 +18,7 @@ use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
+use Throwable;
 
 /**
  * @internal
@@ -211,20 +212,34 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     *
+     * @throws Throwable
+     */
     public function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace): void
     {
-        if ($replace) {
-            $quotedCIds = [];
-            foreach ($cIds as $cId) {
-                $quotedCIds[] = $this->db->quote($cId);
-            }
-            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
-        }
+        $this->db->beginTransaction();
 
-        foreach ($tagIds as $tagId) {
-            foreach ($cIds as $cId) {
-                $this->doAddTagToElement($tagId, $cType, $cId);
+        try {
+            if ($replace) {
+                $quotedCIds = [];
+                foreach ($cIds as $cId) {
+                    $quotedCIds[] = $this->db->quote($cId);
+                }
+                $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
             }
+
+            foreach ($tagIds as $tagId) {
+                foreach ($cIds as $cId) {
+                    $this->doAddTagToElement($tagId, $cType, $cId);
+                }
+            }
+
+            $this->db->commit();
+        } catch (Throwable $e) {
+            $this->db->rollBack();
+
+            throw $e;
         }
     }
 
