@@ -16,10 +16,12 @@ namespace Pimcore\Model;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
+use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
@@ -297,6 +299,37 @@ class Document extends Element\AbstractElement
         return $list;
     }
 
+    /**
+     * Queues the dependency update of the descendants whose path was rewritten together with this document.
+     * Descendants of a moved document may inherit different properties now, a rename cannot change that.
+     *
+     * @param array<int, array{id: int|string, path: string}> $updatedChildren
+     */
+    private function addDescendantsToDependenciesQueue(?string $oldPath, array $updatedChildren): void
+    {
+        if (!$oldPath || dirname($oldPath) === dirname($this->getRealFullPath())) {
+            return;
+        }
+
+        if (!Config::getSystemConfiguration()['dependency']['enabled']) {
+            return;
+        }
+
+        $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
+        foreach ($updatedChildren as $child) {
+            // the path query also matches siblings sharing the name prefix
+            if (!str_starts_with($child['path'], $oldPath . '/')) {
+                continue;
+            }
+
+            try {
+                $bus->dispatch(new ElementDependenciesMessage('document', (int) $child['id']));
+            } catch (Exception $e) {
+                Logger::error('Could not queue the dependency update of document ' . $child['id'] . ': ' . $e->getMessage());
+            }
+        }
+    }
+
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
@@ -364,6 +397,8 @@ class Document extends Element\AbstractElement
 
                 // add to queue that saves dependencies
                 $this->addToDependenciesQueue();
+
+                $this->addDescendantsToDependenciesQueue($differentOldPath, $updatedChildren);
 
                 $postEvent = new DocumentEvent($this, $parameters);
                 if ($isUpdate) {
