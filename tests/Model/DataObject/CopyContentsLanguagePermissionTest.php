@@ -1,0 +1,458 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Model\DataObject;
+
+use Pimcore\Db;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\BlockElement;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\LazyLoading;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
+use Pimcore\Model\DataObject\Service;
+use Pimcore\Model\DataObject\Unittest;
+use Pimcore\Model\DataObject\UnittestLocalizedBlock;
+use Pimcore\Model\User;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
+
+/**
+ * "Paste only contents here" must only replace the localized values of the languages the user may edit
+ * (https://github.com/pimcore/pimcore/issues/6033).
+ *
+ * @group model.dataobject.copycontents
+ */
+class CopyContentsLanguagePermissionTest extends ModelTestCase
+{
+    private const STORE_NAME = 'copycontentsstore';
+
+    private const PLAIN_STORE_CLASS = 'copycontentsplainstore';
+
+    /**
+     * @var User[]
+     */
+    private array $users = [];
+
+    private int $groupId;
+
+    private int $keyId;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        TestHelper::cleanUp();
+    }
+
+    public function tearDown(): void
+    {
+        foreach ($this->users as $user) {
+            $user->delete();
+        }
+        $this->users = [];
+        TestHelper::cleanUp();
+        $this->removeStore();
+        parent::tearDown();
+    }
+
+    /**
+     * The shared classification store tests expect their store at id 1 (GroupConfig::getByName() defaults to it), so
+     * this test's store must not outlive a test (a class-level teardown would run after them) and the auto
+     * increment of the store table must be put back, deleting a row does not do that.
+     */
+    private function removeStore(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        if ($store) {
+            $keys = new Classificationstore\KeyConfig\Listing();
+            $keys->setCondition('storeId = ?', [$store->getId()]);
+            foreach ($keys->load() as $key) {
+                $relations = new Classificationstore\KeyGroupRelation\Listing();
+                $relations->setCondition('keyId = ?', [$key->getId()]);
+                foreach ($relations->load() as $relation) {
+                    $relation->delete();
+                }
+                $key->delete();
+            }
+
+            $groups = new Classificationstore\GroupConfig\Listing();
+            $groups->setCondition('storeId = ?', [$store->getId()]);
+            foreach ($groups->load() as $group) {
+                $group->delete();
+            }
+
+            $store->delete();
+        }
+
+        // only the store ids: the shared tests read the store at id 1, while reused key ids would hit the static
+        // definitions cache and silently run those tests with this test's field definitions
+        Db::get()->executeStatement('ALTER TABLE classificationstore_stores AUTO_INCREMENT = 1');
+        Classificationstore\Service::clearDefinitionsCache();
+    }
+
+    protected function setUpTestClasses(): void
+    {
+        $this->tester->setupFieldcollection_Unittestfieldcollection();
+        $this->tester->setupPimcoreClass_Unittest();
+        $this->tester->setupPimcoreClass_RelationTest();
+        $this->tester->setupFieldcollection_LazyLoadingTest();
+        $this->tester->setupFieldcollection_LazyLoadingLocalizedTest();
+        $this->tester->setupPimcoreClass_LazyLoading();
+        $this->tester->setupPimcoreClass_LocalizedBlock();
+        $this->tester->setupObjectbrick_LazyLoadingTest();
+        $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
+        $storeId = $this->setUpStore()->getId();
+        $this->tester->setupPimcoreClass_Csstore(
+            ['storeId' => $storeId, 'localized' => true],
+            self::STORE_NAME,
+            self::STORE_NAME . '.json'
+        );
+        $this->tester->setupPimcoreClass_Csstore(
+            ['storeId' => $storeId],
+            self::PLAIN_STORE_CLASS,
+            self::PLAIN_STORE_CLASS . '.json'
+        );
+    }
+
+    private function setUpStore(): Classificationstore\StoreConfig
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        if (!$store) {
+            $store = new Classificationstore\StoreConfig();
+            $store->setName(self::STORE_NAME);
+            $store->save();
+
+            $group = new Classificationstore\GroupConfig();
+            $group->setStoreId($store->getId());
+            $group->setName(self::STORE_NAME . 'group');
+            $group->save();
+
+            $key = new Classificationstore\KeyConfig();
+            $key->setStoreId($store->getId());
+            $key->setName(self::STORE_NAME . 'input');
+            $key->setEnabled(true);
+            $key->setType('input');
+            $key->setDefinition(json_encode(new ClassDefinition\Data\Input()));
+            $key->save();
+
+            $relation = new Classificationstore\KeyGroupRelation();
+            $relation->setKeyId($key->getId());
+            $relation->setGroupId($group->getId());
+            $relation->save();
+        }
+
+        $group = Classificationstore\GroupConfig::getByName(self::STORE_NAME . 'group', $store->getId());
+        $this->groupId = $group->getId();
+        $this->keyId = Classificationstore\KeyConfig::getByName(self::STORE_NAME . 'input', $store->getId())->getId();
+
+        return $store;
+    }
+
+    public function testLocalizedFieldsOfNonEditableLanguagesAreKept(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en', 'de' => 'source de', 'fr' => 'source fr']);
+        $target = $this->createUnittest(['en' => 'target en', 'de' => 'target de', 'fr' => 'target fr']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en,fr'));
+
+        $result = Unittest::getById($target->getId(), ['force' => true]);
+        $this->assertSame('source en', $result->getLinput('en'));
+        $this->assertSame('source fr', $result->getLinput('fr'));
+        $this->assertSame('target de', $result->getLinput('de'), 'de is not editable and must keep the target value');
+    }
+
+    public function testLanguageOnlyPresentInSourceIsNotCopiedIfNotEditable(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en', 'fr' => 'source fr']);
+        $target = $this->createUnittest(['en' => 'target en']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $result = Unittest::getById($target->getId(), ['force' => true]);
+        $this->assertSame('source en', $result->getLinput('en'));
+        $this->assertEmpty($result->getLinput('fr'));
+    }
+
+    public function testNonLocalizedFieldsAreStillCopied(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en']);
+        $source->setInput('source input');
+        $source->save();
+        $target = $this->createUnittest(['en' => 'target en']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $this->assertSame('source input', Unittest::getById($target->getId(), ['force' => true])->getInput());
+    }
+
+    public function testAllLanguagesAreCopiedWithoutLanguageRestriction(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createUnittest(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, null));
+
+        $result = Unittest::getById($target->getId(), ['force' => true]);
+        $this->assertSame('source en', $result->getLinput('en'));
+        $this->assertSame('source de', $result->getLinput('de'));
+    }
+
+    public function testAllLanguagesAreCopiedWithoutUser(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createUnittest(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, null);
+
+        $result = Unittest::getById($target->getId(), ['force' => true]);
+        $this->assertSame('source en', $result->getLinput('en'));
+        $this->assertSame('source de', $result->getLinput('de'));
+    }
+
+    public function testAllLanguagesAreCopiedForAdmin(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createUnittest(['en' => 'target en', 'de' => 'target de']);
+
+        $admin = $this->createUserWithEditableLanguages($target, 'en');
+        $admin->setAdmin(true);
+        $admin->save();
+
+        $this->copyContents($target, $source, $admin);
+
+        $this->assertSame('source de', Unittest::getById($target->getId(), ['force' => true])->getLinput('de'));
+    }
+
+    public function testAllLocalizedValuesAreCopiedIfOnlyDefaultIsListed(): void
+    {
+        $source = $this->createUnittest(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createUnittest(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'default'));
+
+        $result = Unittest::getById($target->getId(), ['force' => true]);
+        $this->assertSame('source en', $result->getLinput('en'));
+        $this->assertSame('source de', $result->getLinput('de'));
+    }
+
+    public function testClassificationstoreValuesOfNonEditableLanguagesAreKept(): void
+    {
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de', 'default' => 'source default']);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de', 'default' => 'target default']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+        $this->assertSame('target default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
+    }
+
+    public function testNonLocalizedClassificationstoreIsCopiedForRestrictedUser(): void
+    {
+        $source = $this->createCsstore(['default' => 'source default'], self::PLAIN_STORE_CLASS);
+        $target = $this->createCsstore(['default' => 'target default'], self::PLAIN_STORE_CLASS);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
+    }
+
+    public function testClassificationstoreLanguageIndependentValueIsCopiedIfListed(): void
+    {
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de', 'default' => 'source default']);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de', 'default' => 'target default']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'default'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
+        $this->assertSame('target en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+    }
+
+    public function testClassificationstoreValuesOfNonEditableLanguagesSurviveWhenSourceHasNoGroup(): void
+    {
+        $source = $this->createCsstore([]);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de']);
+        $target->getCsstore()->setGroupCollectionMapping($this->groupId, 4711);
+        $target->save();
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertEmpty($store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+        $this->assertSame(4711, $store->getGroupCollectionMapping($this->groupId), 'the group stays linked to its collection');
+    }
+
+    public function testFieldcollectionLocalizedFieldsOfNonEditableLanguagesAreKept(): void
+    {
+        $source = $this->createUnittest([]);
+        $source->setFieldcollection($this->fieldcollection(['en' => 'source en', 'de' => 'source de']));
+        $source->save();
+        $target = $this->createUnittest([]);
+        $target->setFieldcollection($this->fieldcollection(['en' => 'target en', 'de' => 'target de']));
+        $target->save();
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $item = Unittest::getById($target->getId(), ['force' => true])->getFieldcollection()->getItems()[0];
+        $this->assertSame('source en', $item->getLinput('en'));
+        $this->assertSame('target de', $item->getLinput('de'));
+    }
+
+    public function testObjectbrickLocalizedFieldsOfNonEditableLanguagesAreKept(): void
+    {
+        $source = $this->createLazyLoading(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createLazyLoading(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $brick = LazyLoading::getById($target->getId(), ['force' => true])->getBricks()->getLazyLoadingLocalizedTest();
+        $this->assertSame('source en', $brick->getLinput('en'));
+        $this->assertSame('target de', $brick->getLinput('de'));
+    }
+
+    public function testBlockLocalizedFieldsOfNonEditableLanguagesAreKept(): void
+    {
+        $source = $this->createLocalizedBlock(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createLocalizedBlock(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $item = UnittestLocalizedBlock::getById($target->getId(), ['force' => true])->getLfblock()[0];
+        $this->assertSame('source en', $item['localizedfields']->getData()->getLocalizedValue('blocklinput', 'en'));
+        $this->assertSame('target de', $item['localizedfields']->getData()->getLocalizedValue('blocklinput', 'de'));
+    }
+
+    /**
+     * @param array<string, string> $values
+     */
+    private function createLocalizedBlock(array $values): UnittestLocalizedBlock
+    {
+        $object = TestHelper::createEmptyObject('', false, true, UnittestLocalizedBlock::class);
+        $localizedfield = new Localizedfield();
+        $localizedfield->setObject($object);
+        $localizedfield->setContext([
+            'containerType' => 'block',
+            'fieldname' => 'lfblock',
+            'index' => 0,
+            'containerKey' => 'lfblock',
+            'classId' => $object->getClassId(),
+        ]);
+        foreach ($values as $language => $value) {
+            $localizedfield->setLocalizedValue('blocklinput', $value, $language);
+        }
+        $object->setLfblock([['localizedfields' => new BlockElement('localizedfields', 'localizedfields', $localizedfield)]]);
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * @param array<string, string> $values
+     */
+    private function createUnittest(array $values): Unittest
+    {
+        $object = TestHelper::createEmptyObject();
+        foreach ($values as $language => $value) {
+            $object->setLinput($value, $language);
+        }
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * @param array<string, string> $values
+     */
+    private function createCsstore(array $values, string $className = self::STORE_NAME): Concrete
+    {
+        $class = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className);
+        $object = TestHelper::createEmptyObject('', false, true, $class);
+        $store = $object->getCsstore();
+        foreach ($values as $language => $value) {
+            $store->setLocalizedKeyValue($this->groupId, $this->keyId, $value, $language);
+        }
+        $object->save();
+
+        return $object;
+    }
+
+    private function reloadCsstore(Concrete $object): Classificationstore
+    {
+        return Concrete::getById($object->getId(), ['force' => true])->getCsstore();
+    }
+
+    /**
+     * @param array<string, string> $values
+     */
+    private function createLazyLoading(array $values): LazyLoading
+    {
+        $object = TestHelper::createEmptyObject('', false, true, LazyLoading::class);
+        $brick = new LazyLoadingLocalizedTest($object);
+        foreach ($values as $language => $value) {
+            $brick->getLocalizedfields()->setLocalizedValue('linput', $value, $language);
+        }
+        $object->getBricks()->setLazyLoadingLocalizedTest($brick);
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * @param array<string, string> $values
+     */
+    private function fieldcollection(array $values): Fieldcollection
+    {
+        $item = new Fieldcollection\Data\Unittestfieldcollection();
+        foreach ($values as $language => $value) {
+            $item->setLinput($value, $language);
+        }
+
+        return new Fieldcollection([$item], 'fieldcollection');
+    }
+
+    private function createUserWithEditableLanguages(Concrete $target, ?string $languages): User
+    {
+        $user = new User();
+        $user->setName('copycontents_' . uniqid());
+
+        $workspace = new User\Workspace\DataObject();
+        $workspace->setCid($target->getId());
+        $workspace->setCpath($target->getRealFullPath());
+        $workspace->setList(true);
+        $workspace->setView(true);
+        $workspace->setSave(true);
+        $workspace->setPublish(true);
+        $workspace->setCreate(true);
+        $workspace->setLEdit($languages);
+        $user->setWorkspacesObject([$workspace]);
+        $user->save();
+        $this->users[] = $user;
+
+        return $user;
+    }
+
+    private function copyContents(Concrete $target, Concrete $source, ?User $user): void
+    {
+        (new Service($user))->copyContents(
+            $target::getById($target->getId(), ['force' => true]),
+            $source::getById($source->getId(), ['force' => true])
+        );
+    }
+}
