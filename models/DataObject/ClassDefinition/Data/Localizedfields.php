@@ -648,6 +648,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
+        $violations = [];
         if (!$omitMandatoryCheck) {
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
@@ -690,7 +691,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         }
                     } catch (Model\Element\ValidationException $ve) {
                         $ve->addContext($this->getName() . '-' . $language);
-                        $validationExceptions[] = StructuredValidationException::from($ve)
+                        $validationExceptions[] = $ve;
+                        $violations[] = StructuredValidationException::from($ve)
                             ->setField($fd->getName(), $fd->getTitle())
                             ->addPathSegment(new ValidationPathSegment(field: $this->getName(), language: $language));
                     }
@@ -700,13 +702,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         if (count($validationExceptions) > 0) {
             $errors = [];
-            /** @var StructuredValidationException $e */
+            // the original exceptions, so a custom getAggregatedMessage() keeps its text
+            /** @var Model\Element\ValidationException $e */
             foreach ($validationExceptions as $e) {
                 $errors[] = $e->getAggregatedMessage();
             }
             $message = implode(' / ', $errors);
 
-            throw (new StructuredValidationException($message))->addViolations(...$validationExceptions);
+            throw (new StructuredValidationException($message))->addViolations(...$violations);
         }
     }
 

@@ -990,6 +990,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $blockDefinitions = $this->getFieldDefinitions();
 
                 $validationExceptions = [];
+                $violations = [];
 
                 $idx = -1;
                 foreach ($data as $item) {
@@ -1034,7 +1035,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $fd->checkValidity($data, false, $params);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
-                            $validationExceptions[] = StructuredValidationException::from($ve)
+                            $validationExceptions[] = $ve;
+                            $violations[] = StructuredValidationException::from($ve)
                                 ->setField($fd->getName(), $fd->getTitle())
                                 ->addPathSegment(new ValidationPathSegment(
                                     field: $this->getName(),
@@ -1047,13 +1049,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 if ($validationExceptions) {
                     $errors = [];
-                    /** @var StructuredValidationException $e */
+                    // the original exceptions, so a custom getAggregatedMessage() keeps its text
+                    /** @var Model\Element\ValidationException $e */
                     foreach ($validationExceptions as $e) {
                         $errors[] = $e->getAggregatedMessage();
                     }
                     $message = implode(' / ', $errors);
 
-                    throw (new StructuredValidationException($message))->addViolations(...$validationExceptions);
+                    throw (new StructuredValidationException($message))->addViolations(...$violations);
                 }
             }
         }

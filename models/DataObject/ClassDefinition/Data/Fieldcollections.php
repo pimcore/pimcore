@@ -374,6 +374,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         if ($data instanceof DataObject\Fieldcollection) {
             $validationExceptions = [];
+            $violations = [];
 
             $idx = -1;
             foreach ($data as $item) {
@@ -399,7 +400,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                 }
                             } catch (Model\Element\ValidationException $ve) {
                                 $ve->addContext($this->getName() . '-' . $idx);
-                                $validationExceptions[] = StructuredValidationException::from($ve)
+                                $validationExceptions[] = $ve;
+                                $violations[] = StructuredValidationException::from($ve)
                                     ->setField($fd->getName(), $fd->getTitle())
                                     ->addPathSegment(new ValidationPathSegment(
                                         field: $this->getName(),
@@ -416,13 +418,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
             if ($validationExceptions) {
                 $errors = [];
-                /** @var StructuredValidationException $e */
+                // the original exceptions, so a custom getAggregatedMessage() keeps its text
+                /** @var Model\Element\ValidationException $e */
                 foreach ($validationExceptions as $e) {
                     $errors[] = $e->getAggregatedMessage();
                 }
                 $message = implode(' / ', $errors);
 
-                throw (new StructuredValidationException($message))->addViolations(...$validationExceptions);
+                throw (new StructuredValidationException($message))->addViolations(...$violations);
             }
         }
     }

@@ -506,6 +506,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         if ($data instanceof DataObject\Objectbrick) {
             $validationExceptions = [];
+            $violations = [];
 
             $itemCount = 0;
             $allowedTypes = $this->getAllowedTypes();
@@ -564,10 +565,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }
-                                        $validationExceptions[] = $this->addBrickContext($e, $fd, $collectionDef);
+                                        $violations[] = $this->addBrickContext($e, $fd, $collectionDef);
+                                        $validationExceptions[] = $e;
                                     }
                                 } else {
-                                    $validationExceptions[] = $this->addBrickContext($ve, $fd, $collectionDef);
+                                    $violations[] = $this->addBrickContext($ve, $fd, $collectionDef);
+                                    $validationExceptions[] = $ve;
                                 }
                             }
                         }
@@ -577,14 +580,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
             if ($validationExceptions) {
                 $errors = [];
-                /** @var StructuredValidationException $e */
+                // the original exceptions, so a custom getAggregatedMessage() keeps its text
+                /** @var Model\Element\ValidationException $e */
                 foreach ($validationExceptions as $e) {
                     $errors[] = $e->getAggregatedMessage();
                 }
                 $message = implode(' / ', $errors);
 
                 throw (new StructuredValidationException('invalid brick ' . $this->getName().': '.$message))
-                    ->addViolations(...$validationExceptions);
+                    ->addViolations(...$violations);
             }
         }
     }
