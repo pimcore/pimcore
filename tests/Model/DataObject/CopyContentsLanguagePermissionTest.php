@@ -62,13 +62,15 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         }
         $this->users = [];
         TestHelper::cleanUp();
+        $this->removeStore();
         parent::tearDown();
     }
 
     /**
-     * The shared classification store tests count all key configs, so this test's store must not outlive it.
+     * The shared classification store tests count all key configs, so this test's store must not outlive a test
+     * (the classes of the shared tests run later in the same suite, a class-level teardown would be too late).
      */
-    public static function tearDownAfterClass(): void
+    private function removeStore(): void
     {
         $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
         if ($store) {
@@ -91,8 +93,6 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
 
             $store->delete();
         }
-
-        parent::tearDownAfterClass();
     }
 
     protected function setUpTestClasses(): void
