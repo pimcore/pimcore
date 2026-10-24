@@ -288,12 +288,15 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
     {
         $source = $this->createCsstore([]);
         $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de']);
+        $target->getCsstore()->setGroupCollectionMapping($this->groupId, 4711);
+        $target->save();
 
         $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
 
         $store = $this->reloadCsstore($target);
         $this->assertEmpty($store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
         $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+        $this->assertSame(4711, $store->getGroupCollectionMapping($this->groupId), 'the group stays linked to its collection');
     }
 
     public function testFieldcollectionLocalizedFieldsOfNonEditableLanguagesAreKept(): void

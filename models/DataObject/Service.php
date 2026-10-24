@@ -258,7 +258,8 @@ class Service extends Model\Element\Service
         $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
-        $this->keepNonEditableLanguages($new, $target);
+        // reading block fields outside admin mode would write the frontend-rendered Wysiwyg text back into the copy
+        WysiwygPersistingScope::run(fn () => $this->keepNonEditableLanguages($new, $target));
 
         $new->save();
 
@@ -340,6 +341,9 @@ class Service extends Model\Element\Service
                 if ($kept) {
                     $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
                     $activeGroups[$groupId] = true;
+                    if (!$new->getGroupCollectionMapping($groupId) && $target instanceof DataObject\Classificationstore) {
+                        $new->setGroupCollectionMapping($groupId, $target->getGroupCollectionMapping($groupId));
+                    }
                 }
             }
         }
