@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
@@ -67,8 +68,9 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
     }
 
     /**
-     * The shared classification store tests count all key configs, so this test's store must not outlive a test
-     * (the classes of the shared tests run later in the same suite, a class-level teardown would be too late).
+     * The shared classification store tests expect their store at id 1 (GroupConfig::getByName() defaults to it), so
+     * this test's store must not outlive a test (a class-level teardown would run after them) and the auto
+     * increment of the store tables must be put back, deleting a row does not do that.
      */
     private function removeStore(): void
     {
@@ -92,6 +94,11 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
             }
 
             $store->delete();
+        }
+
+        $db = Db::get();
+        foreach (['stores', 'groups', 'keys'] as $table) {
+            $db->executeStatement('ALTER TABLE classificationstore_' . $table . ' AUTO_INCREMENT = 1');
         }
     }
 
