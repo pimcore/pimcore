@@ -55,6 +55,12 @@ pimcore_seo:
         auto_create_redirects: true
 ```
 
+With the setting enabled, moving or renaming a document, or moving a folder, creates a redirect from the former path for the
+page or hardlink and for every page and hardlink below it. This applies to every way of moving, including Pimcore Studio,
+the PHP API, console commands and background jobs. A user needs the `redirects` permission for the redirects to be created;
+moves without a user (console, background jobs) only depend on the setting. A redirect that cannot be saved is logged and
+does not stop the move.
+
 
 #### Creating custom redirect status codes
 The redirect status codes list can be extended by adding custom codes in config.yaml:

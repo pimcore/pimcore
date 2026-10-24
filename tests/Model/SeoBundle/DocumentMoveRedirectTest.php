@@ -15,12 +15,24 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\SeoBundle;
 
 use Pimcore;
+use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
+use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Bundle\SeoBundle\EventListener\DocumentListener;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Model\Document;
+use Pimcore\Model\Site;
+use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use ReflectionProperty;
+use RuntimeException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Moving or renaming a document through Document::save() (Studio, PHP API) must create the
@@ -36,6 +48,10 @@ class DocumentMoveRedirectTest extends ModelTestCase
      * @var array<int, array{string, callable}>
      */
     private array $removedListeners = [];
+
+    private ?Site $site = null;
+
+    private ?User $user = null;
 
     protected function setUp(): void
     {
@@ -65,6 +81,12 @@ class DocumentMoveRedirectTest extends ModelTestCase
 
     protected function tearDown(): void
     {
+        $this->tokenStorage()->setToken(null);
+        $this->user?->delete();
+        if ($this->site) {
+            $this->site->delete();
+            RuntimeCache::getInstance()->offsetUnset('sites_path_mapping');
+        }
         Pimcore::getEventDispatcher()->removeSubscriber($this->listener);
         foreach ($this->removedListeners as [$eventName, $listener]) {
             Pimcore::getEventDispatcher()->addListener($eventName, $listener);
@@ -85,15 +107,56 @@ class DocumentMoveRedirectTest extends ModelTestCase
     {
         $list = new Redirect\Listing();
         $list->setCondition('type = ?', [Redirect::TYPE_AUTO_CREATE]);
+        $list->setOrderKey('source');
+        $list->setOrder('ASC');
 
         return $list->load();
     }
 
+    /**
+     * @return array<string, int> target document id by source
+     */
+    private function targetsBySource(): array
+    {
+        $targets = [];
+        foreach ($this->autoRedirects() as $redirect) {
+            $targets[$redirect->getSource()] = (int) $redirect->getTarget();
+        }
+
+        return $targets;
+    }
+
+    /**
+     * @param string[] $permissions
+     */
+    private function loginWithPermissions(array $permissions): void
+    {
+        $user = new User();
+        $user->setParentId(0);
+        $user->setName('seo_move_user_' . uniqid());
+        $user->setActive(true);
+        $user->setAdmin(false);
+        $user->setPermissions($permissions);
+        $user->save();
+        $this->user = $user;
+
+        $this->tokenStorage()->setToken(new UsernamePasswordToken(new SecurityUser($user), 'pimcore_admin'));
+    }
+
+    private function tokenStorage(): TokenStorageInterface
+    {
+        // security.token_storage is inlined out of the compiled container, so reach the shared instance
+        // through the public resolver that Admin::getCurrentUser() reads from
+        $resolver = Pimcore::getContainer()->get(TokenStorageUserResolver::class);
+
+        return (new ReflectionProperty(TokenStorageUserResolver::class, 'tokenStorage'))->getValue($resolver);
+    }
+
     public function testMoveCreatesRedirectsForDocumentAndChildren(): void
     {
-        $newParent = TestHelper::createDocumentFolder('pme_t2294_new');
-        $page = TestHelper::createEmptyDocumentPage('pme_t2294_page');
-        $child = TestHelper::createEmptyDocumentPage('pme_t2294_child', false);
+        $newParent = TestHelper::createDocumentFolder('seo_move_new');
+        $page = TestHelper::createEmptyDocumentPage('seo_move_page');
+        $child = TestHelper::createEmptyDocumentPage('seo_move_child', false);
         $child->setParentId($page->getId());
         $child->save();
 
@@ -103,23 +166,21 @@ class DocumentMoveRedirectTest extends ModelTestCase
         $page->setParentId($newParent->getId());
         $page->save();
 
-        $redirects = [];
-        foreach ($this->autoRedirects() as $redirect) {
-            $redirects[$redirect->getSource()] = (int) $redirect->getTarget();
-        }
-
-        $this->assertSame([
+        $expected = [
             $oldPagePath => $page->getId(),
             $oldChildPath => $child->getId(),
-        ], $redirects);
+        ];
+        ksort($expected);
+
+        $this->assertSame($expected, $this->targetsBySource());
     }
 
     public function testRenameCreatesRedirect(): void
     {
-        $page = TestHelper::createEmptyDocumentPage('pme_t2294_rename');
+        $page = TestHelper::createEmptyDocumentPage('seo_move_rename');
         $oldPath = $page->getRealFullPath();
 
-        $page->setKey('pme_t2294_renamed');
+        $page->setKey('seo_move_renamed');
         $page->save();
 
         $redirects = $this->autoRedirects();
@@ -130,8 +191,8 @@ class DocumentMoveRedirectTest extends ModelTestCase
 
     public function testSaveWithoutPathChangeCreatesNoRedirect(): void
     {
-        $page = TestHelper::createEmptyDocumentPage('pme_t2294_same');
-        $page->setProperty('pme_t2294', 'text', 'x');
+        $page = TestHelper::createEmptyDocumentPage('seo_move_same');
+        $page->setProperty('seo_move', 'text', 'x');
         $page->save();
 
         $this->assertSame([], $this->autoRedirects());
@@ -139,8 +200,8 @@ class DocumentMoveRedirectTest extends ModelTestCase
 
     public function testPostMoveActionAfterSaveDoesNotDuplicate(): void
     {
-        $newParent = TestHelper::createDocumentFolder('pme_t2294_dup');
-        $page = TestHelper::createEmptyDocumentPage('pme_t2294_dup_page');
+        $newParent = TestHelper::createDocumentFolder('seo_move_dup');
+        $page = TestHelper::createEmptyDocumentPage('seo_move_dup_page');
         $oldPath = $page->getRealFullPath();
         $oldDocument = clone $page;
 
@@ -160,10 +221,162 @@ class DocumentMoveRedirectTest extends ModelTestCase
     {
         $this->useListener(new DocumentListener(['auto_create_redirects' => false]));
 
-        $page = TestHelper::createEmptyDocumentPage('pme_t2294_off');
-        $page->setKey('pme_t2294_off_renamed');
+        $page = TestHelper::createEmptyDocumentPage('seo_move_off');
+        $page->setKey('seo_move_off_renamed');
         $page->save();
 
         $this->assertSame([], $this->autoRedirects());
+    }
+
+    public function testPostMoveActionAloneStillCreatesRedirects(): void
+    {
+        $page = TestHelper::createEmptyDocumentPage('seo_move_alone');
+        $oldPath = $page->getRealFullPath();
+        $oldDocument = clone $page;
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new DocumentEvent($page, ['oldDocument' => $oldDocument, 'oldPath' => $oldPath]),
+            DocumentEvents::POST_MOVE_ACTION
+        );
+
+        $this->assertSame([$oldPath => $page->getId()], $this->targetsBySource());
+    }
+
+    public function testNestedMoveDuringPostUpdateDoesNotHideTheOuterPostMoveAction(): void
+    {
+        $newParent = TestHelper::createDocumentFolder('seo_move_nested');
+        $pageA = TestHelper::createEmptyDocumentPage('seo_move_nested_a');
+        $pageB = TestHelper::createEmptyDocumentPage('seo_move_nested_b');
+        $oldPathA = $pageA->getRealFullPath();
+        $oldDocumentA = clone $pageA;
+
+        $movedB = false;
+        $moveB = function (DocumentEvent $event) use ($pageB, $newParent, &$movedB): void {
+            if (!$movedB && $event->hasArgument('oldPath')) {
+                $movedB = true;
+                $pageB->setParentId($newParent->getId());
+                $pageB->save();
+            }
+        };
+        Pimcore::getEventDispatcher()->addListener(DocumentEvents::POST_UPDATE, $moveB, -10);
+
+        try {
+            $pageA->setParentId($newParent->getId());
+            $pageA->save();
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DocumentEvents::POST_UPDATE, $moveB);
+        }
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new DocumentEvent($pageA, ['oldDocument' => $oldDocumentA, 'oldPath' => $oldPathA]),
+            DocumentEvents::POST_MOVE_ACTION
+        );
+
+        // one redirect per moved page, none doubled by the POST_MOVE_ACTION of A
+        $this->assertCount(2, $this->autoRedirects());
+    }
+
+    public function testMovingAFolderCreatesRedirectsForThePagesBelow(): void
+    {
+        $newParent = TestHelper::createDocumentFolder('seo_move_target');
+        $folder = TestHelper::createDocumentFolder('seo_move_folder');
+        $page = TestHelper::createEmptyDocumentPage('seo_move_in_folder', false);
+        $page->setParentId($folder->getId());
+        $page->save();
+        $unpublished = TestHelper::createEmptyDocumentPage('seo_move_draft', false, false);
+        $unpublished->setParentId($folder->getId());
+        $unpublished->save();
+
+        $oldPagePath = $page->getRealFullPath();
+        $oldDraftPath = $unpublished->getRealFullPath();
+
+        $folder->setParentId($newParent->getId());
+        $folder->save();
+
+        $expected = [
+            $oldPagePath => $page->getId(),
+            $oldDraftPath => $unpublished->getId(),
+        ];
+        ksort($expected);
+
+        // the folder itself gets no redirect, it is no routable document
+        $this->assertSame($expected, $this->targetsBySource());
+    }
+
+    public function testRedirectSourceIsRelativeToTheSiteOfTheFormerPath(): void
+    {
+        $siteRoot = TestHelper::createEmptyDocumentPage('seo_move_site');
+        $page = TestHelper::createEmptyDocumentPage('seo_move_in_site', false);
+        $page->setParentId($siteRoot->getId());
+        $page->save();
+
+        $this->site = new Site();
+        $this->site->setRootId($siteRoot->getId());
+        $this->site->setMainDomain('seo-move.example.com');
+        $this->site->save();
+        // the site path mapping of the frontend tool is cached for the request
+        RuntimeCache::getInstance()->offsetUnset('sites_path_mapping');
+
+        $newParent = TestHelper::createDocumentFolder('seo_move_out_of_site');
+        $page->setParentId($newParent->getId());
+        $page->save();
+
+        $redirects = $this->autoRedirects();
+        $this->assertCount(1, $redirects);
+        $this->assertSame('/' . $page->getKey(), $redirects[0]->getSource());
+        $this->assertSame($this->site->getId(), $redirects[0]->getSourceSite());
+    }
+
+    public function testUserWithoutRedirectsPermissionGetsNoRedirect(): void
+    {
+        $this->loginWithPermissions(['documents']);
+
+        $page = TestHelper::createEmptyDocumentPage('seo_move_nopermission');
+        $page->setKey('seo_move_nopermission_renamed');
+        $page->save();
+
+        $this->assertSame([], $this->autoRedirects());
+    }
+
+    public function testUserWithRedirectsPermissionGetsRedirect(): void
+    {
+        $this->loginWithPermissions(['documents', 'redirects']);
+
+        $page = TestHelper::createEmptyDocumentPage('seo_move_permitted');
+        $oldPath = $page->getRealFullPath();
+        $page->setKey('seo_move_permitted_renamed');
+        $page->save();
+
+        $this->assertSame([$oldPath => $page->getId()], $this->targetsBySource());
+    }
+
+    public function testFailingRedirectDoesNotFailTheSaveNorSkipTheOthers(): void
+    {
+        $newParent = TestHelper::createDocumentFolder('seo_move_fail_target');
+        $folder = TestHelper::createDocumentFolder('seo_move_fail_folder');
+        $broken = TestHelper::createEmptyDocumentPage('seo_move_broken', false);
+        $broken->setParentId($folder->getId());
+        $broken->save();
+        $fine = TestHelper::createEmptyDocumentPage('seo_move_fine', false);
+        $fine->setParentId($folder->getId());
+        $fine->save();
+        $oldFinePath = $fine->getRealFullPath();
+
+        $failOnBroken = static function (RedirectEvent $event): void {
+            if (str_contains($event->getRedirect()->getSource(), 'seo_move_broken')) {
+                throw new RuntimeException('redirect insert failed');
+            }
+        };
+        Pimcore::getEventDispatcher()->addListener(RedirectEvents::PRE_SAVE, $failOnBroken);
+
+        try {
+            $folder->setParentId($newParent->getId());
+            $folder->save();
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(RedirectEvents::PRE_SAVE, $failOnBroken);
+        }
+
+        $this->assertSame($newParent->getId(), Document::getById($folder->getId())->getParentId());
+        $this->assertSame([$oldFinePath => $fine->getId()], $this->targetsBySource());
     }
 }

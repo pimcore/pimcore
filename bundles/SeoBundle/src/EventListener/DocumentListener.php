@@ -19,28 +19,40 @@ use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Frontend;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Throwable;
 
 class DocumentListener implements EventSubscriberInterface
 {
+    private const MAX_HANDLED_MOVES = 100;
+
     /**
-     * Document id and former path of the move/rename that POST_UPDATE already created redirects for,
+     * Former path by document id of the moves/renames that POST_UPDATE already created redirects for,
      * so a POST_MOVE_ACTION dispatched right after the save (classic admin) does not create them twice.
+     * The entry is dropped when POST_MOVE_ACTION uses it; the list is capped for long-running workers
+     * where no POST_MOVE_ACTION follows.
      *
-     * @var array{int, string}|null
+     * @var array<int, string>
      */
-    private ?array $handledMove = null;
+    private array $handledMoves = [];
+
+    /**
+     * @var array<string, mixed>|null
+     */
+    private ?array $redirectsConfig = null;
 
     /**
      * @param array<string, mixed>|null $redirectsConfig the `pimcore_seo.redirects` config, read from the container when null
      */
-    public function __construct(private readonly ?array $redirectsConfig = null)
+    public function __construct(?array $redirectsConfig = null)
     {
+        $this->redirectsConfig = $redirectsConfig;
     }
 
     public static function getSubscribedEvents(): array
@@ -75,6 +87,7 @@ class DocumentListener implements EventSubscriberInterface
     /**
      * Document::save() adds the former full path to POST_UPDATE when the document was moved or renamed,
      * regardless of who triggered it (Studio, PHP API, console).
+     * Failing to create a redirect must not fail the save, which has already moved the document.
      */
     public function onDocumentUpdate(DocumentEvent $event): void
     {
@@ -84,13 +97,18 @@ class DocumentListener implements EventSubscriberInterface
         }
 
         $document = $event->getDocument();
-        $this->handledMove = [$document->getId(), $oldPath];
+        $this->handledMoves[$document->getId()] = $oldPath;
+        $this->handledMoves = array_slice($this->handledMoves, -self::MAX_HANDLED_MOVES, null, true);
 
-        $oldDocument = clone $document;
-        $oldDocument->setKey(basename($oldPath));
-        $oldDocument->setPath(rtrim(dirname($oldPath), '/') . '/');
+        try {
+            $oldDocument = clone $document;
+            $oldDocument->setKey(basename($oldPath));
+            $oldDocument->setPath(rtrim(dirname($oldPath), '/') . '/');
 
-        $this->createRedirectForFormerPath($document, $oldPath, $oldDocument);
+            $this->createRedirectForFormerPath($document, $oldPath, $oldDocument);
+        } catch (Throwable $e) {
+            Logger::error('Could not create the auto redirects for the moved document ' . $document->getId() . ': ' . $e->getMessage());
+        }
     }
 
     public function onPagePostSaveAction(DocumentEvent $event): void
@@ -130,7 +148,9 @@ class DocumentListener implements EventSubscriberInterface
         $document = $event->getDocument();
         $oldDocument = $event->getArgument('oldDocument');
         $oldPath = $event->getArgument('oldPath');
-        if ($this->handledMove === [$document->getId(), $oldPath]) {
+        if (($this->handledMoves[$document->getId()] ?? null) === $oldPath) {
+            unset($this->handledMoves[$document->getId()]);
+
             return;
         }
 
@@ -139,48 +159,45 @@ class DocumentListener implements EventSubscriberInterface
 
     private function createRedirectForFormerPath(Document $document, string $oldPath, Document $oldDocument): void
     {
-        $pimcore_seo_redirects = $this->getRedirectsConfig();
-        if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
-            // without a user (console, background worker) the opt-in flag alone decides
-            $user = Pimcore\Tool\Admin::getCurrentUser();
-            if (($user === null || $user->isAllowed('redirects')) && $pimcore_seo_redirects['auto_create_redirects']) {
-                $sourceSite = Frontend::getSiteForDocument($oldDocument);
-                if ($sourceSite) {
-                    $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
-                }
+        // without a user (console, background worker) the opt-in flag alone decides
+        $user = Pimcore\Tool\Admin::getCurrentUser();
+        if (!$this->getRedirectsConfig()['auto_create_redirects'] || ($user !== null && !$user->isAllowed('redirects'))) {
+            return;
+        }
 
-                $targetSite = Frontend::getSiteForDocument($document);
+        $sourceSite = Frontend::getSiteForDocument($oldDocument);
+        $targetSite = Frontend::getSiteForDocument($document);
 
-                $this->doCreateRedirectForFormerPath($oldPath, $document->getId(), $sourceSite, $targetSite);
+        if ($document instanceof Page || $document instanceof Hardlink) {
+            $this->doCreateRedirectForFormerPath($this->stripSiteRootPath($oldPath, $sourceSite), $document->getId(), $sourceSite, $targetSite);
+        }
 
-                if ($document->hasChildren()) {
-                    $list = new Document\Listing();
-                    $list->setCondition('`path` LIKE :path', [
-                        'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
-                    ]);
+        // a moved folder or page redirects the pages below it, too
+        if ($document->hasChildren(true)) {
+            $list = new Document\Listing();
+            $list->setUnpublished(true);
+            $list->setCondition('`path` LIKE :path AND `type` IN (\'page\', \'hardlink\')', [
+                'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
+            ]);
 
-                    $childrenList = $list->loadIdPathList();
+            $count = 0;
 
-                    $count = 0;
+            foreach ($list->loadIdPathList() as $child) {
+                $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument->getRealFullPath(), $child['path']);
 
-                    foreach ($childrenList as $child) {
-                        $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument->getRealFullPath(), $child['path']);
-                        if ($sourceSite) {
-                            $source = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $source);
-                        }
+                $this->doCreateRedirectForFormerPath($this->stripSiteRootPath($source, $sourceSite), $child['id'], $sourceSite, $targetSite);
 
-                        $target = $child['id'];
-
-                        $this->doCreateRedirectForFormerPath($source, $target, $sourceSite, $targetSite);
-
-                        $count++;
-                        if ($count % 10 === 0) {
-                            Pimcore::collectGarbage();
-                        }
-                    }
+                $count++;
+                if ($count % 10 === 0) {
+                    Pimcore::collectGarbage();
                 }
             }
         }
+    }
+
+    private function stripSiteRootPath(string $path, ?Site $site): string
+    {
+        return $site ? preg_replace('@^' . preg_quote($site->getRootPath(), '@') . '@', '', $path) : $path;
     }
 
     /**
@@ -209,6 +226,11 @@ class DocumentListener implements EventSubscriberInterface
             $redirect->setTargetSite($targetSite->getId());
         }
 
-        $redirect->save();
+        try {
+            $redirect->save();
+        } catch (Throwable $e) {
+            // e.g. a source longer than the column: skip this one, the other redirects are still created
+            Logger::error('Could not save the auto redirect from "' . $source . '": ' . $e->getMessage());
+        }
     }
 }
