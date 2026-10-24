@@ -172,11 +172,11 @@ class DocumentListener implements EventSubscriberInterface
             $this->doCreateRedirectForFormerPath($this->stripSiteRootPath($oldPath, $sourceSite), $document->getId(), $sourceSite, $targetSite);
         }
 
-        // a moved folder or page redirects the pages below it, too
+        // a moved folder or page redirects the documents below it, too (a folder is no redirect target)
         if ($document->hasChildren(true)) {
             $list = new Document\Listing();
             $list->setUnpublished(true);
-            $list->setCondition('`path` LIKE :path AND `type` IN (\'page\', \'hardlink\')', [
+            $list->setCondition('`path` LIKE :path AND `type` != \'folder\'', [
                 'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
             ]);
 

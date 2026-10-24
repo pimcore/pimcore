@@ -287,8 +287,16 @@ class DocumentMoveRedirectTest extends ModelTestCase
         $unpublished->setParentId($folder->getId());
         $unpublished->save();
 
+        $email = TestHelper::createEmptyDocument('seo_move_mail', false, true, '\\Pimcore\\Model\\Document\\Email');
+        $email->setParentId($folder->getId());
+        $email->save();
+        $subFolder = TestHelper::createDocumentFolder('seo_move_sub', false);
+        $subFolder->setParentId($folder->getId());
+        $subFolder->save();
+
         $oldPagePath = $page->getRealFullPath();
         $oldDraftPath = $unpublished->getRealFullPath();
+        $oldEmailPath = $email->getRealFullPath();
 
         $folder->setParentId($newParent->getId());
         $folder->save();
@@ -296,10 +304,11 @@ class DocumentMoveRedirectTest extends ModelTestCase
         $expected = [
             $oldPagePath => $page->getId(),
             $oldDraftPath => $unpublished->getId(),
+            $oldEmailPath => $email->getId(),
         ];
         ksort($expected);
 
-        // the folder itself gets no redirect, it is no routable document
+        // neither the folder nor its sub folder get a redirect, they are no redirect target
         $this->assertSame($expected, $this->targetsBySource());
     }
 
