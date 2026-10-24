@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Element;
 
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Messenger\Handler\ElementDependenciesHandler;
@@ -234,6 +235,60 @@ class DependenciesTest extends ModelTestCase
         $folder->save();
 
         $this->assertNotContains($child->getId(), $this->getRequiredByIds($snippet), 'A rename must not queue the descendants');
+    }
+
+    /**
+     * The own dependencies of the moved document keep working: they are resolved by its own save, not by the descendant queue.
+     */
+    public function testMovingDocumentKeepsItsOwnDependencies(): void
+    {
+        [, , $folder] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $own = new Document\Snippet();
+        $own->setParentId(1);
+        $own->setKey('own' . uniqid());
+        $own->setPublished(true);
+        $own->save();
+
+        $property = new Property();
+        $property->setName('ownSidebar');
+        $property->setType('document');
+        $property->setData($own);
+        $property->setInherited(false);
+        $property->setInheritable(false);
+        $folder->setProperties(['ownSidebar' => $property]);
+        $folder->save();
+
+        $this->assertContains($folder->getId(), $this->getRequiredByIds($own), 'The folder depends on its snippet before the move');
+
+        $folder->setParentId($target->getId());
+        $folder->save();
+
+        $this->assertContains($folder->getId(), $this->getRequiredByIds($own), 'The own dependency is kept by the move');
+        $requires = array_column(Document::getById($folder->getId(), ['force' => true])->getDependencies()->getRequires(), 'id');
+        $this->assertContains($own->getId(), $requires);
+    }
+
+    public function testMovingDocumentQueuesNothingWhenDependenciesAreDisabled(): void
+    {
+        [$snippet, , $folder, $child] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet));
+
+        $configuration = Config::getSystemConfiguration('dependency');
+        Config::setSystemConfiguration(['enabled' => false] + (array) $configuration, 'dependency');
+
+        try {
+            $folder->setParentId($target->getId());
+            $folder->save();
+        } finally {
+            Config::setSystemConfiguration($configuration, 'dependency');
+        }
+
+        // the child lost the inherited property, but with dependency.enabled=false nothing refreshed its dependencies
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet), 'Nothing may be dispatched for the descendants');
     }
 
     /**
