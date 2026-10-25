@@ -36,6 +36,7 @@ final class ListingTest extends TestCase
             'source',
             'sourceSite',
             'target',
+            'targetType',
             'targetSite',
             'statusCode',
             'priority',
