@@ -16,6 +16,7 @@ namespace Pimcore\Model;
 use __PHP_Incomplete_Class;
 use Exception;
 use Pimcore;
+use Pimcore\Config;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
@@ -28,10 +29,13 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Version\Adapter\ElementTypeAwareStorageTypeInterface;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
+use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
+use Stringable;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
@@ -67,6 +71,19 @@ final class Version extends AbstractModel
     protected int $versionCount = 0;
 
     protected ?string $binaryFileHash = null;
+
+    /**
+     * The calculated value snapshot this version stores, as far as it is known in this process: remembered when a
+     * snapshot is captured for the version and when its data is loaded, so that writing the version again (note,
+     * version count, ...) never replaces the stored values - also when its data is still the live object the
+     * version was created from, which saveVersion() returns and which has no snapshot of its own.
+     */
+    private bool $calculatedValueSnapshotKnown = false;
+
+    /**
+     * @var array<string, scalar|array|null>|null
+     */
+    private ?array $knownCalculatedValueSnapshot = null;
 
     protected ?int $binaryFileId = null;
 
@@ -128,6 +145,31 @@ final class Version extends AbstractModel
         return !self::$disabled;
     }
 
+    /**
+     * Highest version id currently stored for the given element, or null if it has no versions.
+     * Used to scope the deferred version cleanup dispatched on element deletion (see
+     * Messenger\VersionDeleteMessage), so an element id re-used after the deletion does not lose
+     * versions created later.
+     *
+     * With $forUpdate the ids are read FOR UPDATE. Called inside the element's delete transaction
+     * this blocks concurrent version inserts for the element until the delete commits, so the
+     * captured bound cannot miss a version created between the read and the commit (such a
+     * version would survive the deferred cleanup and could later surface in the history of an
+     * element that re-uses the id). Outside a transaction the lock is released immediately and
+     * the flag has no effect.
+     *
+     * @internal
+     */
+    public static function getHighestIdForElement(string $elementType, int $elementId, bool $forUpdate = false): ?int
+    {
+        $id = \Pimcore\Db::get()->fetchOne(
+            'SELECT MAX(id) FROM versions WHERE cid = ? AND ctype = ?' . ($forUpdate ? ' FOR UPDATE' : ''),
+            [$elementId, $elementType]
+        );
+
+        return $id === null || $id === false ? null : (int) $id;
+    }
+
     public function save(): void
     {
         if (!self::$disabled && $this->id === null && $this->coauthorType === null && $this->coauthor === null
@@ -184,8 +226,13 @@ final class Version extends AbstractModel
             $this->setBinaryFileHash(hash_final($ctx));
         }
 
-        $this->setStorageType($this->storageAdapter->getStorageType(strlen($dataString),
-            $isAsset ? $data->getfileSize() : null));
+        $metaDataSize = strlen($dataString);
+        $binaryDataSize = $isAsset ? $data->getfileSize() : null;
+
+        // the storage type may depend on the element type, see ElementDelegateVersionStorageAdapter
+        $this->setStorageType($this->storageAdapter instanceof ElementTypeAwareStorageTypeInterface
+            ? $this->storageAdapter->getStorageTypeForElementType($this->getCtype(), $metaDataSize, $binaryDataSize)
+            : $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize));
 
         if ($isAsset) {
             $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
@@ -227,7 +274,135 @@ final class Version extends AbstractModel
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
         $newData = $copier->copy($data);
 
+        if ($data instanceof Concrete && $newData instanceof Concrete) {
+            if ($this->isAutoSave()) {
+                // auto-save versions never store a snapshot; this includes the auto-save row of a user that is
+                // written again with an object restored from a version, whose copy would carry the old values
+                $this->rememberCalculatedValueSnapshot(null);
+                $newData->__setCalculatedValueSnapshot(null);
+            } elseif ($this->getId() !== null && $this->calculatedValueSnapshotKnown) {
+                // an existing version is written again (e.g. note or version count changed): keep the values
+                // it stores, they are its historical state (none if it was created without a snapshot)
+                $newData->__setCalculatedValueSnapshot($this->knownCalculatedValueSnapshot);
+            } elseif (self::isCalculatedValueSnapshotEnabled()) {
+                $this->captureCalculatedValueSnapshot($data, $newData);
+            } else {
+                // never carry the snapshot of an object that was restored from a version into a new
+                // version that does not capture (option disabled): its values would be stale; remember
+                // that too, so enabling the option later never captures into this version when it is written again
+                $this->rememberCalculatedValueSnapshot(null);
+                $newData->__setCalculatedValueSnapshot(null);
+            }
+        }
+
         return $newData;
+    }
+
+    /**
+     * Whether `pimcore.objects.versions.calculated_value_snapshot` is enabled (opt-in).
+     */
+    private static function isCalculatedValueSnapshotEnabled(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('objects')['versions']['calculated_value_snapshot'] ?? false);
+    }
+
+    /**
+     * Computes the current values of all calculated fields (object level and localized fields)
+     * and stores them on the object copy that gets serialized into this version, so version
+     * views can show the values as of the snapshot instead of recomputing them later.
+     */
+    private function captureCalculatedValueSnapshot(Concrete $source, Concrete $target): void
+    {
+        /** @var array<string, scalar|array|null> $snapshot */
+        $snapshot = [];
+
+        // compute with the snapshot of $source temporarily disabled, so values are computed
+        // freshly even if $source itself was restored from a version; only the serialized
+        // $target receives the new snapshot, $source is left untouched
+        DataObject\Service::computeWithoutCalculatedValueSnapshot($source, function () use (&$snapshot, $source): void {
+            foreach ($source->getClass()->getFieldDefinitions() as $fieldName => $fieldDefinition) {
+                if ($fieldDefinition instanceof Data\CalculatedValue) {
+                    $context = new DataObject\Data\CalculatedValue($fieldName);
+                    $context->setContextualData('object', null, null, null, null, null, $fieldDefinition);
+                    $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+                } elseif ($fieldDefinition instanceof Data\Localizedfields) {
+                    foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldName => $localizedFieldDefinition) {
+                        if ($localizedFieldDefinition instanceof Data\CalculatedValue) {
+                            foreach (Tool::getValidLanguages() as $language) {
+                                $context = new DataObject\Data\CalculatedValue($localizedFieldName);
+                                $context->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $localizedFieldDefinition);
+                                $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        $this->rememberCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
+        $target->__setCalculatedValueSnapshot($this->knownCalculatedValueSnapshot);
+    }
+
+    /**
+     * @param array<string, scalar|array|null>|null $snapshot
+     */
+    private function rememberCalculatedValueSnapshot(?array $snapshot): void
+    {
+        $this->calculatedValueSnapshotKnown = true;
+        $this->knownCalculatedValueSnapshot = $snapshot;
+    }
+
+    /**
+     * @param array<string, scalar|array|null> $snapshot
+     */
+    private function addCalculatedValueSnapshotEntry(array &$snapshot, Concrete $source, DataObject\Data\CalculatedValue $context): void
+    {
+        try {
+            $value = DataObject\Service::getCalculatedFieldValue($source, $context);
+        } catch (Exception $e) {
+            Logger::warning(sprintf(
+                'Could not capture calculated value of field "%s" for version of object %d: %s',
+                $context->getFieldname(),
+                $source->getId() ?? 0,
+                $e->getMessage()
+            ));
+
+            return;
+        }
+
+        if (!$this->isSerializationSafeCalculatedValue($value)) {
+            if ($value instanceof Stringable) {
+                $value = (string) $value;
+            } else {
+                // value cannot be stored safely in the serialized version data (e.g. objects,
+                // arrays containing objects), let version views fall back to live recomputation
+                return;
+            }
+        }
+
+        $snapshot[DataObject\Service::getCalculatedValueSnapshotKey($context)] = $value;
+    }
+
+    /**
+     * @phpstan-assert-if-true scalar|array|null $value
+     */
+    private function isSerializationSafeCalculatedValue(mixed $value): bool
+    {
+        if ($value === null || is_scalar($value)) {
+            return true;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if (!$this->isSerializationSafeCalculatedValue($item)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private function unmarshalData(ElementInterface $data): mixed
@@ -316,6 +491,10 @@ final class Version extends AbstractModel
         }
 
         $this->setData($data);
+
+        if ($data instanceof Concrete) {
+            $this->rememberCalculatedValueSnapshot($data->__getCalculatedValueSnapshot());
+        }
 
         return $data;
     }
@@ -422,6 +601,12 @@ final class Version extends AbstractModel
      */
     public function setData(mixed $data): static
     {
+        if ($data !== $this->data) {
+            // the snapshot known for this version belongs to the data it was captured from or loaded with
+            $this->calculatedValueSnapshotKnown = false;
+            $this->knownCalculatedValueSnapshot = null;
+        }
+
         $this->data = $data;
 
         return $this;

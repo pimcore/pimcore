@@ -305,7 +305,10 @@ class Select extends Data implements
 
     public function setDefaultValue(?string $defaultValue): void
     {
-        $this->defaultValue = $defaultValue;
+        // An empty default means "no default". Keeping '' would make a new object start with an
+        // empty string instead of null, which e.g. a single-state workflow marking store reads as
+        // an (invalid) place instead of falling back to its initial place.
+        $this->defaultValue = $defaultValue === '' ? null : $defaultValue;
     }
 
     public function enrichFieldDefinition(array $context = []): static
@@ -378,6 +381,10 @@ class Select extends Data implements
         if ($operator === '=') {
             $quotedValue = $db->quote((string) $value);
 
+            if ((string) $value === '') {
+                return '(' . $key . ' IS NULL OR ' . $key . ' = ' . $quotedValue . ')';
+            }
+
             return $key . ' = ' . $quotedValue . ' ';
         }
         if ($operator === 'LIKE') {
@@ -410,10 +417,20 @@ class Select extends Data implements
                 $context['purpose'] = 'layout';
             }
 
-            return $optionsProvider->getDefaultValue($context, $this);
+            $defaultValue = $optionsProvider->getDefaultValue($context, $this);
+
+            // same as the configured default: an empty string means "no default"
+            return $defaultValue === '' ? null : $defaultValue;
         }
 
         return $this->getDefaultValue();
+    }
+
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        // the default is resolved at runtime (options provider), the configured default value alone does not tell
+        return parent::hasApplicableDefaultValue($object, $context)
+            || !$this->isEmpty($this->doGetDefaultValue($object, $context));
     }
 
     public function jsonSerialize(): mixed

@@ -25,6 +25,20 @@ use InvalidArgumentException;
  */
 final readonly class StorageOperation
 {
+    /**
+     * @var array<string, mixed>|null
+     */
+    private ?array $copyOptions;
+
+    /**
+     * @param array<string, mixed>|null $copyOptions the flysystem options the original call was
+     *        resolved with, so the processor can copy the way a non-deferred move would. Null
+     *        means nothing was recorded - rows queued before this was introduced, and any
+     *        storage whose configuration sets none of the relevant options. A delete sweeps
+     *        content rather than copying it, so it never carries options: anything passed for
+     *        one is dropped rather than rejected, since a hand-edited row must not be able to
+     *        stop the queue from draining.
+     */
     public function __construct(
         private ?int $id,
         private string $storage,
@@ -32,7 +46,10 @@ final readonly class StorageOperation
         private string $sourcePrefix,
         private ?string $targetPrefix,
         private DateTimeImmutable $createdAt,
+        ?array $copyOptions = null,
     ) {
+        $this->copyOptions = $type === StorageOperationType::Delete ? null : $copyOptions;
+
         $this->assertValidPrefix($sourcePrefix);
 
         if ($type === StorageOperationType::Move) {
@@ -75,6 +92,14 @@ final readonly class StorageOperation
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getCopyOptions(): ?array
+    {
+        return $this->copyOptions;
     }
 
     private function assertValidPrefix(string $prefix): void

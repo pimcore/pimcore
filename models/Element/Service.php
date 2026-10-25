@@ -28,6 +28,7 @@ use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
 use InvalidArgumentException;
 use League\Csv\EscapeFormula;
+use LogicException;
 use Normalizer;
 use Pimcore;
 use Pimcore\Cache;
@@ -193,6 +194,12 @@ class Service extends Model\AbstractModel
     private const REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP = 5000;
 
     private const REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME = 60;
+
+    /**
+     * Marks element session data in `tmp_store` that carries an HMAC signature, see
+     * {@see self::unserializeSignedSessionElement()}.
+     */
+    private const SESSION_ELEMENT_SIGNATURE_PREFIX = 'pimcore-session-v1:';
 
     /**
      * In-process memo of scanRequiredByVisibility() results, keyed by cache key - avoids
@@ -1579,7 +1586,10 @@ class Service extends Model\AbstractModel
         if ($tmpStore) {
             $data = $tmpStore->getData();
             if ($data) {
-                $element = Serialize::unserialize($data, true);
+                $element = self::unserializeSignedSessionElement($data, $tmpStoreKey);
+                if ($element === null) {
+                    return null;
+                }
 
                 $context = [
                     'source' => __METHOD__,
@@ -1611,7 +1621,79 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * The `tmp_store` row read above can be forged by anyone with a raw DB write primitive against
+     * that table (e.g. an authenticated SQL injection elsewhere), and `allowed_classes => true` would let
+     * a forged payload instantiate any autoloadable class - including classes whose `__wakeup()` or
+     * `__destruct()` do harm, third-party and first-party alike (PHP object injection). The classes of an
+     * element graph cannot be enumerated (generated data object classes, application value objects), so
+     * the payload is authenticated instead: `saveElementToSession()` signs it with a key derived from the
+     * application secret and only a payload with a valid signature is unserialized. The signature also
+     * covers the `tmp_store` key, so a valid payload cannot be moved to another row (other session, element
+     * type, element or postfix). Unsigned, tampered, moved or legacy rows are rejected and treated as missing.
+     *
+     * @internal
+     */
+    private static function unserializeSignedSessionElement(string $data, string $tmpStoreKey): Asset|Document|AbstractObject|null
+    {
+        $prefixLength = strlen(self::SESSION_ELEMENT_SIGNATURE_PREFIX);
+        // prefix + hex sha256 hmac (64 chars) + separator
+        $headerLength = $prefixLength + 64 + 1;
+
+        if (strlen($data) <= $headerLength
+            || !str_starts_with($data, self::SESSION_ELEMENT_SIGNATURE_PREFIX)
+            || $data[$headerLength - 1] !== ':'
+        ) {
+            return null;
+        }
+
+        $signature = substr($data, $prefixLength, 64);
+        $payload = substr($data, $headerLength);
+
+        try {
+            $expectedSignature = self::signSessionElementPayload($payload, $tmpStoreKey);
+        } catch (Throwable) {
+            return null;
+        }
+
+        if (!hash_equals($expectedSignature, $signature)) {
+            return null;
+        }
+
+        try {
+            $element = Serialize::unserialize($payload, true);
+        } catch (Throwable) {
+            return null;
+        }
+
+        if (!$element instanceof Asset && !$element instanceof Document && !$element instanceof AbstractObject) {
+            return null;
+        }
+
+        return $element;
+    }
+
+    /**
+     * @throws LogicException if the application secret is not available
+     *
+     * @internal
+     */
+    private static function signSessionElementPayload(string $payload, string $tmpStoreKey): string
+    {
+        $secret = Pimcore::getContainer()->getParameter('secret');
+        if ($secret === '') {
+            throw new LogicException('The application secret is required to sign element session data.');
+        }
+
+        // length-prefixed key, so key and payload cannot be shifted against each other
+        $message = strlen($tmpStoreKey) . ':' . $tmpStoreKey . $payload;
+
+        return hash_hmac('sha256', $message, hash_hmac('sha256', 'pimcore.element_session', $secret, true));
+    }
+
+    /**
      * @param bool $clone save a copy
+     *
+     * @throws LogicException if the application secret needed to sign the session data is not available
      *
      * @internal
      */
@@ -1654,6 +1736,7 @@ class Service extends Model\AbstractModel
         }
 
         $serializedData = Serialize::serialize($element);
+        $serializedData = self::SESSION_ELEMENT_SIGNATURE_PREFIX . self::signSessionElementPayload($serializedData, $tmpStoreKey) . ':' . $serializedData;
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);
     }

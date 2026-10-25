@@ -140,7 +140,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     {
         $cacheKey = $this->getCacheKey($domain, $locale);
 
-        if (isset($this->initializedCatalogues[$cacheKey])) {
+        if ($this->isInitialized($domain, $locale)) {
             return;
         }
 
@@ -193,8 +193,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             if ($fallbackCatalogue) {
                 $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
 
+                // building the catalogue of the fallback locale can make Symfony discard the catalogues loaded so far
+                $c = $this->getCatalogue($locale);
+                if (!$c->defines('__pimcore_dummy', $domain)) {
+                    $c->addCatalogue($catalogue);
+                }
+
                 try {
-                    $this->getCatalogue($locale)->addFallbackCatalogue(
+                    $c->addFallbackCatalogue(
                         $this->getCatalogue($fallbackCatalogue->getLocale())
                     );
                 } catch (LogicException $e) {
@@ -202,6 +208,21 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 }
             }
         }
+    }
+
+    /**
+     * Symfony discards its loaded catalogues whenever it has to build one from scratch (e.g. when the translations
+     * cache is only partially warm), so the flag alone does not prove that the database translations are still
+     * part of the current catalogue - the dummy key added in lazyInitialize() does.
+     */
+    private function isInitialized(string $domain, string $locale): bool
+    {
+        if (!isset($this->initializedCatalogues[$this->getCacheKey($domain, $locale)])) {
+            return false;
+        }
+
+        return !Translation::isAValidDomain($domain)
+            || $this->getCatalogue($locale)->defines('__pimcore_dummy', $domain);
     }
 
     /**
@@ -270,7 +291,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         $t->setKey($id);
 
                         // add all available languages
-                        foreach (Translation::getValidLanguages() as $language) {
+                        foreach (Translation::getValidLanguages($domain) as $language) {
                             $t->addTranslation($language, '');
                         }
                     }

@@ -207,7 +207,7 @@ class NotesSubscriber implements EventSubscriberInterface
     {
         $additional = $this->getAdditionalFields();
 
-        $data = $additional[$fieldConfig['name']];
+        $data = $additional[$fieldConfig['name']] ?? null;
 
         if ($fieldConfig['fieldType'] === 'checkbox') {
             return is_bool($data) ? $data : $data === 'true';

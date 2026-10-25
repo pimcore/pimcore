@@ -44,5 +44,8 @@ class Dao extends UserRole\Dao
 
         // versions
         $this->db->update('versions', ['userId' => null], ['userId' => $userId]);
+
+        // scheduled tasks
+        $this->db->delete('schedule_tasks', ['userId' => $userId]);
     }
 }

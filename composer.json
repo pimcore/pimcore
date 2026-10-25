@@ -48,11 +48,11 @@
     "composer/ca-bundle": "^1.2",
     "defuse/php-encryption": "^2.2.0",
     "doctrine/dbal": "^4.4",
-    "doctrine/doctrine-bundle": "^2.13.2",
+    "doctrine/doctrine-bundle": "^2.13.2 || ^3.0",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
     "doctrine/orm": "^3.0",
-    "doctrine/persistence": "^3.0.3",
+    "doctrine/persistence": "^3.0.3 || ^4.0",
     "egulias/email-validator": "^3.0 || ^4.0",
     "friendsofsymfony/jsrouting-bundle": "^3.6.0",
     "gotenberg/gotenberg-php": "^2.4",
@@ -143,13 +143,13 @@
   },
   "require-dev": {
     "behat/gherkin": "4.15.0",
-    "codeception/codeception": "^5.3.5",
+    "codeception/codeception": "^5.3.7",
     "codeception/stub": "^4.1.4",
     "codeception/module-symfony": "^3.5",
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.13.1",
     "league/flysystem-memory": "^3.0",
-    "phpstan/phpstan": "2.2.6",
+    "phpstan/phpstan": "2.3.1",
     "phpstan/phpstan-symfony": "^2.0.2",
     "phpunit/phpunit": "^12.5.23 || ^13.1.7",
     "symfony/dotenv": "^7.4",
@@ -200,7 +200,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-2026.x": "12.x-dev"
+      "2026.x-dev": "2026.4.x-dev"
     }
   },
   "scripts": {

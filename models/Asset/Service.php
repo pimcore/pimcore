@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Exception;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
@@ -26,6 +27,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
 use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
@@ -47,6 +49,12 @@ class Service extends Model\Element\Service
     public const GRID_SYSTEM_COLUMNS = [
         'preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size', 'mimetype',
     ];
+
+    /**
+     * How much of a delivered thumbnail is read to determine its dimensions, enough to reach the
+     * frame header of a JPEG that carries an embedded color profile.
+     */
+    private const STATUS_CACHE_HEAD_BYTES = 262144;
 
     /**
      * @internal
@@ -256,6 +264,27 @@ class Service extends Model\Element\Service
         }
         $asset->setProperties($properties);
 
+        // rewriting metadata relations (e.g. "asset", "document" or "object" metadata fields)
+        if ($asset->getHasMetaData()) {
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $metadata = $asset->getMetadata(null, null, false, true);
+
+            foreach ($metadata as &$item) {
+                try {
+                    /** @var Data $instance */
+                    $instance = $loader->build($item['type']);
+                } catch (UnsupportedException $e) {
+                    continue;
+                }
+
+                if ($instance instanceof IdRewriterInterface) {
+                    $item['data'] = $instance->rewriteIds($item['data'], $rewriteConfig, $item);
+                }
+            }
+
+            $asset->setMetadataRaw($metadata);
+        }
+
         return $asset;
     }
 
@@ -401,7 +430,7 @@ class Service extends Model\Element\Service
                 return null;
             }
 
-            if ($config['type'] === 'image' && strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+            if ($config['type'] === 'image' && ThumbnailConfig::isAutoFormat($thumbnailConfig->getFormat())) {
                 $formatOverride = $config['file_extension'];
                 if (in_array($config['file_extension'], ['jpg', 'jpeg'])) {
                     $formatOverride = 'pjpeg';
@@ -485,18 +514,44 @@ class Service extends Model\Element\Service
         $config['file_extension'] ??= strtolower(pathinfo($config['filename'], PATHINFO_EXTENSION));
 
         if ($config['type'] === 'image') {
+            $pathReference = $thumbnail->getPathReference();
+
+            if (($pathReference['type'] ?? '') === 'error') {
+                // failed generations have no stream to deliver; the metadata/copy operations
+                // below would fail on the storage for the placeholder path reference
+                return null;
+            }
+
             $thumbnailStream = $thumbnail->getStream();
+            if ($thumbnailStream === null) {
+                return null;
+            }
 
             $mime = $thumbnail->getMimeType();
             $fileSize = $thumbnail->getFileSize();
-            $pathReference = $thumbnail->getPathReference();
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
-            if ($actualFileExtension !== $config['file_extension']) {
+            if ($actualFileExtension !== $config['file_extension']
+                && ($pathReference['type'] ?? '') === 'thumbnail'
+                && in_array(
+                    strtolower((string) $config['file_extension']),
+                    Config::getSystemConfiguration('assets')['thumbnails']['allowed_formats'],
+                    true
+                )
+            ) {
                 // create a copy/symlink to the file with the original file extension
                 // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                 // is set to auto-optimized format so the resulting thumbnail can be jpeg
-                $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $config['file_extension'], $pathReference['src']);
+                //
+                // only a generated thumbnail (type === 'thumbnail') may be mirrored; e.g. a pass-through
+                // path reference (type === 'asset') points directly at the original asset's bytes and
+                // must never be copied into thumbnail storage under a caller-chosen extension. Any other
+                // or missing type is rejected, and the requested extension must be an allowed format
+                $requestedFile = preg_replace(
+                    '/\.' . preg_quote($actualFileExtension, '/') . '$/',
+                    '.' . strtolower((string) $config['file_extension']),
+                    $pathReference['src']
+                );
 
                 //Only copy the file if not exists yet
                 if (!$storage->fileExists($requestedFile)) {
@@ -547,7 +602,20 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            return self::getStreamedResponseForThumbnail($config, $uri);
+            try {
+                return self::getStreamedResponseForThumbnail($config, $uri);
+            } catch (FilesystemException $e) {
+                // the thumbnail storage could not serve the file although the thumbnail itself
+                // resolved - a permission or I/O problem, a briefly unavailable remote adapter, or
+                // the file disappearing between two storage calls. This helper is public API for
+                // custom asset delivery and documented as returning ?StreamedResponse, so the
+                // failure must not escape to the calling project code.
+                // Logged as an error rather than debug: a plain cache miss is already absorbed by
+                // getStreamedResponseForThumbnail(), so everything arriving here is a real fault.
+                Logger::error('Could not stream thumbnail for ' . $uri . ': ' . $e->getMessage());
+
+                return null;
+            }
         }
 
         return null;
@@ -587,14 +655,19 @@ class Service extends Model\Element\Service
 
         if ($stream !== null) {
             $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
+            $fileSize = $storage->fileSize($storagePath);
 
-            return new StreamedResponse(function () use ($stream) {
+            // what was read from the stream to register the thumbnail is sent before the rest of it
+            $head = self::addThumbnailOnStorageToStatusCache($config, $storagePath, $stream, $fileSize);
+
+            return new StreamedResponse(function () use ($stream, $head) {
+                echo $head;
                 fpassthru($stream);
             }, 200, [
                 'Cache-Control' => 'public, max-age=' . $lifetime,
                 'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                 'Content-Type' => $storage->mimeType($storagePath),
-                'Content-Length' => $storage->fileSize($storagePath),
+                'Content-Length' => $fileSize,
                 AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
             ]);
         }
@@ -605,6 +678,64 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    /**
+     * With the status cache enabled, a deferred thumbnail is only treated as existing when it has a row in
+     * assets_image_thumbnail_cache, otherwise it is rendered with the deferred URL (and never with the
+     * frontend_prefixes.thumbnail one). A thumbnail that is already on the storage but unknown to the status
+     * cache (generated before it was enabled, copied from another environment, ...) would stay that way
+     * forever, as delivering it does not touch the cache. So the row is added here.
+     *
+     * The dimensions are read from the beginning of the delivered stream, no additional storage access is needed.
+     * A thumbnail whose dimensions cannot be read that way is delivered as before and stays unregistered.
+     *
+     * @param resource $stream
+     *
+     * @return string the bytes that were read from the stream, they still have to be sent to the client
+     */
+    private static function addThumbnailOnStorageToStatusCache(array $config, string $storagePath, $stream, int $fileSize): string
+    {
+        if ($config['type'] !== 'image'
+            || !Config::getSystemConfiguration('assets')['image']['thumbnails']['status_cache']) {
+            return '';
+        }
+
+        $filename = basename($storagePath);
+
+        try {
+            $asset = Asset::getById($config['asset_id']);
+            if (!$asset instanceof Asset\Image || $asset->getDao()->getCachedThumbnail($config['thumbnail_name'], $filename) !== null) {
+                return '';
+            }
+        } catch (Exception $e) {
+            // registering the thumbnail is best effort, a thumbnail that can be read from the storage is delivered anyway
+            Logger::warning('Could not check the status cache for the thumbnail ' . $storagePath . ': ' . $e->getMessage());
+
+            return '';
+        }
+
+        // the thumbnail must belong to the asset it is registered for, the request URI is user input
+        $expectedStoragePath = rtrim($asset->getRealPath(), '/') . '/' . $asset->getId()
+            . '/image-thumb__' . $asset->getId() . '__' . $config['thumbnail_name'] . '/' . $filename;
+        if (ltrim($storagePath, '/') !== ltrim($expectedStoragePath, '/')) {
+            return '';
+        }
+
+        $head = (string) stream_get_contents($stream, self::STATUS_CACHE_HEAD_BYTES);
+        $dimensions = $head !== '' ? @getimagesizefromstring($head) : false;
+        if (!$dimensions || $dimensions[0] < 1 || $dimensions[1] < 1) {
+            return $head;
+        }
+
+        try {
+            $asset->getDao()->addToThumbnailCache($config['thumbnail_name'], $filename, $fileSize, $dimensions[0], $dimensions[1]);
+        } catch (Exception $e) {
+            // the delivery must not fail because the thumbnail could not be registered, the next request tries again
+            Logger::warning('Could not add the thumbnail ' . $storagePath . ' to the status cache: ' . $e->getMessage());
+        }
+
+        return $head;
     }
 
     /**

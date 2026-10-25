@@ -110,3 +110,27 @@ $data = [
 
 $object->setMyBlockField([$data]); 
 ```
+
+## Custom Field Types and Block Marshallers
+
+The data of a block is stored as one serialized PHP value. Since Pimcore 2026.3.4 it is unserialized with an
+[`allowed_classes`](https://www.php.net/manual/en/function.unserialize.php) list that only covers the value objects
+the core block marshallers write (`Consent`, `ExternalImage`, `StructuredTable`, `MarkerHotspotItem`, `Carbon` /
+`CarbonImmutable`); any other class is reduced to `__PHP_Incomplete_Class`, so a forged value can never instantiate
+arbitrary objects.
+
+If a custom block marshaller (service tag `pimcore.dataobject.fielddefinition.marshaller`, key `block_<fieldtype>`) or
+the `normalize()` output of a custom field definition stores objects of its own inside a block, register their classes.
+Otherwise those values are lost on the next load and save:
+
+```yaml
+# config/packages/pimcore.yaml
+pimcore:
+    objects:
+        block:
+            unserialize_allowed_classes:
+                - App\Model\DataObject\Data\MyValueObject
+```
+
+The classes listed here are merged with the built-in ones. Prefer storing plain arrays and scalars in a block
+marshaller where you can, so that no additional class has to be allowed at all.

@@ -15,6 +15,7 @@ namespace Pimcore\Document\Adapter;
 
 use Exception;
 use Pimcore\Document\Adapter;
+use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -140,7 +141,12 @@ class Ghostscript extends Adapter
     protected function buildPageCountCommand(): string
     {
         $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
-        $localFile = self::getLocalFileFromStream($this->getPdf());
+
+        // The local file path is interpolated into a PostScript string literal below, so it must never
+        // carry a byte derived from the asset's (attacker-influenceable) filename - escapeshellarg() only
+        // protects the shell, not the PostScript parser. A copy under a name Pimcore fully controls
+        // (ignoring the asset's own name and extension) removes that injection vector.
+        $localFile = $this->copyPdfToSafeLocalFile();
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
@@ -152,6 +158,23 @@ class Ghostscript extends Adapter
         Console::addLowProcessPriority($command);
 
         return $command;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function copyPdfToSafeLocalFile(): string
+    {
+        $tempFile = File::getLocalTempFilePath('pdf');
+        $destination = fopen($tempFile, 'wb', false, File::getContext());
+        if (!$destination) {
+            throw new Exception(sprintf('Unable to create temporary file in %s', $tempFile));
+        }
+
+        stream_copy_to_stream($this->getPdf(), $destination);
+        fclose($destination);
+
+        return $tempFile;
     }
 
     /**

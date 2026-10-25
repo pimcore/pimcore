@@ -84,6 +84,9 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setSlug($slug);
         $route->setSite($site);
         $route->setDefault('_controller', $slug->getAction());
+        // the action is class definition data, not application code - let Symfony's controller resolver
+        // accept only registered controllers
+        $route->setDefault('_check_controller_is_allowed', true);
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
 

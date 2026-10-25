@@ -66,6 +66,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
 
         $container->setParameter('pimcore.assets.storage_operation_queue.enabled', $config['assets']['storage_operation_queue']['enabled']);
+        $container->setParameter('pimcore.assets.storage_operation_queue.resolve_frontend_paths', $config['assets']['storage_operation_queue']['resolve_frontend_paths']);
+        $container->setParameter('pimcore.assets.webdav.browser_plugin', $config['assets']['webdav']['browser_plugin']);
 
         if (!$container->hasParameter('pimcore.encryption.secret')) {
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
@@ -83,6 +85,13 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.objects.link_sanitizer.strict', $config['objects']['link_sanitizer']['strict']);
+        $container->setParameter('pimcore.objects.link_sanitizer.blocked_url_schemes', $config['objects']['link_sanitizer']['blocked_url_schemes']);
+        $container->setParameter('pimcore.objects.link_sanitizer.block_unsafe_data_urls', $config['objects']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.objects.block.unserialize_allowed_classes', $config['objects']['block']['unserialize_allowed_classes']);
 
         // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
         $container->setParameter('pimcore.cache.max_write_items', $config['cache']['max_write_items']);
@@ -96,6 +105,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.allowed_classes', $config['templating_engine']['twig']['sandbox_security_policy']['allowed_classes']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_functions', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_functions']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_methods']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_method_patterns', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_method_patterns']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -351,11 +361,35 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     public function prepend(ContainerBuilder $container): void
     {
+        $this->prependTwoFactorServerName($container);
+
         /*$securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {
             $this->setExtensionConfig($container, 'security', $securityConfigs);
         }*/
+    }
+
+    /**
+     * Uses the main domain as default Google Authenticator server name. A `%router.request_context.host%`
+     * default can't be used for this, as the scheb_two_factor config is resolved before this extension sets
+     * that parameter from the main domain. An explicit `scheb_two_factor.google.server_name` takes precedence.
+     */
+    private function prependTwoFactorServerName(ContainerBuilder $container): void
+    {
+        $domain = '';
+        foreach ($container->getExtensionConfig('pimcore') as $config) {
+            // same semantics as the merged configuration: a later `domain: null` clears an earlier value
+            if (is_array($config['general'] ?? null) && array_key_exists('domain', $config['general'])) {
+                $domain = $config['general']['domain'];
+            }
+        }
+
+        if (!is_string($domain) || $domain === '') {
+            return;
+        }
+
+        $container->prependExtensionConfig('scheb_two_factor', ['google' => ['server_name' => $domain]]);
     }
 
     /**

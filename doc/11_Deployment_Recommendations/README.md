@@ -22,3 +22,6 @@ This chapter covers the tools and conventions specific to Pimcore on top of that
   Ongoing maintenance of versioning data, logs, temporary files, and recycle bin.
 - [**Security Concept**](./05_Security_Concept.md) -
   Multi-layer security approach for Pimcore applications.
+- [**Optional System Dependencies**](./06_Optional_System_Dependencies.md) -
+  What Ghostscript, pdftotext, LibreOffice, FFmpeg, and the other external tools are used for,
+  and what happens when they are missing.
