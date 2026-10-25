@@ -34,6 +34,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Time;
 use Pimcore\Model\DataObject\Data\Link as LinkValue;
 use Pimcore\Model\DataObject\Data\NumericRange as NumericRangeValue;
 use Pimcore\Model\DataObject\Data\QuantityValue as QuantityValueValue;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -252,6 +253,9 @@ class ValidationTranslationTest extends TestCase
         $field->setMinValue(5);
         $field->setMaxValue(10);
 
+        $unit = new Unit();
+        $unit->setId('kg');
+
         $minBelow = $this->capture(static fn () => $field->checkValidity(new NumericRangeValue(2, 8)));
         $this->assertSame('Minimum value in field [ span ] is not at least 5', $minBelow->getMessage());
         $this->assertSame(ValidationMessageKey::MIN_VALUE->value, $minBelow->getTranslationKey());
@@ -329,16 +333,19 @@ class ValidationTranslationTest extends TestCase
         $field->setMinValue(2);
         $field->setMaxValue(10);
 
-        $notNumeric = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue('heavy', 'kg')));
+        $unit = new Unit();
+        $unit->setId('kg');
+
+        $notNumeric = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue('heavy', $unit)));
         $this->assertSame(ValidationMessageKey::NOT_NUMERIC->value, $notNumeric->getTranslationKey());
         $this->assertSame(['value' => 'heavy'], $notNumeric->getTranslationParameters());
 
-        $tooLow = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue(1, 'kg')));
+        $tooLow = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue(1, $unit)));
         $this->assertSame('Value in field [ weight ] is not at least 2', $tooLow->getMessage());
         $this->assertSame(ValidationMessageKey::MIN_VALUE->value, $tooLow->getTranslationKey());
         $this->assertSame(['min' => 2.0, 'value' => 1], $tooLow->getTranslationParameters());
 
-        $tooHigh = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue(11, 'kg')));
+        $tooHigh = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue(11, $unit)));
         $this->assertSame('Value in field [ weight ] is bigger than 10', $tooHigh->getMessage());
         $this->assertSame(ValidationMessageKey::MAX_VALUE->value, $tooHigh->getTranslationKey());
         $this->assertSame(['max' => 10.0, 'value' => 11], $tooHigh->getTranslationParameters());
