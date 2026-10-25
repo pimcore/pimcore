@@ -14,9 +14,14 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\CarbonPeriod;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data\DateRange;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Image;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NumericRange;
@@ -26,6 +31,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Slider;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Textarea;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Time;
+use Pimcore\Model\DataObject\Data\Link as LinkValue;
 use Pimcore\Model\DataObject\Data\NumericRange as NumericRangeValue;
 use Pimcore\Model\DataObject\Data\QuantityValue as QuantityValueValue;
 use Pimcore\Model\Element\StructuredValidationException;
@@ -336,6 +342,97 @@ class ValidationTranslationTest extends TestCase
         $this->assertSame('Value in field [ weight ] is bigger than 10', $tooHigh->getMessage());
         $this->assertSame(ValidationMessageKey::MAX_VALUE->value, $tooHigh->getTranslationKey());
         $this->assertSame(['max' => 10.0, 'value' => 11], $tooHigh->getTranslationParameters());
+    }
+
+    public function testImageMandatoryAndInvalid(): void
+    {
+        $field = new Image();
+        $field->setName('picture');
+        $field->setMandatory(true);
+
+        $mandatory = $this->capture(static fn () => $field->checkValidity(null));
+        $this->assertSame('Empty mandatory field [ picture ]', $mandatory->getMessage());
+        $this->assertSame(ValidationMessageKey::MANDATORY->value, $mandatory->getTranslationKey());
+
+        $field->setMandatory(false);
+        $invalid = $this->capture(static fn () => $field->checkValidity(new Asset\Document()));
+        $this->assertSame('Invalid data in field `picture`', $invalid->getMessage());
+        $this->assertSame(ValidationMessageKey::INVALID_RELATION->value, $invalid->getTranslationKey());
+        $this->assertSame([], $invalid->getTranslationParameters());
+    }
+
+    public function testManyToOneRelationMandatoryAndInvalid(): void
+    {
+        $field = new ManyToOneRelation();
+        $field->setName('owner');
+        $field->setMandatory(true);
+
+        $mandatory = $this->capture(static fn () => $field->checkValidity(null));
+        $this->assertSame('Empty mandatory field [ owner ]', $mandatory->getMessage());
+        $this->assertSame(ValidationMessageKey::MANDATORY->value, $mandatory->getTranslationKey());
+
+        $invalid = $this->capture(static fn () => $field->checkValidity('not an element'));
+        $this->assertSame(
+            'Invalid data in field `owner` [type: ' . $field->getFieldtype() . ']',
+            $invalid->getMessage()
+        );
+        $this->assertSame(ValidationMessageKey::INVALID_RELATION->value, $invalid->getTranslationKey());
+        $this->assertSame([], $invalid->getTranslationParameters());
+    }
+
+    public function testManyToManyRelationMandatoryInvalidAndMaxItems(): void
+    {
+        $field = new ManyToManyRelation();
+        $field->setName('related');
+        $field->setMandatory(true);
+
+        $mandatory = $this->capture(static fn () => $field->checkValidity([]));
+        $this->assertSame('Empty mandatory field [ related ]', $mandatory->getMessage());
+        $this->assertSame(ValidationMessageKey::MANDATORY->value, $mandatory->getTranslationKey());
+
+        $field->setMandatory(false);
+        $notAllowed = new Asset\Document();
+        $notAllowed->setId(1);
+        $invalid = $this->capture(static fn () => $field->checkValidity([$notAllowed]));
+        $this->assertSame(
+            'Invalid relation in field `related` [type: ' . $field->getFieldtype() . ']',
+            $invalid->getMessage()
+        );
+        $this->assertSame(ValidationMessageKey::INVALID_RELATION->value, $invalid->getTranslationKey());
+
+        $field->setAssetsAllowed(true);
+        $field->setMaxItems(1);
+        $first = new Asset\Document();
+        $first->setId(1);
+        $second = new Asset\Document();
+        $second->setId(2);
+        $tooMany = $this->capture(static fn () => $field->checkValidity([$first, $second]));
+        $this->assertSame(
+            'Number of allowed relations in field `related` exceeded (max. 1)',
+            $tooMany->getMessage()
+        );
+        $this->assertSame(ValidationMessageKey::MAX_RELATIONS->value, $tooMany->getTranslationKey());
+        $this->assertSame(['max' => 1], $tooMany->getTranslationParameters());
+    }
+
+    public function testLinkReferencingMissingElements(): void
+    {
+        $field = new Link();
+        $field->setName('target');
+
+        foreach (['document', 'asset'] as $type) {
+            $link = new LinkValue();
+            $link->setInternalType($type);
+            $link->setInternal(2147483000);
+
+            $exception = $this->capture(static fn () => $field->checkValidity($link));
+            $this->assertSame(
+                'invalid internal link, referenced document with id [2147483000] does not exist',
+                $exception->getMessage()
+            );
+            $this->assertSame(ValidationMessageKey::INVALID_RELATION->value, $exception->getTranslationKey());
+            $this->assertSame([], $exception->getTranslationParameters());
+        }
     }
 
     private function capture(callable $callback): StructuredValidationException

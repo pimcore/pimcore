@@ -246,7 +246,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * Builds the exception thrown by update() from the (possibly listener-modified) list of validation exceptions.
-     * Each one becomes a violation, named after the field it was caught for.
+     * Each one becomes a violation, named after the field it was caught for. An exception a listener added or
+     * replaced was not caught for a field, so its violation has none.
      *
      * @param Model\Element\ValidationException[] $validationExceptions
      * @param SplObjectStorage<Model\Element\ValidationException, ClassDefinition\Data> $failedFields
