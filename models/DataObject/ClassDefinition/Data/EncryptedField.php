@@ -238,6 +238,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * Drops the `value` parameter and any other string parameter that carries the plain value, so also custom
      * delegate data types that report the entered value under another name cannot expose it. Numbers are kept:
      * they are limits like `min` or `max` far more often than an echo of the entered value.
+     *
+     * An error that lost a parameter loses its translation, too: its text may name the parameter (such as
+     * "{{value}}") and would show the placeholder, so clients show the plain message of the error instead.
      */
     private function removePlainValueParameters(StructuredValidationException $exception, mixed $plain): void
     {
@@ -248,13 +251,17 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
         // setTranslation() scrubs invalid UTF-8, so compare against the scrubbed plain value
         $plainString = is_string($plain) && $plain !== '' ? mb_scrub($plain, 'UTF-8') : null;
-        $parameters = array_filter(
-            $exception->getTranslationParameters(),
+        $parameters = $exception->getTranslationParameters();
+        $remaining = array_filter(
+            $parameters,
             static fn (mixed $value, string $name): bool => $name !== 'value'
                 && !self::isPlainValue($value, $plainString),
             ARRAY_FILTER_USE_BOTH
         );
-        $exception->setTranslation($key, $parameters);
+
+        if (count($remaining) !== count($parameters)) {
+            $exception->removeTranslation();
+        }
     }
 
     private static function isPlainValue(mixed $value, ?string $plain): bool

@@ -72,7 +72,7 @@ class StructuredValidationException extends ValidationException
      * are cut to 100 characters and invalid UTF-8 is replaced, other values (incl. INF/NAN) are dropped.
      * Never pass the value of a password or encrypted field.
      *
-     * @param array<string, mixed> $parameters
+     * @param array<string, mixed> $parameters names are parameter names, not list positions
      */
     public function setTranslation(string|ValidationMessageKey $key, array $parameters = []): static
     {
@@ -94,6 +94,17 @@ class StructuredValidationException extends ValidationException
 
             $this->translationParameters[(string) $name] = $value;
         }
+
+        return $this;
+    }
+
+    /**
+     * Removes key and parameters again, so clients show the plain message of this error.
+     */
+    public function removeTranslation(): static
+    {
+        $this->translationKey = null;
+        $this->translationParameters = [];
 
         return $this;
     }

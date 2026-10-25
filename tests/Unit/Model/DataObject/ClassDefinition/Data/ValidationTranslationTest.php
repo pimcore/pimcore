@@ -13,12 +13,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
+use Carbon\CarbonPeriod;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DateRange;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
+use Pimcore\Model\DataObject\ClassDefinition\Data\NumericRange;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Slider;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Textarea;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Time;
+use Pimcore\Model\DataObject\Data\NumericRange as NumericRangeValue;
+use Pimcore\Model\DataObject\Data\QuantityValue as QuantityValueValue;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -80,7 +89,7 @@ class ValidationTranslationTest extends TestCase
 
         $this->assertSame('Value in field [ amount ] is not at least 5', $exception->getMessage());
         $this->assertSame(ValidationMessageKey::MIN_VALUE->value, $exception->getTranslationKey());
-        $this->assertEquals(['min' => 5, 'value' => 2], $exception->getTranslationParameters());
+        $this->assertEquals(['min' => 5.0, 'value' => 2], $exception->getTranslationParameters());
     }
 
     public function testNumericMaxValue(): void
@@ -171,6 +180,162 @@ class ValidationTranslationTest extends TestCase
         $this->assertSame('Value in field [ secret ] is too long', $exception->getMessage());
         $this->assertSame(ValidationMessageKey::MAX_LENGTH->value, $exception->getTranslationKey());
         $this->assertArrayNotHasKey('value', $exception->getTranslationParameters());
+    }
+
+    public function testMultiselectInvalidOption(): void
+    {
+        $field = new Multiselect();
+        $field->setName('colors');
+        $field->setOptions([['key' => 'Red', 'value' => 'red']]);
+        $field->setEnforceValidation(true);
+
+        $exception = $this->capture(static fn () => $field->checkValidity(['red', 'green']));
+
+        $this->assertSame("Invalid multiselect option 'green' on field [ colors ]", $exception->getMessage());
+        $this->assertSame(ValidationMessageKey::INVALID_OPTION->value, $exception->getTranslationKey());
+        $this->assertSame(['value' => 'green'], $exception->getTranslationParameters());
+    }
+
+    public function testSliderNotNumeric(): void
+    {
+        $field = new Slider();
+        $field->setName('level');
+
+        $exception = $this->capture(static fn () => $field->checkValidity('high'));
+
+        $this->assertSame('invalid slider data', $exception->getMessage());
+        $this->assertSame(ValidationMessageKey::NOT_NUMERIC->value, $exception->getTranslationKey());
+        $this->assertSame(['value' => 'high'], $exception->getTranslationParameters());
+    }
+
+    public function testTimeInvalidFormat(): void
+    {
+        $field = new Time();
+        $field->setName('opening');
+
+        $exception = $this->capture(static fn () => $field->checkValidity('25:99'));
+
+        $this->assertSame(
+            'Wrong time format given must be a 5 digit string (eg: 06:49) [ opening ]',
+            $exception->getMessage()
+        );
+        $this->assertSame(ValidationMessageKey::INVALID_TIME->value, $exception->getTranslationKey());
+        $this->assertSame(['value' => '25:99'], $exception->getTranslationParameters());
+    }
+
+    public function testTimeMinAndMaxValue(): void
+    {
+        $field = new Time();
+        $field->setName('opening');
+        $field->setMinValue('08:00');
+        $field->setMaxValue('18:00');
+
+        $tooEarly = $this->capture(static fn () => $field->checkValidity('07:30'));
+        $this->assertSame(ValidationMessageKey::MIN_VALUE->value, $tooEarly->getTranslationKey());
+        $this->assertSame(['min' => '08:00', 'value' => '07:30'], $tooEarly->getTranslationParameters());
+
+        $tooLate = $this->capture(static fn () => $field->checkValidity('19:00'));
+        $this->assertSame(ValidationMessageKey::MAX_VALUE->value, $tooLate->getTranslationKey());
+        $this->assertSame(['max' => '18:00', 'value' => '19:00'], $tooLate->getTranslationParameters());
+    }
+
+    public function testNumericRangeLimits(): void
+    {
+        $field = new NumericRange();
+        $field->setName('span');
+        $field->setMinValue(5);
+        $field->setMaxValue(10);
+
+        $minBelow = $this->capture(static fn () => $field->checkValidity(new NumericRangeValue(2, 8)));
+        $this->assertSame('Minimum value in field [ span ] is not at least 5', $minBelow->getMessage());
+        $this->assertSame(ValidationMessageKey::MIN_VALUE->value, $minBelow->getTranslationKey());
+        $this->assertSame(['min' => 5.0, 'value' => 2], $minBelow->getTranslationParameters());
+
+        $maxBelow = $this->capture(static fn () => $field->checkValidity(new NumericRangeValue(6, 4)));
+        $this->assertSame('Maximum value in field [ span ] is not at least 5', $maxBelow->getMessage());
+        $this->assertSame(ValidationMessageKey::MIN_VALUE->value, $maxBelow->getTranslationKey());
+        $this->assertSame(['min' => 5.0, 'value' => 4], $maxBelow->getTranslationParameters());
+
+        $minAbove = $this->capture(static fn () => $field->checkValidity(new NumericRangeValue(11, 12)));
+        $this->assertSame('Minimum value in field [ span ] is bigger than 10', $minAbove->getMessage());
+        $this->assertSame(ValidationMessageKey::MAX_VALUE->value, $minAbove->getTranslationKey());
+        $this->assertSame(['max' => 10.0, 'value' => 11], $minAbove->getTranslationParameters());
+
+        $maxAbove = $this->capture(static fn () => $field->checkValidity(new NumericRangeValue(6, 12)));
+        $this->assertSame('Maximum value in field [ span ] is bigger than 10', $maxAbove->getMessage());
+        $this->assertSame(ValidationMessageKey::MAX_VALUE->value, $maxAbove->getTranslationKey());
+        $this->assertSame(['max' => 10.0, 'value' => 12], $maxAbove->getTranslationParameters());
+    }
+
+    public function testNumericRangeStartAfterEnd(): void
+    {
+        $field = new NumericRange();
+        $field->setName('span');
+
+        $exception = $this->capture(static fn () => $field->checkValidity(new NumericRangeValue(9, 3)));
+
+        $this->assertSame('Minimum value in field [ span ] is bigger than the maximum value', $exception->getMessage());
+        $this->assertSame(ValidationMessageKey::RANGE_START_AFTER_END->value, $exception->getTranslationKey());
+        $this->assertSame([], $exception->getTranslationParameters());
+    }
+
+    public function testNumericRangeNotIntegerAndNotUnsigned(): void
+    {
+        $field = new NumericRange();
+        $field->setName('span');
+        $field->setInteger(true);
+
+        $notInteger = $this->capture(static fn () => $field->checkValidity(new NumericRangeValue(1.5, 3)));
+        $this->assertSame(
+            'Either the minimum or maximum value in field [ span ] is not an integer',
+            $notInteger->getMessage()
+        );
+        $this->assertSame(ValidationMessageKey::NOT_INTEGER->value, $notInteger->getTranslationKey());
+        $this->assertSame(['value' => '[1.5, 3]'], $notInteger->getTranslationParameters());
+
+        $unsignedField = new NumericRange();
+        $unsignedField->setName('span');
+        $unsignedField->setUnsigned(true);
+
+        $notUnsigned = $this->capture(static fn () => $unsignedField->checkValidity(new NumericRangeValue(-3, 4)));
+        $this->assertSame(ValidationMessageKey::NOT_UNSIGNED->value, $notUnsigned->getTranslationKey());
+        $this->assertSame(['value' => -3], $notUnsigned->getTranslationParameters());
+    }
+
+    public function testDateRangeStartAfterEnd(): void
+    {
+        $field = new DateRange();
+        $field->setName('stay');
+
+        $period = CarbonPeriod::create('2026-05-10', '2026-05-01');
+
+        $exception = $this->capture(static fn () => $field->checkValidity($period));
+
+        $this->assertSame('Start value in field [ stay ] is bigger than the end value', $exception->getMessage());
+        $this->assertSame(ValidationMessageKey::RANGE_START_AFTER_END->value, $exception->getTranslationKey());
+        $this->assertSame([], $exception->getTranslationParameters());
+    }
+
+    public function testQuantityValueNotNumericAndLimits(): void
+    {
+        $field = new QuantityValue();
+        $field->setName('weight');
+        $field->setMinValue(2);
+        $field->setMaxValue(10);
+
+        $notNumeric = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue('heavy', 'kg')));
+        $this->assertSame(ValidationMessageKey::NOT_NUMERIC->value, $notNumeric->getTranslationKey());
+        $this->assertSame(['value' => 'heavy'], $notNumeric->getTranslationParameters());
+
+        $tooLow = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue(1, 'kg')));
+        $this->assertSame('Value in field [ weight ] is not at least 2', $tooLow->getMessage());
+        $this->assertSame(ValidationMessageKey::MIN_VALUE->value, $tooLow->getTranslationKey());
+        $this->assertSame(['min' => 2.0, 'value' => 1], $tooLow->getTranslationParameters());
+
+        $tooHigh = $this->capture(static fn () => $field->checkValidity(new QuantityValueValue(11, 'kg')));
+        $this->assertSame('Value in field [ weight ] is bigger than 10', $tooHigh->getMessage());
+        $this->assertSame(ValidationMessageKey::MAX_VALUE->value, $tooHigh->getTranslationKey());
+        $this->assertSame(['max' => 10.0, 'value' => 11], $tooHigh->getTranslationParameters());
     }
 
     private function capture(callable $callback): StructuredValidationException

@@ -362,6 +362,50 @@ class ValidationViolationsTest extends ModelTestCase
         $this->assertSame($expected, $this->describe($exception));
     }
 
+    public function testMissingMandatoryBlockElement(): void
+    {
+        $object = $this->createObject();
+        $object->setBlock([
+            ['bkMandatory' => new BlockElement('bkMandatory', 'input', 'x')],
+            [],
+        ]);
+
+        $exception = $this->saveExpectingFailure($object);
+
+        $this->assertSame(
+            [[
+                'bkMandatory',
+                'T_bkMandatory',
+                'validation.mandatory',
+                [],
+                [$this->segment('block', 'T_block', index: 1)],
+            ]],
+            $this->describe($exception)
+        );
+        $this->assertStringContainsString('Block element empty [ bkMandatory ]', $exception->getMessage());
+    }
+
+    public function testMaxItemsOfClassificationstore(): void
+    {
+        $class = ClassDefinition::getByName(self::CLASS_NAME);
+        $class->getFieldDefinition('cs')->setMaxItems(1);
+        $class->save();
+        RuntimeCache::clear();
+
+        $object = $this->createObject();
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $group = Classificationstore\GroupConfig::getByName(self::GROUP_NAME, $store->getId());
+        // the limit is checked on the number of active groups, before the groups are looked up
+        $object->getCs()->setActiveGroups([$group->getId() => true, $group->getId() + 1000 => true]);
+
+        $exception = $this->saveExpectingFailure($object);
+
+        $this->assertSame(
+            [['cs', 'T_cs', 'validation.max_items', ['max' => 1], []]],
+            $this->describe($exception)
+        );
+    }
+
     public function testViolationsReflectListenerModifiedExceptions(): void
     {
         $object = $this->createObject(['plainMandatory' => null, 'plainMandatory2' => null]);

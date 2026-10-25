@@ -15,6 +15,7 @@ in the language of the user and point to the failed field:
   `Pimcore\Model\Element\ValidationPathSegment` objects (localized field language, object brick, field
   collection or block item, classification store and its group), innermost first.
 - `addViolations()`, `getViolations()`: the leaf errors collected by an aggregate exception.
+- `removeTranslation()`: removes key and parameters again, so clients show the plain message.
 - `withMessage()`: creates an exception of the same class with a new message and the structured data of the
   original one.
 - `from()`: converts a plain `ValidationException` into a structured one with the same message, code, context
@@ -29,6 +30,10 @@ exceptions as thrown by the data types.
 Code that compares the exact class, for example `$e::class === ValidationException::class` or
 `get_class($e) === ValidationException::class`, sees `StructuredValidationException` for these errors.
 `catch (ValidationException $e)` and `instanceof ValidationException` keep working.
+
+The `value` of an encrypted field is never a translation parameter. If a validation error of its delegate data type
+has to drop a parameter for that reason, the translation of this error is removed as well, so the plain message is
+shown instead of a text with a missing `{{value}}`.
 
 `StructuredValidationException` can be extended. `withMessage()` creates the copy with the constructor signature
 of `Exception` (message, code, previous), so subclasses must keep it.

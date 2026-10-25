@@ -73,9 +73,10 @@ enum ValidationMessageKey: string
     /** parameters: characters */
     case SLUG_RESERVED_CHARACTERS = 'validation.slug_reserved_characters';
 
+    /** thrown without a field and without parameters: the translation must not use `{{field}}` */
     case UNIQUE_CONSTRAINT = 'validation.unique_constraint';
 
-    /** a document is published with empty required editables */
+    /** a document is published with empty required editables; thrown without a field and without parameters */
     case MISSING_REQUIRED_EDITABLES = 'validation.missing_required_editables';
 
     /** parameters: filename, max_megapixels, suggested_width, suggested_height */

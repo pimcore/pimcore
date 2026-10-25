@@ -46,6 +46,18 @@ class StructuredValidationExceptionTest extends TestCase
         $this->assertSame([], $exception->getTranslationParameters(), 'a new translation replaces the parameters');
     }
 
+    public function testRemoveTranslationKeepsTheMessage(): void
+    {
+        $exception = (new StructuredValidationException('plain message'))
+            ->setTranslation(ValidationMessageKey::MAX_LENGTH, ['max' => 3]);
+
+        $this->assertSame($exception, $exception->removeTranslation());
+
+        $this->assertNull($exception->getTranslationKey());
+        $this->assertSame([], $exception->getTranslationParameters());
+        $this->assertSame('plain message', $exception->getMessage());
+    }
+
     public function testSetTranslationKeepsOnlyScalarParametersAndTruncatesStrings(): void
     {
         $exception = (new StructuredValidationException('x'))->setTranslation('key', [

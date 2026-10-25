@@ -46,8 +46,10 @@ class EncryptedFieldValidationTest extends TestCase
             $field->checkValidity('s3cret-plain');
             $this->fail('Expected a StructuredValidationException');
         } catch (StructuredValidationException $exception) {
-            $this->assertSame(ValidationMessageKey::REGEX_MISMATCH->value, $exception->getTranslationKey());
-            $this->assertSame(['regex' => '^[0-9]+$'], $exception->getTranslationParameters());
+            // a template with `{{value}}` would show the placeholder, so the plain message is reported instead
+            $this->assertNull($exception->getTranslationKey());
+            $this->assertSame([], $exception->getTranslationParameters());
+            $this->assertSame("Value in field [ secret ] doesn't match input validation '^[0-9]+$'", $exception->getMessage());
         }
     }
 
@@ -74,15 +76,16 @@ class EncryptedFieldValidationTest extends TestCase
             $field->checkValidity('s3cret-plain');
             $this->fail('Expected a StructuredValidationException');
         } catch (StructuredValidationException $exception) {
+            $this->assertNull($exception->getTranslationKey());
             $this->assertSame([], $exception->getTranslationParameters());
             $this->assertCount(1, $exception->getViolations());
             $leaf = $exception->getViolations()[0];
-            $this->assertSame(ValidationMessageKey::REGEX_MISMATCH->value, $leaf->getTranslationKey());
-            $this->assertSame(['regex' => '^a$'], $leaf->getTranslationParameters());
+            $this->assertNull($leaf->getTranslationKey());
+            $this->assertSame([], $leaf->getTranslationParameters());
         }
     }
 
-    public function testPlainValueUnderAnotherNameIsStripped(): void
+    public function testPlainValueUnderAnotherNameIsNeverReported(): void
     {
         $plain = str_repeat('s3cret-', 20);
         $delegate = new class() extends Input {
@@ -103,17 +106,18 @@ class EncryptedFieldValidationTest extends TestCase
             $this->fail('Expected a StructuredValidationException');
         } catch (StructuredValidationException $exception) {
             // also the truncated copy of a long value is recognised
-            $this->assertSame(['max' => 5], $exception->getTranslationParameters());
+            $this->assertNull($exception->getTranslationKey());
+            $this->assertSame([], $exception->getTranslationParameters());
         }
     }
 
-    public function testShortPlainValueUnderAnotherNameIsStrippedButLimitsAreKept(): void
+    public function testStringParameterOtherThanThePlainValueDoesNotRemoveTheTranslation(): void
     {
         $delegate = new class() extends Input {
             public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
             {
                 throw (new StructuredValidationException('custom'))
-                    ->setTranslation('custom.rule', ['given' => $data, 'min' => 3, 'hint' => 'a…', 'flag' => true]);
+                    ->setTranslation('custom.rule', ['min' => 3, 'hint' => 'a…', 'flag' => true]);
             }
         };
         $delegate->setName('secret');
@@ -126,6 +130,7 @@ class EncryptedFieldValidationTest extends TestCase
             $field->checkValidity('3');
             $this->fail('Expected a StructuredValidationException');
         } catch (StructuredValidationException $exception) {
+            $this->assertSame('custom.rule', $exception->getTranslationKey());
             $this->assertSame(['min' => 3, 'hint' => 'a…', 'flag' => true], $exception->getTranslationParameters());
         }
     }
