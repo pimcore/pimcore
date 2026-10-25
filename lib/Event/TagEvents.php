@@ -105,7 +105,9 @@ final class TagEvents
      * Arguments:
      *  - tagIds
      *  - elementType
-     *  - elementId
+     *  - elementIds
+     *
+     * Dispatched by Tag::batchAssignTagsToElement() and Tag::setTagsForElement() (with a single element id).
      *
      * @Event("Pimcore\Event\Model\TagEvent")
      *
