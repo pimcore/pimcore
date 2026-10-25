@@ -20,6 +20,7 @@ use League\Csv\EncloseField;
 use League\Csv\Reader;
 use League\Csv\Statement;
 use League\Csv\Writer;
+use Pimcore\Bundle\SeoBundle\Model\ElementType;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Admin;
@@ -79,7 +80,7 @@ class Csv
 
             if (is_numeric($target)) {
                 // legacy rows without an explicit type point to documents
-                $element = Service::getElementById($targetType ?: Redirect::TARGET_TYPE_DOCUMENT, (int) $target);
+                $element = Service::getElementById(($targetType ?? ElementType::Document)->value, (int) $target);
 
                 if ($element) {
                     $target = $element->getRealFullPath();
@@ -97,7 +98,7 @@ class Csv
                 $redirect->getSource(),
                 $redirect->getSourceSite(),
                 $target,
-                $targetType,
+                $targetType?->value,
                 $redirect->getTargetSite(),
                 $redirect->getStatusCode(),
                 $redirect->getPriority(),
@@ -201,7 +202,7 @@ class Csv
         // resolve a path-based target to its element ID using the (optional) target type;
         // legacy exports without a target type point to documents
         if (is_string($data['target']) && '' !== $data['target']) {
-            $targetType = $data['targetType'] ?: Redirect::TARGET_TYPE_DOCUMENT;
+            $targetType = $data['targetType'] ?: ElementType::Document->value;
             if ($element = Service::getElementByPath($targetType, $data['target'])) {
                 $data['target'] = (string) $element->getId();
                 $data['targetType'] = $targetType;
@@ -298,7 +299,7 @@ class Csv
         $resolver->setAllowedTypes('target', ['string', 'int', 'null']);
         $resolver->setDefault('targetType', null);
         $resolver->setAllowedTypes('targetType', ['string', 'null']);
-        $resolver->setAllowedValues('targetType', array_merge([null], Redirect::TARGET_TYPES));
+        $resolver->setAllowedValues('targetType', array_merge([null], ElementType::values()));
         $resolver->setAllowedTypes('targetSite', ['int', 'null']);
 
         $resolver->setAllowedTypes('statusCode', ['int']);

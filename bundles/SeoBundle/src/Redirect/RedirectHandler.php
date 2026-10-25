@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\SeoBundle\Redirect;
 use Exception;
 use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
+use Pimcore\Bundle\SeoBundle\Model\ElementType;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Cache;
 use Pimcore\Config;
@@ -27,6 +28,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Site;
 use Pimcore\Tool;
@@ -148,6 +150,46 @@ final class RedirectHandler
     }
 
     /**
+     * Resolves the frontend path of a redirect target element, or null if the element
+     * cannot be used as a redirect target.
+     */
+    private function resolveElementTarget(ElementInterface $element): ?string
+    {
+        if ($element instanceof Concrete) {
+            $linkGenerator = $element->getClass()->getLinkGenerator();
+
+            if ($linkGenerator) {
+                $getInheritedValues = DataObject::getGetInheritedValues();
+                DataObject::setGetInheritedValues(true);
+                $getFallbackValues = Localizedfield::getGetFallbackValues();
+                Localizedfield::setGetFallbackValues(true);
+
+                try {
+                    return $linkGenerator->generate($element) ?: null;
+                } finally {
+                    DataObject::setGetInheritedValues($getInheritedValues);
+                    Localizedfield::setGetFallbackValues($getFallbackValues);
+                }
+            }
+
+            return null;
+        }
+
+        if ($element instanceof Asset) {
+            return $element->getFullPath();
+        }
+
+        if ($element instanceof Document\Page
+            || $element instanceof Document\Link
+            || $element instanceof Document\Hardlink
+        ) {
+            return $element->getFullPath();
+        }
+
+        return null;
+    }
+
+    /**
      *
      *
      * @throws Exception
@@ -160,46 +202,21 @@ final class RedirectHandler
         if (is_numeric($target)) {
             // legacy rows and auto-created redirects store a numeric document ID without an
             // explicit target type - treat those as documents to preserve the former behavior
-            $targetType = $targetType ?: Redirect::TARGET_TYPE_DOCUMENT;
-            $targetElement = Service::getElementById($targetType, (int) $target);
-            if ($targetElement) {
-                $linkGenerator = $targetElement instanceof Concrete
-                    ? $targetElement->getClass()->getLinkGenerator()
-                    : null;
-                if ($linkGenerator) {
-                    $getInheritedValues = DataObject::getGetInheritedValues();
-                    DataObject::setGetInheritedValues(true);
-                    $getFallBackValues = Localizedfield::getGetFallbackValues();
-                    Localizedfield::setGetFallbackValues(true);
+            $targetType = $targetType ?? ElementType::Document;
+            $targetElement = Service::getElementById($targetType->value, (int) $target);
+            $resolvedTarget = $targetElement ? $this->resolveElementTarget($targetElement) : null;
 
-                    try {
-                        $target = $linkGenerator->generate($targetElement);
-                    } finally {
-                        DataObject::setGetInheritedValues($getInheritedValues);
-                        Localizedfield::setGetFallbackValues($getFallBackValues);
-                    }
-                } elseif ($targetElement instanceof Asset || $targetElement instanceof Document) {
-                    $target = $targetElement->getFullPath();
-                } else {
-                    $this->logger->error('Target of redirect {redirect} is invalid ({targetType} ID: {target})', [
-                        'redirect' => $redirect->getId(),
-                        'target' => $target,
-                        'targetType' => $targetType,
-                    ]);
-                    $target = null;
-                }
-            } else {
-                $this->logger->error('Target of redirect {redirect} not found ({targetType} ID: {target})', [
+            if (null === $resolvedTarget) {
+                $this->logger->error('Target of redirect {redirect} is invalid or not found ({targetType} ID: {target})', [
                     'redirect' => $redirect->getId(),
                     'target' => $target,
-                    'targetType' => $targetType,
+                    'targetType' => $targetType->value,
                 ]);
-                $target = null;
-            }
 
-            if (null === $target) {
                 return null;
             }
+
+            $target = $resolvedTarget;
         }
 
         $url = $target;

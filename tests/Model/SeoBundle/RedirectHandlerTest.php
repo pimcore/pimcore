@@ -13,6 +13,7 @@
 namespace Pimcore\Tests\Model\SeoBundle;
 
 use Pimcore;
+use Pimcore\Bundle\SeoBundle\Model\ElementType;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -95,7 +96,7 @@ class RedirectHandlerTest extends TestCase
         $redirect->setType(Redirect::TYPE_PATH);
         $redirect->setSource('/document-source');
         $redirect->setTarget((string) $document->getId());
-        $redirect->setTargetType(Redirect::TARGET_TYPE_DOCUMENT);
+        $redirect->setTargetType(ElementType::Document);
         $redirect->save();
 
         $response = $this->getRedirectHandler()->checkForRedirect(Request::create('http://example.org/document-source', 'GET'));
@@ -138,7 +139,7 @@ class RedirectHandlerTest extends TestCase
         $redirect->setType(Redirect::TYPE_PATH);
         $redirect->setSource('/asset-source');
         $redirect->setTarget((string) $asset->getId());
-        $redirect->setTargetType(Redirect::TARGET_TYPE_ASSET);
+        $redirect->setTargetType(ElementType::Asset);
         $redirect->save();
 
         $response = $this->getRedirectHandler()->checkForRedirect(Request::create('http://example.org/asset-source', 'GET'));
@@ -157,7 +158,7 @@ class RedirectHandlerTest extends TestCase
         $redirect->setType(Redirect::TYPE_PATH);
         $redirect->setSource('/missing-source');
         $redirect->setTarget('999999999');
-        $redirect->setTargetType(Redirect::TARGET_TYPE_DOCUMENT);
+        $redirect->setTargetType(ElementType::Document);
         $redirect->save();
 
         $response = $this->getRedirectHandler()->checkForRedirect(Request::create('http://example.org/missing-source', 'GET'));

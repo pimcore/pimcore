@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Pimcore;
+use Pimcore\Bundle\SeoBundle\Model\ElementType;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Event\DocumentEvents;
@@ -48,7 +49,7 @@ class DocumentListener implements EventSubscriberInterface
             // check for redirects pointing to this document, and delete them too
             // (restrict to document targets so asset/object redirects sharing the same numeric ID are not removed)
             $redirects = new Redirect\Listing();
-            $redirects->setCondition('target = ? AND (targetType = ? OR targetType IS NULL)', [$document->getId(), Redirect::TARGET_TYPE_DOCUMENT]);
+            $redirects->setCondition('target = ? AND (targetType = ? OR targetType IS NULL)', [$document->getId(), ElementType::Document->value]);
             $redirects->load();
 
             foreach ($redirects->getRedirects() as $redirect) {
@@ -147,7 +148,7 @@ class DocumentListener implements EventSubscriberInterface
         $redirect->setType(Redirect::TYPE_AUTO_CREATE);
         $redirect->setRegex(false);
         $redirect->setTarget((string) $targetId);
-        $redirect->setTargetType(Redirect::TARGET_TYPE_DOCUMENT);
+        $redirect->setTargetType(ElementType::Document);
         $redirect->setSource($source);
         $redirect->setStatusCode(301);
         $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Model\Redirect;
 
+use BackedEnum;
 use Exception;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectUrlPartResolver;
@@ -108,6 +109,8 @@ class Dao extends Model\Dao\AbstractDao
             if (in_array($key, $this->getValidTableColumns('redirects'))) {
                 if (is_bool($value)) {
                     $value = (int) $value;
+                } elseif ($value instanceof BackedEnum) {
+                    $value = $value->value;
                 }
                 $data[$key] = $value;
             }
