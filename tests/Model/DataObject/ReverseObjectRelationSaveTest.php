@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use ArrayObject;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\ClassDefinition\Data\DerivedValueInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
@@ -152,9 +153,9 @@ class ReverseObjectRelationSaveTest extends ModelTestCase
         $target = TestHelper::createEmptyObject('reverse-relation-custom-', false);
         $class = $target->getClass();
 
-        $reads = new \ArrayObject();
+        $reads = new ArrayObject();
         $custom = new class($reads, $derived) extends ManyToManyObjectRelation implements DerivedValueInterface {
-            public function __construct(private \ArrayObject $reads, private bool $derived)
+            public function __construct(private ArrayObject $reads, private bool $derived)
             {
             }
 
@@ -195,7 +196,7 @@ class ReverseObjectRelationSaveTest extends ModelTestCase
      *
      * @return list<string>
      */
-    private function callsFromTheCode(\ArrayObject $reads): array
+    private function callsFromTheCode(ArrayObject $reads): array
     {
         return array_values(array_filter(
             $reads->getArrayCopy(),
