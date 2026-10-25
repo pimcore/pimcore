@@ -14,6 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Db;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -131,5 +135,58 @@ class LocalizedfieldDaoTest extends ModelTestCase
 
         $this->assertFalse($fallbackValues);
         $this->assertSame('some value', Concrete::getById($object->getId(), ['force' => true])->getLinput('en'));
+    }
+
+    /**
+     * Regression test: the localized views fall back to the next language when a value is NULL or an empty
+     * string. A date column cannot hold an empty string and MySQL 8 rejects comparing it with one
+     * ("1525 Incorrect DATE value"), so temporal columns may only be checked for NULL.
+     */
+    public function testViewDoesNotCompareTemporalColumnsWithEmptyString(): void
+    {
+        $className = 'LfDateView';
+
+        $date = new Data\Date();
+        $date->setName('day');
+        $date->setTitle('day');
+        $date->setColumnType('date');
+
+        $datetime = new Data\Datetime();
+        $datetime->setName('moment');
+        $datetime->setTitle('moment');
+        $datetime->setColumnType('datetime');
+
+        $title = new Data\Input();
+        $title->setName('title');
+        $title->setTitle('title');
+
+        $localizedFields = new Localizedfields();
+        $localizedFields->setName('localizedfields');
+        $localizedFields->setChildren([$title, $date, $datetime]);
+
+        $panel = new Panel();
+        $panel->setName('pimcore_root');
+        $panel->setChildren([$localizedFields]);
+
+        $class = ClassDefinition::getByName($className) ?? new ClassDefinition();
+        $class->setName($className);
+        $class->setLayoutDefinitions($panel);
+        $class->save();
+
+        try {
+            $db = Db::get();
+            $view = 'object_localized_' . $class->getId() . '_de';
+            $definition = (string) $db->fetchOne(
+                'SELECT VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+                [$view]
+            );
+
+            $this->assertNotSame('', $definition, 'the localized view must exist');
+            $this->assertStringContainsString('`title`', $definition);
+            $this->assertMatchesRegularExpression('/strcmp\(`?[a-z_]+`?\.`title`/i', $definition, 'text columns keep the empty check');
+            $this->assertDoesNotMatchRegularExpression('/strcmp\(`?[a-z_]+`?\.`(day|moment)`/i', $definition, 'temporal columns must not be compared with an empty string');
+        } finally {
+            $class->delete();
+        }
     }
 }
