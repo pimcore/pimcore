@@ -55,8 +55,8 @@ class TagEventTest extends ModelTestCase
     public function testSetTagsForElementDispatchesPostBatchAssignEvent(): void
     {
         $object = TestHelper::createEmptyObject();
-        $tagA = $this->createTag('pme_t2714_a');
-        $tagB = $this->createTag('pme_t2714_b');
+        $tagA = $this->createTag('event_test_tag_a');
+        $tagB = $this->createTag('event_test_tag_b');
 
         /** @var TagEvent[] $captured */
         $captured = [];
@@ -76,7 +76,7 @@ class TagEventTest extends ModelTestCase
     public function testSetTagsForElementWithEmptyArrayDispatchesEvent(): void
     {
         $object = TestHelper::createEmptyObject();
-        $tag = $this->createTag('pme_t2714_c');
+        $tag = $this->createTag('event_test_tag_c');
         Tag::setTagsForElement('object', $object->getId(), [$tag]);
 
         $captured = [];
