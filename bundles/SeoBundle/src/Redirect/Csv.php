@@ -203,9 +203,14 @@ class Csv
         // legacy exports without a target type point to documents
         if (is_string($data['target']) && '' !== $data['target']) {
             $targetType = $data['targetType'] ?: ElementType::Document->value;
-            if ($element = Service::getElementByPath($targetType, $data['target'])) {
+            $element = Service::getElementByPath($targetType, $data['target']);
+
+            if ($element) {
                 $data['target'] = (string) $element->getId();
                 $data['targetType'] = $targetType;
+            } else {
+                // the target stays a plain URL, which is not tied to an element type
+                $data['targetType'] = null;
             }
         }
 
