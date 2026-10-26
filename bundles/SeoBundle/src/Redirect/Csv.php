@@ -57,6 +57,10 @@ class Csv
 
     private ?OptionsResolver $importResolver = null;
 
+    public function __construct(private readonly TargetResolverInterface $targetResolver)
+    {
+    }
+
     /**
      *
      *
@@ -78,14 +82,7 @@ class Csv
             $target = $redirect->getTarget();
             $targetType = $redirect->getTargetType();
 
-            if (is_numeric($target)) {
-                // legacy rows without an explicit type point to documents
-                $element = Service::getElementById(($targetType ?? ElementType::Document)->value, (int) $target);
-
-                if ($element) {
-                    $target = $element->getRealFullPath();
-                }
-            }
+            $target = $this->targetResolver->resolvePath((string) $target, $targetType) ?? $target;
 
             $expiry = null;
             if ($redirect->getExpiry()) {
@@ -199,23 +196,16 @@ class Csv
         // ID is already set or will be generated
         unset($data['id']);
 
-        // resolve a path-based target to its element ID; a target type in the file restricts
-        // the lookup, without one the element types are tried in order
+        // a path target is stored as the element ID; it stays a plain URL when it resolves
+        // to no element, and is then not tied to a type
         if (is_string($data['target']) && '' !== $data['target']) {
-            $targetType = $data['targetType'] ? ElementType::from($data['targetType']) : null;
-            $candidates = $targetType !== null ? [$targetType] : ElementType::cases();
+            $resolved = $this->targetResolver->resolveElement(
+                $data['target'],
+                $data['targetType'] ? ElementType::from($data['targetType']) : null
+            );
 
-            // the target stays a plain URL unless it resolves, and is then not tied to a type
-            $data['targetType'] = null;
-
-            foreach ($candidates as $candidate) {
-                if ($element = Service::getElementByPath($candidate->value, $data['target'])) {
-                    $data['target'] = (string) $element->getId();
-                    $data['targetType'] = $candidate->value;
-
-                    break;
-                }
-            }
+            $data['target'] = $resolved?->getTargetValue() ?? $data['target'];
+            $data['targetType'] = $resolved?->type->value;
         }
 
         $redirect->setValues($data);
