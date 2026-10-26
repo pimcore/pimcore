@@ -199,18 +199,22 @@ class Csv
         // ID is already set or will be generated
         unset($data['id']);
 
-        // resolve a path-based target to its element ID using the (optional) target type;
-        // legacy exports without a target type point to documents
+        // resolve a path-based target to its element ID; a target type in the file restricts
+        // the lookup, without one the element types are tried in order
         if (is_string($data['target']) && '' !== $data['target']) {
-            $targetType = $data['targetType'] ?: ElementType::Document->value;
-            $element = Service::getElementByPath($targetType, $data['target']);
+            $targetType = $data['targetType'] ? ElementType::from($data['targetType']) : null;
+            $candidates = $targetType !== null ? [$targetType] : ElementType::cases();
 
-            if ($element) {
-                $data['target'] = (string) $element->getId();
-                $data['targetType'] = $targetType;
-            } else {
-                // the target stays a plain URL, which is not tied to an element type
-                $data['targetType'] = null;
+            // the target stays a plain URL unless it resolves, and is then not tied to a type
+            $data['targetType'] = null;
+
+            foreach ($candidates as $candidate) {
+                if ($element = Service::getElementByPath($candidate->value, $data['target'])) {
+                    $data['target'] = (string) $element->getId();
+                    $data['targetType'] = $candidate->value;
+
+                    break;
+                }
             }
         }
 

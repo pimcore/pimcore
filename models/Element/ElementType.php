@@ -19,6 +19,9 @@ use Pimcore\Model\Document;
 
 /**
  * The element types understood by Pimcore\Model\Element\Service.
+ *
+ * Consumers that resolve a path without knowing its type iterate the cases in order, so
+ * documents - the historical default - win over assets and objects on an ambiguous path.
  */
 enum ElementType: string
 {
