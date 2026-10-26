@@ -196,16 +196,35 @@ class Csv
         // ID is already set or will be generated
         unset($data['id']);
 
-        // a path target is stored as the element ID; it stays a plain URL when it resolves
-        // to no element, and is then not tied to a type
+        // a file written before target types existed has no column at all; leaving the key out
+        // keeps setValues() from resetting the type of the redirect it updates
+        $declaredType = array_key_exists('targetType', $data) && $data['targetType']
+            ? ElementType::from($data['targetType'])
+            : null;
+
         if (is_string($data['target']) && '' !== $data['target']) {
+            // a path target is stored as the element ID, in the tree the file names - or, for a
+            // file that names none, in the document tree, as targets behaved before types existed
             $resolved = $this->targetResolver->resolveElement(
                 $data['target'],
-                $data['targetType'] ? ElementType::from($data['targetType']) : null
+                $declaredType ?? ElementType::Document
             );
 
-            $data['target'] = $resolved?->getTargetValue() ?? $data['target'];
-            $data['targetType'] = $resolved?->type->value;
+            if ($resolved === null && $declaredType !== null) {
+                throw new InvalidArgumentException(sprintf(
+                    'No %s usable as a redirect target found at "%s"',
+                    $declaredType->value,
+                    $data['target']
+                ));
+            }
+
+            if ($resolved !== null) {
+                $data['target'] = $resolved->getTargetValue();
+                $data['targetType'] = $resolved->type->value;
+            } else {
+                // the target is a plain URL, which is not tied to an element type
+                $data['targetType'] = null;
+            }
         }
 
         $redirect->setValues($data);
@@ -285,7 +304,8 @@ class Csv
         }
 
         $resolver = new OptionsResolver();
-        // targetType is optional so CSV files exported before it existed can still be imported
+        // every column but targetType is required; that one is optional so that CSV files
+        // written before it existed can still be imported
         $resolver->setRequired(array_values(array_diff($this->columns, ['targetType'])));
 
         $resolver->setAllowedTypes('id', ['int', 'null']);
@@ -296,7 +316,9 @@ class Csv
         $resolver->setAllowedTypes('source', ['string', 'null']);
         $resolver->setAllowedTypes('sourceSite', ['int', 'null']);
         $resolver->setAllowedTypes('target', ['string', 'int', 'null']);
-        $resolver->setDefault('targetType', null);
+        // defined rather than defaulted: an absent column must stay absent, so that importing a
+        // file written before target types existed does not clear the type of existing redirects
+        $resolver->setDefined('targetType');
         $resolver->setAllowedTypes('targetType', ['string', 'null']);
         $resolver->setAllowedValues('targetType', array_merge([null], ElementType::values()));
         $resolver->setAllowedTypes('targetSite', ['int', 'null']);

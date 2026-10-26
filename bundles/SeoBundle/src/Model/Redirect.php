@@ -18,10 +18,10 @@ use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
+use Pimcore\Bundle\SeoBundle\Redirect\TargetResolverInterface;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementType;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
@@ -146,21 +146,37 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * resolved target path with handling for document ids as `target`
-     *   - tries to resolve the target as document by id and take its full path
-     *   - if no document can be found the target is used as target path
+     * resolved target path with handling for element ids as `target`
+     *   - tries to resolve the target as an element of its target type and take its full path
+     *   - a target without a target type is resolved as a document, as targets behaved before
+     *     target types existed
+     *   - if no element can be found the target is used as target path
      *   - ensures a slash at the beginning of the target string
+     *
+     * @deprecated since 2026.4, will be removed in 2027.1. Use
+     *             Pimcore\Bundle\SeoBundle\Redirect\TargetResolverInterface::resolvePath() instead,
+     *             which does not make the model depend on the service container.
      */
     public function getTargetPath(): string
     {
-        $redirectTarget = $this->target;
-        $targetDocumentPath = null;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '2026.4',
+            'Redirect::getTargetPath() is deprecated since Pimcore 2026.4 and will be removed in 2027.1. ' .
+            'Use Pimcore\Bundle\SeoBundle\Redirect\TargetResolverInterface::resolvePath() instead.'
+        );
 
-        if (is_numeric($redirectTarget)) {
-            $targetDocumentPath = Document::getById((int)$redirectTarget)?->getFullPath();
+        $redirectTarget = $this->target;
+        $targetElementPath = null;
+
+        // only an element reference needs resolving, so a plain URL target costs nothing
+        if (null !== $redirectTarget && is_numeric($redirectTarget)) {
+            $targetElementPath = Pimcore::getContainer()
+                ?->get(TargetResolverInterface::class)
+                ?->resolvePath($redirectTarget, $this->targetType);
         }
 
-        $resolvedPath = ($targetDocumentPath ?? $redirectTarget) ?? '';
+        $resolvedPath = ($targetElementPath ?? $redirectTarget) ?? '';
 
         if (!str_starts_with($resolvedPath, '/')) {
             return '/'.$resolvedPath;

@@ -16,9 +16,13 @@ namespace Pimcore\Bundle\SeoBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 
 final class Version20250414100351 extends AbstractMigration
 {
+    private const CACHEKEY = 'system_resource_columns_';
+
     public function getDescription(): string
     {
         return 'Add `targetType` column to `redirects` table.';
@@ -46,6 +50,8 @@ final class Version20250414100351 extends AbstractMigration
             SET `targetType` = 'document'
             WHERE `target` REGEXP '^[1-9][0-9]*$';
         SQL);
+
+        $this->resetValidTableColumnsCache('redirects');
     }
 
     public function down(Schema $schema): void
@@ -59,6 +65,23 @@ final class Version20250414100351 extends AbstractMigration
             $this->addSql(<<<SQL
                 ALTER TABLE `redirects` DROP COLUMN `targetType`;
             SQL);
+
+            $this->resetValidTableColumnsCache('redirects');
         }
+    }
+
+    /**
+     * Redirect\Dao::save() writes only the columns of the cached table description, so the
+     * cache has to go with the column - otherwise saves silently drop `targetType` until the
+     * cache is cleared by other means.
+     */
+    private function resetValidTableColumnsCache(string $table): void
+    {
+        $cacheKey = self::CACHEKEY . $table;
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::getInstance()->offsetUnset($cacheKey);
+        }
+
+        Cache::clearTags(['system', 'resource']);
     }
 }

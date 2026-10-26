@@ -13,41 +13,75 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Redirect;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ElementType;
 use Pimcore\Model\Element\Service;
+use Throwable;
 
 /**
  * @internal
  */
 final class TargetResolver implements TargetResolverInterface
 {
-    public function resolveElement(string $path, ?ElementType $targetType = null): ?ResolvedTarget
+    public function isUsableAsTarget(ElementInterface $element): bool
     {
-        if ('' === $path) {
+        if ($element instanceof Concrete) {
+            try {
+                // a data object has no URL of its own - its class' link generator builds one
+                return $element->getClass()->getLinkGenerator() !== null;
+            } catch (Throwable) {
+                // an object whose class definition is gone cannot produce a URL either
+                return false;
+            }
+        }
+
+        return match (true) {
+            $element instanceof Asset => !$element instanceof Asset\Folder,
+            $element instanceof Document\Page,
+            $element instanceof Document\Link,
+            $element instanceof Document\Hardlink => true,
+            default => false,
+        };
+    }
+
+    public function resolveElement(string $path, ElementType $targetType): ?ResolvedTarget
+    {
+        $element = Service::getElementByPath($targetType->value, $path);
+
+        if ($element === null || !$this->isUsableAsTarget($element)) {
             return null;
         }
 
-        $candidates = $targetType !== null ? [$targetType] : ElementType::cases();
+        return new ResolvedTarget((int) $element->getId(), $targetType);
+    }
 
-        foreach ($candidates as $candidate) {
-            $element = Service::getElementByPath($candidate->value, $path);
+    public function detectElement(string $path): ?ResolvedTarget
+    {
+        foreach (ElementType::cases() as $candidate) {
+            $resolved = $this->resolveElement($path, $candidate);
 
-            if ($element !== null) {
-                return new ResolvedTarget((int) $element->getId(), $candidate);
+            if ($resolved !== null) {
+                return $resolved;
             }
         }
 
         return null;
     }
 
-    public function resolvePath(string $target, ?ElementType $targetType = null): ?string
+    public function resolveTargetElement(string $target, ?ElementType $targetType = null): ?ElementInterface
     {
         if (!is_numeric($target)) {
             return null;
         }
 
-        $element = Service::getElementById(($targetType ?? ElementType::Document)->value, (int) $target);
+        return Service::getElementById(($targetType ?? ElementType::Document)->value, (int) $target);
+    }
 
-        return $element?->getRealFullPath();
+    public function resolvePath(string $target, ?ElementType $targetType = null): ?string
+    {
+        return $this->resolveTargetElement($target, $targetType)?->getRealFullPath();
     }
 }

@@ -54,6 +54,19 @@ class RedirectTargetTypeTest extends TestCase
         $this->assertNull($redirect->getTargetType());
     }
 
+    /**
+     * The order is load-bearing: a path that exists in more than one element tree is resolved
+     * against the cases in order, and documents have to keep winning for targets to behave as
+     * they did before target types existed.
+     */
+    public function testDocumentsTakePrecedenceWhenDetectingAnElementType(): void
+    {
+        $this->assertSame(
+            [ElementType::Document, ElementType::Asset, ElementType::Object],
+            ElementType::cases()
+        );
+    }
+
     public function testInvalidTargetTypeIsRejected(): void
     {
         $this->expectException(InvalidArgumentException::class);

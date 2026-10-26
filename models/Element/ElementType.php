@@ -26,16 +26,14 @@ use Pimcore\Model\Document;
 enum ElementType: string
 {
     case Document = 'document';
-
     case Asset = 'asset';
-
     case Object = 'object';
 
     public static function fromElement(ElementInterface $element): ?self
     {
         return match (true) {
-            $element instanceof Asset => self::Asset,
             $element instanceof Document => self::Document,
+            $element instanceof Asset => self::Asset,
             $element instanceof AbstractObject => self::Object,
             default => null,
         };
