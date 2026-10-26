@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Pimcore;
-use Pimcore\Bundle\SeoBundle\Model\ElementType;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Event\DocumentEvents;
@@ -23,6 +22,7 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Element\ElementType;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Frontend;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

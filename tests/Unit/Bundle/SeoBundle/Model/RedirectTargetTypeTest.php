@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Bundle\SeoBundle\Model;
 
 use InvalidArgumentException;
-use Pimcore\Bundle\SeoBundle\Model\ElementType;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
+use Pimcore\Model\Element\ElementType;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class RedirectTargetTypeTest extends TestCase

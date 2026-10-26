@@ -22,6 +22,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementType;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;

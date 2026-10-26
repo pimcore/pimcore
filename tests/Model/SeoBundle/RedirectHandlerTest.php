@@ -13,9 +13,9 @@
 namespace Pimcore\Tests\Model\SeoBundle;
 
 use Pimcore;
-use Pimcore\Bundle\SeoBundle\Model\ElementType;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
+use Pimcore\Model\Element\ElementType;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\HttpFoundation\Request;

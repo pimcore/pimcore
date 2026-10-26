@@ -11,11 +11,14 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Bundle\SeoBundle\Model;
+namespace Pimcore\Model\Element;
+
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Document;
 
 /**
- * Type of the element a redirect points to. The values match the element types
- * understood by Pimcore\Model\Element\Service.
+ * The element types understood by Pimcore\Model\Element\Service.
  */
 enum ElementType: string
 {
@@ -24,6 +27,16 @@ enum ElementType: string
     case Asset = 'asset';
 
     case Object = 'object';
+
+    public static function fromElement(ElementInterface $element): ?self
+    {
+        return match (true) {
+            $element instanceof Asset => self::Asset,
+            $element instanceof Document => self::Document,
+            $element instanceof AbstractObject => self::Object,
+            default => null,
+        };
+    }
 
     /**
      * @return string[]
