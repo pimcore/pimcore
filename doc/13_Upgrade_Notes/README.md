@@ -2,6 +2,18 @@
 
 ## Pimcore 2026.3.4
 
+### [Assets]
+- [Thumbnails] Images with an embedded Photoshop clipping path are now clipped by that clipping path (bugfix). An image can carry any number of saved paths; the one designated as clipping path is named by the 'Name of clipping path' resource (8BIM 2999). The automatic clipping (`pimcore.assets.image.thumbnails.clip_auto_support`, enabled by default) always used the first saved path instead, so images whose clipping path is not the first path were cut along the wrong outline - e.g. a product photo whose first path outlines only part of the product lost the rest of it in every thumbnail. When the named clipping path cannot be found in the image, the first path is still used, as before, and a warning is logged. Thumbnails only change for images whose clipping path is not their first path:
+
+  | Image | Before | Now |
+  |-------|--------|-----|
+  | No clipping path | not clipped | not clipped (unchanged) |
+  | Clipping path is the only or the first saved path | clipped by the first path | clipped by the same path (unchanged) |
+  | Clipping path name that matches none of the saved paths | clipped by the first path | clipped by the first path (unchanged), warning logged |
+  | Clipping path is not the first saved path | clipped by the first path | **clipped by the clipping path** |
+
+  Existing thumbnails are not regenerated automatically. To apply the fix to affected images, clear their thumbnails - per asset with `Asset::clearThumbnails(true)`, or per thumbnail configuration with `bin/console pimcore:thumbnails:clear --type=image --name=<thumbnail config>`.
+
 ### [DataObjects]
 - [Security] `Block::getDataFromResource()` no longer unserializes the block's stored data with every PHP class allowed (GHSA-6324-x2cv-h975). Only the value objects a block legitimately stores are reconstructed: `Consent`, `ExternalImage`, `StructuredTable`, `MarkerHotspotItem` and `Carbon`/`CarbonImmutable`. Any other object in the stored data comes back as `__PHP_Incomplete_Class`. This affects custom field definitions used inside a block whose `normalize()` output - or whose registered `block_<fieldtype>` marshaller - stores other objects: register those classes in the new `pimcore.objects.block.unserialize_allowed_classes` configuration (merged with the built-in list, see [Blocks](../03_Objects/01_Object_Classes/01_Data_Types/05_Blocks.md#custom-field-types-and-block-marshallers)), or switch them to scalars/arrays as the core marshallers do; otherwise that data is lost on the next load and save.
 - [Security] Hotspot images and image galleries inside a block now have block marshallers, so hotspot/marker metadata is stored as plain arrays with a referenced asset/document/object reduced to its id - the format the editmode and Studio already write. A `MarkerHotspotItem` built through the PHP API with the element object as value is therefore stored by id as well; after reloading, `$item['value']` (array access) still resolves to the element, while `getValue()` returns the id, exactly as for metadata saved through the admin UI. Element objects that older versions serialized into existing block data are reduced to their id on load, so nothing needs re-saving.
