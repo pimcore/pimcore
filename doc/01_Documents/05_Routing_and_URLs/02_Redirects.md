@@ -46,9 +46,8 @@ ID together with a target type, which can be a `document`, an `asset` or an `obj
   of the Data Object's class. Data Objects without a link generator cannot be used as a target.
 
 In Pimcore Studio the target type is set in the redirects grid, and dropping an element onto the
-target column fills in both the target and its type. Redirects that store a numeric target without
-a target type - for example those created automatically when a Document is moved - are resolved as
-Documents.
+target column fills in both the target and its type. Redirects written before target types existed
+store a numeric target without one; those are resolved as Documents.
 
 #### Priority
 

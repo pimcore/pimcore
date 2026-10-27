@@ -50,8 +50,9 @@ interface TargetResolverInterface
      * Resolves a stored target back to the element it references.
      *
      * Unlike detectElement() this cannot detect the type: the same ID exists in every element
-     * tree. A missing type therefore means a document, which is what redirects created before
-     * target types existed - and those created automatically when a document moves - store.
+     * tree. A missing type therefore means a document, which is what redirects written before
+     * target types existed store - whether a user created them or Pimcore did when a document
+     * was moved.
      *
      * Returns null when the target is not an element reference or the element is gone.
      */
