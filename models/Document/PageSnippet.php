@@ -25,6 +25,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 use Pimcore\SystemSettingsConfig;
+use TypeError;
 
 /**
  * @method Model\Document\PageSnippet\Dao getDao()
@@ -151,24 +152,37 @@ abstract class PageSnippet extends Model\Document
 
         // scheduled tasks are saved in $this->saveVersion();
         // save version if needed
-        $this->saveVersion(false, false, $params['versionNote'] ?? null);
+        $this->saveVersion(false, false, $params['versionNote'] ?? null, false, $params);
     }
 
     /**
-     *
+     * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
+     * with custom arguments that are passed on to the versioning events; `existingVersion` (Model\Version)
+     * writes the version data into that version instead of creating a new one. It will become a regular
+     * method parameter in the next major version.
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false): ?Model\Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false /* , array $parameters = [] */): ?Model\Version
     {
+        // TODO: promote $parameters to a regular signature parameter in the next major version (2027.1)
+        $parameters = 5 <= func_num_args() ? func_get_arg(4) : [];
+        if (!is_array($parameters)) {
+            throw new TypeError(sprintf('%s(): Argument #5 ($parameters) must be of type array, %s given', __METHOD__, get_debug_type($parameters)));
+        }
+        $coreParameters = [
+            'saveVersionOnly' => true,
+            'isAutoSave' => $isAutoSave,
+        ];
+        $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
+
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $preUpdateEvent = new DocumentEvent($this, [
-                    'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave,
-                ]);
+                $preUpdateEvent = new DocumentEvent($this, $eventParameters);
                 Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
+                $eventParameters = $preUpdateEvent->getArguments();
             }
 
             // set date
@@ -190,25 +204,18 @@ abstract class PageSnippet extends Model\Document
                 || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $postUpdateEvent = new DocumentEvent($this, [
-                    'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave,
-                ]);
+                $postUpdateEvent = new DocumentEvent($this, array_merge($eventParameters, $coreParameters));
                 Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $postUpdateFailureEvent = new DocumentEvent($this, [
-                'saveVersionOnly' => true,
-                'exception' => $e,
-                'isAutoSave' => $isAutoSave,
-            ]);
+            $postUpdateFailureEvent = new DocumentEvent($this, array_merge($eventParameters, $coreParameters, ['exception' => $e]));
             Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
 
             throw $e;

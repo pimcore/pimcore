@@ -610,7 +610,7 @@ class Asset extends Element\AbstractElement
                     // an asset which is modified already got a version of its persisted state before this transaction
                     /** @var bool $isUpdate assigned by reference in beforeRetryables */
                     if ($isUpdate || !self::isInitialVersionSkipped()) {
-                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null, $parameters);
                     } else {
                         // scheduled tasks are saved always, they are not versioned (see saveVersion())
                         $this->saveScheduledTasks();
@@ -1118,7 +1118,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
-     * with custom arguments that are passed on to the versioning events. It will become a regular
+     * with custom arguments that are passed on to the versioning events; `existingVersion` (Version)
+     * writes the version data into that version instead of creating a new one. It will become a regular
      * method parameter in the next major version.
      *
      * @param string|null $versionNote version note
@@ -1134,6 +1135,7 @@ class Asset extends Element\AbstractElement
         }
         $coreParameters = ['saveVersionOnly' => true];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             // hook should be also called if "save only new version" is selected
@@ -1165,7 +1167,7 @@ class Asset extends Element\AbstractElement
             if (self::isVersionCreationEnabledByConfig() || $setModificationDate) {
                 $assetsConfig = SystemSettingsConfig::get()['assets'];
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, false, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected

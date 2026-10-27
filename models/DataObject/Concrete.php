@@ -219,7 +219,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, $params['versionNote'] ?? null);
+            $this->saveVersion(false, false, $params['versionNote'] ?? null, false, $params);
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
@@ -250,6 +250,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * it is false when the method is called by $this->update()
      *
      * @param string|null $versionNote version note
+     * @param array $parameters custom arguments passed on to the versioning events; `existingVersion` (Model\Version)
+     *                          writes the version data into that version instead of creating a new one
      *
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false, array $parameters = []): ?Model\Version
@@ -259,6 +261,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             'isAutoSave' => $isAutoSave,
         ];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             if ($setModificationDate) {
@@ -285,7 +288,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected

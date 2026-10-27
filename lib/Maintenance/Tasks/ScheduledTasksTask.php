@@ -68,7 +68,7 @@ class ScheduledTasksTask implements TaskInterface
                                 $document = $version->getData();
                                 if ($document instanceof Document) {
                                     $document->setPublished(true);
-                                    $document->save();
+                                    $document->save(['existingVersion' => $version]);
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore document from version data.');
                                 }
@@ -92,7 +92,7 @@ class ScheduledTasksTask implements TaskInterface
                             if ($version = $this->getOwnedVersion($task)) {
                                 $asset = $version->getData();
                                 if ($asset instanceof Asset) {
-                                    $asset->save();
+                                    $asset->save(['existingVersion' => $version]);
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore asset from version data.');
                                 }
@@ -111,7 +111,7 @@ class ScheduledTasksTask implements TaskInterface
                                 $object = $version->getData();
                                 if ($object instanceof DataObject\Concrete) {
                                     $object->setPublished(true);
-                                    $object->save();
+                                    $object->save(['existingVersion' => $version]);
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore object from version data.');
                                 }
