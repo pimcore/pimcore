@@ -668,7 +668,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * Resolves the `existingVersion` save parameter: the version the saved state is written into instead of a new one
+     * Resolves the `existingVersion` save parameter: the version the saved state is written into instead of a new one,
+     * it must belong to this element
      *
      * @throws InvalidArgumentException
      *
@@ -683,6 +684,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                 Model\Version::class,
                 get_debug_type($existingVersion)
             ));
+        }
+
+        if ($existingVersion !== null) {
+            $this->assertVersionBelongsToElement($existingVersion);
         }
 
         return $existingVersion;

@@ -546,6 +546,8 @@ class Asset extends Element\AbstractElement
 
                 $parameters = $preEvent->getArguments();
 
+                $this->assertExistingVersionCanBeWritten($parameters);
+
                 $this->correctPath();
 
                 // need for $this->update() for certain types (image, video, document)
@@ -1112,6 +1114,36 @@ class Asset extends Element\AbstractElement
                 'Unable to clean up the partially saved version of the persisted state of asset %d: %s',
                 $this->getId(),
                 $e->getMessage()
+            ));
+        }
+    }
+
+    /**
+     * The binary data is written to the storage before the version is saved and the storage isn't transactional,
+     * so the `existingVersion` save parameter is validated before anything is changed: the version must belong to
+     * this asset and keep its binary data (see Version::save())
+     *
+     * @throws InvalidArgumentException
+     */
+    private function assertExistingVersionCanBeWritten(array $parameters): void
+    {
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
+        if ($existingVersion === null || $this->getType() === 'folder') {
+            return;
+        }
+
+        $binaryFileHash = $existingVersion->getBinaryFileHash();
+        if ($binaryFileHash === null) {
+            return;
+        }
+
+        $ctx = hash_init('sha3-512');
+        hash_update_stream($ctx, $this->getStream());
+        if (!hash_equals($binaryFileHash, hash_final($ctx))) {
+            throw new InvalidArgumentException(sprintf(
+                'The binary data of asset %d differs from the one of version %d, it can only be saved as a new version',
+                $this->getId(),
+                $existingVersion->getId()
             ));
         }
     }

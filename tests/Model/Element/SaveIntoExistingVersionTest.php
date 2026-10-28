@@ -138,6 +138,62 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $element->save(['existingVersion' => 'not a version']);
     }
 
+    /**
+     * The asset storage isn't transactional, so a rejected `existingVersion` must be detected before the binary data
+     * of the asset is overwritten
+     */
+    public function testARejectedAssetSaveLeavesTheBinaryDataUntouched(): void
+    {
+        $asset = $this->createFreshElement('asset');
+        $originalData = $asset->getData();
+        $version = $asset->getLatestVersion(null, true);
+        $this->assertNotNull($version, 'expected the asset to have a version');
+        $otherVersion = $this->createFreshElement('asset')->getLatestVersion(null, true);
+        $this->assertNotNull($otherVersion, 'expected the other asset to have a version');
+
+        // a version of another asset, and a version whose binary data differs from the changed asset
+        foreach ([$otherVersion, $version] as $rejectedVersion) {
+            $asset->setData('changed binary data');
+            try {
+                $asset->save(['existingVersion' => $rejectedVersion]);
+                $this->fail(sprintf('saving into version %d must be rejected', $rejectedVersion->getId()));
+            } catch (InvalidArgumentException) {
+            }
+
+            $this->assertSame($originalData, $this->reload($asset)->getData(), 'the binary data of the asset must be untouched');
+        }
+    }
+
+    /**
+     * A version that is published in place keeps its id, so the step-based cleanup must not rank it by id: it is
+     * the current version and must be kept
+     */
+    public function testStepCleanupKeepsAVersionThatIsPublishedInPlace(): void
+    {
+        $object = $this->createFreshElement('object');
+        $object->save();
+        $olderVersion = $object->getLatestVersion(null, true);
+        $this->assertNotNull($olderVersion, 'expected the object to have a version');
+        $object->save();
+        $object->save();
+
+        // date the history back, so the publish below is clearly the latest change
+        $versionIds = Db::get()->fetchFirstColumn('SELECT id FROM versions WHERE cid = ? AND ctype = ? ORDER BY id', [$object->getId(), 'object']);
+        foreach ($versionIds as $index => $versionId) {
+            Db::get()->update('versions', ['date' => time() - 1000 + $index], ['id' => $versionId]);
+        }
+
+        $olderVersion = Version::getById($olderVersion->getId());
+        $this->assertNotNull($olderVersion);
+        $restored = $olderVersion->getData();
+        $restored->save(['existingVersion' => $olderVersion]);
+
+        $outdatedVersionIds = (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]);
+
+        $this->assertNotContains($olderVersion->getId(), array_map('intval', $outdatedVersionIds), 'the published version must not be cleaned up');
+        $this->assertContains((int) $versionIds[0], array_map('intval', $outdatedVersionIds), 'versions beyond the steps must still be cleaned up');
+    }
+
     private function createFreshElement(string $type): Asset|Page|Concrete
     {
         $element = match ($type) {

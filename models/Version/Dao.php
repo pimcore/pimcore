@@ -135,11 +135,13 @@ class Dao extends Model\Dao\AbstractDao
             } else {
                 $countsPerCid = [];
 
+                // ranked by date rather than by id: a version that is published in place (see
+                // AbstractElement::doSaveVersion()) gets the publish date and is the latest one, whatever its id
                 $sql = '
                     SELECT sub.cid as cid, sub.id as id, sub.`date`
                     FROM (
                         SELECT id, cid, versions.`date`,
-                               ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
+                               ROW_NUMBER() OVER (PARTITION BY cid ORDER BY versions.`date` DESC, id DESC) AS rownumber
                         FROM versions
                         WHERE ctype = ? AND public = 0 AND autosave = 0
                     ) sub

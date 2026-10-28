@@ -15,6 +15,7 @@ namespace Pimcore\Model;
 
 use __PHP_Incomplete_Class;
 use Exception;
+use LogicException;
 use Pimcore;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -177,6 +178,8 @@ final class Version extends AbstractModel
             $dataString = $data;
         }
 
+        $previousBinaryFileHash = $this->id !== null ? $this->getBinaryFileHash() : null;
+
         if ($data instanceof Asset && $data->getType() != 'folder') {
             $isAsset = true;
             $dataStream = $data->getStream();
@@ -185,16 +188,31 @@ final class Version extends AbstractModel
             $this->setBinaryFileHash(hash_final($ctx));
         }
 
+        // an asset version that is written into again (see AbstractElement::doSaveVersion()) keeps its binary data
+        // where it is: other versions may share it (binaryFileId) and the storage adapters write binary data only once
+        $keepsBinaryData = false;
+        if ($isAsset && $previousBinaryFileHash !== null) {
+            if (!hash_equals($previousBinaryFileHash, $this->getBinaryFileHash())) {
+                throw new LogicException(sprintf(
+                    'Version %d cannot be written with different binary data, save it as a new version instead',
+                    $this->id
+                ));
+            }
+            $keepsBinaryData = true;
+        }
+
         $metaDataSize = strlen($dataString);
         $binaryDataSize = $isAsset ? $data->getfileSize() : null;
 
-        // the storage type may depend on the element type, see ElementDelegateVersionStorageAdapter
-        $this->setStorageType($this->storageAdapter instanceof ElementTypeAwareStorageTypeInterface
-            ? $this->storageAdapter->getStorageTypeForElementType($this->getCtype(), $metaDataSize, $binaryDataSize)
-            : $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize));
+        if (!$keepsBinaryData) {
+            // the storage type may depend on the element type, see ElementDelegateVersionStorageAdapter
+            $this->setStorageType($this->storageAdapter instanceof ElementTypeAwareStorageTypeInterface
+                ? $this->storageAdapter->getStorageTypeForElementType($this->getCtype(), $metaDataSize, $binaryDataSize)
+                : $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize));
 
-        if ($isAsset) {
-            $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
+            if ($isAsset) {
+                $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
+            }
         }
 
         $id = $this->getDao()->save();
