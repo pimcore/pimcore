@@ -238,6 +238,40 @@ class SaveDiffTest extends AbstractBatchedRelationTest
         );
     }
 
+    /**
+     * The primary key of the value table reads the language under a case-insensitive collation, so
+     * a language that differs only in its case addresses the row that is already stored. The
+     * replacement has to survive the removal of the row it replaces.
+     */
+    public function testReplacingALanguageWithAnotherCaseOfIt(): void
+    {
+        $this->saveStore(function (Classificationstore $store): void {
+            $store->setItems([
+                $this->groupA->getId() => [
+                    $this->key1->getId() => ['en' => 'lowercase'],
+                ],
+            ]);
+        });
+
+        $this->assertStoredRows(
+            [$this->dataRow($this->groupA->getId(), $this->key1->getId(), 'lowercase', null, 'en')],
+            [$this->groupA->getId()]
+        );
+
+        $this->saveStore(function (Classificationstore $store): void {
+            $store->setItems([
+                $this->groupA->getId() => [
+                    $this->key1->getId() => ['EN' => 'uppercase'],
+                ],
+            ]);
+        });
+
+        $this->assertStoredRows(
+            [$this->dataRow($this->groupA->getId(), $this->key1->getId(), 'uppercase', null, 'EN')],
+            [$this->groupA->getId()]
+        );
+    }
+
     public function testDenormalize(): void
     {
         if ($this->getStoreId() !== 1) {

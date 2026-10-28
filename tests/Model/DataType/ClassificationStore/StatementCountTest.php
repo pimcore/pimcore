@@ -45,6 +45,31 @@ class StatementCountTest extends AbstractBatchedRelationTest
         );
     }
 
+    /**
+     * A value whose key was removed from its group is not covered by the relations of that group:
+     * it is read through its key config instead. That fallback must not cost a statement per key
+     * either.
+     */
+    public function testLoadingValuesOfDetachedKeysDoesNotScaleWithKeys(): void
+    {
+        $small = $this->createObject('detached-small', 1, 1, 1);
+        $large = $this->createObject('detached-large', 1, 10, 1);
+
+        $this->detachKeysFromTheirGroups($small);
+        $this->detachKeysFromTheirGroups($large);
+
+        $smallCount = $this->measureLoad($small->getId());
+        $largeCount = $this->measureLoad($large->getId());
+
+        $this->assertGreaterThan(0, $smallCount, 'precondition: loading the store reads the database');
+        $this->assertSame(
+            $smallCount,
+            $largeCount,
+            'loading 10 values whose key left its group must cost what one of them costs'
+            . ', measured ' . $smallCount . ' against ' . $largeCount . ' statements'
+        );
+    }
+
     public function testLayoutEnrichmentDoesNotScaleWithGroups(): void
     {
         $small = $this->createObject('layout-small', 1, 1, 1);
@@ -94,6 +119,22 @@ class StatementCountTest extends AbstractBatchedRelationTest
             'validating 10 groups in 3 stored languages against every valid language must cost what one group costs'
             . ', measured ' . $smallCount . ' against ' . $largeCount . ' statements'
         );
+    }
+
+    /**
+     * Removes every key of the object's active groups from its group and leaves the stored values
+     * behind, which is what removing a key from a group in the editor produces.
+     */
+    private function detachKeysFromTheirGroups(Csstore $object): void
+    {
+        foreach (array_keys($object->getCsstore()->getActiveGroups()) as $groupId) {
+            $relations = new Classificationstore\KeyGroupRelation\Listing();
+            $relations->setCondition('`groupId` = ?', [$groupId]);
+
+            foreach ($relations->load() as $relation) {
+                $relation->delete();
+            }
+        }
     }
 
     private function measureLoad(int $objectId): int

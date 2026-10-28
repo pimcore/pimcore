@@ -218,6 +218,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load(array_keys($data->getActiveGroups(), true, true));
 
+        // the relations above bring the key configs of the keys that are still in their group with
+        // them; the ones of values whose key was removed from the group are read here, in one go,
+        // so that the loop below does not resolve them a statement at a time
+        DataObject\Classificationstore\DefinitionCache::load($this->getItemKeyIds($items, $data->getActiveGroups()));
+
         foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
                 continue;
@@ -981,6 +986,31 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     private function getKeyGroupRelationCache(): DataObject\Classificationstore\KeyGroupRelationCache
     {
         return Pimcore::getContainer()->get(DataObject\Classificationstore\KeyGroupRelationCache::class);
+    }
+
+    /**
+     * The key ids held by the items of an active group.
+     *
+     * @param array $items structure: [groupId][keyId][language] = value
+     * @param array<int, bool> $activeGroups
+     *
+     * @return int[]
+     */
+    private function getItemKeyIds(array $items, array $activeGroups): array
+    {
+        $keyIds = [];
+
+        foreach ($items as $groupId => $keys) {
+            if (!isset($activeGroups[$groupId])) {
+                continue;
+            }
+
+            foreach (array_keys($keys) as $keyId) {
+                $keyIds[] = (int) $keyId;
+            }
+        }
+
+        return $keyIds;
     }
 
     /**
