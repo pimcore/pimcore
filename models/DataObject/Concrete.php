@@ -282,11 +282,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
+            // with an existing version that version is written into, no version is added
             $objectsConfig = SystemSettingsConfig::get()['objects'];
             if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
                 || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
-                || $setModificationDate) {
+                || $setModificationDate
+                || $existingVersion !== null) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }

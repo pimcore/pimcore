@@ -25,6 +25,8 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
+use Pimcore\SystemSettingsConfig;
+use Pimcore\Tests\Support\Helper\Pimcore as PimcoreHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Psr\Log\NullLogger;
@@ -112,6 +114,44 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $this->assertSame(0, (int) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]), 'the task must be done');
     }
 
+    /**
+     * With a retention policy of zero versions a regular save adds no version, writing into an existing version
+     * must still happen: otherwise the version isn't published although the save succeeded
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testSaveWritesIntoTheGivenVersionWithoutVersionRetention(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $versionCountBefore = $this->countVersions($element);
+
+        /** @var SystemSettingsConfig $systemSettingsConfig */
+        $systemSettingsConfig = $this->getModule('\\' . PimcoreHelper::class)->grabService(SystemSettingsConfig::class);
+        $originalSystemSettings = $systemSettingsConfig->get();
+        $settings = $originalSystemSettings;
+        $settingsKey = $type . 's';
+        $settings[$settingsKey]['versions']['steps'] = 0;
+        $settings[$settingsKey]['versions']['days'] = null;
+        $systemSettingsConfig->testSave($settings);
+
+        try {
+            $restored = $draft->getData();
+            $this->publish($restored);
+            $restored->save(['existingVersion' => $draft]);
+        } finally {
+            $systemSettingsConfig->testSave($originalSystemSettings);
+        }
+
+        $published = $this->reload($element);
+        $this->assertSame($versionCountBefore, $this->countVersions($element), 'publishing a version must not add a version');
+        $publishedVersion = Version::getById($draft->getId());
+        $this->assertNotNull($publishedVersion, 'the published version must still exist');
+        $this->assertSame($published->getVersionCount(), $publishedVersion->getVersionCount(), 'the version must carry the element\'s version count');
+        $this->assertSame($published->getModificationDate(), $publishedVersion->getDate(), 'the version must carry the element\'s modification date');
+    }
+
     public function testAVersionOfAnotherElementIsRejected(): void
     {
         $element = $this->createFreshElement('object');
@@ -192,6 +232,35 @@ class SaveIntoExistingVersionTest extends ModelTestCase
 
         $this->assertNotContains($olderVersion->getId(), array_map('intval', $outdatedVersionIds), 'the published version must not be cleaned up');
         $this->assertContains((int) $versionIds[0], array_map('intval', $outdatedVersionIds), 'versions beyond the steps must still be cleaned up');
+    }
+
+    /**
+     * Dates have second precision: versions saved within the same second as the publish must not outrank the
+     * version that is published in place
+     */
+    public function testStepCleanupKeepsAVersionThatIsPublishedInPlaceWithinTheSameSecond(): void
+    {
+        $object = $this->createFreshElement('object');
+        $object->save();
+        $olderVersion = $object->getLatestVersion(null, true);
+        $this->assertNotNull($olderVersion, 'expected the object to have a version');
+        $object->save();
+        $object->save();
+
+        $olderVersion = Version::getById($olderVersion->getId());
+        $this->assertNotNull($olderVersion);
+        $restored = $olderVersion->getData();
+        $restored->save(['existingVersion' => $olderVersion]);
+
+        // all versions of the object share the date of the publish
+        Db::get()->executeStatement(
+            'UPDATE versions SET `date` = ? WHERE cid = ? AND ctype = ?',
+            [$this->reload($object)->getModificationDate(), $object->getId(), 'object']
+        );
+
+        $outdatedVersionIds = (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]);
+
+        $this->assertNotContains($olderVersion->getId(), array_map('intval', $outdatedVersionIds), 'the published version must not be cleaned up');
     }
 
     private function createFreshElement(string $type): Asset|Page|Concrete

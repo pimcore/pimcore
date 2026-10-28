@@ -1196,7 +1196,8 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            if (self::isVersionCreationEnabledByConfig() || $setModificationDate) {
+            // with an existing version that version is written into, no version is added
+            if (self::isVersionCreationEnabledByConfig() || $setModificationDate || $existingVersion !== null) {
                 $assetsConfig = SystemSettingsConfig::get()['assets'];
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, false, $existingVersion);
