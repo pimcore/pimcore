@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
 
@@ -517,6 +518,44 @@ class SaveDiffTest extends AbstractBatchedRelationTest
 
         $this->assertGreaterThan(0, $this->countReadStatements(), 'the diff reads the stored rows back');
         $this->assertSame(0, $this->countWriteStatements(), 'an unchanged store writes nothing');
+    }
+
+    /**
+     * An unchecked checkbox reaches the save as the boolean `false` - that is what the edit mode
+     * hands over and what the normalizer keeps - and the untyped binding writes it as the empty
+     * string. The diff has to read it the same way, or the row is upserted on every save.
+     */
+    public function testAnUnchangedFalseCheckboxWritesNothing(): void
+    {
+        $checkboxKey = $this->createKey('save_checkbox', true, new Checkbox());
+        $this->assignKey($this->groupA, $checkboxKey, 2);
+
+        $store = $this->reloadStore();
+        $store->setLocalizedKeyValue($this->groupA->getId(), $checkboxKey->getId(), false);
+        $store->save();
+
+        $this->assertSame(
+            '',
+            $this->grabValue(Db::get(), $checkboxKey->getId()),
+            'the untyped binding stores `false` as the empty string'
+        );
+
+        // the same store instance still holds the boolean, as it does when an object is saved
+        // twice without being read back
+        DataObject::disableDirtyDetection();
+
+        try {
+            $this->startMeasurement();
+            $store->save();
+        } finally {
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertSame(
+            0,
+            $this->countWriteStatements(),
+            'a false checkbox that did not change must not be written again'
+        );
     }
 
     private function saveStore(callable $change, bool $withoutDirtyDetection = false): void

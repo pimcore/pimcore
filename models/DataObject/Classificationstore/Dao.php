@@ -390,17 +390,21 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * The stored value of a column as the driver reads it back, so that a row written as an int
-     * or a bool is not seen as changed on the next save.
+     * The stored value of a column as the driver reads it back, so that a row written as an int,
+     * a float or a bool is not seen as changed on the next save.
+     *
+     * {@see self::executeInsert()} binds the value columns without a type, which is DBAL's
+     * ParameterType::STRING, so what reaches the column is the driver's string cast of the value -
+     * the same cast PHP makes. A `false` therefore arrives as the empty string, not as `'0'`: an
+     * unchecked checkbox normalizes to the boolean itself
+     * ({@see DataObject\Traits\SimpleNormalizerTrait::normalize()}, no classificationstore
+     * marshaller for the type), and casting it here to anything else would never match the stored
+     * row and would upsert it on every save.
      */
     private function normalizeColumnValue(mixed $value): ?string
     {
         if ($value === null) {
             return null;
-        }
-
-        if (is_bool($value)) {
-            return $value ? '1' : '0';
         }
 
         return (string) $value;
