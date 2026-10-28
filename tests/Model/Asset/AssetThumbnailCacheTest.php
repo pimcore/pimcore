@@ -411,7 +411,9 @@ class AssetThumbnailCacheTest extends TestCase
 
         $storage = Storage::get('thumbnail');
         $contents = $storage->read($storagePath);
-        $this->assertSame('deferred', $asset->getThumbnail($thumbnailName)->getPathReference(true)['type']);
+        // the file is delivered unregistered: rendering the thumbnail first would already adopt it
+        // (see testRenderingADeferredThumbnailAlreadyOnStorageRestoresTheMissingStatusCacheRow)
+        $this->assertNull($asset->getDao()->getCachedThumbnail($thumbnailName, $filename));
 
         $response = (new PublicServicesController())->thumbnailAction($this->buildThumbnailRequest($asset, $filename, $storagePath));
         $this->assertInstanceOf(StreamedResponse::class, $response);
@@ -550,6 +552,116 @@ class AssetThumbnailCacheTest extends TestCase
         $this->assertInstanceOf(StreamedResponse::class, $response);
         $this->assertSame($contents, $delivered);
         $this->assertNull($asset->getDao()->getCachedThumbnail($this->thumbnailName, $filename));
+    }
+
+    /**
+     * The admin tree and grid preview only asks exists(), and the AssetPreviewImageMessage handler
+     * only calls generate(false); neither delivers the file. With the status cache enabled, a
+     * deferred render used to answer from the cache alone and a non-deferred one wrote the row only
+     * when it generated the file, so a thumbnail on the storage without its row kept the preview
+     * spinning and the handler busy forever.
+     */
+    public function testRenderingADeferredThumbnailAlreadyOnStorageRestoresTheMissingStatusCacheRow(): void
+    {
+        /** @var Asset\Image $asset */
+        $asset = $this->testAsset;
+        [$filename, $storagePath] = $this->generateThumbnailWithoutStatusCacheRow();
+
+        $storage = Storage::get('thumbnail');
+        $contents = $storage->read($storagePath);
+        $modificationDate = $storage->lastModified($storagePath);
+
+        $thumbnail = $asset->getThumbnail($this->thumbnailName);
+        $this->assertSame('thumbnail', $thumbnail->getPathReference(true)['type']);
+        $this->assertTrue($thumbnail->exists());
+
+        // the row holds the dimensions and size of the file on the storage ...
+        $cacheRow = $asset->getDao()->getCachedThumbnail($this->thumbnailName, $filename);
+        $this->assertNotNull($cacheRow);
+        $imageSize = getimagesizefromstring($contents);
+        $this->assertSame($imageSize[0], (int) $cacheRow['width']);
+        $this->assertSame($imageSize[1], (int) $cacheRow['height']);
+        $this->assertSame(strlen($contents), (int) $cacheRow['filesize']);
+
+        // ... which was adopted, not regenerated
+        $this->assertSame($modificationDate, $storage->lastModified($storagePath));
+        $this->assertSame($contents, $storage->read($storagePath));
+    }
+
+    public function testGeneratingAThumbnailAlreadyOnStorageRestoresTheMissingStatusCacheRow(): void
+    {
+        /** @var Asset\Image $asset */
+        $asset = $this->testAsset;
+        [$filename, $storagePath] = $this->generateThumbnailWithoutStatusCacheRow();
+
+        $storage = Storage::get('thumbnail');
+        $contents = $storage->read($storagePath);
+        $modificationDate = $storage->lastModified($storagePath);
+
+        $asset->getThumbnail($this->thumbnailName)->getPath(['deferredAllowed' => false]);
+
+        $this->assertNotNull($asset->getDao()->getCachedThumbnail($this->thumbnailName, $filename));
+        $this->assertSame($modificationDate, $storage->lastModified($storagePath));
+        $this->assertSame($contents, $storage->read($storagePath));
+
+        // the next deferred render is answered from the cache
+        $this->assertSame('thumbnail', $asset->getThumbnail($this->thumbnailName)->getPathReference(true)['type']);
+    }
+
+    public function testRenderingAThumbnailAlreadyOnStorageDoesNotAddAStatusCacheRowWhenTheStatusCacheIsDisabled(): void
+    {
+        /** @var Asset\Image $asset */
+        $asset = $this->testAsset;
+        [$filename] = $this->generateThumbnailWithoutStatusCacheRow();
+
+        $assetsConfig = Config::getSystemConfiguration('assets');
+        $disabledConfig = $assetsConfig;
+        $disabledConfig['image']['thumbnails']['status_cache'] = false;
+        Config::setSystemConfiguration($disabledConfig, 'assets');
+
+        try {
+            $this->assertSame('thumbnail', $asset->getThumbnail($this->thumbnailName)->getPathReference(true)['type']);
+            $asset->getThumbnail($this->thumbnailName)->getPath(['deferredAllowed' => false]);
+        } finally {
+            Config::setSystemConfiguration($assetsConfig, 'assets');
+        }
+
+        $this->assertNull($asset->getDao()->getCachedThumbnail($this->thumbnailName, $filename));
+    }
+
+    /**
+     * A thumbnail stored by 12.3.0-12.3.11 whose row is missing is adopted under the current name
+     * together with a new row, instead of being moved and then left unregistered.
+     */
+    public function testCropBoxCompatThumbnailWithoutAStatusCacheRowIsMigratedAndRegistered(): void
+    {
+        /** @var Asset\Image $asset */
+        $asset = $this->testAsset;
+        $thumbnailName = $this->thumbnailName;
+        [$filename, $storagePath] = $this->generateThumbnailWithoutStatusCacheRow();
+
+        $storage = Storage::get('thumbnail');
+        $config = $asset->getThumbnail($thumbnailName)->getConfig();
+        $this->assertFalse($config->isUseCropBox());
+
+        $currentHash = $config->getHash([$asset->getChecksum()]);
+        $compatHash = $config->getCropBoxCompatHash([$asset->getChecksum()]);
+        $compatStoragePath = str_replace('.' . $currentHash . '.', '.' . $compatHash . '.', $storagePath);
+        $storage->move($storagePath, $compatStoragePath);
+        $contents = $storage->read($compatStoragePath);
+
+        // nothing under the current name, the old file without any row under the old one
+        $this->assertFalse($storage->fileExists($storagePath));
+        $this->assertTrue($storage->fileExists($compatStoragePath));
+        $this->assertSame('deferred', $asset->getThumbnail($thumbnailName)->getPathReference(true)['type']);
+
+        $asset->getThumbnail($thumbnailName)->getPath(['deferredAllowed' => false]);
+
+        $this->assertTrue($storage->fileExists($storagePath));
+        $this->assertFalse($storage->fileExists($compatStoragePath));
+        $this->assertSame($contents, $storage->read($storagePath));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnail($thumbnailName, $filename));
+        $this->assertSame('thumbnail', $asset->getThumbnail($thumbnailName)->getPathReference(true)['type']);
     }
 
     /**

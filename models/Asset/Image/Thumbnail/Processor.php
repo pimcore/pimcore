@@ -456,11 +456,13 @@ class Processor
             return;
         }
 
-        if ($asset->getDao()->getCachedThumbnail($config->getName(), $filename) !== null) {
-            return;
-        }
-
+        // best effort: a thumbnail that is on the storage is returned even when its row cannot be
+        // checked or written, the next request tries again
         try {
+            if ($asset->getDao()->getCachedThumbnail($config->getName(), $filename) !== null) {
+                return;
+            }
+
             $localFile = self::getLocalFileFromStream($storage->readStream($storagePath));
             $asset->addThumbnailFileToCache($localFile, $filename, $config);
             Logger::info('Restored the missing status cache entry of thumbnail ' . $storagePath);
