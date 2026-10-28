@@ -240,6 +240,15 @@ services:
         public: true
         tags:
             - { name: kernel.reset, method: reset }
+
+    # process-scoped cache of the classification store key/group relations and their field
+    # definitions, cleared per request and per messenger message via the kernel.reset tag.
+    # public, for the same reason as the permission cache above: it is consumed from the
+    # classification store model and DAO, which are not container-managed.
+    Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache:
+        public: true
+        tags:
+            - { name: kernel.reset, method: reset }
     #
     # SECURITY
     #

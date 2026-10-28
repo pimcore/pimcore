@@ -54,6 +54,32 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Set up a class which contains a localized classification store field and allows inheritance
+     */
+    public function setupPimcoreClass_CsstoreLocalized(array $params = [], string $name = 'csstorelocalized', string $filename = 'classificationstore-localized.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $csField = $this->createDataChild('classificationstore', 'csstore');
+            $csField->setStoreId($params['storeId']);
+            $csField->setLocalized(true);
+            $panel->addChild($csField);
+
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
      * Set up a class used for lazy loading tests.
      *
      * @throws Exception

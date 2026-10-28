@@ -12,14 +12,16 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore;
-use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Normalizer\NormalizerInterface;
+use Throwable;
 
 /**
  * @internal
@@ -29,6 +31,36 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
+
+    /**
+     * Rows per multi-row statement, so that a store with many keys and languages does not build a
+     * statement of unbounded length. What the rows weigh is bounded separately,
+     * by {@see self::getWriteBatchByteBudget()}.
+     */
+    private const WRITE_BATCH_SIZE = 200;
+
+    /**
+     * The payload a single multi-row statement may carry when the server does not answer what it
+     * accepts.
+     */
+    private const WRITE_BATCH_FALLBACK_BYTES = 1048576;
+
+    private const DATA_COLUMNS = [
+        'id', 'collectionId', 'groupId', 'keyId', 'fieldname', 'language', 'type', 'value', 'value2',
+    ];
+
+    /**
+     * The columns of a data row that the diff compares: everything the save writes that is not
+     * part of the primary key.
+     */
+    private const DATA_VALUE_COLUMNS = ['collectionId', 'type', 'value', 'value2'];
+
+    private const GROUP_COLUMNS = ['id', 'groupId', 'fieldname'];
+
+    /**
+     * @see self::getWriteBatchByteBudget()
+     */
+    private static ?int $writeBatchByteBudget = null;
 
     protected array $tableDefinitions = [];
 
@@ -52,14 +84,7 @@ class Dao extends Model\Dao\AbstractDao
         }
         $object = $this->model->getObject();
         $objectId = $object->getId();
-        $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
-
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$dataTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
-        if ($dataExists) {
-            $this->db->delete($dataTable, ['id' => $objectId, 'fieldname' => $fieldname]);
-        }
 
         $items = $this->model->getItems();
         $activeGroups = $this->model->getActiveGroups();
@@ -79,26 +104,24 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $groupsTable = $this->getGroupsTableName();
-
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$groupsTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
-        if ($dataExists) {
-            $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
-        }
+        $groupRows = [];
 
         foreach ($activeGroups as $activeGroupId => $enabled) {
             if ($enabled) {
-                $data = [
+                $groupRows[$activeGroupId] = [
                     'id' => $objectId,
                     'groupId' => $activeGroupId,
                     'fieldname' => $fieldname,
                 ];
-                Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
             }
         }
 
+        $dataRows = [];
         $alreadySavedGroups = [];
+
+        // the loop below resolves a key config per key, which on a cold cache - a save that did
+        // not load the store first - would be a statement each
+        DefinitionCache::load($this->getItemKeyIds($items, $activeGroups));
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
@@ -143,7 +166,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value'] = $encodedData['value'] ?? null;
                     $data['value2'] = $encodedData['value2'] ?? null;
 
-                    Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
+                    $dataRows[$this->getDataRowKey($data)] = $data;
                     $alreadySavedGroups[] = $groupId;
                 }
             }
@@ -173,8 +196,373 @@ class Dao extends Model\Dao\AbstractDao
                     'value' => null,
                     'value2' => null,
                 ];
-                $this->db->insert($dataTable, $data);
+                $dataRows[$this->getDataRowKey($data)] = $data;
             }
+        }
+
+        $this->persistRows($groupRows, $dataRows);
+    }
+
+    /**
+     * Writes only the rows that differ, under a transaction that covers the whole operation.
+     *
+     * What is written is decided from what the tables hold, so the read and the writes that
+     * follow it have to see one state and hold it. A store saved as part of its object runs
+     * inside the object's save transaction, which may have read from the database before this
+     * point: under REPEATABLE READ its snapshot can predate a save another connection has
+     * committed since, and the object's row lock - taken by
+     * {@see DataObject\AbstractObject::save()} - serializes the two saves but does not refresh
+     * that snapshot. A row that the snapshot reports as already holding the value would then be
+     * skipped, leaving the other connection's value stored. {@see self::readRowsForUpdate()}
+     * therefore reads both tables as of now, and holds them. A store saved on its own gets a
+     * transaction of its own here, so that its locks cover its writes as well.
+     *
+     * @param array<int, array<string, mixed>> $groupRows groupId => group activation row
+     * @param array<string, array<string, mixed>> $dataRows row key => data row
+     *
+     * @throws Exception
+     */
+    private function persistRows(array $groupRows, array $dataRows): void
+    {
+        $ownTransaction = !$this->db->isTransactionActive();
+        if ($ownTransaction) {
+            $this->db->beginTransaction();
+        }
+
+        try {
+            $this->writeRowDiff($groupRows, $this->reconcileLanguageAliases($dataRows));
+        } catch (Throwable $exception) {
+            if ($ownTransaction) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+
+        if ($ownTransaction) {
+            $this->db->commit();
+        }
+    }
+
+    /**
+     * The stored rows for (object, fieldname) are read back and diffed against the rows the save
+     * describes, and what remains is emitted as multi-row statements. The stored outcome is the
+     * one the former delete-and-reinsert produced, row for row.
+     *
+     * @param array<int, array<string, mixed>> $groupRows groupId => group activation row
+     * @param array<string, array<string, mixed>> $dataRows row key => data row
+     *
+     * @throws Exception
+     */
+    private function writeRowDiff(array $groupRows, array $dataRows): void
+    {
+        $objectId = $this->model->getObject()->getId();
+        $fieldname = $this->model->getFieldname();
+        $groupsTable = $this->getGroupsTableName();
+        $dataTable = $this->getDataTableName();
+
+        $storedGroupIds = array_column($this->readRowsForUpdate($groupsTable, $objectId, $fieldname), 'groupId');
+        $storedDataRows = [];
+        foreach ($this->readRowsForUpdate($dataTable, $objectId, $fieldname) as $storedRow) {
+            $storedDataRows[$this->getDataRowKey($storedRow)] = $storedRow;
+        }
+
+        $groupIdsToDelete = array_map('intval', array_values(array_diff($storedGroupIds, array_keys($groupRows))));
+        $groupIdsToDeleteMap = array_fill_keys($groupIdsToDelete, true);
+
+        $dataRowsToWrite = [];
+        foreach ($dataRows as $rowKey => $row) {
+            if (!isset($storedDataRows[$rowKey]) || $this->dataRowDiffers($storedDataRows[$rowKey], $row)) {
+                $dataRowsToWrite[] = $row;
+            }
+        }
+
+        $dataRowsToDelete = [];
+        foreach ($storedDataRows as $rowKey => $storedRow) {
+            // a deactivated group's rows go with it through the ON DELETE CASCADE
+            if (!isset($dataRows[$rowKey]) && !isset($groupIdsToDeleteMap[(int) $storedRow['groupId']])) {
+                $dataRowsToDelete[] = $storedRow;
+            }
+        }
+
+        // group rows are written first for the composite foreign key, upserted as before, and the
+        // obsolete ones last. The obsolete data rows go before the replacements: the diff above
+        // tells two rows apart by the exact spelling of their language, while the primary key
+        // reads them under a case-insensitive collation, so a language stored as `en` and written
+        // back as `EN` is scheduled as a write and a delete of what is one and the same row - and
+        // only deleting first leaves the replacement standing.
+        $this->insertRows(
+            $groupsTable,
+            self::GROUP_COLUMNS,
+            array_diff_key($groupRows, array_flip($storedGroupIds)),
+            ' ON DUPLICATE KEY UPDATE `id` = VALUES(`id`)'
+        );
+        $this->deleteDataRows($dataTable, $dataRowsToDelete, $objectId, $fieldname);
+        $this->writeDataRows($dataTable, $dataRowsToWrite);
+        $this->deleteGroupRows($groupsTable, $groupIdsToDelete, $objectId, $fieldname);
+    }
+
+    /**
+     * The stored rows of one (object, fieldname), read as of now and locked until the end of the
+     * transaction: a locking read is not answered from the transaction's snapshot, so the diff
+     * decides against what the table holds, and no other connection can change these rows while
+     * the writes that follow are being made. Both tables are read through the leading columns of
+     * their primary key, so the rows this object owns are all that is locked - the range the
+     * former delete-and-reinsert locked as well.
+     *
+     * @return array<array<string, mixed>>
+     *
+     * @throws Exception
+     */
+    private function readRowsForUpdate(string $table, ?int $objectId, string $fieldname): array
+    {
+        return $this->db->fetchAllAssociative(
+            'SELECT * FROM `' . $table . '` WHERE `id` = ? AND `fieldname` = ? FOR UPDATE',
+            [$objectId, $fieldname]
+        );
+    }
+
+    /**
+     * The rows to save, with at most one of them per row the value table can hold.
+     *
+     * {@see self::getDataRowKey()} tells two rows apart by the exact spelling of their language,
+     * while the primary key of the value table compares it under utf8mb4_unicode_520_ci, where
+     * `EN` and `en` are one and the same row. Items that carry both spellings - an import through
+     * setItems(), or two setLocalizedKeyValue() calls whose languages differ only in case - would
+     * otherwise be diffed as two rows against the one stored row, and which of their values
+     * survived would follow from the diff rather than from the items. The former save wrote every
+     * item in order and left the last one standing, which is what is kept here: of a set of
+     * spellings the last one, with its value and its own spelling, and the earlier ones are
+     * dropped before the diff sees them.
+     *
+     * @param array<string, array<string, mixed>> $dataRows
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function reconcileLanguageAliases(array $dataRows): array
+    {
+        $rowKeysByStoredKey = [];
+        foreach ($dataRows as $rowKey => $row) {
+            $rowKeysByStoredKey[$this->getStoredDataRowKey($row)] = $rowKey;
+        }
+
+        if (count($rowKeysByStoredKey) === count($dataRows)) {
+            return $dataRows;
+        }
+
+        return array_intersect_key($dataRows, array_flip($rowKeysByStoredKey));
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function getDataRowKey(array $row): string
+    {
+        return $row['groupId'] . '-' . $row['keyId'] . '-' . $row['language'];
+    }
+
+    /**
+     * The row key as the primary key of the value table reads it. Of the characters a language
+     * can hold, what utf8mb4_unicode_520_ci equates is the case of its letters and, as a PAD
+     * SPACE collation, the spaces it ends on.
+     *
+     * @param array<string, mixed> $row
+     */
+    private function getStoredDataRowKey(array $row): string
+    {
+        return $row['groupId'] . '-' . $row['keyId'] . '-'
+            . rtrim(mb_strtolower((string) $row['language']), ' ');
+    }
+
+    /**
+     * @param array<string, mixed> $storedRow
+     * @param array<string, mixed> $row
+     */
+    private function dataRowDiffers(array $storedRow, array $row): bool
+    {
+        foreach (self::DATA_VALUE_COLUMNS as $column) {
+            if ($this->normalizeColumnValue($storedRow[$column]) !== $this->normalizeColumnValue($row[$column])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * The stored value of a column as the driver reads it back, so that a row written as an int,
+     * a float or a bool is not seen as changed on the next save.
+     *
+     * {@see self::executeInsert()} binds the value columns without a type, which is DBAL's
+     * ParameterType::STRING, so what reaches the column is the driver's string cast of the value -
+     * the same cast PHP makes. A `false` therefore arrives as the empty string, not as `'0'`: an
+     * unchecked checkbox normalizes to the boolean itself
+     * ({@see DataObject\Traits\SimpleNormalizerTrait::normalize()}, no classificationstore
+     * marshaller for the type), and casting it here to anything else would never match the stored
+     * row and would upsert it on every save.
+     */
+    private function normalizeColumnValue(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return (string) $value;
+    }
+
+    /**
+     * @param array<array<string, mixed>> $rows
+     *
+     * @throws Exception
+     */
+    private function writeDataRows(string $table, array $rows): void
+    {
+        $assignments = [];
+        foreach (self::DATA_VALUE_COLUMNS as $column) {
+            $assignments[] = '`' . $column . '` = VALUES(`' . $column . '`)';
+        }
+
+        $this->insertRows($table, self::DATA_COLUMNS, $rows, ' ON DUPLICATE KEY UPDATE ' . implode(', ', $assignments));
+    }
+
+    /**
+     * @param string[] $columns
+     * @param array<array<string, mixed>> $rows
+     *
+     * @throws Exception
+     */
+    private function insertRows(string $table, array $columns, array $rows, string $onDuplicate = ''): void
+    {
+        if (!$rows) {
+            return;
+        }
+
+        $quotedColumns = array_map(static fn (string $column) => '`' . $column . '`', $columns);
+        $rowPlaceholder = '(' . implode(',', array_fill(0, count($columns), '?')) . ')';
+        $statement = 'INSERT INTO `' . $table . '` (' . implode(',', $quotedColumns) . ') VALUES ';
+        $byteBudget = $this->getWriteBatchByteBudget();
+
+        $parameters = [];
+        $rowCount = 0;
+        $size = 0;
+
+        foreach ($rows as $row) {
+            $rowParameters = [];
+            $rowSize = 0;
+            foreach ($columns as $column) {
+                $rowParameters[] = $row[$column];
+                $rowSize += $this->getParameterSize($row[$column]);
+            }
+
+            // a row of its own is emitted whatever it weighs, which is what the former
+            // statement per row did as well
+            if ($rowCount > 0 && ($rowCount >= self::WRITE_BATCH_SIZE || $size + $rowSize > $byteBudget)) {
+                $this->executeInsert($statement, $rowPlaceholder, $rowCount, $parameters, $onDuplicate);
+
+                $parameters = [];
+                $rowCount = 0;
+                $size = 0;
+            }
+
+            foreach ($rowParameters as $parameter) {
+                $parameters[] = $parameter;
+            }
+            $rowCount++;
+            $size += $rowSize;
+        }
+
+        $this->executeInsert($statement, $rowPlaceholder, $rowCount, $parameters, $onDuplicate);
+    }
+
+    /**
+     * @param array<mixed> $parameters
+     *
+     * @throws Exception
+     */
+    private function executeInsert(
+        string $statement,
+        string $rowPlaceholder,
+        int $rowCount,
+        array $parameters,
+        string $onDuplicate
+    ): void {
+        $this->db->executeStatement(
+            $statement . implode(',', array_fill(0, $rowCount, $rowPlaceholder)) . $onDuplicate,
+            $parameters
+        );
+    }
+
+    /**
+     * What a parameter is worth against the packet budget: the bytes of its value, plus the
+     * placeholder and the separators it travels with.
+     */
+    private function getParameterSize(mixed $value): int
+    {
+        return (is_string($value) ? strlen($value) : 8) + 4;
+    }
+
+    /**
+     * What one multi-row statement may carry: half of what the server accepts, so that a worst
+     * case in which quoting doubles every byte of a value still fits into a single packet. A row
+     * count alone does not bound a statement - both value columns are LONGTEXT, and a key without
+     * a length limit can fill them.
+     *
+     * The limit is read once per process: it is a server setting, and asking for it on every save
+     * would cost a statement of the kind this batching saves.
+     *
+     * @throws Exception
+     */
+    private function getWriteBatchByteBudget(): int
+    {
+        if (self::$writeBatchByteBudget === null) {
+            $maxAllowedPacket = (int) $this->db->fetchOne('SELECT @@max_allowed_packet');
+
+            self::$writeBatchByteBudget = $maxAllowedPacket > 0
+                ? intdiv($maxAllowedPacket, 2)
+                : self::WRITE_BATCH_FALLBACK_BYTES;
+        }
+
+        return self::$writeBatchByteBudget;
+    }
+
+    /**
+     * @param array<array<string, mixed>> $rows
+     *
+     * @throws Exception
+     */
+    private function deleteDataRows(string $table, array $rows, ?int $objectId, string $fieldname): void
+    {
+        foreach (array_chunk($rows, self::WRITE_BATCH_SIZE) as $chunk) {
+            $parameters = [$objectId, $fieldname];
+            foreach ($chunk as $row) {
+                $parameters[] = $row['groupId'];
+                $parameters[] = $row['keyId'];
+                $parameters[] = $row['language'];
+            }
+
+            $conditions = array_fill(0, count($chunk), '(`groupId` = ? AND `keyId` = ? AND `language` = ?)');
+
+            $this->db->executeStatement(
+                'DELETE FROM `' . $table . '` WHERE `id` = ? AND `fieldname` = ? AND ('
+                . implode(' OR ', $conditions) . ')',
+                $parameters
+            );
+        }
+    }
+
+    /**
+     * @param int[] $groupIds
+     *
+     * @throws Exception
+     */
+    private function deleteGroupRows(string $table, array $groupIds, ?int $objectId, string $fieldname): void
+    {
+        foreach (array_chunk($groupIds, self::WRITE_BATCH_SIZE) as $chunk) {
+            $this->db->executeStatement(
+                'DELETE FROM `' . $table . '` WHERE `id` = ? AND `fieldname` = ? AND `groupId` IN (?)',
+                [$objectId, $fieldname, $chunk],
+                [ParameterType::INTEGER, ParameterType::STRING, ArrayParameterType::INTEGER]
+            );
         }
     }
 
@@ -217,6 +605,17 @@ class Dao extends Model\Dao\AbstractDao
 
         $groupCollectionMapping = [];
 
+        /** @var MarshallerService $marshallerService */
+        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
+
+        $relationCache = Pimcore::getContainer()->get(KeyGroupRelationCache::class);
+        $relationCache->load(array_keys($list));
+
+        // the relations above bring the key configs of the keys that are still in their group with
+        // them; the ones of values whose key was removed from the group are read here, in one go,
+        // so that the fallback below does not resolve them a statement at a time
+        DefinitionCache::load($this->getStoredKeyIds($data, $list));
+
         foreach ($data as $item) {
             if (!isset($list[$item['groupId']])) {
                 continue;
@@ -232,19 +631,21 @@ class Dao extends Model\Dao\AbstractDao
                 'value2' => $item['value2'],
             ];
 
-            $keyConfig = DefinitionCache::get($keyId);
-            if (!$keyConfig) {
-                Logger::error('Could not resolve key with ID: ' . $keyId);
+            $fd = $relationCache->getFieldDefinition($groupId, $keyId);
 
-                continue;
+            if (!$fd) {
+                // the key is no longer in the group - its value is still read through the key config, if that exists
+                $keyConfig = DefinitionCache::get($keyId);
+                if (!$keyConfig) {
+                    Logger::error('Could not resolve key with ID: ' . $keyId);
+
+                    continue;
+                }
+
+                $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             }
 
-            $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
-
             if ($fd instanceof NormalizerInterface) {
-                /** @var MarshallerService $marshallerService */
-                $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
-
                 if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                     $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
                     // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
@@ -266,6 +667,54 @@ class Dao extends Model\Dao\AbstractDao
         $classificationStore->setActiveGroups($list);
         $classificationStore->setGroupCollectionMappings($groupCollectionMapping);
         $classificationStore->resetDirtyMap();
+    }
+
+    /**
+     * The key ids held by the items of an active group, which is the set the save resolves a key
+     * config for.
+     *
+     * @param array $items structure: [groupId][keyId][language] = value
+     * @param array<int, bool> $activeGroups
+     *
+     * @return int[]
+     */
+    private function getItemKeyIds(array $items, array $activeGroups): array
+    {
+        $keyIds = [];
+
+        foreach ($items as $groupId => $keys) {
+            if (!isset($activeGroups[$groupId])) {
+                continue;
+            }
+
+            foreach (array_keys($keys) as $keyId) {
+                $keyIds[] = (int) $keyId;
+            }
+        }
+
+        return $keyIds;
+    }
+
+    /**
+     * The key ids of the stored rows that belong to an active group, which is the set the load
+     * resolves a key config for.
+     *
+     * @param array<array<string, mixed>> $rows
+     * @param array<int, bool> $activeGroups
+     *
+     * @return int[]
+     */
+    private function getStoredKeyIds(array $rows, array $activeGroups): array
+    {
+        $keyIds = [];
+
+        foreach ($rows as $row) {
+            if (isset($activeGroups[$row['groupId']])) {
+                $keyIds[] = (int) $row['keyId'];
+            }
+        }
+
+        return $keyIds;
     }
 
     public function createUpdateTable(): void

@@ -27,7 +27,8 @@ class Service
     protected static array $definitionsCache = [];
 
     /**
-     * Clears the cache for the definitions
+     * Clears the definitions this class caches by key id - not the ones
+     * {@see KeyGroupRelationCache} holds per (groupId, keyId), which are cleared with that service.
      */
     public static function clearDefinitionsCache(): void
     {
