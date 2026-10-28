@@ -424,6 +424,7 @@ class VersionTest extends TestCase
         $this->assertEmpty($publishedVersion->getBinaryFileId(), 'the version must still own its binary data');
         $binaryStream = $adapter->loadBinaryData($publishedVersion);
         $this->assertIsResource($binaryStream, 'the binary data of the version must still be stored');
+        rewind($binaryStream); // the database adapter returns the stream at its end
         $this->assertSame($originalData, stream_get_contents($binaryStream), 'the binary data of the version must be unchanged');
     }
 
