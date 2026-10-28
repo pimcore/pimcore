@@ -15,6 +15,7 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Exception;
 use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
@@ -174,9 +175,19 @@ class Processor
 
         $modificationDate = null;
         $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+        $statusCacheHit = false;
         if ($statusCacheEnabled && $deferred) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
-        } else {
+            $statusCacheHit = $modificationDate !== null;
+        }
+
+        // The status cache can lack the row of a file that exists on the storage: a restored or
+        // truncated cache table, a filename change (e.g. a new hash scheme) that moved the file but
+        // not the row, a cache write that failed after the file was stored. Without a fallback a
+        // deferred request keeps answering "deferred" (the admin preview keeps spinning and keeps
+        // queueing a preview job) while the generating process keeps finding the file and does
+        // nothing, so the storage is consulted whenever the cache has no answer.
+        if ($modificationDate === null) {
             try {
                 $modificationDate = $storage->lastModified($storagePath);
             } catch (FilesystemException $e) {
@@ -187,6 +198,10 @@ class Processor
         if ($modificationDate) {
             try {
                 if ($modificationDate >= $asset->getDataModificationDate()) {
+                    if ($statusCacheEnabled && !$statusCacheHit) {
+                        self::addExistingThumbnailToStatusCache($asset, $config, $storage, $storagePath, $filename);
+                    }
+
                     return [
                         'src' => $storagePath,
                         'type' => 'thumbnail',
@@ -412,11 +427,46 @@ class Processor
             ];
         }
 
+        if ($statusCacheEnabled) {
+            // the file may pre-exist without a row (see above), or it may just have been moved
+            // from its legacy name while no row existed for that name
+            self::addExistingThumbnailToStatusCache($asset, $config, $storage, $storagePath, $filename);
+        }
+
         return [
             'src' => $storagePath,
             'type' => 'thumbnail',
             'storagePath' => $storagePath,
         ];
+    }
+
+    /**
+     * Writes the status cache row of a thumbnail file that exists on the storage but has no row,
+     * reading the dimensions from a local copy of the file as the generation does. A no-op for a
+     * thumbnail that already has its row.
+     */
+    private static function addExistingThumbnailToStatusCache(
+        Asset $asset,
+        Config $config,
+        FilesystemOperator $storage,
+        string $storagePath,
+        string $filename
+    ): void {
+        if (!$asset instanceof Asset\Image) {
+            return;
+        }
+
+        if ($asset->getDao()->getCachedThumbnail($config->getName(), $filename) !== null) {
+            return;
+        }
+
+        try {
+            $localFile = self::getLocalFileFromStream($storage->readStream($storagePath));
+            $asset->addThumbnailFileToCache($localFile, $filename, $config);
+            Logger::info('Restored the missing status cache entry of thumbnail ' . $storagePath);
+        } catch (Exception | FilesystemException $e) {
+            Logger::warning('Unable to restore the status cache entry of thumbnail ' . $storagePath . ': ' . $e->getMessage());
+        }
     }
 
     /**
