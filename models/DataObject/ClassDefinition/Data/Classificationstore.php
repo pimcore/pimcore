@@ -426,6 +426,75 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $dataString;
     }
 
+    public function getCacheTags(mixed $data, array $tags = []): array
+    {
+        if (!$data instanceof DataObject\Classificationstore) {
+            return $tags;
+        }
+
+        foreach ($this->getOwnStoredValues($data) as [$fieldDefinition, $value]) {
+            $tags = $fieldDefinition->getCacheTags($value, $tags);
+        }
+
+        return $tags;
+    }
+
+    public function resolveDependencies(mixed $data): array
+    {
+        if (!$data instanceof DataObject\Classificationstore) {
+            return [];
+        }
+
+        $dependencies = [];
+
+        foreach ($this->getOwnStoredValues($data) as [$fieldDefinition, $value]) {
+            $dependencies = array_merge($dependencies, $fieldDefinition->resolveDependencies($value));
+        }
+
+        return $dependencies;
+    }
+
+    /**
+     * Collects the store's own values only - inherited ones belong to the parent object
+     */
+    private function getOwnStoredValues(DataObject\Classificationstore $data): array
+    {
+        return DataObject\Service::useInheritedValues(false, fn () => $this->collectStoredValues($data));
+    }
+
+    /**
+     * Returns a [field definition, value] pair for every stored value of an active group
+     */
+    private function collectStoredValues(DataObject\Classificationstore $data): array
+    {
+        $storedValues = [];
+        $activeGroups = $data->getActiveGroups();
+
+        foreach ($data->getItems() as $groupId => $keys) {
+            if (!isset($activeGroups[$groupId])) {
+                continue;
+            }
+
+            foreach ($keys as $keyId => $values) {
+                $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
+                if ($keyConfig === null) {
+                    continue;
+                }
+
+                $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                if ($fieldDefinition === null) {
+                    continue;
+                }
+
+                foreach ($values as $value) {
+                    $storedValues[] = [$fieldDefinition, $value];
+                }
+            }
+        }
+
+        return $storedValues;
+    }
+
     public function isEmpty(mixed $data): bool
     {
         if ($data instanceof DataObject\Classificationstore) {
