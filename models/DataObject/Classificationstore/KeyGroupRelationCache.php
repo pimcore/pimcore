@@ -79,8 +79,7 @@ final class KeyGroupRelationCache implements ResetInterface
 
         $this->relations += $loaded;
 
-        // the key configs of the same keys are read in one go as well: the store model resolves
-        // one per key and language while it is filled
+        // the key configs are read in one go too: the store resolves one per key and language when filled
         DefinitionCache::load($keyIds);
     }
 

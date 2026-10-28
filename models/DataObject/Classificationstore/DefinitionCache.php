@@ -106,8 +106,7 @@ class DefinitionCache
         $list->setIncludeDisabled($includeDisabled);
         $list->setCondition('`id` in (' . implode(',', array_fill(0, count($ids), '?')) . ')', $ids);
 
-        // hydrated exactly as KeyConfig\Dao::getById() does, so that a row with a null column
-        // keeps the property default here as well
+        // hydrated exactly as KeyConfig\Dao::getById() does, so a null column keeps the property default
         foreach ($list->getDao()->getDataArray() as $row) {
             $row['enabled'] = (bool) $row['enabled'];
 

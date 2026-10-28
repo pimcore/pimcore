@@ -227,17 +227,13 @@ class Dao extends Model\Dao\AbstractDao
 
         $dataRowsToDelete = [];
         foreach ($storedDataRows as $rowKey => $storedRow) {
-            // the rows of a group that loses its activation row go with it through the
-            // ON DELETE CASCADE on (id, fieldname, groupId)
+            // a deactivated group's rows go with it through the ON DELETE CASCADE
             if (!isset($dataRows[$rowKey]) && !isset($groupIdsToDeleteMap[(int) $storedRow['groupId']])) {
                 $dataRowsToDelete[] = $storedRow;
             }
         }
 
-        // a data row cannot exist without the group row its composite foreign key points at, so
-        // the group rows are added first and the obsolete ones are removed last
-        // the group row is upserted rather than inserted, as it was before: it carries no column
-        // besides its primary key, so a row another writer added in the meantime stays as it is
+        // group rows are written first for the composite foreign key, upserted as before, and the obsolete ones last
         $this->insertRows(
             $groupsTable,
             self::GROUP_COLUMNS,
@@ -439,8 +435,7 @@ class Dao extends Model\Dao\AbstractDao
             $fd = $relationCache->getFieldDefinition($groupId, $keyId);
 
             if (!$fd) {
-                // the key is no longer assigned to the group - its value is still stored and is
-                // still read through the key config, as long as that one exists
+                // the key is no longer in the group - its value is still read through the key config, if that exists
                 $keyConfig = DefinitionCache::get($keyId);
                 if (!$keyConfig) {
                     Logger::error('Could not resolve key with ID: ' . $keyId);
