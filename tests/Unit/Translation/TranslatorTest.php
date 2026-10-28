@@ -312,6 +312,24 @@ class TranslatorTest extends TestCase
         $this->assertEquals($this->translations['fr']['simple_key'], $this->translator->trans('simple_key'));
     }
 
+    public function testInitializedCatalogueDoesNotQueryTheDatabase(): void
+    {
+        $this->translator->setLocale('de');
+        $this->assertEquals($this->translations['de']['simple_key'], $this->translator->trans('simple_key'));
+
+        $db = Db::get();
+        $selectsBefore = (int) $db->fetchAssociative("SHOW SESSION STATUS LIKE 'Com_select'")['Value'];
+
+        for ($i = 0; $i < 10; $i++) {
+            // the per-request memoization of Translation::isAValidDomain() does not survive e.g. Pimcore::collectGarbage()
+            RuntimeCache::clear();
+            $this->assertEquals($this->translations['de']['simple_key'], $this->translator->trans('simple_key'));
+        }
+
+        $selectsAfter = (int) $db->fetchAssociative("SHOW SESSION STATUS LIKE 'Com_select'")['Value'];
+        $this->assertSame(0, $selectsAfter - $selectsBefore, 'trans() must not query the database once the catalogue is initialized');
+    }
+
     public function testDatabaseTranslationsSurviveCatalogueDiscardedWhileInitializingFallback(): void
     {
         $symfonyTranslator = new class('de') extends SymfonyTranslator {
