@@ -8,6 +8,7 @@ on:
         types: [opened, synchronize, reopened]
         branches:
             - "2026.*"
+            - "cs-store-improvements"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
@@ -16,6 +17,7 @@ on:
         branches:
             - "2026.*"
             - "*_actions"
+            - "cs-store-improvements"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'   
