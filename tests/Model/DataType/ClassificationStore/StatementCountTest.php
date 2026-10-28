@@ -82,7 +82,7 @@ class StatementCountTest extends AbstractBatchedRelationTest
     public function testCheckValidityDoesNotScaleWithGroups(): void
     {
         $small = $this->createLocalizedPair('validity-small', 1, 1, 1);
-        $large = $this->createLocalizedPair('validity-large', 10, 1, 1);
+        $large = $this->createLocalizedPair('validity-large', 10, 1, 3);
 
         $smallCount = $this->measureCheckValidity($small);
         $largeCount = $this->measureCheckValidity($large);
@@ -91,7 +91,7 @@ class StatementCountTest extends AbstractBatchedRelationTest
         $this->assertSame(
             $smallCount,
             $largeCount,
-            'validating 10 groups against every valid language must cost what one group costs'
+            'validating 10 groups in 3 stored languages against every valid language must cost what one group costs'
             . ', measured ' . $smallCount . ' against ' . $largeCount . ' statements'
         );
     }
