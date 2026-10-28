@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
 use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -172,18 +173,21 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $validLanguages = $this->getValidLanguages();
 
+        $relationCache = $this->getKeyGroupRelationCache();
+        $relationCache->load(array_keys($activeGroupIds, true, true));
+
         foreach ($validLanguages as $language) {
             foreach ($activeGroupIds as $groupId => $enabled) {
                 if (!$enabled) {
                     continue;
                 }
 
-                $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                $relation->setCondition("`type` = 'calculatedValue' and groupId = " . $relation->quote($groupId));
-                $relation = $relation->load();
-                foreach ($relation as $key) {
-                    $keyId = $key->getKeyId();
-                    $childDef = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                foreach ($relationCache->getRelations($groupId) as $keyId => $key) {
+                    if ($key->getType() !== 'calculatedValue') {
+                        continue;
+                    }
+
+                    $childDef = $relationCache->getFieldDefinition($groupId, $keyId);
 
                     $childData = new DataObject\Data\CalculatedValue($this->getName());
                     $childData->setContextualData('classificationstore', $this->getName(), null, $language, $groupId, $keyId, $childDef);
@@ -210,6 +214,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inherited = false;
 
         $items = $data->getItems();
+
+        $relationCache = $this->getKeyGroupRelationCache();
+        $relationCache->load(array_keys($data->getActiveGroups(), true, true));
 
         foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
@@ -251,18 +258,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                 $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
+                $relationCache->load(array_keys($activeGroupIds, true, true));
+
                 foreach ($validLanguages as $language) {
                     foreach ($activeGroupIds as $groupId => $enabled) {
                         if (!$enabled) {
                             continue;
                         }
 
-                        $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                        $relation->setCondition('groupId = ' . $relation->quote($groupId));
-                        $relation = $relation->load();
-                        foreach ($relation as $key) {
-                            $keyId = $key->getKeyId();
-                            $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                        foreach (array_keys($relationCache->getRelations($groupId)) as $keyId) {
+                            $fd = $relationCache->getFieldDefinition($groupId, $keyId);
 
                             if ($fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
                                 $foundEmptyValue = true;
@@ -615,44 +620,37 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 );
             }
 
-            foreach ($activeGroups as $activeGroupId => $enabled) {
-                if ($enabled) {
-                    $groupDefinition = DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
-                    if (!$groupDefinition) {
-                        continue;
+            $relationCache = $this->getKeyGroupRelationCache();
+            $existingGroupIds = $this->getExistingGroupIds(array_keys($activeGroups, true, true));
+            $relationCache->load($existingGroupIds);
+
+            foreach ($existingGroupIds as $activeGroupId) {
+                foreach ($relationCache->getRelations($activeGroupId) as $keyId => $keyGroupRelation) {
+                    $keyDef = $relationCache->getMutableFieldDefinition($activeGroupId, $keyId);
+
+                    if ($keyGroupRelation->isMandatory()) {
+                        $keyDef->setMandatory(true);
                     }
 
-                    $keyGroupRelations = $groupDefinition->getRelations();
+                    foreach ($validLanguages as $validLanguage) {
+                        $object = $data->getObject();
+                        if ($object->getClass()->getAllowInherit()) {
+                            $value = DataObject\Service::useInheritedValues(
+                                true,
+                                fn () => $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                            );
+                        } else {
+                            $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
+                        }
 
-                    foreach ($keyGroupRelations as $keyGroupRelation) {
-                        foreach ($validLanguages as $validLanguage) {
-                            $keyId = $keyGroupRelation->getKeyId();
-
-                            $object = $data->getObject();
-                            if ($object->getClass()->getAllowInherit()) {
-                                $value = DataObject\Service::useInheritedValues(
-                                    true,
-                                    fn () => $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
-                                );
-                            } else {
-                                $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
-                            }
-
-                            $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition(), true), $keyGroupRelation->getType());
-
-                            if ($keyGroupRelation->isMandatory()) {
-                                $keyDef->setMandatory(true);
-                            }
-
-                            try {
-                                $keyDef->checkValidity($value, false, $params);
-                            } catch (Exception $exception) {
-                                $subItems[] = new Model\Element\ValidationException(
-                                    $exception->getMessage() . ' (' . $validLanguage . ')',
-                                    $exception->getCode(),
-                                    $exception->getPrevious()
-                                );
-                            }
+                        try {
+                            $keyDef->checkValidity($value, false, $params);
+                        } catch (Exception $exception) {
+                            $subItems[] = new Model\Element\ValidationException(
+                                $exception->getMessage() . ' (' . $validLanguage . ')',
+                                $exception->getCode(),
+                                $exception->getPrevious()
+                            );
                         }
                     }
                 }
@@ -850,6 +848,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
 
+        $relationCache = $this->getKeyGroupRelationCache();
+        $relationCache->load($filteredGroupIds);
+
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
         $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($filteredGroupIds), '?')) . ')', $filteredGroupIds);
 
@@ -859,16 +860,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         foreach ($groupList->load() as $group) {
             $keyList = [];
 
-            $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-            $relation->setCondition('`groupId` = ?', $group->getId());
-            $relation->setOrderKey(['sorter', 'id']);
-            $relation->setOrder(['ASC', 'ASC']);
-            $relation = $relation->load();
-            foreach ($relation as $keyGroupRelation) {
+            foreach ($relationCache->getRelations($group->getId()) as $keyId => $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
                 }
-                $definition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
+                $definition = $relationCache->getMutableFieldDefinition($group->getId(), $keyId);
 
                 // changes here also have an effect here: "https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/public/js/pimcore/object/tags/classificationstore.js"
                 $fallbackTooltip = $definition->getName();
@@ -980,6 +976,33 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         array_unshift($validLanguages, 'default');
 
         return $validLanguages;
+    }
+
+    private function getKeyGroupRelationCache(): DataObject\Classificationstore\KeyGroupRelationCache
+    {
+        return Pimcore::getContainer()->get(DataObject\Classificationstore\KeyGroupRelationCache::class);
+    }
+
+    /**
+     * @param int[] $groupIds
+     *
+     * @return int[] the given ids whose group config still exists, in the order given
+     */
+    private function getExistingGroupIds(array $groupIds): array
+    {
+        if (!$groupIds) {
+            return [];
+        }
+
+        $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
+        $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($groupIds), '?')) . ')', $groupIds);
+
+        $existingIds = [];
+        foreach ($groupList->load() as $group) {
+            $existingIds[] = $group->getId();
+        }
+
+        return array_values(array_intersect($groupIds, $existingIds));
     }
 
     public function getHideEmptyData(): bool

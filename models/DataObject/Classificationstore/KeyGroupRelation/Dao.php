@@ -12,6 +12,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -72,6 +73,8 @@ class Dao extends AbstractDao
             'keyId' => $this->model->getKeyId(),
             'groupId' => $this->model->getGroupId(),
         ]);
+
+        $this->clearRelationCache();
     }
 
     public function update(): void
@@ -94,5 +97,18 @@ class Dao extends AbstractDao
         }
 
         Helper::upsert($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
+
+        $this->clearRelationCache();
+    }
+
+    /**
+     * A relation dispatches no event, so the process-scoped relation cache is invalidated here -
+     * which covers every caller that goes through the model.
+     */
+    private function clearRelationCache(): void
+    {
+        Pimcore::getContainer()
+            ->get(Classificationstore\KeyGroupRelationCache::class)
+            ->clearGroup($this->model->getGroupId());
     }
 }
