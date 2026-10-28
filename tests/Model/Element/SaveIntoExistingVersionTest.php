@@ -115,6 +115,30 @@ class SaveIntoExistingVersionTest extends ModelTestCase
     }
 
     /**
+     * The version keeps its author when it is published by another user, the publisher is the element's user
+     * modification
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testPublishingAVersionKeepsItsAuthor(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $authorId = $draft->getUserId();
+        $publisher = $this->createAdminUser();
+        $this->assertNotSame($publisher->getId(), $authorId, 'the draft must have another author than the publisher');
+
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $restored->setUserModification($publisher->getId());
+        $restored->save(['existingVersion' => $draft]);
+
+        $this->assertSame($authorId, (int) Db::get()->fetchOne('SELECT userId FROM versions WHERE id = ?', [$draft->getId()]), 'the version must keep its author');
+        $this->assertSame($publisher->getId(), $this->reload($element)->getUserModification(), 'the publisher must be the element\'s user modification');
+    }
+
+    /**
      * With a retention policy of zero versions a regular save adds no version, writing into an existing version
      * must still happen: otherwise the version isn't published although the save succeeded
      *
