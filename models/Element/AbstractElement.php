@@ -669,7 +669,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * Resolves the `existingVersion` save parameter: the version the saved state is written into instead of a new one,
-     * it must belong to this element
+     * it must belong to this element and must not be an auto-save version
      *
      * @throws InvalidArgumentException
      *
@@ -688,6 +688,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         if ($existingVersion !== null) {
             $this->assertVersionBelongsToElement($existingVersion);
+
+            // auto-save versions are rewritten by the editor of their user at any time, writing into them would race
+            // with that, so they are saved as a new version
+            if ($existingVersion->isAutoSave()) {
+                throw new InvalidArgumentException(sprintf(
+                    'Version %d is an auto-save version and cannot be written into, save it as a new version instead',
+                    $existingVersion->getId()
+                ));
+            }
         }
 
         return $existingVersion;

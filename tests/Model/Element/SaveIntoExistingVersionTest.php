@@ -170,6 +170,54 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $this->assertSame($other->getId(), Version::getById($otherVersion->getId())?->getCid(), 'the version must still belong to the other element');
     }
 
+    /**
+     * Auto-save versions are rewritten by the editor of their user at any time, writing into them would race with that
+     */
+    public function testAnAutoSaveVersionIsRejected(): void
+    {
+        $element = $this->createFreshElement('object');
+        $autoSave = $element->saveVersion(true, true, null, true);
+        $this->assertNotNull($autoSave, 'expected an auto-save version to be saved');
+
+        try {
+            $element->save(['existingVersion' => $autoSave]);
+            $this->fail('saving into an auto-save version must be rejected');
+        } catch (InvalidArgumentException) {
+        }
+
+        $this->assertTrue(Version::getById($autoSave->getId())?->isAutoSave(), 'the auto-save version must be untouched');
+    }
+
+    /**
+     * A scheduled auto-save version is published as a new version, as before
+     */
+    public function testScheduledPublishVersionPublishesAnAutoSaveVersionAsANewVersion(): void
+    {
+        $element = $this->createFreshElement('object');
+        $autoSave = $element->saveVersion(true, true, null, true);
+        $this->assertNotNull($autoSave, 'expected an auto-save version to be saved');
+        $versionCountBefore = $this->countVersions($element);
+
+        $task = Task::create([
+            'cid' => $element->getId(),
+            'ctype' => 'object',
+            'date' => time() - 60,
+            'action' => 'publish-version',
+            'version' => $autoSave->getId(),
+            'active' => true,
+            'userId' => $this->createAdminUser()->getId(),
+        ]);
+        $task->save();
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $published = $this->reload($element);
+        $this->assertSame($versionCountBefore + 1, $this->countVersions($element), 'the auto-save version must be published as a new version');
+        $this->assertTrue(Version::getById($autoSave->getId())?->isAutoSave(), 'the auto-save version must be untouched');
+        $this->assertNotSame($autoSave->getId(), $published->getLatestVersion(null, true)?->getId(), 'a new version must be the current one');
+        $this->assertSame(0, (int) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]), 'the task must be done');
+    }
+
     public function testAnInvalidExistingVersionParameterIsRejected(): void
     {
         $element = $this->createFreshElement('object');
