@@ -24,6 +24,7 @@ use DeepCopy\Matcher\PropertyTypeMatcher;
 use DeepCopy\TypeFilter\TypeFilter;
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
 use InvalidArgumentException;
@@ -1192,12 +1193,50 @@ class Service extends Model\AbstractModel
                 $folder->setCreationDate(time());
                 $folder->setModificationDate(time());
                 $folder->setValues($options);
-                $folder->save();
+
+                try {
+                    $folder->save();
+                } catch (Exception $e) {
+                    // another request may have created the same folder since the pathExists() check above (e.g.
+                    // parallel uploads of a folder in the admin), continue with that folder then
+                    $folder = self::getConcurrentlyCreatedFolder($e, $type, $folderType, $currentPath);
+                }
+
                 $lastFolder = $folder;
             }
         }
 
         return $lastFolder;
+    }
+
+    /**
+     * Returns the folder at $path if saving a new folder there failed because the path was taken by a concurrent
+     * request in the meantime, otherwise rethrows the exception of the failed save.
+     *
+     * @throws Exception
+     */
+    private static function getConcurrentlyCreatedFolder(
+        Exception $exception,
+        string $type,
+        string $folderType,
+        string $path
+    ): Asset\Folder|DataObject\Folder|Document\Folder {
+        // the duplicate is either found by correctPath() before the insert, or the unique index on the full path
+        // rejects the insert (wrapped in a ValidationException for data objects)
+        for ($e = $exception; $e !== null; $e = $e->getPrevious()) {
+            if ($e instanceof DuplicateFullPathException || $e instanceof UniqueConstraintViolationException) {
+                // the failed save has rolled back its transaction already. Within an outer transaction the folder
+                // of the other request might not be visible, the original exception is thrown then
+                $folder = $type::getByPath($path, ['force' => true]);
+                if ($folder instanceof $folderType) {
+                    return $folder;
+                }
+
+                break;
+            }
+        }
+
+        throw $exception;
     }
 
     /**
