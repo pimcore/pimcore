@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Console\Traits;
 
+use Pimcore\Console\Exception\CommandAlreadyRunningException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +27,20 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
             \Webmozarts\Console\Parallelization\Parallelization::execute as parentExecute;
         }
 
+        /**
+         * A run that finds the command already running (see
+         * Parallelization::runBeforeFirstCommand()) has nothing to do and succeeds,
+         * like Symfony's LockableTrait example.
+         */
+        protected function execute(InputInterface $input, OutputInterface $output): int
+        {
+            try {
+                return $this->parentExecute($input, $output);
+            } catch (CommandAlreadyRunningException) {
+                return Command::SUCCESS;
+            }
+        }
+
         protected static function configureCommand(Command $command): void
         {
             ParallelizationInput::configureCommand($command);
@@ -36,7 +51,11 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
     {
         public function execute(InputInterface $input, OutputInterface $output): int
         {
-            $this->runBeforeFirstCommand($input, $output);
+            try {
+                $this->runBeforeFirstCommand($input, $output);
+            } catch (CommandAlreadyRunningException) {
+                return Command::SUCCESS;
+            }
 
             $items = $this->fetchItems($input, $output);
 

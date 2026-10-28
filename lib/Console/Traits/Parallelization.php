@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Console\Traits;
 
 use Pimcore;
+use Pimcore\Console\Exception\CommandAlreadyRunningException;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,11 +43,18 @@ trait Parallelization
             ->withRunAfterBatch($this->runAfterBatch(...));
     }
 
+    /**
+     * @throws CommandAlreadyRunningException when another process holds the command's lock
+     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         if (!$this->lock()) {
             $this->writeError('The command is already running.');
-            exit(1);
+
+            // Not exit(): that would skip the console.terminate event and everything
+            // else the Application does after a command. ParallelizationBase::execute()
+            // catches this and ends the run.
+            throw new CommandAlreadyRunningException();
         }
     }
 
