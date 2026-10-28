@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -272,6 +274,116 @@ class SaveDiffTest extends AbstractBatchedRelationTest
         );
     }
 
+    /**
+     * Two spellings of one language in the same items address one and the same row, under that
+     * same collation. The last of them is the one that is stored - with its value and with its
+     * spelling - as it was when every item was written in order.
+     */
+    public function testSimultaneousLanguageAliasesKeepTheLastEntry(): void
+    {
+        $this->saveStore(function (Classificationstore $store): void {
+            $store->setItems([
+                $this->groupA->getId() => [
+                    $this->key1->getId() => ['en' => 'lowercase'],
+                ],
+            ]);
+        });
+
+        $this->saveStore(function (Classificationstore $store): void {
+            $store->setItems([
+                $this->groupA->getId() => [
+                    $this->key1->getId() => ['EN' => 'uppercase', 'en' => 'lowercase'],
+                ],
+            ]);
+        });
+
+        $this->assertStoredRows(
+            [$this->dataRow($this->groupA->getId(), $this->key1->getId(), 'lowercase', null, 'en')],
+            [$this->groupA->getId()]
+        );
+    }
+
+    /**
+     * The same two spellings, reached one setLocalizedKeyValue() at a time rather than through an
+     * import, and with no row of that key stored yet.
+     */
+    public function testLanguageAliasesSetThroughSetLocalizedKeyValueKeepTheLastEntry(): void
+    {
+        $this->saveStore(function (Classificationstore $store): void {
+            $store->setLocalizedKeyValue($this->groupA->getId(), $this->key1->getId(), 'lowercase', 'en');
+            $store->setLocalizedKeyValue($this->groupA->getId(), $this->key1->getId(), 'uppercase', 'EN');
+        });
+
+        $this->assertStoredRows(
+            [
+                $this->dataRow($this->groupA->getId(), $this->key1->getId(), self::VALUE_1),
+                $this->dataRow($this->groupA->getId(), $this->key1->getId(), 'uppercase', null, 'EN'),
+                $this->dataRow($this->groupA->getId(), $this->key2->getId(), self::VALUE_2),
+            ],
+            [$this->groupA->getId()]
+        );
+    }
+
+    /**
+     * The save writes what differs from what is stored, so it has to read what is stored now
+     * rather than what its transaction's snapshot held when it opened: a value another connection
+     * committed in between must not be mistaken for the value this save is about to write and
+     * skipped. The second key is only there to make the store dirty - the first one is saved with
+     * the value the snapshot reports it already has.
+     */
+    public function testAValueCommittedAfterTheSnapshotIsStillOverwritten(): void
+    {
+        $groupId = $this->groupA->getId();
+        $connection = Db::get();
+        $otherConnection = $this->openSecondConnection();
+
+        $store = $this->reloadStore();
+        $store->setLocalizedKeyValue($groupId, $this->key2->getId(), 'changed');
+
+        $connection->beginTransaction();
+
+        try {
+            // establishes the snapshot of this transaction
+            $this->assertSame(self::VALUE_1, $this->grabValue($connection, $this->key1->getId()));
+
+            $otherConnection->update(
+                $this->getDataTableName(),
+                ['value' => 'concurrent'],
+                [
+                    'id' => $this->object->getId(),
+                    'fieldname' => self::FIELDNAME,
+                    'groupId' => $groupId,
+                    'keyId' => $this->key1->getId(),
+                    'language' => self::DEFAULT_LANGUAGE,
+                ]
+            );
+
+            $this->assertSame('concurrent', $this->grabValue($otherConnection, $this->key1->getId()));
+            $this->assertSame(
+                self::VALUE_1,
+                $this->grabValue($connection, $this->key1->getId()),
+                'the snapshot of this transaction still reports the value it read first'
+            );
+
+            $store->save();
+
+            $connection->commit();
+        } finally {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            $otherConnection->close();
+        }
+
+        $this->assertStoredRows(
+            [
+                $this->dataRow($groupId, $this->key1->getId(), self::VALUE_1),
+                $this->dataRow($groupId, $this->key2->getId(), 'changed'),
+            ],
+            [$groupId]
+        );
+    }
+
     public function testDenormalize(): void
     {
         if ($this->getStoreId() !== 1) {
@@ -432,6 +544,25 @@ class SaveDiffTest extends AbstractBatchedRelationTest
         $this->object = Csstore::getById($this->object->getId(), ['force' => true]);
 
         return $this->object->getCsstore();
+    }
+
+    private function openSecondConnection(): Connection
+    {
+        return DriverManager::getConnection(Db::get()->getParams());
+    }
+
+    /**
+     * The stored value of a key in the default language, as the given connection sees it.
+     */
+    private function grabValue(Connection $connection, int $keyId): ?string
+    {
+        $value = $connection->fetchOne(
+            'SELECT `value` FROM `' . $this->getDataTableName() . '` WHERE `id` = ? AND `fieldname` = ?'
+            . ' AND `keyId` = ? AND `language` = ?',
+            [$this->object->getId(), self::FIELDNAME, $keyId, self::DEFAULT_LANGUAGE]
+        );
+
+        return $value === false ? null : (string) $value;
     }
 
     private function getDataTableName(): string

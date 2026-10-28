@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Normalizer\NormalizerInterface;
+use Throwable;
 
 /**
  * @internal
@@ -203,9 +204,18 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Writes only the rows that differ: the stored rows for (object, fieldname) are read back and
-     * diffed against the rows above, and what remains is emitted as multi-row statements. The
-     * stored outcome is the one the former delete-and-reinsert produced, row for row.
+     * Writes only the rows that differ, under a transaction that covers the whole operation.
+     *
+     * What is written is decided from what the tables hold, so the read and the writes that
+     * follow it have to see one state and hold it. A store saved as part of its object runs
+     * inside the object's save transaction, which may have read from the database before this
+     * point: under REPEATABLE READ its snapshot can predate a save another connection has
+     * committed since, and the object's row lock - taken by
+     * {@see DataObject\AbstractObject::save()} - serializes the two saves but does not refresh
+     * that snapshot. A row that the snapshot reports as already holding the value would then be
+     * skipped, leaving the other connection's value stored. {@see self::readRowsForUpdate()}
+     * therefore reads both tables as of now, and holds them. A store saved on its own gets a
+     * transaction of its own here, so that its locks cover its writes as well.
      *
      * @param array<int, array<string, mixed>> $groupRows groupId => group activation row
      * @param array<string, array<string, mixed>> $dataRows row key => data row
@@ -214,20 +224,46 @@ class Dao extends Model\Dao\AbstractDao
      */
     private function persistRows(array $groupRows, array $dataRows): void
     {
+        $ownTransaction = !$this->db->isTransactionActive();
+        if ($ownTransaction) {
+            $this->db->beginTransaction();
+        }
+
+        try {
+            $this->writeRowDiff($groupRows, $this->reconcileLanguageAliases($dataRows));
+        } catch (Throwable $exception) {
+            if ($ownTransaction) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+
+        if ($ownTransaction) {
+            $this->db->commit();
+        }
+    }
+
+    /**
+     * The stored rows for (object, fieldname) are read back and diffed against the rows the save
+     * describes, and what remains is emitted as multi-row statements. The stored outcome is the
+     * one the former delete-and-reinsert produced, row for row.
+     *
+     * @param array<int, array<string, mixed>> $groupRows groupId => group activation row
+     * @param array<string, array<string, mixed>> $dataRows row key => data row
+     *
+     * @throws Exception
+     */
+    private function writeRowDiff(array $groupRows, array $dataRows): void
+    {
         $objectId = $this->model->getObject()->getId();
         $fieldname = $this->model->getFieldname();
         $groupsTable = $this->getGroupsTableName();
         $dataTable = $this->getDataTableName();
 
-        $storedGroupIds = $this->db->fetchFirstColumn(
-            'SELECT `groupId` FROM `' . $groupsTable . '` WHERE `id` = ? AND `fieldname` = ?',
-            [$objectId, $fieldname]
-        );
+        $storedGroupIds = array_column($this->readRowsForUpdate($groupsTable, $objectId, $fieldname), 'groupId');
         $storedDataRows = [];
-        foreach ($this->db->fetchAllAssociative(
-            'SELECT * FROM `' . $dataTable . '` WHERE `id` = ? AND `fieldname` = ?',
-            [$objectId, $fieldname]
-        ) as $storedRow) {
+        foreach ($this->readRowsForUpdate($dataTable, $objectId, $fieldname) as $storedRow) {
             $storedDataRows[$this->getDataRowKey($storedRow)] = $storedRow;
         }
 
@@ -267,11 +303,75 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * The stored rows of one (object, fieldname), read as of now and locked until the end of the
+     * transaction: a locking read is not answered from the transaction's snapshot, so the diff
+     * decides against what the table holds, and no other connection can change these rows while
+     * the writes that follow are being made. Both tables are read through the leading columns of
+     * their primary key, so the rows this object owns are all that is locked - the range the
+     * former delete-and-reinsert locked as well.
+     *
+     * @return array<array<string, mixed>>
+     *
+     * @throws Exception
+     */
+    private function readRowsForUpdate(string $table, ?int $objectId, string $fieldname): array
+    {
+        return $this->db->fetchAllAssociative(
+            'SELECT * FROM `' . $table . '` WHERE `id` = ? AND `fieldname` = ? FOR UPDATE',
+            [$objectId, $fieldname]
+        );
+    }
+
+    /**
+     * The rows to save, with at most one of them per row the value table can hold.
+     *
+     * {@see self::getDataRowKey()} tells two rows apart by the exact spelling of their language,
+     * while the primary key of the value table compares it under utf8mb4_unicode_520_ci, where
+     * `EN` and `en` are one and the same row. Items that carry both spellings - an import through
+     * setItems(), or two setLocalizedKeyValue() calls whose languages differ only in case - would
+     * otherwise be diffed as two rows against the one stored row, and which of their values
+     * survived would follow from the diff rather than from the items. The former save wrote every
+     * item in order and left the last one standing, which is what is kept here: of a set of
+     * spellings the last one, with its value and its own spelling, and the earlier ones are
+     * dropped before the diff sees them.
+     *
+     * @param array<string, array<string, mixed>> $dataRows
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function reconcileLanguageAliases(array $dataRows): array
+    {
+        $rowKeysByStoredKey = [];
+        foreach ($dataRows as $rowKey => $row) {
+            $rowKeysByStoredKey[$this->getStoredDataRowKey($row)] = $rowKey;
+        }
+
+        if (count($rowKeysByStoredKey) === count($dataRows)) {
+            return $dataRows;
+        }
+
+        return array_intersect_key($dataRows, array_flip($rowKeysByStoredKey));
+    }
+
+    /**
      * @param array<string, mixed> $row
      */
     private function getDataRowKey(array $row): string
     {
         return $row['groupId'] . '-' . $row['keyId'] . '-' . $row['language'];
+    }
+
+    /**
+     * The row key as the primary key of the value table reads it. Of the characters a language
+     * can hold, what utf8mb4_unicode_520_ci equates is the case of its letters and, as a PAD
+     * SPACE collation, the spaces it ends on.
+     *
+     * @param array<string, mixed> $row
+     */
+    private function getStoredDataRowKey(array $row): string
+    {
+        return $row['groupId'] . '-' . $row['keyId'] . '-'
+            . rtrim(mb_strtolower((string) $row['language']), ' ');
     }
 
     /**
