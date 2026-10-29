@@ -170,4 +170,89 @@ class UseInheritedPropertiesTest extends Unit
         $this->assertSame([], $filtered);
         $this->assertSame(['own', 'inherited'], array_keys($wrapper->getProperties()));
     }
+
+    private function createSourcePage(): Page
+    {
+        $page = new Page();
+        $page->setProperties([
+            'src_own' => (new Property())->setName('src_own')->setType('text')->setData('s')->setInherited(false),
+        ]);
+
+        return $page;
+    }
+
+    private function createHardlinkWithSource(Page $source, bool $propertiesFromSource): Hardlink
+    {
+        $dao = $this->createMock(Dao::class);
+        $dao->method('getProperties')->willReturn($this->createProperties());
+
+        $hardlink = new class ($source) extends Hardlink {
+            public function __construct(private readonly Page $source)
+            {
+            }
+
+            public function getSourceDocument(): Page
+            {
+                return $this->source;
+            }
+        };
+        $hardlink->setId(999999992);
+        $hardlink->setDao($dao);
+        $hardlink->setPropertiesFromSource($propertiesFromSource);
+
+        return $hardlink;
+    }
+
+    public function testHardlinkWithPropertiesFromSourceMergesTheSourcePropertiesAsInherited(): void
+    {
+        $hardlink = $this->createHardlinkWithSource($this->createSourcePage(), true);
+
+        $all = $hardlink->getProperties();
+        $this->assertSame(['src_own', 'own', 'inherited'], array_keys($all));
+        $this->assertTrue($all['src_own']->isInherited());
+
+        $filtered = Service::useInheritedProperties(false, static fn () => array_keys($hardlink->getProperties()));
+        $this->assertSame(['own'], $filtered);
+        $this->assertSame(['src_own', 'own', 'inherited'], array_keys($hardlink->getProperties()));
+        $this->assertTrue(AbstractElement::getGetInheritedProperties());
+    }
+
+    public function testHardlinkWithSourceDocumentReadsTheSourceDaoWithoutPropertiesFromSource(): void
+    {
+        $sourceDao = $this->createMock(Dao::class);
+        $sourceDao->method('getProperties')->willReturn([
+            'dao_prop' => (new Property())->setName('dao_prop')->setType('text')->setData('d')->setInherited(false),
+        ]);
+        $source = new Page();
+        $source->setDao($sourceDao);
+
+        $hardlink = $this->createHardlinkWithSource($source, false);
+
+        $filtered = Service::useInheritedProperties(false, static fn () => array_keys($hardlink->getProperties()));
+
+        $this->assertSame(['own'], $filtered);
+        $all = $hardlink->getProperties();
+        $this->assertSame(['dao_prop', 'own', 'inherited'], array_keys($all));
+        $this->assertTrue($all['dao_prop']->isInherited());
+    }
+
+    public function testHardlinkWrapperWithSourceDocumentUsesTheSourcePropertiesAndKeepsTheStoredListComplete(): void
+    {
+        $hardlink = new Hardlink();
+        $hardlink->setPropertiesFromSource(true);
+        $hardlink->setProperties([
+            'hl_prop' => (new Property())->setName('hl_prop')->setType('text')->setData('h')->setInherited(false),
+        ]);
+
+        $wrapper = new WrapperPage();
+        $wrapper->setHardLinkSource($hardlink);
+        $wrapper->setSourceDocument($this->createSourcePage());
+
+        $filtered = Service::useInheritedProperties(false, static fn () => array_keys($wrapper->getProperties()));
+
+        // the source document's own property survives, the hardlink's property is marked inherited and dropped
+        $this->assertSame(['src_own'], $filtered);
+        $this->assertSame(['src_own', 'hl_prop'], array_keys($wrapper->getProperties()));
+        $this->assertTrue(AbstractElement::getGetInheritedProperties());
+    }
 }
