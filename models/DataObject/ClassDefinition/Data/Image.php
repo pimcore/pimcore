@@ -227,6 +227,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
         $this->uploadPath = $mainDefinition->uploadPath;
+        $this->searchPath = $mainDefinition->searchPath;
     }
 
     public function isFilterable(): bool
