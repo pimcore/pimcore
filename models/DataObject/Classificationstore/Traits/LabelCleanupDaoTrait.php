@@ -24,6 +24,8 @@ use Throwable;
  * Only the entity's own labels go. Deleting a store leaves its groups, keys and collections in
  * place, so it leaves their labels in place too.
  *
+ * The using DAO has to use {@see IdentifierDaoTrait} as well, which carries the transaction helper.
+ *
  * @internal
  */
 trait LabelCleanupDaoTrait
