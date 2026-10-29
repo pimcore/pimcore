@@ -41,6 +41,8 @@ final class LabelResolverTest extends ModelTestCase
 
     private const LANGUAGE_DE = 'de';
 
+    private const LANGUAGE_DE_UPPER = 'DE';
+
     private const LANGUAGE_DE_AT = 'de_AT';
 
     private const LANGUAGE_EN = 'en';
@@ -316,6 +318,27 @@ final class LabelResolverTest extends ModelTestCase
 
         $this->assertSame(self::TITLE_DE, $this->resolver()->getTitle($store, self::LANGUAGE_DE));
         $this->assertNull($this->resolver()->getDescription($store, self::LANGUAGE_DE));
+    }
+
+    /**
+     * The row a statement finds and the key it is then held under have to be the same string.
+     * Were the `language` column compared case-insensitively, the `DE` row would answer the `de`
+     * statement and be held under `DE`, next to the `de` entry the walk prefilled with null and
+     * reads instead - and the `de` write would land on the `DE` row rather than beside it, so the
+     * translation would be lost for good.
+     */
+    public function testALabelWrittenForADifferentlyCasedLanguageStaysBesideTheRequestedOne(): void
+    {
+        $key = $this->createEntity(LabelEntityType::Key);
+        $this->assertInstanceOf(KeyConfig::class, $key);
+        $keyId = (int) $key->getId();
+
+        $this->writeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_DE_UPPER, self::TITLE_UPDATED, null);
+        $this->writeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_DE, self::TITLE_DE, self::DESCRIPTION_DE);
+
+        $this->assertSame(2, $this->countLabels(LabelEntityType::Key, $keyId));
+        $this->assertSame(self::TITLE_DE, $this->resolver()->getTitle($key, self::LANGUAGE_DE));
+        $this->assertSame(self::DESCRIPTION_DE, $this->resolver()->getDescription($key, self::LANGUAGE_DE));
     }
 
     public function testTheResolverIsResettableAndSeesALabelWrittenInTheSameRequest(): void

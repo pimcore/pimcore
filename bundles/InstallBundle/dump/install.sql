@@ -698,8 +698,8 @@ CREATE TABLE `classificationstore_collectionrelations` (
 DROP TABLE IF EXISTS `classificationstore_labels`;
 CREATE TABLE `classificationstore_labels` (
 	`entityType` ENUM('store','collection','group','subgroup','key') NOT NULL,
-	`entityId` INT(11) NOT NULL,
-	`language` VARCHAR(10) NOT NULL,
+	`entityId` BIGINT NOT NULL,
+	`language` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
 	`title` VARCHAR(255) NULL DEFAULT NULL,
 	`description` TEXT NULL,
 	PRIMARY KEY (`entityType`, `entityId`, `language`)
