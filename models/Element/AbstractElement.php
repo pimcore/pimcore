@@ -243,14 +243,46 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->properties = $properties;
         }
 
-        $properties = $this->properties;
-        if (!static::getGetInheritedProperties()) {
-            $properties = array_filter($properties, static function (Model\Property $property) {
-                return !$property->isInherited();
-            });
+        return $this->filterInheritedProperties($this->properties);
+    }
+
+    /**
+     * Drops the inherited properties when the inheritance of properties is switched off
+     * (see Service::useInheritedProperties()). Only the returned list is filtered, never the stored one.
+     *
+     * @internal
+     *
+     * @param array<string, Model\Property> $properties
+     *
+     * @return array<string, Model\Property>
+     */
+    protected function filterInheritedProperties(array $properties): array
+    {
+        if (static::getGetInheritedProperties()) {
+            return $properties;
         }
 
-        return $properties;
+        return array_filter($properties, static function (Model\Property $property) {
+            return !$property->isInherited();
+        });
+    }
+
+    /**
+     * The properties including the inherited ones, independent of the inheritance setting. Used wherever the list is
+     * changed and written back, so that switching the inheritance off cannot drop inherited properties for good.
+     *
+     * @return array<string, Model\Property>
+     */
+    private function getPropertiesIncludingInherited(): array
+    {
+        $backup = static::getGetInheritedProperties();
+        static::setGetInheritedProperties(true);
+
+        try {
+            return $this->getProperties();
+        } finally {
+            static::setGetInheritedProperties($backup);
+        }
     }
 
     public function setProperties(?array $properties): static
@@ -268,7 +300,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         bool $inherited = false,
         bool $inheritable = false
     ): static {
-        $properties = $this->getProperties();
+        $properties = $this->getPropertiesIncludingInherited();
 
         $id = $this->getId();
         $property = new Model\Property();
@@ -364,7 +396,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function removeProperty(string $name): void
     {
-        $properties = $this->getProperties();
+        $properties = $this->getPropertiesIncludingInherited();
         unset($properties[$name]);
         $this->setProperties($properties);
     }

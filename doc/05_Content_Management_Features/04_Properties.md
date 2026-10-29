@@ -26,6 +26,20 @@ Properties control rendering behavior in templates. Common use cases:
 {% set hideNavigation = document.getProperty('hideNavigation') %}
 ```
 
+## Inherited Properties
+
+Properties marked as inheritable are also returned by `getProperties()` and `getProperty()` of the child elements
+(assets, documents and data objects). To get only the properties an element has itself, switch the inheritance off for
+a piece of code with `Pimcore\Model\Element\Service::useInheritedProperties()`; the previous setting is restored
+afterwards, also when the callable throws:
+
+```php
+use Pimcore\Model\Element\Service;
+
+$ownProperties = Service::useInheritedProperties(false, static fn () => $document->getProperties());
+```
+
+Inside the callable, `setProperty()` and `removeProperty()` keep the inherited properties of the element.
 
 ## Predefined Properties
 
