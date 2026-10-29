@@ -546,6 +546,8 @@ class Asset extends Element\AbstractElement
 
                 $parameters = $preEvent->getArguments();
 
+                $this->assertExistingVersionCanBeWritten($parameters);
+
                 $this->correctPath();
 
                 // need for $this->update() for certain types (image, video, document)
@@ -610,7 +612,7 @@ class Asset extends Element\AbstractElement
                     // an asset which is modified already got a version of its persisted state before this transaction
                     /** @var bool $isUpdate assigned by reference in beforeRetryables */
                     if ($isUpdate || !self::isInitialVersionSkipped()) {
-                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null, $parameters);
                     } else {
                         // scheduled tasks are saved always, they are not versioned (see saveVersion())
                         $this->saveScheduledTasks();
@@ -1117,8 +1119,39 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * The binary data is written to the storage before the version is saved and the storage isn't transactional,
+     * so the `existingVersion` save parameter is validated before anything is changed: the version must belong to
+     * this asset and keep its binary data (see Version::save())
+     *
+     * @throws InvalidArgumentException
+     */
+    private function assertExistingVersionCanBeWritten(array $parameters): void
+    {
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
+        if ($existingVersion === null || $this->getType() === 'folder') {
+            return;
+        }
+
+        $binaryFileHash = $existingVersion->getBinaryFileHash();
+        if ($binaryFileHash === null) {
+            return;
+        }
+
+        $ctx = hash_init('sha3-512');
+        hash_update_stream($ctx, $this->getStream());
+        if (!hash_equals($binaryFileHash, hash_final($ctx))) {
+            throw new InvalidArgumentException(sprintf(
+                'The binary data of asset %d differs from the one of version %d, it can only be saved as a new version',
+                $this->getId(),
+                $existingVersion->getId()
+            ));
+        }
+    }
+
+    /**
      * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
-     * with custom arguments that are passed on to the versioning events. It will become a regular
+     * with custom arguments that are passed on to the versioning events; `existingVersion` (Version)
+     * writes the version data into that version instead of creating a new one. It will become a regular
      * method parameter in the next major version.
      *
      * @param string|null $versionNote version note
@@ -1134,6 +1167,7 @@ class Asset extends Element\AbstractElement
         }
         $coreParameters = ['saveVersionOnly' => true];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             // hook should be also called if "save only new version" is selected
@@ -1162,10 +1196,11 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            if (self::isVersionCreationEnabledByConfig() || $setModificationDate) {
+            // with an existing version that version is written into, no version is added
+            if (self::isVersionCreationEnabledByConfig() || $setModificationDate || $existingVersion !== null) {
                 $assetsConfig = SystemSettingsConfig::get()['assets'];
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, false, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
