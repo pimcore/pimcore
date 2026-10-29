@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore\Element\MarshallerService;
+use Pimcore\Marshaller\MarshallerInterface;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -47,7 +48,10 @@ use Throwable;
  *
  * Values are stored as what {@see NormalizerInterface::normalize()} returns, with one named
  * exception: the `encryptedField` marshaller does not pack a value into two columns, it encrypts it,
- * so skipping it would store secrets in cleartext. {@see self::encodesThroughItsMarshaller()}.
+ * so skipping it would store secrets in cleartext. {@see self::encodesThroughItsMarshaller()}. That
+ * encryption is randomized, so a value that encodes through it keeps the string the document already
+ * holds as long as it is still the same value - otherwise every save would rewrite every group that
+ * carries a secret. {@see self::encodesTheSameValue()}.
  *
  * @internal
  */
@@ -140,25 +144,24 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return;
         }
 
-        $object = $classificationStore->getObject();
         $items = $classificationStore->getItems();
         $activeGroups = $classificationStore->getActiveGroups();
         $collectionMapping = $this->getCollectionMappingToStore($classificationStore);
 
-        // the loop below resolves a key config per key, which on a cold cache - a save that did
-        // not load the store first - would be a statement each
+        // the serialization below resolves a key config per key, which on a cold cache - a save
+        // that did not load the store first - would be a statement each
         DefinitionCache::load($this->getItemKeyIds($items, $activeGroups));
 
-        $documents = [];
+        $groups = [];
 
         foreach (array_keys($activeGroups) as $groupId) {
-            $documents[$groupId] = [
+            $groups[$groupId] = [
                 'collectionId' => $collectionMapping[$groupId] ?? null,
-                'values' => $this->serializeDocument($object, $items[$groupId] ?? []),
+                'keys' => $items[$groupId] ?? [],
             ];
         }
 
-        $this->persistDocuments($classificationStore, $documents);
+        $this->persistDocuments($classificationStore, $groups);
     }
 
     public function delete(Classificationstore $classificationStore): void
@@ -306,22 +309,36 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * Two spellings of one language that differ only in case are one and the same value, as they are
      * under the primary key of the EAV value table: the last of them is kept, with its own spelling.
      *
+     * A value that encodes through a randomized marshaller is compared against what the stored
+     * document holds for that key and language, so that it serializes to the string it already had
+     * when it is still the same value. The stored document is read back only for a key of that kind,
+     * as an ordinary value encodes to the same string whatever is stored.
+     *
      * @param array<int, array<string, mixed>> $keys structure: [keyId][language] = value
      *
      * @throws Exception
      */
-    private function serializeDocument(?Concrete $object, array $keys): string
+    private function serializeDocument(?Concrete $object, array $keys, ?string $storedDocument): string
     {
         $document = [];
+        $storedKeys = null;
 
         foreach ($keys as $keyId => $keyData) {
             $fd = Service::getFieldDefinitionFromKeyConfig(DefinitionCache::get((int) $keyId));
             $entries = [];
+            $storedEntries = [];
+
+            if ($fd instanceof Data && $this->encodesThroughItsMarshaller($fd)) {
+                $storedKeys ??= $storedDocument === null ? [] : $this->deserializeDocument($storedDocument);
+                $storedEntries = $storedKeys[(int) $keyId] ?? [];
+            }
 
             foreach ($keyData as $language => $value) {
-                $entries[$this->getLanguageAlias((string) $language)] = $this->buildEntry(
+                $languageAlias = $this->getLanguageAlias((string) $language);
+
+                $entries[$languageAlias] = $this->buildEntry(
                     (string) $language,
-                    $this->encodeValue($fd, $value, $object)
+                    $this->encodeValue($fd, $value, $object, $this->getStoredValue($storedEntries, $languageAlias))
                 );
             }
 
@@ -434,7 +451,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         return rtrim(mb_strtolower($language), ' ');
     }
 
-    private function encodeValue(?Data $fd, mixed $value, ?Concrete $object): mixed
+    /**
+     * @param mixed $storedValue what the stored document holds for this key and language, against
+     *                           which a randomized encoding is compared
+     */
+    private function encodeValue(?Data $fd, mixed $value, ?Concrete $object, mixed $storedValue): mixed
     {
         if (!$fd instanceof NormalizerInterface) {
             return null;
@@ -446,9 +467,74 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return $normalizedData;
         }
 
-        return $this->marshallerService
-            ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype())
-            ->marshal($normalizedData, $this->getMarshallerParameters($fd, $object));
+        $marshaller = $this->marshallerService
+            ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype());
+        $parameters = $this->getMarshallerParameters($fd, $object);
+        $encodedValue = $marshaller->marshal($normalizedData, $parameters);
+
+        if ($storedValue !== null
+            && $encodedValue !== null
+            && $this->encodesTheSameValue($marshaller, $parameters, $storedValue, $encodedValue)
+        ) {
+            return $storedValue;
+        }
+
+        return $encodedValue;
+    }
+
+    /**
+     * Whether a stored value and a freshly encoded one hold the same value.
+     *
+     * The one marshaller a value reaches the document through encrypts, and
+     * {@see \Defuse\Crypto\Crypto::encrypt()} draws a random salt and IV per call: the same secret
+     * encodes to a different string every time, so the two strings cannot be compared as they
+     * stand. They are read back through the marshaller that wrote them and compared as the values
+     * they carry instead - both sides through the same path, so what that path does not preserve
+     * is not mistaken for a change. When they are the same value the stored string is kept, which
+     * is what lets an unchanged save write nothing and a save of one group leave the documents of
+     * the groups that hold a secret alone. A value that did change is written as it was just
+     * encoded, with the fresh salt of that encryption.
+     *
+     * @param array<string, mixed> $parameters
+     */
+    private function encodesTheSameValue(
+        MarshallerInterface $marshaller,
+        array $parameters,
+        mixed $storedValue,
+        mixed $encodedValue
+    ): bool {
+        try {
+            return $marshaller->unmarshal($storedValue, $parameters)
+                === $marshaller->unmarshal($encodedValue, $parameters);
+        } catch (Throwable $exception) {
+            // a stored value that cannot be read back - one written under a key that has since been
+            // rotated, say - is no evidence about the value it holds, so the fresh encoding wins
+            $this->logger->info(
+                'Could not read back a stored classification store value for comparison: '
+                . $exception->getMessage()
+            );
+
+            return false;
+        }
+    }
+
+    /**
+     * The value the stored entries of one key hold in one language, or null when they do not carry
+     * that language.
+     *
+     * @param array<array<string, mixed>> $entries
+     */
+    private function getStoredValue(array $entries, string $languageAlias): mixed
+    {
+        foreach ($entries as $entry) {
+            $language = (string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE);
+
+            if ($this->getLanguageAlias($language) === $languageAlias) {
+                return $entry[self::VALUE_QUALIFIER] ?? null;
+            }
+        }
+
+        return null;
     }
 
     private function decodeValue(Data $fd, mixed $value, ?Concrete $object): mixed
@@ -493,8 +579,9 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     /**
      * Writes only the documents that differ, under a transaction that covers the whole operation.
      *
-     * What is written is decided from what the table holds, so the read and the writes that follow
-     * it have to see one state and hold it. A store saved as part of its object runs inside the
+     * What is written is decided from what the table holds, so the read, the serialization that is
+     * compared against it and the writes that follow have to see one state and hold it. A store
+     * saved as part of its object runs inside the
      * object's save transaction, which may have read from the database before this point: under
      * REPEATABLE READ its snapshot can predate a save another connection has committed since, and
      * the object's row lock - taken by {@see \Pimcore\Model\DataObject\AbstractObject::save()} -
@@ -504,11 +591,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * it. A store saved on its own gets a transaction of its own here, so that its locks cover its
      * writes as well.
      *
-     * @param array<int, array<string, mixed>> $documents groupId => document row
+     * @param array<int, array<string, mixed>> $groups groupId => the collection and items of a group
      *
      * @throws Exception
      */
-    private function persistDocuments(Classificationstore $classificationStore, array $documents): void
+    private function persistDocuments(Classificationstore $classificationStore, array $groups): void
     {
         $ownTransaction = !$this->db->isTransactionActive();
         if ($ownTransaction) {
@@ -516,7 +603,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         }
 
         try {
-            $this->writeDocumentDiff($classificationStore, $documents);
+            $this->writeDocumentDiff($classificationStore, $groups);
         } catch (Throwable $exception) {
             if ($ownTransaction) {
                 $this->db->rollBack();
@@ -531,26 +618,38 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * The stored documents of (object, fieldname) are read back and compared, as strings, against
-     * the ones the save describes. A group whose document and collection are unchanged is not
-     * written, so an unchanged save writes nothing and a save touching one group leaves the
-     * documents of the other groups byte for byte as they were.
+     * The stored documents of (object, fieldname) are read back, and the document of each active
+     * group is serialized against the stored one and compared with it, as strings. A group whose
+     * document and collection are unchanged is not written, so an unchanged save writes nothing and
+     * a save touching one group leaves the documents of the other groups byte for byte as they were.
      *
-     * @param array<int, array<string, mixed>> $documents groupId => document row
+     * @param array<int, array<string, mixed>> $groups groupId => the collection and items of a group
      *
      * @throws Exception
      */
-    private function writeDocumentDiff(Classificationstore $classificationStore, array $documents): void
+    private function writeDocumentDiff(Classificationstore $classificationStore, array $groups): void
     {
-        $objectId = $classificationStore->getObject()->getId();
+        $object = $classificationStore->getObject();
+        $objectId = $object->getId();
         $fieldname = $classificationStore->getFieldname();
         $table = $this->getDocumentTableName($classificationStore->getClass()->getId());
 
         $storedRows = $this->readRowsForUpdate($table, $objectId, $fieldname);
         $rowsToWrite = [];
 
-        foreach ($documents as $groupId => $document) {
-            if (isset($storedRows[$groupId]) && !$this->documentDiffers($storedRows[$groupId], $document)) {
+        foreach ($groups as $groupId => $group) {
+            $storedRow = $storedRows[$groupId] ?? null;
+
+            $document = [
+                'collectionId' => $group['collectionId'],
+                'values' => $this->serializeDocument(
+                    $object,
+                    $group['keys'],
+                    $storedRow === null ? null : (string) $storedRow['values']
+                ),
+            ];
+
+            if ($storedRow !== null && !$this->documentDiffers($storedRow, $document)) {
                 continue;
             }
 
@@ -566,7 +665,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         $this->insertDocumentRows($table, $rowsToWrite);
         $this->deleteDocumentRows(
             $table,
-            array_values(array_diff(array_keys($storedRows), array_keys($documents))),
+            array_values(array_diff(array_keys($storedRows), array_keys($groups))),
             $objectId,
             $fieldname
         );

@@ -318,7 +318,9 @@ child would shadow the parent's collection. Use `getActiveGroups()` to ask which
   selects the engine yet.
 * Values are stored as the field definition's `normalize()` output. An `encryptedField` key is the one exception:
   it keeps its classification store marshaller, which encrypts the value, so the cleartext is never in the
-  document.
+  document. That encryption draws a fresh salt per call, so a value whose cleartext did not change keeps the
+  ciphertext the document already holds - otherwise every save would rewrite every group holding a secret. A value
+  that did change is encrypted anew.
 
 After changing an `engine` value by hand, run
 

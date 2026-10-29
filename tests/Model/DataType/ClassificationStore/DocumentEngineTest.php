@@ -61,6 +61,8 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
 
     private const SECRET = 'a-secret-nobody-may-read';
 
+    private const OTHER_SECRET = 'another-secret-nobody-may-read';
+
     private Classificationstore\GroupConfig $groupA;
 
     private Classificationstore\GroupConfig $groupB;
@@ -532,25 +534,10 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
      */
     public function testAnEncryptedValueIsNotReadableInTheDocument(): void
     {
-        $delegate = new Input();
-        $delegate->setName('doc_secret');
-
-        $definition = new EncryptedFieldDefinition();
-        $definition->setDelegateDatatype('input');
-        $definition->setDelegate($delegate);
-
-        $encryptedKey = $this->createKey('doc_secret', true, $definition);
-        $this->assignKey($this->groupA, $encryptedKey, 2);
-
+        [$encryptedKey, $delegate] = $this->createEncryptedKey('doc_secret');
         $groupId = $this->groupA->getId();
 
-        $this->saveStore(function (Classificationstore $store) use ($groupId, $encryptedKey, $delegate): void {
-            $store->setLocalizedKeyValue(
-                $groupId,
-                $encryptedKey->getId(),
-                new EncryptedField($delegate, self::SECRET)
-            );
-        });
+        $this->storeSecret($encryptedKey, $delegate, self::SECRET);
 
         $this->assertStringNotContainsString(
             self::SECRET,
@@ -562,6 +549,138 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
 
         $this->assertInstanceOf(EncryptedField::class, $loaded);
         $this->assertSame(self::SECRET, $loaded->getPlain());
+    }
+
+    /**
+     * Encryption draws a fresh salt per call, so a group holding a secret would serialize to a
+     * different string on every save and the comparison would call it changed. An unchanged value
+     * keeps the string the document already holds, so the save still writes nothing.
+     */
+    public function testAnUnchangedEncryptedValueIsNotRewritten(): void
+    {
+        [$encryptedKey, $delegate] = $this->createEncryptedKey('doc_secret_unchanged');
+        $groupId = $this->groupA->getId();
+
+        $this->storeSecret($encryptedKey, $delegate, self::SECRET);
+        $storedBefore = $this->storedDocument($groupId);
+
+        $store = $this->reloadStore();
+
+        DataObject::disableDirtyDetection();
+
+        try {
+            $this->startMeasurement();
+            $store->save();
+        } finally {
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertSame(
+            0,
+            $this->countWriteStatements(),
+            'an unchanged save writes nothing, the secret included'
+        );
+        $this->assertSame(
+            $storedBefore,
+            $this->storedDocument($groupId),
+            'the stored ciphertext is kept rather than drawn again'
+        );
+        $this->assertSame(
+            self::SECRET,
+            $this->reloadStore()->getLocalizedKeyValue($groupId, $encryptedKey->getId())->getPlain()
+        );
+    }
+
+    /**
+     * The same, seen from the other side: a group that holds a secret is not rewritten because
+     * another group changed.
+     */
+    public function testChangingAnotherGroupLeavesAnEncryptedDocumentUntouched(): void
+    {
+        [$encryptedKey, $delegate] = $this->createEncryptedKey('doc_secret_untouched');
+        $groupId = $this->groupA->getId();
+
+        $this->storeSecret($encryptedKey, $delegate, self::SECRET);
+        $storedBefore = $this->storedDocument($groupId);
+
+        $this->saveStore(function (Classificationstore $store): void {
+            $store->setLocalizedKeyValue($this->groupB->getId(), $this->key3->getId(), self::VALUE_3);
+        });
+
+        $this->assertSame(
+            $storedBefore,
+            $this->storedDocument($groupId),
+            'the document of the group that holds the secret is left byte for byte as it was'
+        );
+        $this->assertSame(
+            self::VALUE_3,
+            $this->reloadStore()->getLocalizedKeyValue($this->groupB->getId(), $this->key3->getId())
+        );
+    }
+
+    /**
+     * A secret that did change is written as it was just encrypted - with a fresh salt, so the same
+     * cleartext stored twice is not two identical strings.
+     */
+    public function testAChangedEncryptedValueIsRewrittenWithAFreshEncryption(): void
+    {
+        [$encryptedKey, $delegate] = $this->createEncryptedKey('doc_secret_changed');
+        $groupId = $this->groupA->getId();
+
+        $this->storeSecret($encryptedKey, $delegate, self::SECRET);
+        $storedBefore = $this->storedDocument($groupId);
+
+        $this->storeSecret($encryptedKey, $delegate, self::OTHER_SECRET);
+
+        $this->assertNotSame($storedBefore, $this->storedDocument($groupId));
+        $this->assertStringNotContainsString(self::OTHER_SECRET, (string) $this->storedDocument($groupId));
+        $this->assertSame(
+            self::OTHER_SECRET,
+            $this->reloadStore()->getLocalizedKeyValue($groupId, $encryptedKey->getId())->getPlain()
+        );
+
+        // the very same cleartext stored again is a change like any other, so it is written, and
+        // the randomized encryption it is written with makes it a different string
+        $this->storeSecret($encryptedKey, $delegate, self::SECRET);
+
+        $this->assertNotSame(
+            $storedBefore,
+            $this->storedDocument($groupId),
+            'the secret was encrypted again rather than restored to the string it first had'
+        );
+        $this->assertSame(
+            self::SECRET,
+            $this->reloadStore()->getLocalizedKeyValue($groupId, $encryptedKey->getId())->getPlain()
+        );
+    }
+
+    /**
+     * An `encryptedField` key on group A, with the delegate a value of it has to be built against.
+     *
+     * @return array{Classificationstore\KeyConfig, Input}
+     */
+    private function createEncryptedKey(string $name): array
+    {
+        $delegate = new Input();
+        $delegate->setName($name);
+
+        $definition = new EncryptedFieldDefinition();
+        $definition->setDelegateDatatype('input');
+        $definition->setDelegate($delegate);
+
+        $encryptedKey = $this->createKey($name, true, $definition);
+        $this->assignKey($this->groupA, $encryptedKey, 2);
+
+        return [$encryptedKey, $delegate];
+    }
+
+    private function storeSecret(Classificationstore\KeyConfig $key, Input $delegate, string $secret): void
+    {
+        $groupId = $this->groupA->getId();
+
+        $this->saveStore(function (Classificationstore $store) use ($groupId, $key, $delegate, $secret): void {
+            $store->setLocalizedKeyValue($groupId, $key->getId(), new EncryptedField($delegate, $secret));
+        });
     }
 
     /**
