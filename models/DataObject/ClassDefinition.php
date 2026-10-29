@@ -32,6 +32,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInter
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
+use Pimcore\Model\DataObject\Exception\ClassificationStoreEngineNotAvailableException;
+use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -1172,6 +1175,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         $fieldDefinitions = $this->getFieldDefinitions();
+
+        $this->validateClassificationStoreEngines($fieldDefinitions);
+
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
                 throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
@@ -1252,6 +1258,42 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->deleteDeletedDataComponentsInCustomLayout();
         } else {
             $this->updateCustomLayouts();
+        }
+    }
+
+    /**
+     * Refuses the save when any classification store field points at a store whose engine cannot be
+     * resolved, so that no table is created and no class definition row is written for it.
+     *
+     * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
+     *
+     * @throws Exception
+     */
+    private function validateClassificationStoreEngines(array $fieldDefinitions): void
+    {
+        $classificationStoreFields = DataObject\Classificationstore\Service::getClassificationStoreFieldDefinitions($fieldDefinitions);
+        if ($classificationStoreFields === []) {
+            return;
+        }
+
+        $engineResolver = Pimcore::getContainer()->get(EngineResolver::class);
+        $errors = [];
+
+        foreach ($classificationStoreFields as $name => $fieldDefinition) {
+            try {
+                $engineResolver->resolveForStore(DataObject\Classificationstore\Service::getConfiguredStoreId($fieldDefinition));
+            } catch (UnknownClassificationStoreEngineException|ClassificationStoreEngineNotAvailableException $e) {
+                $errors[] = sprintf('field "%s": %s', $name, $e->getMessage());
+            }
+        }
+
+        if ($errors !== []) {
+            throw new Exception(sprintf(
+                'Cannot save class definition %s, the classification store engine of %d field(s) does not resolve. %s',
+                $this->getName(),
+                count($errors),
+                implode(' ', $errors)
+            ));
         }
     }
 

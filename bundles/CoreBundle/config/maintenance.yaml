@@ -55,7 +55,7 @@ services:
 
     Pimcore\Maintenance\Tasks\CleanupClassificationstoreTablesTask:
         arguments:
-            - '@logger'
+            - '@Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver'
         tags:
             - { name: pimcore.maintenance.task, type: cleanupClassificationstoreTables }
 

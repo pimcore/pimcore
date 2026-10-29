@@ -616,6 +616,7 @@ CREATE TABLE `classificationstore_stores` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
+	`engine` VARCHAR(32) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

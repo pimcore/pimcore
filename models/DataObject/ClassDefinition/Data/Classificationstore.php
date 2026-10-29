@@ -518,11 +518,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the classification data
      *
+     * The fieldname is set so that the Dao resolves this field's own store, and a class carrying two
+     * classification store fields on different engines creates the tables of both.
+     *
+     * @throws Exception
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         $classificationStore = new DataObject\Classificationstore();
         $classificationStore->setClass($class);
+        $classificationStore->setFieldname($this->getName());
         $classificationStore->createUpdateTable();
     }
 

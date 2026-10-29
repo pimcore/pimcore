@@ -95,6 +95,11 @@ class Dao extends Model\Dao\AbstractDao
         $type = $this->model->getObjectVars();
 
         foreach ($type as $key => $value) {
+            // a store config built with `new` carries no engine, and must not reset a flipped store
+            if ($key === 'engine' && !$this->model->isEngineInitialized()) {
+                continue;
+            }
+
             if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_STORES))) {
                 if (is_bool($value)) {
                     $value = (int) $value;

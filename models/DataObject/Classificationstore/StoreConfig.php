@@ -39,6 +39,19 @@ final class StoreConfig extends Model\AbstractModel
      */
     protected ?string $description = null;
 
+    /**
+     * The name of the storage engine, null for the default one.
+     *
+     */
+    protected ?string $engine = null;
+
+    /**
+     * Whether `engine` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $engineInitialized = false;
+
     public static function getById(int $id): ?StoreConfig
     {
         try {
@@ -103,6 +116,27 @@ final class StoreConfig extends Model\AbstractModel
         $this->description = $description;
 
         return $this;
+    }
+
+    public function getEngine(): ?string
+    {
+        return $this->engine;
+    }
+
+    public function setEngine(?string $engine): static
+    {
+        $this->engine = $engine;
+        $this->engineInitialized = true;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     */
+    public function isEngineInitialized(): bool
+    {
+        return $this->engineInitialized;
     }
 
     /**
