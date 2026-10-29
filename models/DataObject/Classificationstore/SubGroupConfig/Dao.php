@@ -133,16 +133,38 @@ class Dao extends Model\Dao\AbstractDao
      * its store: the vocabulary row and the tags are one unit of work, so a failure of either leaves
      * both as they were.
      *
+     * Which tags those are is read from the stored row rather than taken from the instance, so that an
+     * instance carrying only an id still clears them, and one that was never saved clears none.
+     *
      * @throws Exception
      */
     public function delete(): void
     {
+        $id = $this->model->getId();
+        if ($id === null) {
+            return;
+        }
+
         $taggedGroupIds = [];
 
-        $this->writeAtomically(function () use (&$taggedGroupIds): void {
-            $taggedGroupIds = $this->clearTags();
+        $this->writeAtomically(function () use ($id, &$taggedGroupIds): void {
+            // the lock KeyGroupRelation\Dao::resolveSubGroup() contends with, taken before any tag is read
+            $stored = $this->db->fetchAssociative(
+                'SELECT `storeId`, `identifier` FROM `' . self::TABLE_NAME_SUBGROUPS . '` WHERE `id` = ? FOR UPDATE',
+                [$id]
+            );
 
-            $this->db->delete(self::TABLE_NAME_SUBGROUPS, ['id' => $this->model->getId()]);
+            if ($stored === false) {
+                return;
+            }
+
+            $identifier = $stored['identifier'];
+            $taggedGroupIds = $this->clearTags(
+                (int) $stored['storeId'],
+                is_string($identifier) ? $identifier : null
+            );
+
+            $this->db->delete(self::TABLE_NAME_SUBGROUPS, ['id' => $id]);
         });
 
         // only once the delete is committed, so that a refused one does not drop a correct answer
@@ -161,6 +183,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->writeAtomically(function (): void {
             $id = $this->model->getId();
             $identifier = $this->model->getIdentifier();
+            $this->assertStoreIsUnchanged($id);
             $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_SUBGROUPS, $id, $identifier);
 
             $ts = time();
@@ -207,19 +230,50 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * The store of a stored entry is what scopes its tags: the key assignments of that store name it by
+     * identifier, and nothing in them would follow the entry to a second store. Moving it would leave
+     * them resolving to nothing - refusing the save fails and reaches no further.
+     *
+     * A row that carries no store yet is the placeholder create() inserts, which update() fills in.
+     *
+     * @throws Model\Exception\InvalidConfigException
+     */
+    private function assertStoreIsUnchanged(?int $id): void
+    {
+        if ($id === null) {
+            return;
+        }
+
+        $stored = $this->db->fetchOne(
+            'SELECT `storeId` FROM `' . self::TABLE_NAME_SUBGROUPS . '` WHERE `id` = ?',
+            [$id]
+        );
+
+        if ($stored === false || $stored === null || (int) $stored === $this->model->getStoreId()) {
+            return;
+        }
+
+        throw new Model\Exception\InvalidConfigException(sprintf(
+            'The store of sub group %d cannot be changed from %d to %d.',
+            $id,
+            (int) $stored,
+            $this->model->getStoreId()
+        ));
+    }
+
+    /**
      * Clears the tag from every key assignment of the store that carries it, and reports the groups
      * those assignments belong to.
      *
      * @return int[]
      */
-    private function clearTags(): array
+    private function clearTags(int $storeId, ?string $identifier): array
     {
-        $identifier = $this->model->getIdentifier();
         if ($identifier === null) {
             return [];
         }
 
-        $parameters = [$this->model->getStoreId(), $identifier];
+        $parameters = [$storeId, $identifier];
 
         $taggedGroupIds = $this->db->fetchFirstColumn(
             'SELECT DISTINCT `r`.`groupId`'

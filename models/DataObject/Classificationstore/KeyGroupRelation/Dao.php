@@ -16,9 +16,11 @@ use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Classificationstore\Traits\AtomicWriteTrait;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
+use Throwable;
 
 /**
  * @internal
@@ -27,6 +29,8 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends AbstractDao
 {
+    use AtomicWriteTrait;
+
     public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
     /**
@@ -60,6 +64,9 @@ class Dao extends AbstractDao
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function save(): void
     {
         $this->update();
@@ -69,30 +76,44 @@ class Dao extends AbstractDao
      * The vocabulary is scoped to the store of the group, not of the key, so the group decides which
      * entries a relation may name.
      *
+     * The resolved row is locked rather than only read: the lock is held until the enclosing write
+     * commits, so a sub group deletion either clears the tag this write leaves behind or waits for the
+     * write and then finds it. SubGroupConfig\Dao::delete() takes the same lock before it clears tags.
+     *
+     * What is stored is the identifier of the resolved row, not the spelling the caller passed: the
+     * column collation is case insensitive, so two spellings resolve to one entry here and would
+     * otherwise read as two sub groups in KeyGroupRelationCache::getSubGroupOrder().
+     *
      * @throws InvalidConfigException
      */
-    public function assertSubGroupIsResolvable(): void
+    private function resolveSubGroup(): void
     {
         $subGroup = $this->model->getSubGroup();
         if ($subGroup === null) {
             return;
         }
 
-        $resolved = $this->db->fetchOne(
-            'SELECT `s`.`id` FROM `' . Classificationstore\SubGroupConfig\Dao::TABLE_NAME_SUBGROUPS . '` `s`'
-            . ' INNER JOIN `' . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '` `g`'
-            . ' ON `g`.`storeId` = `s`.`storeId`'
-            . ' WHERE `g`.`id` = ? AND `s`.`identifier` = ?',
-            [$this->model->getGroupId(), $subGroup]
+        $storeId = $this->db->fetchOne(
+            'SELECT `storeId` FROM `' . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '` WHERE `id` = ?',
+            [$this->model->getGroupId()]
         );
 
-        if ($resolved === false) {
+        // locking a single row by the unique (storeId, identifier) index, rather than the join of the two
+        $resolved = $storeId === false ? false : $this->db->fetchOne(
+            'SELECT `identifier` FROM `' . Classificationstore\SubGroupConfig\Dao::TABLE_NAME_SUBGROUPS . '`'
+            . ' WHERE `storeId` = ? AND `identifier` = ? FOR UPDATE',
+            [$storeId, $subGroup]
+        );
+
+        if (!is_string($resolved)) {
             throw new InvalidConfigException(sprintf(
                 'The sub group "%s" does not exist in the store of group %s.',
                 $subGroup,
                 $this->model->getGroupId()
             ));
         }
+
+        $this->model->setSubGroup($resolved);
     }
 
     /**
@@ -108,32 +129,48 @@ class Dao extends AbstractDao
         $this->clearRelationCache();
     }
 
+    /**
+     * The sub group is resolved and the row written as one unit, so that the entry the tag names
+     * cannot be deleted in between.
+     *
+     * @throws Throwable
+     */
     public function update(): void
     {
-        $type = $this->model->getObjectVars();
-        $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);
-        $data = [];
+        $this->writeAtomically(function (): void {
+            $this->resolveSubGroup();
 
-        foreach ($type as $key => $value) {
-            // a relation built with `new` carries no sub group, and must not clear a stored tag
-            if ($key === 'subGroup' && !$this->model->isSubGroupInitialized()) {
-                continue;
-            }
+            $type = $this->model->getObjectVars();
+            $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);
+            $data = [];
 
-            if (in_array($key, $validTableColumns)) {
-                if (is_bool($value)) {
-                    $value = (int) $value;
-                }
-                if (is_array($value) || is_object($value)) {
-                    $value = Serialize::serialize($value);
+            foreach ($type as $key => $value) {
+                // a relation built with `new` carries no sub group, and must not clear a stored tag
+                if ($key === 'subGroup' && !$this->model->isSubGroupInitialized()) {
+                    continue;
                 }
 
-                $data[$key] = $value;
+                if (in_array($key, $validTableColumns)) {
+                    if (is_bool($value)) {
+                        $value = (int) $value;
+                    }
+                    if (is_array($value) || is_object($value)) {
+                        $value = Serialize::serialize($value);
+                    }
+
+                    $data[$key] = $value;
+                }
             }
-        }
 
-        Helper::upsert($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
+            Helper::upsert(
+                $this->db,
+                self::TABLE_NAME_RELATIONS,
+                $data,
+                $this->getPrimaryKey(self::TABLE_NAME_RELATIONS)
+            );
+        });
 
+        // only once the write is committed, so that a refused one does not drop a correct answer
         $this->clearRelationCache();
     }
 

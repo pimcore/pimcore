@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Migrations\Version20261029120000;
 use Pimcore\Db;
@@ -386,6 +389,211 @@ final class SubGroupTest extends AbstractClassificationStoreTest
     }
 
     /**
+     * AC7: the tags are read from the stored row, so an instance that carries nothing but an id - the
+     * shape a listing or a delete-by-id hands over - clears them like a fully loaded one.
+     */
+    public function testAnInstanceCarryingOnlyAnIdClearsTheTagsToo(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('id_only');
+        $keyConfig = $this->createKey('id_only');
+        $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+
+        $idOnly = new SubGroupConfig();
+        $idOnly->setId($subGroup->getId());
+        $idOnly->delete();
+
+        $this->assertNull(SubGroupConfig::getById($subGroup->getId()));
+        $this->assertNull($this->fetchTag($group, $keyConfig));
+
+        // the row is gone, so a second delete has nothing to read and nothing to clear
+        $subGroup->delete();
+        $this->assertNull($this->fetchTag($group, $keyConfig));
+    }
+
+    /**
+     * AC7, the mirror image: an instance that was never saved carries an identifier of its own, and
+     * must not reach the tags of the stored entry that happens to answer to it.
+     */
+    public function testAnUnsavedInstanceClearsNoTags(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('unsaved');
+        $keyConfig = $this->createKey('unsaved');
+        $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+
+        $unsaved = new SubGroupConfig();
+        $unsaved->setStoreId($subGroup->getStoreId());
+        $unsaved->setName('never saved');
+        $unsaved->setIdentifier($subGroup->getIdentifier());
+        $unsaved->delete();
+
+        $this->assertNotNull(SubGroupConfig::getById($subGroup->getId()));
+        $this->assertSame($subGroup->getIdentifier(), $this->fetchTag($group, $keyConfig));
+    }
+
+    /**
+     * AC2: the key assignments of a store name an entry by its identifier, and nothing in them would
+     * follow it to a second store, so the store of a stored entry is fixed.
+     */
+    public function testTheStoreOfAStoredEntryCannotBeChanged(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('moved');
+        $keyConfig = $this->createKey('moved');
+        $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+
+        $subGroup->setStoreId($this->createStore());
+        $subGroup->setDescription('moved');
+
+        try {
+            $subGroup->save();
+            $this->fail('Moving a stored entry to another store must be refused');
+        } catch (InvalidConfigException $e) {
+            $this->addToAssertionCount(1);
+        }
+
+        $stored = Db::get()->fetchAssociative(
+            'SELECT `storeId`, `description` FROM ' . self::TABLE_SUBGROUPS . ' WHERE id = ?',
+            [$subGroup->getId()]
+        );
+
+        $this->assertSame($this->getStoreId(), (int) $stored['storeId']);
+        $this->assertNull($stored['description'], 'a refused save must write nothing at all');
+        $this->assertSame($subGroup->getIdentifier(), $this->fetchTag($group, $keyConfig));
+
+        // the store it already has is not a change
+        $subGroup->setStoreId($this->getStoreId());
+        $subGroup->save();
+
+        $this->assertSame('moved', SubGroupConfig::getById($subGroup->getId())->getDescription());
+    }
+
+    /**
+     * AC3: the identifier column is compared case insensitively, so a tag that differs from the entry
+     * only in case names that entry. What is stored is the identifier of the entry, not the spelling
+     * the caller used, which would otherwise read as a sub group of its own.
+     */
+    public function testTheStoredTagIsTheIdentifierOfTheResolvedEntry(): void
+    {
+        $subGroup = $this->createSubGroup(null, 'Dimensions');
+        $group = $this->createGroup('canonical');
+        $exactKey = $this->createKey('canonical_exact');
+        $mixedCaseKey = $this->createKey('canonical_mixed');
+
+        $this->assignKey($group, $exactKey, 10, 'Dimensions');
+        $this->assignKey($group, $mixedCaseKey, 20, 'dimensions');
+
+        $this->assertSame('Dimensions', $this->fetchTag($group, $exactKey));
+        $this->assertSame('Dimensions', $this->fetchTag($group, $mixedCaseKey));
+
+        $relation = KeyGroupRelation::getByGroupAndKeyId($group->getId(), $mixedCaseKey->getId());
+        $this->assertSame('Dimensions', $relation->getSubGroup());
+
+        $relationCache = Pimcore::getContainer()->get(KeyGroupRelationCache::class);
+        $this->assertSame(
+            ['Dimensions'],
+            $relationCache->getSubGroupOrder($group->getId()),
+            'two spellings of one entry are one sub group'
+        );
+
+        // and the deletion, which matches the tags against the identifier, reaches both of them
+        $subGroup->delete();
+
+        $this->assertNull($this->fetchTag($group, $exactKey));
+        $this->assertNull($this->fetchTag($group, $mixedCaseKey));
+    }
+
+    /**
+     * AC4: a deletion committed between the resolution of a tag and the write that stores it would
+     * leave an identifier behind that resolves to nothing. The resolution locks the row it resolved
+     * to, and holds it until the write commits, so the deletion has to wait for it.
+     */
+    public function testResolvingASubGroupHoldsItAgainstAConcurrentDeletion(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('held');
+        $keyConfig = $this->createKey('held');
+
+        $db = Db::get();
+        $otherConnection = $this->openSecondConnection();
+        $otherConnection->executeStatement('SET SESSION innodb_lock_wait_timeout = 2');
+
+        $db->beginTransaction();
+
+        try {
+            $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+
+            $otherConnection->beginTransaction();
+
+            try {
+                $otherConnection->delete(self::TABLE_SUBGROUPS, ['id' => $subGroup->getId()]);
+                $this->fail('An entry a relation write resolved must not be deletable before that write commits');
+            } catch (LockWaitTimeoutException $e) {
+                $this->addToAssertionCount(1);
+            } finally {
+                $otherConnection->rollBack();
+            }
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * AC4, the other half: the deletion takes the same lock before it reads a single tag. Clearing
+     * them first and locking afterwards would clear the tags of a relation write that has not landed
+     * yet, and leave that one behind.
+     */
+    public function testDeletionTakesTheLockBeforeItClearsAnyTag(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('contended');
+        $keyConfig = $this->createKey('contended');
+        $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+
+        $db = Db::get();
+        $otherConnection = $this->openSecondConnection();
+        $otherConnection->beginTransaction();
+
+        $db->executeStatement('SET SESSION innodb_lock_wait_timeout = 2');
+
+        // an enclosing transaction: the refused delete does not roll it back, so whatever that delete
+        // managed to write before it hit the lock is still readable below
+        $db->beginTransaction();
+
+        try {
+            // the lock a concurrent relation write holds while it resolves the entry
+            $otherConnection->fetchOne(
+                'SELECT `identifier` FROM ' . self::TABLE_SUBGROUPS . ' WHERE id = ? FOR UPDATE',
+                [$subGroup->getId()]
+            );
+
+            try {
+                $subGroup->delete();
+                $this->fail('A deletion must not pass an entry another transaction holds');
+            } catch (LockWaitTimeoutException $e) {
+                $this->addToAssertionCount(1);
+            }
+
+            $this->assertSame(
+                $subGroup->getIdentifier(),
+                $this->fetchTag($group, $keyConfig),
+                'the deletion must reach the lock before it clears a single tag'
+            );
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = DEFAULT');
+            $otherConnection->rollBack();
+            $otherConnection->close();
+        }
+    }
+
+    /**
      * AC8
      */
     public function testSubGroupOrderIsDerivedFromSorter(): void
@@ -520,6 +728,11 @@ final class SubGroupTest extends AbstractClassificationStoreTest
     private function getStoreId(): int
     {
         return StoreConfig::getByName('teststore')->getId();
+    }
+
+    private function openSecondConnection(): Connection
+    {
+        return DriverManager::getConnection(Db::get()->getParams());
     }
 
     private function createStore(): int

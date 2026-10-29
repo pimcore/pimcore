@@ -186,14 +186,13 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     /**
      * Saves the key assignment, refusing a sub group that names no entry of the vocabulary of the
-     * store its group belongs to.
+     * store its group belongs to, and storing the identifier of the entry it resolved to rather than
+     * the spelling that was passed.
      *
      * @throws InvalidConfigException
      */
     public function save(): void
     {
-        $this->getDao()->assertSubGroupIsResolvable();
-
         $this->getDao()->save();
     }
 
