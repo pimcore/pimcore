@@ -2258,18 +2258,24 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @return bool whether an update task was dispatched - false if the asset's queue lock is held elsewhere
+     *
      * @internal
      */
-    public function triggerUpdateTask(): void
+    public function triggerUpdateTask(): bool
     {
         /** @var LockInterface $lock */
         $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
-        if ($lock->acquire()) {
-            $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
-            $message = new AssetUpdateTasksMessage($this->getId());
-
-            $bus->dispatch($message);
+        if (!$lock->acquire()) {
+            return false;
         }
+
+        $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
+        $message = new AssetUpdateTasksMessage($this->getId());
+
+        $bus->dispatch($message);
+
+        return true;
     }
 
     /**
