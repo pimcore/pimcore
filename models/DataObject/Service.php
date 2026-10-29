@@ -258,11 +258,217 @@ class Service extends Model\Element\Service
         $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
+        // reading block fields outside admin mode would write the frontend-rendered Wysiwyg text back into the copy
+        WysiwygPersistingScope::run(fn () => $this->keepNonEditableLanguages($new, $target));
+
         $new->save();
 
         $target = Concrete::getById($new->getId());
 
         return $target;
+    }
+
+    /**
+     * Restores the localized values of the languages the user is not allowed to edit (lEdit workspace permission)
+     * from the target, in the object itself as well as in its object bricks, field collections and blocks.
+     */
+    private function keepNonEditableLanguages(Concrete $new, Concrete $target): void
+    {
+        if (!$this->_user || $this->_user->isAdmin()) {
+            return;
+        }
+
+        $editableLanguages = self::getLanguagePermissions($target, $this->_user, 'lEdit');
+        if ($editableLanguages === null) {
+            return;
+        }
+
+        // like the editors: for localized fields a list with only the language-independent 'default' means
+        // "no restriction", while the classification store still limits itself to that one value
+        $restrictLocalizedfields = array_keys($editableLanguages) !== ['default'];
+
+        self::loadAllObjectFields($target);
+
+        foreach ($new->getClass()->getFieldDefinitions() as $name => $definition) {
+            $newValue = $new->get($name);
+            $targetValue = $target->get($name);
+
+            if ($newValue instanceof DataObject\Classificationstore) {
+                // like the editors, only localized stores are limited; a store without languages only holds 'default'
+                if ($definition instanceof ClassDefinition\Data\Classificationstore && $definition->isLocalized()) {
+                    $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
+                }
+            } elseif (!$restrictLocalizedfields) {
+                continue;
+            } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
+                $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
+            } elseif ($definition instanceof ClassDefinition\Data\Block) {
+                $this->restoreBlockLanguages($definition, $newValue, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Objectbrick) {
+                $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Fieldcollection) {
+                $this->restoreFieldcollectionLanguages($newValue, $targetValue, $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * The values of a localized classification store are keyed by group, key and language ('default' is the
+     * language-independent value, which is only editable if the user's list contains it).
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreClassificationstoreLanguages(
+        DataObject\Classificationstore $new,
+        mixed $target,
+        array $editableLanguages
+    ): void {
+        // the object is saved with inheritance off, so own values must not be mixed with the parent's
+        [$items, $activeGroups] = self::useInheritedValues(false, static fn (): array => [$new->getItems(), $new->getActiveGroups()]);
+        $targetItems = $target instanceof DataObject\Classificationstore
+            ? self::useInheritedValues(false, static fn (): array => $target->getItems())
+            : [];
+
+        foreach ($items as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $items[$groupId][$keyId] = array_intersect_key($values, $editableLanguages);
+            }
+        }
+
+        foreach ($targetItems as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $kept = array_diff_key($values, $editableLanguages);
+                if ($kept) {
+                    $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
+                    $activeGroups[$groupId] = true;
+                    if (!$new->getGroupCollectionMapping($groupId)) {
+                        $new->setGroupCollectionMapping($groupId, $target->getGroupCollectionMapping($groupId));
+                    }
+                }
+            }
+        }
+
+        foreach ($items as $groupId => $group) {
+            $items[$groupId] = array_filter($group);
+        }
+
+        $new->setItems(array_filter($items));
+        $new->setActiveGroups($activeGroups);
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBrickLanguages(DataObject\Objectbrick $new, mixed $target, array $editableLanguages): void
+    {
+        foreach ($new->getItems() as $brick) {
+            $targetBrick = $target instanceof DataObject\Objectbrick ? $target->get($brick->getType()) : null;
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($brick),
+                $targetBrick ? $this->getLocalizedfieldsOf($targetBrick) : null,
+                $editableLanguages
+            );
+            $this->restoreContainerBlockLanguages($brick, $targetBrick, $editableLanguages);
+        }
+    }
+
+    /**
+     * Blocks inside an object brick or field collection item.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreContainerBlockLanguages(
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new,
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData|null $target,
+        array $editableLanguages
+    ): void {
+        foreach ($new->getDefinition()->getFieldDefinitions() as $name => $definition) {
+            if ($definition instanceof ClassDefinition\Data\Block) {
+                $this->restoreBlockLanguages($definition, $new->get($name), $target?->get($name), $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * Only blocks with a localizedfields child hold languages. Block items are matched by index.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBlockLanguages(ClassDefinition\Data\Block $definition, mixed $new, mixed $target, array $editableLanguages): void
+    {
+        if (!$definition->getFieldDefinition('localizedfields') || !is_array($new)) {
+            return;
+        }
+
+        foreach ($new as $index => $item) {
+            $element = $item['localizedfields'] ?? null;
+            $targetElement = is_array($target) ? ($target[$index]['localizedfields'] ?? null) : null;
+            if ($element instanceof DataObject\Data\BlockElement) {
+                $this->restoreLocalizedfields(
+                    $element->getData(),
+                    $targetElement instanceof DataObject\Data\BlockElement ? $targetElement->getData() : null,
+                    $editableLanguages
+                );
+            }
+        }
+    }
+
+    /**
+     * Items are matched by index and type.
+     *
+     * @param DataObject\Fieldcollection<DataObject\Fieldcollection\Data\AbstractData> $new
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreFieldcollectionLanguages(DataObject\Fieldcollection $new, mixed $target, array $editableLanguages): void
+    {
+        $targetItems = $target instanceof DataObject\Fieldcollection ? $target->getItems() : [];
+        foreach ($new->getItems() as $index => $item) {
+            $targetItem = $targetItems[$index] ?? null;
+            if ($targetItem?->getType() !== $item->getType()) {
+                $targetItem = null;
+            }
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($item),
+                $targetItem ? $this->getLocalizedfieldsOf($targetItem) : null,
+                $editableLanguages
+            );
+            $this->restoreContainerBlockLanguages($item, $targetItem, $editableLanguages);
+        }
+    }
+
+    /**
+     * The getter only exists on generated brick and field collection classes that define localized fields.
+     */
+    private function getLocalizedfieldsOf(Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $container): ?DataObject\Localizedfield
+    {
+        return method_exists($container, 'getLocalizedfields') ? $container->getLocalizedfields() : null;
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreLocalizedfields(mixed $new, mixed $target, array $editableLanguages): void
+    {
+        if (!$new instanceof DataObject\Localizedfield) {
+            return;
+        }
+
+        $items = $new->getItems();
+        $targetItems = $target instanceof DataObject\Localizedfield ? $target->getItems() : [];
+
+        foreach (array_unique(array_merge(array_keys($items), array_keys($targetItems))) as $language) {
+            if (isset($editableLanguages[$language])) {
+                continue;
+            }
+
+            if (isset($targetItems[$language])) {
+                $items[$language] = $targetItems[$language];
+            } else {
+                unset($items[$language]);
+            }
+        }
+
+        $new->setItems($items);
     }
 
     /**
