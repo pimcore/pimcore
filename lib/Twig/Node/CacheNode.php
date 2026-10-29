@@ -29,8 +29,7 @@ final class CacheNode extends Node
         ?Node $tags,
         ?Node $force,
         Node $body,
-        int $lineno,
-        ?string $tag = 'pimcorecache'
+        int $lineno
     ) {
         $nodes = ['key' => $key, 'body' => $body];
         foreach (['ttl' => $ttl, 'tags' => $tags, 'force' => $force] as $name => $node) {
@@ -39,7 +38,7 @@ final class CacheNode extends Node
             }
         }
 
-        parent::__construct($nodes, [], $lineno, $tag);
+        parent::__construct($nodes, [], $lineno);
     }
 
     public function compile(Compiler $compiler): void

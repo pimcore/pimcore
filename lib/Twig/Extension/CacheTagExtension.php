@@ -34,6 +34,9 @@ class CacheTagExtension extends AbstractExtension
 {
     private const CACHE_KEY_PREFIX = 'pimcore_twigcache_';
 
+    // characters the cache (PSR-6) does not allow in keys and tags
+    private const RESERVED_CHARACTERS = '{}()/\\@:';
+
     public function getTokenParsers(): array
     {
         return [
@@ -47,7 +50,17 @@ class CacheTagExtension extends AbstractExtension
             throw new RuntimeError('The cache key of "pimcorecache" must be a string.');
         }
 
-        return (string) $key;
+        $key = (string) $key;
+        if ($key === '') {
+            throw new RuntimeError('The cache key of "pimcorecache" must not be empty.');
+        }
+
+        // a key built from request data (e.g. a path) may contain characters the cache rejects
+        if (strpbrk($key, self::RESERVED_CHARACTERS) !== false) {
+            return 'hashed_' . sha1($key);
+        }
+
+        return $key;
     }
 
     /**
@@ -56,16 +69,28 @@ class CacheTagExtension extends AbstractExtension
     public function normalizeTags(mixed $tags): array
     {
         try {
-            return (new ArrayOfStrings(is_array($tags) ? array_values($tags) : [$tags]))->getValue();
+            $tags = (new ArrayOfStrings(is_array($tags) ? array_values($tags) : [$tags]))->getValue();
         } catch (ValueError) {
             throw new RuntimeError('The "tags" modifier of "pimcorecache" requires a string or an array of strings.');
         }
+
+        foreach ($tags as $tag) {
+            if ($tag === '' || strpbrk($tag, self::RESERVED_CHARACTERS) !== false) {
+                throw new RuntimeError(sprintf(
+                    'The tag "%s" of "pimcorecache" is empty or contains one of the characters "%s".',
+                    $tag,
+                    self::RESERVED_CHARACTERS
+                ));
+            }
+        }
+
+        return $tags;
     }
 
     public function normalizeTtl(mixed $ttl): ?int
     {
-        if ($ttl !== null && !is_int($ttl)) {
-            throw new RuntimeError('The "ttl" modifier of "pimcorecache" requires an integer or null.');
+        if ($ttl !== null && (!is_int($ttl) || $ttl < 0)) {
+            throw new RuntimeError('The "ttl" modifier of "pimcorecache" requires a non-negative integer or null.');
         }
 
         return $ttl;

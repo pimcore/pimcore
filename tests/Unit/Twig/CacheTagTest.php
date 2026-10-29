@@ -40,7 +40,14 @@ final class CacheTagTest extends Unit
     {
         Cache::enable();
         $this->renderCount = 0;
-        $this->suffix = uniqid('pme_t2916_', true);
+        $this->suffix = str_replace('.', '', uniqid('cachetagtest', true));
+    }
+
+    protected function _after(): void
+    {
+        // clearing the shared "in_template" tag would stop later saves of this process, entries use a unique key
+        Cache::clearTag('tag_' . $this->suffix);
+        Cache::disable();
     }
 
     private function render(string $template, array $context = []): string
@@ -91,6 +98,31 @@ final class CacheTagTest extends Unit
         $this->assertSame('1', $this->render($template, $context));
         $this->assertSame('1', $this->render($template, $context));
         $this->assertSame(1, $this->renderCount);
+
+        // the dynamic tag is attached to the entry: clearing it renders the block again
+        Cache::clearTag('tag_' . $this->suffix);
+        $this->assertSame('2', $this->render($template, $context));
+    }
+
+    public function testDynamicTagFromStringVariable(): void
+    {
+        $template = '{% pimcorecache "str" ~ suffix tags(extraTag) %}{{ render_count() }}{% endpimcorecache %}';
+        $context = ['extraTag' => 'tag_' . $this->suffix];
+
+        $this->assertSame('1', $this->render($template, $context));
+        Cache::clearTag('tag_' . $this->suffix);
+        $this->assertSame('2', $this->render($template, $context));
+    }
+
+    public function testDynamicTtlIsStoredWithTheEntry(): void
+    {
+        $template = '{% pimcorecache "ttl" ~ suffix ttl(lifetime) %}x{% endpimcorecache %}';
+
+        $this->render($template, ['lifetime' => 1]);
+        $this->assertNotFalse(Cache::load(self::KEY_PREFIX . 'ttl' . $this->suffix));
+
+        sleep(2);
+        $this->assertFalse(Cache::load(self::KEY_PREFIX . 'ttl' . $this->suffix));
     }
 
     public function testNestedBlocksKeepTheirOwnKey(): void
@@ -121,9 +153,43 @@ final class CacheTagTest extends Unit
     public function testDynamicTtlOfWrongTypeFailsAtRuntime(): void
     {
         $this->expectException(RuntimeError::class);
-        $this->expectExceptionMessage('requires an integer or null');
+        $this->expectExceptionMessage('requires a non-negative integer or null');
 
         $this->render('{% pimcorecache "k" ttl(lifetime) %}x{% endpimcorecache %}', ['lifetime' => 'abc']);
+    }
+
+    public function testNegativeDynamicTtlFailsAtRuntime(): void
+    {
+        $this->expectException(RuntimeError::class);
+        $this->expectExceptionMessage('requires a non-negative integer or null');
+
+        $this->render('{% pimcorecache "k" ttl(lifetime) %}x{% endpimcorecache %}', ['lifetime' => -5]);
+    }
+
+    public function testKeyWithReservedCharactersIsHashed(): void
+    {
+        $template = '{% pimcorecache "nav_" ~ path ~ suffix %}{{ render_count() }}{% endpimcorecache %}';
+
+        $this->assertSame('1', $this->render($template, ['path' => '/de/news:1']));
+        $this->assertSame('1', $this->render($template, ['path' => '/de/news:1']));
+        $this->assertSame('2', $this->render($template, ['path' => '/de/news:2']));
+        $this->assertSame(2, $this->renderCount);
+    }
+
+    public function testEmptyKeyFailsAtRuntime(): void
+    {
+        $this->expectException(RuntimeError::class);
+        $this->expectExceptionMessage('must not be empty');
+
+        $this->render('{% pimcorecache key %}x{% endpimcorecache %}', ['key' => '']);
+    }
+
+    public function testTagWithReservedCharactersFailsAtRuntime(): void
+    {
+        $this->expectException(RuntimeError::class);
+        $this->expectExceptionMessage('contains one of the characters');
+
+        $this->render('{% pimcorecache "k" tags(extraTags) %}x{% endpimcorecache %}', ['extraTags' => ['a:b']]);
     }
 
     public function testDynamicTagsOfWrongTypeFailAtRuntime(): void
