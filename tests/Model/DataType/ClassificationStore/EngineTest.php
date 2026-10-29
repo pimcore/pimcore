@@ -22,10 +22,11 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as Classif
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
-use Pimcore\Model\DataObject\Exception\ClassificationStoreEngineNotAvailableException;
+use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionProperty;
@@ -43,6 +44,8 @@ class EngineTest extends ModelTestCase
 
     private const GROUPS_TABLE_PREFIX = 'object_classificationstore_groups_';
 
+    private const DOCUMENT_TABLE_PREFIX = 'object_classificationstore_doc_';
+
     private const FACADE_CLASS_ID = 'CsEngineFacade';
 
     private const DELETED_CLASS_ID = 'CsEngineDeleted';
@@ -53,9 +56,11 @@ class EngineTest extends ModelTestCase
 
     private const CONFLICT_CLASS_ID = 'CsEngineConflict';
 
+    private const DOCUMENT_CLASS_ID = 'CsEngineDocument';
+
     private const UNKNOWN_ENGINE = 'nosuchengine';
 
-    private const UNAVAILABLE_ENGINE = 'document';
+    private const DOCUMENT_ENGINE = 'document';
 
     private const FIRST_BRICK_KEY = 'csEngineFirstBrick';
 
@@ -85,9 +90,15 @@ class EngineTest extends ModelTestCase
             self::REFUSED_CLASS_ID,
             self::ROUTED_CLASS_ID,
             self::CONFLICT_CLASS_ID,
+            self::DOCUMENT_CLASS_ID,
         ];
 
         foreach ($classIds as $classId) {
+            ClassDefinition::getById($classId, true)?->delete();
+        }
+
+        foreach ($classIds as $classId) {
+            $db->executeStatement('DROP TABLE IF EXISTS ' . $db->quoteIdentifier(self::DOCUMENT_TABLE_PREFIX . $classId));
             $db->executeStatement('DROP TABLE IF EXISTS ' . $db->quoteIdentifier(self::DATA_TABLE_PREFIX . $classId));
             $db->executeStatement('DROP TABLE IF EXISTS ' . $db->quoteIdentifier(self::GROUPS_TABLE_PREFIX . $classId));
         }
@@ -169,11 +180,15 @@ class EngineTest extends ModelTestCase
      */
     public function testClassDeletionDropsTheTablesOfEveryRegisteredEngine(): void
     {
-        $class = $this->buildClass(self::DELETED_CLASS_ID, ['cs' => $this->storeField('cs', $this->createStore())]);
+        $class = $this->buildClass(self::DELETED_CLASS_ID, [
+            'cs' => $this->storeField('cs', $this->createStore()),
+            'csDoc' => $this->storeField('csDoc', $this->createStore(self::DOCUMENT_ENGINE)),
+        ]);
         $class->save();
 
         $this->assertTrue($this->tableExists(self::DATA_TABLE_PREFIX . self::DELETED_CLASS_ID));
         $this->assertTrue($this->tableExists(self::GROUPS_TABLE_PREFIX . self::DELETED_CLASS_ID));
+        $this->assertTrue($this->tableExists(self::DOCUMENT_TABLE_PREFIX . self::DELETED_CLASS_ID));
 
         $secondEngine = $this->createMock(EngineInterface::class);
         $secondEngine->expects($this->once())->method('dropTables');
@@ -184,6 +199,7 @@ class EngineTest extends ModelTestCase
 
         $this->assertFalse($this->tableExists(self::DATA_TABLE_PREFIX . self::DELETED_CLASS_ID));
         $this->assertFalse($this->tableExists(self::GROUPS_TABLE_PREFIX . self::DELETED_CLASS_ID));
+        $this->assertFalse($this->tableExists(self::DOCUMENT_TABLE_PREFIX . self::DELETED_CLASS_ID));
     }
 
     /**
@@ -218,21 +234,66 @@ class EngineTest extends ModelTestCase
     }
 
     /**
-     * An engine this release does not ship yet has no values to read, so a load through the DAO has
-     * to fail rather than come back empty from the default engine.
+     * An engine name no bundle registers has no values to read, so a load through the DAO has to
+     * fail rather than come back empty from the default engine.
      */
-    public function testLoadingThroughTheDaoRejectsAnUnavailableEngine(): void
+    public function testLoadingThroughTheDaoRejectsAnUnknownEngine(): void
     {
-        $storeId = $this->createStore(self::UNAVAILABLE_ENGINE);
+        $storeId = $this->createStore(self::UNKNOWN_ENGINE);
         $class = $this->buildClass(self::ROUTED_CLASS_ID, ['cs' => $this->storeField('cs', $storeId)]);
 
         $classificationStore = new Classificationstore();
         $classificationStore->setClass($class);
         $classificationStore->setFieldname('cs');
 
-        $this->expectException(ClassificationStoreEngineNotAvailableException::class);
+        $this->expectException(UnknownClassificationStoreEngineException::class);
 
         $classificationStore->load();
+    }
+
+    /**
+     * `document` used to be the engine this release knew about but did not ship. It is registered
+     * now, so a store carrying it resolves to the document engine instead of being refused.
+     */
+    public function testADocumentStoreResolvesToTheRegisteredDocumentEngine(): void
+    {
+        $resolver = Pimcore::getContainer()->get(EngineResolver::class);
+
+        $this->assertInstanceOf(DocumentEngine::class, $resolver->getEngines()[self::DOCUMENT_ENGINE] ?? null);
+        $this->assertInstanceOf(
+            DocumentEngine::class,
+            $resolver->resolveForStore($this->createStore(self::DOCUMENT_ENGINE))
+        );
+    }
+
+    /**
+     * The document engine owns one table per class and nothing else: it neither creates nor needs
+     * the two tables of the EAV engine, and creating it twice leaves it as it was.
+     */
+    public function testADocumentStoreCreatesOnlyItsOwnTableAndCreatesItIdempotently(): void
+    {
+        $class = $this->buildClass(
+            self::DOCUMENT_CLASS_ID,
+            ['cs' => $this->storeField('cs', $this->createStore(self::DOCUMENT_ENGINE))]
+        );
+        $class->save();
+
+        $table = self::DOCUMENT_TABLE_PREFIX . self::DOCUMENT_CLASS_ID;
+
+        $this->assertTrue($this->tableExists($table));
+        $this->assertFalse($this->tableExists(self::DATA_TABLE_PREFIX . self::DOCUMENT_CLASS_ID));
+        $this->assertFalse($this->tableExists(self::GROUPS_TABLE_PREFIX . self::DOCUMENT_CLASS_ID));
+
+        $this->assertSame(['id', 'fieldname', 'groupId'], $this->primaryKeyOf($table));
+        $this->assertSame(
+            ['classificationstore_groups' => 'CASCADE', 'objects' => 'CASCADE'],
+            $this->foreignKeysOf($table)
+        );
+
+        $class->save();
+
+        $this->assertTrue($this->tableExists($table));
+        $this->assertSame(['id', 'fieldname', 'groupId'], $this->primaryKeyOf($table));
     }
 
     /**
@@ -450,5 +511,42 @@ class EngineTest extends ModelTestCase
     private function tableExists(string $table): bool
     {
         return Db::get()->fetchOne('SHOW TABLES LIKE ?', [$table]) !== false;
+    }
+
+    /**
+     * @return string[] the primary key columns, in their declared order
+     */
+    private function primaryKeyOf(string $table): array
+    {
+        return Db::get()->fetchFirstColumn(
+            'SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE'
+            . " WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY'"
+            . ' ORDER BY ORDINAL_POSITION',
+            [$table]
+        );
+    }
+
+    /**
+     * @return array<string, string> referenced table => delete rule
+     */
+    private function foreignKeysOf(string $table): array
+    {
+        $rows = Db::get()->fetchAllAssociative(
+            'SELECT k.REFERENCED_TABLE_NAME AS referenced, r.DELETE_RULE AS deleteRule'
+            . ' FROM information_schema.KEY_COLUMN_USAGE k'
+            . ' JOIN information_schema.REFERENTIAL_CONSTRAINTS r ON r.CONSTRAINT_NAME = k.CONSTRAINT_NAME'
+            . ' AND r.CONSTRAINT_SCHEMA = k.CONSTRAINT_SCHEMA'
+            . ' WHERE k.TABLE_SCHEMA = DATABASE() AND k.TABLE_NAME = ? AND k.REFERENCED_TABLE_NAME IS NOT NULL',
+            [$table]
+        );
+
+        $foreignKeys = [];
+        foreach ($rows as $row) {
+            $foreignKeys[(string) $row['referenced']] = (string) $row['deleteRule'];
+        }
+
+        ksort($foreignKeys);
+
+        return $foreignKeys;
     }
 }
