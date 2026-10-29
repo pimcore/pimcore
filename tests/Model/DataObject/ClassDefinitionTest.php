@@ -236,6 +236,105 @@ class ClassDefinitionTest extends ModelTestCase
     }
 
     /**
+     * generateClassFiles() writes parentClass (and the other inheritance-related properties)
+     * verbatim into the generated class file's `extends` clause. save() validates those values
+     * before generating the class file, but generateClassFiles() is itself public and can be
+     * called directly, bypassing that check entirely (incomplete fix of GHSA-g2vm-g4vq-qhwj,
+     * see GHSA-93rx-hv39-6r6r).
+     */
+    public function testGenerateClassFilesRejectsInvalidParentClass(): void
+    {
+        $class = new ClassDefinition();
+        $class->setName('GenerateClassFilesInvalidParentClassTest');
+        $class->setId('GenerateClassFilesInvalidParentClassTest');
+        $class->setParentClass('Foo {} abstract class Bar');
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Invalid parentClass value for class definition');
+
+        $class->generateClassFiles(false);
+    }
+
+    /**
+     * The class ID and name are emitted verbatim into the generated class files as well (e.g.
+     * `protected $classId = "<id>";`), so generateClassFiles() must apply the same name/ID and
+     * field name checks as save() - not only the inheritance property checks.
+     *
+     * @dataProvider invalidClassFileGenerationInputProvider
+     */
+    public function testGenerateClassFilesRejectsInvalidClassDefinition(
+        string $name,
+        string $id,
+        ?string $fieldName,
+        string $expectedMessage
+    ): void {
+        $class = new ClassDefinition();
+        $class->setName($name);
+        $class->setId($id);
+
+        if ($fieldName !== null) {
+            $input = new Input();
+            $input->setName($fieldName);
+            $class->setFieldDefinitions([$fieldName => $input]);
+        }
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $class->generateClassFiles(false);
+    }
+
+    public static function invalidClassFileGenerationInputProvider(): array
+    {
+        return [
+            'id breaking out of the generated string literal' => [
+                'GenerateClassFilesInvalidIdTest',
+                'x"; } system("id"); class Y { //',
+                null,
+                'Invalid ID',
+            ],
+            'id with trailing newline' => [
+                'GenerateClassFilesInvalidIdTest',
+                "x\n",
+                null,
+                'Invalid ID',
+            ],
+            'invalid class name' => [
+                'Foo extends Bar {} class Baz',
+                'GenerateClassFilesInvalidNameTest',
+                null,
+                'Invalid name for class definition',
+            ],
+            'reserved class name' => [
+                'var',
+                'GenerateClassFilesReservedNameTest',
+                null,
+                'reserved word',
+            ],
+            'forbidden field name' => [
+                'GenerateClassFilesForbiddenFieldTest',
+                'GenerateClassFilesForbiddenFieldTest',
+                'dao',
+                'Forbidden name used for field definition',
+            ],
+        ];
+    }
+
+    /**
+     * Negative control: generateClassFiles() must keep working for a class with a legitimate
+     * (or empty) parentClass once the validation above is in place.
+     */
+    public function testGenerateClassFilesStillWorksForValidParentClass(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+
+        $class->generateClassFiles(false);
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
      * A class name is emitted verbatim as the PHP class name in the generated class file, so a
      * PHP reserved word (e.g. "var") must be rejected at save time instead of reaching the class
      * file generator, where it produces a fatal syntax error only when an object of that class is
