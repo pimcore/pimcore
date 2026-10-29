@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Workflow\MarkingStore;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
@@ -42,7 +41,9 @@ class DataObjectMarkingStoreFieldNameTest extends TestCase
         ];
     }
 
-    #[DataProvider('subjectProvider')]
+    /**
+     * @dataProvider subjectProvider
+     */
     public function testMultipleStateMarkingStoreReadsAndWritesField(string $fieldName, MarkingSubject $subject): void
     {
         $store = new DataObjectMultipleStateMarkingStore($fieldName);
@@ -54,7 +55,9 @@ class DataObjectMarkingStoreFieldNameTest extends TestCase
         $this->assertSame(['review', 'approved'], $subject->getStored());
     }
 
-    #[DataProvider('subjectProvider')]
+    /**
+     * @dataProvider subjectProvider
+     */
     public function testSplittedStateMarkingStoreReadsAndWritesField(string $fieldName, MarkingSubject $subject): void
     {
         $subject->defineField($fieldName);
