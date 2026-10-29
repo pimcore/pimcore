@@ -594,6 +594,157 @@ final class SubGroupTest extends AbstractClassificationStoreTest
     }
 
     /**
+     * A tag names an entry in the vocabulary of the store its group belongs to, so a group that moves
+     * would take its tags to a store whose vocabulary knows nothing of them: they would resolve to
+     * nothing, the deletion of the entry they came from would no longer reach them, and saving such a
+     * relation again would be refused. The move is refused instead, for as long as a tag is there.
+     */
+    public function testAGroupThatCarriesATagCannotBeMovedToAnotherStore(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('movedgroup');
+        $keyConfig = $this->createKey('movedgroup');
+        $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+
+        $otherStoreId = $this->createStore();
+        $group->setStoreId($otherStoreId);
+        $group->setDescription('moved');
+
+        try {
+            $group->save();
+            $this->fail('Moving a group that carries a tag must be refused');
+        } catch (InvalidConfigException $e) {
+            $this->addToAssertionCount(1);
+        }
+
+        $stored = Db::get()->fetchAssociative(
+            'SELECT `storeId`, `description` FROM `classificationstore_groups` WHERE id = ?',
+            [$group->getId()]
+        );
+
+        $this->assertSame($this->getStoreId(), (int) $stored['storeId']);
+        $this->assertNull($stored['description'], 'a refused save must write nothing at all');
+
+        // the tag is still the one it was, and still reachable from the entry it names
+        $this->assertSame($subGroup->getIdentifier(), $this->fetchTag($group, $keyConfig));
+        $subGroup->delete();
+        $this->assertNull($this->fetchTag($group, $keyConfig));
+
+        // and with no tag left, the group moves as it did before
+        $group->setStoreId($otherStoreId);
+        $group->save();
+
+        $this->assertSame(
+            $otherStoreId,
+            (int) Db::get()->fetchOne(
+                'SELECT `storeId` FROM `classificationstore_groups` WHERE id = ?',
+                [$group->getId()]
+            )
+        );
+
+        // put it back, so that tearDown deletes it from the store it was created in
+        $group->setStoreId($this->getStoreId());
+        $group->save();
+    }
+
+    /**
+     * The other half: a tag on its way in must not slip past the move that was looking for it. The move
+     * holds the group row, and KeyGroupRelation\Dao::resolveSubGroup() reads the store of the group
+     * under the same lock, so a relation write started in parallel waits for the move rather than
+     * resolving against the store the group is about to leave.
+     */
+    public function testMovingAGroupHoldsItAgainstAConcurrentTagWrite(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('contendedgroup');
+        $keyConfig = $this->createKey('contendedgroup');
+
+        $db = Db::get();
+        $otherConnection = $this->openSecondConnection();
+        $otherConnection->beginTransaction();
+
+        $db->executeStatement('SET SESSION innodb_lock_wait_timeout = 2');
+
+        try {
+            // the lock a move holds while it looks for a tag it would strand
+            $otherConnection->fetchOne(
+                'SELECT `storeId` FROM `classificationstore_groups` WHERE id = ? FOR UPDATE',
+                [$group->getId()]
+            );
+
+            try {
+                $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+                $this->fail('A tag must not be resolved against a group another transaction is moving');
+            } catch (LockWaitTimeoutException $e) {
+                $this->addToAssertionCount(1);
+            }
+
+            $this->assertNull(
+                $this->fetchTag($group, $keyConfig),
+                'a relation write that could not read the store of its group must leave no tag'
+            );
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = DEFAULT');
+            $otherConnection->rollBack();
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * The tags a deletion has to clear are read as of now, not from the snapshot of the transaction the
+     * deletion runs in. Inside an enclosing transaction whose snapshot predates a committed tag, a plain
+     * read would report the assignment as untagged, skip the clearing altogether, and still delete the
+     * entry - leaving a tag that resolves to nothing, and a group whose cache was never invalidated.
+     */
+    public function testDeletionClearsATagCommittedAfterTheSnapshotOfItsTransaction(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('stale');
+        $keyConfig = $this->createKey('stale');
+        $this->assignKey($group, $keyConfig, 0);
+
+        $db = Db::get();
+        $otherConnection = $this->openSecondConnection();
+
+        $db->beginTransaction();
+
+        try {
+            // establishes the snapshot of the deleting transaction, while the assignment is still untagged
+            $this->assertNull($this->fetchTag($group, $keyConfig));
+
+            $otherConnection->executeStatement(
+                'UPDATE `' . self::TABLE_RELATIONS . '` SET `' . self::COLUMN . '` = ?'
+                . ' WHERE `groupId` = ? AND `keyId` = ?',
+                [$subGroup->getIdentifier(), $group->getId(), $keyConfig->getId()]
+            );
+
+            // committed, and still invisible from inside the snapshot - which is what a plain read would see
+            $this->assertNull($this->fetchTag($group, $keyConfig));
+
+            $subGroup->delete();
+
+            $db->commit();
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $otherConnection->close();
+        }
+
+        $this->assertNull(
+            $this->fetchTag($group, $keyConfig),
+            'the deletion must clear a tag committed after the snapshot it runs in'
+        );
+        $this->assertSame(
+            0,
+            (int) $db->fetchOne('SELECT COUNT(*) FROM ' . self::TABLE_SUBGROUPS . ' WHERE id = ?', [$subGroup->getId()])
+        );
+    }
+
+    /**
      * AC8
      */
     public function testSubGroupOrderIsDerivedFromSorter(): void

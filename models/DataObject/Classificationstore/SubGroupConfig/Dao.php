@@ -234,6 +234,11 @@ class Dao extends Model\Dao\AbstractDao
      * identifier, and nothing in them would follow the entry to a second store. Moving it would leave
      * them resolving to nothing - refusing the save fails and reaches no further.
      *
+     * The stored store is read as of now and held until the save commits, the way delete() and
+     * GroupConfig\Dao::update() read the row they decide on: a plain read would answer from the
+     * snapshot of an enclosing transaction, and the UPDATE below - a current read - would then write
+     * against a row this guard never actually looked at.
+     *
      * A row that carries no store yet is the placeholder create() inserts, which update() fills in.
      *
      * @throws Model\Exception\InvalidConfigException
@@ -245,7 +250,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $stored = $this->db->fetchOne(
-            'SELECT `storeId` FROM `' . self::TABLE_NAME_SUBGROUPS . '` WHERE `id` = ?',
+            'SELECT `storeId` FROM `' . self::TABLE_NAME_SUBGROUPS . '` WHERE `id` = ? FOR UPDATE',
             [$id]
         );
 
@@ -275,11 +280,16 @@ class Dao extends Model\Dao\AbstractDao
 
         $parameters = [$storeId, $identifier];
 
+        // Read as of now rather than from the transaction's snapshot: inside an enclosing transaction
+        // whose snapshot predates a committed tag, a plain read would report the assignment as
+        // untagged, return nothing here, and leave the UPDATE below - a current read, and the only
+        // thing that would still have cleared it - unreached, along with the cache of its group.
         $taggedGroupIds = $this->db->fetchFirstColumn(
             'SELECT DISTINCT `r`.`groupId`'
             . ' FROM `' . KeyGroupRelationDao::TABLE_NAME_RELATIONS . '` `r`'
             . ' INNER JOIN `' . GroupConfigDao::TABLE_NAME_GROUPS . '` `g` ON `g`.`id` = `r`.`groupId`'
-            . ' WHERE `g`.`storeId` = ? AND `r`.`subGroup` = ?',
+            . ' WHERE `g`.`storeId` = ? AND `r`.`subGroup` = ?'
+            . ' FOR UPDATE',
             $parameters
         );
         if (!$taggedGroupIds) {

@@ -76,6 +76,13 @@ class Dao extends AbstractDao
      * The vocabulary is scoped to the store of the group, not of the key, so the group decides which
      * entries a relation may name.
      *
+     * Which store that is, is read under a lock on the group row, and so as of now rather than from the
+     * snapshot of an enclosing transaction: GroupConfig\Dao::update() takes the same lock before it
+     * looks for a tag that a move would strand, so this write and that move cannot both decide that
+     * there is nothing to refuse. Whichever takes the row first, the other sees its outcome - a tag on
+     * its way in is either found by the move and refuses it, or waits for the move and then resolves
+     * against the store the group ended up in.
+     *
      * The resolved row is locked rather than only read: the lock is held until the enclosing write
      * commits, so a sub group deletion either clears the tag this write leaves behind or waits for the
      * write and then finds it. SubGroupConfig\Dao::delete() takes the same lock before it clears tags.
@@ -94,7 +101,8 @@ class Dao extends AbstractDao
         }
 
         $storeId = $this->db->fetchOne(
-            'SELECT `storeId` FROM `' . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '` WHERE `id` = ?',
+            'SELECT `storeId` FROM `' . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '`'
+            . ' WHERE `id` = ? FOR UPDATE',
             [$this->model->getGroupId()]
         );
 
