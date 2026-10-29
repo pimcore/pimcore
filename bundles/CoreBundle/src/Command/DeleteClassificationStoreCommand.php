@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,6 +35,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class DeleteClassificationStoreCommand extends AbstractCommand
 {
+    public function __construct(private readonly EngineResolver $engineResolver)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         $this
@@ -86,23 +92,10 @@ class DeleteClassificationStoreCommand extends AbstractCommand
     {
         $db = Db::get();
 
-        $tableList = $db->fetchAllAssociative("SHOW TABLES LIKE 'object_classificationstore_data_%'");
-        foreach ($tableList as $table) {
-            $theTable = current($table);
-            $sql = 'DELETE FROM ' . $theTable .
-                ' WHERE keyId IN (SELECT id FROM classificationstore_keys WHERE storeId = ' . $storeId . ')';
-            echo $sql . "\n";
-            $db->executeQuery($sql);
-        }
-
-        $tableList = $db->fetchAllAssociative("SHOW TABLES LIKE 'object_classificationstore_groups_%'");
-
-        foreach ($tableList as $table) {
-            $theTable = current($table);
-            $sql = 'DELETE FROM ' . $theTable .
-                ' WHERE groupId IN (SELECT id FROM classificationstore_groups WHERE storeId = ' . $storeId . ')';
-            echo $sql . "\n";
-            $db->executeQuery($sql);
+        // before the configuration tables below, as an engine given only a store id has to read them
+        foreach ($this->engineResolver->getEngines() as $name => $engine) {
+            echo 'Deleting values for store ' . $storeId . ' via engine ' . $name . "\n";
+            $engine->deleteStoreValues($storeId);
         }
 
         $sql = 'DELETE FROM classificationstore_keys WHERE storeId = ' . $storeId;

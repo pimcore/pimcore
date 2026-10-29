@@ -13,9 +13,11 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 
 /**
  * @internal
@@ -350,8 +352,10 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->executeQuery('DROP TABLE IF EXISTS `'.$brickTable.'`');
         }
 
-        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_data_'.$this->model->getId());
-        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_groups_'.$this->model->getId());
+        // every engine drops the tables it owns; a class may carry fields on more than one of them
+        foreach (Pimcore::getContainer()->get(EngineResolver::class)->getEngines() as $engine) {
+            $engine->dropTables($this->model);
+        }
 
         // clean slug table
         DataObject\Data\UrlSlug::handleClassDeleted($this->model->getId());

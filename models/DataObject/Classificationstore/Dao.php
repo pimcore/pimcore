@@ -14,12 +14,9 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Exception;
 use Pimcore;
-use Pimcore\Db\Helper;
-use Pimcore\Element\MarshallerService;
-use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\DataObject;
-use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 
 /**
  * @internal
@@ -28,10 +25,6 @@ use Pimcore\Normalizer\NormalizerInterface;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    use DataObject\ClassDefinition\Helper\Dao;
-
-    protected array $tableDefinitions = [];
-
     public function getDataTableName(): string
     {
         return 'object_classificationstore_data_' . $this->model->getClass()->getId();
@@ -47,147 +40,15 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save(): void
     {
-        if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
-            return;
-        }
-        $object = $this->model->getObject();
-        $objectId = $object->getId();
-        $dataTable = $this->getDataTableName();
-        $fieldname = $this->model->getFieldname();
-
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$dataTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
-        if ($dataExists) {
-            $this->db->delete($dataTable, ['id' => $objectId, 'fieldname' => $fieldname]);
-        }
-
-        $items = $this->model->getItems();
-        $activeGroups = $this->model->getActiveGroups();
-
-        $collectionMapping = $collectionToAdd = $this->model->getGroupCollectionMappings();
-
-        // when the field is inheritable, check the parent collection mappings and skip the ones that are meant to be inherited
-        $allowInherit = $this->model->getClass()->getAllowInherit();
-
-        // check and exclude if an object is the top of the hierarchy
-        // otherwise it wouldn't be able to distinguish whether the exact collections are from itself, rather from a common parent
-        if ($allowInherit && ($parent = DataObject\Service::hasInheritableParentObject($object))) {
-            $parentStore = $parent->{'get' . ucfirst($fieldname)}();
-            if ($parentStore instanceof DataObject\Classificationstore) {
-                $parentCollectionMapping = DataObject\Service::useInheritedValues(true, $parentStore->getGroupCollectionMappings(...));
-                $collectionToAdd = array_diff_assoc($collectionToAdd, $parentCollectionMapping);
-            }
-        }
-
-        $groupsTable = $this->getGroupsTableName();
-
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$groupsTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
-        if ($dataExists) {
-            $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
-        }
-
-        foreach ($activeGroups as $activeGroupId => $enabled) {
-            if ($enabled) {
-                $data = [
-                    'id' => $objectId,
-                    'groupId' => $activeGroupId,
-                    'fieldname' => $fieldname,
-                ];
-                Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
-            }
-        }
-
-        $alreadySavedGroups = [];
-
-        foreach ($items as $groupId => $group) {
-            foreach ($group as $keyId => $keyData) {
-                if (!isset($activeGroups[$groupId])) {
-                    continue;
-                }
-                $keyConfig = DefinitionCache::get($keyId);
-                $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
-
-                foreach ($keyData as $language => $value) {
-                    $collectionId = $collectionMapping[$groupId] ?? null;
-                    $data = [
-                        'id' => $objectId,
-                        'collectionId' => $collectionId,
-                        'groupId' => $groupId,
-                        'keyId' => $keyId,
-                        'fieldname' => $fieldname,
-                        'language' => $language,
-                        'type' => $keyConfig->getType(),
-                    ];
-
-                    $encodedData = [];
-
-                    if ($fd instanceof NormalizerInterface) {
-                        $normalizedData = $fd->normalize($value, [
-                            'object' => $object,
-                            'fieldDefinition' => $fd,
-                        ]);
-
-                        /** @var MarshallerService $marshallerService */
-                        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
-
-                        if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
-                            $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
-                            // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
-                            $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'classificationstore']);
-                        } else {
-                            $encodedData['value'] = $normalizedData;
-                        }
-                    }
-
-                    $data['value'] = $encodedData['value'] ?? null;
-                    $data['value2'] = $encodedData['value2'] ?? null;
-
-                    Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
-                    $alreadySavedGroups[] = $groupId;
-                }
-            }
-        }
-
-        // Adds a placeholder to persist collectionId by adding the first field of the group
-        // that belongs to a collection with NULL values
-        foreach ($collectionToAdd as $groupId => $collectionId) {
-            // Ignore the groups that are already saved and those without any collection id
-            if ($collectionId && !in_array($groupId, $alreadySavedGroups)) {
-                $group = GroupConfig::getById($groupId);
-                $groupKeys = $group?->getRelations();
-                if (!$groupKeys) {
-                    continue;
-                }
-                $firstKey = reset($groupKeys);
-                $keyId = $firstKey->getKeyId();
-                $keyConfig = DefinitionCache::get($keyId);
-                $data = [
-                    'id' => $objectId,
-                    'collectionId' => $collectionId,
-                    'groupId' => $groupId,
-                    'keyId' => $keyId,
-                    'fieldname' => $fieldname,
-                    'language' => 'default',
-                    'type' => $keyConfig->getType(),
-                    'value' => null,
-                    'value2' => null,
-                ];
-                $this->db->insert($dataTable, $data);
-            }
-        }
+        $this->getEngine()->save($this->model);
     }
 
+    /**
+     * @throws Exception
+     */
     public function delete(): void
     {
-        $object = $this->model->getObject();
-        $objectId = $object->getId();
-        $dataTable = $this->getDataTableName();
-        $groupsTable = $this->getGroupsTableName();
-
-        // remove relations
-        $this->db->delete($dataTable, ['id' => $objectId]);
-        $this->db->delete($groupsTable, ['id' => $objectId]);
+        $this->getEngine()->delete($this->model);
     }
 
     /**
@@ -195,113 +56,67 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load(): void
     {
-        $classificationStore = $this->model;
-        $object = $this->model->getObject();
-        $dataTableName = $this->getDataTableName();
-        $objectId = $object->getId() ?? 0;
-        $fieldname = $this->model->getFieldname();
-        $groupsTableName = $this->getGroupsTableName();
-
-        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
-
-        $data = $this->db->fetchAllAssociative($query);
-        $list = [];
-
-        foreach ($data as $item) {
-            $list[$item['groupId']] = true;
-        }
-
-        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
-
-        $data = $this->db->fetchAllAssociative($query);
-
-        $groupCollectionMapping = [];
-
-        foreach ($data as $item) {
-            if (!isset($list[$item['groupId']])) {
-                continue;
-            }
-
-            $groupId = $item['groupId'];
-            $keyId = $item['keyId'];
-            $collectionId = $item['collectionId'];
-            $groupCollectionMapping[$groupId] = $collectionId;
-
-            $value = [
-                'value' => $item['value'],
-                'value2' => $item['value2'],
-            ];
-
-            $keyConfig = DefinitionCache::get($keyId);
-            if (!$keyConfig) {
-                Logger::error('Could not resolve key with ID: ' . $keyId);
-
-                continue;
-            }
-
-            $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
-
-            if ($fd instanceof NormalizerInterface) {
-                /** @var MarshallerService $marshallerService */
-                $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
-
-                if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
-                    $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
-                    // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
-                    $value = $unmarshaller->unmarshal($value, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'classificationstore']);
-                } else {
-                    $value = $value['value'];
-                }
-
-                $value = $fd->denormalize($value, [
-                    'object' => $object,
-                    'fieldDefinition' => $fd,
-                ]);
-            }
-
-            $language = $item['language'];
-            $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);
-        }
-
-        $classificationStore->setActiveGroups($list);
-        $classificationStore->setGroupCollectionMappings($groupCollectionMapping);
-        $classificationStore->resetDirtyMap();
+        $this->getEngine()->load($this->model);
     }
 
+    /**
+     * Kept as the published facade of the model; the plural method is on the engine interface.
+     *
+     * classSaved() no longer comes through here - it routes from the field definition it was
+     * dispatched on, which knows its own store - so this is the path of third-party callers that
+     * have only the model, which names a field rather than a definition. The engine is the one of
+     * the whole group, and the store handed to it the first of them, as a group that does not agree
+     * on its engine is refused before this point.
+     *
+     * @throws Exception
+     */
     public function createUpdateTable(): void
     {
-        $groupsTable = $this->getGroupsTableName();
-        $dataTable = $this->getDataTableName();
+        $storeIds = $this->getStoreIds();
+        $storeId = $storeIds === [] ? null : reset($storeIds);
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
-            `id` INT(11) UNSIGNED NOT NULL,
-            `groupId` INT(11) UNSIGNED NOT NULL,
-            `fieldname` VARCHAR(70) NOT NULL,
-            PRIMARY KEY (`id`, `fieldname`, `groupId`),
-            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'id').'` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
-            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'groupId').'` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
+        $this->getEngineResolver()->resolveForStores($storeIds)
+            ->createUpdateTables($this->model->getClass(), $storeId);
+    }
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
-            `id` INT(11) UNSIGNED NOT NULL,
-            `collectionId` BIGINT(20) NULL,
-            `groupId` INT(11) UNSIGNED NOT NULL,
-            `keyId` BIGINT(20) NOT NULL,
-            `value` LONGTEXT NULL,
-	        `value2` LONGTEXT NULL,
-            `fieldname` VARCHAR(70) NOT NULL,
-            `language` VARCHAR(10) NOT NULL,
-            `type` VARCHAR(50) NULL,
-            PRIMARY KEY (`id`, `fieldname`, `groupId`, `keyId`, `language`),
-            INDEX `keyId` (`keyId`),
-            INDEX `language` (`language`),
-            INDEX `groupKeys` (`id`, `fieldname`, `groupId`),
-            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'id').'` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
-            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'id__fieldname__groupId').'` FOREIGN KEY (`id`, `fieldname`, `groupId`) REFERENCES `' . $groupsTable . '` (`id`, `fieldname`, `groupId`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
+    /**
+     * @throws Exception
+     */
+    private function getEngine(): EngineInterface
+    {
+        return $this->getEngineResolver()->resolveForStores($this->getStoreIds());
+    }
 
-        $this->tableDefinitions = [];
+    private function getEngineResolver(): EngineResolver
+    {
+        return Pimcore::getContainer()->get(EngineResolver::class);
+    }
 
-        $this->handleEncryption($this->model->getClass(), [$groupsTable, $dataTable]);
+    /**
+     * The configured stores of every field definition the model's fieldname reaches.
+     *
+     * Two object bricks allowed on the same class may define a classification store field under the
+     * same name, so the name identifies a group rather than one definition. The value tables key
+     * their rows by (object, fieldname), so such fields share their rows - the resolver is what
+     * refuses the group when they do not share an engine.
+     *
+     * Empty when the model carries no fieldname, or when no definition matches it, which both mean
+     * the default engine.
+     *
+     * @return array<string, int|null> container-qualified field identity => store id
+     */
+    private function getStoreIds(): array
+    {
+        // createUpdateTable() is reachable on a model that carries only its class, with no fieldname
+        $fieldname = $this->model->getObjectVars()['fieldname'] ?? null;
+        if (!is_string($fieldname)) {
+            return [];
+        }
+
+        $classificationStoreFields = Service::getClassificationStoreFieldDefinitions(
+            $this->model->getClass()->getFieldDefinitions()
+        );
+
+        return Service::groupStoreIdsByFieldName($classificationStoreFields)[$fieldname] ?? [];
     }
 }
