@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -23,6 +24,22 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class KeyGroupRelation extends Model\AbstractModel
 {
+    private const OPTIONS = 'options';
+
+    /**
+     * What a definitionOverride may carry: presentation, the per group option subset and the unit
+     * of a quantity value. `type` and `fieldtype` are deliberately not among them - an assignment
+     * never changes what a key stores.
+     */
+    private const OVERRIDABLE_PROPERTIES = [
+        'title',
+        'tooltip',
+        self::OPTIONS,
+        'defaultValue',
+        'defaultUnit',
+        'validUnits',
+    ];
+
     protected int $keyId;
 
     protected int $groupId;
@@ -57,6 +74,46 @@ final class KeyGroupRelation extends Model\AbstractModel
     protected bool $mandatory = false;
 
     protected bool $enabled = true;
+
+    /**
+     * Carried, not interpreted - no core path reads it.
+     *
+     * @var array<string, mixed>|null
+     */
+    protected ?array $metadata = null;
+
+    /**
+     * Whether `metadata` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $metadataInitialized = false;
+
+    /**
+     * A partial field definition merged over the key's own by {@see self::getEffectiveDefinition()}.
+     *
+     * @var array<string, mixed>|null
+     */
+    protected ?array $definitionOverride = null;
+
+    /**
+     * Whether `definitionOverride` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $definitionOverrideInitialized = false;
+
+    /**
+     * The sub-group of this assignment, stored verbatim; null means no sub-group.
+     */
+    protected ?string $subGroup = null;
+
+    /**
+     * Whether `subGroup` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $subGroupInitialized = false;
 
     public static function create(): self
     {
@@ -153,6 +210,109 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->enabled = $enabled;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getMetadata(): ?array
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param array<string, mixed>|null $metadata
+     */
+    public function setMetadata(?array $metadata): void
+    {
+        $this->metadata = $metadata;
+        $this->metadataInitialized = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function isMetadataInitialized(): bool
+    {
+        return $this->metadataInitialized;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getDefinitionOverride(): ?array
+    {
+        return $this->definitionOverride;
+    }
+
+    /**
+     * @param array<string, mixed>|null $definitionOverride
+     *
+     * @throws InvalidConfigException
+     */
+    public function setDefinitionOverride(?array $definitionOverride): void
+    {
+        foreach (array_keys($definitionOverride ?? []) as $property) {
+            if (!in_array($property, self::OVERRIDABLE_PROPERTIES, true)) {
+                throw new InvalidConfigException(
+                    sprintf('"%s" cannot be overridden per key assignment.', $property)
+                );
+            }
+        }
+
+        $this->definitionOverride = $definitionOverride;
+        $this->definitionOverrideInitialized = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function isDefinitionOverrideInitialized(): bool
+    {
+        return $this->definitionOverrideInitialized;
+    }
+
+    public function getSubGroup(): ?string
+    {
+        return $this->subGroup;
+    }
+
+    public function setSubGroup(?string $subGroup): void
+    {
+        $this->subGroup = $subGroup;
+        $this->subGroupInitialized = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function isSubGroupInitialized(): bool
+    {
+        return $this->subGroupInitialized;
+    }
+
+    /**
+     * The definition this assignment effectively uses: the one {@see self::getDefinition()} returns
+     * with `definitionOverride` merged over it, as the same JSON string. Without a stored override
+     * it is that definition unchanged. Nothing in core reads this yet - the editor still renders
+     * {@see self::getDefinition()}.
+     */
+    public function getEffectiveDefinition(): string
+    {
+        $override = $this->definitionOverride;
+        if ($override === null) {
+            return $this->getDefinition();
+        }
+
+        $definition = json_decode($this->getDefinition(), true);
+
+        foreach ($override as $property => $value) {
+            $definition[$property] = $property === self::OPTIONS
+                ? self::filterOptions($definition[self::OPTIONS] ?? null, $value)
+                : $value;
+        }
+
+        return json_encode($definition);
+    }
+
     public static function getByGroupAndKeyId(int $groupId, int $keyId): ?KeyGroupRelation
     {
         try {
@@ -163,5 +323,33 @@ final class KeyGroupRelation extends Model\AbstractModel
         } catch (NotFoundException) {
             return null;
         }
+    }
+
+    /**
+     * Filter rather than replace: one key holds the full option list and each group uses a subset
+     * of it, so the key's own label/value pairs are kept in the key's order. A null subset means
+     * every option, an empty one means none. Values are compared strictly.
+     *
+     * @param array<int, array<string, mixed>>|null $options
+     * @param array<int, mixed>|null $subset
+     *
+     * @return array<int, array<string, mixed>>|null
+     */
+    private static function filterOptions(?array $options, ?array $subset): ?array
+    {
+        if ($subset === null || $options === null) {
+            return $options;
+        }
+
+        // the subset speaks the vocabulary of the key's own options, so a pair stands for its value
+        $values = array_map(
+            static fn (mixed $entry) => is_array($entry) ? ($entry['value'] ?? null) : $entry,
+            $subset
+        );
+
+        return array_values(array_filter(
+            $options,
+            static fn (array $option) => in_array($option['value'] ?? null, $values, true)
+        ));
     }
 }

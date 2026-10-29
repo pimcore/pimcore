@@ -270,3 +270,53 @@ runs the command again.
 
 Each write is guarded by `identifier IS NULL`, so a row that was given an identifier between the pre-flight and the
 write keeps it; the command reports that row as unresolved rather than counting it as backfilled.
+
+### Per assignment fields
+
+Assigning a key to a group is a row of its own, and that row can carry more than the sorter and the mandatory flag.
+`Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation` exposes three nullable per assignment fields, all of
+which default to "not set" and are written only when they were loaded or explicitly set - a relation built with `new`
+that carries just a group id and a key id therefore never clears a stored value.
+
+* `getMetadata()` / `setMetadata()` - an arbitrary JSON object, stored and returned verbatim. Nothing in core reads
+  it; the keys `indexed`, `externalCode` and `custom` are conventions for the packages and customer implementations
+  that do. The search index mapping, the editor layout and `checkValidity()` behave identically whether or not a
+  relation carries metadata.
+* `getDefinitionOverride()` / `setDefinitionOverride()` - a partial field definition, in the vocabulary of a key's own
+  settings, merged over the key's definition by `getEffectiveDefinition()`.
+* `getSubGroup()` / `setSubGroup()` - the sub-group of this assignment, as a string of at most 190 characters, stored
+  verbatim and indexed. `null` means no sub-group. There is no vocabulary to validate it against yet, so any string
+  is accepted.
+
+Both JSON fields take and return decoded arrays; the encoding happens in the DAO.
+
+#### Overriding a key's definition per group
+
+`getEffectiveDefinition()` returns the key's definition with the relation's `definitionOverride` merged over it, as
+the same JSON string `getDefinition()` returns. With no override stored it returns exactly that definition. Its base
+is `getDefinition()` as the instance carries it, which on a relation loaded through `KeyGroupRelation\Listing` already
+has the relation's `mandatory` flag folded in and on one loaded through `getByGroupAndKeyId()` does not - `mandatory`
+has a column of its own and is not part of an override.
+
+An override may only carry `title`, `tooltip`, `options`, `defaultValue`, `defaultUnit` and `validUnits`. Any other
+property - `type` and `fieldtype` above all, because an assignment never changes what a key stores - is refused by
+`setDefinitionOverride()` with `Pimcore\Model\Exception\InvalidConfigException`, and nothing is written.
+
+`options` **filters** rather than replaces: the merged definition keeps the key's own label/value pairs whose value
+appears in the override's list, in the key's order. That is what lets one key hold the full option list while each
+group uses its own subset of it. `null` means every option, an empty list means none.
+
+```php
+$relation = \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation::getByGroupAndKeyId($groupId, $keyId);
+$relation->setDefinitionOverride(['options' => ['red', 'green']]);
+$relation->setSubGroup('EFG00007');
+$relation->save();
+
+$definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+    json_decode($relation->getEffectiveDefinition(), true),
+    $relation->getType()
+);
+```
+
+> **Note**: `definitionOverride` is stored but not yet read by core. The object editor still renders the key's own
+> definition, so saving an override changes nothing that is visible until a reader is wired up.

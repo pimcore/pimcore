@@ -14,6 +14,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Listing;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Classificationstore\Traits\PerAssignmentDaoTrait;
 
 /**
  * @internal
@@ -22,6 +23,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use PerAssignmentDaoTrait;
+
     /**
      * Loads a list of Classificationstore group configs for the specified parameters, returns an array of config elements
      *
@@ -51,7 +54,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $definition['mandatory'] = $dataItem['mandatory'];
             $dataItem['definition'] = json_encode($definition);
 
-            $resource->assignVariablesToModel($dataItem);
+            $resource->assignVariablesToModel($this->decodeJsonColumns($dataItem));
 
             $configData[] = $entry;
         }
