@@ -16,6 +16,9 @@ namespace Pimcore\Helper\SymfonyExpression;
 use DateTimeInterface;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
@@ -36,8 +39,9 @@ final class CalculatedFieldMethodCallPolicy
 {
     /**
      * Getter-named methods that are never allowed: they hand out infrastructure (e.g. the DBAL
-     * connection), read arbitrary properties or call arbitrary getters by name, or build SQL
-     * from their arguments.
+     * connection), read arbitrary properties or call arbitrary getters by name, build SQL from
+     * their arguments, generate files from an expression-supplied configuration
+     * (getThumbnail) or delete data (UrlSlug::getAction() for a stale slug).
      */
     private const FORBIDDEN_METHODS = [
         'getdao',
@@ -48,6 +52,8 @@ final class CalculatedFieldMethodCallPolicy
         'getvaluefromparent',
         'getrelationdata',
         'hassiblings',
+        'getthumbnail',
+        'getaction',
     ];
 
     /**
@@ -97,8 +103,19 @@ final class CalculatedFieldMethodCallPolicy
         Fieldcollection::class,
         Fieldcollection\Data\AbstractData::class,
         Classificationstore::class,
+        Classificationstore\Group::class,
+        Classificationstore\Key::class,
         Unit::class,
         DateTimeInterface::class,
+    ];
+
+    /**
+     * Value objects whose column/row getters are dispatched through __call() and only read data.
+     */
+    private const MAGIC_GETTER_RECEIVERS = [
+        StructuredTable::class,
+        ObjectMetadata::class,
+        ElementMetadata::class,
     ];
 
     private const VALUE_NAMESPACE = 'Pimcore\\Model\\DataObject\\Data\\';
@@ -109,7 +126,8 @@ final class CalculatedFieldMethodCallPolicy
             return false;
         }
 
-        return 1 === preg_match('/^(get|is|has)[A-Z0-9]/', $method);
+        // plain `get()` is only allowed on a Fieldcollection, see isAllowedMethodCall()
+        return self::isFieldcollectionItemGetter($method) || 1 === preg_match('/^(get|is|has)[A-Z0-9]/', $method);
     }
 
     /**
@@ -128,8 +146,12 @@ final class CalculatedFieldMethodCallPolicy
 
     private static function isAllowedMethodCall(object $receiver, string $method): bool
     {
-        if (!self::isAllowedMethodName($method) || !method_exists($receiver, $method)) {
+        if (!self::isAllowedMethodName($method)) {
             return false;
+        }
+
+        if (!method_exists($receiver, $method)) {
+            return self::isMagicGetterReceiver($receiver) && str_starts_with($method, 'get');
         }
 
         $reflectionMethod = new ReflectionMethod($receiver, $method);
@@ -137,9 +159,15 @@ final class CalculatedFieldMethodCallPolicy
             return false;
         }
 
+        // `get()` reads an item on a Fieldcollection, but dispatches arbitrary getter names on
+        // other receivers (e.g. Fieldcollection\Data\AbstractData::get())
+        if (self::isFieldcollectionItemGetter($method)) {
+            return $receiver instanceof Fieldcollection;
+        }
+
         if ($receiver instanceof ElementInterface) {
             return in_array(strtolower($method), self::ELEMENT_GETTERS, true)
-                || self::isGeneratedFieldGetter($receiver, $reflectionMethod);
+                || self::isGeneratedFieldGetter($receiver, $method);
         }
 
         foreach (self::VALUE_RECEIVERS as $valueReceiver) {
@@ -151,18 +179,40 @@ final class CalculatedFieldMethodCallPolicy
         return str_starts_with(get_class($receiver), self::VALUE_NAMESPACE);
     }
 
+    private static function isFieldcollectionItemGetter(string $method): bool
+    {
+        return strtolower($method) === 'get';
+    }
+
+    private static function isMagicGetterReceiver(object $receiver): bool
+    {
+        foreach (self::MAGIC_GETTER_RECEIVERS as $magicGetterReceiver) {
+            if ($receiver instanceof $magicGetterReceiver) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Getters for the fields of a data object class are generated into the class
-     * `Pimcore\Model\DataObject\<ClassName>`.
+     * `Pimcore\Model\DataObject\<ClassName>`. The getter is looked up on that generated class,
+     * so an application model overriding it (e.g. to supply inherited data) keeps working.
      */
-    private static function isGeneratedFieldGetter(ElementInterface $receiver, ReflectionMethod $method): bool
+    private static function isGeneratedFieldGetter(ElementInterface $receiver, string $method): bool
     {
         if (!$receiver instanceof Concrete) {
             return false;
         }
 
         $generatedClass = 'Pimcore\\Model\\DataObject\\' . ucfirst((string) $receiver->getClassName());
+        if (!$receiver instanceof $generatedClass || !method_exists($generatedClass, $method)) {
+            return false;
+        }
 
-        return strcasecmp($method->getDeclaringClass()->getName(), $generatedClass) === 0;
+        $generatedMethod = new ReflectionMethod($generatedClass, $method);
+
+        return strcasecmp($generatedMethod->getDeclaringClass()->getName(), $generatedClass) === 0;
     }
 }

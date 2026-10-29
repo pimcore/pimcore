@@ -19,8 +19,15 @@ use DateTime;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Helper\SymfonyExpression\CalculatedFieldExpressionLanguage;
+use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
+use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\ImageGallery;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\DataObject\Data\StructuredTable;
+use Pimcore\Model\DataObject\Data\UrlSlug;
+use Pimcore\Model\DataObject\Fieldcollection;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 /**
@@ -115,6 +122,24 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         $language->evaluate($expression, ['obj' => new CalculatedValue('myField')]);
     }
 
+    public function testRejectsThumbnailGenerationFromExpressionSuppliedConfig(): void
+    {
+        // the thumbnail configuration (e.g. an overlay file path) would come from the expression
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->expectException(SyntaxError::class);
+        $language->evaluate('image.getThumbnail({"items": []}) ~ ""', ['image' => new Hotspotimage()]);
+    }
+
+    public function testRejectsUrlSlugActionLookup(): void
+    {
+        // UrlSlug::getAction() deletes the slug when its field definition can't be resolved
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->expectException(SyntaxError::class);
+        $language->evaluate('slug.getAction()', ['slug' => new UrlSlug('/stale-slug')]);
+    }
+
     public function testRejectsNonGetterMethodCallsNestedInsideAnExpression(): void
     {
         // the disallowed call does not have to be the outermost node - every method call
@@ -152,6 +177,52 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         $this->expectException(SyntaxError::class);
         $this->expectExceptionMessage('not allowed');
         $language->evaluate('date.getLastErrors()', ['date' => new DateTime()]);
+    }
+
+    public function testAllowsMagicColumnGettersOfDataOnlyValueObjects(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $table = new StructuredTable(['row1' => ['col1' => 'cell']]);
+        $this->assertSame('cell', $language->evaluate('table.getRow1__col1()', ['table' => $table]));
+
+        $objectMetadata = new ObjectMetadata('relation', ['text']);
+        $objectMetadata->setText('object-meta');
+        $this->assertSame('object-meta', $language->evaluate('meta.getText()', ['meta' => $objectMetadata]));
+
+        $elementMetadata = new ElementMetadata('relation', ['text']);
+        $elementMetadata->setText('element-meta');
+        $this->assertSame('element-meta', $language->evaluate('meta.getText()', ['meta' => $elementMetadata]));
+    }
+
+    public function testAllowsFieldcollectionItemGetter(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->assertNull($language->evaluate('collection.get(0)', ['collection' => new Fieldcollection()]));
+    }
+
+    public function testRejectsGetOnFieldcollectionItems(): void
+    {
+        // Fieldcollection\Data\AbstractData::get() dispatches arbitrary getter names
+        $language = new CalculatedFieldExpressionLanguage();
+        $item = new class() extends Fieldcollection\Data\AbstractData {
+        };
+
+        $this->expectException(SyntaxError::class);
+        $language->evaluate('item.get("dao")', ['item' => $item]);
+    }
+
+    public function testAllowsClassificationstoreGroupAndKeyGetterChains(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+        $store = new Classificationstore();
+        $key = new Classificationstore\Key(
+            new Classificationstore\Group($store, new Classificationstore\GroupConfig()),
+            new Classificationstore\KeyConfig()
+        );
+
+        $this->assertSame($store, $language->evaluate('key.getGroup().getClassificationStore()', ['key' => $key]));
     }
 
     public function testCompilingIsNotSupported(): void

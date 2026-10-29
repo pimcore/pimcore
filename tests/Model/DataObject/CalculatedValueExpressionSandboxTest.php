@@ -57,6 +57,20 @@ class CalculatedValueExpressionSandboxTest extends ModelTestCase
         $this->assertSame('sandbox', $this->evaluate('object.getLinput("en") ?? object.getInput()', $object));
     }
 
+    public function testAllowsFieldGettersOverriddenByAnApplicationModel(): void
+    {
+        // a model override (e.g. supplying inherited data) declares the getter on the subclass
+        $object = new class() extends Unittest {
+            public function getInput(): ?string
+            {
+                return 'overridden:' . parent::getInput();
+            }
+        };
+        $object->setInput('sandbox');
+
+        $this->assertSame('overridden:sandbox', $this->evaluate('object.getInput()', $object));
+    }
+
     /**
      * @return iterable<string, array{string}>
      */
