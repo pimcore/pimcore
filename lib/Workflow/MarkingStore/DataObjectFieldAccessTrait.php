@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\MarkingStore;
 
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
@@ -20,7 +21,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  *
  * The PropertyAccessor camelizes the field name (product_workflow => getProductWorkflow()),
  * while Pimcore keeps underscores (getProduct_workflow()). The accessor remains the fallback
- * for subjects without such a method.
+ * for subjects without such a method. A custom accessor injected through the constructor is always used.
  *
  * @internal
  */
@@ -30,7 +31,7 @@ trait DataObjectFieldAccessTrait
     {
         $getter = 'get' . ucfirst($property);
 
-        if (method_exists($subject, $getter)) {
+        if ($this->usesGeneratedAccessors($propertyAccessor) && method_exists($subject, $getter)) {
             return $subject->$getter();
         }
 
@@ -41,12 +42,17 @@ trait DataObjectFieldAccessTrait
     {
         $setter = 'set' . ucfirst($property);
 
-        if (method_exists($subject, $setter)) {
+        if ($this->usesGeneratedAccessors($propertyAccessor) && method_exists($subject, $setter)) {
             $subject->$setter($value);
 
             return;
         }
 
         $propertyAccessor->setValue($subject, $property, $value);
+    }
+
+    private function usesGeneratedAccessors(PropertyAccessorInterface $propertyAccessor): bool
+    {
+        return $propertyAccessor::class === PropertyAccessor::class;
     }
 }

@@ -123,6 +123,11 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
             }
 
             $places = array_shift($places);
+
+            // array_keys() turns numeric place names into integers, the generated setters expect strings
+            if ($places !== null) {
+                $places = (string) $places;
+            }
         }
 
         $this->setFieldValue($subject, $property, $places, $this->propertyAccessor);
