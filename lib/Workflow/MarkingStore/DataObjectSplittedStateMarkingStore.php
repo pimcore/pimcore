@@ -22,6 +22,8 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {
+    use DataObjectFieldAccessTrait;
+
     const ALLOWED_PLACE_FIELD_TYPES = ['input', 'select', 'multiselect'];
 
     private string $workflowName;
@@ -51,7 +53,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 
         $placeNames = [];
         foreach ($properties as $property) {
-            $propertyPlaces = $this->propertyAccessor->getValue($subject, $property);
+            $propertyPlaces = $this->getFieldValue($subject, $property, $this->propertyAccessor);
 
             if (is_null($propertyPlaces) || $propertyPlaces === '') {
                 continue;
@@ -121,9 +123,14 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
             }
 
             $places = array_shift($places);
+
+            // array_keys() turns numeric place names into integers, the generated setters expect strings
+            if ($places !== null) {
+                $places = (string) $places;
+            }
         }
 
-        $this->propertyAccessor->setValue($subject, $property, $places);
+        $this->setFieldValue($subject, $property, $places, $this->propertyAccessor);
     }
 
     /**
