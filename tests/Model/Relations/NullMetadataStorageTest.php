@@ -145,4 +145,40 @@ class NullMetadataStorageTest extends ModelTestCase
         $loaded = MultipleAssignments::getById($owner->getId(), ['force' => true]);
         $this->assertNull($loaded->getMultipleManyToManyObject()[0]->getMeta());
     }
+
+    public function testReloadedRelationKeepsNullColumnsAndIsEqualToEditmodeData(): void
+    {
+        $withValue = new ObjectMetadata('multipleManyToManyObject', ['meta'], $this->targets[0]);
+        $withValue->setMeta('some value');
+        $withoutValue = new ObjectMetadata('multipleManyToManyObject', ['meta'], $this->targets[1]);
+
+        $owner = $this->createOwner();
+        $owner->setMultipleManyToManyObject([$withValue, $withoutValue]);
+        $owner->save();
+
+        $loaded = MultipleAssignments::getById($owner->getId(), ['force' => true]);
+        $relations = $loaded->getMultipleManyToManyObject();
+        $this->assertSame(['meta' => null], $relations[1]->getData(), 'The null column stays in the data.');
+
+        // the editmode/import path sets every column explicitly, also with null
+        $fromEditmode = new ObjectMetadata('multipleManyToManyObject', ['meta'], $this->targets[1]);
+        $fromEditmode->setMeta(null);
+        $unchanged = new ObjectMetadata('multipleManyToManyObject', ['meta'], $this->targets[0]);
+        $unchanged->setMeta('some value');
+
+        $fieldDefinition = $loaded->getClass()->getFieldDefinition('multipleManyToManyObject');
+        $this->assertTrue($fieldDefinition->isEqual($relations, [$unchanged, $fromEditmode]));
+    }
+
+    public function testReloadedElementRelationKeepsNullColumns(): void
+    {
+        $withoutValue = new ElementMetadata('multipleManyToMany', ['meta'], $this->targets[1]);
+
+        $owner = $this->createOwner();
+        $owner->setMultipleManyToMany([$withoutValue]);
+        $owner->save();
+
+        $loaded = MultipleAssignments::getById($owner->getId(), ['force' => true]);
+        $this->assertSame(['meta' => null], $loaded->getMultipleManyToMany()[0]->getData());
+    }
 }

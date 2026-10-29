@@ -97,6 +97,11 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType): ?ElementMetadata
     {
+        // columns without a stored row are null, keep their keys in the data
+        foreach ($this->columns as $column) {
+            $this->data[$column] ??= null;
+        }
+
         $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
         $this->markMeDirty(false);
 
