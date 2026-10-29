@@ -103,9 +103,15 @@ class Service
      * including the ones nested in localized fields, object bricks and field collections -
      * classSaved() reaches those as well.
      *
+     * Two object bricks (or field collections) allowed on the same class may each define a
+     * classification store field under the same name, on different stores. The keys are therefore
+     * qualified by the container the field was found in - "brickKey.fieldName" - so that no
+     * definition is dropped and the error messages name the one that is at fault.
+     *
      * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
      *
-     * @return array<string, DataObject\ClassDefinition\Data\Classificationstore> field name => definition
+     * @return array<string, DataObject\ClassDefinition\Data\Classificationstore>
+     *         container-qualified field identity => definition
      */
     public static function getClassificationStoreFieldDefinitions(array $fieldDefinitions): array
     {
@@ -113,6 +119,26 @@ class Service
         self::collectClassificationStoreFieldDefinitions($fieldDefinitions, $classificationStoreFields);
 
         return $classificationStoreFields;
+    }
+
+    /**
+     * Groups collected classification store fields by the field name they are stored under.
+     *
+     * The value tables key their rows by (object, fieldname), so every definition sharing a field
+     * name shares its rows - which is why they are resolved together rather than one at a time.
+     *
+     * @param array<string, DataObject\ClassDefinition\Data\Classificationstore> $classificationStoreFields
+     *
+     * @return array<string, array<string, int|null>> field name => (qualified identity => store id)
+     */
+    public static function groupStoreIdsByFieldName(array $classificationStoreFields): array
+    {
+        $storeIds = [];
+        foreach ($classificationStoreFields as $identity => $fieldDefinition) {
+            $storeIds[$fieldDefinition->getName()][$identity] = self::getConfiguredStoreId($fieldDefinition);
+        }
+
+        return $storeIds;
     }
 
     /**
@@ -130,31 +156,38 @@ class Service
     /**
      * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
      * @param array<string, DataObject\ClassDefinition\Data\Classificationstore> $classificationStoreFields
+     * @param string $prefix the container path the given field definitions were reached through
      */
     private static function collectClassificationStoreFieldDefinitions(
         array $fieldDefinitions,
-        array &$classificationStoreFields
+        array &$classificationStoreFields,
+        string $prefix = ''
     ): void {
         foreach ($fieldDefinitions as $fieldDefinition) {
             if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Classificationstore) {
-                $classificationStoreFields[$fieldDefinition->getName()] ??= $fieldDefinition;
+                $classificationStoreFields[$prefix . $fieldDefinition->getName()] = $fieldDefinition;
 
                 continue;
             }
 
-            foreach (self::getNestedFieldDefinitions($fieldDefinition) as $nestedFieldDefinitions) {
-                self::collectClassificationStoreFieldDefinitions($nestedFieldDefinitions, $classificationStoreFields);
+            foreach (self::getNestedFieldDefinitions($fieldDefinition) as $nestedPrefix => $nestedFieldDefinitions) {
+                self::collectClassificationStoreFieldDefinitions(
+                    $nestedFieldDefinitions,
+                    $classificationStoreFields,
+                    $prefix . $nestedPrefix
+                );
             }
         }
     }
 
     /**
-     * @return array<int, array<string, DataObject\ClassDefinition\Data>>
+     * @return array<string, array<string, DataObject\ClassDefinition\Data>> container prefix => field definitions
      */
     private static function getNestedFieldDefinitions(DataObject\ClassDefinition\Data $fieldDefinition): array
     {
         if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            return [$fieldDefinition->getFieldDefinitions()];
+            // localized fields share the name space of the class they belong to, so they add no prefix
+            return ['' => $fieldDefinition->getFieldDefinitions()];
         }
 
         if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
@@ -178,7 +211,7 @@ class Service
      * @param string[] $allowedTypes
      * @param callable(string): (DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition|null) $loadDefinition
      *
-     * @return array<int, array<string, DataObject\ClassDefinition\Data>>
+     * @return array<string, array<string, DataObject\ClassDefinition\Data>> container prefix => field definitions
      */
     private static function getContainerFieldDefinitions(array $allowedTypes, callable $loadDefinition): array
     {
@@ -186,7 +219,7 @@ class Service
         foreach ($allowedTypes as $allowedType) {
             $definition = $loadDefinition($allowedType);
             if ($definition !== null) {
-                $fieldDefinitions[] = $definition->getFieldDefinitions();
+                $fieldDefinitions[$allowedType . '.'] = $definition->getFieldDefinitions();
             }
         }
 

@@ -29,9 +29,13 @@ class DaoTest extends TestCase
 {
     private const BRICK_KEY = 'csEngineDaoBrick';
 
+    private const OTHER_BRICK_KEY = 'csEngineDaoOtherBrick';
+
     protected function tearDown(): void
     {
-        RuntimeCache::getInstance()->offsetUnset('objectbrick_' . self::BRICK_KEY);
+        foreach ([self::BRICK_KEY, self::OTHER_BRICK_KEY] as $brickKey) {
+            RuntimeCache::getInstance()->offsetUnset('objectbrick_' . $brickKey);
+        }
 
         parent::tearDown();
     }
@@ -70,12 +74,12 @@ class DaoTest extends TestCase
      */
     public function testTheStoreIsNotResolvedFromAnUnsetFieldname(): void
     {
-        $this->assertNull($this->resolveStoreId($this->storeFor(null)));
+        $this->assertSame([], $this->resolveStoreIds($this->storeFor(null)));
     }
 
     public function testTheStoreIsResolvedFromTheFieldDefinitionOfTheFieldname(): void
     {
-        $this->assertSame(9, $this->resolveStoreId($this->storeFor('csConfigured')));
+        $this->assertSame(['csConfigured' => 9], $this->resolveStoreIds($this->storeFor('csConfigured')));
     }
 
     /**
@@ -84,16 +88,32 @@ class DaoTest extends TestCase
      */
     public function testAFieldWithoutAStoreResolvesToNoStore(): void
     {
-        $this->assertNull($this->resolveStoreId($this->storeFor('csUnconfigured')));
+        $this->assertSame(['csUnconfigured' => null], $this->resolveStoreIds($this->storeFor('csUnconfigured')));
     }
 
     /**
-     * classSaved() reaches a classification store nested in an object brick with the owning class,
-     * so the facade has to resolve that field's store the same way it resolves a top-level one.
+     * A classification store nested in an object brick is reachable from the owning class, so the
+     * facade has to resolve that field's store the same way it resolves a top-level one.
      */
     public function testAFieldNestedInABrickResolvesToItsOwnStore(): void
     {
-        $this->assertSame(11, $this->resolveStoreId($this->storeFor('csInBrick')));
+        $this->assertSame(
+            [self::BRICK_KEY . '.csInBrick' => 11],
+            $this->resolveStoreIds($this->storeFor('csInBrick'))
+        );
+    }
+
+    /**
+     * Two bricks allowed on the same class may define a classification store under the same name,
+     * on different stores. The name identifies a group rather than one definition, so every store
+     * behind it reaches the resolver instead of the first one silently winning.
+     */
+    public function testEveryStoreBehindASharedFieldNameIsResolved(): void
+    {
+        $this->assertSame(
+            [self::BRICK_KEY . '.csShared' => 12, self::OTHER_BRICK_KEY . '.csShared' => 13],
+            $this->resolveStoreIds($this->storeFor('csShared'))
+        );
     }
 
     public function testTheDaoStaysInternal(): void
@@ -136,14 +156,12 @@ class DaoTest extends TestCase
         $nested->setName('csInBrick');
         $nested->setStoreId(11);
 
-        $brick = new Definition();
-        $brick->setKey(self::BRICK_KEY);
-        $brick->setFieldDefinitions(['csInBrick' => $nested]);
-        RuntimeCache::set('objectbrick_' . self::BRICK_KEY, $brick);
+        $this->registerBrick(self::BRICK_KEY, ['csInBrick' => $nested, 'csShared' => $this->sharedField(12)]);
+        $this->registerBrick(self::OTHER_BRICK_KEY, ['csShared' => $this->sharedField(13)]);
 
         $bricks = new Objectbricks();
         $bricks->setName('bricks');
-        $bricks->setAllowedTypes([self::BRICK_KEY]);
+        $bricks->setAllowedTypes([self::BRICK_KEY, self::OTHER_BRICK_KEY]);
 
         $class = new ClassDefinition();
         $class->setId('UNIT');
@@ -157,12 +175,36 @@ class DaoTest extends TestCase
         return $class;
     }
 
-    private function resolveStoreId(Classificationstore $classificationStore): ?int
+    private function sharedField(int $storeId): ClassificationstoreField
+    {
+        $fieldDefinition = new ClassificationstoreField();
+        $fieldDefinition->setName('csShared');
+        $fieldDefinition->setStoreId($storeId);
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * @param array<string, ClassificationstoreField> $fieldDefinitions
+     */
+    private function registerBrick(string $key, array $fieldDefinitions): void
+    {
+        $brick = new Definition();
+        $brick->setKey($key);
+        $brick->setFieldDefinitions($fieldDefinitions);
+
+        RuntimeCache::set('objectbrick_' . $key, $brick);
+    }
+
+    /**
+     * @return array<string, int|null>
+     */
+    private function resolveStoreIds(Classificationstore $classificationStore): array
     {
         $dao = (new ReflectionClass(Dao::class))->newInstanceWithoutConstructor();
         $dao->setModel($classificationStore);
 
-        $method = new ReflectionMethod(Dao::class, 'getStoreId');
+        $method = new ReflectionMethod(Dao::class, 'getStoreIds');
         $method->setAccessible(true);
 
         return $method->invoke($dao);

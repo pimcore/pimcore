@@ -62,12 +62,21 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Kept as the published facade of the model; the plural method is on the engine interface.
      *
+     * classSaved() no longer comes through here - it routes from the field definition it was
+     * dispatched on, which knows its own store - so this is the path of third-party callers that
+     * have only the model, which names a field rather than a definition. The engine is the one of
+     * the whole group, and the store handed to it the first of them, as a group that does not agree
+     * on its engine is refused before this point.
+     *
      * @throws Exception
      */
     public function createUpdateTable(): void
     {
-        $storeId = $this->getStoreId();
-        $this->getEngineResolver()->resolveForStore($storeId)->createUpdateTables($this->model->getClass(), $storeId);
+        $storeIds = $this->getStoreIds();
+        $storeId = $storeIds === [] ? null : reset($storeIds);
+
+        $this->getEngineResolver()->resolveForStores($storeIds)
+            ->createUpdateTables($this->model->getClass(), $storeId);
     }
 
     /**
@@ -75,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     private function getEngine(): EngineInterface
     {
-        return $this->getEngineResolver()->resolveForStore($this->getStoreId());
+        return $this->getEngineResolver()->resolveForStores($this->getStoreIds());
     }
 
     private function getEngineResolver(): EngineResolver
@@ -84,21 +93,30 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Null when no store is configured for the field, which means the default engine.
+     * The configured stores of every field definition the model's fieldname reaches.
+     *
+     * Two object bricks allowed on the same class may define a classification store field under the
+     * same name, so the name identifies a group rather than one definition. The value tables key
+     * their rows by (object, fieldname), so such fields share their rows - the resolver is what
+     * refuses the group when they do not share an engine.
+     *
+     * Empty when the model carries no fieldname, or when no definition matches it, which both mean
+     * the default engine.
+     *
+     * @return array<string, int|null> container-qualified field identity => store id
      */
-    private function getStoreId(): ?int
+    private function getStoreIds(): array
     {
         // createUpdateTable() is reachable on a model that carries only its class, with no fieldname
         $fieldname = $this->model->getObjectVars()['fieldname'] ?? null;
         if (!is_string($fieldname)) {
-            return null;
+            return [];
         }
 
-        $fieldDefinitions = Service::getClassificationStoreFieldDefinitions(
+        $classificationStoreFields = Service::getClassificationStoreFieldDefinitions(
             $this->model->getClass()->getFieldDefinitions()
         );
-        $fieldDefinition = $fieldDefinitions[$fieldname] ?? null;
 
-        return $fieldDefinition !== null ? Service::getConfiguredStoreId($fieldDefinition) : null;
+        return Service::groupStoreIdsByFieldName($classificationStoreFields)[$fieldname] ?? [];
     }
 }

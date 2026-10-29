@@ -34,6 +34,7 @@ use Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Exception\ClassificationStoreEngineNotAvailableException;
+use Pimcore\Model\DataObject\Exception\ConflictingClassificationStoreEnginesException;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
 
 /**
@@ -1265,6 +1266,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      * Refuses the save when any classification store field points at a store whose engine cannot be
      * resolved, so that no table is created and no class definition row is written for it.
      *
+     * Every definition is checked, not one per name: two object bricks allowed on the same class
+     * may each carry a classification store called the same thing, on different stores.
+     *
      * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
      *
      * @throws Exception
@@ -1279,11 +1283,24 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         $engineResolver = Pimcore::getContainer()->get(EngineResolver::class);
         $errors = [];
 
-        foreach ($classificationStoreFields as $name => $fieldDefinition) {
+        foreach ($classificationStoreFields as $identity => $fieldDefinition) {
             try {
                 $engineResolver->resolveForStore(DataObject\Classificationstore\Service::getConfiguredStoreId($fieldDefinition));
             } catch (UnknownClassificationStoreEngineException|ClassificationStoreEngineNotAvailableException $e) {
+                $errors[] = sprintf('field "%s": %s', $identity, $e->getMessage());
+            }
+        }
+
+        // the value tables key their rows by field name, so definitions sharing one have to agree
+        // on the engine - the stores that do not resolve at all are already reported above
+        $storeIdsByFieldName = DataObject\Classificationstore\Service::groupStoreIdsByFieldName($classificationStoreFields);
+        foreach ($storeIdsByFieldName as $name => $storeIds) {
+            try {
+                $engineResolver->resolveForStores($storeIds);
+            } catch (ConflictingClassificationStoreEnginesException $e) {
                 $errors[] = sprintf('field "%s": %s', $name, $e->getMessage());
+            } catch (UnknownClassificationStoreEngineException|ClassificationStoreEngineNotAvailableException) {
+                // reported per definition above, with the container-qualified name
             }
         }
 

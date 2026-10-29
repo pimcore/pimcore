@@ -16,13 +16,17 @@ namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore\Engine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Exception\ClassificationStoreEngineNotAvailableException;
+use Pimcore\Model\DataObject\Exception\ConflictingClassificationStoreEnginesException;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use ReflectionProperty;
 
 class EngineResolverTest extends TestCase
 {
     private const STORE_ID = 7;
+
+    private const OTHER_STORE_ID = 8;
 
     /**
      * No row of classificationstore_stores can carry this id, so resolving it exercises the
@@ -84,6 +88,73 @@ class EngineResolverTest extends TestCase
         $this->resolver($this->createMock(EngineInterface::class))->resolve('document', self::STORE_ID);
     }
 
+    /**
+     * A group with no store configured at all is the default engine, the same as a single one.
+     */
+    public function testAGroupOfFieldsWithoutAStoreResolvesToTheDefaultEngine(): void
+    {
+        $eavEngine = $this->createMock(EngineInterface::class);
+        $resolver = $this->resolver($eavEngine);
+
+        $this->assertSame($eavEngine, $resolver->resolveForStores([]));
+        $this->assertSame($eavEngine, $resolver->resolveForStores(['brickA.cs' => null, 'brickB.cs' => null]));
+    }
+
+    /**
+     * The value tables key their rows by (object, fieldname), so two containers defining the same
+     * classification store field name share their rows and cannot be split across two engines.
+     */
+    public function testAFieldNameSittingOnTwoEnginesIsRefusedInsteadOfPickingTheFirst(): void
+    {
+        $eavEngine = $this->createMock(EngineInterface::class);
+        $otherEngine = $this->createMock(EngineInterface::class);
+        $resolver = new EngineResolver(['eav' => $eavEngine, 'other' => $otherEngine]);
+
+        // seeded straight into the memo: the conflict is about the group, not about reading a store
+        $this->seedResolvedEngines($resolver, [self::STORE_ID => $eavEngine, self::OTHER_STORE_ID => $otherEngine]);
+
+        $this->expectException(ConflictingClassificationStoreEnginesException::class);
+        $this->expectExceptionMessage('brickA.cs uses "eav", brickB.cs uses "other"');
+
+        $resolver->resolveForStores(['brickA.cs' => self::STORE_ID, 'brickB.cs' => self::OTHER_STORE_ID]);
+    }
+
+    public function testAFieldNameOnSeveralStoresOfOneEngineResolvesToThatEngine(): void
+    {
+        $eavEngine = $this->createMock(EngineInterface::class);
+        $resolver = $this->resolver($eavEngine);
+
+        $this->seedResolvedEngines($resolver, [self::STORE_ID => $eavEngine, self::OTHER_STORE_ID => $eavEngine]);
+
+        $this->assertSame(
+            $eavEngine,
+            $resolver->resolveForStores(['brickA.cs' => self::STORE_ID, 'brickB.cs' => self::OTHER_STORE_ID])
+        );
+    }
+
+    /**
+     * The resolver outlives a request in a messenger worker, so the memo of which engine a store
+     * uses has to be droppable - entry by entry for the code that writes a store, and wholesale at
+     * the request and message boundary.
+     */
+    public function testTheResolvedEnginesAreDroppedByResetAndByInvalidation(): void
+    {
+        $eavEngine = $this->createMock(EngineInterface::class);
+        $otherEngine = $this->createMock(EngineInterface::class);
+        $resolver = new EngineResolver(['eav' => $eavEngine, 'other' => $otherEngine]);
+
+        $this->seedResolvedEngines($resolver, [self::STORE_ID => $otherEngine, self::OTHER_STORE_ID => $otherEngine]);
+
+        $resolver->invalidateStore(self::STORE_ID);
+        $this->assertSame([self::OTHER_STORE_ID => $otherEngine], $this->resolvedEngines($resolver));
+
+        $resolver->reset();
+        $this->assertSame([], $this->resolvedEngines($resolver));
+
+        // the registered engines come from the container and survive both
+        $this->assertSame(['eav' => $eavEngine, 'other' => $otherEngine], $resolver->getEngines());
+    }
+
     public function testEveryRegisteredEngineIsReturnedByItsName(): void
     {
         $eavEngine = $this->createMock(EngineInterface::class);
@@ -97,5 +168,24 @@ class EngineResolverTest extends TestCase
     private function resolver(EngineInterface $eavEngine): EngineResolver
     {
         return new EngineResolver(['eav' => $eavEngine]);
+    }
+
+    /**
+     * Fills the memo resolveForStore() keeps, so that grouping and invalidation can be exercised
+     * without a store configuration row behind every id.
+     *
+     * @param array<int, EngineInterface> $storeEngines
+     */
+    private function seedResolvedEngines(EngineResolver $resolver, array $storeEngines): void
+    {
+        (new ReflectionProperty(EngineResolver::class, 'storeEngines'))->setValue($resolver, $storeEngines);
+    }
+
+    /**
+     * @return array<int, EngineInterface>
+     */
+    private function resolvedEngines(EngineResolver $resolver): array
+    {
+        return (new ReflectionProperty(EngineResolver::class, 'storeEngines'))->getValue($resolver);
     }
 }

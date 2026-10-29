@@ -26,9 +26,13 @@ class ServiceTest extends TestCase
 {
     private const BRICK_KEY = 'csEngineBrick';
 
+    private const OTHER_BRICK_KEY = 'csEngineOtherBrick';
+
     protected function tearDown(): void
     {
-        RuntimeCache::getInstance()->offsetUnset('objectbrick_' . self::BRICK_KEY);
+        foreach ([self::BRICK_KEY, self::OTHER_BRICK_KEY] as $brickKey) {
+            RuntimeCache::getInstance()->offsetUnset('objectbrick_' . $brickKey);
+        }
 
         parent::tearDown();
     }
@@ -70,8 +74,57 @@ class ServiceTest extends TestCase
 
         $collected = Service::getClassificationStoreFieldDefinitions(['bricks' => $bricks]);
 
-        $this->assertSame(['csInBrick'], array_keys($collected));
-        $this->assertSame(5, Service::getConfiguredStoreId($collected['csInBrick']));
+        $this->assertSame([self::BRICK_KEY . '.csInBrick'], array_keys($collected));
+        $this->assertSame(5, Service::getConfiguredStoreId($collected[self::BRICK_KEY . '.csInBrick']));
+    }
+
+    /**
+     * Two bricks allowed on the same field may each define a classification store under the same
+     * name, on different stores. Keying the collection by name alone dropped the second one, and
+     * with it the engine validation of the store behind it.
+     */
+    public function testTwoBricksDefiningTheSameFieldNameAreBothCollected(): void
+    {
+        $this->registerBrick($this->classificationStoreField('cs', 5));
+        $this->registerBrick($this->classificationStoreField('cs', 6), self::OTHER_BRICK_KEY);
+
+        $bricks = new Objectbricks();
+        $bricks->setName('bricks');
+        $bricks->setAllowedTypes([self::BRICK_KEY, self::OTHER_BRICK_KEY]);
+
+        $collected = Service::getClassificationStoreFieldDefinitions(['bricks' => $bricks]);
+
+        $this->assertSame(
+            [self::BRICK_KEY . '.cs', self::OTHER_BRICK_KEY . '.cs'],
+            array_keys($collected)
+        );
+        $this->assertSame(5, Service::getConfiguredStoreId($collected[self::BRICK_KEY . '.cs']));
+        $this->assertSame(6, Service::getConfiguredStoreId($collected[self::OTHER_BRICK_KEY . '.cs']));
+    }
+
+    /**
+     * The value tables key their rows by (object, fieldname), so the definitions sharing a name are
+     * what has to be resolved together.
+     */
+    public function testTheStoresOfTheDefinitionsSharingAFieldNameAreGroupedUnderIt(): void
+    {
+        $this->registerBrick($this->classificationStoreField('cs', 5));
+        $this->registerBrick($this->classificationStoreField('cs', 6), self::OTHER_BRICK_KEY);
+
+        $bricks = new Objectbricks();
+        $bricks->setName('bricks');
+        $bricks->setAllowedTypes([self::BRICK_KEY, self::OTHER_BRICK_KEY]);
+
+        $this->assertSame(
+            [
+                'other' => ['other' => null],
+                'cs' => [self::BRICK_KEY . '.cs' => 5, self::OTHER_BRICK_KEY . '.cs' => 6],
+            ],
+            Service::groupStoreIdsByFieldName(Service::getClassificationStoreFieldDefinitions([
+                'other' => $this->classificationStoreField('other'),
+                'bricks' => $bricks,
+            ]))
+        );
     }
 
     public function testAClassWithoutClassificationStoreFieldsCollectsNothing(): void
@@ -109,12 +162,12 @@ class ServiceTest extends TestCase
      * Definition::getByKey() answers from the runtime cache before it looks for a definition file,
      * so the brick can be built in memory.
      */
-    private function registerBrick(ClassificationstoreField $fieldDefinition): void
+    private function registerBrick(ClassificationstoreField $fieldDefinition, string $key = self::BRICK_KEY): void
     {
         $brick = new Definition();
-        $brick->setKey(self::BRICK_KEY);
+        $brick->setKey($key);
         $brick->setFieldDefinitions([$fieldDefinition->getName() => $fieldDefinition]);
 
-        RuntimeCache::set('objectbrick_' . self::BRICK_KEY, $brick);
+        RuntimeCache::set('objectbrick_' . $key, $brick);
     }
 }
