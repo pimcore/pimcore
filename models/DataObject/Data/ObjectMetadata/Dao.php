@@ -41,9 +41,16 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
 
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);
+            $value = $this->model->$getter();
+
+            // a column without a value needs no row, the field deleted the previous rows before saving
+            if ($value === null) {
+                continue;
+            }
+
             $data = $dataTemplate;
             $data['column'] = $column;
-            $data['data'] = $this->model->$getter();
+            $data['data'] = $value;
             Helper::upsert($this->db, $table, $data, parent::UNIQUE_COLUMNS);
         }
     }
