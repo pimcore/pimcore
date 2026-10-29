@@ -14,7 +14,10 @@ namespace Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 
 use Exception;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
+use Pimcore\Model\DataObject\Classificationstore\Traits\LabelCleanupDaoTrait;
+use Throwable;
 
 /**
  * @internal
@@ -24,6 +27,7 @@ use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
 class Dao extends Model\Dao\AbstractDao
 {
     use IdentifierDaoTrait;
+    use LabelCleanupDaoTrait;
 
     const TABLE_NAME_GROUPS = 'classificationstore_groups';
 
@@ -132,11 +136,13 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Deletes object from database
+     * Deletes object from database, together with this group's own labels
+     *
+     * @throws Throwable
      */
     public function delete(): void
     {
-        $this->db->delete(self::TABLE_NAME_GROUPS, ['id' => $this->model->getId()]);
+        $this->deleteWithLabels(self::TABLE_NAME_GROUPS, LabelEntityType::Group);
     }
 
     /**

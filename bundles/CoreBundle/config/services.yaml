@@ -268,6 +268,16 @@ services:
         public: true
         tags:
             - { name: kernel.reset, method: reset }
+
+    # request-scoped cache of the classification store labels, cleared per request and per
+    # messenger message via the kernel.reset tag. deliberately not folded into the relation cache
+    # above, which is keyed by (groupId, keyId) and answers one of the five labelled entity types.
+    # public, for the same reason as the caches above: it is consumed from the classification
+    # store model and DAO, which are not container-managed.
+    Pimcore\Model\DataObject\Classificationstore\LabelResolver:
+        public: true
+        tags:
+            - { name: kernel.reset, method: reset }
     #
     # SECURITY
     #
