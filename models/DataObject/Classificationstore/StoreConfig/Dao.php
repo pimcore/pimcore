@@ -14,6 +14,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 
 use Exception;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
 
 /**
  * @internal
@@ -22,6 +23,8 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use IdentifierDaoTrait;
+
     const TABLE_NAME_STORES = 'classificationstore_stores';
 
     /**
@@ -107,7 +110,9 @@ class Dao extends Model\Dao\AbstractDao
     public function save(): void
     {
         if (!$this->model->getId()) {
-            $this->create();
+            $this->createAndUpdate();
+
+            return;
         }
 
         $this->update();
@@ -126,12 +131,21 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update(): void
     {
+        $id = $this->model->getId();
+        $identifier = $this->model->getIdentifier();
+        $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_STORES, $id, $identifier);
+
         $data = [];
         $type = $this->model->getObjectVars();
 
         foreach ($type as $key => $value) {
             // a store config built with `new` carries no engine, and must not reset a flipped store
             if ($key === 'engine' && !$this->model->isEngineInitialized()) {
+                continue;
+            }
+
+            // written by writeIdentifier(), which is the only place allowed to touch the column
+            if ($key === 'identifier') {
                 continue;
             }
 
@@ -148,6 +162,10 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->update(self::TABLE_NAME_STORES, $data, ['id' => $this->model->getId()]);
+
+        if ($identifierPending) {
+            $this->writeIdentifier(self::TABLE_NAME_STORES, (int) $id, (string) $identifier);
+        }
     }
 
     public function create(): void

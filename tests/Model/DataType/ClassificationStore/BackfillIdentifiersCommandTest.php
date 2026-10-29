@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\CoreBundle\Command\BackfillClassificationStoreIdentifiersCommand;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\CollectionConfig;
@@ -43,7 +44,7 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         self::TABLE_KEYS,
     ];
 
-    private const IDENTIFIER_PATTERN = '/^[A-Za-z0-9][A-Za-z0-9_-]*$/';
+    private const IDENTIFIER_PATTERN = '/\A[A-Za-z0-9][A-Za-z0-9_-]*\z/';
 
     private array $createdStoreIds = [];
 
@@ -120,6 +121,66 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         $this->assertStringContainsString(
             sprintf('key %d "...": the name yields no valid identifier', $namelessId),
             $display
+        );
+    }
+
+    public function testADuplicateNameIsReportedEvenWhenTheOtherRowIsAlreadyIdentified(): void
+    {
+        $storeId = $this->seedStore();
+        $identifiedHeightId = $this->seedKey($storeId, 'Height', true);
+        $unidentifiedHeightId = $this->seedKey($storeId, 'Height', true);
+        Db::get()->update(self::TABLE_KEYS, ['identifier' => '01JA0PQ7XK'], ['id' => $identifiedHeightId]);
+
+        $tester = $this->runCommand();
+
+        $this->assertSame(0, $tester->getStatusCode());
+        $this->assertSame('01JA0PQ7XK', $this->fetchIdentifier(self::TABLE_KEYS, $identifiedHeightId));
+        $this->assertNull(
+            $this->fetchIdentifier(self::TABLE_KEYS, $unidentifiedHeightId),
+            'A name shared with an already identified row must not be backfilled'
+        );
+        $this->assertStringContainsString(
+            sprintf('key %d "Height": the name is not unique within its store', $unidentifiedHeightId),
+            $tester->getDisplay()
+        );
+    }
+
+    public function testAnIdentifierAssignedAfterThePreflightIsPreservedAndNotCounted(): void
+    {
+        $storeId = $this->seedStore();
+        $keyId = $this->seedKey($storeId, 'Volume', true);
+
+        $command = new class($keyId) extends BackfillClassificationStoreIdentifiersCommand {
+            public function __construct(private readonly int $targetId)
+            {
+                // the AsCommand attribute is not inherited by an anonymous subclass
+                parent::__construct('pimcore:classificationstore:backfill-identifiers');
+            }
+
+            protected function write(Connection $db, string $table, array $assignment): bool
+            {
+                // stand in for the request that assigns an identifier between the pre-flight and this write
+                if ($table === 'classificationstore_keys' && $assignment['id'] === $this->targetId) {
+                    $db->update($table, ['identifier' => 'assigned-meanwhile'], ['id' => $this->targetId]);
+                }
+
+                return parent::write($db, $table, $assignment);
+            }
+        };
+
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+
+        $this->assertSame(
+            'assigned-meanwhile',
+            $this->fetchIdentifier(self::TABLE_KEYS, $keyId),
+            'The backfill must not overwrite an identifier assigned since the pre-flight'
+        );
+
+        // reported as unresolved, so it is not part of the backfilled tally
+        $this->assertStringContainsString(
+            sprintf('key %d "Volume": an identifier was assigned while the command was running', $keyId),
+            $tester->getDisplay()
         );
     }
 

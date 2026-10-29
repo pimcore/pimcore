@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Console\AbstractCommand;
@@ -48,6 +49,8 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
 
     private const REASON_ALREADY_IN_USE = 'the derived identifier is already in use';
 
+    private const REASON_ASSIGNED_MEANWHILE = 'an identifier was assigned while the command was running';
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $db = Db::get();
@@ -55,10 +58,7 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
         $unresolved = [];
 
         foreach (self::TABLES as $type => $table) {
-            [$plan[$table], $failures] = $this->resolve(
-                $this->loadRowsWithoutIdentifier($db, $table),
-                $this->loadTakenIdentifiers($db, $table)
-            );
+            [$plan[$type], $failures] = $this->resolve($this->loadRows($db, $table));
 
             foreach ($failures as $failure) {
                 $unresolved[] = ['type' => $type] + $failure;
@@ -66,11 +66,16 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
         }
 
         $written = 0;
-        foreach ($plan as $table => $assignments) {
-            foreach ($assignments as $id => $identifier) {
-                $db->update($table, ['identifier' => $identifier], ['id' => $id]);
+        foreach ($plan as $type => $assignments) {
+            foreach ($assignments as $assignment) {
+                if ($this->write($db, self::TABLES[$type], $assignment)) {
+                    $written++;
+
+                    continue;
+                }
+
+                $unresolved[] = ['type' => $type] + $this->failure($assignment, self::REASON_ASSIGNED_MEANWHILE);
             }
-            $written += count($assignments);
         }
 
         if ($written > 0) {
@@ -83,27 +88,16 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
         return 0;
     }
 
-    private function loadRowsWithoutIdentifier(Connection $db, string $table): array
+    /**
+     * Every row of the table, identified or not: a name clash is a clash against the whole store, not only
+     * against the rows this command may write to.
+     */
+    private function loadRows(Connection $db, string $table): array
     {
         return $db->fetchAllAssociative(
-            'SELECT `id`, `name`, ' . $this->storeIdExpression($table) . ' AS `storeId` FROM `' . $table . '`'
-            . ' WHERE `identifier` IS NULL ORDER BY `id`'
+            'SELECT `id`, `name`, `identifier`, ' . $this->storeIdExpression($table) . ' AS `storeId`'
+            . ' FROM `' . $table . '` ORDER BY `id`'
         );
-    }
-
-    private function loadTakenIdentifiers(Connection $db, string $table): array
-    {
-        $rows = $db->fetchAllAssociative(
-            'SELECT `identifier`, ' . $this->storeIdExpression($table) . ' AS `storeId` FROM `' . $table . '`'
-            . ' WHERE `identifier` IS NOT NULL'
-        );
-
-        $taken = [];
-        foreach ($rows as $row) {
-            $taken[(int) $row['storeId']][strtolower((string) $row['identifier'])] = true;
-        }
-
-        return $taken;
     }
 
     private function storeIdExpression(string $table): string
@@ -114,57 +108,70 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
     /**
      * Pre-flight: decides for every row whether a unique identifier can be derived, before anything is written.
      */
-    private function resolve(array $rows, array $taken): array
+    private function resolve(array $rows): array
     {
-        $candidates = [];
+        $taken = [];
+        $namesInScope = [];
+
+        foreach ($rows as $row) {
+            $scope = (int) $row['storeId'];
+
+            if ($row['identifier'] !== null) {
+                $taken[$scope][strtolower((string) $row['identifier'])] = true;
+            }
+
+            $derived = $this->deriveIdentifier($row['name']);
+            if ($derived !== null) {
+                $namesInScope[$scope][$derived] = ($namesInScope[$scope][$derived] ?? 0) + 1;
+            }
+        }
+
+        $assignments = [];
         $failures = [];
 
         foreach ($rows as $row) {
-            $identifier = $this->deriveIdentifier($row['name']);
-            if ($identifier === null) {
-                $failures[] = $this->failure($row, self::REASON_NO_USABLE_NAME);
-
+            if ($row['identifier'] !== null) {
                 continue;
             }
 
             $scope = (int) $row['storeId'];
-            if (isset($taken[$scope][$identifier])) {
+            $identifier = $this->deriveIdentifier($row['name']);
+
+            if ($identifier === null) {
+                $failures[] = $this->failure($row, self::REASON_NO_USABLE_NAME);
+            } elseif ($namesInScope[$scope][$identifier] > 1) {
+                $failures[] = $this->failure($row, self::REASON_DUPLICATE_NAME);
+            } elseif (isset($taken[$scope][$identifier])) {
                 $failures[] = $this->failure($row, self::REASON_ALREADY_IN_USE);
-
-                continue;
-            }
-
-            $candidates[$scope][$identifier][] = $row;
-        }
-
-        [$assignments, $duplicates] = $this->pickUniqueCandidates($candidates);
-
-        return [$assignments, [...$failures, ...$duplicates]];
-    }
-
-    /**
-     * A derived identifier claimed by more than one row in the same scope resolves none of them.
-     */
-    private function pickUniqueCandidates(array $candidates): array
-    {
-        $assignments = [];
-        $failures = [];
-
-        foreach ($candidates as $byIdentifier) {
-            foreach ($byIdentifier as $identifier => $rowsForIdentifier) {
-                if (count($rowsForIdentifier) > 1) {
-                    foreach ($rowsForIdentifier as $row) {
-                        $failures[] = $this->failure($row, self::REASON_DUPLICATE_NAME);
-                    }
-
-                    continue;
-                }
-
-                $assignments[(int) $rowsForIdentifier[0]['id']] = (string) $identifier;
+            } else {
+                $assignments[] = [
+                    'id' => (int) $row['id'],
+                    'name' => (string) $row['name'],
+                    'identifier' => $identifier,
+                ];
             }
         }
 
         return [$assignments, $failures];
+    }
+
+    /**
+     * `identifier IS NULL` makes the write lose against an identifier assigned since the pre-flight read,
+     * rather than replace one that is already immutable.
+     */
+    protected function write(Connection $db, string $table, array $assignment): bool
+    {
+        try {
+            $affected = $db->executeStatement(
+                'UPDATE `' . $table . '` SET `identifier` = ? WHERE `id` = ? AND `identifier` IS NULL',
+                [$assignment['identifier'], $assignment['id']]
+            );
+        } catch (UniqueConstraintViolationException) {
+            // another process claimed the derived identifier between the pre-flight and here
+            return false;
+        }
+
+        return $affected > 0;
     }
 
     private function deriveIdentifier(?string $name): ?string

@@ -14,6 +14,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\CollectionConfig;
 
 use Exception;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
 
 /**
  * @internal
@@ -22,6 +23,8 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use IdentifierDaoTrait;
+
     const TABLE_NAME_COLLECTIONS = 'classificationstore_collections';
 
     /**
@@ -105,10 +108,15 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(): void
     {
         if (!$this->model->getId()) {
-            $this->create();
+            $this->createAndUpdate();
+
+            return;
         }
 
         $this->update();
@@ -127,6 +135,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update(): void
     {
+        $id = $this->model->getId();
+        $identifier = $this->model->getIdentifier();
+        $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_COLLECTIONS, $id, $identifier);
+
         $ts = time();
         $this->model->setModificationDate($ts);
 
@@ -134,6 +146,11 @@ class Dao extends Model\Dao\AbstractDao
         $type = $this->model->getObjectVars();
 
         foreach ($type as $key => $value) {
+            // written by writeIdentifier(), which is the only place allowed to touch the column
+            if ($key === 'identifier') {
+                continue;
+            }
+
             if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_COLLECTIONS))) {
                 if (is_bool($value)) {
                     $value = (int) $value;
@@ -147,6 +164,10 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, ['id' => $this->model->getId()]);
+
+        if ($identifierPending) {
+            $this->writeIdentifier(self::TABLE_NAME_COLLECTIONS, (int) $id, (string) $identifier);
+        }
     }
 
     public function create(): void

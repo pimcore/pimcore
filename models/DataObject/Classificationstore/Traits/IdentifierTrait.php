@@ -18,7 +18,8 @@ use Symfony\Component\Uid\Ulid;
 
 trait IdentifierTrait
 {
-    private const IDENTIFIER_PATTERN = '/^[A-Za-z0-9][A-Za-z0-9_-]*$/';
+    // \A and \z, not ^ and $: the latter would let a trailing newline through
+    private const IDENTIFIER_PATTERN = '/\A[A-Za-z0-9][A-Za-z0-9_-]*\z/';
 
     private const IDENTIFIER_MAX_LENGTH = 190;
 

@@ -205,7 +205,7 @@ final class IdentifierTest extends ModelTestCase
 
     public static function rejectedIdentifierProvider(): array
     {
-        return [['a.b'], ['-lead'], ['_lead'], [''], ['ä'], [str_repeat('a', 191)]];
+        return [['a.b'], ['-lead'], ['_lead'], [''], ['ä'], ["valid-id\n"], [str_repeat('a', 191)]];
     }
 
     /**
@@ -270,6 +270,44 @@ final class IdentifierTest extends ModelTestCase
         $unresolved->save();
 
         $this->assertSame('C', $this->fetchIdentifier(self::TABLE_KEYS, $unresolvedId));
+    }
+
+    public function testStaleInstanceNeitherClearsNorReplacesAnIdentifier(): void
+    {
+        $store = $this->createStore();
+
+        foreach ([self::TABLE_STORES, ...self::STORE_SCOPED_TABLES] as $table) {
+            $id = $this->insertRowWithoutIdentifier($table, $store->getId(), 'stale');
+
+            // three instances of the same identifier-less row, all loaded before any of them saves
+            $assigning = $this->loadConfig($table, $id);
+            $clearing = $this->loadConfig($table, $id);
+            $replacing = $this->loadConfig($table, $id);
+
+            $assigning->setIdentifier('assigned-first');
+            $assigning->save();
+            $this->assertSame('assigned-first', $this->fetchIdentifier($table, $id));
+
+            $this->assertNull($clearing->getIdentifier());
+            $clearing->setDescription('touched');
+            $clearing->save();
+            $this->assertSame(
+                'assigned-first',
+                $this->fetchIdentifier($table, $id),
+                $table . ': a stale instance must not clear the identifier assigned meanwhile'
+            );
+
+            $replacing->setIdentifier('assigned-third');
+
+            try {
+                $replacing->save();
+                $this->fail($table . ': a stale instance must not replace the identifier assigned meanwhile');
+            } catch (InvalidConfigException $e) {
+                $this->addToAssertionCount(1);
+            }
+
+            $this->assertSame('assigned-first', $this->fetchIdentifier($table, $id));
+        }
     }
 
     public function testIdentifierIsGeneratedOnCreation(): void
@@ -501,6 +539,37 @@ final class IdentifierTest extends ModelTestCase
         $db->insert(self::TABLE_KEYS, ['storeId' => $storeId, 'name' => $name, 'type' => 'input']);
 
         return (int) $db->lastInsertId();
+    }
+
+    private function insertRowWithoutIdentifier(string $table, int $storeId, string $name): int
+    {
+        if ($table === self::TABLE_KEYS) {
+            return $this->insertKeyRowWithoutIdentifier($storeId, $name);
+        }
+
+        $db = Db::get();
+
+        if ($table === self::TABLE_STORES) {
+            $db->insert($table, ['name' => uniqid($name, true)]);
+            $id = (int) $db->lastInsertId();
+            $this->createdStoreIds[] = $id;
+
+            return $id;
+        }
+
+        $db->insert($table, ['storeId' => $storeId, 'name' => $name]);
+
+        return (int) $db->lastInsertId();
+    }
+
+    private function loadConfig(string $table, int $id): StoreConfig|CollectionConfig|GroupConfig|KeyConfig
+    {
+        return match ($table) {
+            self::TABLE_STORES => StoreConfig::getById($id),
+            self::TABLE_COLLECTIONS => CollectionConfig::getById($id, true),
+            self::TABLE_GROUPS => GroupConfig::getById($id, true),
+            default => KeyConfig::getById($id, true),
+        };
     }
 
     private function fetchIdentifier(string $table, int $id): ?string

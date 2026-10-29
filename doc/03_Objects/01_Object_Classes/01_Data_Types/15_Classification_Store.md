@@ -231,11 +231,13 @@ and the name is not unique.
   the name is edited. Setting an identifier explicitly before the first `save()` keeps that value instead.
 * It is **opaque** - do not parse it, and do not expect it to be readable.
 * It is **immutable**: once an entity holds a non-null identifier, `setIdentifier()` refuses to change it and throws
-  `Pimcore\Model\Exception\InvalidConfigException`. Setting the same value again is a no-op.
+  `Pimcore\Model\Exception\InvalidConfigException`. Setting the same value again is a no-op. The null to value
+  transition is enforced in the database as well, so an instance loaded before another process assigned an identifier
+  neither clears it on save nor replaces it - the latter is refused with the same exception.
 * It is **unique per store** for collections, groups and keys, and unique overall for stores. A save that would write
   an identifier which is already in use within that scope is refused with the same exception, and nothing is written -
   the identifier is never disambiguated with a suffix.
-* Valid identifiers match `/^[A-Za-z0-9][A-Za-z0-9_-]*$/` and are at most 190 characters long. Anything else is
+* Valid identifiers match `/\A[A-Za-z0-9][A-Za-z0-9_-]*\z/` and are at most 190 characters long. Anything else is
   rejected by `setIdentifier()`.
 
 ```php
@@ -261,6 +263,10 @@ definition is rewritten - and it is idempotent, so running it twice changes noth
 
 A pre-flight runs before anything is written. Rows for which no unique identifier can be derived from the name are
 left untouched, listed in the command's report with their type, id, name and the reason, and the command still exits
-with `0`. That happens when two entities of the same kind share a name within one store, when the derived identifier
-is already taken, or when the name contains no characters a valid identifier can be built from. Those rows keep a
-`NULL` identifier until someone renames them and runs the command again.
+with `0`. That happens when two entities of the same kind share a name within one store - whether or not the other
+one already carries an identifier - when the derived identifier is already taken, or when the name contains no
+characters a valid identifier can be built from. Those rows keep a `NULL` identifier until someone renames them and
+runs the command again.
+
+Each write is guarded by `identifier IS NULL`, so a row that was given an identifier between the pre-flight and the
+write keeps it; the command reports that row as unresolved rather than counting it as backfilled.
