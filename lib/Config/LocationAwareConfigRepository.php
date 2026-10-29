@@ -102,7 +102,9 @@ class LocationAwareConfigRepository
     private function getDataFromSettingsStore(string $key, ?string &$dataSource): mixed
     {
         $settingsStoreEntryData = null;
-        $settingsStoreEntry = SettingsStore::get($key, $this->settingsStoreScope);
+        // a listing of the scope (fetchAllKeys()) has usually just loaded the entry already
+        $settingsStoreEntry = SettingsStore::getFromScopeSnapshot($key, $this->settingsStoreScope)
+            ?? SettingsStore::get($key, $this->settingsStoreScope);
         if ($settingsStoreEntry) {
             $settingsStoreEntryData = json_decode($settingsStoreEntry->getData(), true);
             $dataSource = self::LOCATION_SETTINGS_STORE;
@@ -258,7 +260,7 @@ class LocationAwareConfigRepository
     public function fetchAllKeys(): array
     {
         return array_unique(array_merge(
-            SettingsStore::getIdsByScope($this->settingsStoreScope),
+            $this->fetchSettingsStoreKeys(),
             array_keys($this->containerConfig)
         ));
     }
@@ -269,7 +271,25 @@ class LocationAwareConfigRepository
             return array_keys($this->containerConfig);
         }
 
-        return array_unique(SettingsStore::getIdsByScope($this->settingsStoreScope));
+        return array_unique($this->fetchSettingsStoreKeys());
+    }
+
+    /**
+     * Lists the settings store entries of the scope.
+     *
+     * A listing is almost always followed by loading every listed config, which would
+     * otherwise cost one settings store query per key. So when configs are read from the
+     * settings store, the entries are loaded together with their ids, in the same single
+     * query, and getDataFromSettingsStore() takes them from there.
+     */
+    private function fetchSettingsStoreKeys(): array
+    {
+        $readTarget = $this->storageConfig[self::READ_TARGET][self::TYPE] ?? null;
+        if (!$readTarget || $readTarget === self::LOCATION_SETTINGS_STORE) {
+            return SettingsStore::loadScopeSnapshot($this->settingsStoreScope);
+        }
+
+        return SettingsStore::getIdsByScope($this->settingsStoreScope);
     }
 
     private function invalidateConfigCache(): void

@@ -127,4 +127,81 @@ class SettingsStoreTest extends ModelTestCase
         $setting = SettingsStore::get('my-id1x');
         $this->assertNull($setting);
     }
+
+    public function testScopeSnapshot(): void
+    {
+        $db = Db::get();
+        foreach (['snapshot-scope', 'snapshot-other-scope'] as $scope) {
+            foreach (SettingsStore::getIdsByScope($scope) as $id) {
+                SettingsStore::delete($id, $scope);
+            }
+        }
+        SettingsStore::set('snapshot-1', 'data-1', SettingsStore::TYPE_STRING, 'snapshot-scope');
+        SettingsStore::set('snapshot-2', 42, SettingsStore::TYPE_INTEGER, 'snapshot-scope');
+        SettingsStore::set('snapshot-1', 'other-scope', SettingsStore::TYPE_STRING, 'snapshot-other-scope');
+
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'), 'no snapshot taken yet');
+
+        $ids = SettingsStore::loadScopeSnapshot('snapshot-scope');
+        $this->assertEqualsCanonicalizing(SettingsStore::getIdsByScope('snapshot-scope'), $ids);
+
+        // entries come out exactly as get() returns them, types included
+        foreach (['snapshot-1', 'snapshot-2'] as $id) {
+            $expected = SettingsStore::get($id, 'snapshot-scope');
+            $actual = SettingsStore::getFromScopeSnapshot($id, 'snapshot-scope');
+            $this->assertSame($expected->getId(), $actual->getId());
+            $this->assertSame($expected->getScope(), $actual->getScope());
+            $this->assertSame($expected->getType(), $actual->getType());
+            $this->assertSame($expected->getData(), $actual->getData());
+        }
+        $this->assertSame(42, SettingsStore::getFromScopeSnapshot('snapshot-2', 'snapshot-scope')->getData());
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-missing', 'snapshot-scope'));
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-other-scope'), 'only the loaded scope is in memory');
+
+        // served from memory: a change made behind the model's back is not seen ...
+        $db->update(SettingsStore\Dao::TABLE_NAME, ['data' => 'changed'], ['id' => 'snapshot-1', 'scope' => 'snapshot-scope']);
+        $this->assertSame('data-1', SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->getData());
+        // ... and a returned entry is a copy
+        SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->setData('modified');
+        $this->assertSame('data-1', SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->getData());
+
+        // the next snapshot of the scope replaces it
+        SettingsStore::loadScopeSnapshot('snapshot-scope');
+        $this->assertSame('changed', SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->getData());
+
+        // set() and delete() drop the snapshots, whichever scope they write to
+        SettingsStore::set('snapshot-1', 'other', SettingsStore::TYPE_STRING, 'snapshot-other-scope');
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
+        SettingsStore::loadScopeSnapshot('snapshot-scope');
+        SettingsStore::set('snapshot-3', 'data-3', SettingsStore::TYPE_STRING, 'snapshot-scope');
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
+
+        SettingsStore::loadScopeSnapshot('snapshot-scope');
+        $this->assertNotNull(SettingsStore::getFromScopeSnapshot('snapshot-3', 'snapshot-scope'));
+        SettingsStore::delete('snapshot-3', 'snapshot-scope');
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
+        $this->assertNull(SettingsStore::get('snapshot-3', 'snapshot-scope'));
+    }
+
+    public function testScopeSnapshotIsDroppedByWritesThroughAnotherSpellingOfTheScope(): void
+    {
+        foreach (SettingsStore::getIdsByScope('snapshot-case') as $id) {
+            SettingsStore::delete($id, 'snapshot-case');
+        }
+        SettingsStore::set('case-1', 'data-1', SettingsStore::TYPE_STRING, 'snapshot-case');
+
+        // the scope column compares case-insensitively, so this updates the same row ...
+        SettingsStore::loadScopeSnapshot('snapshot-case');
+        SettingsStore::set('case-1', 'data-2', SettingsStore::TYPE_STRING, 'SNAPSHOT-CASE');
+        $this->assertSame('data-2', SettingsStore::get('case-1', 'snapshot-case')->getData());
+        // ... and the snapshot must not keep serving the old value
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
+
+        // ... nor an entry deleted that way
+        SettingsStore::loadScopeSnapshot('snapshot-case');
+        $this->assertNotNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
+        SettingsStore::delete('case-1', 'Snapshot-Case');
+        $this->assertNull(SettingsStore::get('case-1', 'snapshot-case'));
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
+    }
 }
