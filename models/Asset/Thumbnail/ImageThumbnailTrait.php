@@ -241,7 +241,7 @@ trait ImageThumbnailTrait
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
                 $localFile = $this->getLocalFile();
-                $asset = $this->getAsset();
+                $asset = $this->asset;
                 if (null !== $localFile && $pathReference['type'] === 'asset' && $asset instanceof Image) {
                     $dimensions = $asset->getDimensionsFromFile($localFile) ?? [];
 
@@ -263,7 +263,7 @@ trait ImageThumbnailTrait
                             $dimensions = $estimatedDimensions;
                         }
                     }
-                } elseif (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
+                } elseif (null !== $localFile && $asset !== null && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
                     $filename = basename($pathReference['storagePath']);
                     $asset->addThumbnailFileToCache(
                         $localFile,
@@ -291,10 +291,11 @@ trait ImageThumbnailTrait
     {
         if (!$this->width || !$this->height) {
             $config = $this->getConfig();
-            $asset = $this->getAsset();
+            // read the property: thumbnails of videos/documents may have no asset, getAsset() is non-nullable
+            $asset = $this->asset;
             $dimensions = [];
 
-            if ($config) {
+            if ($config && $asset !== null) {
                 $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
                 if ($statusCacheEnabled) {
                     $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
@@ -420,10 +421,11 @@ trait ImageThumbnailTrait
             } elseif ($type === 'asset') {
                 $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
                 if ($prefix !== '' && $prefix !== null) {
-                    // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
-                    // folder move is pending the bytes still live under the pre-move prefix
+                    // a prefix pointing straight at the storage (CDN/bucket) needs the pre-move physical
+                    // path while a queued folder move is pending; a prefix served through Pimcore keeps
+                    // the logical path (storage_operation_queue.resolve_frontend_paths: false)
                     $path = Pimcore::getContainer()->get(\Pimcore\Asset\StorageQueue\FrontendPathResolver::class)
-                        ->resolvePhysicalPath($path, $this->getAsset()->getModificationDate());
+                        ->resolvePhysicalPath($path, $this->asset?->getModificationDate());
                 }
                 $path = $prefix . urlencode_ignore_slash($path);
             } else {
@@ -462,8 +464,8 @@ trait ImageThumbnailTrait
             $sourcePath = (string) ($pathReference['storagePath'] ?? $pathReference['src'] ?? '');
             $sourcePath = (string) (parse_url($sourcePath, PHP_URL_PATH) ?: $sourcePath);
             $fileExtension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-            if ($fileExtension === '' && $this->getAsset() instanceof Image) {
-                $fileExtension = pathinfo($this->getAsset()->getFilename(), PATHINFO_EXTENSION);
+            if ($fileExtension === '' && $this->asset instanceof Image) {
+                $fileExtension = pathinfo($this->asset->getFilename(), PATHINFO_EXTENSION);
             }
 
             $metadata = stream_get_meta_data($stream);
@@ -552,8 +554,9 @@ trait ImageThumbnailTrait
     public function getFileSize(): ?int
     {
         $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
-        if ($statusCacheEnabled) {
-            $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
+        $config = $this->getConfig();
+        if ($statusCacheEnabled && $this->asset !== null && $config !== null) {
+            $thumbnail = $this->asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
             if ($thumbnail && $thumbnail['filesize']) {
                 return $thumbnail['filesize'];
             }

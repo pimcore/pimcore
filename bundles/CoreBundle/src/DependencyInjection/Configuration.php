@@ -443,6 +443,10 @@ final class Configuration implements ConfigurationInterface
                             ->booleanNode('enabled')
                                 ->defaultFalse()
                             ->end()
+                            ->booleanNode('resolve_frontend_paths')
+                                ->info('Only relevant with a configured assets.frontend_prefixes.source. When true (default), frontend URLs of original asset files under a pending folder move are built from the pre-move physical path, which is what a prefix pointing straight at the storage (CDN, bucket) needs. Set to false when the prefix is served through Pimcore itself (e.g. a route resolving the asset by its path via Asset::getByPath()), so that URLs always carry the current logical path and the queue-aware storage adapter resolves the physical location on read.')
+                                ->defaultTrue()
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode('frontend_prefixes')
@@ -825,6 +829,20 @@ final class Configuration implements ConfigurationInterface
                             .'setting. Defaults to false to preserve existing behavior; the permissive default is deprecated '
                             .'since 2026.3 and will be removed in 2027.1. See Pimcore\\Model\\DataObject\\Data\\Link\\SanitizerPolicy.'
                         ))
+                        ->arrayNode('block')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('unserialize_allowed_classes')
+                                    ->info('Additional PHP classes to allow when unserializing the stored data of a Block field, on top of '
+                                        .'the value object classes the core block marshallers write. Register the classes a custom block '
+                                        .'marshaller (tag pimcore.dataobject.fielddefinition.marshaller, key block_<fieldtype>) or a custom '
+                                        .'field definition\'s normalize() places into a block; every other class in the stored data is '
+                                        .'reduced to __PHP_Incomplete_Class (see GHSA-6324-x2cv-h975).')
+                                    ->scalarPrototype()->end()
+                                    ->defaultValue([])
+                                ->end()
+                            ->end()
+                        ->end()
                         ->booleanNode('ignore_localized_query_fallback')
                             ->beforeNormalization()
                             ->ifString()
@@ -2238,7 +2256,7 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('blocked_classes')
                                 ->info('FQCNs that must not be traversable (method calls or property access) from
                                 sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
-                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                infrastructure layer, `Pimcore\Model\User`, the request and the `app` variable) - a site can append further FQCNs on
                                 top of that default. Ignored when `allowed_classes` is non-empty.')
                                 ->scalarPrototype()->end()
                             ->end()
@@ -2254,10 +2272,10 @@ final class Configuration implements ConfigurationInterface
                                 ->info('`pimcore_*` function names that must not be covered by the blanket
                                 `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
                                 functions that look up and return a live model instance by id/path, expose a
-                                filesystem/state oracle (e.g. `pimcore_file_exists`), or read and delete an
+                                filesystem/state oracle (e.g. `pimcore_file_exists`), read and delete an
                                 arbitrary file (`pimcore_asset_version_preview`,
-                                `pimcore_image_version_preview`) - a site can append further function names on
-                                top of that default.')
+                                `pimcore_image_version_preview`) or dump arbitrary objects (`pimcore_dump`) - a
+                                site can append further function names on top of that default.')
                                 ->scalarPrototype()->end()
                             ->end()
                             ->arrayNode('hard_blocked_methods')

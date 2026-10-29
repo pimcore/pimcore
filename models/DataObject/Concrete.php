@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\SystemSettingsConfig;
 
@@ -102,6 +103,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     protected function update(?bool $isUpdate = null, array $params = []): void
     {
+        // the field getters used for the validation and by the dao must not reduce wysiwyg links to unpublished
+        // elements, whichever request or process saves the object
+        WysiwygPersistingScope::run(fn () => $this->updateObject($isUpdate, $params));
+    }
+
+    private function updateObject(?bool $isUpdate, array $params): void
+    {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
@@ -110,6 +118,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             try {
                 if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $this->__objectAwareFields['localizedfields'] = true;
+                }
+
+                if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    // a calculated value is computed on read and never persisted from user input,
+                    // and CalculatedValue::checkValidity() is a no-op for that reason - including
+                    // for the mandatory check. Calling the getter here would run the calculator
+                    // for every calculated field on every save, only to discard the result.
+                    continue;
                 }
 
                 $getter = 'get' . ucfirst($fd->getName());
@@ -141,13 +157,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
-                                $getInheritedValues = DataObject::doGetInheritedValues();
-                                DataObject::setGetInheritedValues(true);
-
-                                $value = $this->$getter();
-                                $fd->checkValidity($value, $omitMandatoryCheck, $params);
-
-                                DataObject::setGetInheritedValues($getInheritedValues);
+                                DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $fd->checkValidity($this->$getter(), $omitMandatoryCheck, $params)
+                                );
                             } catch (Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
@@ -351,6 +364,21 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                // a calculated value cannot own a dependency: it is computed on read and
+                // CalculatedValue does not override Data::resolveDependencies(), which returns
+                // an empty array. Calling the getter would run the calculator for nothing.
+                continue;
+            }
+
+            if ($field instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                // a reverse relation cannot own a dependency either - the relation is recorded
+                // on the owning object - and ReverseObjectRelation::resolveDependencies() says so
+                // by returning an empty array. Its getter is never memoised, so calling it here
+                // would query the relation table and load every owning object for nothing.
+                continue;
+            }
+
             $key = $field->getName();
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());

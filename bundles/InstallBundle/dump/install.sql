@@ -302,7 +302,7 @@ CREATE TABLE `properties` (
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
   `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL, /* verified to fit within the 3072-byte InnoDB index-prefix limit for `getall` (cpath+ctype+inheritable) at 4 bytes/char */
   `name` varchar(190) NOT NULL DEFAULT '',
-  `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
+  `type` enum('text','document','asset','object','bool','select','date') DEFAULT NULL,
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
@@ -333,8 +333,7 @@ CREATE TABLE `schedule_tasks` (
   `active` tinyint(1) unsigned DEFAULT '0',
   `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
+  KEY `cid_ctype` (`cid`,`ctype`),
   KEY `active` (`active`),
   KEY `version` (`version`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

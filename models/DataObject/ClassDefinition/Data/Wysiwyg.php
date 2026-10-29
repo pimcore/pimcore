@@ -17,6 +17,7 @@ use DOMElement;
 use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
@@ -107,7 +108,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = self::getWysiwygSanitizer()->sanitizeFor('body', $data);
         }
 
-        return Text::wysiwygText($data, [
+        return Text::wysiwygTextKeepingLinks($data, [
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
@@ -121,7 +122,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return Text::wysiwygText($data, [
+        return Text::wysiwygTextKeepingLinks($data, [
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
@@ -219,11 +220,19 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = $container->getObjectVar($this->getName());
         }
 
-        return Text::wysiwygText($data, [
-                'object' => $container,
-                'context' => $this,
-                'language' => $params['language'] ?? null,
-            ]);
+        $textParams = [
+            'object' => $container,
+            'context' => $this,
+            'language' => $params['language'] ?? null,
+        ];
+
+        // the editor and the save keep links to unpublished elements, everywhere else (frontend, CLI) they are
+        // reduced to their text
+        if (Pimcore::inAdmin() || WysiwygPersistingScope::isActive()) {
+            return Text::wysiwygTextKeepingLinks($data, $textParams);
+        }
+
+        return Text::wysiwygText($data, $textParams);
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or

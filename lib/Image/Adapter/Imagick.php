@@ -15,6 +15,7 @@ namespace Pimcore\Image\Adapter;
 
 use Exception;
 use ImagickDraw;
+use ImagickException;
 use ImagickPixel;
 use Pimcore\Cache;
 use Pimcore\Config;
@@ -137,28 +138,26 @@ class Imagick extends Adapter
                 // check for the existence of an embedded clipping path (8BIM / Adobe profile meta data)
                 //$identifyRaw = $i->identifyImage(true)['rawOutput'];
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
-                // if there's a clipping path embedded, apply the first one
+                // if there's a clipping path embedded, apply it
                 // clipping overwrites the alpha channel of the image, so keep a copy of the unclipped image
-                // around: it is the only way to still deliver the image when the clipping fails
-                $unclipped = clone $i;
+                // around: it is the only way to still deliver the image when the clipping fails.
+                // Skipped when the animation handling above replaced the resource with a different image:
+                // clipping $i would have no effect on the resource anyway.
+                if ($this->resource === $i) {
+                    $unclipped = clone $i;
 
-                try {
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
-                    $i->clipImage();
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
-                    $unclipped->clear();
-                } catch (Exception $e) {
-                    // the image is entirely transparent at this point, so restore the copy instead of
-                    // just resetting the alpha channel, which would drop any pre-existing transparency
-                    if ($this->resource === $i) {
-                        $this->resource = $unclipped;
-                    } else {
-                        // the animation handling above replaced the resource with a different image,
-                        // which was never clipped in the first place
+                    try {
+                        $this->resource = $this->applyClippingPath($i);
+                        $this->setIsAlphaPossible(true);
+                        $i->clear();
                         $unclipped->clear();
-                    }
+                    } catch (Exception $e) {
+                        // $i may be entirely transparent at this point, so restore the copy instead of
+                        // just resetting the alpha channel, which would drop any pre-existing transparency
+                        $this->resource = $unclipped;
 
-                    Logger::error(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                        Logger::error(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                    }
                 }
                 //}
             }
@@ -171,6 +170,110 @@ class Imagick extends Adapter
         $this->setModified(false);
 
         return $this;
+    }
+
+    /**
+     * Applies the embedded clipping path to the alpha channel and returns the result as a new image.
+     *
+     * clipPathImage() leaves a write mask (ImageMagick 7) / clip mask (ImageMagick 6) on the image which every later
+     * operation (resize, crop, ...) still honours, see pimcore/platform-version#348. Imagick cannot unset it, so
+     * the clipped image is rebuilt from an in-memory MIFF blob: lossless for pixels, alpha, colorspace, depth and
+     * profiles, but the mask is not serialized.
+     *
+     * @throws ImagickException when the image has no usable clipping path
+     */
+    private function applyClippingPath(\Imagick $image): \Imagick
+    {
+        $mask = null;
+        $clippingPath = $this->getClippingPathReference($image);
+
+        if (defined('Imagick::PIXELMASK_WRITE')) {
+            // ImageMagick 7: clipPathImage() only installs the write mask rendered from the path and relies on the
+            // following alpha channel change to write through it. ImageMagick 7.1.2-23 and 7.1.2-24 ignore the
+            // mask there and leave the whole image transparent (ImageMagick/ImageMagick#8778), so the mask is
+            // copied into the alpha channel directly instead.
+            $image->clipPathImage($clippingPath, true);
+            // getImageMask() is available since Imagick 3.5.0 on ImageMagick 7 builds, but missing from the stubs
+            // @phpstan-ignore-next-line
+            $mask = $image->getImageMask(\Imagick::PIXELMASK_WRITE);
+
+            if (!$mask instanceof \Imagick) {
+                throw new ImagickException('clipPathImage() did not provide a clip mask');
+            }
+        } else {
+            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+            $image->clipPathImage($clippingPath, true);
+            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+        }
+
+        $format = $image->getImageFormat();
+        $image->setImageFormat('miff');
+        $clipped = new \Imagick();
+        $clipped->readImageBlob($image->getImageBlob());
+        $clipped->setImageFormat($format);
+
+        if ($mask instanceof \Imagick) {
+            $clipped->setImageAlphaChannel(\Imagick::ALPHACHANNEL_SET);
+            $mask->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OFF);
+            $clipped->compositeImage($mask, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
+            $mask->clear();
+        }
+
+        return $clipped;
+    }
+
+    /**
+     * Returns the reference of the clipping path of the image in the notation of clipPathImage().
+     *
+     * An image can carry any number of saved paths (8BIM 2000 - 2998), the one designated as clipping path is
+     * named by the 'Name of clipping path' resource (8BIM 2999). clipImage() ignores that name and always uses the
+     * first path, so the clipping path is looked up here. It is referenced by its position ('#<n>') rather than by
+     * its name, which ImageMagick matches case-insensitively and reads as a position when it starts with '#'.
+     * Falls back to the first path - what clipImage() uses - when the clipping path cannot be found.
+     */
+    private function getClippingPathReference(\Imagick $image): string
+    {
+        $profile = $image->getImageProfiles('8bim', true)['8bim'] ?? '';
+        $length = strlen($profile);
+        $offset = 0;
+        $pathNames = [];
+        $clippingPathName = null;
+
+        // each image resource consists of the signature, the resource id, a pascal string name padded to an even
+        // length and the size of the data, followed by the data padded to an even length
+        while ($offset + 12 <= $length && substr($profile, $offset, 4) === '8BIM') {
+            $resourceId = unpack('n', $profile, $offset + 4)[1];
+            $nameLength = ord($profile[$offset + 6]);
+            $sizeOffset = $offset + 6 + $nameLength + 1 + (($nameLength + 1) % 2);
+            if ($sizeOffset + 4 > $length) {
+                break;
+            }
+
+            $size = unpack('N', $profile, $sizeOffset)[1];
+            $data = substr($profile, $sizeOffset + 4, $size);
+
+            // the same range ImageMagick takes into account when resolving a path reference
+            if ($resourceId >= 1999 && $resourceId <= 2998) {
+                $pathNames[] = substr($profile, $offset + 7, $nameLength);
+            } elseif ($resourceId === 2999 && $data !== '') {
+                // the data starts with the name of the clipping path as a pascal string
+                $clippingPathName = substr($data, 1, ord($data[0]));
+            }
+
+            $offset = $sizeOffset + 4 + $size + ($size % 2);
+        }
+
+        $position = $clippingPathName === null ? false : array_search($clippingPathName, $pathNames, true);
+        if ($position === false) {
+            Logger::warning(sprintf(
+                'The clipping path of the image %s could not be found, the first path is used instead',
+                $this->imagePath
+            ));
+
+            return '#1';
+        }
+
+        return '#' . ($position + 1);
     }
 
     private function has8BIMClippingPath(): bool
@@ -523,6 +626,8 @@ class Imagick extends Adapter
                     'x' => ($width / $this->getWidth()) * 96,
                     'y' => ($height / $this->getHeight()) * 96,
                 ];
+                // drop the original rendering, otherwise it is kept next to the re-rendered image below
+                $this->resource->removeImage();
             }
 
             $this->resource->setResolution($res['x'], $res['y']);

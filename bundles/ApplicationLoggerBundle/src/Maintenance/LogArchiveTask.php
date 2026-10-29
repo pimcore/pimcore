@@ -18,6 +18,10 @@ use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToDeleteDirectory;
+use League\Flysystem\UnableToDeleteFile;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
@@ -45,8 +49,11 @@ class LogArchiveTask implements TaskInterface
 
     private LockInterface $lock;
 
-    public function __construct(Connection $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory)
+    private ?FilesystemOperator $storage;
+
+    public function __construct(Connection $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory, ?FilesystemOperator $storage = null)
     {
+        $this->storage = $storage;
         $this->db = $db;
         $this->config = $config;
         $this->logger = $logger;
@@ -79,7 +86,7 @@ class LogArchiveTask implements TaskInterface
     private function archiveLogEntries(): void
     {
         $db = $this->db;
-        $storage = Storage::get('application_log');
+        $storage = $this->storage ?? Storage::get('application_log');
 
         $date = new DateTime('now');
         $archiveTableName = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('Y').'_'.$date->format('m');
@@ -138,8 +145,8 @@ class LogArchiveTask implements TaskInterface
             $fileObjectPaths = $db->fetchFirstColumn(sprintf($sql, 'fileobject'));
             $deleted = 0;
             foreach ($fileObjectPaths as $filePath) {
-                if ($filePath !== null && $storage->fileExists($filePath)) {
-                    $storage->delete($filePath);
+                if ($filePath !== null) {
+                    $this->deleteFile($storage, $filePath);
                 }
 
                 // deleting the file objects is the part of a run that can outlive the ttl, so
@@ -172,11 +179,53 @@ class LogArchiveTask implements TaskInterface
 
                     $folderName = $deleteArchiveLogDate->format('Y/m');
 
-                    if ($storage->directoryExists($folderName)) {
-                        $storage->deleteDirectory($folderName);
-                    }
+                    $this->deleteDirectory($storage, $folderName);
                 }
             }
+        }
+    }
+
+    /**
+     * Checking for existence before deleting is not atomic: another run may remove the file in between,
+     * which makes the delete fail although the file is gone - the state this wants to reach anyway.
+     * A deletion only counts as failed when the file is still there afterwards.
+     */
+    private function deleteFile(FilesystemOperator $storage, string $path): void
+    {
+        try {
+            if ($storage->fileExists($path)) {
+                $storage->delete($path);
+            }
+        } catch (UnableToDeleteFile $e) {
+            if ($this->stillExists(static fn (): bool => $storage->fileExists($path))) {
+                throw $e;
+            }
+        }
+    }
+
+    private function deleteDirectory(FilesystemOperator $storage, string $path): void
+    {
+        try {
+            if ($storage->directoryExists($path)) {
+                $storage->deleteDirectory($path);
+            }
+        } catch (UnableToDeleteDirectory $e) {
+            if ($this->stillExists(static fn (): bool => $storage->directoryExists($path))) {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * @param callable(): bool $exists
+     */
+    private function stillExists(callable $exists): bool
+    {
+        try {
+            return $exists();
+        } catch (FilesystemException) {
+            // cannot tell, so the original failure must not be swallowed
+            return true;
         }
     }
 

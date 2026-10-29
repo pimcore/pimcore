@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObjectField;
 use Pimcore\Tests\Support\Util\OptionsProvider\DefaultingOptionsProvider;
 
 class Model extends AbstractDefinitionHelper
@@ -314,6 +315,14 @@ class Model extends AbstractDefinitionHelper
             $block->addChild($this->createDataChild('input', 'blockinput'));
             $block->addChild($this->createDataChild('link', 'blocklink'));
             $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
+            $block->addChild($this->createDataChild('imageGallery', 'blockimagegallery'));
+
+            // Custom field type with a custom block marshaller that stores a project value object;
+            // covered by BlockTest::testCustomMarshallerValueObjectInsideBlock().
+            $customValueObject = new CustomValueObjectField();
+            $customValueObject->setName('blockcustomvalueobject');
+            $customValueObject->setTitle('blockcustomvalueobject');
+            $block->addChild($customValueObject);
 
             $block->addChild($this->createDataChild('geopoint', 'blockgeopoint'));
             $block->addChild($this->createDataChild('geobounds', 'blockgeobounds'));
@@ -711,6 +720,34 @@ class Model extends AbstractDefinitionHelper
 
             $root->addChild($rootPanel);
             $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a class with a Block that holds a wysiwyg field.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_WysiwygBlock(string $name = 'unittestWysiwygBlock', string $filename = 'wysiwyg-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('testblock');
+            $block->addChild($this->createDataChild('wysiwyg', 'blockwysiwyg'));
+
+            $panel->addChild($block);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
         }
 
         return $class;
