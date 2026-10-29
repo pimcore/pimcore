@@ -81,9 +81,16 @@ class ParallelizationLockTest extends Unit
         $application->setDispatcher($dispatcher);
         $application->addCommand($command);
 
+        $input = ['command' => self::COMMAND];
+        // --main-process: process the items here instead of spawning bin/console children.
+        // Without webmozarts/console-parallelization the command has no such option and
+        // always runs in this process (the fallback of ParallelizationBase).
+        if ($command->getDefinition()->hasOption('main-process')) {
+            $input['--main-process'] = true;
+        }
+
         $tester = new ApplicationTester($application);
-        // --main-process: process the items here instead of spawning bin/console children
-        $tester->run(['command' => self::COMMAND, '--main-process' => true]);
+        $tester->run($input);
 
         return $tester;
     }
