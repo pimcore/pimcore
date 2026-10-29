@@ -495,6 +495,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * the groups that hold a secret alone. A value that did change is written as it was just
      * encoded, with the fresh salt of that encryption.
      *
+     * Only an Exception is an answer about the stored string - that is what an unreadable one
+     * arrives as, {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::decrypt()}.
+     * A PHP Error is a fault in this code rather than evidence about a value, so it propagates and
+     * takes the save down with it instead of being logged and answered with "not the same value".
+     *
      * @param array<string, mixed> $parameters
      */
     private function encodesTheSameValue(
@@ -506,7 +511,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         try {
             return $marshaller->unmarshal($storedValue, $parameters)
                 === $marshaller->unmarshal($encodedValue, $parameters);
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             // a stored value that cannot be read back - one written under a key that has since been
             // rotated, say - is no evidence about the value it holds, so the fresh encoding wins
             $this->logger->info(
@@ -884,6 +889,16 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         return self::DOCUMENT_TABLE_PREFIX . $classId;
     }
 
+    /**
+     * Removes the documents of a field name the class no longer carries.
+     *
+     * Which names it still carries is answered by the same recursive discovery the engine routing
+     * uses, {@see Service::getClassificationStoreFieldDefinitions()}: a classification store may be
+     * defined inside an object brick or a field collection, and its documents land in this table
+     * under the field's own name all the same - while {@see ClassDefinition::getFieldDefinition()}
+     * looks no further than the class's own fields and its localized ones, and would call every one
+     * of those names gone.
+     */
     private function cleanupTable(string $tableName, string $classId): void
     {
         $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
@@ -893,10 +908,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return;
         }
 
+        $liveFieldNames = Service::groupStoreIdsByFieldName(
+            Service::getClassificationStoreFieldDefinitions($classDefinition->getFieldDefinitions())
+        );
+
         $fieldNames = $this->db->fetchFirstColumn('SELECT DISTINCT fieldname FROM ' . $tableName);
 
         foreach ($fieldNames as $fieldName) {
-            if (!$classDefinition->getFieldDefinition($fieldName)) {
+            if (!isset($liveFieldNames[$fieldName])) {
                 $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
                 $this->db->delete($tableName, ['fieldname' => $fieldName]);
             }
