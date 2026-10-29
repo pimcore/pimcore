@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
             [$entityType->value, $entityId, $language]
         );
 
-        if (!$data) {
+        if ($data === false) {
             throw new NotFoundException(sprintf(
                 'Classification store label of %s %d in language "%s" does not exist.',
                 $entityType->value,

@@ -156,7 +156,7 @@ final class LabelResolver implements ResetInterface
             }
         }
 
-        if (!$missing) {
+        if ($missing === []) {
             return;
         }
 

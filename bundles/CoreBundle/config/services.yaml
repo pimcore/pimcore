@@ -278,6 +278,7 @@ services:
         public: true
         tags:
             - { name: kernel.reset, method: reset }
+
     #
     # SECURITY
     #

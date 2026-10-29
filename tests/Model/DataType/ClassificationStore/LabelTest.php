@@ -118,16 +118,7 @@ final class LabelTest extends ModelTestCase
      */
     public function testTheMigrationCreatesTheSameTableAsTheInstallerDump(): void
     {
-        $db = Db::get();
-        $migration = new Version20261029100000($db, new NullLogger());
-
-        // an empty schema is the fresh install the migration is written for
-        $migration->up(new Schema());
-        $planned = array_map(static fn ($query) => $query->getStatement(), $migration->getSql());
-
-        $this->assertCount(1, $planned);
-
-        $db->executeStatement(str_replace(self::TABLE_LABELS, self::MIGRATION_SCRATCH_TABLE, $planned[0]));
+        $this->createMigrationScratchTable();
 
         $this->assertSame(
             $this->describeColumns(self::TABLE_LABELS),
@@ -150,10 +141,14 @@ final class LabelTest extends ModelTestCase
 
         $down = new Version20261029100000($db, new NullLogger());
         $down->down($schema);
-        $this->assertSame(
-            ['DROP TABLE `' . self::TABLE_LABELS . '`'],
-            array_map(static fn ($query) => $query->getStatement(), $down->getSql())
-        );
+        $dropped = array_map(static fn ($query) => $query->getStatement(), $down->getSql());
+        $this->assertSame(['DROP TABLE `' . self::TABLE_LABELS . '`'], $dropped);
+
+        // run against a copy, so that the table the rest of the suite needs survives the assertion
+        $this->createMigrationScratchTable();
+        $db->executeStatement(str_replace(self::TABLE_LABELS, self::MIGRATION_SCRATCH_TABLE, $dropped[0]));
+
+        $this->assertSame([], $this->describeColumns(self::MIGRATION_SCRATCH_TABLE));
     }
 
     public function testASubGroupLabelInsertsAndReadsBackAlthoughNoSubGroupEntityExists(): void
@@ -262,6 +257,24 @@ final class LabelTest extends ModelTestCase
             $this->countLabels(LabelEntityType::Key, (int) $survivor->getId()),
             'a key of another store keeps its labels'
         );
+    }
+
+    /**
+     * Builds a copy of the label table from the statement the migration plans on a fresh install,
+     * which is what both schema paths have to agree on.
+     */
+    private function createMigrationScratchTable(): void
+    {
+        $db = Db::get();
+        $migration = new Version20261029100000($db, new NullLogger());
+
+        // an empty schema is the fresh install the migration is written for
+        $migration->up(new Schema());
+        $planned = array_map(static fn ($query) => $query->getStatement(), $migration->getSql());
+
+        $this->assertCount(1, $planned);
+
+        $db->executeStatement(str_replace(self::TABLE_LABELS, self::MIGRATION_SCRATCH_TABLE, $planned[0]));
     }
 
     private function countEntityRows(LabelEntityType $entityType, int $entityId): int

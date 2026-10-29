@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\Label;
+use Pimcore\Model\DataObject\Classificationstore\Label\Dao as LabelDao;
 use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
 use Pimcore\Model\DataObject\Classificationstore\LabelResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
@@ -240,9 +242,44 @@ final class LabelResolverTest extends ModelTestCase
             $resolver->getTitle($collection, self::LANGUAGE_DE),
             'a write invalidates the held row'
         );
+    }
 
-        $resolver->reset();
-        $this->assertSame(self::TITLE_UPDATED, $resolver->getTitle($collection, self::LANGUAGE_DE));
+    /**
+     * Drives the real services_resetter rather than asserting the tag line in services.yaml, as
+     * the relation cache's own reset test next door does.
+     */
+    public function testTheHeldRowsAreClearedAtTheKernelResetBoundary(): void
+    {
+        $container = Pimcore::getContainer();
+        $this->assertTrue($container->has(LabelResolver::class));
+
+        $group = $this->createEntity(LabelEntityType::Group);
+        $groupId = (int) $group->getId();
+        $this->writeLabel(LabelEntityType::Group, $groupId, self::LANGUAGE_DE, self::TITLE_DE, null);
+
+        $resolver = $this->resolver();
+        $this->assertSame(self::TITLE_DE, $resolver->getTitle($group, self::LANGUAGE_DE));
+
+        // changed behind the resolver's back, so that the DAO's invalidation does not fire
+        Db::get()->executeStatement(
+            'UPDATE `' . LabelDao::TABLE_NAME_LABELS . '` SET `title` = ?'
+            . ' WHERE `entityType` = ? AND `entityId` = ? AND `language` = ?',
+            [self::TITLE_UPDATED, LabelEntityType::Group->value, $groupId, self::LANGUAGE_DE]
+        );
+
+        $this->assertSame(
+            self::TITLE_DE,
+            $resolver->getTitle($group, self::LANGUAGE_DE),
+            'precondition: the held row answers without reading again'
+        );
+
+        $container->get('services_resetter')->reset();
+
+        $this->assertSame(
+            self::TITLE_UPDATED,
+            $resolver->getTitle($group, self::LANGUAGE_DE),
+            'the kernel.reset tag must empty the held rows'
+        );
     }
 
     private static function because(LabelEntityType $entityType): string
