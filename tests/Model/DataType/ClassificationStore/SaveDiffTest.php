@@ -15,11 +15,15 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Csstore;
+use ReflectionClass;
 
 /**
  * The save writes the rows that changed, and nothing else. Every transition is asserted against
@@ -442,6 +446,8 @@ class SaveDiffTest extends AbstractBatchedRelationTest
             $this->countWriteStatements(),
             'one changed row out of 900 must not rewrite the stored rows'
         );
+
+        $this->assertSaveRanOnTheEngine();
     }
 
     public function testRewritingEveryValueIsBatched(): void
@@ -555,6 +561,25 @@ class SaveDiffTest extends AbstractBatchedRelationTest
             0,
             $this->countWriteStatements(),
             'a false checkbox that did not change must not be written again'
+        );
+    }
+
+    /**
+     * The statement count above only says something about the engine if the engine is what ran it.
+     * Without this, the budget would still be met by a Dao that never delegates - which is how the
+     * diff was reverted once already.
+     */
+    private function assertSaveRanOnTheEngine(): void
+    {
+        $this->assertInstanceOf(
+            EavEngine::class,
+            Pimcore::getContainer()->get(EngineResolver::class)->resolveForStore($this->getStoreId()),
+            'the store resolves to the EAV engine'
+        );
+
+        $this->assertFalse(
+            (new ReflectionClass(Classificationstore\Dao::class))->hasMethod('persistRows'),
+            'the Dao holds no write path of its own, so the statements counted came from the engine'
         );
     }
 

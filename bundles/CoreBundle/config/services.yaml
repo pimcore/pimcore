@@ -108,6 +108,25 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
         public: true
 
+    # Classification Store storage engines
+    Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.classificationstore.engine, key: eav }
+
+    # public: it is consumed from the classification store DAO and the class definition DAO,
+    # which are not container-managed.
+    # kernel.reset: the resolver memoizes which engine each store resolves to, and that memo has to
+    # be dropped per request and per messenger message so a store flipped to another engine is read
+    # back from its configuration - like the caches further down do.
+    Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver:
+        public: true
+        arguments:
+            $engines: !tagged_iterator { tag: pimcore.classificationstore.engine, index_by: key }
+        tags:
+            - { name: kernel.reset, method: reset }
+
     Pimcore\Mail\Plugins\RedirectingPlugin: ~
 
     # Decorates Symfony Mailer

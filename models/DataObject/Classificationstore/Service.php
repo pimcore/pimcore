@@ -22,6 +22,15 @@ use Pimcore\Model\DataObject;
 class Service
 {
     /**
+     * The name spaces a container key can come from, used to qualify a collected field identity.
+     * Object brick keys and field collection keys are unique within their own kind only, so the
+     * kind has to be part of the identity for the two to stay apart.
+     */
+    private const OBJECTBRICK_CONTAINER = 'objectbrick';
+
+    private const FIELDCOLLECTION_CONTAINER = 'fieldcollection';
+
+    /**
      * @var array Used for storing definitions
      */
     protected static array $definitionsCache = [];
@@ -96,5 +105,142 @@ class Service
         }
 
         return $dataDefinition;
+    }
+
+    /**
+     * Collects every classification store field reachable from the given field definitions,
+     * including the ones nested in localized fields, object bricks and field collections -
+     * classSaved() reaches those as well.
+     *
+     * Two object bricks (or field collections) allowed on the same class may each define a
+     * classification store field under the same name, on different stores. The keys are therefore
+     * qualified by the container the field was found in - "objectbrick:brickKey.fieldName" - so that
+     * no definition is dropped and the error messages name the one that is at fault. Object bricks
+     * and field collections are keyed in separate name spaces, so the kind is part of the identity
+     * as well: both may be called "Shared" and both may contain a "cs".
+     *
+     * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
+     *
+     * @return array<string, DataObject\ClassDefinition\Data\Classificationstore>
+     *         container-qualified field identity => definition
+     */
+    public static function getClassificationStoreFieldDefinitions(array $fieldDefinitions): array
+    {
+        $classificationStoreFields = [];
+        self::collectClassificationStoreFieldDefinitions($fieldDefinitions, $classificationStoreFields);
+
+        return $classificationStoreFields;
+    }
+
+    /**
+     * Groups collected classification store fields by the field name they are stored under.
+     *
+     * The value tables key their rows by (object, fieldname), so every definition sharing a field
+     * name shares its rows - which is why they are resolved together rather than one at a time.
+     *
+     * @param array<string, DataObject\ClassDefinition\Data\Classificationstore> $classificationStoreFields
+     *
+     * @return array<string, array<string, int|null>> field name => (qualified identity => store id)
+     */
+    public static function groupStoreIdsByFieldName(array $classificationStoreFields): array
+    {
+        $storeIds = [];
+        foreach ($classificationStoreFields as $identity => $fieldDefinition) {
+            $storeIds[$fieldDefinition->getName()][$identity] = self::getConfiguredStoreId($fieldDefinition);
+        }
+
+        return $storeIds;
+    }
+
+    /**
+     * The store id of a classification store field, or null when the field carries none.
+     *
+     * The property is typed and has no default, so a class definition without the key leaves it
+     * uninitialized - reading it through the getter would raise an Error rather than return a default.
+     */
+    public static function getConfiguredStoreId(
+        DataObject\ClassDefinition\Data\Classificationstore $fieldDefinition
+    ): ?int {
+        return isset($fieldDefinition->storeId) ? $fieldDefinition->getStoreId() : null;
+    }
+
+    /**
+     * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
+     * @param array<string, DataObject\ClassDefinition\Data\Classificationstore> $classificationStoreFields
+     * @param string $prefix the container path the given field definitions were reached through
+     */
+    private static function collectClassificationStoreFieldDefinitions(
+        array $fieldDefinitions,
+        array &$classificationStoreFields,
+        string $prefix = ''
+    ): void {
+        foreach ($fieldDefinitions as $fieldDefinition) {
+            if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Classificationstore) {
+                $classificationStoreFields[$prefix . $fieldDefinition->getName()] = $fieldDefinition;
+
+                continue;
+            }
+
+            foreach (self::getNestedFieldDefinitions($fieldDefinition) as $nestedPrefix => $nestedFieldDefinitions) {
+                self::collectClassificationStoreFieldDefinitions(
+                    $nestedFieldDefinitions,
+                    $classificationStoreFields,
+                    $prefix . $nestedPrefix
+                );
+            }
+        }
+    }
+
+    /**
+     * @return array<string, array<string, DataObject\ClassDefinition\Data>> container prefix => field definitions
+     */
+    private static function getNestedFieldDefinitions(DataObject\ClassDefinition\Data $fieldDefinition): array
+    {
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+            // localized fields share the name space of the class they belong to, so they add no prefix
+            return ['' => $fieldDefinition->getFieldDefinitions()];
+        }
+
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+            return self::getContainerFieldDefinitions(
+                self::OBJECTBRICK_CONTAINER,
+                $fieldDefinition->getAllowedTypes(),
+                DataObject\Objectbrick\Definition::getByKey(...)
+            );
+        }
+
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+            return self::getContainerFieldDefinitions(
+                self::FIELDCOLLECTION_CONTAINER,
+                $fieldDefinition->getAllowedTypes(),
+                DataObject\Fieldcollection\Definition::getByKey(...)
+            );
+        }
+
+        return [];
+    }
+
+    /**
+     * @param string $containerKind the name space the allowed types are keyed in - an object brick and
+     *                              a field collection may carry the same key without being related
+     * @param string[] $allowedTypes
+     * @param callable(string): (DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition|null) $loadDefinition
+     *
+     * @return array<string, array<string, DataObject\ClassDefinition\Data>> container prefix => field definitions
+     */
+    private static function getContainerFieldDefinitions(
+        string $containerKind,
+        array $allowedTypes,
+        callable $loadDefinition
+    ): array {
+        $fieldDefinitions = [];
+        foreach ($allowedTypes as $allowedType) {
+            $definition = $loadDefinition($allowedType);
+            if ($definition !== null) {
+                $fieldDefinitions[$containerKind . ':' . $allowedType . '.'] = $definition->getFieldDefinitions();
+            }
+        }
+
+        return $fieldDefinitions;
     }
 }

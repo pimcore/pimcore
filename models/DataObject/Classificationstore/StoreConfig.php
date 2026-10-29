@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\StoreConfigEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\StoreConfig\Dao getDao()
@@ -38,6 +40,19 @@ final class StoreConfig extends Model\AbstractModel
      *
      */
     protected ?string $description = null;
+
+    /**
+     * The name of the storage engine, null for the default one.
+     *
+     */
+    protected ?string $engine = null;
+
+    /**
+     * Whether `engine` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $engineInitialized = false;
 
     public static function getById(int $id): ?StoreConfig
     {
@@ -105,6 +120,27 @@ final class StoreConfig extends Model\AbstractModel
         return $this;
     }
 
+    public function getEngine(): ?string
+    {
+        return $this->engine;
+    }
+
+    public function setEngine(?string $engine): static
+    {
+        $this->engine = $engine;
+        $this->engineInitialized = true;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     */
+    public function isEngineInitialized(): bool
+    {
+        return $this->engineInitialized;
+    }
+
     /**
      * Deletes the key value group configuration
      */
@@ -112,6 +148,7 @@ final class StoreConfig extends Model\AbstractModel
     {
         $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE);
         $this->getDao()->delete();
+        $this->invalidateResolvedEngine();
         $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE);
     }
 
@@ -130,12 +167,27 @@ final class StoreConfig extends Model\AbstractModel
         }
 
         $this->getDao()->save();
+        $this->invalidateResolvedEngine();
 
         if ($isUpdate) {
             $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE);
         } else {
             $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD);
         }
+    }
+
+    /**
+     * The resolver memoizes which engine this store resolves to, so a write that may have changed
+     * the engine column has to drop that entry rather than wait for the next kernel reset.
+     */
+    private function invalidateResolvedEngine(): void
+    {
+        $id = $this->getId();
+        if ($id === null || !Pimcore::hasContainer()) {
+            return;
+        }
+
+        Pimcore::getContainer()->get(EngineResolver::class)->invalidateStore($id);
     }
 
     public function getId(): ?int

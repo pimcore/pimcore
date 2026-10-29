@@ -587,12 +587,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the classification data
      *
+     * The store is taken from this definition rather than looked up by field name, so that two
+     * containers defining a classification store under the same name each create the tables of
+     * their own engine.
+     *
+     * @throws Exception
      */
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
-        $classificationStore = new DataObject\Classificationstore();
-        $classificationStore->setClass($class);
-        $classificationStore->createUpdateTable();
+        $storeId = DataObject\Classificationstore\Service::getConfiguredStoreId($this);
+
+        Pimcore::getContainer()->get(DataObject\Classificationstore\Engine\EngineResolver::class)
+            ->resolveForStore($storeId)
+            ->createUpdateTables($class, $storeId);
     }
 
     public function preGetData(mixed $container, array $params = []): mixed
