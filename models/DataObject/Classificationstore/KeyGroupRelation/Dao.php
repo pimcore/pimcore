@@ -16,6 +16,7 @@ use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
 
@@ -65,6 +66,36 @@ class Dao extends AbstractDao
     }
 
     /**
+     * The vocabulary is scoped to the store of the group, not of the key, so the group decides which
+     * entries a relation may name.
+     *
+     * @throws InvalidConfigException
+     */
+    public function assertSubGroupIsResolvable(): void
+    {
+        $subGroup = $this->model->getSubGroup();
+        if ($subGroup === null) {
+            return;
+        }
+
+        $resolved = $this->db->fetchOne(
+            'SELECT `s`.`id` FROM `' . Classificationstore\SubGroupConfig\Dao::TABLE_NAME_SUBGROUPS . '` `s`'
+            . ' INNER JOIN `' . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '` `g`'
+            . ' ON `g`.`storeId` = `s`.`storeId`'
+            . ' WHERE `g`.`id` = ? AND `s`.`identifier` = ?',
+            [$this->model->getGroupId(), $subGroup]
+        );
+
+        if ($resolved === false) {
+            throw new InvalidConfigException(sprintf(
+                'The sub group "%s" does not exist in the store of group %s.',
+                $subGroup,
+                $this->model->getGroupId()
+            ));
+        }
+    }
+
+    /**
      * Deletes object from database
      */
     public function delete(): void
@@ -84,6 +115,11 @@ class Dao extends AbstractDao
         $data = [];
 
         foreach ($type as $key => $value) {
+            // a relation built with `new` carries no sub group, and must not clear a stored tag
+            if ($key === 'subGroup' && !$this->model->isSubGroupInitialized()) {
+                continue;
+            }
+
             if (in_array($key, $validTableColumns)) {
                 if (is_bool($value)) {
                     $value = (int) $value;

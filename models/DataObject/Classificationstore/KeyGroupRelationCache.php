@@ -101,6 +101,31 @@ final class KeyGroupRelationCache implements ResetInterface
     }
 
     /**
+     * The distinct sub groups of a group, each positioned by its first-occurring key under the
+     * (sorter, id) order the relations are held in. Disabled relations are left out, because
+     * enrichLayoutDefinition() skips them too and a sub group exists in a group exactly as long as a
+     * key the user can see carries it.
+     *
+     * @return string[]
+     */
+    public function getSubGroupOrder(int $groupId): array
+    {
+        $order = [];
+
+        foreach ($this->getRelations($groupId) as $relation) {
+            $subGroup = $relation->getSubGroup();
+            if ($subGroup === null || !$relation->isEnabled()) {
+                continue;
+            }
+
+            // valued as well as keyed: array_keys() would hand back an all digit identifier as an int
+            $order[$subGroup] = $subGroup;
+        }
+
+        return array_values($order);
+    }
+
+    /**
      * The shared field definition of a key within a group, for callers that only read it.
      */
     public function getFieldDefinition(int $groupId, int $keyId): ?Data
