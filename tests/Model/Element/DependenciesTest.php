@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Messenger\Handler\ElementDependenciesHandler;
@@ -28,8 +30,12 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Psr\Log\AbstractLogger;
 use Psr\Log\NullLogger;
+use ReflectionProperty;
 use RuntimeException;
 use Stringable;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Class DependenciesTest
@@ -166,6 +172,222 @@ class DependenciesTest extends ModelTestCase
         $this->assertCount(3, $requires, 'Asset: requires dependencies not saved or loaded properly');
         $this->assertEquals($targets[0]->getId(), $requires[0]['id'], 'Asset: requires dependency not saved or loaded properly');
         $this->assertEquals($targets[2]->getId(), $requiredBy[0]['id'], 'Asset: requiredBy dependency not saved or loaded properly');
+    }
+
+    /**
+     * Regression test for #14699: moving a document changes the properties its descendants inherit, so their
+     * dependencies have to be resolved again, not only the ones of the moved document.
+     */
+    public function testMovingDocumentUpdatesDependenciesOfDescendants(): void
+    {
+        [$snippet, $source, $folder, $child] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet), 'The child inherits the property before the move');
+
+        $folder->setParentId($target->getId());
+        $folder->save();
+
+        $this->assertNull(
+            Document::getById($child->getId(), ['force' => true])->getProperty('sidebar'),
+            'The child does not inherit the property any more'
+        );
+        $this->assertNotContains($child->getId(), $this->getRequiredByIds($snippet), 'The dependency of the child on the snippet is stale after the move');
+    }
+
+    public function testMovingDocumentDoesNotQueueSiblingsSharingTheNamePrefix(): void
+    {
+        [$snippet, $source, $folder] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $sibling = new Document\Folder();
+        $sibling->setParentId($source->getId());
+        $sibling->setKey($folder->getKey() . '-sibling');
+        $sibling->save();
+
+        $siblingChild = new Document\Page();
+        $siblingChild->setParentId($sibling->getId());
+        $siblingChild->setKey('child');
+        $siblingChild->setPublished(true);
+        $siblingChild->save();
+
+        $this->assertContains($siblingChild->getId(), $this->getRequiredByIds($snippet));
+
+        // the sibling is not moved, so nothing may refresh its dependencies: drop them to detect a refresh
+        Db::get()->delete('dependencies', ['sourcetype' => 'document', 'sourceid' => $siblingChild->getId()]);
+
+        $folder->setParentId($target->getId());
+        $folder->save();
+
+        $this->assertNotContains($siblingChild->getId(), $this->getRequiredByIds($snippet), 'The sibling must not be queued');
+    }
+
+    public function testRenamingDocumentDoesNotQueueDescendants(): void
+    {
+        [$snippet, , $folder, $child] = $this->createInheritingDocumentTree();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet));
+
+        // a rename keeps the inherited properties, so nothing may refresh the descendants: drop their dependencies to detect a refresh
+        Db::get()->delete('dependencies', ['sourcetype' => 'document', 'sourceid' => $child->getId()]);
+
+        $folder->setKey($folder->getKey() . '-renamed');
+        $folder->save();
+
+        $this->assertNotContains($child->getId(), $this->getRequiredByIds($snippet), 'A rename must not queue the descendants');
+    }
+
+    /**
+     * The own dependencies of the moved document keep working: they are resolved by its own save, not by the descendant queue.
+     */
+    public function testMovingDocumentKeepsItsOwnDependencies(): void
+    {
+        [, , $folder] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $own = new Document\Snippet();
+        $own->setParentId(1);
+        $own->setKey('own' . uniqid());
+        $own->setPublished(true);
+        $own->save();
+
+        $property = new Property();
+        $property->setName('ownSidebar');
+        $property->setType('document');
+        $property->setData($own);
+        $property->setInherited(false);
+        $property->setInheritable(false);
+        $folder->setProperties(['ownSidebar' => $property]);
+        $folder->save();
+
+        $this->assertContains($folder->getId(), $this->getRequiredByIds($own), 'The folder depends on its snippet before the move');
+
+        $folder->setParentId($target->getId());
+        $folder->save();
+
+        $this->assertContains($folder->getId(), $this->getRequiredByIds($own), 'The own dependency is kept by the move');
+        $requires = array_column(Document::getById($folder->getId(), ['force' => true])->getDependencies()->getRequires(), 'id');
+        $this->assertContains($own->getId(), $requires);
+    }
+
+    public function testMovingDocumentQueuesNothingWhenDependenciesAreDisabled(): void
+    {
+        [$snippet, , $folder, $child] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet));
+
+        $configuration = Config::getSystemConfiguration('dependency');
+        Config::setSystemConfiguration(['enabled' => false] + (array) $configuration, 'dependency');
+
+        try {
+            $folder->setParentId($target->getId());
+            $folder->save();
+        } finally {
+            Config::setSystemConfiguration($configuration, 'dependency');
+        }
+
+        // the child lost the inherited property, but with dependency.enabled=false nothing refreshed its dependencies
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet), 'Nothing may be dispatched for the descendants');
+    }
+
+    /**
+     * A failing dependency update of one descendant must neither abort the move nor keep the other descendants
+     * from being refreshed (queueing it fails).
+     */
+    public function testMovingDocumentSurvivesFailingDescendant(): void
+    {
+        [$snippet, , $folder, $child] = $this->createInheritingDocumentTree();
+        $target = TestHelper::createDocumentFolder();
+
+        $second = new Document\Page();
+        $second->setParentId($folder->getId());
+        $second->setKey('second');
+        $second->setPublished(true);
+        $second->save();
+
+        $this->assertContains($child->getId(), $this->getRequiredByIds($snippet));
+        $this->assertContains($second->getId(), $this->getRequiredByIds($snippet));
+
+        $container = Pimcore::getContainer();
+        $bus = $container->get('messenger.bus.pimcore-core');
+        $failingId = $child->getId();
+        // the bus is already initialized, so Container::set() would refuse to replace it
+        $services = new ReflectionProperty(Container::class, 'services');
+        $original = $services->getValue($container);
+        $services->setValue($container, ['messenger.bus.pimcore-core' => new class($bus, $failingId) implements MessageBusInterface {
+            public function __construct(private MessageBusInterface $bus, private int $failingId)
+            {
+            }
+
+            public function dispatch(object $message, array $stamps = []): Envelope
+            {
+                if ($message instanceof ElementDependenciesMessage && $message->getId() === $this->failingId) {
+                    throw new RuntimeException('queueing failed');
+                }
+
+                return $this->bus->dispatch($message, $stamps);
+            }
+        }] + $original);
+
+        try {
+            $folder->setParentId($target->getId());
+            $folder->save();
+        } finally {
+            $services->setValue($container, $original);
+        }
+
+        $this->assertSame($target->getId(), Document::getById($folder->getId(), ['force' => true])->getParentId(), 'The move is committed');
+        $requiredBy = $this->getRequiredByIds($snippet);
+        $this->assertNotContains($second->getId(), $requiredBy, 'The other descendant is still refreshed');
+        $this->assertContains($child->getId(), $requiredBy, 'The failing descendant keeps its dependencies');
+    }
+
+    /**
+     * @return array{Document\Snippet, Document, Document\Folder, Document\Page} snippet, property holder, moved folder, its child
+     */
+    private function createInheritingDocumentTree(): array
+    {
+        $snippet = new Document\Snippet();
+        $snippet->setParentId(1);
+        $snippet->setKey('snippet' . uniqid());
+        $snippet->setPublished(true);
+        $snippet->save();
+
+        $source = TestHelper::createDocumentFolder();
+
+        $property = new Property();
+        $property->setName('sidebar');
+        $property->setType('document');
+        $property->setData($snippet);
+        $property->setInherited(false);
+        $property->setInheritable(true);
+        $source->setProperties(['sidebar' => $property]);
+        $source->save();
+
+        $folder = new Document\Folder();
+        $folder->setParentId($source->getId());
+        $folder->setKey('moved' . uniqid());
+        $folder->save();
+
+        $child = new Document\Page();
+        $child->setParentId($folder->getId());
+        $child->setKey('child');
+        $child->setPublished(true);
+        $child->save();
+
+        return [$snippet, $source, $folder, $child];
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getRequiredByIds(Document $document): array
+    {
+        return array_column(
+            Document::getById($document->getId(), ['force' => true])->getDependencies()->getRequiredBy(),
+            'id'
+        );
     }
 
     /**
