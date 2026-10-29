@@ -22,7 +22,9 @@ use Throwable;
  * labels with it, in every language, as one unit of work with its row.
  *
  * Only the entity's own labels go. Deleting a store leaves its groups, keys and collections in
- * place, so it leaves their labels in place too.
+ * place, so it leaves their labels in place too. The path that does delete those children - the
+ * delete-store command, which never constructs a model - takes their labels with
+ * {@see Label\Dao::deleteByStore()} instead.
  *
  * The using DAO has to use {@see IdentifierDaoTrait} as well, which carries the transaction helper.
  *

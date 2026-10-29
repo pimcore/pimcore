@@ -22,12 +22,16 @@ use Pimcore\Model\DataObject\Classificationstore\Label\Dao as LabelDao;
 use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
 use Pimcore\Model\DataObject\Classificationstore\LabelResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
+use Pimcore\SystemSettingsConfig;
+use Pimcore\Tests\Support\Helper\Pimcore as PimcoreModule;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tool;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
- * The title and description chains. The test environment configures `de` to fall back to `en`
- * (tests/Support/Resources/system_settings.json), which is the fallback rung throughout.
+ * The title and description chains. The test environment configures `de` to fall back to `en` and
+ * `de_AT` to fall back to `de`, leaves `fr` without a fallback, and resolves the default language
+ * to `en` (tests/Support/Resources/system_settings.json).
  *
  * @group model.classificationstore.label
  */
@@ -37,7 +41,11 @@ final class LabelResolverTest extends ModelTestCase
 
     private const LANGUAGE_DE = 'de';
 
+    private const LANGUAGE_DE_AT = 'de_AT';
+
     private const LANGUAGE_EN = 'en';
+
+    private const LANGUAGE_FR = 'fr';
 
     private const TITLE_DE = 'Höhe';
 
@@ -69,8 +77,24 @@ final class LabelResolverTest extends ModelTestCase
         LabelEntityType::Key,
     ];
 
+    private SystemSettingsConfig $systemSettings;
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $originalSystemSettings;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->systemSettings = $this->getModule('\\' . PimcoreModule::class)->grabService(SystemSettingsConfig::class);
+        $this->originalSystemSettings = $this->systemSettings->get();
+    }
+
     protected function tearDown(): void
     {
+        $this->systemSettings->testSave($this->originalSystemSettings);
         $this->deleteLabelFixtures();
 
         parent::tearDown();
@@ -99,6 +123,75 @@ final class LabelResolverTest extends ModelTestCase
 
         $key->setTitle(self::OWN_TITLE);
         $this->assertSame(self::OWN_TITLE, $this->resolver()->getTitle($key, self::LANGUAGE_DE));
+    }
+
+    /**
+     * `de_AT` falls back to `de`, which falls back to `en`: a rung two steps away has to answer,
+     * and a nearer one has to win over it.
+     */
+    public function testTheChainWalksTheConfiguredFallbacksTransitively(): void
+    {
+        $this->assertSame([self::LANGUAGE_DE], Tool::getFallbackLanguagesFor(self::LANGUAGE_DE_AT));
+        $this->assertSame([self::LANGUAGE_EN], Tool::getFallbackLanguagesFor(self::LANGUAGE_DE));
+
+        $group = $this->createEntity(LabelEntityType::Group);
+        $groupId = (int) $group->getId();
+
+        $this->writeLabel(LabelEntityType::Group, $groupId, self::LANGUAGE_EN, self::TITLE_EN, self::DESCRIPTION_EN);
+        $this->assertSame(self::TITLE_EN, $this->resolver()->getTitle($group, self::LANGUAGE_DE_AT));
+        $this->assertSame(self::DESCRIPTION_EN, $this->resolver()->getDescription($group, self::LANGUAGE_DE_AT));
+
+        $this->writeLabel(LabelEntityType::Group, $groupId, self::LANGUAGE_DE, self::TITLE_DE, self::DESCRIPTION_DE);
+        $this->assertSame(self::TITLE_DE, $this->resolver()->getTitle($group, self::LANGUAGE_DE_AT));
+        $this->assertSame(self::DESCRIPTION_DE, $this->resolver()->getDescription($group, self::LANGUAGE_DE_AT));
+    }
+
+    /**
+     * The ordinary installation: fallback_languages is empty until an operator fills it in, so the
+     * default language is the only rung between the requested language and the technical name.
+     */
+    public function testTheChainEndsAtTheDefaultLanguageWhenNoFallbackIsConfigured(): void
+    {
+        $this->assertSame([], Tool::getFallbackLanguagesFor(self::LANGUAGE_FR));
+        $this->assertSame(self::LANGUAGE_EN, Tool::getDefaultLanguage());
+
+        $key = $this->createEntity(LabelEntityType::Key);
+        $this->assertInstanceOf(KeyConfig::class, $key);
+        $key->setTitle(self::OWN_TITLE);
+        $keyId = (int) $key->getId();
+
+        $this->writeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_EN, self::TITLE_EN, self::DESCRIPTION_EN);
+        $this->assertSame(self::TITLE_EN, $this->resolver()->getTitle($key, self::LANGUAGE_FR));
+        $this->assertSame(self::DESCRIPTION_EN, $this->resolver()->getDescription($key, self::LANGUAGE_FR));
+
+        $this->removeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_EN);
+        $this->assertSame(
+            self::OWN_TITLE,
+            $this->resolver()->getTitle($key, self::LANGUAGE_FR),
+            'the own title rung follows the default language, not the requested one'
+        );
+    }
+
+    /**
+     * Two languages configured as each other's fallback. The walk has to end at the second one
+     * rather than loop between them.
+     */
+    public function testAFallbackCycleEndsAtTheLanguagesItContains(): void
+    {
+        $settings = $this->originalSystemSettings;
+        $settings['general']['fallback_languages'][self::LANGUAGE_DE] = self::LANGUAGE_EN;
+        $settings['general']['fallback_languages'][self::LANGUAGE_EN] = self::LANGUAGE_DE;
+        $this->systemSettings->testSave($settings);
+
+        $store = $this->createEntity(LabelEntityType::Store);
+        $storeId = (int) $store->getId();
+
+        $this->writeLabel(LabelEntityType::Store, $storeId, self::LANGUAGE_EN, self::TITLE_EN, self::DESCRIPTION_EN);
+        $this->assertSame(self::TITLE_EN, $this->resolver()->getTitle($store, self::LANGUAGE_DE));
+        $this->assertSame(self::DESCRIPTION_EN, $this->resolver()->getDescription($store, self::LANGUAGE_DE));
+
+        $this->removeLabel(LabelEntityType::Store, $storeId, self::LANGUAGE_EN);
+        $this->assertSame($store->getName(), $this->resolver()->getTitle($store, self::LANGUAGE_DE));
     }
 
     public function testAKeyWithANullOwnTitleFallsThroughToItsName(): void

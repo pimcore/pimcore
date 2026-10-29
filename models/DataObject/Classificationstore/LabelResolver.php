@@ -19,10 +19,10 @@ use Symfony\Contracts\Service\ResetInterface;
 /**
  * Resolves the title and the description a classification store entity is shown under.
  *
- * The title chain is the requested language, then the configured fallback languages, then - for a
- * key only, because no other entity carries one - the key's own title, and finally the entity's
- * name. The description chain is the requested language, then the fallbacks, then the entity's own
- * description, and then nothing: a description never falls through to the name.
+ * The title chain is the requested language, then the languages it falls back to transitively, then
+ * the default language, then - for a key only, because no other entity carries one - the key's own
+ * title, and finally the entity's name. The description chain is the same set of languages, then the
+ * entity's own description, and then nothing: a description never falls through to the name.
  *
  * A stored title or description that is NULL or empty counts as absent, so the chain continues
  * past it; the two share a row, so one can be filled without the other.
@@ -86,7 +86,8 @@ final class LabelResolver implements ResetInterface
 
     /**
      * Reads the labels of a set of entities of one type with a single statement, so that resolving
-     * them afterwards costs nothing. The fallback languages of the requested one are read with it.
+     * them afterwards costs nothing. The whole language chain of the requested language is read
+     * with it, so a longer chain costs no additional statement.
      *
      * @param int[] $entityIds
      */
@@ -109,8 +110,8 @@ final class LabelResolver implements ResetInterface
     }
 
     /**
-     * Walks the requested language and then its configured fallbacks, skipping a row that carries
-     * no usable value for the field being read.
+     * Walks the language chain of the requested language, skipping a row that carries no usable
+     * value for the field being read.
      *
      * @param callable(Label): ?string $read
      */
@@ -179,11 +180,41 @@ final class LabelResolver implements ResetInterface
     }
 
     /**
-     * @return string[] the requested language followed by the fallbacks configured for it
+     * The requested language, then the languages configured as its fallbacks - transitively, as a
+     * fallback language may configure fallbacks of its own - and last the default language, which
+     * is the rung that answers the ordinary installation: fallback_languages is empty until an
+     * operator fills it in, and without this step every such installation falls through to the
+     * technical name.
+     *
+     * The chain doubles as the visited set, so a cycle among the configured fallbacks ends here
+     * rather than looping.
+     *
+     * @return string[]
      */
     private function languageChain(string $language): array
     {
-        return array_values(array_unique([$language, ...Tool::getFallbackLanguagesFor($language)]));
+        $chain = [];
+        $pending = [$language];
+
+        while ($pending !== []) {
+            $current = array_shift($pending);
+            if (in_array($current, $chain, true)) {
+                continue;
+            }
+
+            $chain[] = $current;
+            // breadth first, like the fallback walk of Classificationstore::getFallbackValue()
+            foreach (Tool::getFallbackLanguagesFor($current) as $fallbackLanguage) {
+                $pending[] = $fallbackLanguage;
+            }
+        }
+
+        $defaultLanguage = Tool::getDefaultLanguage();
+        if ($defaultLanguage !== null && !in_array($defaultLanguage, $chain, true)) {
+            $chain[] = $defaultLanguage;
+        }
+
+        return $chain;
     }
 
     private function ownTitle(StoreConfig|CollectionConfig|GroupConfig|KeyConfig $entity): ?string
