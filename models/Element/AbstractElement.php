@@ -250,13 +250,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * Drops the inherited properties when the inheritance of properties is switched off
      * (see Service::useInheritedProperties()). Only the returned list is filtered, never the stored one.
      *
-     * @internal
-     *
      * @param array<string, Model\Property> $properties
      *
      * @return array<string, Model\Property>
      */
-    protected function filterInheritedProperties(array $properties): array
+    private function filterInheritedProperties(array $properties): array
     {
         if (static::getGetInheritedProperties()) {
             return $properties;

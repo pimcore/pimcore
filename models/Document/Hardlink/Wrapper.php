@@ -17,6 +17,7 @@ use Exception;
 use Pimcore;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Property;
 
 /**
  * @internal
@@ -59,43 +60,56 @@ trait Wrapper
     public function getProperties(): array
     {
         if ($this->properties == null) {
-            $hardLink = $this->getHardLinkSource();
+            // build and store the complete list; the inheritance setting is applied to the returned list only,
+            // so that the filtered list is never stored
+            $backup = static::getGetInheritedProperties();
+            static::setGetInheritedProperties(true);
 
-            if ($hardLink->getPropertiesFromSource()) {
-                $sourceProperties = $this->getDao()->getProperties();
-            } else {
-                $sourceProperties = [];
-            }
+            try {
+                $hardLink = $this->getHardLinkSource();
 
-            if ($this->getSourceDocument()) {
-                // if we have a source document, it means that this document is not directly linked, it's a
-                // child of a hardlink that uses "childFromSource", so in this case we use the source properties
-                // this is especially important for the navigation, otherwise all children will have the same
-                // navigation_name as the source hardlink, which doesn't make sense at all
-                $sourceProperties = $this->getSourceDocument()->getProperties();
-            }
-
-            $hardLinkProperties = [];
-            $hardLinkSourceProperties = $hardLink->getProperties();
-            foreach ($hardLinkSourceProperties as $key => $prop) {
-                $prop = clone $prop;
-
-                // if the property doesn't exist in the source-properties just add it
-                if (!array_key_exists($key, $sourceProperties)) {
-                    $hardLinkProperties[$key] = $prop;
+                if ($hardLink->getPropertiesFromSource()) {
+                    $sourceProperties = $this->getDao()->getProperties();
                 } else {
-                    // if the property does exist in the source properties but it is inherited, then overwrite it with the hardlink property
-                    // or if the property is set directly on the hardlink itself
-                    if ($sourceProperties[$key]->isInherited() || !$prop->isInherited()) {
-                        $hardLinkProperties[$key] = $prop;
-                    }
+                    $sourceProperties = [];
                 }
 
-                $prop->setInherited(true);
-            }
+                if ($this->getSourceDocument()) {
+                    // if we have a source document, it means that this document is not directly linked, it's a
+                    // child of a hardlink that uses "childFromSource", so in this case we use the source properties
+                    // this is especially important for the navigation, otherwise all children will have the same
+                    // navigation_name as the source hardlink, which doesn't make sense at all
+                    $sourceProperties = $this->getSourceDocument()->getProperties();
+                }
 
-            $properties = array_merge($sourceProperties, $hardLinkProperties);
-            $this->setProperties($properties);
+                $hardLinkProperties = [];
+                $hardLinkSourceProperties = $hardLink->getProperties();
+                foreach ($hardLinkSourceProperties as $key => $prop) {
+                    $prop = clone $prop;
+
+                    // if the property doesn't exist in the source-properties just add it
+                    if (!array_key_exists($key, $sourceProperties)) {
+                        $hardLinkProperties[$key] = $prop;
+                    } else {
+                        // if the property does exist in the source properties but it is inherited, then overwrite it with the hardlink property
+                        // or if the property is set directly on the hardlink itself
+                        if ($sourceProperties[$key]->isInherited() || !$prop->isInherited()) {
+                            $hardLinkProperties[$key] = $prop;
+                        }
+                    }
+
+                    $prop->setInherited(true);
+                }
+
+                $properties = array_merge($sourceProperties, $hardLinkProperties);
+                $this->setProperties($properties);
+            } finally {
+                static::setGetInheritedProperties($backup);
+            }
+        }
+
+        if (!static::getGetInheritedProperties()) {
+            return array_filter($this->properties, static fn (Property $property) => !$property->isInherited());
         }
 
         return $this->properties;

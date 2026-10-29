@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\Element;
 
 use Codeception\Test\Unit;
+use Pimcore\Model\Document\Dao;
 use Pimcore\Model\Document\Hardlink;
+use Pimcore\Model\Document\Hardlink\Wrapper\Page as WrapperPage;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
@@ -119,16 +121,53 @@ class UseInheritedPropertiesTest extends Unit
         $this->assertSame('b', $page->getProperty('inherited'));
     }
 
+    /**
+     * @return array<string, Property>
+     */
+    private function createProperties(): array
+    {
+        return [
+            'own' => (new Property())->setName('own')->setType('text')->setData('a')->setInherited(false),
+            'inherited' => (new Property())->setName('inherited')->setType('text')->setData('b')->setInherited(true),
+        ];
+    }
+
+    private function createHardlink(): Hardlink
+    {
+        // the properties are left unset, so that getProperties() builds them from the dao stub
+        $dao = $this->createMock(Dao::class);
+        $dao->method('getProperties')->willReturn($this->createProperties());
+
+        $hardlink = new Hardlink();
+        $hardlink->setId(999999991);
+        $hardlink->setDao($dao);
+
+        return $hardlink;
+    }
+
     public function testHardlinkHonoursTheFlagWithoutStoringTheFilteredList(): void
     {
-        $own = (new Property())->setName('own')->setType('text')->setData('a')->setInherited(false);
-        $inherited = (new Property())->setName('inherited')->setType('text')->setData('b')->setInherited(true);
-        $hardlink = new Hardlink();
-        $hardlink->setProperties(['own' => $own, 'inherited' => $inherited]);
+        $hardlink = $this->createHardlink();
 
         $filtered = Service::useInheritedProperties(false, static fn () => array_keys($hardlink->getProperties()));
 
         $this->assertSame(['own'], $filtered);
         $this->assertSame(['own', 'inherited'], array_keys($hardlink->getProperties()));
+    }
+
+    public function testHardlinkWrapperHonoursTheFlagWithoutStoringTheFilteredList(): void
+    {
+        $hardlink = new Hardlink();
+        $hardlink->setProperties($this->createProperties());
+
+        $wrapper = new WrapperPage();
+        $wrapper->setHardLinkSource($hardlink);
+
+        // built while the inheritance is off: the wrapper marks every property of the hardlink as inherited, so none
+        // is returned, but the stored list must still be complete
+        $filtered = Service::useInheritedProperties(false, static fn () => array_keys($wrapper->getProperties()));
+
+        $this->assertSame([], $filtered);
+        $this->assertSame(['own', 'inherited'], array_keys($wrapper->getProperties()));
     }
 }
