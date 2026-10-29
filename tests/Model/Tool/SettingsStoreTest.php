@@ -169,9 +169,10 @@ class SettingsStoreTest extends ModelTestCase
         SettingsStore::loadScopeSnapshot('snapshot-scope');
         $this->assertSame('changed', SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->getData());
 
-        // writing to another scope keeps it, set() and delete() on the scope drop it
+        // set() and delete() drop the snapshots, whichever scope they write to
         SettingsStore::set('snapshot-1', 'other', SettingsStore::TYPE_STRING, 'snapshot-other-scope');
-        $this->assertNotNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
+        SettingsStore::loadScopeSnapshot('snapshot-scope');
         SettingsStore::set('snapshot-3', 'data-3', SettingsStore::TYPE_STRING, 'snapshot-scope');
         $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
 
@@ -180,5 +181,27 @@ class SettingsStoreTest extends ModelTestCase
         SettingsStore::delete('snapshot-3', 'snapshot-scope');
         $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
         $this->assertNull(SettingsStore::get('snapshot-3', 'snapshot-scope'));
+    }
+
+    public function testScopeSnapshotIsDroppedByWritesThroughAnotherSpellingOfTheScope(): void
+    {
+        foreach (SettingsStore::getIdsByScope('snapshot-case') as $id) {
+            SettingsStore::delete($id, 'snapshot-case');
+        }
+        SettingsStore::set('case-1', 'data-1', SettingsStore::TYPE_STRING, 'snapshot-case');
+
+        // the scope column compares case-insensitively, so this updates the same row ...
+        SettingsStore::loadScopeSnapshot('snapshot-case');
+        SettingsStore::set('case-1', 'data-2', SettingsStore::TYPE_STRING, 'SNAPSHOT-CASE');
+        $this->assertSame('data-2', SettingsStore::get('case-1', 'snapshot-case')->getData());
+        // ... and the snapshot must not keep serving the old value
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
+
+        // ... nor an entry deleted that way
+        SettingsStore::loadScopeSnapshot('snapshot-case');
+        $this->assertNotNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
+        SettingsStore::delete('case-1', 'Snapshot-Case');
+        $this->assertNull(SettingsStore::get('case-1', 'snapshot-case'));
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
     }
 }

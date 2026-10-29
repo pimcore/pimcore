@@ -99,7 +99,7 @@ final class SettingsStore extends Model\AbstractModel
     {
         self::validateType($type);
         $instance = self::getInstance();
-        unset(self::$scopeSnapshots[(string) $scope]);
+        self::clearScopeSnapshots();
 
         return $instance->getDao()->set($id, $data, $type, $scope);
     }
@@ -107,9 +107,20 @@ final class SettingsStore extends Model\AbstractModel
     public static function delete(string $id, ?string $scope = null): int|string
     {
         $instance = self::getInstance();
-        unset(self::$scopeSnapshots[(string) $scope]);
+        self::clearScopeSnapshots();
 
         return $instance->getDao()->delete($id, $scope);
+    }
+
+    /**
+     * Drops every snapshot, not only the one of the written scope: the `scope` column
+     * compares case-insensitively, so a write through another spelling of a scope
+     * (`SCOPE` for `scope`) changes rows of a snapshot that is keyed by the exact string.
+     * Writes are rare next to listings, which take a fresh snapshot anyway.
+     */
+    private static function clearScopeSnapshots(): void
+    {
+        self::$scopeSnapshots = [];
     }
 
     public static function get(string $id, ?string $scope = null): ?SettingsStore
@@ -141,8 +152,8 @@ final class SettingsStore extends Model\AbstractModel
      *
      * Meant for callers that list a scope and then read each of its entries, such as the
      * configuration listings of {@see \Pimcore\Config\LocationAwareConfigRepository}.
-     * The snapshot of a scope is replaced by the next call for that scope and dropped by
-     * {@see self::set()} and {@see self::delete()} on it.
+     * The snapshot of a scope is replaced by the next call for that scope; every snapshot
+     * is dropped by {@see self::set()} and {@see self::delete()}.
      *
      * @return string[] the ids of the scope, as {@see self::getIdsByScope()} returns them
      *
