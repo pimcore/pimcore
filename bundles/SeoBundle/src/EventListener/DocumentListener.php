@@ -22,6 +22,7 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Element\ElementType;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Frontend;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -46,8 +47,9 @@ class DocumentListener implements EventSubscriberInterface
         $document = $event->getDocument();
         if ($document instanceof Page || $document instanceof Hardlink) {
             // check for redirects pointing to this document, and delete them too
+            // (restrict to document targets so asset/object redirects sharing the same numeric ID are not removed)
             $redirects = new Redirect\Listing();
-            $redirects->setCondition('target = ?', $document->getId());
+            $redirects->setCondition('target = ? AND (targetType = ? OR targetType IS NULL)', [$document->getId(), ElementType::Document->value]);
             $redirects->load();
 
             foreach ($redirects->getRedirects() as $redirect) {
@@ -146,6 +148,7 @@ class DocumentListener implements EventSubscriberInterface
         $redirect->setType(Redirect::TYPE_AUTO_CREATE);
         $redirect->setRegex(false);
         $redirect->setTarget((string) $targetId);
+        $redirect->setTargetType(ElementType::Document);
         $redirect->setSource($source);
         $redirect->setStatusCode(301);
         $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
