@@ -139,8 +139,8 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $relation = $this->createRelationWithPerAssignmentData();
         $row = $this->readRow($relation);
 
-        $this->assertSame(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
-        $this->assertSame(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
+        $this->assertSameJsonValue(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
+        $this->assertSameJsonValue(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
     }
 
     public function testASavedFreshRelationKeepsStoredPerAssignmentData(): void
@@ -156,8 +156,8 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
         $row = $this->readRow($relation);
 
-        $this->assertSame(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
-        $this->assertSame(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
+        $this->assertSameJsonValue(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
+        $this->assertSameJsonValue(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
         $this->assertSame(self::SUB_GROUP, $row[self::COLUMN_SUB_GROUP]);
         $this->assertSame(42, (int) $row['sorter'], 'the sorter the fresh relation carries is written');
     }
@@ -173,7 +173,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
             $this->addToAssertionCount(1);
         }
 
-        $this->assertSame(
+        $this->assertSameJsonValue(
             self::OVERRIDE,
             json_decode($this->readRow($relation)[self::COLUMN_DEFINITION_OVERRIDE], true)
         );
@@ -208,7 +208,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $relation->save();
         $this->clearConfigCaches();
 
-        $this->assertSame(
+        $this->assertSameJsonValue(
             self::METADATA,
             KeyGroupRelation::getByGroupAndKeyId($group->getId(), $relation->getKeyId())->getMetadata(),
             'the metadata is stored and returned verbatim'
@@ -241,9 +241,43 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
     private function assertPerAssignmentData(KeyGroupRelation $relation): void
     {
-        $this->assertSame(self::METADATA, $relation->getMetadata());
-        $this->assertSame(self::OVERRIDE, $relation->getDefinitionOverride());
+        $this->assertSameJsonValue(self::METADATA, $relation->getMetadata());
+        $this->assertSameJsonValue(self::OVERRIDE, $relation->getDefinitionOverride());
         $this->assertSame(self::SUB_GROUP, $relation->getSubGroup());
+    }
+
+    /**
+     * MySQL stores a JSON column in a binary form whose object members are sorted by key, MariaDB
+     * keeps the text it was handed. A round trip therefore preserves every key and every value but
+     * not the order the keys were written in, and `assertSame()` on two PHP arrays is order
+     * sensitive. So both sides are compared with their object keys sorted, all the way down -
+     * values are still compared strictly, and the order of a JSON *array*, which neither database
+     * reorders, is still compared as well.
+     *
+     * @param array<string, mixed> $expected
+     */
+    private function assertSameJsonValue(array $expected, mixed $actual, string $message = ''): void
+    {
+        $this->assertIsArray($actual, $message);
+        $this->assertSame(self::withSortedKeys($expected), self::withSortedKeys($actual), $message);
+    }
+
+    /**
+     * @param array<array-key, mixed> $value
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function withSortedKeys(array $value): array
+    {
+        foreach ($value as $key => $entry) {
+            if (is_array($entry)) {
+                $value[$key] = self::withSortedKeys($entry);
+            }
+        }
+
+        ksort($value);
+
+        return $value;
     }
 
     private function loadThroughListing(KeyGroupRelation $relation): KeyGroupRelation

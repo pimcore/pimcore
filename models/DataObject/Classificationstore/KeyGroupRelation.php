@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use JsonException;
 use Pimcore\Model;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
@@ -26,16 +27,26 @@ final class KeyGroupRelation extends Model\AbstractModel
 {
     private const OPTIONS = 'options';
 
+    private const DEFAULT_UNIT = 'defaultUnit';
+
+    private const VALID_UNITS = 'validUnits';
+
     /**
      * The closed list of what a definitionOverride may carry: the per group option subset and the
      * unit of a quantity value. Everything else is refused, `type` and `fieldtype` above all - an
-     * assignment never changes what a key stores.
+     * assignment never changes what a key stores. Each entry describes the value the property
+     * takes, for the message of a refusal.
      */
     private const OVERRIDABLE_PROPERTIES = [
-        self::OPTIONS,
-        'defaultUnit',
-        'validUnits',
+        self::OPTIONS => 'a list of option values, or null for every option',
+        self::DEFAULT_UNIT => 'a string, or null',
+        self::VALID_UNITS => 'a list of unit ids',
     ];
+
+    /**
+     * The length of the `subGroup` column.
+     */
+    private const SUB_GROUP_MAX_LENGTH = 190;
 
     protected int $keyId;
 
@@ -217,9 +228,13 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     /**
      * @param array<string, mixed>|null $metadata
+     *
+     * @throws InvalidConfigException
      */
     public function setMetadata(?array $metadata): void
     {
+        self::assertJsonEncodable($metadata, 'metadata');
+
         $this->metadata = $metadata;
         $this->metadataInitialized = true;
     }
@@ -247,13 +262,24 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     public function setDefinitionOverride(?array $definitionOverride): void
     {
-        foreach (array_keys($definitionOverride ?? []) as $property) {
-            if (!in_array($property, self::OVERRIDABLE_PROPERTIES, true)) {
+        foreach ($definitionOverride ?? [] as $property => $value) {
+            if (!array_key_exists($property, self::OVERRIDABLE_PROPERTIES)) {
                 throw new InvalidConfigException(
                     sprintf('"%s" cannot be overridden per key assignment.', $property)
                 );
             }
+
+            if (!self::isAcceptedOverrideValue($property, $value)) {
+                throw new InvalidConfigException(sprintf(
+                    'The "%s" override takes %s, %s given.',
+                    $property,
+                    self::OVERRIDABLE_PROPERTIES[$property],
+                    get_debug_type($value)
+                ));
+            }
         }
+
+        self::assertJsonEncodable($definitionOverride, 'definition override');
 
         $this->definitionOverride = $definitionOverride;
         $this->definitionOverrideInitialized = true;
@@ -272,8 +298,19 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->subGroup;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function setSubGroup(?string $subGroup): void
     {
+        if ($subGroup !== null && mb_strlen($subGroup) > self::SUB_GROUP_MAX_LENGTH) {
+            throw new InvalidConfigException(sprintf(
+                'A sub-group is at most %d characters, the given one is %d.',
+                self::SUB_GROUP_MAX_LENGTH,
+                mb_strlen($subGroup)
+            ));
+        }
+
         $this->subGroup = $subGroup;
         $this->subGroupInitialized = true;
     }
@@ -319,6 +356,52 @@ final class KeyGroupRelation extends Model\AbstractModel
             return $relation;
         } catch (NotFoundException) {
             return null;
+        }
+    }
+
+    /**
+     * The value type each overridable property takes, which is the one its consumer accepts:
+     * `options` is the subset {@see self::filterOptions()} filters with, and the two unit
+     * properties are the arguments of AbstractQuantityValue::setDefaultUnit() and
+     * ::setValidUnits(). Without this an override of the wrong type is stored happily and only
+     * fails once something reads it back.
+     *
+     * Only ever reached for a property of {@see self::OVERRIDABLE_PROPERTIES}, so the default arm
+     * stands for a property added to that list without an arm here - refusing it is the safe way
+     * round, and the test over the full list catches it.
+     */
+    private static function isAcceptedOverrideValue(string $property, mixed $value): bool
+    {
+        return match ($property) {
+            self::OPTIONS => $value === null || is_array($value),
+            self::DEFAULT_UNIT => $value === null || is_string($value),
+            self::VALID_UNITS => is_array($value),
+            default => false,
+        };
+    }
+
+    /**
+     * Both JSON columns are written with json_encode(), which has no way of reporting a failure
+     * other than returning a value the column would then hold instead of the data. Refuse here,
+     * where the caller can still do something about it.
+     *
+     * @param array<string, mixed>|null $value
+     *
+     * @throws InvalidConfigException
+     */
+    private static function assertJsonEncodable(?array $value, string $property): void
+    {
+        if ($value === null) {
+            return;
+        }
+
+        try {
+            json_encode($value, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            throw new InvalidConfigException(
+                sprintf('The %s cannot be encoded as JSON: %s', $property, $exception->getMessage()),
+                previous: $exception
+            );
         }
     }
 
