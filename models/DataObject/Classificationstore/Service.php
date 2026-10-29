@@ -22,6 +22,15 @@ use Pimcore\Model\DataObject;
 class Service
 {
     /**
+     * The name spaces a container key can come from, used to qualify a collected field identity.
+     * Object brick keys and field collection keys are unique within their own kind only, so the
+     * kind has to be part of the identity for the two to stay apart.
+     */
+    private const OBJECTBRICK_CONTAINER = 'objectbrick';
+
+    private const FIELDCOLLECTION_CONTAINER = 'fieldcollection';
+
+    /**
      * @var array Used for storing definitions
      */
     protected static array $definitionsCache = [];
@@ -105,8 +114,10 @@ class Service
      *
      * Two object bricks (or field collections) allowed on the same class may each define a
      * classification store field under the same name, on different stores. The keys are therefore
-     * qualified by the container the field was found in - "brickKey.fieldName" - so that no
-     * definition is dropped and the error messages name the one that is at fault.
+     * qualified by the container the field was found in - "objectbrick:brickKey.fieldName" - so that
+     * no definition is dropped and the error messages name the one that is at fault. Object bricks
+     * and field collections are keyed in separate name spaces, so the kind is part of the identity
+     * as well: both may be called "Shared" and both may contain a "cs".
      *
      * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
      *
@@ -192,6 +203,7 @@ class Service
 
         if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
             return self::getContainerFieldDefinitions(
+                self::OBJECTBRICK_CONTAINER,
                 $fieldDefinition->getAllowedTypes(),
                 DataObject\Objectbrick\Definition::getByKey(...)
             );
@@ -199,6 +211,7 @@ class Service
 
         if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
             return self::getContainerFieldDefinitions(
+                self::FIELDCOLLECTION_CONTAINER,
                 $fieldDefinition->getAllowedTypes(),
                 DataObject\Fieldcollection\Definition::getByKey(...)
             );
@@ -208,18 +221,23 @@ class Service
     }
 
     /**
+     * @param string $containerKind the name space the allowed types are keyed in - an object brick and
+     *                              a field collection may carry the same key without being related
      * @param string[] $allowedTypes
      * @param callable(string): (DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition|null) $loadDefinition
      *
      * @return array<string, array<string, DataObject\ClassDefinition\Data>> container prefix => field definitions
      */
-    private static function getContainerFieldDefinitions(array $allowedTypes, callable $loadDefinition): array
-    {
+    private static function getContainerFieldDefinitions(
+        string $containerKind,
+        array $allowedTypes,
+        callable $loadDefinition
+    ): array {
         $fieldDefinitions = [];
         foreach ($allowedTypes as $allowedType) {
             $definition = $loadDefinition($allowedType);
             if ($definition !== null) {
-                $fieldDefinitions[$allowedType . '.'] = $definition->getFieldDefinitions();
+                $fieldDefinitions[$containerKind . ':' . $allowedType . '.'] = $definition->getFieldDefinitions();
             }
         }
 
