@@ -309,8 +309,8 @@ class EngineTest extends ModelTestCase
 
         $this->assertIsString($message, 'the save has to be refused');
         $this->assertStringContainsString('field "cs"', $message);
-        $this->assertStringContainsString(self::FIRST_BRICK_KEY . '.cs uses "eav"', $message);
-        $this->assertStringContainsString(self::SECOND_BRICK_KEY . '.cs uses "second"', $message);
+        $this->assertStringContainsString('objectbrick:' . self::FIRST_BRICK_KEY . '.cs uses "eav"', $message);
+        $this->assertStringContainsString('objectbrick:' . self::SECOND_BRICK_KEY . '.cs uses "second"', $message);
 
         $this->assertSame(
             0,

@@ -98,7 +98,7 @@ class DaoTest extends TestCase
     public function testAFieldNestedInABrickResolvesToItsOwnStore(): void
     {
         $this->assertSame(
-            [self::BRICK_KEY . '.csInBrick' => 11],
+            ['objectbrick:' . self::BRICK_KEY . '.csInBrick' => 11],
             $this->resolveStoreIds($this->storeFor('csInBrick'))
         );
     }
@@ -111,7 +111,10 @@ class DaoTest extends TestCase
     public function testEveryStoreBehindASharedFieldNameIsResolved(): void
     {
         $this->assertSame(
-            [self::BRICK_KEY . '.csShared' => 12, self::OTHER_BRICK_KEY . '.csShared' => 13],
+            [
+                'objectbrick:' . self::BRICK_KEY . '.csShared' => 12,
+                'objectbrick:' . self::OTHER_BRICK_KEY . '.csShared' => 13,
+            ],
             $this->resolveStoreIds($this->storeFor('csShared'))
         );
     }
