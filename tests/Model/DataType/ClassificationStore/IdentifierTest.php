@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Bundle\CoreBundle\Migrations\Version20261028100000;
 use Pimcore\Db;
@@ -40,6 +42,8 @@ final class IdentifierTest extends ModelTestCase
     private const TABLE_GROUPS = 'classificationstore_groups';
 
     private const TABLE_KEYS = 'classificationstore_keys';
+
+    private const TABLE_RELATIONS = 'classificationstore_relations';
 
     private const STORE_SCOPED_TABLES = [self::TABLE_COLLECTIONS, self::TABLE_GROUPS, self::TABLE_KEYS];
 
@@ -310,6 +314,184 @@ final class IdentifierTest extends ModelTestCase
         }
     }
 
+    /**
+     * The collision another request causes can only be seen at the moment the identifier is written: the
+     * uniqueness check of the model runs before the save, and a concurrent claim lands after it. The DAO is
+     * driven directly here to reach that moment without a second process, because what is asserted is not
+     * the refusal itself - the interleaved tests below cover that - but that it takes the save with it.
+     */
+    public function testARefusedIdentifierWriteLeavesTheRestOfTheRowUnwritten(): void
+    {
+        $db = Db::get();
+        $store = $this->createStore();
+
+        foreach ([self::TABLE_STORES, ...self::STORE_SCOPED_TABLES] as $table) {
+            $takenId = $this->insertRowWithoutIdentifier($table, $store->getId(), 'taken');
+            $db->update($table, [self::COLUMN_IDENTIFIER => 'claimed-elsewhere'], ['id' => $takenId]);
+
+            $id = $this->insertRowWithoutIdentifier($table, $store->getId(), 'refused');
+            $db->update($table, ['description' => 'before'], ['id' => $id]);
+
+            $config = $this->loadConfig($table, $id);
+            $config->setIdentifier('claimed-elsewhere');
+            $config->setDescription('after');
+
+            try {
+                $config->getDao()->update();
+                $this->fail($table . ': an identifier taken by another row must be refused');
+            } catch (InvalidConfigException $e) {
+                $this->addToAssertionCount(1);
+            }
+
+            $this->assertFalse(
+                $db->isTransactionActive(),
+                $table . ': a refused save must not leave its transaction open'
+            );
+            $this->assertNull($this->fetchIdentifier($table, $id), $table . ': the identifier must stay NULL');
+            $this->assertSame(
+                'before',
+                $db->fetchOne('SELECT description FROM ' . $table . ' WHERE id = ?', [$id]),
+                $table . ': a refused save must not persist the rest of the row'
+            );
+        }
+    }
+
+    /**
+     * Disabling a key deletes its group relations on the way past, so the same refusal has to undo those too.
+     */
+    public function testARefusedIdentifierWriteKeepsTheGroupRelationsOfADisabledKey(): void
+    {
+        $db = Db::get();
+        $store = $this->createStore();
+
+        $taken = new KeyConfig();
+        $taken->setStoreId($store->getId());
+        $taken->setName('taken');
+        $taken->setIdentifier('claimed-elsewhere');
+        $taken->save();
+
+        $keyId = $this->insertKeyRowWithoutIdentifier($store->getId(), 'disabled');
+        $this->relateKeyToANewGroup($store->getId(), $keyId);
+
+        $key = KeyConfig::getById($keyId, true);
+        $key->setIdentifier('claimed-elsewhere');
+        $key->setDescription('after');
+        $key->setEnabled(false);
+
+        try {
+            $key->getDao()->update();
+            $this->fail('An identifier taken by another key must be refused');
+        } catch (InvalidConfigException $e) {
+            $this->addToAssertionCount(1);
+        }
+
+        $this->assertKeyIsStillEnabledAndRelated($keyId);
+        $this->assertNull($this->fetchIdentifier(self::TABLE_KEYS, $keyId));
+    }
+
+    /**
+     * The interleaving an enclosing transaction makes reproducible: its snapshot predates the identifier the
+     * other request assigns to the same row, so the stale check of the save reads NULL and only the guarded
+     * UPDATE that follows the rest of the save can refuse it. An enclosing transaction is not the save's to
+     * roll back - that is its owner's call, made here in the `finally` - so what the committed row has to
+     * show afterwards is nothing of the refused save at all.
+     */
+    public function testAnIdentifierAssignedAfterTheSnapshotRefusesTheSave(): void
+    {
+        $db = Db::get();
+        $store = $this->createStore();
+
+        $keyId = $this->insertKeyRowWithoutIdentifier($store->getId(), 'interleaved');
+        $this->relateKeyToANewGroup($store->getId(), $keyId);
+
+        $key = KeyConfig::getById($keyId, true);
+        $key->setIdentifier('assigned-by-this-request');
+        $key->setDescription('after');
+        $key->setEnabled(false);
+
+        $otherConnection = $this->openSecondConnection();
+        $db->beginTransaction();
+
+        try {
+            // establishes the snapshot of this transaction, before the other request commits
+            $this->assertNull($this->fetchIdentifier(self::TABLE_KEYS, $keyId));
+
+            $otherConnection->update(
+                self::TABLE_KEYS,
+                [self::COLUMN_IDENTIFIER => 'assigned-by-the-other-request'],
+                ['id' => $keyId]
+            );
+
+            $this->assertNull(
+                $this->fetchIdentifier(self::TABLE_KEYS, $keyId),
+                'the snapshot of this transaction still reports the identifier it read first'
+            );
+
+            try {
+                $key->save();
+                $this->fail('An identifier assigned meanwhile must refuse the save');
+            } catch (InvalidConfigException $e) {
+                $this->addToAssertionCount(1);
+            }
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $otherConnection->close();
+        }
+
+        $this->assertSame('assigned-by-the-other-request', $this->fetchIdentifier(self::TABLE_KEYS, $keyId));
+        $this->assertKeyIsStillEnabledAndRelated($keyId);
+    }
+
+    /**
+     * The other half of the same interleaving: the proposed identifier is claimed for a row of its own after
+     * the snapshot, so the uniqueness check of the model passes and the refusal comes from the unique index.
+     */
+    public function testAnIdentifierClaimedAfterTheSnapshotRefusesTheSave(): void
+    {
+        $db = Db::get();
+        $store = $this->createStore();
+
+        $keyId = $this->insertKeyRowWithoutIdentifier($store->getId(), 'interleaved');
+        $this->relateKeyToANewGroup($store->getId(), $keyId);
+
+        $key = KeyConfig::getById($keyId, true);
+        $key->setIdentifier('contested');
+        $key->setDescription('after');
+        $key->setEnabled(false);
+
+        $otherConnection = $this->openSecondConnection();
+        $db->beginTransaction();
+
+        try {
+            // establishes the snapshot of this transaction, before the other request commits
+            $this->assertNull($this->fetchIdentifier(self::TABLE_KEYS, $keyId));
+
+            $otherConnection->insert(self::TABLE_KEYS, [
+                'storeId' => $store->getId(),
+                'name' => 'claiming',
+                'type' => 'input',
+                self::COLUMN_IDENTIFIER => 'contested',
+            ]);
+
+            try {
+                $key->save();
+                $this->fail('An identifier claimed meanwhile must refuse the save');
+            } catch (InvalidConfigException $e) {
+                $this->addToAssertionCount(1);
+            }
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $otherConnection->close();
+        }
+
+        $this->assertNull($this->fetchIdentifier(self::TABLE_KEYS, $keyId));
+        $this->assertKeyIsStillEnabledAndRelated($keyId);
+    }
+
     public function testIdentifierIsGeneratedOnCreation(): void
     {
         $store = $this->createStore();
@@ -531,6 +713,47 @@ final class IdentifierTest extends ModelTestCase
         $this->createdStoreIds[] = $store->getId();
 
         return $store;
+    }
+
+    private function openSecondConnection(): Connection
+    {
+        return DriverManager::getConnection(Db::get()->getParams());
+    }
+
+    /**
+     * Enables the key and relates it to a group of its own, so that disabling it again has a relation to delete.
+     */
+    private function relateKeyToANewGroup(int $storeId, int $keyId): void
+    {
+        $group = new GroupConfig();
+        $group->setStoreId($storeId);
+        $group->setName(uniqid('relatedgroup', true));
+        $group->save();
+
+        $db = Db::get();
+        $db->update(self::TABLE_KEYS, ['enabled' => 1, 'description' => 'before'], ['id' => $keyId]);
+        $db->insert(self::TABLE_RELATIONS, ['groupId' => $group->getId(), 'keyId' => $keyId]);
+    }
+
+    private function assertKeyIsStillEnabledAndRelated(int $keyId): void
+    {
+        $db = Db::get();
+
+        $this->assertSame(
+            1,
+            (int) $db->fetchOne('SELECT COUNT(*) FROM ' . self::TABLE_RELATIONS . ' WHERE keyId = ?', [$keyId]),
+            'a refused save must not delete the group relations of the key'
+        );
+        $this->assertSame(
+            1,
+            (int) $db->fetchOne('SELECT enabled FROM ' . self::TABLE_KEYS . ' WHERE id = ?', [$keyId]),
+            'a refused save must not disable the key'
+        );
+        $this->assertSame(
+            'before',
+            $db->fetchOne('SELECT description FROM ' . self::TABLE_KEYS . ' WHERE id = ?', [$keyId]),
+            'a refused save must not persist the rest of the row'
+        );
     }
 
     private function insertKeyRowWithoutIdentifier(int $storeId, string $name): int

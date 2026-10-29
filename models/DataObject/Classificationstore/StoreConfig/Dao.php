@@ -131,41 +131,44 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update(): void
     {
-        $id = $this->model->getId();
-        $identifier = $this->model->getIdentifier();
-        $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_STORES, $id, $identifier);
+        // the row itself and the identifier are written as one unit
+        $this->writeAtomically(function (): void {
+            $id = $this->model->getId();
+            $identifier = $this->model->getIdentifier();
+            $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_STORES, $id, $identifier);
 
-        $data = [];
-        $type = $this->model->getObjectVars();
+            $data = [];
+            $type = $this->model->getObjectVars();
 
-        foreach ($type as $key => $value) {
-            // a store config built with `new` carries no engine, and must not reset a flipped store
-            if ($key === 'engine' && !$this->model->isEngineInitialized()) {
-                continue;
-            }
-
-            // written by writeIdentifier(), which is the only place allowed to touch the column
-            if ($key === 'identifier') {
-                continue;
-            }
-
-            if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_STORES))) {
-                if (is_bool($value)) {
-                    $value = (int) $value;
-                }
-                if (is_array($value) || is_object($value)) {
-                    $value = \Pimcore\Tool\Serialize::serialize($value);
+            foreach ($type as $key => $value) {
+                // a store config built with `new` carries no engine, and must not reset a flipped store
+                if ($key === 'engine' && !$this->model->isEngineInitialized()) {
+                    continue;
                 }
 
-                $data[$key] = $value;
+                // written by writeIdentifier(), which is the only place allowed to touch the column
+                if ($key === 'identifier') {
+                    continue;
+                }
+
+                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_STORES))) {
+                    if (is_bool($value)) {
+                        $value = (int) $value;
+                    }
+                    if (is_array($value) || is_object($value)) {
+                        $value = \Pimcore\Tool\Serialize::serialize($value);
+                    }
+
+                    $data[$key] = $value;
+                }
             }
-        }
 
-        $this->db->update(self::TABLE_NAME_STORES, $data, ['id' => $this->model->getId()]);
+            $this->db->update(self::TABLE_NAME_STORES, $data, ['id' => $this->model->getId()]);
 
-        if ($identifierPending) {
-            $this->writeIdentifier(self::TABLE_NAME_STORES, (int) $id, (string) $identifier);
-        }
+            if ($identifierPending) {
+                $this->writeIdentifier(self::TABLE_NAME_STORES, (int) $id, (string) $identifier);
+            }
+        });
     }
 
     public function create(): void

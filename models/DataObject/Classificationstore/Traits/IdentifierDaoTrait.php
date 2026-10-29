@@ -32,9 +32,46 @@ trait IdentifierDaoTrait
     abstract public function delete(): void;
 
     /**
+     * The write-once guard straddles the rest of the row: the stale check reads the stored identifier
+     * before the ordinary fields are written, and the NULL to value transition happens after them. A
+     * refusal in between - because another request assigned this row a different identifier, or claimed
+     * the proposed one for a row of its own - would otherwise leave those fields behind, and with them
+     * the group relations that disabling a key deletes on the way past.
+     *
+     * A save that is not already inside a transaction therefore gets one of its own, which a refusal
+     * takes with it. Inside an enclosing transaction nothing is begun or rolled back here: the refusal
+     * propagates, and that transaction is the unit its owner rolls back.
+     *
+     * @param callable(): void $write
+     *
+     * @throws Throwable
+     */
+    private function writeAtomically(callable $write): void
+    {
+        $ownTransaction = !$this->db->isTransactionActive();
+        if ($ownTransaction) {
+            $this->db->beginTransaction();
+        }
+
+        try {
+            $write();
+        } catch (Throwable $e) {
+            if ($ownTransaction) {
+                $this->db->rollBack();
+            }
+
+            throw $e;
+        }
+
+        if ($ownTransaction) {
+            $this->db->commit();
+        }
+    }
+
+    /**
      * First half of the write-once guard, to be called before the rest of the row is written: a stale
      * identifier - one belonging to an instance loaded before another process assigned a different one - is
-     * refused here, so that a refused save leaves no partial write behind.
+     * refused here, before anything has been written at all.
      *
      * Returns whether writeIdentifier() still has anything to do.
      *
@@ -80,7 +117,7 @@ trait IdentifierDaoTrait
 
         if (!$assigned) {
             // an identifier was assigned between the two halves, and it is immutable from now on
-            $this->rejectStaleIdentifier($this->readIdentifier($table, $id), $identifier);
+            $this->rejectStaleIdentifier($this->readIdentifierForUpdate($table, $id), $identifier);
         }
     }
 
@@ -93,15 +130,19 @@ trait IdentifierDaoTrait
      */
     private function createAndUpdate(): void
     {
-        $this->create();
+        $this->writeAtomically(function (): void {
+            $this->create();
 
-        try {
-            $this->update();
-        } catch (Throwable $e) {
-            $this->delete();
+            try {
+                $this->update();
+            } catch (Throwable $e) {
+                // the compensation an enclosing transaction needs, which is not this method's to
+                // roll back; an own transaction removes the placeholder itself a moment later
+                $this->delete();
 
-            throw $e;
-        }
+                throw $e;
+            }
+        });
     }
 
     /**
@@ -110,6 +151,22 @@ trait IdentifierDaoTrait
     private function readIdentifier(string $table, int $id): ?string
     {
         $stored = $this->db->fetchOne('SELECT `identifier` FROM `' . $table . '` WHERE `id` = ?', [$id]);
+
+        return is_string($stored) ? $stored : null;
+    }
+
+    /**
+     * Read as of now rather than from the transaction's snapshot: the guarded UPDATE of writeIdentifier()
+     * is a current read, so under REPEATABLE READ a plain read here could report the column as still NULL
+     * and turn a refusal into a silent success. The row is held for the rest of the transaction, which
+     * ends either way as soon as the refusal is raised.
+     */
+    private function readIdentifierForUpdate(string $table, int $id): ?string
+    {
+        $stored = $this->db->fetchOne(
+            'SELECT `identifier` FROM `' . $table . '` WHERE `id` = ? FOR UPDATE',
+            [$id]
+        );
 
         return is_string($stored) ? $stored : null;
     }
