@@ -61,13 +61,16 @@ class FieldcollectionObjectbrickDefinitionFileOpcacheTest extends ModelTestCase
         $file = $definition->getDefinitionFile();
         $originalGroup = $definition->getGroup();
 
-        // opcache refuses to cache files younger than opcache.file_update_protection
-        touch($file, time() - 60);
-        clearstatcache(true, $file);
-        $this->assertTrue(opcache_compile_file($file));
-        $this->assertTrue(opcache_is_script_cached($file));
+        // cache the freshly written file, and keep a stale entry until it is invalidated explicitly
+        $iniBackup = [
+            'opcache.file_update_protection' => ini_set('opcache.file_update_protection', '0'),
+            'opcache.validate_timestamps' => ini_set('opcache.validate_timestamps', '0'),
+        ];
 
         try {
+            $this->assertTrue(opcache_compile_file($file));
+            $this->assertTrue(opcache_is_script_cached($file));
+
             $definition->setGroup('opcacheTestGroup');
             $definition->save();
 
@@ -77,6 +80,10 @@ class FieldcollectionObjectbrickDefinitionFileOpcacheTest extends ModelTestCase
         } finally {
             $definition->setGroup($originalGroup);
             $definition->save();
+
+            foreach ($iniBackup as $name => $value) {
+                ini_set($name, (string) $value);
+            }
         }
     }
 }
