@@ -81,7 +81,15 @@ public static function removeTagFromElement(string $cType, int $cId, Tag $tag): 
 public static function setTagsForElement(string $cType, int $cId, array $tags): void
 {
     $tag = new Tag();
+    $event = new TagEvent($tag, [
+        'tagIds' => array_map(static fn (Tag $assignedTag) => $assignedTag->getId(), $tags),
+        'elementType' => $cType,
+        'elementIds' => [$cId],
+    ]);
+
     $tag->getDao()->setTagsForElement($cType, $cId, $tags);
+
+    $tag->dispatchEvent($event, TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT);
 }
 ```
 
