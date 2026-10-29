@@ -27,15 +27,12 @@ final class KeyGroupRelation extends Model\AbstractModel
     private const OPTIONS = 'options';
 
     /**
-     * What a definitionOverride may carry: presentation, the per group option subset and the unit
-     * of a quantity value. `type` and `fieldtype` are deliberately not among them - an assignment
-     * never changes what a key stores.
+     * The closed list of what a definitionOverride may carry: the per group option subset and the
+     * unit of a quantity value. Everything else is refused, `type` and `fieldtype` above all - an
+     * assignment never changes what a key stores.
      */
     private const OVERRIDABLE_PROPERTIES = [
-        'title',
-        'tooltip',
         self::OPTIONS,
-        'defaultValue',
         'defaultUnit',
         'validUnits',
     ];

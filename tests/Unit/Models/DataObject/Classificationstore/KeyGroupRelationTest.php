@@ -34,6 +34,11 @@ class KeyGroupRelationTest extends TestCase
 
     private const BLUE = ['key' => 'Blue', 'value' => 'blue'];
 
+    /**
+     * Everything an override may carry, and nothing else.
+     */
+    private const IN_SCOPE = ['options' => null, 'defaultUnit' => 'cm', 'validUnits' => ['cm', 'mm']];
+
     public function testWithoutAnOverrideTheEffectiveDefinitionIsTheKeysOwn(): void
     {
         $relation = $this->relation(new Input());
@@ -101,7 +106,11 @@ class KeyGroupRelationTest extends TestCase
             'type' => [['type' => 'input']],
             'name' => [['name' => 'somethingElse']],
             'mandatory' => [['mandatory' => true]],
-            'in scope next to out of scope' => [['title' => 'fine', 'noteditable' => true]],
+            // a per group label is localization's question, not a definition override's
+            'title' => [['title' => 'Height']],
+            'tooltip' => [['tooltip' => 'in this group only']],
+            'defaultValue' => [['defaultValue' => 1]],
+            'in scope next to out of scope' => [['defaultUnit' => 'cm', 'noteditable' => true]],
         ];
     }
 
@@ -111,7 +120,7 @@ class KeyGroupRelationTest extends TestCase
     public function testAnOutOfScopeOverrideIsRefused(array $override): void
     {
         $relation = $this->relation(new Input());
-        $relation->setDefinitionOverride(['title' => 'stored']);
+        $relation->setDefinitionOverride(self::IN_SCOPE);
 
         try {
             $relation->setDefinitionOverride($override);
@@ -120,24 +129,16 @@ class KeyGroupRelationTest extends TestCase
             $this->addToAssertionCount(1);
         }
 
-        $this->assertSame(['title' => 'stored'], $relation->getDefinitionOverride(), 'nothing was taken over');
+        $this->assertSame(self::IN_SCOPE, $relation->getDefinitionOverride(), 'nothing was taken over');
     }
 
-    public function testEveryInScopePropertyIsAccepted(): void
+    public function testTheClosedListOfOverridablePropertiesIsAccepted(): void
     {
         $relation = $this->relation(new QuantityValue());
-        $override = [
-            'title' => 'Height',
-            'tooltip' => 'in this group only',
-            'options' => null,
-            'defaultValue' => 1,
-            'defaultUnit' => 'cm',
-            'validUnits' => ['cm', 'mm'],
-        ];
 
-        $relation->setDefinitionOverride($override);
+        $relation->setDefinitionOverride(self::IN_SCOPE);
 
-        $this->assertSame($override, $relation->getDefinitionOverride());
+        $this->assertSame(self::IN_SCOPE, $relation->getDefinitionOverride());
     }
 
     private function relation(Data $definition): KeyGroupRelation

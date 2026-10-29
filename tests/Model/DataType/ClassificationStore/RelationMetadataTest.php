@@ -37,9 +37,15 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
     private const COLUMN_SUB_GROUP = 'subGroup';
 
+    private const PER_ASSIGNMENT_COLUMNS = [
+        self::COLUMN_METADATA,
+        self::COLUMN_DEFINITION_OVERRIDE,
+        self::COLUMN_SUB_GROUP,
+    ];
+
     private const METADATA = ['indexed' => false, 'externalCode' => 'EF000001', 'custom' => ['x' => 1]];
 
-    private const OVERRIDE = ['title' => 'per group title'];
+    private const OVERRIDE = ['defaultUnit' => 'cm'];
 
     private const SUB_GROUP = 'EFG00007';
 
@@ -48,7 +54,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $schemaManager = Db::get()->createSchemaManager();
         $columns = $schemaManager->listTableColumns(self::TABLE);
 
-        foreach ([self::COLUMN_METADATA, self::COLUMN_DEFINITION_OVERRIDE, self::COLUMN_SUB_GROUP] as $column) {
+        foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
             $this->assertArrayHasKey(strtolower($column), $columns, self::TABLE . ' must carry ' . $column);
             $this->assertFalse($columns[strtolower($column)]->getNotnull(), $column . ' must be nullable');
         }
@@ -69,20 +75,55 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         );
     }
 
-    public function testMigrationDownDropsOnlyThePerAssignmentColumns(): void
+    public function testTheMigrationAddsThePerAssignmentColumnsAndTakesThemBack(): void
     {
         $db = Db::get();
-        $migration = new Version20261029100000($db, new NullLogger());
-        $migration->down($db->createSchemaManager()->introspectSchema());
+        $schemaManager = $db->createSchemaManager();
+        $copy = self::TABLE . '_premigration';
 
-        $planned = array_map(static fn ($query) => $query->getStatement(), $migration->getSql());
+        $db->executeStatement('DROP TABLE IF EXISTS `' . $copy . '`');
+        $db->executeStatement('CREATE TABLE `' . $copy . '` LIKE `' . self::TABLE . '`');
 
-        $this->assertSame(
-            ['ALTER TABLE `' . self::TABLE . '` DROP INDEX `subGroup`, DROP COLUMN `metadata`,'
-                . ' DROP COLUMN `definitionOverride`, DROP COLUMN `subGroup`;'],
-            $planned,
-            'down() must revert the three columns and their index, and nothing else'
-        );
+        try {
+            // the table as a database created from the previous dump carries it
+            $previous = $schemaManager->introspectSchema();
+            $previous->getTable(self::TABLE)->dropIndex(self::COLUMN_SUB_GROUP);
+            foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
+                $previous->getTable(self::TABLE)->dropColumn($column);
+            }
+            $db->executeStatement(
+                'ALTER TABLE `' . $copy . '` DROP INDEX `subGroup`, DROP COLUMN `metadata`,'
+                . ' DROP COLUMN `definitionOverride`, DROP COLUMN `subGroup`'
+            );
+
+            $up = new Version20261029100000($db, new NullLogger());
+            $up->up($previous);
+            $this->executeOnCopy($up, $copy);
+
+            $columns = $schemaManager->listTableColumns($copy);
+            foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
+                $this->assertArrayHasKey(strtolower($column), $columns, 'up() must add ' . $column);
+                $this->assertFalse($columns[strtolower($column)]->getNotnull(), $column . ' must be nullable');
+            }
+            $this->assertArrayHasKey(
+                strtolower(self::COLUMN_SUB_GROUP),
+                $schemaManager->listTableIndexes($copy),
+                'up() must add the subGroup index'
+            );
+
+            $down = new Version20261029100000($db, new NullLogger());
+            $down->down($schemaManager->introspectSchema());
+            $this->executeOnCopy($down, $copy);
+
+            $columns = $schemaManager->listTableColumns($copy);
+            foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
+                $this->assertArrayNotHasKey(strtolower($column), $columns, 'down() must take back ' . $column);
+            }
+            $this->assertArrayHasKey('sorter', $columns, 'down() must leave sorter alone');
+            $this->assertArrayHasKey('mandatory', $columns, 'down() must leave mandatory alone');
+        } finally {
+            $db->executeStatement('DROP TABLE IF EXISTS `' . $copy . '`');
+        }
     }
 
     public function testTheInstallerDumpCarriesTheSameColumns(): void
@@ -188,6 +229,18 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
             'the metadata is stored and returned verbatim'
         );
         $this->assertSame($without, $this->enrich($object), 'the enriched layout is unaffected by metadata');
+    }
+
+    /**
+     * Executes what the migration planned against a structural copy, so the live table is left alone.
+     */
+    private function executeOnCopy(Version20261029100000 $migration, string $table): void
+    {
+        foreach ($migration->getSql() as $query) {
+            Db::get()->executeStatement(
+                str_replace('`' . self::TABLE . '`', '`' . $table . '`', $query->getStatement())
+            );
+        }
     }
 
     private function createRelationWithPerAssignmentData(): KeyGroupRelation

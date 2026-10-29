@@ -298,9 +298,11 @@ is `getDefinition()` as the instance carries it, which on a relation loaded thro
 has the relation's `mandatory` flag folded in and on one loaded through `getByGroupAndKeyId()` does not - `mandatory`
 has a column of its own and is not part of an override.
 
-An override may only carry `title`, `tooltip`, `options`, `defaultValue`, `defaultUnit` and `validUnits`. Any other
-property - `type` and `fieldtype` above all, because an assignment never changes what a key stores - is refused by
-`setDefinitionOverride()` with `Pimcore\Model\Exception\InvalidConfigException`, and nothing is written.
+An override may carry `options`, `defaultUnit` and `validUnits`, and nothing else - the per group option subset and
+the unit. Any other property is refused by `setDefinitionOverride()` with
+`Pimcore\Model\Exception\InvalidConfigException`, and nothing is written. That includes `type` and `fieldtype`,
+because an assignment never changes what a key stores, and `title`, `tooltip` and `defaultValue`, which are a
+labelling question rather than a definition one.
 
 `options` **filters** rather than replaces: the merged definition keeps the key's own label/value pairs whose value
 appears in the override's list, in the key's order. That is what lets one key hold the full option list while each
