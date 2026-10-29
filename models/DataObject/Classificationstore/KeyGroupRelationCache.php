@@ -102,9 +102,10 @@ final class KeyGroupRelationCache implements ResetInterface
 
     /**
      * The distinct sub groups of a group, each positioned by its first-occurring key under the
-     * (sorter, id) order the relations are held in. Disabled relations are left out, because
-     * enrichLayoutDefinition() skips them too and a sub group exists in a group exactly as long as a
-     * key the user can see carries it.
+     * (sorter, id) order the relations are held in. The relations of disabled keys are left out, so
+     * a sub group every key of which is disabled does not appear at all, and one that keeps a single
+     * visible key is positioned by that key: enrichLayoutDefinition() skips the disabled keys too,
+     * and a sub group exists in a group exactly as long as a key the user can see carries it.
      *
      * @return string[]
      */

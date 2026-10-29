@@ -446,6 +446,39 @@ final class SubGroupTest extends AbstractClassificationStoreTest
     }
 
     /**
+     * AC8: a sub group every key of which is disabled is left out of the order entirely, and comes
+     * back in its first-occurring position as soon as one of its keys is visible again.
+     */
+    public function testASubGroupWithoutAVisibleKeyIsLeftOut(): void
+    {
+        $hidden = $this->createSubGroup();
+        $shown = $this->createSubGroup();
+
+        $group = $this->createGroup('partly_hidden');
+        $firstHiddenKey = $this->createKey('partly_hidden_first', false);
+        $shownKey = $this->createKey('partly_hidden_shown');
+        $secondHiddenKey = $this->createKey('partly_hidden_second', false);
+
+        $this->assignKey($group, $firstHiddenKey, 10, $hidden->getIdentifier());
+        $this->assignKey($group, $shownKey, 20, $shown->getIdentifier());
+        $this->assignKey($group, $secondHiddenKey, 30, $hidden->getIdentifier());
+
+        $relationCache = Pimcore::getContainer()->get(KeyGroupRelationCache::class);
+
+        $this->assertCount(3, $relationCache->getRelations($group->getId()), 'the relations are still there');
+        $this->assertSame([$shown->getIdentifier()], $relationCache->getSubGroupOrder($group->getId()));
+
+        // the key that opens the group becomes visible again, so its sub group leads the order
+        $firstHiddenKey->setEnabled(true);
+        $firstHiddenKey->save();
+
+        $this->assertSame(
+            [$hidden->getIdentifier(), $shown->getIdentifier()],
+            $relationCache->getSubGroupOrder($group->getId())
+        );
+    }
+
+    /**
      * AC9
      */
     public function testTagIsInertToResolution(): void
