@@ -21,6 +21,11 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201009095924 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->getTable('users')->hasColumn('apiKey')) {

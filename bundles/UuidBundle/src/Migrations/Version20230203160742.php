@@ -22,6 +22,11 @@ final class Version20230203160742 extends AbstractMigration
         return 'Modify `itemId` column type in `uuids` db table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `uuids` MODIFY COLUMN `itemId` VARCHAR(50) NOT NULL;');

@@ -26,6 +26,11 @@ final class Version20250516142759 extends AbstractMigration
         return 'Introducing 3 indices for optimizing maintenance on versions table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $table = $schema->getTable('versions');

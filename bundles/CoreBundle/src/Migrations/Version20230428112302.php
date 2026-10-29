@@ -24,6 +24,11 @@ final class Version20230428112302 extends AbstractMigration
         return 'Migrate notes table schema to have a auto increment column';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $notesData = $schema->getTable('notes_data');
