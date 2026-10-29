@@ -13,7 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper\SymfonyExpression;
 
+use Carbon\CarbonPeriod;
+use DateInterval;
+use DatePeriod;
 use DateTimeInterface;
+use DateTimeZone;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -107,6 +111,10 @@ final class CalculatedFieldMethodCallPolicy
         Classificationstore\Key::class,
         Unit::class,
         DateTimeInterface::class,
+        DateTimeZone::class,
+        DateInterval::class,
+        DatePeriod::class,
+        CarbonPeriod::class,
     ];
 
     /**
@@ -127,7 +135,7 @@ final class CalculatedFieldMethodCallPolicy
         }
 
         // plain `get()` is only allowed on a Fieldcollection, see isAllowedMethodCall()
-        return self::isFieldcollectionItemGetter($method) || 1 === preg_match('/^(get|is|has)[A-Z0-9]/', $method);
+        return self::isFieldcollectionItemGetter($method) || 1 === preg_match('/^(get|is|has)[A-Z0-9_]/', $method);
     }
 
     /**

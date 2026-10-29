@@ -15,10 +15,12 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Helper\SymfonyExpression;
 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use DateTime;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Helper\SymfonyExpression\CalculatedFieldExpressionLanguage;
+use Pimcore\Helper\SymfonyExpression\CalculatedFieldMethodCallPolicy;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -223,6 +225,27 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         );
 
         $this->assertSame($store, $language->evaluate('key.getGroup().getClassificationStore()', ['key' => $key]));
+    }
+
+    public function testAllowsReadOnlyDatePeriodAndTimezoneChains(): void
+    {
+        // a DateRange field getter returns a CarbonPeriod
+        $language = new CalculatedFieldExpressionLanguage();
+        $period = CarbonPeriod::create('2024-01-01', '2024-01-31');
+        $date = Carbon::create(2024, 1, 1, 0, 0, 0, 'Europe/Vienna');
+
+        $this->assertSame(
+            $period->getStartDate()->getTimestamp(),
+            $language->evaluate('period.getStartDate().getTimestamp()', ['period' => $period])
+        );
+        $this->assertSame('Europe/Vienna', $language->evaluate('date.getTimezone().getName()', ['date' => $date]));
+    }
+
+    public function testAllowsGettersOfUnderscorePrefixedFieldNames(): void
+    {
+        // field names may start with `_`, the generated getter is then e.g. get_internal()
+        $this->assertTrue(CalculatedFieldMethodCallPolicy::isAllowedMethodName('get_internal'));
+        $this->assertFalse(CalculatedFieldMethodCallPolicy::isAllowedMethodName('getter'));
     }
 
     public function testCompilingIsNotSupported(): void
