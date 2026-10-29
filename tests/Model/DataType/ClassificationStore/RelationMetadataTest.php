@@ -49,7 +49,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
     private const SUB_GROUP = 'EFG00007';
 
-    public function testThePerAssignmentColumnsAreNullableAndSubGroupIsIndexed(): void
+    public function testThePerAssignmentColumnsAreNullable(): void
     {
         $schemaManager = Db::get()->createSchemaManager();
         $columns = $schemaManager->listTableColumns(self::TABLE);
@@ -60,13 +60,6 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         }
 
         $this->assertSame(190, $columns[strtolower(self::COLUMN_SUB_GROUP)]->getLength());
-
-        $indexes = $schemaManager->listTableIndexes(self::TABLE);
-        $this->assertArrayHasKey(strtolower(self::COLUMN_SUB_GROUP), $indexes, 'subGroup must be indexable');
-        $this->assertSame(
-            [self::COLUMN_SUB_GROUP],
-            $indexes[strtolower(self::COLUMN_SUB_GROUP)]->getColumns()
-        );
 
         $this->assertContains(
             self::COLUMN_SUB_GROUP,
@@ -87,12 +80,11 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         try {
             // the table as a database created from the previous dump carries it
             $previous = $schemaManager->introspectSchema();
-            $previous->getTable(self::TABLE)->dropIndex(self::COLUMN_SUB_GROUP);
             foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
                 $previous->getTable(self::TABLE)->dropColumn($column);
             }
             $db->executeStatement(
-                'ALTER TABLE `' . $copy . '` DROP INDEX `subGroup`, DROP COLUMN `metadata`,'
+                'ALTER TABLE `' . $copy . '` DROP COLUMN `metadata`,'
                 . ' DROP COLUMN `definitionOverride`, DROP COLUMN `subGroup`'
             );
 
@@ -105,12 +97,6 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
                 $this->assertArrayHasKey(strtolower($column), $columns, 'up() must add ' . $column);
                 $this->assertFalse($columns[strtolower($column)]->getNotnull(), $column . ' must be nullable');
             }
-            $this->assertArrayHasKey(
-                strtolower(self::COLUMN_SUB_GROUP),
-                $schemaManager->listTableIndexes($copy),
-                'up() must add the subGroup index'
-            );
-
             $down = new Version20261029100000($db, new NullLogger());
             $down->down($schemaManager->introspectSchema());
             $this->executeOnCopy($down, $copy);
@@ -136,7 +122,6 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertStringContainsString('`metadata` json NULL', $matches[1]);
         $this->assertStringContainsString('`definitionOverride` json NULL', $matches[1]);
         $this->assertStringContainsString('`subGroup` VARCHAR(190) NULL DEFAULT NULL', $matches[1]);
-        $this->assertStringContainsString('INDEX `subGroup` (`subGroup`)', $matches[1]);
     }
 
     public function testThePerAssignmentDataRoundTripsThroughBothLoadPaths(): void

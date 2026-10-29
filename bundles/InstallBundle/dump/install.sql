@@ -671,7 +671,6 @@ CREATE TABLE `classificationstore_relations` (
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	INDEX `mandatory` (`mandatory`),
-	INDEX `subGroup` (`subGroup`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

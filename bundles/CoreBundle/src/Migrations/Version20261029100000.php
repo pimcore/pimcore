@@ -30,12 +30,10 @@ final class Version20261029100000 extends AbstractMigration
 
     private const TABLE = 'classificationstore_relations';
 
-    private const COLUMN_SUB_GROUP = 'subGroup';
-
     private const COLUMNS = [
         'metadata' => 'JSON NULL',
         'definitionOverride' => 'JSON NULL',
-        self::COLUMN_SUB_GROUP => 'VARCHAR(190) NULL DEFAULT NULL',
+        'subGroup' => 'VARCHAR(190) NULL DEFAULT NULL',
     ];
 
     public function getDescription(): string
@@ -54,11 +52,6 @@ final class Version20261029100000 extends AbstractMigration
             }
         }
 
-        // the column exists instead of a key inside the JSON so that a sub-group can be looked up by index
-        if (!$table->hasIndex(self::COLUMN_SUB_GROUP)) {
-            $changes[] = 'ADD INDEX `subGroup` (`subGroup`)';
-        }
-
         if ($changes !== []) {
             $this->addSql('ALTER TABLE `' . self::TABLE . '` ' . implode(', ', $changes) . ';');
         }
@@ -73,10 +66,6 @@ final class Version20261029100000 extends AbstractMigration
     {
         $table = $schema->getTable(self::TABLE);
         $changes = [];
-
-        if ($table->hasIndex(self::COLUMN_SUB_GROUP)) {
-            $changes[] = 'DROP INDEX `subGroup`';
-        }
 
         foreach (array_keys(self::COLUMNS) as $column) {
             if ($table->hasColumn($column)) {
