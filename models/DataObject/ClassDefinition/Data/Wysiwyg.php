@@ -19,6 +19,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
@@ -196,7 +198,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);
         foreach ($dependencies as $key => $value) {

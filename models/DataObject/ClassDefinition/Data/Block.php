@@ -30,6 +30,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -1035,6 +1038,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $blockDefinitions = $this->getFieldDefinitions();
 
                 $validationExceptions = [];
+                $violations = [];
 
                 $idx = -1;
                 foreach ($data as $item) {
@@ -1048,7 +1052,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $blockElement = $item[$fd->getName()] ?? null;
                             if (!$blockElement) {
                                 if ($fd->getMandatory()) {
-                                    throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
+                                    throw (new StructuredValidationException(
+                                        'Block element empty [ ' . $fd->getName() . ' ]'
+                                    ))->setTranslation(ValidationMessageKey::MANDATORY);
                                 } else {
                                     continue;
                                 }
@@ -1078,19 +1084,27 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
                             $validationExceptions[] = $ve;
+                            $violations[] = StructuredValidationException::from($ve)
+                                ->setField($fd->getName(), $fd->getTitle())
+                                ->addPathSegment(new ValidationPathSegment(
+                                    field: $this->getName(),
+                                    title: $this->getTitle() !== '' ? $this->getTitle() : null,
+                                    index: $idx
+                                ));
                         }
                     }
                 }
 
                 if ($validationExceptions) {
                     $errors = [];
-                    /** @var Element\ValidationException $e */
+                    // the original exceptions, so a custom getAggregatedMessage() keeps its text
+                    /** @var Model\Element\ValidationException $e */
                     foreach ($validationExceptions as $e) {
                         $errors[] = $e->getAggregatedMessage();
                     }
                     $message = implode(' / ', $errors);
 
-                    throw new Model\Element\ValidationException($message);
+                    throw (new StructuredValidationException($message))->addViolations(...$violations);
                 }
             }
         }
