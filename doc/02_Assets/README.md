@@ -58,6 +58,11 @@ existing installation without re-processing every asset. It can be narrowed down
 `--id`, `--parent` and `--path-pattern`, and combined with `--retry-failed` to include assets whose
 processing failed before.
 
+An asset keeps counting as missing its metadata until its update task has run, so running the
+command again before the queue has drained adds such assets a second time. That is safe - the
+extraction is simply repeated - but it is wasted work, so leave enough time between runs when
+scheduling the command.
+
 ## Thumbnails and Format Conversion
 
 Pimcore provides a thumbnail processing engine that generates optimized output variants

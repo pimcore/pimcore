@@ -111,6 +111,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
         // while the queue is being consumed - paginate by ID instead of by offset, which would skip assets
         $lastId = 0;
         $count = 0;
+        $skipped = 0;
 
         do {
             $list->setCondition(
@@ -121,24 +122,36 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             $assets = $list->load();
             foreach ($assets as $asset) {
                 $lastId = (int) $asset->getId();
-                $this->output->writeln(
-                    sprintf('Adding asset %s (%s) to the update task queue', $asset->getId(), $asset->getRealFullPath()),
-                    OutputInterface::VERBOSITY_VERBOSE
-                );
-                $asset->triggerUpdateTask();
-                $count++;
+                if ($asset->triggerUpdateTask()) {
+                    $this->output->writeln(
+                        sprintf('Added asset %s (%s) to the update task queue', $asset->getId(), $asset->getRealFullPath()),
+                        OutputInterface::VERBOSITY_VERBOSE
+                    );
+                    $count++;
+                } else {
+                    $this->output->writeln(
+                        sprintf('Skipped asset %s (%s), it is being added to the queue elsewhere', $asset->getId(), $asset->getRealFullPath()),
+                        OutputInterface::VERBOSITY_VERBOSE
+                    );
+                    $skipped++;
+                }
             }
 
             Pimcore::collectGarbage();
         } while (count($assets) === self::ASSETS_PER_LOOP);
 
         $this->output->writeln(sprintf('Added %d asset(s) to the update task queue', $count));
+        if ($skipped > 0) {
+            $this->output->writeln(sprintf('Skipped %d asset(s) that were being added to the queue elsewhere', $skipped));
+        }
 
         return 0;
     }
 
     /**
      * @return array{0: string[], 1: array<int, mixed>}
+     *
+     * @throws InvalidOptionException if --parent is not the ID of an asset folder
      */
     protected function buildConditions(InputInterface $input): array
     {
