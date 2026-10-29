@@ -155,7 +155,8 @@ final class ImageThumbnail implements ImageThumbnailInterface
                         $converter->setUseCropBox($this->getConfig()->isUseCropBox());
                     }
 
-                    if (false === $converter->saveImage($tempFile, $this->page)) {
+                    // an adapter may report success without having written the image
+                    if (false === $converter->saveImage($tempFile, $this->page) || !is_file($tempFile)) {
                         Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
 
                         return null;
