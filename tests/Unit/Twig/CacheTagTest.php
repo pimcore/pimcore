@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Twig;
 
 use Codeception\Test\Unit;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Twig\Extension\CacheTagExtension;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
 
@@ -102,6 +104,27 @@ final class CacheTagTest extends Unit
         // the dynamic tag is attached to the entry: clearing it renders the block again
         Cache::clearTag('tag_' . $this->suffix);
         $this->assertSame('2', $this->render($template, $context));
+    }
+
+    /**
+     * In an admin request (editmode, preview) the block is not cached unless force is set.
+     */
+    public function testDynamicForceDecidesCachingInAdminRequest(): void
+    {
+        $template = '{% pimcorecache "force" ~ suffix force(forced) %}{{ render_count() }}{% endpimcorecache %}';
+        $requestStack = Pimcore::getContainer()->get('request_stack');
+        $requestStack->push(new Request(['pimcore_editmode' => '1']));
+
+        try {
+            $this->assertSame('1', $this->render($template, ['forced' => false]));
+            $this->assertSame('2', $this->render($template, ['forced' => false]));
+
+            $this->assertSame('3', $this->render($template, ['forced' => true]));
+            $this->assertSame('3', $this->render($template, ['forced' => true]));
+            $this->assertSame(3, $this->renderCount);
+        } finally {
+            $requestStack->pop();
+        }
     }
 
     public function testDynamicTagFromStringVariable(): void
