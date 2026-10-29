@@ -20,12 +20,14 @@ use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyConfig\Dao getDao()
  */
 final class KeyConfig extends Model\AbstractModel
 {
+    use IdentifierTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 
     protected ?int $id = null;
@@ -122,6 +124,19 @@ final class KeyConfig extends Model\AbstractModel
         }
     }
 
+    public static function getByIdentifier(string $identifier, int $storeId = 1): ?KeyConfig
+    {
+        try {
+            $config = new self();
+            $config->setStoreId($storeId);
+            $config->getDao()->getByIdentifier($identifier);
+
+            return $config;
+        } catch (Model\Exception\NotFoundException $e) {
+            return null;
+        }
+    }
+
     public static function create(): KeyConfig
     {
         $config = new self();
@@ -192,9 +207,16 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      * Saves the key config
+     *
+     * @throws Model\Exception\InvalidConfigException
      */
     public function save(): void
     {
+        if ($this->getId() === null) {
+            $this->generateIdentifier();
+        }
+        $this->getDao()->assertIdentifierIsUnique();
+
         DefinitionCache::clear($this);
 
         $isUpdate = false;

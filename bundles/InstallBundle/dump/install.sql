@@ -617,8 +617,10 @@ CREATE TABLE `classificationstore_stores` (
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
 	`engine` VARCHAR(32) NULL DEFAULT NULL,
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	INDEX `name` (`name`)
+	INDEX `name` (`name`),
+	UNIQUE INDEX `identifier` (`identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
@@ -630,9 +632,11 @@ CREATE TABLE `classificationstore_groups` (
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `storeId` (`storeId`),
-	INDEX `name` (`name`)
+	INDEX `name` (`name`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_keys`;
@@ -647,11 +651,13 @@ CREATE TABLE `classificationstore_keys` (
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`definition` json NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `enabled` (`enabled`),
 	INDEX `type` (`type`),
-	INDEX `storeId` (`storeId`)
+	INDEX `storeId` (`storeId`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 CREATE TABLE `classificationstore_relations` (
@@ -674,8 +680,10 @@ CREATE TABLE `classificationstore_collections` (
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	INDEX `storeId` (`storeId`)
+	INDEX `storeId` (`storeId`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 

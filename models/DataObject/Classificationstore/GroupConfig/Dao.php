@@ -14,6 +14,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 
 use Exception;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
 
 /**
  * @internal
@@ -22,6 +23,8 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use IdentifierDaoTrait;
+
     const TABLE_NAME_GROUPS = 'classificationstore_groups';
 
     /**
@@ -67,6 +70,44 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByIdentifier(string $identifier): void
+    {
+        $data = $this->db->fetchAssociative(
+            'SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE identifier = ? AND storeId = ?',
+            [$identifier, $this->model->getStoreId()]
+        );
+
+        if ($data) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException(sprintf('Classification store group config with identifier "%s" does not exist.', $identifier));
+        }
+    }
+
+    /**
+     * @throws Model\Exception\InvalidConfigException
+     */
+    public function assertIdentifierIsUnique(): void
+    {
+        $identifier = $this->model->getIdentifier();
+        if ($identifier === null) {
+            return;
+        }
+
+        $used = $this->db->fetchOne(
+            'SELECT id FROM ' . self::TABLE_NAME_GROUPS . ' WHERE identifier = ? AND storeId = ? AND id != ?',
+            [$identifier, $this->model->getStoreId(), $this->model->getId() ?? 0]
+        );
+
+        if ($used !== false) {
+            throw new Model\Exception\InvalidConfigException(sprintf('The identifier "%s" is already in use.', $identifier));
+        }
+    }
+
     public function hasChildren(): bool
     {
         if (!$this->model->getId()) {
@@ -82,7 +123,9 @@ class Dao extends Model\Dao\AbstractDao
     public function save(): void
     {
         if (!$this->model->getId()) {
-            $this->create();
+            $this->createAndUpdate();
+
+            return;
         }
 
         $this->update();
@@ -101,26 +144,42 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update(): void
     {
-        $ts = time();
-        $this->model->setModificationDate($ts);
+        // the row itself and the identifier are written as one unit
+        $this->writeAtomically(function (): void {
+            $id = $this->model->getId();
+            $identifier = $this->model->getIdentifier();
+            $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_GROUPS, $id, $identifier);
 
-        $data = [];
-        $type = $this->model->getObjectVars();
+            $ts = time();
+            $this->model->setModificationDate($ts);
 
-        foreach ($type as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_GROUPS))) {
-                if (is_bool($value)) {
-                    $value = (int) $value;
+            $data = [];
+            $type = $this->model->getObjectVars();
+
+            foreach ($type as $key => $value) {
+                // written by writeIdentifier(), which is the only place allowed to touch the column
+                if ($key === 'identifier') {
+                    continue;
                 }
-                if (is_array($value) || is_object($value)) {
-                    $value = \Pimcore\Tool\Serialize::serialize($value);
-                }
 
-                $data[$key] = $value;
+                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_GROUPS))) {
+                    if (is_bool($value)) {
+                        $value = (int) $value;
+                    }
+                    if (is_array($value) || is_object($value)) {
+                        $value = \Pimcore\Tool\Serialize::serialize($value);
+                    }
+
+                    $data[$key] = $value;
+                }
             }
-        }
 
-        $this->db->update(self::TABLE_NAME_GROUPS, $data, ['id' => $this->model->getId()]);
+            $this->db->update(self::TABLE_NAME_GROUPS, $data, ['id' => $this->model->getId()]);
+
+            if ($identifierPending) {
+                $this->writeIdentifier(self::TABLE_NAME_GROUPS, (int) $id, (string) $identifier);
+            }
+        });
     }
 
     public function create(): void

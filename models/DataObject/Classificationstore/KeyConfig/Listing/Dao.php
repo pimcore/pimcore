@@ -36,7 +36,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         foreach ($configsData as $keyConfigData) {
             $keyConfig = new DataObject\Classificationstore\KeyConfig();
             $keyConfigData['enabled'] = (bool)$keyConfigData['enabled'];
-            $keyConfig->setValues($keyConfigData);
+            $keyConfig->setValues($keyConfigData, true);
             $configList[] = $keyConfig;
         }
 

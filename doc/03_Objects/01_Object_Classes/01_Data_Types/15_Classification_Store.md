@@ -53,7 +53,9 @@ defined.
 * Similar to keys a sort order can be specified
 * Groups with lower sort order are displayed first
 * A key can belong to more than one group
-* It is not necessary for the group name to be unique
+* It is not necessary for the group name to be unique. Note that two entities of the same kind sharing a name within
+  one store cannot both be resolved by the identifier backfill described under [Identifiers](#identifiers) - it leaves
+  both of them without an identifier and reports them for an operator to resolve
 * Use the grid on the right side to manage the keys belonging to the selected group
 * Configure sort order for the object editor, keys with lower values are listed first
 * Configure which keys should be mandatory in this group
@@ -218,3 +220,53 @@ $groupRel->setGroupId($groupConfig->getId());
 $groupRel->setColId($collectionConfig->getId());
 $groupRel->save();
 ```
+
+### Identifiers
+
+Stores, collections, groups and keys carry an `identifier` in addition to their auto increment id and their name.
+It is meant as the stable handle for an entity across environments, where the auto increment id is not comparable
+and the name is not unique.
+
+* It is **generated** when an entity is created and does not derive from the entity's name, so it stays stable when
+  the name is edited. Setting an identifier explicitly before the first `save()` keeps that value instead.
+* It is **opaque** - do not parse it, and do not expect it to be readable.
+* It is **immutable**: once an entity holds a non-null identifier, `setIdentifier()` refuses to change it and throws
+  `Pimcore\Model\Exception\InvalidConfigException`. Setting the same value again is a no-op. The null to value
+  transition is enforced in the database as well, so an instance loaded before another process assigned an identifier
+  neither clears it on save nor replaces it - the latter is refused with the same exception.
+* It is **unique per store** for collections, groups and keys, and unique overall for stores. A save that would write
+  an identifier which is already in use within that scope is refused with the same exception, and nothing is written -
+  the identifier is never disambiguated with a suffix.
+* Valid identifiers match `/\A[A-Za-z0-9][A-Za-z0-9_-]*\z/` and are at most 190 characters long. Anything else is
+  rejected by `setIdentifier()`.
+
+```php
+$keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByIdentifier($identifier, $storeId);
+$groupConfig = \Pimcore\Model\DataObject\Classificationstore\GroupConfig::getByIdentifier($identifier, $storeId);
+$collectionConfig = \Pimcore\Model\DataObject\Classificationstore\CollectionConfig::getByIdentifier($identifier, $storeId);
+$storeConfig = \Pimcore\Model\DataObject\Classificationstore\StoreConfig::getByIdentifier($identifier);
+```
+
+Each of them returns `null` when nothing matches.
+
+#### Backfilling existing rows
+
+Rows that already existed before the identifier was introduced have none. The console command
+
+```bash
+bin/console pimcore:classificationstore:backfill-identifiers
+```
+
+assigns an identifier derived from the entity's name to every row across the four tables whose identifier is still
+`NULL`, disabled keys included. It writes the `identifier` column and nothing else - no title, modification date or
+definition is rewritten - and it is idempotent, so running it twice changes nothing.
+
+A pre-flight runs before anything is written. Rows for which no unique identifier can be derived from the name are
+left untouched, listed in the command's report with their type, id, name and the reason, and the command still exits
+with `0`. That happens when two entities of the same kind share a name within one store - whether or not the other
+one already carries an identifier - when the derived identifier is already taken, or when the name contains no
+characters a valid identifier can be built from. Those rows keep a `NULL` identifier until someone renames them and
+runs the command again.
+
+Each write is guarded by `identifier IS NULL`, so a row that was given an identifier between the pre-flight and the
+write keeps it; the command reports that row as unresolved rather than counting it as backfilled.
