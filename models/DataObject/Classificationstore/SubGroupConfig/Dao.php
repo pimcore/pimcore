@@ -148,6 +148,8 @@ class Dao extends Model\Dao\AbstractDao
         $taggedGroupIds = [];
 
         $this->writeAtomically(function () use ($id, &$taggedGroupIds): void {
+            $this->lockGroupsBeforeTheEntry($id);
+
             // the lock KeyGroupRelation\Dao::resolveSubGroup() contends with, taken before any tag is read
             $stored = $this->db->fetchAssociative(
                 'SELECT `storeId`, `identifier` FROM `' . self::TABLE_NAME_SUBGROUPS . '` WHERE `id` = ? FOR UPDATE',
@@ -267,8 +269,50 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * Takes the group locks this deletion ends up needing before it touches the vocabulary row, because
+     * groups before sub groups before relations is the order every writer in this family takes the three
+     * tables in: KeyGroupRelation\Dao::resolveSubGroup() locks the group of the relation and then the
+     * entry its tag names, and GroupConfig\Dao::update() locks the group and then the relations that
+     * carry a tag. Reaching the groups the other way round - the entry first, and the groups afterwards
+     * through the join of clearTags() - closes the cycle, and InnoDB resolves that by aborting one of the
+     * two writers with a deadlock that nothing here retries.
+     *
+     * The same order is why the groups are locked here rather than left to that join, which would leave
+     * groups and relations to whichever the optimizer drives from.
+     *
+     * Which groups those are is the groups of the store the entry belongs to, and that store is read
+     * without a lock - a lock on the entry is exactly what may not be taken yet. The read is sound
+     * because a stored entry never changes store (assertStoreIsUnchanged()): either it sees the row, and
+     * reports the store the locking read below confirms, or it sees nothing - a snapshot that predates
+     * the row - and the lock is taken on the whole table rather than on a store this transaction has no
+     * way to name.
+     *
+     * @throws Exception
+     */
+    private function lockGroupsBeforeTheEntry(int $id): void
+    {
+        $storeId = $this->db->fetchOne(
+            'SELECT `storeId` FROM `' . self::TABLE_NAME_SUBGROUPS . '` WHERE `id` = ?',
+            [$id]
+        );
+
+        $scoped = $storeId !== false && $storeId !== null;
+
+        // ascending id, so that two deletions of differently scoped entries still agree on an order
+        $this->db->fetchFirstColumn(
+            'SELECT `id` FROM `' . GroupConfigDao::TABLE_NAME_GROUPS . '`'
+            . ($scoped ? ' WHERE `storeId` = ?' : '')
+            . ' ORDER BY `id` FOR UPDATE',
+            $scoped ? [(int) $storeId] : []
+        );
+    }
+
+    /**
      * Clears the tag from every key assignment of the store that carries it, and reports the groups
      * those assignments belong to.
+     *
+     * The group rows this join reads are already held by lockGroupsBeforeTheEntry(), so the only locks
+     * left for it to take are on the relations - after the groups, whichever way the optimizer drives it.
      *
      * @return int[]
      */

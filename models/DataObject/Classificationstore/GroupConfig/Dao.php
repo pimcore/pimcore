@@ -208,6 +208,10 @@ class Dao extends Model\Dao\AbstractDao
      * against the store the group ends up in. The tags are read the same way, because the row that
      * carries one may have been committed after the snapshot of an enclosing transaction.
      *
+     * The group before the relations it carries, which is the order the other two writers of this family
+     * take these tables in as well - see KeyGroupRelation\Dao::resolveSubGroup() and
+     * SubGroupConfig\Dao::lockGroupsBeforeTheEntry().
+     *
      * A row that carries no store yet is the placeholder create() inserts, which update() fills in.
      *
      * @throws Model\Exception\InvalidConfigException

@@ -87,6 +87,10 @@ class Dao extends AbstractDao
      * commits, so a sub group deletion either clears the tag this write leaves behind or waits for the
      * write and then finds it. SubGroupConfig\Dao::delete() takes the same lock before it clears tags.
      *
+     * The two locks are taken in that order - the group, then the entry, then the relation the write
+     * itself touches - which is the order SubGroupConfig\Dao::lockGroupsBeforeTheEntry() and
+     * GroupConfig\Dao::update() take the same tables in, so none of the three can wait on another.
+     *
      * What is stored is the identifier of the resolved row, not the spelling the caller passed: the
      * column collation is case insensitive, so two spellings resolve to one entry here and would
      * otherwise read as two sub groups in KeyGroupRelationCache::getSubGroupOrder().

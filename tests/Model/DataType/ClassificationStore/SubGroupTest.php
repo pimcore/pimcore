@@ -594,6 +594,77 @@ final class SubGroupTest extends AbstractClassificationStoreTest
     }
 
     /**
+     * The two halves above are taken in one order: a relation save locks the group of the relation and
+     * then the entry its tag names, so the deletion has to lock the groups before it touches the entry.
+     * Taking the entry first and reaching the groups afterwards - through the join that matches the tags
+     * - closes a cycle between the two, and InnoDB resolves that by aborting one of them with a deadlock
+     * that nothing here retries.
+     *
+     * Held up by a group, the deletion must therefore be holding nothing on the entry, and the relation
+     * save that holds that group runs to the end rather than into it.
+     */
+    public function testADeletionHeldUpByAGroupHoldsNothingOnTheEntry(): void
+    {
+        $subGroup = $this->createSubGroup();
+        $group = $this->createGroup('ordered');
+        $keyConfig = $this->createKey('ordered');
+
+        // a tag of its own, so that the tags the deletion matches do reach this group
+        $this->assignKey($group, $keyConfig, 0, $subGroup->getIdentifier());
+
+        $db = Db::get();
+        $otherConnection = $this->openSecondConnection();
+        $otherConnection->executeStatement('SET SESSION innodb_lock_wait_timeout = 2');
+        $otherConnection->beginTransaction();
+
+        $db->executeStatement('SET SESSION innodb_lock_wait_timeout = 2');
+
+        // an enclosing transaction: the refused delete does not roll it back, so whatever locks it took
+        // on its way to the refusal are still held below
+        $db->beginTransaction();
+
+        try {
+            // the first of the two locks a relation save takes
+            $otherConnection->fetchOne(
+                'SELECT `storeId` FROM `classificationstore_groups` WHERE id = ? FOR UPDATE',
+                [$group->getId()]
+            );
+
+            try {
+                $subGroup->delete();
+                $this->fail('A deletion must not pass a group another transaction holds');
+            } catch (LockWaitTimeoutException $e) {
+                $this->addToAssertionCount(1);
+            }
+
+            // the second of them: a deletion that had taken the entry first would leave this waiting on
+            // a transaction that is itself waiting - which is the deadlock
+            $this->assertSame(
+                $subGroup->getIdentifier(),
+                $otherConnection->fetchOne(
+                    'SELECT `identifier` FROM ' . self::TABLE_SUBGROUPS
+                    . ' WHERE `storeId` = ? AND `identifier` = ? FOR UPDATE',
+                    [$this->getStoreId(), $subGroup->getIdentifier()]
+                ),
+                'a deletion held up by a group must hold nothing on the entry'
+            );
+
+            $this->assertSame(
+                $subGroup->getIdentifier(),
+                $this->fetchTag($group, $keyConfig),
+                'and must have cleared no tag either'
+            );
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = DEFAULT');
+            $otherConnection->rollBack();
+            $otherConnection->close();
+        }
+    }
+
+    /**
      * A tag names an entry in the vocabulary of the store its group belongs to, so a group that moves
      * would take its tags to a store whose vocabulary knows nothing of them: they would resolve to
      * nothing, the deletion of the entry they came from would no longer reach them, and saving such a
