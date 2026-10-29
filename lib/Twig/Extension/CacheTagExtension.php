@@ -17,8 +17,15 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Cache;
 use Pimcore\Tool;
 use Pimcore\Twig\TokenParser\CacheParser;
+use Pimcore\ValueObject\Collection\ArrayOfStrings;
+use Stringable;
+use Twig\Error\RuntimeError;
 use Twig\Extension\AbstractExtension;
+use ValueError;
+use function is_array;
+use function is_int;
 use function is_null;
+use function is_scalar;
 
 /**
  * @internal
@@ -32,6 +39,36 @@ class CacheTagExtension extends AbstractExtension
         return [
             new CacheParser(),
         ];
+    }
+
+    public function normalizeKey(mixed $key): string
+    {
+        if (!is_scalar($key) && !$key instanceof Stringable) {
+            throw new RuntimeError('The cache key of "pimcorecache" must be a string.');
+        }
+
+        return (string) $key;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function normalizeTags(mixed $tags): array
+    {
+        try {
+            return (new ArrayOfStrings(is_array($tags) ? array_values($tags) : [$tags]))->getValue();
+        } catch (ValueError) {
+            throw new RuntimeError('The "tags" modifier of "pimcorecache" requires a string or an array of strings.');
+        }
+    }
+
+    public function normalizeTtl(mixed $ttl): ?int
+    {
+        if ($ttl !== null && !is_int($ttl)) {
+            throw new RuntimeError('The "ttl" modifier of "pimcorecache" requires an integer or null.');
+        }
+
+        return $ttl;
     }
 
     public function getContentFromCache(string $key, bool $force): string|bool
