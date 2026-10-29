@@ -1199,10 +1199,14 @@ class Service extends Model\AbstractModel
                 } catch (Exception $e) {
                     // another request may have created the same folder since the pathExists() check above (e.g.
                     // parallel uploads of a folder in the admin), continue with that folder then
-                    $folder = self::getConcurrentlyCreatedFolder($e, $type, $folderType, $currentPath);
+                    $folder = self::getConcurrentlyCreatedFolder($e, $folder, $type, $folderType, $currentPath);
                 }
 
                 $lastFolder = $folder;
+            } elseif ($i === count($pathsArray) - 1) {
+                // a concurrent request has created the requested folder itself since the check above, possibly along
+                // with the parent taken over from it in the previous iteration
+                $lastFolder = $type::getByPath($currentPath, ['force' => true]);
             }
         }
 
@@ -1217,6 +1221,7 @@ class Service extends Model\AbstractModel
      */
     private static function getConcurrentlyCreatedFolder(
         Exception $exception,
+        Asset\Folder|DataObject\Folder|Document\Folder $failedFolder,
         string $type,
         string $folderType,
         string $path
@@ -1228,7 +1233,9 @@ class Service extends Model\AbstractModel
                 // the failed save has rolled back its transaction already. Within an outer transaction the folder
                 // of the other request might not be visible, the original exception is thrown then
                 $folder = $type::getByPath($path, ['force' => true]);
-                if ($folder instanceof $folderType) {
+                // the folder must be another one: if it is the failed one, its save was committed and a listener of
+                // the post add event threw the exception
+                if ($folder instanceof $folderType && $folder->getId() !== $failedFolder->getId()) {
                     return $folder;
                 }
 

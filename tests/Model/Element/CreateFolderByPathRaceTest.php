@@ -169,6 +169,60 @@ class CreateFolderByPathRaceTest extends ModelTestCase
     }
 
     /**
+     * The other request creates the whole remaining path, so the requested folder exists already when it is reached
+     * after taking over its parent, and is the one returned
+     */
+    public function testConcurrentRequestCreatesRemainingPath(): void
+    {
+        $root = '/race-' . uniqid();
+        $parentId = Asset\Service::createFolderByPath($root)->getId();
+
+        $concurrentFolder = null;
+        $this->addListener(AssetEvents::PRE_ADD, function (ElementEventInterface $event) use (&$concurrentFolder, $root, $parentId): void {
+            if ($concurrentFolder === null && self::isNewChild($event->getElement(), $parentId, 'a')) {
+                $concurrentFolder = false; // the save of the other request dispatches this event too
+                $concurrentFolder = Asset\Service::createFolderByPath($root . '/a/b');
+            }
+        });
+        $failure = $this->captureAddFailure(AssetEvents::class);
+
+        $folder = Asset\Service::createFolderByPath($root . '/a/b');
+
+        $this->assertInstanceOf(DuplicateFullPathException::class, $failure(), 'the race was not hit');
+        $this->assertInstanceOf(Asset\Folder::class, $concurrentFolder);
+        $this->assertInstanceOf(Asset\Folder::class, $folder);
+        $this->assertSame($root . '/a/b', $folder->getRealFullPath());
+        $this->assertSame($concurrentFolder->getId(), $folder->getId());
+    }
+
+    /**
+     * A duplicate exception thrown by a post add listener, after the folder was committed, is not mistaken for a
+     * concurrently created folder
+     */
+    public function testPostAddDuplicateFailureIsRethrown(): void
+    {
+        $root = '/race-' . uniqid();
+        $parentId = Asset\Service::createFolderByPath($root)->getId();
+
+        $this->addListener(AssetEvents::POST_ADD, function (ElementEventInterface $event) use ($parentId): void {
+            $element = $event->getElement();
+            if ($element->getParentId() === $parentId && $element->getKey() === 'a') {
+                throw new DuplicateFullPathException('duplicate from a listener');
+            }
+        });
+
+        try {
+            Asset\Service::createFolderByPath($root . '/a/b');
+            $this->fail('no exception thrown');
+        } catch (DuplicateFullPathException $e) {
+            $this->assertSame('duplicate from a listener', $e->getMessage());
+        }
+
+        $this->assertInstanceOf(Asset\Folder::class, Asset::getByPath($root . '/a', ['force' => true]));
+        $this->assertNull(Asset::getByPath($root . '/a/b', ['force' => true]));
+    }
+
+    /**
      * The other request has committed the folder after the pathExists() check, before the save looks for duplicates
      */
     private function assertFolderCommittedBeforeSave(string $type): void
@@ -264,7 +318,8 @@ class CreateFolderByPathRaceTest extends ModelTestCase
     }
 
     /**
-     * Inserts a folder row in a separate process and transaction, which is committed after a second
+     * Inserts a folder row in a separate process and transaction, which is committed once another connection inserts
+     * into the table, i.e. the insert of the conflicting folder waits for the uncommitted row
      *
      * @return array{handle: resource, pipes: array<int, resource>, id: string, error: string}
      */
@@ -287,7 +342,18 @@ class CreateFolderByPathRaceTest extends ModelTestCase
             ))->execute([$p['parentId'], 'folder', $p['key'], $p['path'], time(), time()]);
             echo $pdo->lastInsertId(), "\n";
             fflush(STDOUT);
-            sleep(1);
+            // commit only once the conflicting insert runs, at most after the timeout: it waits for the lock on this
+            // row then. SHOW PROCESSLIST lists the threads of the same user without the PROCESS privilege
+            $ownId = $pdo->query('SELECT CONNECTION_ID()')->fetchColumn();
+            $deadline = microtime(true) + $p['timeout'];
+            do {
+                usleep(10000);
+                $inserting = false;
+                foreach ($pdo->query('SHOW FULL PROCESSLIST', PDO::FETCH_ASSOC) as $thread) {
+                    $inserting = $inserting || ($thread['Id'] != $ownId
+                        && preg_match('/^\s*INSERT INTO\s+`?' . $p['table'] . '`?\s*\(/i', (string) $thread['Info']));
+                }
+            } while (!$inserting && microtime(true) < $deadline);
             $pdo->commit();
             PHP;
 
@@ -301,6 +367,7 @@ class CreateFolderByPathRaceTest extends ModelTestCase
             'parentId' => $parentId,
             'path' => $path,
             'key' => $key,
+            'timeout' => 10,
         ]);
 
         $handle = proc_open([PHP_BINARY, '-r', $script], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, $env);
@@ -308,7 +375,7 @@ class CreateFolderByPathRaceTest extends ModelTestCase
             $this->fail('could not start the concurrent insert');
         }
 
-        // wait until the row is inserted (and locked), the transaction is committed a second later
+        // wait until the row is inserted (and locked), the transaction is committed once the conflicting insert runs
         $id = trim((string) fgets($pipes[1]));
         $error = $id === '' ? (string) stream_get_contents($pipes[2]) : '';
 
