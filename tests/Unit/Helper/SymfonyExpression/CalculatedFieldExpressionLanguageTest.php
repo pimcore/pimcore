@@ -14,9 +14,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Helper\SymfonyExpression;
 
+use Carbon\Carbon;
+use DateTime;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Helper\SymfonyExpression\CalculatedFieldExpressionLanguage;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
+use Pimcore\Model\DataObject\Data\ImageGallery;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 /**
@@ -24,21 +28,20 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
  */
 final class CalculatedFieldExpressionLanguageTest extends TestCase
 {
-    public function testAllowsGetPrefixedMethodCalls(): void
+    public function testAllowsGetPrefixedMethodCallsOnDataValueObjects(): void
     {
         $language = new CalculatedFieldExpressionLanguage();
-        $fixture = new ExpressionLanguageTestFixture();
+        $data = new CalculatedValue('myField');
 
-        $this->assertSame(42, $language->evaluate('obj.getId()', ['obj' => $fixture]));
+        $this->assertSame('myField', $language->evaluate('data.getFieldname()', ['data' => $data]));
     }
 
     public function testAllowsIsAndHasPrefixedMethodCalls(): void
     {
         $language = new CalculatedFieldExpressionLanguage();
-        $fixture = new ExpressionLanguageTestFixture();
 
-        $this->assertTrue($language->evaluate('obj.isActive()', ['obj' => $fixture]));
-        $this->assertTrue($language->evaluate('obj.hasChildren()', ['obj' => $fixture]));
+        $this->assertTrue($language->evaluate('date.isLeapYear()', ['date' => Carbon::create(2024)]));
+        $this->assertFalse($language->evaluate('gallery.hasValidImages()', ['gallery' => new ImageGallery([])]));
     }
 
     public function testExistingCalculatorDataGetterExpressionStillWorks(): void
@@ -50,6 +53,13 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         $data->setCalculatorData('expression-arg');
 
         $this->assertSame('expression-arg', $language->evaluate('data.getCalculatorData()', ['data' => $data]));
+    }
+
+    public function testAllowsNullSafeMethodCallChains(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->assertNull($language->evaluate('date?.getTimestamp()', ['date' => null]));
     }
 
     /**
@@ -71,29 +81,38 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         $language = new CalculatedFieldExpressionLanguage();
 
         $this->expectException(SyntaxError::class);
-        $language->evaluate($expression, ['obj' => new ExpressionLanguageTestFixture()]);
+        $language->evaluate($expression, ['obj' => new CalculatedValue('myField')]);
     }
 
     /**
+     * Getter-named methods that hand out infrastructure, read arbitrary properties or methods
+     * by name, or pass their arguments into SQL.
+     *
      * @return iterable<string, array{string}>
      */
-    public static function infrastructureAccessorMethodCallsProvider(): iterable
+    public static function forbiddenGetterMethodCallsProvider(): iterable
     {
         yield 'getDao' => ['obj.getDao()'];
         yield 'GETDAO' => ['obj.GETDAO()'];
         yield 'getResource' => ['obj.getResource()'];
         yield 'GetResource' => ['obj.GetResource()'];
+        yield 'getObjectVar' => ['obj.getObjectVar("dao")'];
+        yield 'getObjectVars' => ['obj.getObjectVars()'];
+        yield 'getValueForFieldName' => ['obj.getValueForFieldName("dao")'];
+        yield 'getValueFromParent' => ['obj.getValueFromParent("List")'];
+        yield 'getRelationData' => ['obj.getRelationData("field", true, "1")'];
+        yield 'hasSiblings' => ['obj.hasSiblings(["object"])'];
     }
 
     /**
-     * @dataProvider infrastructureAccessorMethodCallsProvider
+     * @dataProvider forbiddenGetterMethodCallsProvider
      */
-    public function testRejectsInfrastructureAccessorMethodCallsCaseInsensitively(string $expression): void
+    public function testRejectsForbiddenGetterMethodCallsCaseInsensitively(string $expression): void
     {
         $language = new CalculatedFieldExpressionLanguage();
 
         $this->expectException(SyntaxError::class);
-        $language->evaluate($expression, ['obj' => new ExpressionLanguageTestFixture()]);
+        $language->evaluate($expression, ['obj' => new CalculatedValue('myField')]);
     }
 
     public function testRejectsNonGetterMethodCallsNestedInsideAnExpression(): void
@@ -103,7 +122,45 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         $language = new CalculatedFieldExpressionLanguage();
 
         $this->expectException(SyntaxError::class);
-        $language->evaluate('obj.isActive() ? obj.save() : null', ['obj' => new ExpressionLanguageTestFixture()]);
+        $language->evaluate('obj.getFieldname() ? obj.save() : null', ['obj' => new CalculatedValue('myField')]);
+    }
+
+    public function testRejectsPropertyAccess(): void
+    {
+        // property access reaches public properties such as AbstractDao::$db without any method call
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->expectException(SyntaxError::class);
+        $language->evaluate('obj.db', ['obj' => new ExpressionLanguageTestFixture()]);
+    }
+
+    public function testRejectsMethodCallsOnReceiversOutsideTheAllowList(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->expectException(SyntaxError::class);
+        $this->expectExceptionMessage('not allowed');
+        $language->evaluate('obj.getId()', ['obj' => new ExpressionLanguageTestFixture()]);
+    }
+
+    public function testRejectsStaticMethodCallsOnAllowedReceivers(): void
+    {
+        // static methods are callable on an instance in PHP (e.g. DataObject::getList()),
+        // DateTime::getLastErrors() is a static getter on an allowed receiver type
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->expectException(SyntaxError::class);
+        $this->expectExceptionMessage('not allowed');
+        $language->evaluate('date.getLastErrors()', ['date' => new DateTime()]);
+    }
+
+    public function testCompilingIsNotSupported(): void
+    {
+        // compiled expressions would bypass the runtime receiver checks
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->expectException(LogicException::class);
+        $language->compile('data.getFieldname()', ['data']);
     }
 
     public function testStillRejectsConstantFunction(): void
@@ -117,18 +174,10 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
 
 final class ExpressionLanguageTestFixture
 {
+    public string $db = 'connection';
+
     public function getId(): int
     {
         return 42;
-    }
-
-    public function isActive(): bool
-    {
-        return true;
-    }
-
-    public function hasChildren(): bool
-    {
-        return true;
     }
 }

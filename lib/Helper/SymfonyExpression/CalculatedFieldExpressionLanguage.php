@@ -25,13 +25,6 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 class CalculatedFieldExpressionLanguage extends ExpressionLanguage
 {
     /**
-     * Method names that are never allowed, even though they match the getter naming
-     * convention below: they expose infrastructure (e.g. the DBAL connection) rather
-     * than object data.
-     */
-    private const FORBIDDEN_METHODS = ['getdao', 'getresource'];
-
-    /**
      * @param iterable<ExpressionFunctionProviderInterface> $providers
      */
     public function __construct(iterable $providers = [])
@@ -51,44 +44,46 @@ class CalculatedFieldExpressionLanguage extends ExpressionLanguage
     }
 
     /**
-     * Only plain read-only accessors (get-, is- or has-prefixed) may be called on the object
-     * graph exposed to calculated-value expressions, and never the ones that hand out
-     * infrastructure objects (e.g. getDao()). This keeps the documented `object.getXxx()` /
-     * `data.getXxx()` usage working while preventing arbitrary method invocation
-     * (saving/deleting objects) and reaching the database connection through the Dao layer.
+     * Calculated value expressions may only read data of the object graph: property access is
+     * rejected, and every method call is checked against CalculatedFieldMethodCallPolicy - the
+     * method name here, the receiver when the expression is evaluated. This keeps the documented
+     * `object.getXxx()` / `data.getXxx()` usage working while preventing arbitrary method
+     * invocation, SQL built from expression input and reaching the database connection.
      */
     public function parse(Expression|string $expression, array $names, int $flags = 0): ParsedExpression
     {
         $parsedExpression = parent::parse($expression, $names, $flags);
-        $this->assertNoDisallowedMethodCalls($parsedExpression->getNodes());
 
-        return $parsedExpression;
+        return new ParsedExpression((string) $expression, $this->sandbox($parsedExpression->getNodes()));
     }
 
-    private function assertNoDisallowedMethodCalls(Node $node): void
+    private function sandbox(Node $node): Node
     {
-        if ($node instanceof GetAttrNode && GetAttrNode::METHOD_CALL === $node->attributes['type']) {
-            $attributeNode = $node->nodes['attribute'];
-            $method = $attributeNode instanceof ConstantNode ? $attributeNode->attributes['value'] : null;
-
-            if (!is_string($method) || !$this->isAllowedMethodName($method)) {
-                throw new SyntaxError(sprintf('Method call `%s` is not allowed in calculated value expressions', is_string($method) ? $method : '?'));
-            }
-        }
-
-        foreach ($node->nodes as $childNode) {
+        foreach ($node->nodes as $key => $childNode) {
             if ($childNode instanceof Node) {
-                $this->assertNoDisallowedMethodCalls($childNode);
+                $node->nodes[$key] = $this->sandbox($childNode);
             }
         }
-    }
 
-    private function isAllowedMethodName(string $method): bool
-    {
-        if (in_array(strtolower($method), self::FORBIDDEN_METHODS, true)) {
-            return false;
+        if (!$node instanceof GetAttrNode || $node instanceof CalculatedFieldMethodCallNode) {
+            return $node;
         }
 
-        return 1 === preg_match('/^(get|is|has)[A-Z0-9]/', $method);
+        if (GetAttrNode::PROPERTY_CALL === $node->attributes['type']) {
+            throw new SyntaxError('Property access is not allowed in calculated value expressions');
+        }
+
+        if (GetAttrNode::METHOD_CALL !== $node->attributes['type']) {
+            return $node;
+        }
+
+        $attributeNode = $node->nodes['attribute'];
+        $method = $attributeNode instanceof ConstantNode ? $attributeNode->attributes['value'] : null;
+
+        if (!is_string($method) || !CalculatedFieldMethodCallPolicy::isAllowedMethodName($method)) {
+            throw new SyntaxError(sprintf('Method call `%s` is not allowed in calculated value expressions', is_string($method) ? $method : '?'));
+        }
+
+        return CalculatedFieldMethodCallNode::fromGetAttrNode($node);
     }
 }
