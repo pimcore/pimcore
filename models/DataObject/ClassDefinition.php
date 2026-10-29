@@ -1190,16 +1190,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         $this->validateName($this->getName());
-
-        // `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
-        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*\z/', $this->getId())) {
-            throw new Exception(sprintf(
-                'Invalid ID `%s` for class definition %s',
-                $this->getId(),
-                $this->getName()
-            ));
-        }
-
+        $this->validateId((string) $this->getId());
         $this->validateInheritanceProperties();
 
         $isUpdate = $this->exists();
@@ -1251,8 +1242,41 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     /**
      * @throws Exception
+     */
+    private function validateId(string $id): void
+    {
+        // `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*\z/', $id)) {
+            throw new Exception(sprintf(
+                'Invalid ID `%s` for class definition %s',
+                $id,
+                $this->getName()
+            ));
+        }
+    }
+
+    /**
+     * Name, ID, field names and inheritance properties are emitted verbatim into the generated
+     * class files, so they are validated here as well and not only in saveClassInternal():
+     * generateClassFiles() can be called directly without going through save().
      *
-     * @internal
+     * @throws Exception
+     */
+    private function validateClassFileGenerationInput(): void
+    {
+        foreach ($this->getFieldDefinitions() as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+        }
+
+        $this->validateName((string) $this->getName());
+        $this->validateId((string) $this->getId());
+        $this->validateInheritanceProperties();
+    }
+
+    /**
+     * @throws Exception
      */
     private function validateInheritanceProperties(): void
     {
@@ -1275,7 +1299,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         bool $generateDefinitionFile = true,
         bool $dumpPHPClasses = true
     ): void {
-        $this->validateInheritanceProperties();
+        $this->validateClassFileGenerationInput();
 
         if ($dumpPHPClasses) {
             Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);

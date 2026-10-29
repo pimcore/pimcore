@@ -256,6 +256,71 @@ class ClassDefinitionTest extends ModelTestCase
     }
 
     /**
+     * The class ID and name are emitted verbatim into the generated class files as well (e.g.
+     * `protected $classId = "<id>";`), so generateClassFiles() must apply the same name/ID and
+     * field name checks as save() - not only the inheritance property checks.
+     *
+     * @dataProvider invalidClassFileGenerationInputProvider
+     */
+    public function testGenerateClassFilesRejectsInvalidClassDefinition(
+        string $name,
+        string $id,
+        ?string $fieldName,
+        string $expectedMessage
+    ): void {
+        $class = new ClassDefinition();
+        $class->setName($name);
+        $class->setId($id);
+
+        if ($fieldName !== null) {
+            $input = new Input();
+            $input->setName($fieldName);
+            $class->setFieldDefinitions([$fieldName => $input]);
+        }
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $class->generateClassFiles(false);
+    }
+
+    public static function invalidClassFileGenerationInputProvider(): array
+    {
+        return [
+            'id breaking out of the generated string literal' => [
+                'GenerateClassFilesInvalidIdTest',
+                'x"; } system("id"); class Y { //',
+                null,
+                'Invalid ID',
+            ],
+            'id with trailing newline' => [
+                'GenerateClassFilesInvalidIdTest',
+                "x\n",
+                null,
+                'Invalid ID',
+            ],
+            'invalid class name' => [
+                'Foo extends Bar {} class Baz',
+                'GenerateClassFilesInvalidNameTest',
+                null,
+                'Invalid name for class definition',
+            ],
+            'reserved class name' => [
+                'var',
+                'GenerateClassFilesReservedNameTest',
+                null,
+                'reserved word',
+            ],
+            'forbidden field name' => [
+                'GenerateClassFilesForbiddenFieldTest',
+                'GenerateClassFilesForbiddenFieldTest',
+                'dao',
+                'Forbidden name used for field definition',
+            ],
+        ];
+    }
+
+    /**
      * Negative control: generateClassFiles() must keep working for a class with a legitimate
      * (or empty) parentClass once the validation above is in place.
      */
