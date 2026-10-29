@@ -222,8 +222,8 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             `groupId` INT(11) UNSIGNED NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `values` LONGTEXT NOT NULL,
-            `checksum` VARCHAR(64) NULL,
-            `migratedAt` BIGINT(20) UNSIGNED NULL,
+            `checksum` CHAR(40) NULL,
+            `migratedAt` INT UNSIGNED NULL,
             PRIMARY KEY (`id`, `fieldname`, `groupId`),
             CONSTRAINT `'.self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
             CONSTRAINT `'.self::getForeignKeyName($table, 'groupId').'` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE

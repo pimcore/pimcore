@@ -67,6 +67,11 @@ class EngineTest extends ModelTestCase
     private const SECOND_BRICK_KEY = 'csEngineSecondBrick';
 
     /**
+     * @see self::columnTypesOf()
+     */
+    private const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
+
+    /**
      * @var array<string, EngineInterface>|null
      */
     private ?array $registeredEngines = null;
@@ -288,6 +293,20 @@ class EngineTest extends ModelTestCase
         $this->assertSame(
             ['classificationstore_groups' => 'CASCADE', 'objects' => 'CASCADE'],
             $this->foreignKeysOf($table)
+        );
+
+        // checksum and migratedAt belong to the drain and are written by nothing in this release
+        $this->assertSame(
+            [
+                'id' => 'int unsigned',
+                'fieldname' => 'varchar(70)',
+                'groupId' => 'int unsigned',
+                'collectionId' => 'bigint',
+                'values' => 'longtext',
+                'checksum' => 'char(40)',
+                'migratedAt' => 'int unsigned',
+            ],
+            $this->columnTypesOf($table)
         );
 
         $class->save();
@@ -524,6 +543,35 @@ class EngineTest extends ModelTestCase
             . ' ORDER BY ORDINAL_POSITION',
             [$table]
         );
+    }
+
+    /**
+     * The integer display width is dropped: MariaDB reports `int(11) unsigned` where MySQL 8.0.19
+     * and later report `int unsigned`, and the width says nothing about what the column holds.
+     *
+     * @return array<string, string> column name => declared type, in their declared order
+     */
+    private function columnTypesOf(string $table): array
+    {
+        $rows = Db::get()->fetchAllAssociative(
+            'SELECT COLUMN_NAME AS name, DATA_TYPE AS dataType, COLUMN_TYPE AS columnType'
+            . ' FROM information_schema.COLUMNS'
+            . ' WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION',
+            [$table]
+        );
+
+        $columns = [];
+        foreach ($rows as $row) {
+            $type = (string) $row['columnType'];
+
+            if (in_array((string) $row['dataType'], self::INTEGER_TYPES, true)) {
+                $type = (string) preg_replace('/\(\d+\)/', '', $type);
+            }
+
+            $columns[(string) $row['name']] = $type;
+        }
+
+        return $columns;
     }
 
     /**

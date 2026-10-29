@@ -253,6 +253,8 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
         $this->startMeasurement();
         $store->save();
 
+        codecept_debug('[document] save without dirty fields: ' . $this->countStatements() . ' statements');
+
         $this->assertSame(
             0,
             $this->countStatements(),
@@ -273,6 +275,11 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
             DataObject::enableDirtyDetection();
         }
 
+        codecept_debug(
+            '[document] unchanged save without dirty detection: ' . $this->countReadStatements()
+            . ' reads, ' . $this->countWriteStatements() . ' writes'
+        );
+
         $this->assertGreaterThan(0, $this->countReadStatements(), 'the diff reads the stored documents back');
         $this->assertSame(0, $this->countWriteStatements(), 'an unchanged store writes nothing');
     }
@@ -291,6 +298,11 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
 
         $this->startMeasurement();
         $store->save();
+
+        codecept_debug(
+            '[document] one changed value of ' . (self::BULK_KEY_COUNT * count(self::BULK_LANGUAGES))
+            . ': ' . $this->countWriteStatements() . ' writes, budget ' . self::WRITE_STATEMENT_BUDGET
+        );
 
         $this->assertLessThan(
             self::WRITE_STATEMENT_BUDGET,

@@ -298,6 +298,12 @@ default-language fallback and inheritance are resolved in PHP at read time and d
 Deleting a group configuration destroys the stored values of that group on either engine, and deleting an object
 removes its values on either engine.
 
+There is one deliberate exception. `getGroupCollectionMappings()` lists, on an EAV store, every group holding a
+stored value - mapped to `null` when it has no collection - while on a document store it lists only the groups that
+have one. `getGroupCollectionMapping($groupId)` answers `null` either way. A `null` entry is not recordable on the
+document engine: an object's mappings and its inheritable parent's are merged as an array union, so a `null` on the
+child would shadow the parent's collection. Use `getActiveGroups()` to ask which groups hold values.
+
 #### What the document engine does and does not do
 
 * A save writes only the groups whose document changed. An unchanged save writes nothing, and changing a value in
