@@ -1859,6 +1859,23 @@ class Service extends Model\AbstractModel
         }
     }
 
+    /**
+     * Runs the callable with the inheritance of properties switched on or off and restores the previous setting afterwards.
+     *
+     * @param array<int|string, mixed> $fnArgs
+     */
+    public static function useInheritedProperties(bool $inheritProperties, callable $fn, array $fnArgs = []): mixed
+    {
+        $backup = AbstractElement::getGetInheritedProperties();
+        AbstractElement::setGetInheritedProperties($inheritProperties);
+
+        try {
+            return $fn(...$fnArgs);
+        } finally {
+            AbstractElement::setGetInheritedProperties($backup);
+        }
+    }
+
     private static function getListingFrom(PaginateListingInterface $listing): ?string
     {
         return match(true) {
