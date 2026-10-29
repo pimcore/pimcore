@@ -17,12 +17,14 @@ use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\StoreConfigEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\StoreConfig\Dao getDao()
  */
 final class StoreConfig extends Model\AbstractModel
 {
+    use IdentifierTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 
     protected ?int $id = null;
@@ -56,6 +58,18 @@ final class StoreConfig extends Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->getByName($name);
+
+            return $config;
+        } catch (Model\Exception\NotFoundException $e) {
+            return null;
+        }
+    }
+
+    public static function getByIdentifier(string $identifier): ?StoreConfig
+    {
+        try {
+            $config = new self();
+            $config->getDao()->getByIdentifier($identifier);
 
             return $config;
         } catch (Model\Exception\NotFoundException $e) {
@@ -117,9 +131,16 @@ final class StoreConfig extends Model\AbstractModel
 
     /**
      * Saves the store config
+     *
+     * @throws Model\Exception\InvalidConfigException
      */
     public function save(): void
     {
+        if ($this->getId() === null) {
+            $this->generateIdentifier();
+        }
+        $this->getDao()->assertIdentifierIsUnique();
+
         $isUpdate = false;
 
         if ($this->getId()) {

@@ -67,6 +67,41 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByIdentifier(string $identifier): void
+    {
+        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_STORES . ' WHERE identifier = ?', [$identifier]);
+
+        if ($data) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException(sprintf('Classification store config with identifier "%s" does not exist.', $identifier));
+        }
+    }
+
+    /**
+     * @throws Model\Exception\InvalidConfigException
+     */
+    public function assertIdentifierIsUnique(): void
+    {
+        $identifier = $this->model->getIdentifier();
+        if ($identifier === null) {
+            return;
+        }
+
+        $used = $this->db->fetchOne(
+            'SELECT id FROM ' . self::TABLE_NAME_STORES . ' WHERE identifier = ? AND id != ?',
+            [$identifier, $this->model->getId() ?? 0]
+        );
+
+        if ($used !== false) {
+            throw new Model\Exception\InvalidConfigException(sprintf('The identifier "%s" is already in use.', $identifier));
+        }
+    }
+
+    /**
      * @throws Exception
      */
     public function save(): void

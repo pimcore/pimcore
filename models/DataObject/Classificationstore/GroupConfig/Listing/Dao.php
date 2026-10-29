@@ -35,7 +35,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $configList = [];
         foreach ($configsData as $configData) {
             $groupConfig = new DataObject\Classificationstore\GroupConfig();
-            $groupConfig->setValues($configData);
+            $groupConfig->setValues($configData, true);
             $configList[] = $groupConfig;
         }
 
