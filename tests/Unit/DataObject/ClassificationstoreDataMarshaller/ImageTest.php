@@ -48,5 +48,30 @@ class ImageTest extends TestCase
 
         $this->assertNull($marshaller->unmarshal(['value' => '', 'value2' => null]));
         $this->assertNull($marshaller->unmarshal(['value' => 'not-an-id', 'value2' => null]));
+        $this->assertNull($marshaller->unmarshal(['value' => '0', 'value2' => null]));
+    }
+
+    /**
+     * A value that only starts with digits is no id - taking the digits off its front would resolve
+     * an unrelated asset.
+     */
+    public function testAStoredValueWithANumericPrefixUnmarshalsToNull(): void
+    {
+        $marshaller = new ImageMarshaller();
+
+        $this->assertNull($marshaller->unmarshal(['value' => '42junk', 'value2' => null]));
+        $this->assertNull($marshaller->unmarshal(['value' => '42.7', 'value2' => null]));
+        $this->assertNull($marshaller->unmarshal(['value' => '42 ', 'value2' => null]));
+        $this->assertNull($marshaller->unmarshal(['value' => '-42', 'value2' => null]));
+    }
+
+    public function testAStoredAssetIdUnmarshalsToAnAssetReference(): void
+    {
+        $marshaller = new ImageMarshaller();
+
+        $this->assertSame(
+            ['type' => 'asset', 'id' => 42],
+            $marshaller->unmarshal(['value' => '42', 'value2' => null])
+        );
     }
 }

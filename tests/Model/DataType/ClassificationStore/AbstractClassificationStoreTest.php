@@ -90,7 +90,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         }
 
         $keyNames = ['date', 'datetime', 'encryptedField', 'input', 'rgbaColor', 'select', 'time', 'numeric', 'booleanSelect', 'user', 'textarea', 'wysiwyg', 'checkbox', 'slider',
-            'table', 'country', 'language', 'multiselect', 'countrymultiselect', 'languagemultiselect', 'quantityValue', 'inputQuantityValue', 'image', ];
+            'table', 'country', 'language', 'multiselect', 'countrymultiselect', 'languagemultiselect', 'quantityValue', 'inputQuantityValue', 'image', 'encryptedImage', ];
 
         self::$configCount = count($keyNames);
 
@@ -139,6 +139,15 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                         $definition = new ClassDefinition\Data\EncryptedField();
                         $definition->setDelegateDatatype('input');
                         $definition->setDelegate($delegate);
+
+                        break;
+                    case 'encryptedImage':
+                        // the key name is only a label, the field type of the key is the encrypted field
+                        $delegate = new ClassDefinition\Data\Image();
+                        $definition = new ClassDefinition\Data\EncryptedField();
+                        $definition->setDelegateDatatype('image');
+                        $definition->setDelegate($delegate);
+                        $keyConfig->setType('encryptedField');
 
                         break;
                     case 'image':

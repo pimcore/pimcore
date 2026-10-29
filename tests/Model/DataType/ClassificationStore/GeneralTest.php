@@ -19,6 +19,7 @@ use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Db;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Image as ImageFieldDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Data\EncryptedField;
@@ -365,6 +366,40 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
+    /**
+     * An image delegate stores the asset id in the value column on its own and leaves the second
+     * column empty, so there is nothing to encrypt there.
+     */
+    public function testEncryptedImage(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $o = $this->createCsObject();
+        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
+        $csField = $o->getCsstore();
+
+        $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
+        $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('encryptedImage', $store->getId());
+
+        $originalValue = TestHelper::createImageAsset();
+        $csField->setLocalizedKeyValue(
+            $groupConfig->getId(),
+            $keyConfig->getId(),
+            new EncryptedField(new ImageFieldDefinition(), $originalValue)
+        );
+        $o->save();
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
+
+        $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertInstanceOf(EncryptedField::class, $newValue);
+        $this->assertInstanceOf(Image::class, $newValue->getPlain());
+        $this->assertSame($originalValue->getId(), $newValue->getPlain()->getId());
+
+        $rows = $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId());
+        $this->assertCount(1, $rows);
+        $this->assertNull($rows[0]['value2'], 'the second column stays empty instead of holding an encrypted null');
+        $this->assertNotSame((string) $originalValue->getId(), $rows[0]['value'], 'the asset id is stored encrypted');
+    }
+
     public function testImage(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
@@ -406,8 +441,9 @@ class GeneralTest extends AbstractClassificationStoreTest
 
     /**
      * A stored value that does not resolve to an image asset - the empty string, a string that is
-     * no id at all (what a save before the marshaller existed left behind), the id of a deleted
-     * asset and the id of an asset that is not an image - reads back as null.
+     * no id at all (what a save before the marshaller existed left behind), a string that only
+     * starts with the id of an existing image, the id of a deleted asset and the id of an asset
+     * that is not an image - reads back as null.
      */
     public function testImageWithAStoredValueThatDoesNotResolve(): void
     {
@@ -419,7 +455,8 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('image', $store->getId());
 
-        $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), TestHelper::createImageAsset());
+        $existingImage = TestHelper::createImageAsset();
+        $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $existingImage);
         $o->save();
 
         $deletedAsset = TestHelper::createImageAsset();
@@ -427,7 +464,14 @@ class GeneralTest extends AbstractClassificationStoreTest
         $deletedAsset->delete();
 
         $notAnImage = TestHelper::createDocumentAsset();
-        $storedValues = ['', 'not-an-id', (string) $deletedAssetId, (string) $notAnImage->getId()];
+        $storedValues = [
+            '',
+            'not-an-id',
+            $existingImage->getId() . 'junk',
+            $existingImage->getId() . '.7',
+            (string) $deletedAssetId,
+            (string) $notAnImage->getId(),
+        ];
 
         foreach ($storedValues as $storedValue) {
             Db::get()->update(

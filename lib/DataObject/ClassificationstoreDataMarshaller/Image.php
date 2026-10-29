@@ -31,11 +31,14 @@ class Image implements MarshallerInterface
 
     public function unmarshal(mixed $value, array $params = []): mixed
     {
-        // the value column is LONGTEXT, so an id reads back as a string, and anything else as not an id
-        if (is_array($value) && (int) ($value['value'] ?? 0) > 0) {
+        // the value column is LONGTEXT, so an id reads back as a string; anything that is not a
+        // string of digits is no id at all, and a cast of it would resolve an unrelated asset
+        $id = is_array($value) ? ($value['value'] ?? null) : null;
+
+        if ((is_int($id) || (is_string($id) && ctype_digit($id))) && (int) $id > 0) {
             return [
                 'type' => 'asset',
-                'id' => (int) $value['value'],
+                'id' => (int) $id,
             ];
         }
 
