@@ -22,6 +22,8 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
 {
+    use DataObjectFieldAccessTrait;
+
     private string $property;
 
     private \Symfony\Component\PropertyAccess\PropertyAccessor|PropertyAccessorInterface $propertyAccessor;
@@ -36,7 +38,7 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
     {
         $this->checkIfSubjectIsValid($subject);
 
-        $marking = (array) $this->propertyAccessor->getValue($subject, $this->property);
+        $marking = (array) $this->getFieldValue($subject, $this->property, $this->propertyAccessor);
 
         $_marking = [];
         foreach ($marking as $place) {
@@ -51,7 +53,7 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
         $subject = $this->checkIfSubjectIsValid($subject);
 
         $places = array_keys($marking->getPlaces());
-        $this->propertyAccessor->setValue($subject, $this->property, $places);
+        $this->setFieldValue($subject, $this->property, $places, $this->propertyAccessor);
     }
 
     /**
