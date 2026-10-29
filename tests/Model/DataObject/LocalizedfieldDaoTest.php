@@ -202,7 +202,15 @@ class LocalizedfieldDaoTest extends ModelTestCase
             $object->setMoment(Carbon::create(2026, 3, 4, 12), 'en');
             $object->save();
 
-            $row = $db->fetchAssociative('SELECT `title`, `day`, `moment` FROM ' . $db->quoteIdentifier($view) . ' WHERE `ooo_id` = ?', [$object->getId()]);
+            // save() materializes the en values into the de query row; clear them so that
+            // the view's own fallback expression has to supply the values
+            $db->executeStatement(
+                'UPDATE ' . $db->quoteIdentifier('object_localized_query_' . $class->getId() . '_de')
+                . ' SET `title` = \'\', `day` = NULL, `moment` = NULL WHERE `ooo_id` = ?',
+                [$object->getId()]
+            );
+
+            $row =$db->fetchAssociative('SELECT `title`, `day`, `moment` FROM ' . $db->quoteIdentifier($view) . ' WHERE `ooo_id` = ?', [$object->getId()]);
 
             $this->assertIsArray($row, 'the de view must return the object');
             $this->assertSame('english title', $row['title']);
