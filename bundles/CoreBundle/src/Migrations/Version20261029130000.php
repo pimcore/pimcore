@@ -33,6 +33,12 @@ use Pimcore\Cache\RuntimeCache;
  * `subgroup` is a member of the enum although no sub-group entity exists yet, so that labels
  * imported for sub-groups are stored rather than refused.
  *
+ * `language` collates as utf8mb4_bin so that SQL compares it exactly as PHP does. Under the table's
+ * case-insensitive default collation a row written for `DE` would answer a lookup for `de` and then
+ * be held in {@see \Pimcore\Model\DataObject\Classificationstore\LabelResolver} under `DE`, where
+ * the `de` lookup never reads it - and the two rows would additionally collide under the primary
+ * key.
+ *
  * `language` is 16 characters wide, which holds the realistic BCP 47 forms - `en_US_POSIX` and
  * `zh_Hant_TW` among them - rather than the 10 the specification sketched; the stored bytes of the
  * ordinary two and five character codes are unchanged.
@@ -58,7 +64,7 @@ final class Version20261029130000 extends AbstractMigration
             'CREATE TABLE `classificationstore_labels` ('
             . '`entityType` ENUM(\'store\',\'collection\',\'group\',\'subgroup\',\'key\') NOT NULL, '
             . '`entityId` BIGINT(20) NOT NULL, '
-            . '`language` VARCHAR(16) NOT NULL, '
+            . '`language` VARCHAR(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL, '
             . '`title` VARCHAR(255) NULL DEFAULT NULL, '
             . '`description` TEXT NULL, '
             . 'PRIMARY KEY (`entityType`, `entityId`, `language`)'

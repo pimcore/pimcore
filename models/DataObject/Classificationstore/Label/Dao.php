@@ -68,6 +68,10 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Hydrates the model from a row of the label table, for this DAO and for the listing alike.
      *
+     * `title` and `description` are set directly rather than left to assignVariablesToModel(),
+     * which skips a NULL: reloading an entity whose stored translation was cleared would otherwise
+     * leave the previously loaded text in memory, and the next save would write it back.
+     *
      * @param array<string, mixed> $row
      */
     public function assignRowToModel(array $row): void
@@ -76,9 +80,10 @@ class Dao extends Model\Dao\AbstractDao
             'entityType' => LabelEntityType::from((string) $row['entityType']),
             'entityId' => (int) $row['entityId'],
             'language' => (string) $row['language'],
-            'title' => $row['title'] === null ? null : (string) $row['title'],
-            'description' => $row['description'] === null ? null : (string) $row['description'],
         ]);
+
+        $this->model->setTitle(($row['title'] ?? null) === null ? null : (string) $row['title']);
+        $this->model->setDescription(($row['description'] ?? null) === null ? null : (string) $row['description']);
     }
 
     public function save(): void

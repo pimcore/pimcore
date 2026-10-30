@@ -51,6 +51,8 @@ final class LabelTest extends ModelTestCase
 
     private const LANGUAGE_DE = 'de';
 
+    private const LANGUAGE_DE_UPPER = 'DE';
+
     private const LANGUAGE_EN = 'en';
 
     private const LANGUAGE_POSIX = 'en_US_POSIX';
@@ -94,6 +96,11 @@ final class LabelTest extends ModelTestCase
 
         $this->assertSame('varchar(16)', strtolower((string) $columns['language']['COLUMN_TYPE']));
         $this->assertSame('NO', $columns['language']['IS_NULLABLE']);
+        $this->assertSame(
+            'utf8mb4_bin',
+            strtolower((string) $columns['language']['COLLATION_NAME']),
+            'the resolver keys its held rows by the language string, so SQL has to compare it exactly too'
+        );
 
         $this->assertSame('varchar(255)', strtolower((string) $columns['title']['COLUMN_TYPE']));
         $this->assertSame('YES', $columns['title']['IS_NULLABLE']);
@@ -218,6 +225,58 @@ final class LabelTest extends ModelTestCase
         $this->assertNotNull($label, 'a truncated language key would not be found under the real locale');
         $this->assertSame(self::LANGUAGE_POSIX, $label->getLanguage());
         $this->assertSame(self::TITLE_DE, $label->getTitle());
+    }
+
+    /**
+     * The language is the part of the key SQL used to compare case-insensitively while PHP - the
+     * resolver's held rows, the DAO's lookups - compares it exactly. Two casings are two labels.
+     */
+    public function testTwoDifferentlyCasedLanguagesAreTwoLabels(): void
+    {
+        $this->writeLabel(LabelEntityType::Key, 4714, self::LANGUAGE_DE, self::TITLE_DE, null);
+        $this->writeLabel(LabelEntityType::Key, 4714, self::LANGUAGE_DE_UPPER, 'HÖHE', null);
+
+        $this->assertSame(
+            2,
+            $this->countLabels(LabelEntityType::Key, 4714),
+            'the upper cased write must add a row rather than land on the lower cased one'
+        );
+        $this->assertSame(
+            self::TITLE_DE,
+            Label::getByEntity(LabelEntityType::Key, 4714, self::LANGUAGE_DE)?->getTitle()
+        );
+        $this->assertSame(
+            'HÖHE',
+            Label::getByEntity(LabelEntityType::Key, 4714, self::LANGUAGE_DE_UPPER)?->getTitle()
+        );
+    }
+
+    /**
+     * assignVariablesToModel() skips a NULL, so hydrating a cleared column through it would leave
+     * the text a previous load put on the model - and the next save would write it back, undoing
+     * the clearing.
+     */
+    public function testReloadingALabelWhoseTextWasClearedClearsItOnTheModel(): void
+    {
+        $this->writeLabel(LabelEntityType::Key, 4715, self::LANGUAGE_DE, self::TITLE_DE, 'Die Höhe');
+
+        $label = Label::getByEntity(LabelEntityType::Key, 4715, self::LANGUAGE_DE);
+        $this->assertNotNull($label);
+        $this->assertSame(self::TITLE_DE, $label->getTitle());
+
+        $this->writeLabel(LabelEntityType::Key, 4715, self::LANGUAGE_DE, null, null);
+
+        $label->getDao()->getByEntity(LabelEntityType::Key, 4715, self::LANGUAGE_DE);
+
+        $this->assertNull($label->getTitle(), 'a cleared title must not keep the text of the earlier load');
+        $this->assertNull($label->getDescription());
+
+        $label->save();
+
+        $reloaded = Label::getByEntity(LabelEntityType::Key, 4715, self::LANGUAGE_DE);
+        $this->assertNotNull($reloaded);
+        $this->assertNull($reloaded->getTitle(), 'the save must not write the stale text back');
+        $this->assertNull($reloaded->getDescription());
     }
 
     public function testDeletingAnEntityDeletesItsLabelsInEveryLanguage(): void
