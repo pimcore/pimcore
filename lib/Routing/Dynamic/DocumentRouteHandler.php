@@ -108,7 +108,14 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         if (!$site && $document && !$this->requestHelper->isAuthenticatedFrontendRequestByAdmin($context->getRequest())) {
             $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
             if ($siteIdOfDocument) {
-                throw new NotFoundHttpException('The page does not exist on this configured site.');
+                // the pretty url lookup is not scoped to a site, so the document of a site may have shadowed
+                // a main site document with the same pretty url
+                $mainSiteDocId = $this->documentService->getDao()->getDocumentIdByPrettyUrlOutsideSites($context->getPath());
+                $document = $mainSiteDocId ? Document::getById($mainSiteDocId) : null;
+
+                if (!$document) {
+                    throw new NotFoundHttpException('The page does not exist on this configured site.');
+                }
             }
         }
 

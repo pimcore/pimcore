@@ -56,6 +56,39 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * Resolves a pretty URL to a document of the main site, i.e. one that is not located below the
+     * root of any site. Used for requests without a site, where the global pretty URL lookup may
+     * return the document of a site that carries the same pretty URL.
+     */
+    public function getDocumentIdByPrettyUrlOutsideSites(string $path): int
+    {
+        $candidates = $this->db->fetchAllAssociative(
+            'SELECT documents.id, CONCAT(documents.`path`, documents.`key`) AS fullPath FROM documents
+            INNER JOIN documents_page ON documents.id = documents_page.id
+            WHERE documents_page.prettyUrl = :prettyUrl
+            ORDER BY documents.id',
+            ['prettyUrl' => rtrim($path, '/')]
+        );
+
+        if ($candidates === []) {
+            return 0;
+        }
+
+        $siteRootPaths = $this->db->fetchFirstColumn(
+            'SELECT CONCAT(documents.`path`, documents.`key`) FROM sites
+            INNER JOIN documents ON sites.rootId = documents.id'
+        );
+
+        foreach ($candidates as $candidate) {
+            if (!$this->isPathBelowAnyPath((string) $candidate['fullPath'], $siteRootPaths)) {
+                return (int) $candidate['id'];
+            }
+        }
+
+        return 0;
+    }
+
+    /**
      * Returns the root paths of all sites whose root document is located within the given site.
      *
      * @return string[]
