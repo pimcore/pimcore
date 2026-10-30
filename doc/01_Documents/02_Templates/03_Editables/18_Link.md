@@ -69,9 +69,12 @@ class YourBundle extends Bundle
 The strict policy rejects `javascript:`/`vbscript:` paths and most `data:` URIs (`data:image/*` other than
 `data:image/svg+xml` is still allowed, e.g. for a downloadable data-uri image), and rejects
 editor-supplied attribute keys that look like an event handler (`on*`) or aren't shaped like a
-conventional HTML attribute name. It also stops emitting the editable's own bookkeeping data
-(`path`, `linktype`, `text`, `parameters`, `anchor`, `internal*`) as attributes on the `<a>` tag,
-which the permissive default still does for backward compatibility (e.g. `linktype="direct"`).
+conventional HTML attribute name. By default (both the permissive and the strict policy), the editable's own bookkeeping
+data (`path`, `linktype`, `text`, `parameters`, `anchor`, `internal*`, `fullPath`, `direct`) is not emitted as attributes
+on the `<a>` tag, as these are not valid HTML attributes. Until 2026.3.3 the permissive default still rendered them
+(e.g. `linktype="direct"`); a custom policy can restore that with `omitInternalDataAttributes: false`. An installed policy
+replaces the configured one, so on a site with `strict: true` pass the strict flags to it as well, otherwise the strict
+protection is off.
 A `target`/`title`/`class`/`data-*`/`aria-*`/... attribute, or an event handler passed only via the
 template call (e.g. `pimcore_link("x", {"onclick": "track()"})`), is unaffected either way.
 
