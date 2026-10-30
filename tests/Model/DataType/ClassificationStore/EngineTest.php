@@ -20,14 +20,17 @@ use Pimcore\Db;
 use Pimcore\Maintenance\Tasks\CleanupClassificationstoreTablesTask;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
+use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
+use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionProperty;
@@ -61,6 +64,8 @@ class EngineTest extends ModelTestCase
 
     private const NESTED_CLASS_ID = 'CsEngineNested';
 
+    private const COLLECTION_CLASS_ID = 'CsEngineCollection';
+
     private const UNKNOWN_ENGINE = 'nosuchengine';
 
     private const DOCUMENT_ENGINE = 'document';
@@ -68,6 +73,12 @@ class EngineTest extends ModelTestCase
     private const FIRST_BRICK_KEY = 'csEngineFirstBrick';
 
     private const SECOND_BRICK_KEY = 'csEngineSecondBrick';
+
+    private const COLLECTION_KEY = 'csEngineCollection';
+
+    private const NESTED_DOCUMENT_FIELD = 'csNestedDoc';
+
+    private const NESTED_EAV_FIELD = 'csNestedEav';
 
     /**
      * @see self::columnTypesOf()
@@ -105,6 +116,7 @@ class EngineTest extends ModelTestCase
             self::CONFLICT_CLASS_ID,
             self::DOCUMENT_CLASS_ID,
             self::NESTED_CLASS_ID,
+            self::COLLECTION_CLASS_ID,
         ];
 
         foreach ($classIds as $classId) {
@@ -124,6 +136,12 @@ class EngineTest extends ModelTestCase
                     );
                 }
             }
+
+            // and a class carrying a field collection leaves that collection's table behind
+            $db->executeStatement(
+                'DROP TABLE IF EXISTS '
+                . $db->quoteIdentifier('object_collection_' . self::COLLECTION_KEY . '_' . $classId)
+            );
         }
 
         // the groups go before the stores they belong to, which they carry a foreign key on
@@ -140,6 +158,8 @@ class EngineTest extends ModelTestCase
         foreach ([self::FIRST_BRICK_KEY, self::SECOND_BRICK_KEY] as $brickKey) {
             RuntimeCache::getInstance()->offsetUnset('objectbrick_' . $brickKey);
         }
+
+        RuntimeCache::getInstance()->offsetUnset('fieldcollection_' . self::COLLECTION_KEY);
 
         parent::tearDown();
     }
@@ -436,8 +456,8 @@ class EngineTest extends ModelTestCase
 
         $this->registerBrick(
             self::FIRST_BRICK_KEY,
-            $this->storeField('csNestedDoc', $documentStoreId),
-            $this->storeField('csNestedEav', $eavStoreId)
+            $this->storeField(self::NESTED_DOCUMENT_FIELD, $documentStoreId),
+            $this->storeField(self::NESTED_EAV_FIELD, $eavStoreId)
         );
 
         $bricks = new Objectbricks();
@@ -446,8 +466,45 @@ class EngineTest extends ModelTestCase
 
         $this->buildClass(self::NESTED_CLASS_ID, ['bricks' => $bricks])->save();
 
-        $documentTable = self::DOCUMENT_TABLE_PREFIX . self::NESTED_CLASS_ID;
-        $groupsTable = self::GROUPS_TABLE_PREFIX . self::NESTED_CLASS_ID;
+        $this->assertCleanupKeepsTheNestedFields(self::NESTED_CLASS_ID, $documentStoreId, $eavStoreId);
+    }
+
+    /**
+     * The field collection is the other container a classification store may hide in, and it is
+     * reached through a definition of its own in exactly the same way - so cleanup has to look
+     * into it too, and the two containers are pinned by the same assertions.
+     */
+    public function testCleanupKeepsTheValuesOfAFieldDefinedOnlyInsideAFieldCollection(): void
+    {
+        $documentStoreId = $this->createStore(self::DOCUMENT_ENGINE);
+        $eavStoreId = $this->createStore();
+
+        $this->registerFieldCollection(
+            self::COLLECTION_KEY,
+            $this->storeField(self::NESTED_DOCUMENT_FIELD, $documentStoreId),
+            $this->storeField(self::NESTED_EAV_FIELD, $eavStoreId)
+        );
+
+        $collections = new Fieldcollections();
+        $collections->setName('items');
+        $collections->setAllowedTypes([self::COLLECTION_KEY]);
+
+        $this->buildClass(self::COLLECTION_CLASS_ID, ['items' => $collections])->save();
+
+        $this->assertCleanupKeepsTheNestedFields(self::COLLECTION_CLASS_ID, $documentStoreId, $eavStoreId);
+    }
+
+    /**
+     * Writes a value row for a field name the class only carries inside a container, one for a name
+     * that really is gone, and runs the maintenance task over every engine.
+     */
+    private function assertCleanupKeepsTheNestedFields(
+        string $classId,
+        int $documentStoreId,
+        int $eavStoreId
+    ): void {
+        $documentTable = self::DOCUMENT_TABLE_PREFIX . $classId;
+        $groupsTable = self::GROUPS_TABLE_PREFIX . $classId;
 
         $this->assertTrue($this->tableExists($documentTable), 'the nested document field needs its table');
         $this->assertTrue($this->tableExists($groupsTable), 'the nested EAV field needs its table');
@@ -457,7 +514,7 @@ class EngineTest extends ModelTestCase
 
         // 'csRemoved' is the name of a field that really is gone, so that the test also fails when
         // cleanup stops deleting anything at all
-        foreach (['csNestedDoc', 'csRemoved'] as $fieldName) {
+        foreach ([self::NESTED_DOCUMENT_FIELD, 'csRemoved'] as $fieldName) {
             // `values` is a reserved word, which Connection::insert() would leave unquoted
             $db->executeStatement(
                 'INSERT INTO ' . $db->quoteIdentifier($documentTable)
@@ -466,7 +523,7 @@ class EngineTest extends ModelTestCase
             );
         }
 
-        foreach (['csNestedEav', 'csRemoved'] as $fieldName) {
+        foreach ([self::NESTED_EAV_FIELD, 'csRemoved'] as $fieldName) {
             $db->insert($groupsTable, [
                 'id' => $objectId,
                 'fieldname' => $fieldName,
@@ -478,8 +535,8 @@ class EngineTest extends ModelTestCase
             Pimcore::getContainer()->get(EngineResolver::class)
         ))->execute();
 
-        $this->assertSame(['csNestedDoc'], $this->fieldNamesIn($documentTable, $objectId));
-        $this->assertSame(['csNestedEav'], $this->fieldNamesIn($groupsTable, $objectId));
+        $this->assertSame([self::NESTED_DOCUMENT_FIELD], $this->fieldNamesIn($documentTable, $objectId));
+        $this->assertSame([self::NESTED_EAV_FIELD], $this->fieldNamesIn($groupsTable, $objectId));
     }
 
     /**
@@ -594,6 +651,24 @@ class EngineTest extends ModelTestCase
     }
 
     /**
+     * Definition::getByKey() answers from the runtime cache the same way the object brick one does,
+     * so the field collection is built in memory as well.
+     */
+    private function registerFieldCollection(string $key, ClassificationstoreField ...$fieldDefinitions): void
+    {
+        $fieldCollection = new FieldcollectionDefinition();
+        $fieldCollection->setKey($key);
+
+        $byName = [];
+        foreach ($fieldDefinitions as $fieldDefinition) {
+            $byName[$fieldDefinition->getName()] = $fieldDefinition;
+        }
+        $fieldCollection->setFieldDefinitions($byName);
+
+        RuntimeCache::set('fieldcollection_' . $key, $fieldCollection);
+    }
+
+    /**
      * The value tables carry a foreign key on `objects`, which any object row satisfies - the rows
      * written here stand for values, and never for an object of the class under test.
      */
@@ -644,14 +719,21 @@ class EngineTest extends ModelTestCase
     }
 
     /**
+     * The fields go in through the layout, because that is what a saved class is rebuilt from:
+     * a class whose field definitions are only set directly reloads without any of them.
+     *
      * @param array<string, ClassDefinition\Data> $fieldDefinitions
      */
     private function buildClass(string $id, array $fieldDefinitions): ClassDefinition
     {
+        $layout = new Panel();
+        $layout->setName('root');
+        $layout->setChildren(array_values($fieldDefinitions));
+
         $class = new ClassDefinition();
         $class->setId($id);
         $class->setName(lcfirst($id));
-        $class->setFieldDefinitions($fieldDefinitions);
+        $class->setLayoutDefinitions($layout);
 
         return $class;
     }
