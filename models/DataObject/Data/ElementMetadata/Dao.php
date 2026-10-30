@@ -35,12 +35,15 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             'position' => $position ? $position : '0',
             'type' => $type ? $type : 'object', ];
 
+        $emptyColumns = [];
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);
             $value = $this->model->$getter();
 
-            // a column without a value needs no row, the field deleted the previous rows before saving
+            // a column without a value needs no row, but must not keep a previously stored value
             if ($value === null) {
+                $emptyColumns[] = $column;
+
                 continue;
             }
 
@@ -49,6 +52,8 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             $data['data'] = $value;
             Helper::upsert($this->db, $table, $data, parent::UNIQUE_COLUMNS);
         }
+
+        $this->deleteColumnRows($table, $dataTemplate, $emptyColumns);
     }
 
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ElementMetadata

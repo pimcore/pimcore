@@ -106,9 +106,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?ObjectMetadata
     {
-        // columns without a stored row are null, keep their keys in the data
+        // columns without a stored row are null, also on a reloaded instance; keep their keys in the data
         foreach ($this->columns as $column) {
-            $this->data[$column] ??= null;
+            $this->data[$column] = null;
         }
 
         $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);

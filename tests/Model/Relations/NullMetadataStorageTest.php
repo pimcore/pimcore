@@ -181,4 +181,40 @@ class NullMetadataStorageTest extends ModelTestCase
         $loaded = MultipleAssignments::getById($owner->getId(), ['force' => true]);
         $this->assertSame(['meta' => null], $loaded->getMultipleManyToMany()[0]->getData());
     }
+
+    public function testDirectSaveWithNullRemovesPreviouslyStoredValue(): void
+    {
+        $metadata = new ObjectMetadata('multipleManyToManyObject', ['meta'], $this->targets[0]);
+        $metadata->setMeta('some value');
+
+        $owner = $this->createOwner();
+        $owner->setMultipleManyToManyObject([$metadata]);
+        $owner->save();
+        $this->assertCount(1, $this->fetchMetadataRows($owner, 'multipleManyToManyObject'));
+
+        $metadata->setMeta(null);
+        $metadata->save($owner, 'object', '', '0', 1);
+
+        $this->assertCount(0, $this->fetchMetadataRows($owner, 'multipleManyToManyObject'));
+    }
+
+    public function testReloadingSameInstanceResetsClearedColumns(): void
+    {
+        $metadata = new ObjectMetadata('multipleManyToManyObject', ['meta', 'other'], $this->targets[0]);
+        $metadata->setMeta('some value');
+        $metadata->setOther('other value');
+
+        $owner = $this->createOwner();
+        $owner->setMultipleManyToManyObject([$metadata]);
+        $owner->save();
+
+        Db::get()->executeStatement(
+            'DELETE FROM object_metadata_' . $owner->getClassId() . ' WHERE `id` = ? AND `column` = ?',
+            [$owner->getId(), 'meta']
+        );
+
+        $metadata->load($owner, $this->targets[0]->getId(), 'multipleManyToManyObject', 'object', '', '0', 1);
+        $this->assertNull($metadata->getMeta());
+        $this->assertSame('other value', $metadata->getOther());
+    }
 }
