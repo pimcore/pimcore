@@ -14,6 +14,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 
 use Exception;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao as KeyGroupRelationDao;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
 
 /**
@@ -148,6 +149,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->writeAtomically(function (): void {
             $id = $this->model->getId();
             $identifier = $this->model->getIdentifier();
+            $this->assertNoTagIsStrandedByAMove($id);
             $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_GROUPS, $id, $identifier);
 
             $ts = time();
@@ -191,5 +193,61 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insert(self::TABLE_NAME_GROUPS, []);
 
         $this->model->setId((int) $this->db->lastInsertId());
+    }
+
+    /**
+     * The sub group a key assignment names is an entry in the vocabulary of the store the group
+     * belongs to, so a group that moves takes its assignments to a store whose vocabulary knows
+     * nothing of their tags: the tag resolves to nothing, deleting the entry it came from no longer
+     * reaches it, and saving that assignment again is refused. A move is therefore refused for as
+     * long as one of the group's assignments carries a tag - an untagged group moves as before.
+     *
+     * The stored store is read as of now and held until the move commits:
+     * KeyGroupRelation\Dao::resolveSubGroup() takes the same lock on the group row while it resolves
+     * a tag, so a tag on its way in is either seen here or waits for the move and then resolves
+     * against the store the group ends up in. The tags are read the same way, because the row that
+     * carries one may have been committed after the snapshot of an enclosing transaction.
+     *
+     * The group before the relations it carries, which is the order the other two writers of this family
+     * take these tables in as well - see KeyGroupRelation\Dao::resolveSubGroup() and
+     * SubGroupConfig\Dao::lockGroupsBeforeTheEntry().
+     *
+     * A row that carries no store yet is the placeholder create() inserts, which update() fills in.
+     *
+     * @throws Model\Exception\InvalidConfigException
+     */
+    private function assertNoTagIsStrandedByAMove(?int $id): void
+    {
+        if ($id === null) {
+            return;
+        }
+
+        $stored = $this->db->fetchOne(
+            'SELECT `storeId` FROM `' . self::TABLE_NAME_GROUPS . '` WHERE `id` = ? FOR UPDATE',
+            [$id]
+        );
+
+        if ($stored === false || $stored === null || (int) $stored === $this->model->getStoreId()) {
+            return;
+        }
+
+        $tag = $this->db->fetchOne(
+            'SELECT `subGroup` FROM `' . KeyGroupRelationDao::TABLE_NAME_RELATIONS . '`'
+            . ' WHERE `groupId` = ? AND `subGroup` IS NOT NULL LIMIT 1 FOR UPDATE',
+            [$id]
+        );
+
+        if ($tag === false) {
+            return;
+        }
+
+        throw new Model\Exception\InvalidConfigException(sprintf(
+            'The store of group %d cannot be changed from %d to %d while a key assignment of it'
+            . ' carries the sub group "%s".',
+            $id,
+            (int) $stored,
+            $this->model->getStoreId(),
+            (string) $tag
+        ));
     }
 }
