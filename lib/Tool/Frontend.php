@@ -91,7 +91,7 @@ final class Frontend
             foreach ($sites as $site) {
                 $siteMapping[$site->getRootPath()] = $site->getId();
             }
-            Pimcore\Cache::save($siteMapping, $cacheKey, ['system', 'resource'], null, 997);
+            Pimcore\Cache::save($siteMapping, $cacheKey, ['system', 'resource', 'site'], null, 997);
         }
         RuntimeCache::set($cacheKey, $siteMapping);
 
