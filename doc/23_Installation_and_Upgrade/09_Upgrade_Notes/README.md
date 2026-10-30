@@ -2,6 +2,14 @@
 
 ## Pimcore 2026.3.4
 
+### [Documents] Link editable no longer renders its internal data as HTML attributes
+
+The `<a>` tag rendered by the Link editable no longer contains the attributes `path`, `linktype`, `text`, `parameters`,
+`anchor`, `internal`, `internalId` and `internalType`; they are no valid HTML attributes. `AttributeSanitizer` now omits
+them by default (constructor argument `omitInternalDataAttributes`, before only true for `AttributeSanitizer::strict()`).
+If a frontend still depends on them, install a policy with `omitInternalDataAttributes: false` via
+`AttributeSanitizer::setInstance()`.
+
 ### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
 
 A WYSIWYG field (data object field and Document editable) no longer reduces `<a pimcore_id=... pimcore_type=...>` links

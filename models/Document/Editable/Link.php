@@ -37,7 +37,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      * Data keys that carry the editable's own bookkeeping or are already rendered elsewhere
      * (link text, parameters/anchor folded into the href, internal target reference). They are
      * kept out of the rendered <a> tag's attributes when the active AttributeSanitizer policy
-     * omitsInternalDataAttributes(); the permissive default still emits them, as it always has.
+     * omitsInternalDataAttributes() (the default); a custom policy can opt back into emitting them.
      */
     private const RESERVED_DATA_KEYS = [
         'path', 'linktype', 'internal', 'internalId', 'internalType',

@@ -63,7 +63,7 @@ class AttributeSanitizer
         private readonly bool $blockUnsafeDataUrls = false,
         private readonly bool $blockEditorSuppliedEventHandlerAttributes = false,
         private readonly bool $requireConventionalAttributeNameShape = false,
-        private readonly bool $omitInternalDataAttributes = false,
+        private readonly bool $omitInternalDataAttributes = true,
     ) {
     }
 
@@ -117,8 +117,9 @@ class AttributeSanitizer
 
     /**
      * Whether the Link editable's own bookkeeping data (path, linktype, text, parameters, anchor,
-     * internal*) is kept out of the rendered <a> tag's attributes. The permissive default keeps
-     * the historical behavior of emitting them as attributes (e.g. linktype="direct").
+     * internal*) is kept out of the rendered <a> tag's attributes, as they are no valid HTML attributes.
+     * A custom policy can opt back into the historical behavior of emitting them (e.g.
+     * linktype="direct") with omitInternalDataAttributes: false.
      */
     public function omitsInternalDataAttributes(): bool
     {
