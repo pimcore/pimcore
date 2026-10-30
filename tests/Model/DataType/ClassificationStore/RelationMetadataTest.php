@@ -185,8 +185,8 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $relation = $this->createRelationWithPerAssignmentData();
         $row = $this->readRow($relation);
 
-        $this->assertSame(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
-        $this->assertSame(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
+        $this->assertSameJsonData(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
+        $this->assertSameJsonData(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
     }
 
     public function testASavedFreshRelationKeepsStoredPerAssignmentData(): void
@@ -202,8 +202,8 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
         $row = $this->readRow($relation);
 
-        $this->assertSame(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
-        $this->assertSame(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
+        $this->assertSameJsonData(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
+        $this->assertSameJsonData(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
         $this->assertSame(self::SUB_GROUP, $row[self::COLUMN_SUB_GROUP]);
         $this->assertSame(42, (int) $row['sorter'], 'the sorter the fresh relation carries is written');
     }
@@ -219,7 +219,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
             $this->addToAssertionCount(1);
         }
 
-        $this->assertSame(
+        $this->assertSameJsonData(
             self::OVERRIDE,
             json_decode($this->readRow($relation)[self::COLUMN_DEFINITION_OVERRIDE], true)
         );
@@ -254,7 +254,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $relation->save();
         $this->clearConfigCaches();
 
-        $this->assertSame(
+        $this->assertSameJsonData(
             self::METADATA,
             KeyGroupRelation::getByGroupAndKeyId($group->getId(), $relation->getKeyId())->getMetadata(),
             'the metadata is stored and returned verbatim'
@@ -287,8 +287,8 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
     private function assertPerAssignmentData(KeyGroupRelation $relation): void
     {
-        $this->assertSame(self::METADATA, $relation->getMetadata());
-        $this->assertSame(self::OVERRIDE, $relation->getDefinitionOverride());
+        $this->assertSameJsonData(self::METADATA, $relation->getMetadata());
+        $this->assertSameJsonData(self::OVERRIDE, $relation->getDefinitionOverride());
         $this->assertSame(self::SUB_GROUP, $relation->getSubGroup());
     }
 
@@ -297,6 +297,37 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertNull($relation->getMetadata());
         $this->assertNull($relation->getDefinitionOverride());
         $this->assertNull($relation->getSubGroup());
+    }
+
+    /**
+     * MySQL does not preserve the key order of a JSON object, so a value that came out of one of the
+     * two JSON columns is compared by key, with every key and every value still matching exactly.
+     *
+     * @param array<array-key, mixed> $expected
+     */
+    private function assertSameJsonData(array $expected, mixed $actual, string $message = ''): void
+    {
+        $this->assertSame(
+            $this->sortedByKey($expected),
+            is_array($actual) ? $this->sortedByKey($actual) : $actual,
+            $message
+        );
+    }
+
+    /**
+     * @param array<array-key, mixed> $value
+     *
+     * @return array<array-key, mixed>
+     */
+    private function sortedByKey(array $value): array
+    {
+        $sorted = [];
+        foreach ($value as $key => $entry) {
+            $sorted[$key] = is_array($entry) ? $this->sortedByKey($entry) : $entry;
+        }
+        ksort($sorted);
+
+        return $sorted;
     }
 
     private function loadThroughListing(KeyGroupRelation $relation): KeyGroupRelation
