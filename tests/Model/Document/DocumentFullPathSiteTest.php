@@ -18,10 +18,14 @@ use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
+use Pimcore\Http\Request\Resolver\SiteResolver;
+use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Navigation\Builder;
+use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -137,6 +141,42 @@ class DocumentFullPathSiteTest extends ModelTestCase
             'http://' . $otherSite->getMainDomain() . '/other',
             $this->freshDocument($otherPage)->getFullPath()
         );
+    }
+
+    public function testPrettyUrlOfSiteDocumentFromMainDomainContainsSiteDomain(): void
+    {
+        $this->sitePage->setPrettyUrl('/offer');
+        $this->sitePage->save();
+
+        // the site path mapping is memoized, drop it again after the save; the save may leave a current site behind
+        Cache::clearAll();
+        RuntimeCache::clear();
+        $this->setCurrentSite(null);
+
+        $this->pushRequest('http://main.fullpath.test/some/page');
+
+        $this->assertSame(
+            'http://' . $this->site->getMainDomain() . '/offer',
+            $this->freshDocument($this->sitePage)->getFullPath()
+        );
+    }
+
+    public function testNamedRouteOfSiteDocumentFromMainDomainUsesSiteHost(): void
+    {
+        $this->pushRequest('http://main.fullpath.test/some/page');
+
+        $handler = new DocumentRouteHandler(
+            new Document\Service(),
+            Pimcore::getContainer()->get(SiteResolver::class),
+            Pimcore::getContainer()->get(RequestHelper::class),
+            new Config(),
+            new StaticPageResolver(Pimcore::getContainer()->get('request_stack'))
+        );
+        $route = $handler->buildRouteForDocument($this->freshDocument($this->sitePage));
+
+        $this->assertSame('/page', $route->getPath());
+        $this->assertSame($this->site->getMainDomain(), $route->getHost());
+        $this->assertSame(['http'], $route->getSchemes());
     }
 
     public function testHardlinkAsMainDocumentOnMainDomainDoesNotNeedACurrentSite(): void
