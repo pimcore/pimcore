@@ -21,8 +21,10 @@ use Symfony\Contracts\Service\ResetInterface;
  *
  * The title chain is the requested language, then the languages it falls back to transitively, then
  * the default language, then - for a key only, because no other entity carries one - the key's own
- * title, and finally the entity's name. The description chain is the same set of languages, then the
- * entity's own description, and then nothing: a description never falls through to the name.
+ * title, and finally the entity's name. {@see self::getStoredTitle()} walks the same chain but ends
+ * one rung earlier, at null, for a caller that must not publish the technical name. The description
+ * chain is the same set of languages, then the entity's own description, and then nothing: a
+ * description never falls through to the name, so it needs no such twin.
  *
  * A stored title or description that is NULL or empty counts as absent, so the chain continues
  * past it; the two share a row, so one can be filled without the other.
@@ -35,7 +37,7 @@ use Symfony\Contracts\Service\ResetInterface;
  *
  * @internal
  */
-final class LabelResolver implements ResetInterface
+final class LabelResolver implements LabelResolverInterface, ResetInterface
 {
     /**
      * @var array<string, array<int, array<string, Label|null>>> entity type => entity id => language => label
@@ -43,6 +45,13 @@ final class LabelResolver implements ResetInterface
     private array $labels = [];
 
     public function getTitle(
+        StoreConfig|CollectionConfig|GroupConfig|KeyConfig $entity,
+        string $language
+    ): ?string {
+        return $this->getStoredTitle($entity, $language) ?? $entity->getName();
+    }
+
+    public function getStoredTitle(
         StoreConfig|CollectionConfig|GroupConfig|KeyConfig $entity,
         string $language
     ): ?string {
@@ -220,17 +229,19 @@ final class LabelResolver implements ResetInterface
         return $chain;
     }
 
+    /**
+     * The entity's own title column, which only a key carries.
+     */
     private function ownTitle(StoreConfig|CollectionConfig|GroupConfig|KeyConfig $entity): ?string
     {
-        if ($entity instanceof KeyConfig) {
-            // the column is NOT NULL DEFAULT '' while the property is nullable, so both are empty
-            $title = $entity->getTitle();
-            if ($title !== null && $title !== '') {
-                return $title;
-            }
+        if (!$entity instanceof KeyConfig) {
+            return null;
         }
 
-        return $entity->getName();
+        // the column is NOT NULL DEFAULT '' while the property is nullable, so both are empty
+        $title = $entity->getTitle();
+
+        return $title === '' ? null : $title;
     }
 
     private function entityTypeOf(StoreConfig|CollectionConfig|GroupConfig|KeyConfig $entity): LabelEntityType

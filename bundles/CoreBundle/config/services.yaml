@@ -279,6 +279,12 @@ services:
         tags:
             - { name: kernel.reset, method: reset }
 
+    # the supported contract the packages rendering a label bind to, so that none of them has to
+    # type-hint the implementation above, which stays internal.
+    Pimcore\Model\DataObject\Classificationstore\LabelResolverInterface:
+        public: true
+        alias: Pimcore\Model\DataObject\Classificationstore\LabelResolver
+
     #
     # SECURITY
     #

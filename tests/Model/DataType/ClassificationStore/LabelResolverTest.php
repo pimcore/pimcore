@@ -16,12 +16,14 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\Classificationstore\CollectionConfig;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\Label;
 use Pimcore\Model\DataObject\Classificationstore\Label\Dao as LabelDao;
 use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
 use Pimcore\Model\DataObject\Classificationstore\LabelResolver;
+use Pimcore\Model\DataObject\Classificationstore\LabelResolverInterface;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tests\Support\Helper\Pimcore as PimcoreModule;
@@ -195,6 +197,76 @@ final class LabelResolverTest extends ModelTestCase
 
         $this->removeLabel(LabelEntityType::Store, $storeId, self::LANGUAGE_EN);
         $this->assertSame($store->getName(), $this->resolver()->getTitle($store, self::LANGUAGE_DE));
+    }
+
+    /**
+     * The nullable twin of the title chain. An entity with no label row in any language of the
+     * chain and nothing in its own title column has to answer null, where the title falls through
+     * to the technical name - which the Studio layout paths must never publish.
+     */
+    public function testTheStoredTitleEndsAtNullWhereTheTitleEndsAtTheName(): void
+    {
+        foreach (self::ALL_TYPES as $entityType) {
+            $entity = $this->createEntity($entityType);
+            $because = self::because($entityType);
+
+            $this->assertNull($this->resolver()->getStoredTitle($entity, self::LANGUAGE_DE), $because);
+            $this->assertSame($entity->getName(), $this->resolver()->getTitle($entity, self::LANGUAGE_DE), $because);
+        }
+    }
+
+    /**
+     * One key through every rung of the chain: the two methods have to agree wherever a title is
+     * stored, and part company only on the last rung, which only the title has.
+     */
+    public function testTheStoredTitleWalksTheSameChainAsTheTitle(): void
+    {
+        $key = $this->createEntity(LabelEntityType::Key);
+        $this->assertInstanceOf(KeyConfig::class, $key);
+        $key->setTitle(self::OWN_TITLE);
+        $keyId = (int) $key->getId();
+
+        $this->writeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_DE, self::TITLE_DE, null);
+        $this->writeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_EN, self::TITLE_EN, null);
+        $this->assertBothTitlesAre(self::TITLE_DE, $key);
+
+        $this->removeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_DE);
+        $this->assertBothTitlesAre(self::TITLE_EN, $key);
+
+        $this->removeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_EN);
+        $this->assertBothTitlesAre(self::OWN_TITLE, $key);
+
+        // the column is NOT NULL DEFAULT '' while the property is nullable, so both are empty
+        $key->setTitle('');
+        $this->assertNull($this->resolver()->getStoredTitle($key, self::LANGUAGE_DE));
+        $this->assertSame($key->getName(), $this->resolver()->getTitle($key, self::LANGUAGE_DE));
+    }
+
+    /**
+     * A description already stops at null rather than at the name, so it needs no nullable twin -
+     * the rung the twin exists to skip is the one the description chain does not have.
+     *
+     * @see self::testADescriptionNeverFallsThroughToTheName()
+     */
+    public function testADescriptionWithNothingStoredIsAlreadyNull(): void
+    {
+        $collection = $this->createEntity(LabelEntityType::Collection);
+        $this->assertInstanceOf(CollectionConfig::class, $collection);
+
+        $this->assertNull($this->resolver()->getDescription($collection, self::LANGUAGE_FR));
+        $this->assertNull($this->resolver()->getStoredTitle($collection, self::LANGUAGE_FR));
+    }
+
+    /**
+     * The contract studio-backend-bundle binds to. The implementation stays @internal, so a
+     * consumer in another package has a BC promise only if the interface id is wired.
+     */
+    public function testTheInterfaceIdResolvesToTheResolver(): void
+    {
+        $container = Pimcore::getContainer();
+
+        $this->assertTrue($container->has(LabelResolverInterface::class));
+        $this->assertSame($this->resolver(), $container->get(LabelResolverInterface::class));
     }
 
     public function testAKeyWithANullOwnTitleFallsThroughToItsName(): void
@@ -408,6 +480,14 @@ final class LabelResolverTest extends ModelTestCase
             $resolver->getTitle($group, self::LANGUAGE_DE),
             'a failed load must not be held as a missing label'
         );
+    }
+
+    private function assertBothTitlesAre(
+        string $expected,
+        StoreConfig|CollectionConfig|GroupConfig|KeyConfig $entity
+    ): void {
+        $this->assertSame($expected, $this->resolver()->getStoredTitle($entity, self::LANGUAGE_DE));
+        $this->assertSame($expected, $this->resolver()->getTitle($entity, self::LANGUAGE_DE));
     }
 
     private static function because(LabelEntityType $entityType): string
