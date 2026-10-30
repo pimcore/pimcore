@@ -17,6 +17,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Traits\AtomicWriteTrait;
+use Pimcore\Model\DataObject\Classificationstore\Traits\PerAssignmentDaoTrait;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
@@ -30,6 +31,7 @@ use Throwable;
 class Dao extends AbstractDao
 {
     use AtomicWriteTrait;
+    use PerAssignmentDaoTrait;
 
     public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
@@ -54,7 +56,7 @@ class Dao extends AbstractDao
         if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
             $data['mandatory'] = (bool)$data['mandatory'];
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel($this->hydratePerAssignmentColumns($this->model, $data));
         } else {
             throw new NotFoundException(sprintf(
                 'KeyGroupRelation with keyId: %s and groupId: %s does not exist',
@@ -152,26 +154,36 @@ class Dao extends AbstractDao
         $this->writeAtomically(function (): void {
             $this->resolveSubGroup();
 
+            // read after resolveSubGroup(), so that the resolved identifier is the one written
             $type = $this->model->getObjectVars();
             $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);
             $data = [];
 
             foreach ($type as $key => $value) {
-                // a relation built with `new` carries no sub group, and must not clear a stored tag
-                if ($key === 'subGroup' && !$this->model->isSubGroupInitialized()) {
+                if (!in_array($key, $validTableColumns)) {
                     continue;
                 }
 
-                if (in_array($key, $validTableColumns)) {
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    }
-                    if (is_array($value) || is_object($value)) {
-                        $value = Serialize::serialize($value);
-                    }
-
-                    $data[$key] = $value;
+                // a relation built with `new` carries no per assignment data, and must not clear a stored one
+                if ($this->isUninitializedPerAssignmentColumn($key)) {
+                    continue;
                 }
+
+                // the two JSON columns hold JSON text, not a PHP serialization payload
+                if ($key === self::COLUMN_METADATA || $key === self::COLUMN_DEFINITION_OVERRIDE) {
+                    $data[$key] = $value === null ? null : json_encode($value);
+
+                    continue;
+                }
+
+                if (is_bool($value)) {
+                    $value = (int) $value;
+                }
+                if (is_array($value) || is_object($value)) {
+                    $value = Serialize::serialize($value);
+                }
+
+                $data[$key] = $value;
             }
 
             Helper::upsert(
@@ -184,6 +196,20 @@ class Dao extends AbstractDao
 
         // only once the write is committed, so that a refused one does not drop a correct answer
         $this->clearRelationCache();
+    }
+
+    /**
+     * Mirrors the engineInitialized guard of StoreConfig: a column is written only once it was
+     * loaded or explicitly set.
+     */
+    private function isUninitializedPerAssignmentColumn(string $column): bool
+    {
+        return match ($column) {
+            self::COLUMN_METADATA => !$this->model->isMetadataInitialized(),
+            self::COLUMN_DEFINITION_OVERRIDE => !$this->model->isDefinitionOverrideInitialized(),
+            self::COLUMN_SUB_GROUP => !$this->model->isSubGroupInitialized(),
+            default => false,
+        };
     }
 
     /**

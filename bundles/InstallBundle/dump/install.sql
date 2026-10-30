@@ -680,6 +680,8 @@ CREATE TABLE `classificationstore_relations` (
 	`keyId` INT(11) unsigned NOT NULL,
 	`sorter` INT(11) NULL DEFAULT NULL,
 	`mandatory` TINYINT(1) NULL DEFAULT NULL,
+	`metadata` json NULL,
+	`definitionOverride` json NULL,
 	`subGroup` VARCHAR(190) NULL DEFAULT NULL,
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),

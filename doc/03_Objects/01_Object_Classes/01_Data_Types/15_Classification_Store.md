@@ -296,6 +296,67 @@ runs the command again.
 Each write is guarded by `identifier IS NULL`, so a row that was given an identifier between the pre-flight and the
 write keeps it; the command reports that row as unresolved rather than counting it as backfilled.
 
+### Per assignment fields
+
+Assigning a key to a group is a row of its own, and that row can carry more than the sorter and the mandatory flag.
+`Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation` exposes three nullable per assignment fields, all of
+which default to "not set" and are written only when they were loaded or explicitly set - a relation built with `new`
+that carries just a group id and a key id therefore never clears a stored value.
+
+* `getMetadata()` / `setMetadata()` - an arbitrary JSON object, stored and returned verbatim. Nothing in core reads
+  it; the keys `indexed`, `externalCode` and `custom` are conventions for the packages and customer implementations
+  that do. The search index mapping, the editor layout and `checkValidity()` behave identically whether or not a
+  relation carries metadata.
+* `getDefinitionOverride()` / `setDefinitionOverride()` - a partial field definition, in the vocabulary of a key's own
+  settings, merged over the key's definition by `getEffectiveDefinition()`.
+* `getSubGroup()` / `setSubGroup()` - the sub group of this assignment, naming an entry of the sub group vocabulary
+  of the store its group belongs to. `null` means no sub group, and is what clears a stored tag. A save whose value
+  names no entry of that vocabulary is refused with `Pimcore\Model\Exception\InvalidConfigException` and writes
+  nothing; what is stored is the `identifier` of the entry it resolved to, not the spelling that was passed. The
+  vocabulary itself is `Pimcore\Model\DataObject\Classificationstore\SubGroupConfig`, one list per store.
+
+Both JSON fields take and return decoded arrays; the encoding happens in the DAO.
+
+#### Overriding a key's definition per group
+
+`getEffectiveDefinition()` returns the key's definition with the relation's `definitionOverride` merged over it, as
+the same JSON string `getDefinition()` returns. With no override stored it returns exactly that definition. Its base
+is `getDefinition()` as the instance carries it, which on a relation loaded through `KeyGroupRelation\Listing` already
+has the relation's `mandatory` flag folded in and on one loaded through `getByGroupAndKeyId()` does not - `mandatory`
+has a column of its own and is not part of an override.
+
+An override may carry `options`, `defaultUnit` and `validUnits`, and nothing else - the per group option subset and
+the unit. Any other property is refused by `setDefinitionOverride()` with
+`Pimcore\Model\Exception\InvalidConfigException`, and nothing is written. That includes `type` and `fieldtype`,
+because an assignment never changes what a key stores, and `title`, `tooltip` and `defaultValue`, which are a
+labelling question rather than a definition one.
+
+`options` **filters** rather than replaces: the merged definition keeps the key's own label/value pairs whose value
+appears in the override's list, in the key's order. That is what lets one key hold the full option list while each
+group uses its own subset of it. `null` means every option, an empty list means none - including for a key whose own
+`options` are `null`, where an empty subset still leaves no option at all.
+
+```php
+// the sub group has to exist in the vocabulary of the store the group belongs to before it can be named
+$subGroup = new \Pimcore\Model\DataObject\Classificationstore\SubGroupConfig();
+$subGroup->setStoreId($storeId);
+$subGroup->setName('Dimensions');
+$subGroup->save();
+
+$relation = \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation::getByGroupAndKeyId($groupId, $keyId);
+$relation->setDefinitionOverride(['options' => ['red', 'green']]);
+$relation->setSubGroup($subGroup->getIdentifier());
+$relation->save();
+
+$definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+    json_decode($relation->getEffectiveDefinition(), true),
+    $relation->getType()
+);
+```
+
+> **Note**: `definitionOverride` is stored but not yet read by core. The object editor still renders the key's own
+> definition, so saving an override changes nothing that is visible until a reader is wired up.
+
 ## Storage engines
 
 Where the values of a store are kept is a property of the store, not of the class. The `engine` column of
