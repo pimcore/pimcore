@@ -295,3 +295,62 @@ runs the command again.
 
 Each write is guarded by `identifier IS NULL`, so a row that was given an identifier between the pre-flight and the
 write keeps it; the command reports that row as unresolved rather than counting it as backfilled.
+
+## Storage engines
+
+Where the values of a store are kept is a property of the store, not of the class. The `engine` column of
+`classificationstore_stores` names it, and `NULL` - what every store has until it is changed - means the default
+engine.
+
+| engine | storage | tables per class |
+|---|---|---|
+| `eav` (default, also `NULL`) | one row per key and language | `object_classificationstore_data_<CLASS>`, `object_classificationstore_groups_<CLASS>` |
+| `document` | one JSON document per object, field and group | `object_classificationstore_doc_<CLASS>` |
+
+Selecting an engine is opt-in per store and is done from PHP:
+
+```php
+$store = \Pimcore\Model\DataObject\Classificationstore\StoreConfig::getByName('myStore');
+$store->setEngine('document');
+$store->save();
+```
+
+The tables of the selected engine are created the next time a class carrying a classification store field on that
+store is saved. There is **no migration of existing values** between engines, so flip a store before it holds data.
+
+The two engines behave the same way through the model API: `getLocalizedKeyValue()`, the language fallback, the
+default-language fallback and inheritance are resolved in PHP at read time and do not depend on the storage.
+Deleting a group configuration destroys the stored values of that group on either engine, and deleting an object
+removes its values on either engine.
+
+There is one deliberate exception. `getGroupCollectionMappings()` lists, on an EAV store, every group holding a
+stored value - mapped to `null` when it has no collection - while on a document store it lists only the groups that
+have one. `getGroupCollectionMapping($groupId)` answers `null` either way. A `null` entry is not recordable on the
+document engine: an object's mappings and its inheritable parent's are merged as an array union, so a `null` on the
+child would shadow the parent's collection. Use `getActiveGroups()` to ask which groups hold values.
+
+#### What the document engine does and does not do
+
+* A save writes only the groups whose document changed. An unchanged save writes nothing, and changing a value in
+  one group does not rewrite the documents of the other groups.
+* Within a group, the document **is** the group: changing one value rewrites that group's whole document in one
+  statement. Fewer statements than the EAV engine, more bytes per statement - measure a store with large groups
+  before switching it.
+* A group that is active but holds no value is stored as the document `{}`. The presence of the row is what makes
+  the group active; there is no second table.
+* It offers no capability the EAV engine does not. `supports()` answers `false` for every
+  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature`, and nothing in the object editor or Studio
+  selects the engine yet.
+* Values are stored as the field definition's `normalize()` output. An `encryptedField` key is the one exception:
+  it keeps its classification store marshaller, which encrypts the value, so the cleartext is never in the
+  document. That encryption draws a fresh salt per call, so a value whose cleartext did not change keeps the
+  ciphertext the document already holds - otherwise every save would rewrite every group holding a secret. A value
+  that did change is encrypted anew.
+
+After changing an `engine` value by hand, run
+
+```bash
+bin/console pimcore:classificationstore:check-engines
+```
+
+which lists every store that does not resolve to a registered engine and exits non-zero if there is one.

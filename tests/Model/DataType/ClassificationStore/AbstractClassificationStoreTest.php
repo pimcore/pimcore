@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -54,21 +55,56 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         $keygroupconfig->save();
     }
 
+    /**
+     * The storage engine the test store runs on. A subclass returning another name runs the very
+     * same tests against that engine - the store is shared across the suite, so every test class
+     * puts it on the engine it asks for rather than assuming the previous one left it there.
+     */
+    protected function getStoreEngine(): ?string
+    {
+        return null;
+    }
+
     protected function setUpTestClasses(): void
     {
-        if (!ClassDefinition::getByName('csstore')) {
-            $store = Classificationstore\StoreConfig::getByName('teststore');
-            if (!$store) {
-                $store = new Classificationstore\StoreConfig();
-                $store->setName('teststore');
-                $store->save();
-                $this->configureStore($store);
-            }
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        if (!$store) {
+            $store = new Classificationstore\StoreConfig();
+            $store->setName('teststore');
+            $store->setEngine($this->getStoreEngine());
+            $store->save();
+            $this->configureStore($store);
+        } elseif ($store->getEngine() !== $this->getStoreEngine()) {
+            $store->setEngine($this->getStoreEngine());
+            $store->save();
+        }
 
+        if (!ClassDefinition::getByName('csstore')) {
             $this->tester->setupPimcoreClass_Csstore([
                 'storeId' => $store->getId(),
             ]);
+
+            return;
         }
+
+        $this->createValueTables($store, 'csstore');
+    }
+
+    /**
+     * The value tables of the engine the store is on now. Creating them is idempotent, and the
+     * class definition was saved while the store was on whichever engine the previous test class
+     * asked for, so its tables cannot be assumed to be there.
+     */
+    protected function createValueTables(Classificationstore\StoreConfig $store, string $className): void
+    {
+        $class = ClassDefinition::getByName($className);
+        if (!$class) {
+            return;
+        }
+
+        Pimcore::getContainer()->get(Classificationstore\Engine\EngineResolver::class)
+            ->resolveForStore($store->getId())
+            ->createUpdateTables($class, $store->getId());
     }
 
     protected function configureStore(Classificationstore\StoreConfig $store): void
