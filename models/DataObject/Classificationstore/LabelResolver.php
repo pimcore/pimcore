@@ -161,12 +161,6 @@ final class LabelResolver implements ResetInterface
             return;
         }
 
-        foreach ($missing as $entityId) {
-            foreach ($languages as $chainLanguage) {
-                $this->labels[$entityType->value][$entityId][$chainLanguage] ??= null;
-            }
-        }
-
         $list = new Label\Listing();
         $list->setCondition(
             '`entityType` = ? AND `entityId` IN (' . implode(',', array_fill(0, count($missing), '?')) . ')'
@@ -174,7 +168,16 @@ final class LabelResolver implements ResetInterface
             [$entityType->value, ...$missing, ...$languages]
         );
 
-        foreach ($list->load() as $label) {
+        // held only once the load succeeded, so a failed read is not remembered as a missing label
+        $loaded = $list->load();
+
+        foreach ($missing as $entityId) {
+            foreach ($languages as $chainLanguage) {
+                $this->labels[$entityType->value][$entityId][$chainLanguage] ??= null;
+            }
+        }
+
+        foreach ($loaded as $label) {
             $this->labels[$entityType->value][$label->getEntityId()][$label->getLanguage()] = $label;
         }
     }

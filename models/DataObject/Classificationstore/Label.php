@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -29,6 +30,8 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class Label extends Model\AbstractModel
 {
+    private const LANGUAGE_MAX_LENGTH = 16;
+
     protected LabelEntityType $entityType;
 
     protected int $entityId;
@@ -87,8 +90,18 @@ final class Label extends Model\AbstractModel
         return $this->language;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function setLanguage(string $language): void
     {
+        // strict SQL mode is off by default, so a key too long for the column would be truncated
+        if (strlen($language) > self::LANGUAGE_MAX_LENGTH) {
+            throw new InvalidConfigException(
+                sprintf('"%s" is longer than a classification store label language may be.', $language)
+            );
+        }
+
         $this->language = $language;
     }
 

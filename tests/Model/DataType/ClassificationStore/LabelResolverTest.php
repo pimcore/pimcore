@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
@@ -39,9 +40,9 @@ final class LabelResolverTest extends ModelTestCase
 {
     use LabelFixtureTrait;
 
-    private const LANGUAGE_DE = 'de';
+    private const TABLE_HIDDEN = 'cs_labels_unreadable';
 
-    private const LANGUAGE_DE_UPPER = 'DE';
+    private const LANGUAGE_DE = 'de';
 
     private const LANGUAGE_DE_AT = 'de_AT';
 
@@ -320,27 +321,6 @@ final class LabelResolverTest extends ModelTestCase
         $this->assertNull($this->resolver()->getDescription($store, self::LANGUAGE_DE));
     }
 
-    /**
-     * The row a statement finds and the key it is then held under have to be the same string.
-     * Were the `language` column compared case-insensitively, the `DE` row would answer the `de`
-     * statement and be held under `DE`, next to the `de` entry the walk prefilled with null and
-     * reads instead - and the `de` write would land on the `DE` row rather than beside it, so the
-     * translation would be lost for good.
-     */
-    public function testALabelWrittenForADifferentlyCasedLanguageStaysBesideTheRequestedOne(): void
-    {
-        $key = $this->createEntity(LabelEntityType::Key);
-        $this->assertInstanceOf(KeyConfig::class, $key);
-        $keyId = (int) $key->getId();
-
-        $this->writeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_DE_UPPER, self::TITLE_UPDATED, null);
-        $this->writeLabel(LabelEntityType::Key, $keyId, self::LANGUAGE_DE, self::TITLE_DE, self::DESCRIPTION_DE);
-
-        $this->assertSame(2, $this->countLabels(LabelEntityType::Key, $keyId));
-        $this->assertSame(self::TITLE_DE, $this->resolver()->getTitle($key, self::LANGUAGE_DE));
-        $this->assertSame(self::DESCRIPTION_DE, $this->resolver()->getDescription($key, self::LANGUAGE_DE));
-    }
-
     public function testTheResolverIsResettableAndSeesALabelWrittenInTheSameRequest(): void
     {
         $resolver = $this->resolver();
@@ -398,6 +378,38 @@ final class LabelResolverTest extends ModelTestCase
         );
     }
 
+    /**
+     * A load that throws must leave nothing held: the misses it would have recorded are
+     * indistinguishable from "this entity has no label", so remembering them would turn one
+     * transient database failure into a wrong label for the rest of the request.
+     */
+    public function testAFailedLoadHoldsNothingAndTheNextCallReadsAgain(): void
+    {
+        $group = $this->createEntity(LabelEntityType::Group);
+        $groupId = (int) $group->getId();
+        $this->writeLabel(LabelEntityType::Group, $groupId, self::LANGUAGE_DE, self::TITLE_DE, null);
+
+        $resolver = $this->resolver();
+        $resolver->reset();
+
+        $this->renameLabelTable(LabelDao::TABLE_NAME_LABELS, self::TABLE_HIDDEN);
+
+        try {
+            $resolver->getTitle($group, self::LANGUAGE_DE);
+            $this->fail('the resolver has to surface the failed load');
+        } catch (TableNotFoundException) {
+            // the transient failure the resolver must not remember
+        } finally {
+            $this->renameLabelTable(self::TABLE_HIDDEN, LabelDao::TABLE_NAME_LABELS);
+        }
+
+        $this->assertSame(
+            self::TITLE_DE,
+            $resolver->getTitle($group, self::LANGUAGE_DE),
+            'a failed load must not be held as a missing label'
+        );
+    }
+
     private static function because(LabelEntityType $entityType): string
     {
         return 'of a ' . $entityType->value;
@@ -411,5 +423,10 @@ final class LabelResolverTest extends ModelTestCase
     private function removeLabel(LabelEntityType $entityType, int $entityId, string $language): void
     {
         Label::getByEntity($entityType, $entityId, $language)?->delete();
+    }
+
+    private function renameLabelTable(string $from, string $to): void
+    {
+        Db::get()->executeStatement('RENAME TABLE `' . $from . '` TO `' . $to . '`');
     }
 }

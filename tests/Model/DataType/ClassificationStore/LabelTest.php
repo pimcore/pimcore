@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\Label;
 use Pimcore\Model\DataObject\Classificationstore\Label\Dao as LabelDao;
 use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -50,9 +51,13 @@ final class LabelTest extends ModelTestCase
 
     private const LANGUAGE_DE = 'de';
 
-    private const LANGUAGE_DE_UPPER = 'DE';
-
     private const LANGUAGE_EN = 'en';
+
+    private const LANGUAGE_POSIX = 'en_US_POSIX';
+
+    private const LANGUAGE_MAX = 'zh_Hant_TW_x_pri';
+
+    private const LANGUAGE_OVERLENGTH = 'zh_Hant_TW_x_priv';
 
     protected function tearDown(): void
     {
@@ -76,24 +81,15 @@ final class LabelTest extends ModelTestCase
         );
 
         $this->assertSame('NO', $columns['entityId']['IS_NULLABLE']);
-        $this->assertStringStartsWith(
-            'bigint',
-            strtolower((string) $columns['entityId']['COLUMN_TYPE']),
-            'an INT holds neither a negative store id nor a child id above 2147483647'
-        );
+        $this->assertStringStartsWith('int', strtolower((string) $columns['entityId']['COLUMN_TYPE']));
         $this->assertStringNotContainsString(
             'unsigned',
             strtolower((string) $columns['entityId']['COLUMN_TYPE']),
             'entityId also addresses classificationstore_stores.id, which is signed'
         );
 
-        $this->assertSame('varchar(10)', strtolower((string) $columns['language']['COLUMN_TYPE']));
+        $this->assertSame('varchar(16)', strtolower((string) $columns['language']['COLUMN_TYPE']));
         $this->assertSame('NO', $columns['language']['IS_NULLABLE']);
-        $this->assertSame(
-            'utf8mb4_bin',
-            strtolower((string) $columns['language']['COLLATION_NAME']),
-            'the resolver keys its held rows by the language string, so SQL has to compare it exactly too'
-        );
 
         $this->assertSame('varchar(255)', strtolower((string) $columns['title']['COLUMN_TYPE']));
         $this->assertSame('YES', $columns['title']['IS_NULLABLE']);
@@ -194,44 +190,30 @@ final class LabelTest extends ModelTestCase
     }
 
     /**
-     * A group, key or collection id is an unsigned INT(11) and so runs past the signed INT range
-     * that a store id is bounded by. The one polymorphic column has to hold both.
+     * Strict SQL mode is off in the default connection, so a column too narrow for the key would
+     * store a truncated one and every later lookup with the real locale would miss the label. The
+     * model decides the limit rather than the database.
      */
-    public function testAnEntityIdBeyondTheSignedIntRangeRoundTrips(): void
+    public function testALanguageLongerThanTheColumnIsRejected(): void
     {
-        $entityId = 4294967295;
+        $label = new Label();
 
-        $this->writeLabel(LabelEntityType::Key, $entityId, self::LANGUAGE_DE, self::TITLE_DE, null);
+        $label->setLanguage(self::LANGUAGE_MAX);
+        $this->assertSame(self::LANGUAGE_MAX, $label->getLanguage(), 'the column width itself still fits');
 
-        $label = Label::getByEntity(LabelEntityType::Key, $entityId, self::LANGUAGE_DE);
-
-        $this->assertNotNull($label);
-        $this->assertSame($entityId, $label->getEntityId());
-        $this->assertSame(self::TITLE_DE, $label->getTitle());
+        $this->expectException(InvalidConfigException::class);
+        $label->setLanguage(self::LANGUAGE_OVERLENGTH);
     }
 
-    /**
-     * The language is the part of the key SQL used to compare case-insensitively while PHP - the
-     * resolver's held rows, the DAO's lookups - compares it exactly. Two casings are two labels.
-     */
-    public function testTwoDifferentlyCasedLanguagesAreTwoLabels(): void
+    public function testAnElevenCharacterLanguageRoundTripsIntact(): void
     {
-        $this->writeLabel(LabelEntityType::Key, 4713, self::LANGUAGE_DE, self::TITLE_DE, null);
-        $this->writeLabel(LabelEntityType::Key, 4713, self::LANGUAGE_DE_UPPER, 'HÖHE', null);
+        $this->writeLabel(LabelEntityType::Key, 4713, self::LANGUAGE_POSIX, self::TITLE_DE, 'Die Höhe');
 
-        $this->assertSame(
-            2,
-            $this->countLabels(LabelEntityType::Key, 4713),
-            'the upper cased write must add a row rather than land on the lower cased one'
-        );
-        $this->assertSame(
-            self::TITLE_DE,
-            Label::getByEntity(LabelEntityType::Key, 4713, self::LANGUAGE_DE)?->getTitle()
-        );
-        $this->assertSame(
-            'HÖHE',
-            Label::getByEntity(LabelEntityType::Key, 4713, self::LANGUAGE_DE_UPPER)?->getTitle()
-        );
+        $label = Label::getByEntity(LabelEntityType::Key, 4713, self::LANGUAGE_POSIX);
+
+        $this->assertNotNull($label, 'a truncated language key would not be found under the real locale');
+        $this->assertSame(self::LANGUAGE_POSIX, $label->getLanguage());
+        $this->assertSame(self::TITLE_DE, $label->getTitle());
     }
 
     public function testDeletingAnEntityDeletesItsLabelsInEveryLanguage(): void

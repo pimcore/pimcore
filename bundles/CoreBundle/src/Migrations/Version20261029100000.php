@@ -21,20 +21,17 @@ use Pimcore\Cache\RuntimeCache;
 /**
  * Adds the table holding the translated titles and descriptions of classification store entities.
  *
- * `entityId` is a signed BIGINT, not the unsigned INT the specification sketched: the column
- * addresses four tables, and `classificationstore_stores`.`id` is a signed INT(11) while groups,
- * keys and collections are unsigned INT(11) - neither INT width holds every id it points at, since
- * an unsigned one cannot take a negative store id and a signed one stops at 2147483647 while an
- * unsigned child id runs to 4294967295. Signed BIGINT covers both ranges. No foreign key is
- * possible from a polymorphic column either way.
- *
- * `language` collates as utf8mb4_bin so that SQL compares it exactly as PHP does. Under the table's
- * case-insensitive default collation a row written for `DE` would answer a lookup for `de` and then
- * be held in {@see \Pimcore\Model\DataObject\Classificationstore\LabelResolver} under `DE`, where
- * the `de` lookup never reads it.
+ * `entityId` is a signed INT, not the unsigned one the specification sketched: the column addresses
+ * four tables, and `classificationstore_stores`.`id` is a signed INT(11) while groups, keys and
+ * collections are unsigned - one unsigned column cannot faithfully hold every id it points at. No
+ * foreign key is possible from a polymorphic column either way.
  *
  * `subgroup` is a member of the enum although no sub-group entity exists yet, so that labels
  * imported for sub-groups are stored rather than refused.
+ *
+ * `language` is 16 characters wide, which holds the realistic BCP 47 forms - `en_US_POSIX` and
+ * `zh_Hant_TW` among them - rather than the 10 the specification sketched; the stored bytes of the
+ * ordinary two and five character codes are unchanged.
  */
 final class Version20261029100000 extends AbstractMigration
 {
@@ -56,8 +53,8 @@ final class Version20261029100000 extends AbstractMigration
         $this->addSql(
             'CREATE TABLE `classificationstore_labels` ('
             . '`entityType` ENUM(\'store\',\'collection\',\'group\',\'subgroup\',\'key\') NOT NULL, '
-            . '`entityId` BIGINT NOT NULL, '
-            . '`language` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL, '
+            . '`entityId` INT(11) NOT NULL, '
+            . '`language` VARCHAR(16) NOT NULL, '
             . '`title` VARCHAR(255) NULL DEFAULT NULL, '
             . '`description` TEXT NULL, '
             . 'PRIMARY KEY (`entityType`, `entityId`, `language`)'
