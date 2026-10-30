@@ -19,7 +19,6 @@ use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao getDao()
- * @method void save()
  * @method void delete()
  */
 final class KeyGroupRelation extends Model\AbstractModel
@@ -99,6 +98,18 @@ final class KeyGroupRelation extends Model\AbstractModel
      * @internal
      */
     protected bool $definitionOverrideInitialized = false;
+
+    /**
+     * The identifier of the sub group this assignment belongs to, null for none.
+     */
+    protected ?string $subGroup = null;
+
+    /**
+     * Whether `subGroup` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $subGroupInitialized = false;
 
     public static function create(): self
     {
@@ -255,6 +266,25 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->definitionOverrideInitialized;
     }
 
+    public function getSubGroup(): ?string
+    {
+        return $this->subGroup;
+    }
+
+    public function setSubGroup(?string $subGroup): void
+    {
+        $this->subGroup = $subGroup;
+        $this->subGroupInitialized = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function isSubGroupInitialized(): bool
+    {
+        return $this->subGroupInitialized;
+    }
+
     /**
      * The definition this assignment effectively uses: the one {@see self::getDefinition()} returns
      * with `definitionOverride` merged over it, as the same JSON string. Without a stored override
@@ -277,6 +307,18 @@ final class KeyGroupRelation extends Model\AbstractModel
         }
 
         return json_encode($definition);
+    }
+
+    /**
+     * Saves the key assignment, refusing a sub group that names no entry of the vocabulary of the
+     * store its group belongs to, and storing the identifier of the entry it resolved to rather than
+     * the spelling that was passed.
+     *
+     * @throws InvalidConfigException
+     */
+    public function save(): void
+    {
+        $this->getDao()->save();
     }
 
     public static function getByGroupAndKeyId(int $groupId, int $keyId): ?KeyGroupRelation

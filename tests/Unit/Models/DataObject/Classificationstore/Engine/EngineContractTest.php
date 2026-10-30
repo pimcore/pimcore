@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore\Engine;
 
+use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
@@ -49,7 +50,15 @@ class EngineContractTest extends TestCase
 
     public function testEverythingInTheEngineNamespaceIsInternal(): void
     {
-        foreach ([EngineInterface::class, EngineFeature::class, EngineResolver::class, EavEngine::class] as $name) {
+        $names = [
+            EngineInterface::class,
+            EngineFeature::class,
+            EngineResolver::class,
+            EavEngine::class,
+            DocumentEngine::class,
+        ];
+
+        foreach ($names as $name) {
             $this->assertStringContainsString(
                 '@internal',
                 (string) (new ReflectionClass($name))->getDocComment(),
@@ -88,6 +97,64 @@ class EngineContractTest extends TestCase
         foreach (EngineFeature::cases() as $feature) {
             $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
         }
+    }
+
+    /**
+     * The document engine ships without any of the four: it offers no capability the EAV engine
+     * does not, and no model API for a qualified value lands with it.
+     */
+    public function testDocumentEngineSupportsNoFeature(): void
+    {
+        // the engine needs no collaborator to answer supports(), and must not open a connection for it
+        $engine = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
+
+        $this->assertInstanceOf(EngineInterface::class, $engine);
+
+        foreach (EngineFeature::cases() as $feature) {
+            $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
+        }
+    }
+
+    /**
+     * The write budget of the document engine rests on the document being canonical and on the save
+     * comparing the serialized document against the stored one. The behavioural guard is
+     * DocumentEngineTest; this is the one that also fires without a database.
+     */
+    public function testTheDocumentEngineComparesSerializedDocumentsInsteadOfRewritingThem(): void
+    {
+        $source = $this->engineSource(DocumentEngine::class);
+
+        foreach ([
+            'persistDocuments',
+            'writeDocumentDiff',
+            'readRowsForUpdate',
+            'documentDiffers',
+            'getLanguageAlias',
+            'ksort(',
+            'FOR UPDATE',
+            'ON DUPLICATE KEY UPDATE',
+            'KeyGroupRelationCache',
+        ] as $marker) {
+            $this->assertStringContainsString($marker, $source, $marker . ' is part of the document save/load path');
+        }
+
+        $this->assertStringContainsString(
+            "(string) \$storedRow['values'] !== \$document['values']",
+            $source,
+            'the save compares the serialized document against the stored string'
+        );
+    }
+
+    /**
+     * The group of a document store lives in the document table alone - a second table holding the
+     * active groups is what the engine exists to do without.
+     */
+    public function testTheDocumentEngineNeverTouchesTheEavTables(): void
+    {
+        $source = $this->engineSource(DocumentEngine::class);
+
+        $this->assertStringNotContainsString('object_classificationstore_groups_', $source);
+        $this->assertStringNotContainsString('object_classificationstore_data_', $source);
     }
 
     /**
@@ -140,9 +207,12 @@ class EngineContractTest extends TestCase
         );
     }
 
-    private function engineSource(): string
+    /**
+     * @param class-string $engine
+     */
+    private function engineSource(string $engine = EavEngine::class): string
     {
-        return (string) file_get_contents((string) (new ReflectionClass(EavEngine::class))->getFileName());
+        return (string) file_get_contents((string) (new ReflectionClass($engine))->getFileName());
     }
 
     private function describe(ReflectionMethod $method): string

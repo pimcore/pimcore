@@ -50,6 +50,8 @@ class DependenciesTest extends AbstractClassificationStoreTest
 
     private const WYSIWYG_KEY_NAME = 'wysiwyg';
 
+    private const IMAGE_KEY_NAME = 'image';
+
     private const DISABLED_KEY_NAME = 'wysiwygDisabledForDependencies';
 
     private const ASSET_TYPE = 'asset';
@@ -133,6 +135,42 @@ class DependenciesTest extends AbstractClassificationStoreTest
             Service::getElementCacheTag(self::ASSET_TYPE, $asset->getId()),
             $object->getCacheTags()
         );
+    }
+
+    /**
+     * An asset referenced by an image key is reached by the same walk, through the field
+     * definition of the key - the type is new to the classification store, the walk is not.
+     */
+    public function testAnAssetInAnImageKeyRegistersItsDependencyAndContributesItsCacheTag(): void
+    {
+        $asset = TestHelper::createImageAsset(self::KEY_PREFIX);
+        $object = $this->createCsObject(self::KEY_PREFIX . 'image');
+        $object->getCsstore()->setLocalizedKeyValue(
+            $this->getGroup()->getId(),
+            $this->getImageKey()->getId(),
+            $asset
+        );
+        $object->save();
+
+        $this->assertContains(
+            ['id' => $asset->getId(), 'type' => self::ASSET_TYPE],
+            $this->getCsstoreFieldDefinition()->resolveDependencies($object->getCsstore())
+        );
+        $this->assertArrayHasKey(
+            Service::getElementCacheTag(self::ASSET_TYPE, $asset->getId()),
+            $object->getCacheTags()
+        );
+
+        $this->saveDependenciesOf($object);
+        $this->assertSame(1, $this->countDependencyRows($object->getId(), $asset->getId()));
+
+        $requiredBy = Service::getRequiredByDependenciesForFrontend(
+            Dependency::getBySourceId($asset->getId(), self::ASSET_TYPE),
+            null,
+            null
+        );
+
+        $this->assertContains($object->getId(), array_column($requiredBy['requiredBy'], 'id'));
     }
 
     public function testSavingTheReferencedAssetEvictsTheOwningObjectsCacheEntry(): void
@@ -377,6 +415,11 @@ class DependenciesTest extends AbstractClassificationStoreTest
     private function getWysiwygKey(): KeyConfig
     {
         return KeyConfig::getByName(self::WYSIWYG_KEY_NAME, $this->getStore()->getId());
+    }
+
+    private function getImageKey(): KeyConfig
+    {
+        return KeyConfig::getByName(self::IMAGE_KEY_NAME, $this->getStore()->getId());
     }
 
     private function getCsstoreFieldDefinition(): ClassificationstoreField

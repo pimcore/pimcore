@@ -28,8 +28,10 @@ trait PerAssignmentDaoTrait
 
     protected const COLUMN_DEFINITION_OVERRIDE = 'definitionOverride';
 
+    protected const COLUMN_SUB_GROUP = 'subGroup';
+
     /**
-     * Sets the two nullable per assignment columns on the model and returns the row without them.
+     * Sets the three nullable per assignment columns on the model and returns the row without them.
      * They are set here rather than left to assignVariablesToModel(), which skips a NULL: a row whose
      * column was cleared would otherwise leave the previously loaded value in memory, and the next
      * save would write it back.
@@ -42,12 +44,16 @@ trait PerAssignmentDaoTrait
      */
     protected function hydratePerAssignmentColumns(KeyGroupRelation $relation, array $row): array
     {
+        $subGroup = $row[self::COLUMN_SUB_GROUP] ?? null;
+
         $relation->setMetadata($this->decodeJsonColumn($row[self::COLUMN_METADATA] ?? null));
         $relation->setDefinitionOverride($this->decodeJsonColumn($row[self::COLUMN_DEFINITION_OVERRIDE] ?? null));
+        $relation->setSubGroup(is_string($subGroup) ? $subGroup : null);
 
         unset(
             $row[self::COLUMN_METADATA],
-            $row[self::COLUMN_DEFINITION_OVERRIDE]
+            $row[self::COLUMN_DEFINITION_OVERRIDE],
+            $row[self::COLUMN_SUB_GROUP]
         );
 
         return $row;
