@@ -18,6 +18,7 @@ use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Image as ImageFieldDefinition;
 use Pimcore\Model\DataObject\Data\EncryptedField;
 use Pimcore\Model\DataObject\Data\InputQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
@@ -132,6 +133,10 @@ class DocumentEngineRoundTripTest extends AbstractClassificationStoreTest
             'languagemultiselect' => ['AT', 'DE'],
             'quantityValue' => new QuantityValue(123, $unit->getId()),
             'inputQuantityValue' => new InputQuantityValue('abc', $unit->getId()),
+            // Added with the image marshaller (#1656). The guard above is what caught their
+            // absence: the store configured two keys this round trip never wrote.
+            'image' => TestHelper::createImageAsset(),
+            'encryptedImage' => new EncryptedField(new ImageFieldDefinition(), TestHelper::createImageAsset()),
         ];
     }
 

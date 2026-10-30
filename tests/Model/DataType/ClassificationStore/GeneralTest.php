@@ -394,10 +394,12 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertInstanceOf(Image::class, $newValue->getPlain());
         $this->assertSame($originalValue->getId(), $newValue->getPlain()->getId());
 
-        $rows = $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId());
-        $this->assertCount(1, $rows);
-        $this->assertNull($rows[0]['value2'], 'the second column stays empty instead of holding an encrypted null');
-        $this->assertNotSame((string) $originalValue->getId(), $rows[0]['value'], 'the asset id is stored encrypted');
+        if ($this->storesInEavColumns()) {
+            $rows = $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId());
+            $this->assertCount(1, $rows);
+            $this->assertNull($rows[0]['value2'], 'the second column stays empty instead of holding an encrypted null');
+            $this->assertNotSame((string) $originalValue->getId(), $rows[0]['value'], 'the asset id is stored encrypted');
+        }
     }
 
     public function testImage(): void
@@ -425,18 +427,22 @@ class GeneralTest extends AbstractClassificationStoreTest
             $this->assertEquals($originalValue->getId(), $newValue->getId());
         }
 
-        $this->assertSame(
-            array_fill(0, count($languages), ['value' => (string) $originalValue->getId(), 'value2' => null]),
-            $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId()),
-            'the asset id is stored on its own, in the value column'
-        );
+        if ($this->storesInEavColumns()) {
+            $this->assertSame(
+                array_fill(0, count($languages), ['value' => (string) $originalValue->getId(), 'value2' => null]),
+                $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId()),
+                'the asset id is stored on its own, in the value column'
+            );
+        }
 
         foreach ($languages as $language) {
             $o->getCsstore()->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), null, $language);
         }
         $o->save();
 
-        $this->assertSame([], $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId()));
+        if ($this->storesInEavColumns()) {
+            $this->assertSame([], $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId()));
+        }
     }
 
     /**
@@ -447,6 +453,13 @@ class GeneralTest extends AbstractClassificationStoreTest
      */
     public function testImageWithAStoredValueThatDoesNotResolve(): void
     {
+        if (!$this->storesInEavColumns()) {
+            // The case is written by putting raw text into value/value2. An engine that keeps its
+            // values in a document has no such columns, so there is nothing to corrupt and nothing
+            // this test could assert.
+            $this->markTestSkipped('the unresolvable stored value is written into the EAV columns');
+        }
+
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
@@ -500,6 +513,18 @@ class GeneralTest extends AbstractClassificationStoreTest
      *
      * @return array<array<string, ?string>>
      */
+    /**
+     * Whether the engine under test keeps values in the EAV value/value2 columns.
+     *
+     * The image assertions come in two halves: the round trip, which every engine must satisfy,
+     * and the storage layout, which only describes the EAV tables. DocumentGeneralTest inherits
+     * both, and the second half asserted against columns a document store does not have.
+     */
+    private function storesInEavColumns(): bool
+    {
+        return $this->getStoreEngine() === null;
+    }
+
     private function grabImageRows(\Pimcore\Model\DataObject\Csstore $o, int $groupId, int $keyId): array
     {
         return Db::get()->fetchAllAssociative(
