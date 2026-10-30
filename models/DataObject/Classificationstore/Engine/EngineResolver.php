@@ -36,9 +36,13 @@ final class EngineResolver implements ResetInterface
     private const DEFAULT_ENGINE = 'eav';
 
     /**
-     * Engine names this release knows about but does not ship yet.
+     * Engine names this release knows about but does not ship yet. Empty since `document` ships, so
+     * {@see ClassificationStoreEngineNotAvailableException} is no longer raised from the default
+     * configuration - the class is kept, as it carries no `@internal` and catching it is legal.
+     *
+     * @var string[]
      */
-    private const UNAVAILABLE_ENGINES = ['document'];
+    private const UNAVAILABLE_ENGINES = [];
 
     /**
      * @var array<string, EngineInterface>|null
@@ -167,6 +171,7 @@ final class EngineResolver implements ResetInterface
             return $engines[$engine];
         }
 
+        // @phpstan-ignore-next-line empty while every known engine ships; holding one back re-fills it
         if (in_array($engine, self::UNAVAILABLE_ENGINES, true)) {
             throw new ClassificationStoreEngineNotAvailableException($storeId, $engine);
         }

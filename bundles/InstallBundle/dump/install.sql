@@ -639,6 +639,21 @@ CREATE TABLE `classificationstore_groups` (
 	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
+DROP TABLE IF EXISTS `classificationstore_subgroups`;
+CREATE TABLE `classificationstore_subgroups` (
+	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
+	`storeId` INT NULL DEFAULT NULL,
+	`name` VARCHAR(190) NOT NULL DEFAULT '',
+	`description` VARCHAR(255) NULL DEFAULT NULL,
+	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `storeId` (`storeId`),
+	INDEX `name` (`name`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
 DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
 	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -665,9 +680,11 @@ CREATE TABLE `classificationstore_relations` (
 	`keyId` INT(11) unsigned NOT NULL,
 	`sorter` INT(11) NULL DEFAULT NULL,
 	`mandatory` TINYINT(1) NULL DEFAULT NULL,
+	`subGroup` VARCHAR(190) NULL DEFAULT NULL,
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	INDEX `mandatory` (`mandatory`),
+	INDEX `subGroup` (`subGroup`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

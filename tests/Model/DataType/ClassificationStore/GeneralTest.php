@@ -17,6 +17,9 @@ use Carbon\Carbon;
 use Exception;
 use Pimcore;
 use Pimcore\Cache;
+use Pimcore\Db;
+use Pimcore\Model\Asset\Image;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Image as ImageFieldDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Data\EncryptedField;
@@ -29,6 +32,10 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 class GeneralTest extends AbstractClassificationStoreTest
 {
+    private const FIELDNAME = 'csstore';
+
+    private const DEFAULT_LANGUAGE = 'default';
+
     public function setUp(): void
     {
         parent::setUp();
@@ -357,6 +364,179 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
         $this->assertEquals($originalValue, $newValue);
+    }
+
+    /**
+     * An image delegate stores the asset id in the value column on its own and leaves the second
+     * column empty, so there is nothing to encrypt there.
+     */
+    public function testEncryptedImage(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $o = $this->createCsObject();
+        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
+        $csField = $o->getCsstore();
+
+        $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
+        $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('encryptedImage', $store->getId());
+
+        $originalValue = TestHelper::createImageAsset();
+        $csField->setLocalizedKeyValue(
+            $groupConfig->getId(),
+            $keyConfig->getId(),
+            new EncryptedField(new ImageFieldDefinition(), $originalValue)
+        );
+        $o->save();
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
+
+        $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertInstanceOf(EncryptedField::class, $newValue);
+        $this->assertInstanceOf(Image::class, $newValue->getPlain());
+        $this->assertSame($originalValue->getId(), $newValue->getPlain()->getId());
+
+        if ($this->storesInEavColumns()) {
+            $rows = $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId());
+            $this->assertCount(1, $rows);
+            $this->assertNull($rows[0]['value2'], 'the second column stays empty instead of holding an encrypted null');
+            $this->assertNotSame((string) $originalValue->getId(), $rows[0]['value'], 'the asset id is stored encrypted');
+        }
+    }
+
+    public function testImage(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $o = $this->createCsObject();
+        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
+        $csField = $o->getCsstore();
+
+        $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
+        $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('image', $store->getId());
+
+        $languages = [self::DEFAULT_LANGUAGE, 'en'];
+        $originalValue = TestHelper::createImageAsset();
+
+        foreach ($languages as $language) {
+            $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue, $language);
+        }
+        $o->save();
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
+
+        foreach ($languages as $language) {
+            $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $language);
+            $this->assertInstanceOf(Image::class, $newValue);
+            $this->assertEquals($originalValue->getId(), $newValue->getId());
+        }
+
+        if ($this->storesInEavColumns()) {
+            $this->assertSame(
+                array_fill(0, count($languages), ['value' => (string) $originalValue->getId(), 'value2' => null]),
+                $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId()),
+                'the asset id is stored on its own, in the value column'
+            );
+        }
+
+        foreach ($languages as $language) {
+            $o->getCsstore()->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), null, $language);
+        }
+        $o->save();
+
+        if ($this->storesInEavColumns()) {
+            $this->assertSame([], $this->grabImageRows($o, $groupConfig->getId(), $keyConfig->getId()));
+        }
+    }
+
+    /**
+     * A stored value that does not resolve to an image asset - the empty string, a string that is
+     * no id at all (what a save before the marshaller existed left behind), a string that only
+     * starts with the id of an existing image, the id of a deleted asset and the id of an asset
+     * that is not an image - reads back as null.
+     */
+    public function testImageWithAStoredValueThatDoesNotResolve(): void
+    {
+        if (!$this->storesInEavColumns()) {
+            // The case is written by putting raw text into value/value2. An engine that keeps its
+            // values in a document has no such columns, so there is nothing to corrupt and nothing
+            // this test could assert.
+            $this->markTestSkipped('the unresolvable stored value is written into the EAV columns');
+        }
+
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $o = $this->createCsObject();
+        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
+        $csField = $o->getCsstore();
+
+        $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
+        $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('image', $store->getId());
+
+        $existingImage = TestHelper::createImageAsset();
+        $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $existingImage);
+        $o->save();
+
+        $deletedAsset = TestHelper::createImageAsset();
+        $deletedAssetId = $deletedAsset->getId();
+        $deletedAsset->delete();
+
+        $notAnImage = TestHelper::createDocumentAsset();
+        $storedValues = [
+            '',
+            'not-an-id',
+            $existingImage->getId() . 'junk',
+            $existingImage->getId() . '.7',
+            (string) $deletedAssetId,
+            (string) $notAnImage->getId(),
+        ];
+
+        foreach ($storedValues as $storedValue) {
+            Db::get()->update(
+                $this->getDataTableName($o),
+                ['value' => $storedValue],
+                [
+                    'id' => $o->getId(),
+                    'fieldname' => self::FIELDNAME,
+                    'groupId' => $groupConfig->getId(),
+                    'keyId' => $keyConfig->getId(),
+                    'language' => self::DEFAULT_LANGUAGE,
+                ]
+            );
+
+            $reloaded = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
+
+            $this->assertNull(
+                $reloaded->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId()),
+                'a stored value of "' . $storedValue . '" must read back as null'
+            );
+        }
+    }
+
+    /**
+     * The value columns of the stored rows of a key, ordered by language.
+     *
+     * @return array<array<string, ?string>>
+     */
+    /**
+     * Whether the engine under test keeps values in the EAV value/value2 columns.
+     *
+     * The image assertions come in two halves: the round trip, which every engine must satisfy,
+     * and the storage layout, which only describes the EAV tables. DocumentGeneralTest inherits
+     * both, and the second half asserted against columns a document store does not have.
+     */
+    private function storesInEavColumns(): bool
+    {
+        return $this->getStoreEngine() === null;
+    }
+
+    private function grabImageRows(\Pimcore\Model\DataObject\Csstore $o, int $groupId, int $keyId): array
+    {
+        return Db::get()->fetchAllAssociative(
+            'SELECT `value`, `value2` FROM `' . $this->getDataTableName($o) . '` WHERE `id` = ? AND `fieldname` = ?'
+            . ' AND `groupId` = ? AND `keyId` = ? ORDER BY `language`',
+            [$o->getId(), self::FIELDNAME, $groupId, $keyId]
+        );
+    }
+
+    private function getDataTableName(\Pimcore\Model\DataObject\Csstore $o): string
+    {
+        return 'object_classificationstore_data_' . $o->getClass()->getId();
     }
 
     public function testInput(): void
