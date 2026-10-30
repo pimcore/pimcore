@@ -19,7 +19,6 @@ use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao getDao()
- * @method void save()
  * @method void delete()
  */
 final class KeyGroupRelation extends Model\AbstractModel
@@ -101,7 +100,7 @@ final class KeyGroupRelation extends Model\AbstractModel
     protected bool $definitionOverrideInitialized = false;
 
     /**
-     * The sub-group of this assignment, stored verbatim; null means no sub-group.
+     * The identifier of the sub group this assignment belongs to, null for none.
      */
     protected ?string $subGroup = null;
 
@@ -308,6 +307,18 @@ final class KeyGroupRelation extends Model\AbstractModel
         }
 
         return json_encode($definition);
+    }
+
+    /**
+     * Saves the key assignment, refusing a sub group that names no entry of the vocabulary of the
+     * store its group belongs to, and storing the identifier of the entry it resolved to rather than
+     * the spelling that was passed.
+     *
+     * @throws InvalidConfigException
+     */
+    public function save(): void
+    {
+        $this->getDao()->save();
     }
 
     public static function getByGroupAndKeyId(int $groupId, int $keyId): ?KeyGroupRelation

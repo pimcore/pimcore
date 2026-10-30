@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use Pimcore\Bundle\CoreBundle\Migrations\Version20261029100000;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
+use Pimcore\Model\DataObject\Classificationstore\SubGroupConfig;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Psr\Log\NullLogger;
@@ -43,11 +44,39 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         self::COLUMN_SUB_GROUP,
     ];
 
+    /**
+     * The columns Version20261029100000 adds. `subGroup` is added by Version20261029120000, together
+     * with the sub group vocabulary it names and the index it is queried by, and its schema is
+     * asserted by SubGroupTest.
+     */
+    private const MIGRATED_COLUMNS = [
+        self::COLUMN_METADATA,
+        self::COLUMN_DEFINITION_OVERRIDE,
+    ];
+
     private const METADATA = ['indexed' => false, 'externalCode' => 'EF000001', 'custom' => ['x' => 1]];
 
     private const OVERRIDE = ['defaultUnit' => 'cm'];
 
-    private const SUB_GROUP = 'EFG00007';
+    /**
+     * @var SubGroupConfig[]
+     */
+    private array $createdSubGroups = [];
+
+    private ?string $subGroup = null;
+
+    protected function tearDown(): void
+    {
+        $db = Db::get();
+        foreach ($this->createdSubGroups as $subGroup) {
+            $db->delete(SubGroupConfig\Dao::TABLE_NAME_SUBGROUPS, ['id' => $subGroup->getId()]);
+        }
+
+        $this->createdSubGroups = [];
+        $this->subGroup = null;
+
+        parent::tearDown();
+    }
 
     public function testThePerAssignmentColumnsAreNullable(): void
     {
@@ -60,12 +89,6 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         }
 
         $this->assertSame(190, $columns[strtolower(self::COLUMN_SUB_GROUP)]->getLength());
-
-        $this->assertArrayNotHasKey(
-            strtolower(self::COLUMN_SUB_GROUP),
-            $schemaManager->listTableIndexes(self::TABLE),
-            'the sub-group deliberately carries no secondary index'
-        );
 
         $this->assertContains(
             self::COLUMN_SUB_GROUP,
@@ -86,12 +109,11 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         try {
             // the table as a database created from the previous dump carries it
             $previous = $schemaManager->introspectSchema();
-            foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
+            foreach (self::MIGRATED_COLUMNS as $column) {
                 $previous->getTable(self::TABLE)->dropColumn($column);
             }
             $db->executeStatement(
-                'ALTER TABLE `' . $copy . '` DROP COLUMN `metadata`,'
-                . ' DROP COLUMN `definitionOverride`, DROP COLUMN `subGroup`'
+                'ALTER TABLE `' . $copy . '` DROP COLUMN `metadata`, DROP COLUMN `definitionOverride`'
             );
 
             $up = new Version20261029100000($db, new NullLogger());
@@ -99,26 +121,26 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
             $this->executeOnCopy($up, $copy);
 
             $columns = $schemaManager->listTableColumns($copy);
-            foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
+            foreach (self::MIGRATED_COLUMNS as $column) {
                 $this->assertArrayHasKey(strtolower($column), $columns, 'up() must add ' . $column);
                 $this->assertFalse($columns[strtolower($column)]->getNotnull(), $column . ' must be nullable');
             }
-            $this->assertArrayNotHasKey(
-                strtolower(self::COLUMN_SUB_GROUP),
-                $schemaManager->listTableIndexes($copy),
-                'up() must not index ' . self::COLUMN_SUB_GROUP
-            );
 
             $down = new Version20261029100000($db, new NullLogger());
             $down->down($schemaManager->introspectSchema());
             $this->executeOnCopy($down, $copy);
 
             $columns = $schemaManager->listTableColumns($copy);
-            foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
+            foreach (self::MIGRATED_COLUMNS as $column) {
                 $this->assertArrayNotHasKey(strtolower($column), $columns, 'down() must take back ' . $column);
             }
             $this->assertArrayHasKey('sorter', $columns, 'down() must leave sorter alone');
             $this->assertArrayHasKey('mandatory', $columns, 'down() must leave mandatory alone');
+            $this->assertArrayHasKey(
+                strtolower(self::COLUMN_SUB_GROUP),
+                $columns,
+                'down() must leave the sub group of Version20261029120000 alone'
+            );
         } finally {
             $db->executeStatement('DROP TABLE IF EXISTS `' . $copy . '`');
         }
@@ -134,7 +156,6 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertStringContainsString('`metadata` json NULL', $matches[1]);
         $this->assertStringContainsString('`definitionOverride` json NULL', $matches[1]);
         $this->assertStringContainsString('`subGroup` VARCHAR(190) NULL DEFAULT NULL', $matches[1]);
-        $this->assertStringNotContainsString('INDEX `subGroup`', $matches[1]);
     }
 
     public function testThePerAssignmentDataRoundTripsThroughBothLoadPaths(): void
@@ -204,7 +225,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
         $this->assertSameJsonData(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
         $this->assertSameJsonData(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
-        $this->assertSame(self::SUB_GROUP, $row[self::COLUMN_SUB_GROUP]);
+        $this->assertSame($this->subGroup(), $row[self::COLUMN_SUB_GROUP]);
         $this->assertSame(42, (int) $row['sorter'], 'the sorter the fresh relation carries is written');
     }
 
@@ -230,14 +251,13 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $without = $this->assignKey($this->createGroup('nosub'), $this->createKey('nosub'));
         $this->assertNull($this->readRow($without)[self::COLUMN_SUB_GROUP], 'no sub-group means NULL');
 
-        $long = str_repeat('a', 190);
-        $relation = $this->assignKey($this->createGroup('longsub'), $this->createKey('longsub'));
-        $relation->setSubGroup($long);
+        $relation = $this->assignKey($this->createGroup('withsub'), $this->createKey('withsub'));
+        $relation->setSubGroup($this->subGroup());
         $relation->save();
 
-        $this->assertSame($long, $this->readRow($relation)[self::COLUMN_SUB_GROUP]);
+        $this->assertSame($this->subGroup(), $this->readRow($relation)[self::COLUMN_SUB_GROUP]);
         $this->assertSame(
-            $long,
+            $this->subGroup(),
             KeyGroupRelation::getByGroupAndKeyId($relation->getGroupId(), $relation->getKeyId())->getSubGroup()
         );
     }
@@ -279,17 +299,36 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $relation = $this->assignKey($this->createGroup('perassignment'), $this->createKey('perassignment'));
         $relation->setMetadata(self::METADATA);
         $relation->setDefinitionOverride(self::OVERRIDE);
-        $relation->setSubGroup(self::SUB_GROUP);
+        $relation->setSubGroup($this->subGroup());
         $relation->save();
 
         return $relation;
+    }
+
+    /**
+     * A tag names an entry of the vocabulary of its store, so the entry has to exist before a
+     * relation can carry it. One entry serves every relation here: they all live in `teststore`.
+     */
+    private function subGroup(): string
+    {
+        if ($this->subGroup === null) {
+            $entry = new SubGroupConfig();
+            $entry->setStoreId($this->getStoreId());
+            $entry->setName('batched_perassignment_' . uniqid());
+            $entry->save();
+
+            $this->createdSubGroups[] = $entry;
+            $this->subGroup = $entry->getIdentifier();
+        }
+
+        return $this->subGroup;
     }
 
     private function assertPerAssignmentData(KeyGroupRelation $relation): void
     {
         $this->assertSameJsonData(self::METADATA, $relation->getMetadata());
         $this->assertSameJsonData(self::OVERRIDE, $relation->getDefinitionOverride());
-        $this->assertSame(self::SUB_GROUP, $relation->getSubGroup());
+        $this->assertSame($this->subGroup(), $relation->getSubGroup());
     }
 
     private function assertNoPerAssignmentData(KeyGroupRelation $relation): void

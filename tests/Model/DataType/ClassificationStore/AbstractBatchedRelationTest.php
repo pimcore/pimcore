@@ -115,6 +115,8 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
 
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $this->tester->setupPimcoreClass_CsstoreLocalized(['storeId' => $store->getId()]);
+
+        $this->createValueTables($store, 'csstorelocalized');
     }
 
     protected function getRelationCache(): Classificationstore\KeyGroupRelationCache

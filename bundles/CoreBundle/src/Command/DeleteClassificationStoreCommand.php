@@ -110,6 +110,11 @@ class DeleteClassificationStoreCommand extends AbstractCommand
         echo $sql . "\n";
         $db->executeQuery($sql);
 
+        // after the groups, whose relations carry the tags that name these entries
+        $sql = 'DELETE FROM classificationstore_subgroups WHERE storeId = ' . $storeId;
+        echo $sql . "\n";
+        $db->executeQuery($sql);
+
         $sql = 'DELETE FROM classificationstore_stores WHERE id = ' . $storeId;
         echo $sql . "\n";
         $db->executeQuery($sql);

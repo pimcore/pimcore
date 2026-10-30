@@ -21,8 +21,12 @@ use Pimcore\Cache\RuntimeCache;
 /**
  * Adds the per assignment columns of a classification store key/group relation.
  *
- * All three are nullable and carry no value for an existing row, so nothing changes for an
+ * Both are nullable and carry no value for an existing row, so nothing changes for an
  * installation that does not write them.
+ *
+ * The third per assignment column, `subGroup`, is added by Version20261029120000 together with the
+ * sub group vocabulary it names and the index it is queried by - adding it here as well would leave
+ * that migration's guard satisfied and its index uncreated.
  */
 final class Version20261029100000 extends AbstractMigration
 {
@@ -33,12 +37,11 @@ final class Version20261029100000 extends AbstractMigration
     private const COLUMNS = [
         'metadata' => 'JSON NULL',
         'definitionOverride' => 'JSON NULL',
-        'subGroup' => 'VARCHAR(190) NULL DEFAULT NULL',
     ];
 
     public function getDescription(): string
     {
-        return 'Add the metadata, definitionOverride and subGroup columns to classificationstore_relations';
+        return 'Add the metadata and definitionOverride columns to classificationstore_relations';
     }
 
     public function up(Schema $schema): void

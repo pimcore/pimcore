@@ -25,48 +25,21 @@ use Throwable;
  */
 trait IdentifierDaoTrait
 {
-    abstract public function create(): void;
-
-    abstract public function update(): void;
-
-    abstract public function delete(): void;
-
     /**
      * The write-once guard straddles the rest of the row: the stale check reads the stored identifier
      * before the ordinary fields are written, and the NULL to value transition happens after them. A
      * refusal in between - because another request assigned this row a different identifier, or claimed
      * the proposed one for a row of its own - would otherwise leave those fields behind, and with them
-     * the group relations that disabling a key deletes on the way past.
-     *
-     * A save that is not already inside a transaction therefore gets one of its own, which a refusal
-     * takes with it. Inside an enclosing transaction nothing is begun or rolled back here: the refusal
-     * propagates, and that transaction is the unit its owner rolls back.
-     *
-     * @param callable(): void $write
-     *
-     * @throws Throwable
+     * the group relations that disabling a key deletes on the way past. writeAtomically() is what makes
+     * the two halves and the fields between them one unit.
      */
-    private function writeAtomically(callable $write): void
-    {
-        $ownTransaction = !$this->db->isTransactionActive();
-        if ($ownTransaction) {
-            $this->db->beginTransaction();
-        }
+    use AtomicWriteTrait;
 
-        try {
-            $write();
-        } catch (Throwable $e) {
-            if ($ownTransaction) {
-                $this->db->rollBack();
-            }
+    abstract public function create(): void;
 
-            throw $e;
-        }
+    abstract public function update(): void;
 
-        if ($ownTransaction) {
-            $this->db->commit();
-        }
-    }
+    abstract public function delete(): void;
 
     /**
      * First half of the write-once guard, to be called before the rest of the row is written: a stale
