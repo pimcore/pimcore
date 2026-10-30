@@ -18,14 +18,17 @@ use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Navigation\Builder;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RequestContext;
 
 /**
  * Regression test for pimcore/pimcore#17180: a link to a document of a site, rendered in a frontend
@@ -163,6 +166,43 @@ class DocumentFullPathSiteTest extends ModelTestCase
             'http://' . $site->getMainDomain() . '/page',
             $this->freshDocument($page)->getFullPath()
         );
+    }
+
+    public function testNavigationCacheOutsideSitesIsSeparatedByScheme(): void
+    {
+        $link = new Document\Link();
+        $link->setKey('to-site');
+        $link->setParentId($this->mainPage->getId());
+        $link->setInternalType('document');
+        $link->setInternal($this->sitePage->getId());
+        $link->setPublished(true);
+        $link->save();
+
+        $builder = new Builder(new RequestHelper(Pimcore::getContainer()->get('request_stack'), new RequestContext()));
+        // the cache is disabled in the test environment, the navigation has to be written and read for real
+        Cache::enable();
+        Cache::clearAll();
+        // the saves above marked their tags as cleared, which makes the handler refuse to write them
+        (new ReflectionProperty(Cache::getHandler(), 'clearedTags'))->setValue(Cache::getHandler(), []);
+        $cache = 'fullpath-scheme-' . uniqid();
+        // a fresh document tree per call, like a new request: getFullPath() is memoized per instance
+        $siteUri = fn (): string => array_values($builder->getNavigation([
+            'root' => $this->freshDocument($this->mainPage),
+            'cache' => $cache,
+            'markActiveTrail' => false,
+        ])->getPages())[0]->getUri();
+
+        try {
+            $this->pushRequest('http://main.fullpath.test/some/page');
+            $this->assertSame('http://' . $this->site->getMainDomain() . '/page', $siteUri());
+            $this->popRequest();
+
+            $this->pushRequest('https://main.fullpath.test/some/page');
+            $this->assertSame('https://' . $this->site->getMainDomain() . '/page', $siteUri());
+        } finally {
+            Cache::clearAll();
+            Cache::disable();
+        }
     }
 
     private function createPage(string $key, int $parentId): Document\Page

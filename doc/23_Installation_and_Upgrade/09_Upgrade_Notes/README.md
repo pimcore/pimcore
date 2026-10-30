@@ -11,6 +11,11 @@ does not resolve on the main domain. Links, link generators and the navigation r
 If your own code prefixes the scheme and host to `getFullPath()` (for example for canonical or sitemap URLs), handle a
 result that starts with `http://` or `https://`, or use `getRealFullPath()` where you need the path itself.
 
+This also applies to headless and API consumers: a frontend request on the main domain (for example a GraphQL or REST
+endpoint that returns `getFullPath()`) now delivers absolute URLs for site documents. A client that passes such a value
+back as a path (for example to look a document up by path) has to use the path part of the URL, or the endpoint has to
+return `getRealFullPath()`. Requests inside the admin or Studio are not affected.
+
 Known limit: ID links inside a hardlink on the main domain that point into the hardlink's source site render the site
 domain, as before the change they rendered the real path, which does not resolve on the main domain either.
 
