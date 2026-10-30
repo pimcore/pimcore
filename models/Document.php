@@ -707,9 +707,13 @@ class Document extends Element\AbstractElement
                 $differentDomain = $site->getMainDomain() != $request->getHost();
             }
 
+            // a request outside of any site (main domain) cannot serve documents of a site below its real path
+            $siteDocumentOutsideSite = !Site::isSiteRequest() && $site instanceof Site && $site->getMainDomain();
+
             if ((Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this))
-                || $differentDomain) {
-                if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
+                || $differentDomain
+                || $siteDocumentOutsideSite) {
+                if ($mainRequest && Site::isSiteRequest() && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
                     if ($mainDocument instanceof WrapperInterface) {
                         $hardlinkPath = '';
                         $hardlink = $mainDocument->getHardLinkSource();
