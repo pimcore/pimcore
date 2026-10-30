@@ -114,6 +114,31 @@ class DocumentFullPathSiteTest extends ModelTestCase
         $this->assertSame('/page', $this->freshDocument($this->sitePage)->getFullPath());
     }
 
+    public function testLinkFromSiteRequestToOtherSiteDocumentUsesOtherSiteDomain(): void
+    {
+        $otherRoot = $this->createPage('fullpath-other-' . uniqid(), 1);
+        $otherPage = $this->createPage('other', $otherRoot->getId());
+
+        $otherSite = new Site();
+        $otherSite->setRootDocument($otherRoot);
+        $otherSite->setMainDomain('other-' . uniqid() . '.fullpath.test');
+        $otherSite->setRootPath($otherRoot->getRealFullPath());
+        $otherSite->save();
+
+        Cache::clearAll();
+        RuntimeCache::clear();
+
+        $this->pushRequest('http://' . $this->site->getMainDomain() . '/page');
+        $this->setCurrentSite($this->site);
+
+        // a site request keeps its behaviour: own documents stay relative, other sites get their domain
+        $this->assertSame('/page', $this->freshDocument($this->sitePage)->getFullPath());
+        $this->assertSame(
+            'http://' . $otherSite->getMainDomain() . '/other',
+            $this->freshDocument($otherPage)->getFullPath()
+        );
+    }
+
     public function testHardlinkAsMainDocumentOnMainDomainDoesNotNeedACurrentSite(): void
     {
         $this->pushRequest('http://main.fullpath.test/hl');
