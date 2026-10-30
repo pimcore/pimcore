@@ -149,6 +149,12 @@ class ServiceTest extends ModelTestCase
         );
 
         $this->assertSame(
+            $mainPage->getId(),
+            $dao->getDocumentIdByPrettyUrlOutsideSites($prettyUrl . '/'),
+            'A trailing slash must not change the lookup.'
+        );
+
+        $this->assertSame(
             0,
             $dao->getDocumentIdByPrettyUrlOutsideSites('/unknown-' . uniqid()),
             'An unknown pretty URL must not resolve to a document.'

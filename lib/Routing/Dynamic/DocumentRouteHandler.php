@@ -103,15 +103,16 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $site = $this->siteResolver->getSite($context->getRequest());
 
         // If the request is not from a site and the document is part of a site
-        // or the ID of the requested site does not match the site where the document is located.
-        // Then we have to throw a NotFoundHttpException
+        // (or the ID of the requested site does not match the site where the document is located),
+        // it must not be served. The pretty url lookup is not scoped to a site though, so the document
+        // of a site may have shadowed a main site document or a hardlink child with the same pretty url:
+        // fall back to those and throw a NotFoundHttpException only without a match
         if (!$site && $document && !$this->requestHelper->isAuthenticatedFrontendRequestByAdmin($context->getRequest())) {
             $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
             if ($siteIdOfDocument) {
-                // the pretty url lookup is not scoped to a site, so the document of a site may have shadowed
-                // a main site document with the same pretty url
                 $mainSiteDocId = $this->documentService->getDao()->getDocumentIdByPrettyUrlOutsideSites($context->getPath());
                 $document = $mainSiteDocId ? Document::getById($mainSiteDocId) : null;
+                $document ??= $this->getHardlinkChildOutsideSites($context->getPath());
 
                 if (!$document) {
                     throw new NotFoundHttpException('The page does not exist on this configured site.');
@@ -150,6 +151,21 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
                 $collection->add($route->getRouteKey(), $route);
             }
         }
+    }
+
+    /**
+     * Resolves the child of a hardlink outside of all sites, for a path whose own lookup returned a site document.
+     */
+    private function getHardlinkChildOutsideSites(string $path): ?Document
+    {
+        for ($parentPath = dirname($path); $parentPath !== '/' && $parentPath !== '.'; $parentPath = dirname($parentPath)) {
+            $parent = Document::getByPath($parentPath);
+            if ($parent instanceof Document\Hardlink && !Frontend::getSiteIdForDocument($parent)) {
+                return Document\Hardlink\Service::getChildByPath($parent, $path);
+            }
+        }
+
+        return null;
     }
 
     /**

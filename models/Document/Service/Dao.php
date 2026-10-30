@@ -15,6 +15,7 @@ namespace Pimcore\Model\Document\Service;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Model\Site;
 
 /**
@@ -67,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
             INNER JOIN documents_page ON documents.id = documents_page.id
             WHERE documents_page.prettyUrl = :prettyUrl
             ORDER BY documents.id',
-            ['prettyUrl' => rtrim($path, '/')]
+            ['prettyUrl' => Element\Service::correctPath($path)]
         );
 
         if ($candidates === []) {
