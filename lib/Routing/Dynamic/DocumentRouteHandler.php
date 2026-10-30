@@ -161,7 +161,17 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
         }
 
-        $route = new DocumentRoute($document->getFullPath());
+        $fullPath = $document->getFullPath();
+        $absoluteUrl = null !== $context ? false : parse_url($fullPath);
+
+        // a document of a site, linked from outside of it, has an absolute full path: the route only takes the path
+        if (is_array($absoluteUrl) && isset($absoluteUrl['scheme'], $absoluteUrl['host'])) {
+            $route = new DocumentRoute($absoluteUrl['path'] ?? '/');
+            $route->setHost($absoluteUrl['host'] . (isset($absoluteUrl['port']) ? ':' . $absoluteUrl['port'] : ''));
+            $route->setSchemes([$absoluteUrl['scheme']]);
+        } else {
+            $route = new DocumentRoute($fullPath);
+        }
         $route->setOption('utf8', true);
 
         // coming from matching -> set route path the currently matched one
