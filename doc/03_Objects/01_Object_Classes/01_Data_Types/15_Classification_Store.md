@@ -18,13 +18,38 @@ key can only be added once to that object.
 * An object can have more than one classification store.
 * Localization is supported (optionally, can be configured in the class definition).
 * The classification store introduces the concept of a fallback language.
-* All simple data types (e.g. textarea, date, etc are supported). The store can be extended with custom data types.
+* All simple data types, plus the structured types that ship a Classification Store marshaller, are supported - see [Available Data Types](#available-data-types). The store can be extended with custom data types.
 * Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc).
 * Keys can be organized in groups.
 * A key can belong to several groups.
 * Individual keys currently cannot be added to the object. Instead, the corresponding groups added.
 * The allowed groups can be restricted via the class definition.
 
+
+## Available Data Types
+
+A key can use any data type whose value fits the two value columns of the store's row, `value` and
+`value2` (both `LONGTEXT`):
+
+* **Every simple data type**, whose value the column takes as it is: input, textarea, wysiwyg,
+  numeric, slider, checkbox, date, datetime, time, select, country, language, user, etc.
+* **The structured types that ship a Classification Store marshaller**, which encodes the value into
+  the two columns and decodes it again when the object is loaded: `booleanSelect`,
+  `countrymultiselect`, `encryptedField`, `image`, `inputQuantityValue`, `inputQuantityValueRange`,
+  `languagemultiselect`, `multiselect`, `quantityValue`, `quantityValueRange`, `rgbaColor` and
+  `table`. The authoritative list is the `# classification store` section of
+  `bundles/CoreBundle/config/marshaller.yaml`.
+
+A custom data type is added the same way: register the data type, and - unless its value is a plain
+scalar the column already holds - register a marshaller for it under the key
+`classificationstore_<fieldtype>`.
+
+Relations are not supported, and that is a structural limit rather than a missing feature: a
+relation is not stored in a value column at all, but as rows of `object_relations_*`, which address
+their owner by field name and owner type (`object`, `localizedfield`, `fieldcollection`,
+`objectbrick`). A Classification Store key is none of those - its values live in the store's own
+table, keyed by group, key and language - so there is no row a relation could be written to. Use an
+[Object Brick](./60_Object_Bricks.md) when the attributes include relations.
 
 ## Configuration of Classification Stores
 
