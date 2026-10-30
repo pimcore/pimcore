@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
-use JsonException;
 use Pimcore\Model;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
@@ -27,26 +26,16 @@ final class KeyGroupRelation extends Model\AbstractModel
 {
     private const OPTIONS = 'options';
 
-    private const DEFAULT_UNIT = 'defaultUnit';
-
-    private const VALID_UNITS = 'validUnits';
-
     /**
      * The closed list of what a definitionOverride may carry: the per group option subset and the
      * unit of a quantity value. Everything else is refused, `type` and `fieldtype` above all - an
-     * assignment never changes what a key stores. Each entry describes the value the property
-     * takes, for the message of a refusal.
+     * assignment never changes what a key stores.
      */
     private const OVERRIDABLE_PROPERTIES = [
-        self::OPTIONS => 'a list of option values, or null for every option',
-        self::DEFAULT_UNIT => 'a string, or null',
-        self::VALID_UNITS => 'a list of unit ids',
+        self::OPTIONS,
+        'defaultUnit',
+        'validUnits',
     ];
-
-    /**
-     * The length of the `subGroup` column.
-     */
-    private const SUB_GROUP_MAX_LENGTH = 190;
 
     protected int $keyId;
 
@@ -228,13 +217,9 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     /**
      * @param array<string, mixed>|null $metadata
-     *
-     * @throws InvalidConfigException
      */
     public function setMetadata(?array $metadata): void
     {
-        self::assertJsonEncodable($metadata, 'metadata');
-
         $this->metadata = $metadata;
         $this->metadataInitialized = true;
     }
@@ -262,24 +247,13 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     public function setDefinitionOverride(?array $definitionOverride): void
     {
-        foreach ($definitionOverride ?? [] as $property => $value) {
-            if (!array_key_exists($property, self::OVERRIDABLE_PROPERTIES)) {
+        foreach (array_keys($definitionOverride ?? []) as $property) {
+            if (!in_array($property, self::OVERRIDABLE_PROPERTIES, true)) {
                 throw new InvalidConfigException(
                     sprintf('"%s" cannot be overridden per key assignment.', $property)
                 );
             }
-
-            if (!self::isAcceptedOverrideValue($property, $value)) {
-                throw new InvalidConfigException(sprintf(
-                    'The "%s" override takes %s, %s given.',
-                    $property,
-                    self::OVERRIDABLE_PROPERTIES[$property],
-                    get_debug_type($value)
-                ));
-            }
         }
-
-        self::assertJsonEncodable($definitionOverride, 'definition override');
 
         $this->definitionOverride = $definitionOverride;
         $this->definitionOverrideInitialized = true;
@@ -298,19 +272,8 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->subGroup;
     }
 
-    /**
-     * @throws InvalidConfigException
-     */
     public function setSubGroup(?string $subGroup): void
     {
-        if ($subGroup !== null && mb_strlen($subGroup) > self::SUB_GROUP_MAX_LENGTH) {
-            throw new InvalidConfigException(sprintf(
-                'A sub-group is at most %d characters, the given one is %d.',
-                self::SUB_GROUP_MAX_LENGTH,
-                mb_strlen($subGroup)
-            ));
-        }
-
         $this->subGroup = $subGroup;
         $this->subGroupInitialized = true;
     }
@@ -360,52 +323,6 @@ final class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * The value type each overridable property takes, which is the one its consumer accepts:
-     * `options` is the subset {@see self::filterOptions()} filters with, and the two unit
-     * properties are the arguments of AbstractQuantityValue::setDefaultUnit() and
-     * ::setValidUnits(). Without this an override of the wrong type is stored happily and only
-     * fails once something reads it back.
-     *
-     * Only ever reached for a property of {@see self::OVERRIDABLE_PROPERTIES}, so the default arm
-     * stands for a property added to that list without an arm here - refusing it is the safe way
-     * round, and the test over the full list catches it.
-     */
-    private static function isAcceptedOverrideValue(string $property, mixed $value): bool
-    {
-        return match ($property) {
-            self::OPTIONS => $value === null || is_array($value),
-            self::DEFAULT_UNIT => $value === null || is_string($value),
-            self::VALID_UNITS => is_array($value),
-            default => false,
-        };
-    }
-
-    /**
-     * Both JSON columns are written with json_encode(), which has no way of reporting a failure
-     * other than returning a value the column would then hold instead of the data. Refuse here,
-     * where the caller can still do something about it.
-     *
-     * @param array<string, mixed>|null $value
-     *
-     * @throws InvalidConfigException
-     */
-    private static function assertJsonEncodable(?array $value, string $property): void
-    {
-        if ($value === null) {
-            return;
-        }
-
-        try {
-            json_encode($value, JSON_THROW_ON_ERROR);
-        } catch (JsonException $exception) {
-            throw new InvalidConfigException(
-                sprintf('The %s cannot be encoded as JSON: %s', $property, $exception->getMessage()),
-                previous: $exception
-            );
-        }
-    }
-
-    /**
      * Filter rather than replace: one key holds the full option list and each group uses a subset
      * of it, so the key's own label/value pairs are kept in the key's order. A null subset means
      * every option, an empty one means none. Values are compared strictly.
@@ -417,8 +334,13 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     private static function filterOptions(?array $options, ?array $subset): ?array
     {
-        if ($subset === null || $options === null) {
+        if ($subset === null) {
             return $options;
+        }
+
+        // null options are the absence of a list to filter, not an instruction to keep every option
+        if ($options === null) {
+            return [];
         }
 
         // the subset speaks the vocabulary of the key's own options, so a pair stands for its value

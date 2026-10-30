@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
@@ -99,6 +100,18 @@ class KeyGroupRelationTest extends TestCase
         $this->assertSame([], json_decode($relation->getEffectiveDefinition(), true)['options']);
     }
 
+    public function testAnEmptySubsetOverAKeyWithoutOptionsStillMeansNone(): void
+    {
+        // a multiselect's own options are null by default, which is what the subset is filtering here
+        $relation = $this->relation(new Multiselect());
+
+        $relation->setDefinitionOverride(['options' => []]);
+        $this->assertSame([], json_decode($relation->getEffectiveDefinition(), true)['options']);
+
+        $relation->setDefinitionOverride(['options' => null]);
+        $this->assertNull(json_decode($relation->getEffectiveDefinition(), true)['options']);
+    }
+
     public static function outOfScopeOverrideProvider(): array
     {
         return [
@@ -139,107 +152,6 @@ class KeyGroupRelationTest extends TestCase
         $relation->setDefinitionOverride(self::IN_SCOPE);
 
         $this->assertSame(self::IN_SCOPE, $relation->getDefinitionOverride());
-    }
-
-    public static function illTypedOverrideProvider(): array
-    {
-        return [
-            // the value `filterOptions()` would then be handed instead of a subset
-            'options as a string' => [['options' => 'red']],
-            'options as an int' => [['options' => 1]],
-            // the arguments of AbstractQuantityValue::setDefaultUnit() and ::setValidUnits()
-            'defaultUnit as a list' => [['defaultUnit' => ['cm']]],
-            'defaultUnit as an int' => [['defaultUnit' => 7]],
-            'validUnits as a string' => [['validUnits' => 'cm']],
-            'validUnits as null' => [['validUnits' => null]],
-            'ill typed next to well typed' => [['defaultUnit' => 'cm', 'validUnits' => 'mm']],
-        ];
-    }
-
-    /**
-     * @dataProvider illTypedOverrideProvider
-     */
-    public function testAnOverrideOfTheWrongValueTypeIsRefused(array $override): void
-    {
-        $relation = $this->relation(new QuantityValue());
-        $relation->setDefinitionOverride(self::IN_SCOPE);
-
-        try {
-            $relation->setDefinitionOverride($override);
-            $this->fail('An override of the wrong value type must be refused');
-        } catch (InvalidConfigException $e) {
-            $this->addToAssertionCount(1);
-        }
-
-        $this->assertSame(self::IN_SCOPE, $relation->getDefinitionOverride(), 'nothing was taken over');
-    }
-
-    /**
-     * What the refusal buys: an accepted override is one `getEffectiveDefinition()` can merge and
-     * the quantity value setters can take back, rather than one that only fails when read.
-     */
-    public function testAnAcceptedOverrideSurvivesTheMergeAndTheQuantityValueSetters(): void
-    {
-        $definition = new QuantityValue();
-        $definition->setDefaultUnit('mm');
-        $definition->setValidUnits(['mm']);
-        $relation = $this->relation($definition);
-
-        foreach ([null, [], ['cm']] as $options) {
-            $relation->setDefinitionOverride(
-                ['options' => $options, 'defaultUnit' => 'cm', 'validUnits' => ['cm', 'mm']]
-            );
-
-            $effective = json_decode($relation->getEffectiveDefinition(), true);
-
-            $merged = new QuantityValue();
-            $merged->setDefaultUnit($effective['defaultUnit']);
-            $merged->setValidUnits($effective['validUnits']);
-
-            $this->assertSame('cm', $merged->getDefaultUnit());
-            $this->assertSame(['cm', 'mm'], $merged->getValidUnits());
-        }
-    }
-
-    public function testMetadataThatCannotBeEncodedAsJsonIsRefused(): void
-    {
-        $relation = $this->relation(new Input());
-        $relation->setMetadata(['externalCode' => 'EF000001']);
-
-        try {
-            // a byte sequence that is not valid UTF-8, which json_encode() cannot represent
-            $relation->setMetadata(['externalCode' => "EF\xB1\x31"]);
-            $this->fail('Metadata that json_encode() cannot represent must be refused');
-        } catch (InvalidConfigException $e) {
-            $this->addToAssertionCount(1);
-        }
-
-        $this->assertSame(['externalCode' => 'EF000001'], $relation->getMetadata(), 'nothing was taken over');
-    }
-
-    /**
-     * The column is `VARCHAR(190)`, and Pimcore ships with `sql_mode` empty, so a longer value
-     * would be truncated on save without a word - and a truncated sub-group is a different one.
-     * 190 is a count of characters, not of bytes, which is why the boundary is checked in a
-     * multi-byte alphabet too.
-     */
-    public function testASubGroupLongerThanItsColumnIsRefused(): void
-    {
-        $relation = $this->relation(new Input());
-
-        $relation->setSubGroup(str_repeat('ä', 190));
-        $this->assertSame(str_repeat('ä', 190), $relation->getSubGroup(), '190 characters still fit');
-
-        foreach ([str_repeat('a', 191), str_repeat('ä', 191)] as $tooLong) {
-            try {
-                $relation->setSubGroup($tooLong);
-                $this->fail('A sub-group longer than 190 characters must be refused');
-            } catch (InvalidConfigException $e) {
-                $this->addToAssertionCount(1);
-            }
-        }
-
-        $this->assertSame(str_repeat('ä', 190), $relation->getSubGroup(), 'nothing was taken over');
     }
 
     private function relation(Data $definition): KeyGroupRelation

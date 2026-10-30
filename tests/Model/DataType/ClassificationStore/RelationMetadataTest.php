@@ -61,6 +61,12 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
         $this->assertSame(190, $columns[strtolower(self::COLUMN_SUB_GROUP)]->getLength());
 
+        $this->assertArrayHasKey(
+            strtolower(self::COLUMN_SUB_GROUP),
+            $schemaManager->listTableIndexes(self::TABLE),
+            'the sub-group is a column of its own so that it can be indexed'
+        );
+
         $this->assertContains(
             self::COLUMN_SUB_GROUP,
             (new KeyGroupRelation())->getDao()->getValidTableColumns(self::TABLE),
@@ -97,6 +103,12 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
                 $this->assertArrayHasKey(strtolower($column), $columns, 'up() must add ' . $column);
                 $this->assertFalse($columns[strtolower($column)]->getNotnull(), $column . ' must be nullable');
             }
+            $this->assertArrayHasKey(
+                strtolower(self::COLUMN_SUB_GROUP),
+                $schemaManager->listTableIndexes($copy),
+                'up() must index ' . self::COLUMN_SUB_GROUP
+            );
+
             $down = new Version20261029100000($db, new NullLogger());
             $down->down($schemaManager->introspectSchema());
             $this->executeOnCopy($down, $copy);
@@ -122,6 +134,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertStringContainsString('`metadata` json NULL', $matches[1]);
         $this->assertStringContainsString('`definitionOverride` json NULL', $matches[1]);
         $this->assertStringContainsString('`subGroup` VARCHAR(190) NULL DEFAULT NULL', $matches[1]);
+        $this->assertStringContainsString('INDEX `subGroup` (`subGroup`)', $matches[1]);
     }
 
     public function testThePerAssignmentDataRoundTripsThroughBothLoadPaths(): void
@@ -134,13 +147,46 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertPerAssignmentData($this->loadThroughListing($relation));
     }
 
+    public function testAReloadAfterThePerAssignmentDataWasClearedDropsIt(): void
+    {
+        $relation = $this->createRelationWithPerAssignmentData();
+
+        $relation->setMetadata(null);
+        $relation->setDefinitionOverride(null);
+        $relation->setSubGroup(null);
+        $relation->save();
+
+        // the instance still holds what it was given, and the cleared row has to take it off again
+        $relation->getDao()->getById($relation->getKeyId(), $relation->getGroupId());
+        $this->assertNoPerAssignmentData($relation);
+
+        $relation->setSorter(7);
+        $relation->save();
+
+        $row = $this->readRow($relation);
+        foreach (self::PER_ASSIGNMENT_COLUMNS as $column) {
+            $this->assertNull($row[$column], 'a save after the reload must not write ' . $column . ' back');
+        }
+        $this->assertSame(7, (int) $row['sorter']);
+    }
+
+    public function testARowWithoutPerAssignmentDataLoadsAsNullThroughBothLoadPaths(): void
+    {
+        $relation = $this->assignKey($this->createGroup('nodata'), $this->createKey('nodata'));
+
+        $this->assertNoPerAssignmentData(
+            KeyGroupRelation::getByGroupAndKeyId($relation->getGroupId(), $relation->getKeyId())
+        );
+        $this->assertNoPerAssignmentData($this->loadThroughListing($relation));
+    }
+
     public function testTheJsonColumnsHoldJsonText(): void
     {
         $relation = $this->createRelationWithPerAssignmentData();
         $row = $this->readRow($relation);
 
-        $this->assertSameJsonValue(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
-        $this->assertSameJsonValue(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
+        $this->assertSame(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
+        $this->assertSame(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
     }
 
     public function testASavedFreshRelationKeepsStoredPerAssignmentData(): void
@@ -156,8 +202,8 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
         $row = $this->readRow($relation);
 
-        $this->assertSameJsonValue(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
-        $this->assertSameJsonValue(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
+        $this->assertSame(self::METADATA, json_decode($row[self::COLUMN_METADATA], true));
+        $this->assertSame(self::OVERRIDE, json_decode($row[self::COLUMN_DEFINITION_OVERRIDE], true));
         $this->assertSame(self::SUB_GROUP, $row[self::COLUMN_SUB_GROUP]);
         $this->assertSame(42, (int) $row['sorter'], 'the sorter the fresh relation carries is written');
     }
@@ -173,7 +219,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
             $this->addToAssertionCount(1);
         }
 
-        $this->assertSameJsonValue(
+        $this->assertSame(
             self::OVERRIDE,
             json_decode($this->readRow($relation)[self::COLUMN_DEFINITION_OVERRIDE], true)
         );
@@ -208,7 +254,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $relation->save();
         $this->clearConfigCaches();
 
-        $this->assertSameJsonValue(
+        $this->assertSame(
             self::METADATA,
             KeyGroupRelation::getByGroupAndKeyId($group->getId(), $relation->getKeyId())->getMetadata(),
             'the metadata is stored and returned verbatim'
@@ -241,43 +287,16 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
     private function assertPerAssignmentData(KeyGroupRelation $relation): void
     {
-        $this->assertSameJsonValue(self::METADATA, $relation->getMetadata());
-        $this->assertSameJsonValue(self::OVERRIDE, $relation->getDefinitionOverride());
+        $this->assertSame(self::METADATA, $relation->getMetadata());
+        $this->assertSame(self::OVERRIDE, $relation->getDefinitionOverride());
         $this->assertSame(self::SUB_GROUP, $relation->getSubGroup());
     }
 
-    /**
-     * MySQL stores a JSON column in a binary form whose object members are sorted by key, MariaDB
-     * keeps the text it was handed. A round trip therefore preserves every key and every value but
-     * not the order the keys were written in, and `assertSame()` on two PHP arrays is order
-     * sensitive. So both sides are compared with their object keys sorted, all the way down -
-     * values are still compared strictly, and the order of a JSON *array*, which neither database
-     * reorders, is still compared as well.
-     *
-     * @param array<string, mixed> $expected
-     */
-    private function assertSameJsonValue(array $expected, mixed $actual, string $message = ''): void
+    private function assertNoPerAssignmentData(KeyGroupRelation $relation): void
     {
-        $this->assertIsArray($actual, $message);
-        $this->assertSame(self::withSortedKeys($expected), self::withSortedKeys($actual), $message);
-    }
-
-    /**
-     * @param array<array-key, mixed> $value
-     *
-     * @return array<array-key, mixed>
-     */
-    private static function withSortedKeys(array $value): array
-    {
-        foreach ($value as $key => $entry) {
-            if (is_array($entry)) {
-                $value[$key] = self::withSortedKeys($entry);
-            }
-        }
-
-        ksort($value);
-
-        return $value;
+        $this->assertNull($relation->getMetadata());
+        $this->assertNull($relation->getDefinitionOverride());
+        $this->assertNull($relation->getSubGroup());
     }
 
     private function loadThroughListing(KeyGroupRelation $relation): KeyGroupRelation

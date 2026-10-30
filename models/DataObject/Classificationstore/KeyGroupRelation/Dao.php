@@ -31,8 +31,6 @@ class Dao extends AbstractDao
 
     public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
-    private const COLUMN_SUB_GROUP = 'subGroup';
-
     /**
      *
      * @throws NotFoundException
@@ -54,7 +52,7 @@ class Dao extends AbstractDao
         if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
             $data['mandatory'] = (bool)$data['mandatory'];
-            $this->assignVariablesToModel($this->decodeJsonColumns($data));
+            $this->assignVariablesToModel($this->hydratePerAssignmentColumns($this->model, $data));
         } else {
             throw new NotFoundException(sprintf(
                 'KeyGroupRelation with keyId: %s and groupId: %s does not exist',

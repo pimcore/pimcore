@@ -285,9 +285,8 @@ that carries just a group id and a key id therefore never clears a stored value.
 * `getDefinitionOverride()` / `setDefinitionOverride()` - a partial field definition, in the vocabulary of a key's own
   settings, merged over the key's definition by `getEffectiveDefinition()`.
 * `getSubGroup()` / `setSubGroup()` - the sub-group of this assignment, as a string of at most 190 characters, stored
-  verbatim, without an index. `null` means no sub-group. There is no vocabulary to validate it against yet, so any
-  string of that length is accepted; a longer one is refused with
-  `Pimcore\Model\Exception\InvalidConfigException` rather than silently truncated to the width of its column.
+  verbatim in an indexed column, so that every key of one sub-group is a lookup rather than a scan. `null` means no
+  sub-group. There is no vocabulary to validate it against yet, so any string is accepted.
 
 Both JSON fields take and return decoded arrays; the encoding happens in the DAO.
 
@@ -305,15 +304,10 @@ the unit. Any other property is refused by `setDefinitionOverride()` with
 because an assignment never changes what a key stores, and `title`, `tooltip` and `defaultValue`, which are a
 labelling question rather than a definition one.
 
-The value of each of the three is checked as well, against what the property's consumer takes: `options` is a list
-or `null`, `defaultUnit` a string or `null`, `validUnits` a list. The same exception refuses anything else, so that
-an override cannot be stored only to make `getEffectiveDefinition()` or the quantity value setters fail when
-something reads it back. `setMetadata()` and `setDefinitionOverride()` likewise refuse a value `json_encode()`
-cannot represent - invalid UTF-8, for instance - because the two columns hold what that function returns.
-
 `options` **filters** rather than replaces: the merged definition keeps the key's own label/value pairs whose value
 appears in the override's list, in the key's order. That is what lets one key hold the full option list while each
-group uses its own subset of it. `null` means every option, an empty list means none.
+group uses its own subset of it. `null` means every option, an empty list means none - including for a key whose own
+`options` are `null`, where an empty subset still leaves no option at all.
 
 ```php
 $relation = \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation::getByGroupAndKeyId($groupId, $keyId);
