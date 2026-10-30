@@ -41,7 +41,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      */
     private const RESERVED_DATA_KEYS = [
         'path', 'linktype', 'internal', 'internalId', 'internalType',
-        'text', 'parameters', 'anchor',
+        'text', 'parameters', 'anchor', 'fullPath', 'direct',
     ];
 
     public function getType(): string

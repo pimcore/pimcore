@@ -5,10 +5,15 @@
 ### [Documents] Link editable no longer renders its internal data as HTML attributes
 
 The `<a>` tag rendered by the Link editable no longer contains the attributes `path`, `linktype`, `text`, `parameters`,
-`anchor`, `internal`, `internalId` and `internalType`; they are no valid HTML attributes. `AttributeSanitizer` now omits
-them by default (constructor argument `omitInternalDataAttributes`, before only true for `AttributeSanitizer::strict()`).
+`anchor`, `internal`, `internalId`, `internalType`, `fullPath` and `direct`; they are not valid HTML attributes.
+`AttributeSanitizer` now omits them by default (constructor argument `omitInternalDataAttributes`, before only true for
+`AttributeSanitizer::strict()`).
 If a frontend still depends on them, install a policy with `omitInternalDataAttributes: false` via
-`AttributeSanitizer::setInstance()`.
+`AttributeSanitizer::setInstance()`. Note that an installed policy replaces the one built from
+`pimcore.documents.editables.link_sanitizer`: a site running with `strict: true` has to pass the strict flags as well
+(e.g. `new AttributeSanitizer(blockedUrlSchemes: AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES, blockUnsafeDataUrls: true,
+blockEditorSuppliedEventHandlerAttributes: true, requireConventionalAttributeNameShape: true, omitInternalDataAttributes: false)`),
+otherwise the XSS protection is off.
 
 ### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
 

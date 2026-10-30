@@ -18,9 +18,9 @@ namespace Pimcore\Model\Document\Editable\Link;
  * (\Pimcore\Model\Document\Editable\Link) is allowed to emit for editor-supplied ("direct" link
  * path, or custom attribute) data.
  *
- * The default instance (getInstance() with nothing configured) is fully permissive: no scheme is
+ * The default instance (getInstance() with nothing configured) is permissive: no scheme is
  * rejected and no attribute key is rejected, matching this editable's behavior prior to
- * GHSA-9g27-c28m-8xg5. strict() closes that advisory (rejects javascript:/vbscript:/script-
+ * GHSA-9g27-c28m-8xg5. It only omits the editable's own bookkeeping data from the rendered attributes. strict() closes that advisory (rejects javascript:/vbscript:/script-
  * executing data: URLs, and on*-shaped attribute keys the document editor could influence).
  *
  * To opt into the stricter policy, set the "pimcore.documents.editables.link_sanitizer.strict"
@@ -117,7 +117,7 @@ class AttributeSanitizer
 
     /**
      * Whether the Link editable's own bookkeeping data (path, linktype, text, parameters, anchor,
-     * internal*) is kept out of the rendered <a> tag's attributes, as they are no valid HTML attributes.
+     * internal*, fullPath, direct) is kept out of the rendered <a> tag's attributes, as they are not valid HTML attributes.
      * A custom policy can opt back into the historical behavior of emitting them (e.g.
      * linktype="direct") with omitInternalDataAttributes: false.
      */

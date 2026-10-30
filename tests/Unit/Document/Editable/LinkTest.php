@@ -21,7 +21,7 @@ use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * AttributeSanitizer::getInstance() defaults to a fully permissive policy (see
+ * AttributeSanitizer::getInstance() defaults to a permissive policy (see
  * AttributeSanitizerTest for that), so every test in this class that exercises the
  * GHSA-9g27-c28m-8xg5 fix explicitly installs the strict() policy first.
  */
@@ -384,12 +384,16 @@ class LinkTest extends TestCase
     {
         AttributeSanitizer::setInstance(null);
 
+        // shape of a link saved in Studio (fullPath and direct are part of its editable value);
+        // scalar values, as the attribute rendering only handles strings and numbers; document 1 is the root document
         $link = new Link();
         $link->setDataFromResource([
             'path' => '/en',
+            'fullPath' => '/en',
+            'direct' => '/en',
             'linktype' => 'internal',
-            'internal' => true,
-            'internalId' => 3,
+            'internal' => 1,
+            'internalId' => 1,
             'internalType' => 'document',
             'parameters' => 'a=b',
             'anchor' => 'top',
@@ -398,10 +402,33 @@ class LinkTest extends TestCase
 
         $output = $link->frontend();
 
-        foreach (['path', 'linktype', 'internal', 'internalId', 'internalType', 'parameters', 'anchor'] as $key) {
+        // DOMDocument lowercases attribute names, so look them up lowercased
+        foreach (['path', 'fullpath', 'direct', 'linktype', 'internal', 'internalid', 'internaltype', 'parameters', 'anchor'] as $key) {
             $this->assertNull($this->getRenderedAnchorAttribute($output, $key), $key);
         }
         $this->assertSame('x', $this->getRenderedAnchorAttribute($output, 'class'));
+    }
+
+    public function testOptOutPolicyEmitsStudioSavedInternalAttributes(): void
+    {
+        AttributeSanitizer::setInstance(new AttributeSanitizer(omitInternalDataAttributes: false));
+
+        $link = new Link();
+        $link->setDataFromResource([
+            'path' => '/en',
+            'fullPath' => '/en',
+            'direct' => '/en',
+            'linktype' => 'internal',
+            'internal' => 1,
+            'internalId' => 1,
+            'internalType' => 'document',
+        ]);
+
+        $output = $link->frontend();
+
+        foreach (['fullpath', 'direct', 'linktype', 'internal', 'internalid', 'internaltype'] as $key) {
+            $this->assertNotNull($this->getRenderedAnchorAttribute($output, $key), $key);
+        }
     }
 
     public function testPolicyCanOptBackIntoEmittingInternalDataAttributes(): void
