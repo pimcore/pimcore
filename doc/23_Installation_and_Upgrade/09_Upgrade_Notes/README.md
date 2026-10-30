@@ -2,6 +2,18 @@
 
 ## Pimcore 2026.3.4
 
+### [Documents] `Document::getFullPath()` returns the site domain for site documents outside of sites
+
+In a frontend request outside of any site (the main domain), `getFullPath()` of a document that belongs to a site with a
+main domain now returns an absolute URL (`https://site.example.com/page`) instead of the real path (`/site/page`), which
+does not resolve on the main domain. Links, link generators and the navigation render the site domain with it.
+
+If your own code prefixes the scheme and host to `getFullPath()` (for example for canonical or sitemap URLs), handle a
+result that starts with `http://` or `https://`, or use `getRealFullPath()` where you need the path itself.
+
+Known limit: ID links inside a hardlink on the main domain that point into the hardlink's source site render the site
+domain, as before the change they rendered the real path, which does not resolve on the main domain either.
+
 ### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
 
 A WYSIWYG field (data object field and Document editable) no longer reduces `<a pimcore_id=... pimcore_type=...>` links

@@ -745,7 +745,7 @@ class Document extends Element\AbstractElement
                                 $link = $scheme . $site->getMainDomain() . '/';
                             } else {
                                 $link = $scheme . $site->getMainDomain() .
-                                    preg_replace('@^' . $site->getRootPath() . '/@', '/', $this->getRealFullPath());
+                                    preg_replace('@^' . preg_quote($site->getRootPath(), '@') . '/@', '/', $this->getRealFullPath());
                             }
                         }
                     }
