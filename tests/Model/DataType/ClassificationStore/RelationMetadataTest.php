@@ -61,10 +61,10 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
 
         $this->assertSame(190, $columns[strtolower(self::COLUMN_SUB_GROUP)]->getLength());
 
-        $this->assertArrayHasKey(
+        $this->assertArrayNotHasKey(
             strtolower(self::COLUMN_SUB_GROUP),
             $schemaManager->listTableIndexes(self::TABLE),
-            'the sub-group is a column of its own so that it can be indexed'
+            'the sub-group deliberately carries no secondary index'
         );
 
         $this->assertContains(
@@ -103,10 +103,10 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
                 $this->assertArrayHasKey(strtolower($column), $columns, 'up() must add ' . $column);
                 $this->assertFalse($columns[strtolower($column)]->getNotnull(), $column . ' must be nullable');
             }
-            $this->assertArrayHasKey(
+            $this->assertArrayNotHasKey(
                 strtolower(self::COLUMN_SUB_GROUP),
                 $schemaManager->listTableIndexes($copy),
-                'up() must index ' . self::COLUMN_SUB_GROUP
+                'up() must not index ' . self::COLUMN_SUB_GROUP
             );
 
             $down = new Version20261029100000($db, new NullLogger());
@@ -134,7 +134,7 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertStringContainsString('`metadata` json NULL', $matches[1]);
         $this->assertStringContainsString('`definitionOverride` json NULL', $matches[1]);
         $this->assertStringContainsString('`subGroup` VARCHAR(190) NULL DEFAULT NULL', $matches[1]);
-        $this->assertStringContainsString('INDEX `subGroup` (`subGroup`)', $matches[1]);
+        $this->assertStringNotContainsString('INDEX `subGroup`', $matches[1]);
     }
 
     public function testThePerAssignmentDataRoundTripsThroughBothLoadPaths(): void

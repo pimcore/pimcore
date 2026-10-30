@@ -36,12 +36,6 @@ final class Version20261029100000 extends AbstractMigration
         'subGroup' => 'VARCHAR(190) NULL DEFAULT NULL',
     ];
 
-    /**
-     * A column of its own rather than a key inside `metadata` so that it can be indexed: every key
-     * of one sub-group across a store is then a lookup rather than a full scan.
-     */
-    private const INDEXED_COLUMN = 'subGroup';
-
     public function getDescription(): string
     {
         return 'Add the metadata, definitionOverride and subGroup columns to classificationstore_relations';
@@ -58,10 +52,6 @@ final class Version20261029100000 extends AbstractMigration
             }
 
             $changes[] = 'ADD COLUMN `' . $column . '` ' . $type;
-
-            if ($column === self::INDEXED_COLUMN) {
-                $changes[] = 'ADD INDEX `' . $column . '` (`' . $column . '`)';
-            }
         }
 
         if ($changes !== []) {
@@ -82,10 +72,6 @@ final class Version20261029100000 extends AbstractMigration
         foreach (array_keys(self::COLUMNS) as $column) {
             if (!$table->hasColumn($column)) {
                 continue;
-            }
-
-            if ($column === self::INDEXED_COLUMN) {
-                $changes[] = 'DROP INDEX `' . $column . '`';
             }
 
             $changes[] = 'DROP COLUMN `' . $column . '`';

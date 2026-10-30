@@ -285,8 +285,8 @@ that carries just a group id and a key id therefore never clears a stored value.
 * `getDefinitionOverride()` / `setDefinitionOverride()` - a partial field definition, in the vocabulary of a key's own
   settings, merged over the key's definition by `getEffectiveDefinition()`.
 * `getSubGroup()` / `setSubGroup()` - the sub-group of this assignment, as a string of at most 190 characters, stored
-  verbatim in an indexed column, so that every key of one sub-group is a lookup rather than a scan. `null` means no
-  sub-group. There is no vocabulary to validate it against yet, so any string is accepted.
+  verbatim in a column of its own, with no secondary index and no foreign key. `null` means no sub-group. There is no
+  vocabulary to validate it against yet, so any string is accepted.
 
 Both JSON fields take and return decoded arrays; the encoding happens in the DAO.
 
