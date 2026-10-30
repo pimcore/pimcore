@@ -19,76 +19,80 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 
 /**
- * Adds the table holding the translated titles and descriptions of classification store entities.
+ * Adds the per assignment columns of a classification store key/group relation.
  *
- * `entityId` is a signed BIGINT, neither the unsigned INT the specification sketched nor a signed
- * one: the column addresses four tables, and `classificationstore_stores`.`id` is a signed INT(11)
- * while groups, keys and collections are INT UNSIGNED. No INT holds both - an unsigned one cannot
- * carry the signed range, a signed one loses the unsigned range above 2147483647 - so a signed
- * BIGINT is the only type covering every id this column points at. Strict SQL mode is off in the
- * default connection, so an id the column cannot hold would be clamped rather than refused and the
- * label would attach to the wrong entity or collide under the primary key. No foreign key is
- * possible from a polymorphic column whichever type it takes.
- *
- * `subgroup` is a member of the enum although no sub-group entity exists yet, so that labels
- * imported for sub-groups are stored rather than refused.
- *
- * `language` is 16 characters wide, which holds the realistic BCP 47 forms - `en_US_POSIX` and
- * `zh_Hant_TW` among them - rather than the 10 the specification sketched; the stored bytes of the
- * ordinary two and five character codes are unchanged.
+ * Both are nullable and carry no value for an existing row, so nothing changes for an
+ * installation that does not write them.
  */
 final class Version20261029100000 extends AbstractMigration
 {
     private const CACHEKEY = 'system_resource_columns_';
 
-    private const TABLE = 'classificationstore_labels';
+    private const TABLE = 'classificationstore_relations';
+
+    private const COLUMNS = [
+        'metadata' => 'JSON NULL',
+        'definitionOverride' => 'JSON NULL',
+    ];
 
     public function getDescription(): string
     {
-        return 'Add the classificationstore_labels table';
+        return 'Add the metadata and definitionOverride columns to classificationstore_relations';
     }
 
     public function up(Schema $schema): void
     {
-        if ($schema->hasTable(self::TABLE)) {
-            return;
+        $table = $schema->getTable(self::TABLE);
+        $changes = [];
+
+        foreach (self::COLUMNS as $column => $type) {
+            if ($table->hasColumn($column)) {
+                continue;
+            }
+
+            $changes[] = 'ADD COLUMN `' . $column . '` ' . $type;
         }
 
-        $this->addSql(
-            'CREATE TABLE `classificationstore_labels` ('
-            . '`entityType` ENUM(\'store\',\'collection\',\'group\',\'subgroup\',\'key\') NOT NULL, '
-            . '`entityId` BIGINT(20) NOT NULL, '
-            . '`language` VARCHAR(16) NOT NULL, '
-            . '`title` VARCHAR(255) NULL DEFAULT NULL, '
-            . '`description` TEXT NULL, '
-            . 'PRIMARY KEY (`entityType`, `entityId`, `language`)'
-            . ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci'
-        );
+        if ($changes !== []) {
+            $this->addSql('ALTER TABLE `' . self::TABLE . '` ' . implode(', ', $changes) . ';');
+        }
     }
 
     public function postUp(Schema $schema): void
     {
-        $this->resetValidTableColumnsCache(self::TABLE);
+        $this->resetValidTableColumnsCache();
     }
 
     public function down(Schema $schema): void
     {
-        if ($schema->hasTable(self::TABLE)) {
-            $this->addSql('DROP TABLE `classificationstore_labels`');
+        $table = $schema->getTable(self::TABLE);
+        $changes = [];
+
+        foreach (array_keys(self::COLUMNS) as $column) {
+            if (!$table->hasColumn($column)) {
+                continue;
+            }
+
+            $changes[] = 'DROP COLUMN `' . $column . '`';
+        }
+
+        if ($changes !== []) {
+            $this->addSql('ALTER TABLE `' . self::TABLE . '` ' . implode(', ', $changes) . ';');
         }
     }
 
     public function postDown(Schema $schema): void
     {
-        $this->resetValidTableColumnsCache(self::TABLE);
+        $this->resetValidTableColumnsCache();
     }
 
-    private function resetValidTableColumnsCache(string $table): void
+    private function resetValidTableColumnsCache(): void
     {
-        $cacheKey = self::CACHEKEY . $table;
+        $cacheKey = self::CACHEKEY . self::TABLE;
         if (RuntimeCache::isRegistered($cacheKey)) {
             RuntimeCache::getInstance()->offsetUnset($cacheKey);
         }
+
         Cache::clearTags(['system', 'resource']);
     }
 }

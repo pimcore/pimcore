@@ -16,6 +16,7 @@ use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Classificationstore\Traits\PerAssignmentDaoTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
 
@@ -26,6 +27,8 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends AbstractDao
 {
+    use PerAssignmentDaoTrait;
+
     public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
     /**
@@ -49,7 +52,7 @@ class Dao extends AbstractDao
         if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
             $data['mandatory'] = (bool)$data['mandatory'];
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel($this->hydratePerAssignmentColumns($this->model, $data));
         } else {
             throw new NotFoundException(sprintf(
                 'KeyGroupRelation with keyId: %s and groupId: %s does not exist',
@@ -84,21 +87,48 @@ class Dao extends AbstractDao
         $data = [];
 
         foreach ($type as $key => $value) {
-            if (in_array($key, $validTableColumns)) {
-                if (is_bool($value)) {
-                    $value = (int) $value;
-                }
-                if (is_array($value) || is_object($value)) {
-                    $value = Serialize::serialize($value);
-                }
-
-                $data[$key] = $value;
+            if (!in_array($key, $validTableColumns)) {
+                continue;
             }
+
+            // a relation built with `new` carries no per assignment data, and must not clear a stored one
+            if ($this->isUninitializedPerAssignmentColumn($key)) {
+                continue;
+            }
+
+            // the two JSON columns hold JSON text, not a PHP serialization payload
+            if ($key === self::COLUMN_METADATA || $key === self::COLUMN_DEFINITION_OVERRIDE) {
+                $data[$key] = $value === null ? null : json_encode($value);
+
+                continue;
+            }
+
+            if (is_bool($value)) {
+                $value = (int) $value;
+            }
+            if (is_array($value) || is_object($value)) {
+                $value = Serialize::serialize($value);
+            }
+
+            $data[$key] = $value;
         }
 
         Helper::upsert($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
 
         $this->clearRelationCache();
+    }
+
+    /**
+     * Mirrors the engineInitialized guard of StoreConfig: a column is written only once it was
+     * loaded or explicitly set.
+     */
+    private function isUninitializedPerAssignmentColumn(string $column): bool
+    {
+        return match ($column) {
+            self::COLUMN_METADATA => !$this->model->isMetadataInitialized(),
+            self::COLUMN_DEFINITION_OVERRIDE => !$this->model->isDefinitionOverrideInitialized(),
+            default => false,
+        };
     }
 
     /**

@@ -16,7 +16,7 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Command\DeleteClassificationStoreCommand;
-use Pimcore\Bundle\CoreBundle\Migrations\Version20261029100000;
+use Pimcore\Bundle\CoreBundle\Migrations\Version20261029130000;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\Label;
@@ -146,11 +146,11 @@ final class LabelTest extends ModelTestCase
         $db = Db::get();
         $schema = $db->createSchemaManager()->introspectSchema();
 
-        $up = new Version20261029100000($db, new NullLogger());
+        $up = new Version20261029130000($db, new NullLogger());
         $up->up($schema);
         $this->assertSame([], array_map(static fn ($query) => $query->getStatement(), $up->getSql()));
 
-        $down = new Version20261029100000($db, new NullLogger());
+        $down = new Version20261029130000($db, new NullLogger());
         $down->down($schema);
         $dropped = array_map(static fn ($query) => $query->getStatement(), $down->getSql());
         $this->assertSame(['DROP TABLE `' . self::TABLE_LABELS . '`'], $dropped);
@@ -304,7 +304,7 @@ final class LabelTest extends ModelTestCase
     private function createMigrationScratchTable(): void
     {
         $db = Db::get();
-        $migration = new Version20261029100000($db, new NullLogger());
+        $migration = new Version20261029130000($db, new NullLogger());
 
         // an empty schema is the fresh install the migration is written for
         $migration->up(new Schema());
