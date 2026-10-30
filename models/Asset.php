@@ -1867,6 +1867,11 @@ class Asset extends Element\AbstractElement
         $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         $transformedData = $metaData['data'];
 
+        // rows with an empty type (e.g. an out-of-enum value stored as '') have no data type to transform with
+        if (empty($metaData['type'])) {
+            return $transformedData;
+        }
+
         try {
             /** @var Data $instance */
             $instance = $loader->build($metaData['type']);
