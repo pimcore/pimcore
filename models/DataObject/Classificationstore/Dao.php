@@ -25,29 +25,11 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * The name of the EAV value table of the model's class, whether or not that engine is the one
-     * behind the model's store.
-     *
-     * The method predates the engines and is part of the published facade, so it keeps its name and
-     * its arity. It names a table rather than asking an engine for one: a store on the document
-     * engine keeps its values in `object_classificationstore_doc_<CLASS>` and has no table of this
-     * name at all. Read the store's engine to find out which storage is in use.
-     *
-     * @deprecated and will be removed in Pimcore 2027.1. It answers for one engine only.
-     */
     public function getDataTableName(): string
     {
         return 'object_classificationstore_data_' . $this->model->getClass()->getId();
     }
 
-    /**
-     * The name of the EAV group table of the model's class, under the same caveat as
-     * {@see self::getDataTableName()}: the document engine has no group table, as the presence of a
-     * value row is what makes a group active there.
-     *
-     * @deprecated and will be removed in Pimcore 2027.1. It answers for one engine only.
-     */
     public function getGroupsTableName(): string
     {
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();

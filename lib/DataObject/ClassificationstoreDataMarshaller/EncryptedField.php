@@ -55,10 +55,8 @@ class EncryptedField implements MarshallerInterface
                     $encodedData = $marshaller->marshal($value, ['fieldDefinition' => $delegateFd, 'format' => 'classificationstore']);
 
                     if (is_array($encodedData)) {
-                        // a delegate marshaller leaves a column out, or sets it to null, when it has
-                        // nothing to store there - such a column stays null instead of being encrypted
-                        $encryptedValue = isset($encodedData['value']) ? $this->encrypt($encodedData['value'], $params) : null;
-                        $encryptedValue2 = isset($encodedData['value2']) ? $this->encrypt($encodedData['value2'], $params) : null;
+                        $encryptedValue = $this->encrypt($encodedData['value'], $params);
+                        $encryptedValue2 = $this->encrypt($encodedData['value2'], $params);
                     }
                 }
             } else {
@@ -85,8 +83,8 @@ class EncryptedField implements MarshallerInterface
             if ($this->marshallerService->supportsFielddefinition('classificationstore', $delegateFd->getFieldtype())) {
                 $marshaller = $this->marshallerService->buildFieldefinitionMarshaller('classificationstore', $delegateFd->getFieldtype());
 
-                $encryptedValue = $this->decrypt($value['value'] ?? null, $params);
-                $encryptedValue2 = $this->decrypt($value['value2'] ?? null, $params);
+                $encryptedValue = $this->decrypt($value['value'], $params);
+                $encryptedValue2 = $this->decrypt($value['value2'], $params);
 
                 $decodedData = $marshaller->unmarshal([
                     'value' => $encryptedValue,

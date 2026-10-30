@@ -20,7 +20,6 @@ use Pimcore\Model\DataObject\Exception\ConflictingClassificationStoreEnginesExce
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use ReflectionClassConstant;
 use ReflectionProperty;
 
 class EngineResolverTest extends TestCase
@@ -79,32 +78,14 @@ class EngineResolverTest extends TestCase
         $this->resolver($this->createMock(EngineInterface::class))->resolve('nosuchengine', self::STORE_ID);
     }
 
-    /**
-     * `document` used to be held back as an engine this release knew about but did not ship. It
-     * ships now, so a store carrying it resolves to the registered engine.
-     */
-    public function testTheDocumentEngineResolvesToTheEngineRegisteredUnderThatName(): void
+    public function testTheNotYetAvailableDocumentEngineThrowsItsOwnError(): void
     {
-        $eavEngine = $this->createMock(EngineInterface::class);
-        $documentEngine = $this->createMock(EngineInterface::class);
-        $resolver = new EngineResolver(['eav' => $eavEngine, 'document' => $documentEngine]);
+        $this->expectException(ClassificationStoreEngineNotAvailableException::class);
+        $this->expectExceptionMessage('Classification store 7 is configured for the storage engine "document", which'
+            . ' this Pimcore version does not ship yet. Set classificationstore_stores.engine of store 7 back to NULL'
+            . ' to use the default engine until the bundle providing "document" is available.');
 
-        $this->assertSame($documentEngine, $resolver->resolve('document', self::STORE_ID));
-    }
-
-    /**
-     * Nothing is held back any more, so {@see ClassificationStoreEngineNotAvailableException} is
-     * unreachable from the default configuration. The class stays - it carries no `@internal`, so
-     * catching it is legal - and this pins that re-filling the list is a deliberate act.
-     */
-    public function testNoEngineNameIsHeldBackAsNotYetAvailable(): void
-    {
-        $this->assertSame(
-            [],
-            (new ReflectionClassConstant(EngineResolver::class, 'UNAVAILABLE_ENGINES'))->getValue()
-        );
-
-        $this->assertTrue(class_exists(ClassificationStoreEngineNotAvailableException::class));
+        $this->resolver($this->createMock(EngineInterface::class))->resolve('document', self::STORE_ID);
     }
 
     /**

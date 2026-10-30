@@ -65,10 +65,6 @@ services:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_encryptedField, key: 'classificationstore_encryptedField' }
 
-    Pimcore\DataObject\ClassificationstoreDataMarshaller\Image:
-        tags:
-            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_image, key: 'classificationstore_image' }
-
     Pimcore\DataObject\ClassificationstoreDataMarshaller\Multiselect:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_multiselect, key: 'classificationstore_multiselect' }

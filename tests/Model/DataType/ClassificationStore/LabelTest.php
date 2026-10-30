@@ -81,7 +81,11 @@ final class LabelTest extends ModelTestCase
         );
 
         $this->assertSame('NO', $columns['entityId']['IS_NULLABLE']);
-        $this->assertStringStartsWith('int', strtolower((string) $columns['entityId']['COLUMN_TYPE']));
+        $this->assertStringStartsWith(
+            'bigint',
+            strtolower((string) $columns['entityId']['COLUMN_TYPE']),
+            'entityId addresses signed and unsigned int ids alike, so it has to span both ranges'
+        );
         $this->assertStringNotContainsString(
             'unsigned',
             strtolower((string) $columns['entityId']['COLUMN_TYPE']),

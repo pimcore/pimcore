@@ -49,10 +49,9 @@ class EncryptedField implements MarshallerInterface
                 $marshaller = $this->marshallerService->buildFieldefinitionMarshaller('block', $delegateFd->getFieldtype());
                 $value = $marshaller->marshal($value, ['fieldDefinition' => $delegateFd, 'format' => 'block']);
             }
+            $encryptedValue = $this->encrypt($value, $params);
 
-            // a delegate marshaller returns null when it has nothing to store - encrypt() takes a
-            // string, so nothing is left to encrypt here either
-            return $value === null ? null : $this->encrypt($value, $params);
+            return $encryptedValue;
         }
 
         return null;

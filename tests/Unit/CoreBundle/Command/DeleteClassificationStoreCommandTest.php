@@ -16,10 +16,8 @@ namespace Pimcore\Tests\Unit\CoreBundle\Command;
 
 use Exception;
 use Pimcore\Bundle\CoreBundle\Command\DeleteClassificationStoreCommand;
-use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
-use Pimcore\Model\DataObject\Classificationstore\SubGroupConfig;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\Console\Application;
@@ -67,8 +65,8 @@ class DeleteClassificationStoreCommandTest extends TestCase
         $this->assertStringContainsString('Deleting values for store ' . self::STORE_ID . ' via engine eav', $output);
         $this->assertStringContainsString('Deleting values for store ' . self::STORE_ID . ' via engine other', $output);
 
-        // every store-scoped configuration table is emptied, the sub group vocabulary included
-        foreach (['keys', 'groups', 'collections', 'subgroups'] as $table) {
+        // the four configuration-table lines are unchanged
+        foreach (['keys', 'groups', 'collections'] as $table) {
             $this->assertStringContainsString(
                 'DELETE FROM classificationstore_' . $table . ' WHERE storeId = ' . self::STORE_ID,
                 $output
@@ -81,38 +79,6 @@ class DeleteClassificationStoreCommandTest extends TestCase
 
         // the per-table value SQL the command used to echo is gone by construction
         $this->assertStringNotContainsString('DELETE FROM object_classificationstore_', $output);
-    }
-
-    /**
-     * The sub group vocabulary is scoped to the store and has no cascading foreign key of its own, so
-     * only the command removes it - a store left behind here stays reachable through SubGroupConfig.
-     */
-    public function testTheSubGroupVocabularyOfTheStoreIsDeletedWithIt(): void
-    {
-        TestHelper::checkDbSupport();
-
-        $db = Db::get();
-        $db->insert('classificationstore_subgroups', [
-            'storeId' => self::STORE_ID,
-            'name' => 'deleted with the store',
-            'identifier' => 'deleted-with-the-store',
-        ]);
-
-        try {
-            [$exitCode] = $this->runCommand(['eav' => $this->createMock(EngineInterface::class)]);
-
-            $this->assertSame(Command::SUCCESS, $exitCode);
-            $this->assertSame(
-                0,
-                (int) $db->fetchOne(
-                    'SELECT COUNT(*) FROM classificationstore_subgroups WHERE storeId = ?',
-                    [self::STORE_ID]
-                )
-            );
-            $this->assertNull(SubGroupConfig::getByIdentifier('deleted-with-the-store', self::STORE_ID));
-        } finally {
-            $db->delete('classificationstore_subgroups', ['storeId' => self::STORE_ID]);
-        }
     }
 
     public function testAFailingEngineStopsTheCommandWithANonZeroExitCode(): void

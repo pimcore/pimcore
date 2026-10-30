@@ -21,10 +21,14 @@ use Pimcore\Cache\RuntimeCache;
 /**
  * Adds the table holding the translated titles and descriptions of classification store entities.
  *
- * `entityId` is a signed INT, not the unsigned one the specification sketched: the column addresses
- * four tables, and `classificationstore_stores`.`id` is a signed INT(11) while groups, keys and
- * collections are unsigned - one unsigned column cannot faithfully hold every id it points at. No
- * foreign key is possible from a polymorphic column either way.
+ * `entityId` is a signed BIGINT, neither the unsigned INT the specification sketched nor a signed
+ * one: the column addresses four tables, and `classificationstore_stores`.`id` is a signed INT(11)
+ * while groups, keys and collections are INT UNSIGNED. No INT holds both - an unsigned one cannot
+ * carry the signed range, a signed one loses the unsigned range above 2147483647 - so a signed
+ * BIGINT is the only type covering every id this column points at. Strict SQL mode is off in the
+ * default connection, so an id the column cannot hold would be clamped rather than refused and the
+ * label would attach to the wrong entity or collide under the primary key. No foreign key is
+ * possible from a polymorphic column whichever type it takes.
  *
  * `subgroup` is a member of the enum although no sub-group entity exists yet, so that labels
  * imported for sub-groups are stored rather than refused.
@@ -53,7 +57,7 @@ final class Version20261029100000 extends AbstractMigration
         $this->addSql(
             'CREATE TABLE `classificationstore_labels` ('
             . '`entityType` ENUM(\'store\',\'collection\',\'group\',\'subgroup\',\'key\') NOT NULL, '
-            . '`entityId` INT(11) NOT NULL, '
+            . '`entityId` BIGINT(20) NOT NULL, '
             . '`language` VARCHAR(16) NOT NULL, '
             . '`title` VARCHAR(255) NULL DEFAULT NULL, '
             . '`description` TEXT NULL, '

@@ -814,16 +814,6 @@ final class EavEngine extends AbstractDao implements EngineInterface
         return self::GROUPS_TABLE_PREFIX . $classId;
     }
 
-    /**
-     * Removes the rows of a field name the class no longer carries.
-     *
-     * Which names it still carries is answered by the same recursive discovery the engine routing
-     * uses, {@see Service::getClassificationStoreFieldDefinitions()}: a classification store may be
-     * defined inside an object brick or a field collection, and its rows land in this table under
-     * the field's own name all the same - while {@see ClassDefinition::getFieldDefinition()} looks
-     * no further than the class's own fields and its localized ones, and would call every one of
-     * those names gone.
-     */
     private function cleanupTable(string $tableName, string $classId): void
     {
         $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
@@ -833,15 +823,13 @@ final class EavEngine extends AbstractDao implements EngineInterface
             return;
         }
 
-        $liveFieldNames = Service::groupStoreIdsByFieldName(
-            Service::getClassificationStoreFieldDefinitions($classDefinition->getFieldDefinitions())
-        );
-
         $fieldsQuery = 'SELECT DISTINCT fieldname FROM ' . $tableName;
         $fieldNames = $this->db->fetchFirstColumn($fieldsQuery);
 
         foreach ($fieldNames as $fieldName) {
-            if (!isset($liveFieldNames[$fieldName])) {
+            $fieldDef = $classDefinition->getFieldDefinition($fieldName);
+
+            if (!$fieldDef) {
                 $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
                 $this->db->delete($tableName, ['fieldname' => $fieldName]);
             }

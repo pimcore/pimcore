@@ -28,16 +28,6 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
 {
     private const FIELDNAME = 'csstore';
 
-    /**
-     * The EAV engine maps every group holding a stored value, with a null collection when it has none.
-     *
-     * @return array<int, int|null>
-     */
-    protected function expectedMappingOfAGroupWithoutCollection(int $groupId): array
-    {
-        return [$groupId => null];
-    }
-
     public function testEditModePayloadOfAParentChildPair(): void
     {
         $groupA = $this->createGroup('editmode_a');
@@ -76,7 +66,8 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
             [$groupA->getId() => true, $groupB->getId() => true],
             $result['activeGroups']
         );
-        $this->assertSame($this->expectedMappingOfAGroupWithoutCollection($groupA->getId()), $result['groupCollectionMapping']);
+        // every group holding a stored row is mapped, with the collection the row carries - none here
+        $this->assertSame([$groupA->getId() => null], $result['groupCollectionMapping']);
         $this->assertTrue($result['inherited']);
 
         $this->assertSame('child input', $result['data']['en'][$groupA->getId()][$inputKey->getId()]);

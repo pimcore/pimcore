@@ -32,7 +32,7 @@ class CheckClassificationStoreEnginesCommandTest extends TestCase
         $tester = new CommandTester($this->command([
             $this->storeConfig(1, 'healthy', null),
             $this->storeConfig(2, 'broken', 'nosuchengine'),
-            $this->storeConfig(3, 'alsoBroken', 'anotherengine'),
+            $this->storeConfig(3, 'queued', 'document'),
         ]));
 
         $this->assertSame(Command::FAILURE, $tester->execute([]));
@@ -42,22 +42,17 @@ class CheckClassificationStoreEnginesCommandTest extends TestCase
         $this->assertStringContainsString('Classification store 2', $display);
         $this->assertStringContainsString('"nosuchengine", which is not registered', $display);
         $this->assertStringContainsString('Classification store 3', $display);
-        $this->assertStringContainsString('"anotherengine", which is not registered', $display);
+        $this->assertStringContainsString('"document", which this Pimcore version does not ship yet', $display);
         $this->assertStringContainsString('store name: "broken"', $display);
-        $this->assertStringContainsString('store name: "alsoBroken"', $display);
+        $this->assertStringContainsString('store name: "queued"', $display);
         $this->assertStringNotContainsString('Classification store 1', $display);
     }
 
-    /**
-     * `document` is a registered engine now, so a store carrying it is healthy rather than one the
-     * check has to report.
-     */
     public function testAHealthyInstallationReportsNothingAndSucceeds(): void
     {
         $tester = new CommandTester($this->command([
             $this->storeConfig(1, 'healthy', null),
             $this->storeConfig(2, 'explicit', 'eav'),
-            $this->storeConfig(3, 'onDocuments', 'document'),
         ]));
 
         $this->assertSame(Command::SUCCESS, $tester->execute([]));
@@ -72,10 +67,7 @@ class CheckClassificationStoreEnginesCommandTest extends TestCase
      */
     private function command(array $storeConfigs): CheckClassificationStoreEnginesCommand
     {
-        $resolver = new EngineResolver([
-            'eav' => $this->createMock(EngineInterface::class),
-            'document' => $this->createMock(EngineInterface::class),
-        ]);
+        $resolver = new EngineResolver(['eav' => $this->createMock(EngineInterface::class)]);
 
         return new class($resolver, $storeConfigs) extends CheckClassificationStoreEnginesCommand {
             /**

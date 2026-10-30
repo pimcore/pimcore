@@ -115,12 +115,6 @@ services:
         tags:
             - { name: pimcore.classificationstore.engine, key: eav }
 
-    Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine:
-        arguments:
-            $db: '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.classificationstore.engine, key: document }
-
     # public: it is consumed from the classification store DAO and the class definition DAO,
     # which are not container-managed.
     # kernel.reset: the resolver memoizes which engine each store resolves to, and that memo has to
