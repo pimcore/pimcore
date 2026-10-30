@@ -172,10 +172,16 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
     {
         $relation = $this->createRelationWithPerAssignmentData();
 
-        $relation->setMetadata(null);
-        $relation->setDefinitionOverride(null);
-        $relation->setSubGroup(null);
-        $relation->save();
+        // cleared through a second instance, so that the one reloaded below still holds its values
+        $clearing = new KeyGroupRelation();
+        $clearing->setGroupId($relation->getGroupId());
+        $clearing->setKeyId($relation->getKeyId());
+        $clearing->setMetadata(null);
+        $clearing->setDefinitionOverride(null);
+        $clearing->setSubGroup(null);
+        $clearing->save();
+
+        $this->assertPerAssignmentData($relation, 'the cleared row does not reach the loaded instance by itself');
 
         // the instance still holds what it was given, and the cleared row has to take it off again
         $relation->getDao()->getById($relation->getKeyId(), $relation->getGroupId());
@@ -324,11 +330,11 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         return $this->subGroup;
     }
 
-    private function assertPerAssignmentData(KeyGroupRelation $relation): void
+    private function assertPerAssignmentData(KeyGroupRelation $relation, string $message = ''): void
     {
-        $this->assertSameJsonData(self::METADATA, $relation->getMetadata());
-        $this->assertSameJsonData(self::OVERRIDE, $relation->getDefinitionOverride());
-        $this->assertSame($this->subGroup(), $relation->getSubGroup());
+        $this->assertSameJsonData(self::METADATA, $relation->getMetadata(), $message);
+        $this->assertSameJsonData(self::OVERRIDE, $relation->getDefinitionOverride(), $message);
+        $this->assertSame($this->subGroup(), $relation->getSubGroup(), $message);
     }
 
     private function assertNoPerAssignmentData(KeyGroupRelation $relation): void
