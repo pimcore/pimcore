@@ -117,6 +117,32 @@ class LazyLocalizedBlockTest extends ModelTestCase
     /**
      * @throws Exception
      */
+    public function testInheritedLazyBlockWithoutChildLanguageRow(): void
+    {
+        $parent = $this->createObject('parent');
+        $parent->setLazyblock($this->blockItems('from parent'), 'en');
+        $parent->save();
+
+        $child = $this->createObject('child', $parent);
+        $child->setLazyblock($this->blockItems('child de'), 'de');
+        $child->save();
+
+        RuntimeCache::clear();
+        $child = DataObject::getById($child->getId(), ['force' => true]);
+
+        $inheritedState = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(true);
+
+        try {
+            $this->assertSame('from parent', $child->getLazyblock('en')[0]['lazyblockinput']->getData());
+        } finally {
+            DataObject::setGetInheritedValues($inheritedState);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testLazyBlockInLocalizedfieldsOfFieldcollection(): void
     {
         $object = $this->createObject('fieldcollection');
