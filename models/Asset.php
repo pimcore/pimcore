@@ -429,7 +429,7 @@ class Asset extends Element\AbstractElement
         // this is the more efficient way
         $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
         if (is_string($localPathOrStream)) {
-            $size = @getimagesize($localPathOrStream);
+            $size = \Pimcore\Image::getImageSize($localPathOrStream);
         } else {
             $size = self::getImageSizeFromStream($localPathOrStream);
         }
