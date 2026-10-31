@@ -161,7 +161,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         for ($parentPath = dirname($path); $parentPath !== '/' && $parentPath !== '.'; $parentPath = dirname($parentPath)) {
             $parent = Document::getByPath($parentPath);
             if ($parent instanceof Document\Hardlink && !Frontend::getSiteIdForDocument($parent)) {
-                return Document\Hardlink\Service::getChildByPath($parent, $path);
+                $child = Document\Hardlink\Service::getChildByPath($parent, $path);
+
+                return $child instanceof Document ? $child : null;
             }
         }
 
