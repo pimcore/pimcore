@@ -21,6 +21,7 @@ use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Routing\DocumentRoute;
 use Pimcore\Tool\Frontend;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -155,19 +156,47 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Resolves the child of a hardlink outside of all sites, for a path whose own lookup returned a site document.
+     * Only real paths count: the nearest physical ancestor decides (as in the nearest document lookup), and
+     * the source child must exist at its real path in the same site (or none) as the hardlink source.
      */
     private function getHardlinkChildOutsideSites(string $path): ?Document
     {
         for ($parentPath = dirname($path); $parentPath !== '/' && $parentPath !== '.'; $parentPath = dirname($parentPath)) {
-            $parent = Document::getByPath($parentPath);
-            if ($parent instanceof Document\Hardlink && !Frontend::getSiteIdForDocument($parent)) {
-                $child = Document\Hardlink\Service::getChildByPath($parent, $path);
-
-                return $child instanceof Document ? $child : null;
+            $parent = $this->getDocumentByExactPath($parentPath);
+            if (!$parent) {
+                continue;
             }
+
+            $source = $parent instanceof Document\Hardlink ? $parent->getSourceDocument() : null;
+            if (!$source || !$parent->getChildrenFromSource() || Frontend::getSiteIdForDocument($parent)) {
+                return null;
+            }
+
+            $sourcePath = preg_replace('@^' . preg_quote($parent->getRealFullPath(), '@') . '@', $source->getRealFullPath(), $path);
+            $sourceChild = $this->getDocumentByExactPath($sourcePath);
+            if (!$sourceChild || Frontend::getSiteIdForDocument($sourceChild) !== Frontend::getSiteIdForDocument($source)) {
+                return null;
+            }
+
+            $child = Document\Hardlink\Service::getChildByPath($parent, $path);
+
+            return $child instanceof Document ? $child : null;
         }
 
         return null;
+    }
+
+    private function getDocumentByExactPath(string $path): ?Document
+    {
+        $helperDocument = new Document();
+
+        try {
+            $helperDocument->getDao()->getByExactPath($path);
+        } catch (NotFoundException) {
+            return null;
+        }
+
+        return Document::getById($helperDocument->getId());
     }
 
     /**
