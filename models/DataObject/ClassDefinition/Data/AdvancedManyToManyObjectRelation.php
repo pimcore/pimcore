@@ -760,6 +760,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             $result = [];
             /** @var DataObject\Data\ObjectMetadata $elementMetadata */
             foreach ($value as $elementMetadata) {
+                if (!($elementMetadata instanceof DataObject\Data\ObjectMetadata)) {
+                    continue;
+                }
+
                 $element = $elementMetadata->getElement();
 
                 $type = Element\Service::getElementType($element);
