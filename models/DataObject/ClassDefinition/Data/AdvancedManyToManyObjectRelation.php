@@ -758,7 +758,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     {
         if (is_array($value)) {
             $result = [];
-            /** @var DataObject\Data\ObjectMetadata $elementMetadata */
             foreach ($value as $elementMetadata) {
                 if (!($elementMetadata instanceof DataObject\Data\ObjectMetadata)) {
                     continue;
