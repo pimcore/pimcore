@@ -683,6 +683,7 @@ CREATE TABLE `classificationstore_relations` (
 	`metadata` json NULL,
 	`definitionOverride` json NULL,
 	`subGroup` VARCHAR(190) NULL DEFAULT NULL,
+
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	INDEX `mandatory` (`mandatory`),
@@ -712,6 +713,16 @@ CREATE TABLE `classificationstore_collectionrelations` (
     `sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`colId`, `groupId`),
 	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+DROP TABLE IF EXISTS `classificationstore_labels`;
+CREATE TABLE `classificationstore_labels` (
+	`entityType` ENUM('store','collection','group','subgroup','key') NOT NULL,
+	`entityId` BIGINT(20) NOT NULL,
+	`language` VARCHAR(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+	`title` VARCHAR(255) NULL DEFAULT NULL,
+	`description` TEXT NULL,
+	PRIMARY KEY (`entityType`, `entityId`, `language`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `quantityvalue_units`;

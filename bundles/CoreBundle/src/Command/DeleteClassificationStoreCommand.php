@@ -19,6 +19,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
+use Pimcore\Model\DataObject\Classificationstore\Label;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -97,6 +98,10 @@ class DeleteClassificationStoreCommand extends AbstractCommand
             echo 'Deleting values for store ' . $storeId . ' via engine ' . $name . "\n";
             $engine->deleteStoreValues($storeId);
         }
+
+        // before the configuration tables below, whose rows are the scope the labels are found by
+        echo 'Deleting labels for store ' . $storeId . "\n";
+        (new Label())->getDao()->deleteByStore($storeId);
 
         $sql = 'DELETE FROM classificationstore_keys WHERE storeId = ' . $storeId;
         echo $sql . "\n";

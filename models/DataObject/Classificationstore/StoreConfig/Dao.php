@@ -14,7 +14,10 @@ namespace Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 
 use Exception;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
+use Pimcore\Model\DataObject\Classificationstore\Traits\LabelCleanupDaoTrait;
+use Throwable;
 
 /**
  * @internal
@@ -24,6 +27,7 @@ use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
 class Dao extends Model\Dao\AbstractDao
 {
     use IdentifierDaoTrait;
+    use LabelCleanupDaoTrait;
 
     const TABLE_NAME_STORES = 'classificationstore_stores';
 
@@ -119,11 +123,13 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Deletes object from database
+     * Deletes object from database, together with this store's own labels
+     *
+     * @throws Throwable
      */
     public function delete(): void
     {
-        $this->db->delete(self::TABLE_NAME_STORES, ['id' => $this->model->getId()]);
+        $this->deleteWithLabels(self::TABLE_NAME_STORES, LabelEntityType::Store);
     }
 
     /**
