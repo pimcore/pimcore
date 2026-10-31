@@ -68,7 +68,8 @@ final class CacheNode extends Node
         $this->compileOptional($compiler, 'ttl', 'null');
         $compiler
             ->raw(");\n")
-            ->write(sprintf('$%s = (bool) (', $force));
+            ->write(sprintf('$%s = ', $force))
+            ->raw(sprintf('$%s->normalizeForce(', $extension));
         $this->compileOptional($compiler, 'force', 'false');
         $compiler
             ->raw(");\n")

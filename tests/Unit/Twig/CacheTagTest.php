@@ -189,6 +189,38 @@ final class CacheTagTest extends Unit
         $this->render('{% pimcorecache "k" ttl(lifetime) %}x{% endpimcorecache %}', ['lifetime' => -5]);
     }
 
+    public function testKeyStartingWithGeneratedPrefixDoesNotCollideWithHashedKey(): void
+    {
+        $hashed = 'hashed_' . sha1('a:b' . $this->suffix);
+        $first = '{% pimcorecache "a:b" ~ suffix %}first{% endpimcorecache %}';
+        $second = '{% pimcorecache literal %}second{% endpimcorecache %}';
+
+        $this->assertSame('first', $this->render($first));
+        $this->assertSame('second', $this->render($second, ['literal' => $hashed]));
+    }
+
+    public function testObjectKeyFailsAtRuntime(): void
+    {
+        $this->expectException(RuntimeError::class);
+        $this->expectExceptionMessage('must be a string');
+
+        $key = new class() implements \Stringable {
+            public function __toString(): string
+            {
+                return 'object_key';
+            }
+        };
+        $this->render('{% pimcorecache key %}x{% endpimcorecache %}', ['key' => $key]);
+    }
+
+    public function testDynamicForceOfWrongTypeFailsAtRuntime(): void
+    {
+        $this->expectException(RuntimeError::class);
+        $this->expectExceptionMessage('requires a boolean');
+
+        $this->render('{% pimcorecache "k" force(forced) %}x{% endpimcorecache %}', ['forced' => 'false']);
+    }
+
     public function testKeyWithReservedCharactersIsHashed(): void
     {
         $template = '{% pimcorecache "nav_" ~ path ~ suffix %}{{ render_count() }}{% endpimcorecache %}';

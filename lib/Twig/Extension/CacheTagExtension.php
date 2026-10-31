@@ -18,7 +18,6 @@ use Pimcore\Cache;
 use Pimcore\Tool;
 use Pimcore\Twig\TokenParser\CacheParser;
 use Pimcore\ValueObject\Collection\ArrayOfStrings;
-use Stringable;
 use Twig\Error\RuntimeError;
 use Twig\Extension\AbstractExtension;
 use ValueError;
@@ -34,6 +33,8 @@ class CacheTagExtension extends AbstractExtension
 {
     private const CACHE_KEY_PREFIX = 'pimcore_twigcache_';
 
+    private const HASHED_KEY_PREFIX = 'hashed_';
+
     // characters the cache (PSR-6) does not allow in keys and tags
     private const RESERVED_CHARACTERS = '{}()/\\@:';
 
@@ -46,7 +47,8 @@ class CacheTagExtension extends AbstractExtension
 
     public function normalizeKey(mixed $key): string
     {
-        if (!is_scalar($key) && !$key instanceof Stringable) {
+        // objects are rejected: casting them would run __toString() without the Twig sandbox check
+        if (!is_scalar($key)) {
             throw new RuntimeError('The cache key of "pimcorecache" must be a string.');
         }
 
@@ -56,8 +58,9 @@ class CacheTagExtension extends AbstractExtension
         }
 
         // a key built from request data (e.g. a path) may contain characters the cache rejects
-        if (strpbrk($key, self::RESERVED_CHARACTERS) !== false) {
-            return 'hashed_' . sha1($key);
+        // keys starting with the generated prefix are hashed too, so they cannot collide with a hashed key
+        if (strpbrk($key, self::RESERVED_CHARACTERS) !== false || str_starts_with($key, self::HASHED_KEY_PREFIX)) {
+            return self::HASHED_KEY_PREFIX . sha1($key);
         }
 
         return $key;
@@ -94,6 +97,15 @@ class CacheTagExtension extends AbstractExtension
         }
 
         return $ttl;
+    }
+
+    public function normalizeForce(mixed $force): bool
+    {
+        if (!is_bool($force)) {
+            throw new RuntimeError('The "force" modifier of "pimcorecache" requires a boolean.');
+        }
+
+        return $force;
     }
 
     public function getContentFromCache(string $key, bool $force): string|bool
