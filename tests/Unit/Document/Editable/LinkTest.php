@@ -385,8 +385,13 @@ class LinkTest extends TestCase
         AttributeSanitizer::setInstance(null);
 
         // shape of a link saved in Studio (fullPath and direct are part of its editable value);
-        // scalar values, as the attribute rendering only handles strings and numbers; document 1 is the root document
-        $link = new Link();
+        // scalar values, as the attribute rendering only handles strings and numbers; getHref() is fixed so no document lookup (database) is needed
+        $link = new class() extends Link {
+            public function getHref(): string
+            {
+                return '/en';
+            }
+        };
         $link->setDataFromResource([
             'path' => '/en',
             'fullPath' => '/en',
@@ -413,7 +418,12 @@ class LinkTest extends TestCase
     {
         AttributeSanitizer::setInstance(new AttributeSanitizer(omitInternalDataAttributes: false));
 
-        $link = new Link();
+        $link = new class() extends Link {
+            public function getHref(): string
+            {
+                return '/en';
+            }
+        };
         $link->setDataFromResource([
             'path' => '/en',
             'fullPath' => '/en',
