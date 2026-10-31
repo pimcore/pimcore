@@ -194,10 +194,10 @@ final class CacheTagTest extends Unit
     {
         $hashed = 'hashed_' . sha1('a:b' . $this->suffix);
         $first = '{% pimcorecache "a:b" ~ suffix %}first{% endpimcorecache %}';
-        $second = '{% pimcorecache literal %}second{% endpimcorecache %}';
+        $second = '{% pimcorecache plainKey %}second{% endpimcorecache %}';
 
         $this->assertSame('first', $this->render($first));
-        $this->assertSame('second', $this->render($second, ['literal' => $hashed]));
+        $this->assertSame('second', $this->render($second, ['plainKey' => $hashed]));
     }
 
     public function testObjectKeyFailsAtRuntime(): void
