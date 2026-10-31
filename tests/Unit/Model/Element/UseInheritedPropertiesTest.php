@@ -186,7 +186,7 @@ class UseInheritedPropertiesTest extends Unit
         $dao = $this->createMock(Dao::class);
         $dao->method('getProperties')->willReturn($this->createProperties());
 
-        $hardlink = new class ($source) extends Hardlink {
+        $hardlink = new class($source) extends Hardlink {
             public function __construct(private readonly Page $source)
             {
             }
