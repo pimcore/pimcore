@@ -56,4 +56,81 @@ final class DocumentRouteHandlerTest extends TestCase
         self::assertSame(Console::class . '::execInBackground', $route->getDefault('_controller'));
         self::assertTrue($route->getDefault('_check_controller_is_allowed'));
     }
+
+    public function testUnpublishedDocumentIsNotRoutedForUnauthenticatedRequestWithAdminParameters(): void
+    {
+        $page = $this->createMock(Page::class);
+        $page->method('getType')->willReturn('page');
+        $page->method('getFullPath')->willReturn('/en/draft-page');
+        $page->method('isPublished')->willReturn(false);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/en/draft-page', 'GET', ['pimcore_admin' => '1']));
+        $requestHelper->expects(self::never())->method('isFrontendRequestByAdmin');
+        $requestHelper->method('isAuthenticatedFrontendRequestByAdmin')->willReturn(false);
+
+        $handler = new DocumentRouteHandler(
+            $this->createMock(Document\Service::class),
+            $this->createMock(SiteResolver::class),
+            $requestHelper,
+            new Config(),
+            $this->createMock(StaticPageResolver::class)
+        );
+
+        self::assertNull($handler->buildRouteForDocument($page));
+    }
+
+    public function testUnpublishedDocumentIsRoutedForAuthenticatedAdminRequest(): void
+    {
+        $page = $this->createMock(Page::class);
+        $page->method('getType')->willReturn('page');
+        $page->method('getFullPath')->willReturn('/en/draft-page');
+        $page->method('isPublished')->willReturn(false);
+        $page->method('getController')->willReturn(Console::class . '::execInBackground');
+        $page->method('getLatestVersion')->willReturn(null);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/en/draft-page', 'GET', ['pimcore_admin' => '1']));
+        $requestHelper->method('isAuthenticatedFrontendRequestByAdmin')->willReturn(true);
+
+        $handler = new DocumentRouteHandler(
+            $this->createMock(Document\Service::class),
+            $this->createMock(SiteResolver::class),
+            $requestHelper,
+            new Config(),
+            $this->createMock(StaticPageResolver::class)
+        );
+
+        $route = $handler->buildRouteForDocument($page);
+
+        self::assertNotNull($route);
+        self::assertSame(Console::class . '::execInBackground', $route->getDefault('_controller'));
+    }
+
+    public function testPublishedDocumentDoesNotUseLatestVersionForUnauthenticatedRequestWithAdminParameters(): void
+    {
+        $page = $this->createMock(Page::class);
+        $page->method('getType')->willReturn('page');
+        $page->method('getFullPath')->willReturn('/en/page');
+        $page->method('isPublished')->willReturn(true);
+        $page->method('getController')->willReturn(Console::class . '::execInBackground');
+        $page->expects(self::never())->method('getLatestVersion');
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/en/page', 'GET', ['pimcore_admin' => '1']));
+        $requestHelper->method('isAuthenticatedFrontendRequestByAdmin')->willReturn(false);
+
+        $handler = new DocumentRouteHandler(
+            $this->createMock(Document\Service::class),
+            $this->createMock(SiteResolver::class),
+            $requestHelper,
+            new Config(),
+            $this->createMock(StaticPageResolver::class)
+        );
+
+        $route = $handler->buildRouteForDocument($page);
+
+        self::assertNotNull($route);
+        self::assertSame(Console::class . '::execInBackground', $route->getDefault('_controller'));
+    }
 }
