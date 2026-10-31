@@ -87,7 +87,6 @@ final class DocumentRouteHandlerTest extends TestCase
         $page->method('getFullPath')->willReturn('/en/draft-page');
         $page->method('isPublished')->willReturn(false);
         $page->method('getController')->willReturn(Console::class . '::execInBackground');
-        $page->method('getLatestVersion')->willReturn(null);
 
         $requestHelper = $this->createMock(RequestHelper::class);
         $requestHelper->method('getMainRequest')->willReturn(Request::create('/en/draft-page', 'GET', ['pimcore_admin' => '1']));
@@ -114,7 +113,8 @@ final class DocumentRouteHandlerTest extends TestCase
         $page->method('getFullPath')->willReturn('/en/page');
         $page->method('isPublished')->willReturn(true);
         $page->method('getController')->willReturn(Console::class . '::execInBackground');
-        $page->expects(self::never())->method('getLatestVersion');
+        // getLatestVersion() is Dao-delegated via __call(), not a real declared method PHPUnit can stub directly
+        $page->expects(self::never())->method('__call');
 
         $requestHelper = $this->createMock(RequestHelper::class);
         $requestHelper->method('getMainRequest')->willReturn(Request::create('/en/page', 'GET', ['pimcore_admin' => '1']));
