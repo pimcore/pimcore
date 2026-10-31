@@ -18,10 +18,10 @@ use Codeception\Test\Unit;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Twig\Extension\CacheTagExtension;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Symfony\Component\HttpFoundation\Request;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
 
