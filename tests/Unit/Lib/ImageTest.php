@@ -62,6 +62,25 @@ class ImageTest extends Unit
         self::assertArrayHasKey('APP0', $info);
     }
 
+    public function testReadsTheDimensionsOfAFormatWithoutASignature(): void
+    {
+        // WBMP and XBM are not recognised by fileinfo, so they are read from the first bytes;
+        // Asset::checkMaxPixels() has no other way to learn their dimensions
+        $wbmp = $this->createFile('wbmp');
+        imagewbmp(imagecreate(6, 4), $wbmp);
+        $xbm = $this->createFile('xbm');
+        imagexbm(imagecreate(5, 3), $xbm);
+
+        foreach ([[$wbmp, 6, 4, IMAGETYPE_WBMP], [$xbm, 5, 3, IMAGETYPE_XBM]] as [$file, $width, $height, $type]) {
+            $size = Image::getImageSize($file);
+
+            self::assertIsArray($size, $file);
+            self::assertSame($width, $size[0], $file);
+            self::assertSame($height, $size[1], $file);
+            self::assertSame($type, $size[2], $file);
+        }
+    }
+
     public function testDoesNotReadAnUnsupportedFileWithoutLineFeedsIntoMemory(): void
     {
         // PostScript with classic Mac line endings: no "\n" anywhere in the file

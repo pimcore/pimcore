@@ -58,8 +58,9 @@ final class Image
      * ends in its XBM check, which reads the file a line at a time - so a file without
      * line feeds (an EPS or AI file with classic Mac CR line endings, for one) is read
      * into memory whole, and a large one is a fatal "Allowed memory size exhausted"
-     * rather than a false return. The type is therefore identified from the first bytes,
-     * and getimagesize() only runs for the formats it can read.
+     * rather than a false return. The type is therefore identified from the first bytes:
+     * getimagesize() reads the whole file only for the formats fileinfo recognises, and
+     * any other file is given to getimagesizefromstring() as those first bytes alone.
      *
      * @internal
      *
@@ -76,10 +77,17 @@ final class Image
         $head = fread($handle, 8192);
         fclose($handle);
 
-        if (!$head || !in_array((new finfo(FILEINFO_MIME_TYPE))->buffer($head), self::GETIMAGESIZE_MIME_TYPES, true)) {
+        if (!$head) {
             return false;
         }
 
-        return @getimagesize($path, $imageInfo);
+        if (in_array((new finfo(FILEINFO_MIME_TYPE))->buffer($head), self::GETIMAGESIZE_MIME_TYPES, true)) {
+            return @getimagesize($path, $imageInfo);
+        }
+
+        // the remaining formats getimagesize() reads - among them WBMP and XBM, which have
+        // no signature - carry their dimensions at the very start of the file, so they are
+        // read from the first bytes alone, which is what bounds the XBM check
+        return @getimagesizefromstring($head, $imageInfo);
     }
 }
