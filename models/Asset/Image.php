@@ -324,8 +324,9 @@ EOT;
     /**
      * The size an EPS file declares in its DSC header comments: Photoshop's %ImageData, which the Imagick
      * adapter also prefers, else %%HiResBoundingBox or %%BoundingBox in points - what ImageMagick reports at
-     * its default 72 dpi. Handles DOS EPS binary headers and "(atend)" boxes. Reads at most
-     * EPS_COMMENTS_BYTES from each end of the PostScript, so the size of the file does not matter.
+     * its default 72 dpi. Handles DOS EPS binary headers and boxes deferred to the trailer with "(atend)".
+     * Reads at most EPS_COMMENTS_BYTES from each end of the PostScript section, so the size of the file
+     * does not matter, and never reads outside that section.
      *
      * @return array{width: int, height: int}|null null if the file is not EPS or declares no usable size
      */
@@ -351,11 +352,12 @@ EOT;
             if ($length <= 0 || fseek($handle, $start) !== 0) {
                 return null;
             }
-            $head = (string) fread($handle, min($length, self::EPS_COMMENTS_BYTES));
-            if (!str_starts_with($head, '%!PS-Adobe')) {
+            $lines = self::readLines($handle, min($length, self::EPS_COMMENTS_BYTES), $length > self::EPS_COMMENTS_BYTES, false);
+
+            // EPS declares itself on the first line ("%!PS-Adobe-3.0 EPSF-3.0"); other PostScript is left to the adapter
+            if (!preg_match('/^%!PS-Adobe-\S+\s+EPSF-/', $lines[0] ?? '')) {
                 return null;
             }
-            $lines = preg_split('/\r\n|\r|\n/', $head);
 
             // the Imagick adapter looks for this in the first 100 lines too
             foreach (array_slice($lines, 0, 100) as $line) {
@@ -364,12 +366,12 @@ EOT;
                 }
             }
 
-            $boxes = self::readBoundingBoxes($lines, true);
+            $boxes = self::readBoundingBoxes(self::headerComments($lines));
             if (in_array('atend', $boxes, true)) {
-                // the boxes are in the trailer, at the end of the PostScript
-                $tailStart = $start + max(0, $length - self::EPS_COMMENTS_BYTES);
-                $trailer = fseek($handle, $tailStart) === 0
-                    ? self::readBoundingBoxes(preg_split('/\r\n|\r|\n/', (string) fread($handle, self::EPS_COMMENTS_BYTES)), false)
+                // deferred to the trailer, at the end of the PostScript section
+                $tailLength = min($length, self::EPS_COMMENTS_BYTES);
+                $trailer = fseek($handle, $start + $length - $tailLength) === 0
+                    ? self::readBoundingBoxes(self::trailerComments(self::readLines($handle, $tailLength, false, $tailLength < $length)))
                     : [];
                 foreach ($boxes as $key => $box) {
                     if ($box === 'atend') {
@@ -393,20 +395,76 @@ EOT;
     }
 
     /**
+     * Reads $bytes and splits them into lines, dropping a line the read cut off: the last one if the
+     * section continues after the read, the first one if it started before it.
+     *
+     * @param resource $handle
+     *
+     * @return string[]
+     */
+    private static function readLines($handle, int $bytes, bool $cutAtEnd, bool $cutAtStart): array
+    {
+        $lines = preg_split('/\r\n|\r|\n/', (string) fread($handle, $bytes));
+        if ($cutAtEnd) {
+            array_pop($lines);
+        }
+        if ($cutAtStart) {
+            array_shift($lines);
+        }
+
+        return $lines;
+    }
+
+    /**
+     * The header comments end at %%EndComments or, without it, at the first line that is not a comment.
+     *
      * @param string[] $lines
      *
-     * @return array<string, float[]|string|null> 'atend' for a box deferred to the trailer
+     * @return string[]
      */
-    private static function readBoundingBoxes(array $lines, bool $header): array
+    private static function headerComments(array $lines): array
     {
-        $boxes = [];
+        $header = [];
         foreach ($lines as $line) {
-            if ($header && str_starts_with($line, '%%EndComments')) {
+            if (str_starts_with($line, '%%EndComments') || !preg_match('/^%[!-~]/', $line)) {
                 break;
             }
-            // in the header the first one counts, in the trailer the last
-            if (!preg_match('/^%%(HiResBoundingBox|BoundingBox):\s*(.*)$/', $line, $matches)
-                || ($header && isset($boxes[$matches[1]]))) {
+            $header[] = $line;
+        }
+
+        return $header;
+    }
+
+    /**
+     * The trailer comments follow the last %%Trailer.
+     *
+     * @param string[] $lines
+     *
+     * @return string[]
+     */
+    private static function trailerComments(array $lines): array
+    {
+        for ($i = count($lines) - 1; $i >= 0; $i--) {
+            if (str_starts_with($lines[$i], '%%Trailer')) {
+                return array_slice($lines, $i + 1);
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * The first value of each box comment; in a header, a box deferred to the trailer is 'atend'.
+     *
+     * @param string[] $comments
+     *
+     * @return array<string, float[]|string|null>
+     */
+    private static function readBoundingBoxes(array $comments): array
+    {
+        $boxes = [];
+        foreach ($comments as $line) {
+            if (!preg_match('/^%%(HiResBoundingBox|BoundingBox):\s*(.*)$/', $line, $matches) || isset($boxes[$matches[1]])) {
                 continue;
             }
             $value = trim($matches[2]);
