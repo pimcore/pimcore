@@ -19,7 +19,11 @@ use Pimcore\Bundle\CoreBundle\Command\DrainClassificationStoreCommand;
 use Pimcore\Bundle\CoreBundle\Command\FlipClassificationStoreEngineCommand;
 use Pimcore\Bundle\CoreBundle\Command\VerifyClassificationStoreCommand;
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\StoreFlipConflictException;
 use Pimcore\Db;
+use Pimcore\Event\DataObjectClassificationStoreEvents;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LazyCommand;
@@ -33,6 +37,21 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class MigrationFlipTest extends AbstractMigrationTest
 {
+    use MigrationClassFixtureTrait;
+
+    /**
+     * A class whose two object bricks define one classification store field name on two stores of
+     * their own: the value tables key their rows by (object, fieldname), so those two definitions
+     * share one set of rows and cannot be split across two engines.
+     */
+    private const SPLIT_CLASS_ID = 'CsMigrationSplit';
+
+    private const SPLIT_FIELD = 'csSplitField';
+
+    private const FIRST_BRICK_KEY = 'csMigrationSplitBrickOne';
+
+    private const SECOND_BRICK_KEY = 'csMigrationSplitBrickTwo';
+
     private const COMMAND_NAMES = [
         'pimcore:classificationstore:flip' => FlipClassificationStoreEngineCommand::class,
         'pimcore:classificationstore:drain' => DrainClassificationStoreCommand::class,
@@ -52,7 +71,15 @@ class MigrationFlipTest extends AbstractMigrationTest
         'bundles/CoreBundle/src/DataObject/Classificationstore/DrainOutcome.php',
         'bundles/CoreBundle/src/DataObject/Classificationstore/DrainPairResult.php',
         'bundles/CoreBundle/src/DataObject/Classificationstore/VerificationReport.php',
+        'bundles/CoreBundle/src/DataObject/Classificationstore/StoreFlipConflictException.php',
     ];
+
+    protected function tearDown(): void
+    {
+        $this->cleanUpMigrationFixture();
+
+        parent::tearDown();
+    }
 
     /**
      * It takes a store and nothing else: no engine to choose, no command to undo it, and a
@@ -218,7 +245,148 @@ class MigrationFlipTest extends AbstractMigrationTest
         $this->assertInstanceOf(DocumentEngineMigrationService::class, $this->getMigrationService());
     }
 
-    private function runFlip(?string $store = null): CommandTester
+    /**
+     * Every process reads the engine column, so a save that saw the flip before the document table
+     * of its class existed would fail with table-not-found - and a `CREATE TABLE` that failed half
+     * way would leave the store switched onto tables that are not there. The tables therefore go
+     * first, which the store configuration write itself is what proves: by the time it is
+     * dispatched, the table is already there.
+     */
+    public function testTheFlipCreatesTheTablesBeforeItWritesTheEngineColumn(): void
+    {
+        $this->dropDocumentTable();
+        $this->assertFalse($this->tableExists($this->getDocumentTable()));
+
+        $tableWhenTheEngineWasWritten = null;
+        $listener = function () use (&$tableWhenTheEngineWasWritten): void {
+            $tableWhenTheEngineWasWritten ??= $this->tableExists($this->getDocumentTable());
+        };
+
+        $dispatcher = Pimcore::getEventDispatcher();
+        $dispatcher->addListener(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE, $listener);
+
+        try {
+            $this->runFlip();
+        } finally {
+            $dispatcher->removeListener(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE, $listener);
+        }
+
+        $this->assertTrue($tableWhenTheEngineWasWritten, 'the document table has to exist by then');
+        $this->assertSame(self::DOCUMENT_ENGINE, $this->getStoredEngine());
+    }
+
+    /**
+     * A field name identifies a group of definitions rather than one, and the group has to agree on
+     * one engine: flipping one of its stores alone would report success and then have every load,
+     * save and drain of that field refused. The refusal comes before anything is written, and names
+     * the store that would be left behind by id and by name.
+     */
+    public function testTheFlipRefusesToLeaveAFieldNameSplitAcrossTwoEngines(): void
+    {
+        [$firstStoreId, $secondStoreId] = $this->setUpClassWithASplitFieldName();
+
+        $tester = $this->runFlip((string) $firstStoreId);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertNull($this->storedEngineOf($firstStoreId), 'nothing is written when it refuses');
+        $this->assertFalse($this->tableExists(self::DOCUMENT_TABLE_PREFIX . self::SPLIT_CLASS_ID));
+
+        // the message itself rather than the block the console wraps it into, so that the class,
+        // the field and the store it has to name can be read as one line
+        $store = StoreConfig::getById($firstStoreId);
+        $this->assertInstanceOf(StoreConfig::class, $store);
+        $message = '';
+
+        try {
+            $this->getMigrationService()->flip($store);
+            $this->fail('the flip has to refuse');
+        } catch (StoreFlipConflictException $exception) {
+            $message = $exception->getMessage();
+        }
+
+        $this->assertStringContainsString(self::SPLIT_CLASS_ID, $message);
+        $this->assertStringContainsString(self::SPLIT_FIELD, $message);
+        $this->assertStringContainsString(sprintf('store %d', $secondStoreId), $message);
+    }
+
+    /**
+     * And the way through is to take both stores over at once, which is what the argument accepts
+     * more than one store for.
+     */
+    public function testTheStoresSharingAFieldNameAreFlippedTogether(): void
+    {
+        [$firstStoreId, $secondStoreId] = $this->setUpClassWithASplitFieldName();
+
+        $tester = new CommandTester(new FlipClassificationStoreEngineCommand($this->getMigrationService()));
+        $tester->execute(
+            ['store' => [(string) $firstStoreId, (string) $secondStoreId]],
+            ['interactive' => false]
+        );
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(self::DOCUMENT_ENGINE, $this->storedEngineOf($firstStoreId));
+        $this->assertSame(self::DOCUMENT_ENGINE, $this->storedEngineOf($secondStoreId));
+        $this->assertTrue($this->tableExists(self::DOCUMENT_TABLE_PREFIX . self::SPLIT_CLASS_ID));
+
+        // the field name is resolvable again, which is what the refusal above was protecting
+        $this->assertSame(
+            [self::SPLIT_FIELD],
+            $this->getMigrationService()->getDocumentFieldNames($this->splitClass())
+        );
+    }
+
+    /**
+     * The step between the flip and the drain: a process that resolved the EAV engine before the
+     * flip keeps writing EAV rows until its next reset, so the command says to let those writers
+     * finish rather than leaving an operator to find out from the drain's report.
+     */
+    public function testTheFlipSaysToLetTheWritersThatPredateItFinish(): void
+    {
+        $display = $this->unwrap($this->runFlip()->getDisplay());
+
+        $this->assertStringContainsString('let the requests and messenger messages', $display);
+        $this->assertStringContainsString('resolved the EAV engine before this flip', $display);
+    }
+
+    /**
+     * A class whose two bricks define one field name on two stores of their own, neither flipped.
+     *
+     * @return array{0: int, 1: int} the two store ids
+     */
+    private function setUpClassWithASplitFieldName(): array
+    {
+        $firstStoreId = $this->createMigrationStore();
+        $secondStoreId = $this->createMigrationStore();
+
+        $this->saveMigrationClass(self::SPLIT_CLASS_ID, [
+            $this->registerMigrationBricks([
+                self::FIRST_BRICK_KEY => [$this->migrationStoreField(self::SPLIT_FIELD, $firstStoreId)],
+                self::SECOND_BRICK_KEY => [$this->migrationStoreField(self::SPLIT_FIELD, $secondStoreId)],
+            ]),
+        ]);
+
+        return [$firstStoreId, $secondStoreId];
+    }
+
+    private function splitClass(): ClassDefinition
+    {
+        $class = ClassDefinition::getById(self::SPLIT_CLASS_ID, true);
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+
+        return $class;
+    }
+
+    private function storedEngineOf(int $storeId): ?string
+    {
+        $engine = Db::get()->fetchOne('SELECT engine FROM classificationstore_stores WHERE id = ?', [$storeId]);
+
+        return $engine === false || $engine === null ? null : (string) $engine;
+    }
+
+    /**
+     * @param string|string[]|null $store
+     */
+    private function runFlip(string|array|null $store = null): CommandTester
     {
         $tester = new CommandTester(new FlipClassificationStoreEngineCommand($this->getMigrationService()));
         $tester->execute(['store' => $store ?? (string) $this->getStoreId()], ['interactive' => false]);

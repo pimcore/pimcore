@@ -33,11 +33,12 @@ use Throwable;
  * The route that moves the stored values of a classification store from the EAV tables to the
  * document engine, in the four steps the four commands of the same names drive.
  *
- * *flip* puts a store on the document engine and creates the document table of every class that
- * carries a field on it, so that the first save after the flip has a table to write to. Everything
- * the store holds is still in the EAV tables at that point, and is read through to them by
- * {@see DocumentEngine::load()} until it is converted - which is what makes the flip reversible by
- * nothing but a drain, and what lets reads and writes of a class keep working while it is running.
+ * *flip* creates the document table of every class that carries a field on the store and only then
+ * puts the store on the document engine, so that the first save after the flip has a table to write
+ * to and no process can see the switch before it. Everything the store holds is still in the EAV
+ * tables at that point, and is read through to them by {@see DocumentEngine::load()} until it is
+ * converted - which is what makes the flip reversible by nothing but a drain, and what lets reads
+ * and writes of a class keep working while it is running.
  *
  * *drain* converts one (objectId, fieldname) pair at a time: it reads the EAV side with inheritance
  * off, writes the documents if the pair holds none, reads them back, compares them against the EAV
@@ -59,6 +60,13 @@ final class DocumentEngineMigrationService
      * store at all is on the default engine, and names no row an operator could flip.
      */
     private const DEFAULT_STORE_NAME = '(the default store)';
+
+    /**
+     * Document rows the verification holds in memory at once. Each one carries a whole group's
+     * stored values, so this is what bounds {@see self::verifyChecksums()} on a class whose data
+     * does not fit in the process.
+     */
+    private const VERIFY_BATCH_SIZE = 100;
 
     public function __construct(
         private readonly EngineResolver $engineResolver,
@@ -84,35 +92,138 @@ final class DocumentEngineMigrationService
     }
 
     /**
-     * Puts the store on the document engine and creates the document table of every class carrying
-     * a classification store field on it.
+     * Puts the given stores on the document engine and creates the document table of every class
+     * carrying a classification store field on one of them.
      *
      * Writing the engine column alone would leave the first save after the flip without a table:
      * the tables of an engine are created by a class save, and nothing saves a class because a
-     * store changed.
+     * store changed. The tables are therefore created *before* the engine column is written, in
+     * this order for two reasons: every other process reads the engine column, so a save that saw
+     * the flip before its table existed would fail with table-not-found, and a DDL that failed
+     * half way would otherwise leave the store switched onto tables that are not there. Creating
+     * the table of a store that is then not flipped leaves an empty table behind and nothing else.
+     *
+     * More than one store is taken because a field-name group spanning two stores has to go over
+     * in one step, {@see self::findFlipConflicts()}. The engine columns are written in one
+     * transaction, so no other connection sees such a group half flipped.
      *
      * @return string[] the ids of the classes whose document table was created
      *
+     * @throws StoreFlipConflictException
      * @throws Exception
      */
-    public function flip(StoreConfig $store): array
+    public function flip(StoreConfig ...$stores): array
     {
-        $store->setEngine(self::DOCUMENT_ENGINE);
-        $store->save();
+        $storeIds = array_map(static fn (StoreConfig $store): int => (int) $store->getId(), $stores);
+        $classes = $this->loadClassDefinitions();
 
-        $storeId = (int) $store->getId();
+        $conflicts = $this->findFlipConflicts($classes, $storeIds);
+        if ($conflicts !== []) {
+            throw new StoreFlipConflictException($conflicts);
+        }
+
         $classIds = [];
 
-        foreach ($this->loadClassDefinitions() as $class) {
-            if (!$this->carriesStore($class, $storeId)) {
+        foreach ($classes as $class) {
+            $carried = array_values(array_filter(
+                $storeIds,
+                fn (int $storeId): bool => $this->carriesStore($class, $storeId)
+            ));
+
+            if ($carried === []) {
                 continue;
             }
 
-            $this->documentEngine->createUpdateTables($class, $storeId);
+            foreach ($carried as $storeId) {
+                $this->documentEngine->createUpdateTables($class, $storeId);
+            }
+
             $classIds[] = $class->getId();
         }
 
+        $this->db->transactional(static function () use ($stores): void {
+            foreach ($stores as $store) {
+                $store->setEngine(self::DOCUMENT_ENGINE);
+                $store->save();
+            }
+        });
+
         return $classIds;
+    }
+
+    /**
+     * The field-name groups a flip of exactly these stores would leave split across two engines.
+     *
+     * A field name identifies a group of definitions rather than one - two allowed bricks of the
+     * same class can define the same classification store field on two different stores - and the
+     * value tables key their rows by (object, fieldname), so the group has to agree on one engine.
+     * Flipping one store of such a group would report success and then have every load, save and
+     * drain of that field refused by {@see EngineResolver::resolveForStores()}.
+     *
+     * A store of the group that is already on the document engine is no conflict, and neither is
+     * one the same flip is taking over - which is what lets a group that spans two stores go over,
+     * and is why the refusal names the stores rather than only the field.
+     *
+     * @param ClassDefinition[] $classes
+     * @param int[]             $storeIds the stores this flip would put on the document engine
+     *
+     * @return string[] one line per group, naming the class, the field and the stores in the way
+     *
+     * @throws Exception
+     */
+    private function findFlipConflicts(array $classes, array $storeIds): array
+    {
+        $conflicts = [];
+
+        foreach ($classes as $class) {
+            foreach ($this->groupStoreIdsByFieldName($class) as $fieldName => $groupStoreIds) {
+                $blocking = $this->findBlockingStores($groupStoreIds, $storeIds);
+
+                if ($blocking !== []) {
+                    $conflicts[] = sprintf(
+                        'class "%s", field "%s" is also defined on %s',
+                        $class->getId(),
+                        $fieldName,
+                        implode(' and ', $blocking)
+                    );
+                }
+            }
+        }
+
+        return $conflicts;
+    }
+
+    /**
+     * The stores of one field-name group that the flip would leave behind on another engine, or an
+     * empty array when the group does not touch the flip at all.
+     *
+     * @param array<string, int|null> $groupStoreIds container-qualified field identity => store id
+     * @param int[]                   $storeIds
+     *
+     * @return string[] the blocking stores, named
+     *
+     * @throws Exception
+     */
+    private function findBlockingStores(array $groupStoreIds, array $storeIds): array
+    {
+        $ids = array_map(static fn (int|string|null $id): ?int => $id === null ? null : (int) $id, $groupStoreIds);
+        $goingOver = static fn (?int $id): bool => $id !== null && in_array($id, $storeIds, true);
+
+        if (array_filter($ids, $goingOver) === []) {
+            return [];
+        }
+
+        $blocking = [];
+
+        foreach ($ids as $id) {
+            if ($goingOver($id) || $this->engineResolver->resolveForStore($id) === $this->documentEngine) {
+                continue;
+            }
+
+            $blocking[(string) ($id ?? 'default')] = $this->describeStore($id);
+        }
+
+        return array_values($blocking);
     }
 
     /**
@@ -341,7 +452,9 @@ final class DocumentEngineMigrationService
             $result = $this->convertPairInTransaction($class, $classId, $objectId, $fieldname, $migratedAt);
 
             // the document of a diverging pair goes with the transaction, so the pair stays wholly
-            // on EAV and the read-through keeps serving its stored values
+            // on EAV and the read-through keeps serving its stored values. A pair that was already
+            // converted and diverges has nothing of this run's to roll back, and its surviving EAV
+            // rows are what the rollback keeps - {@see self::reconcileConvertedPair()}
             if ($result->outcome === DrainOutcome::Diverged) {
                 $this->db->rollBack();
 
@@ -372,10 +485,10 @@ final class DocumentEngineMigrationService
         int $migratedAt
     ): DrainPairResult {
         // a user save that converted the pair while the drain was running owns it: its document is
-        // what the pair is read from, so nothing is written and nothing is compared
-        if ($this->documentEngine->hasDocuments($classId, $objectId, $fieldname)) {
-            return new DrainPairResult(DrainOutcome::AlreadyMigrated, $objectId, $fieldname);
-        }
+        // what the pair is read from, so nothing is written over it. The question is asked under the
+        // lock it takes, and before anything else is read, so that this transaction's snapshot is
+        // not older than the answer it gave
+        $alreadyMigrated = $this->documentEngine->hasDocuments($classId, $objectId, $fieldname);
 
         // the value tables carry a foreign key on `objects`, which a folder satisfies as well, so a
         // row can point at an id no concrete object answers - which is a divergence rather than an
@@ -392,6 +505,10 @@ final class DocumentEngineMigrationService
 
         $eavStore = $this->readStore($object, $class, $fieldname, $this->eavEngine->load(...));
 
+        if ($alreadyMigrated) {
+            return $this->reconcileConvertedPair($object, $class, $eavStore, $classId, $objectId, $fieldname);
+        }
+
         // the write-if-absent guard answers again under the lock it takes, so a save that committed
         // between the check above and here is the one that owns the pair
         if (!$this->documentEngine->writeMigratedDocuments($eavStore, $migratedAt)) {
@@ -406,6 +523,91 @@ final class DocumentEngineMigrationService
         }
 
         return new DrainPairResult(DrainOutcome::Converted, $objectId, $fieldname);
+    }
+
+    /**
+     * What to do with the EAV rows that survived beside a pair that is already converted.
+     *
+     * A save on this engine takes the pair's EAV rows in the same transaction as the documents it
+     * writes, so a converted pair normally has none left and there is nothing to decide. Rows that
+     * are there all the same were written while the pair was already converted - by a process that
+     * had resolved the EAV engine before the flip and has not reached its reset boundary yet, which
+     * is why the flip asks for those writers to be let finish first.
+     *
+     * Such rows are removed only when they hold nothing the documents do not, which is asked one
+     * way round on purpose: the documents of a converted pair are what it is read from and may
+     * hold more than the rows beside them - the rows the conversion took are exactly the ones that
+     * are gone, and a group activation row left without values holds nothing either. A value the
+     * rows hold and the documents do not is the one thing no drain can resolve: it is reported with
+     * its object and field name, the pair is left as it stands and the class halts, rather than the
+     * newer value being deleted by the migration.
+     *
+     * @throws Exception
+     */
+    private function reconcileConvertedPair(
+        Concrete $object,
+        ClassDefinition $class,
+        Classificationstore $eavStore,
+        string $classId,
+        int $objectId,
+        string $fieldname
+    ): DrainPairResult {
+        $documentStore = $this->readStore($object, $class, $fieldname, $this->documentEngine->load(...));
+
+        $unaccounted = $this->findUnaccountedValue($eavStore, $documentStore)
+            ?? $this->compareMappings($eavStore, $documentStore, $classId, $objectId, $fieldname);
+
+        if ($unaccounted === null) {
+            return new DrainPairResult(DrainOutcome::AlreadyMigrated, $objectId, $fieldname);
+        }
+
+        return new DrainPairResult(
+            DrainOutcome::Diverged,
+            $objectId,
+            $fieldname,
+            'the pair is converted and still holds EAV rows its documents do not account for ('
+            . $unaccounted . '), so they were written after it was converted: reconcile the two by'
+            . ' hand rather than letting the drain delete them'
+        );
+    }
+
+    /**
+     * The first value the EAV side holds that the document side does not give back the same.
+     *
+     * Unlike {@see self::compareItems()} this is one-directional: a value only the documents hold
+     * is what a conversion leaves behind, not a loss. {@see self::compareMappings()} is already
+     * asked this way round and is reused as it stands.
+     *
+     * @return string|null the address of the value, or null when every one of them is accounted for
+     */
+    private function findUnaccountedValue(
+        Classificationstore $eavStore,
+        Classificationstore $documentStore
+    ): ?string {
+        $readItems = $documentStore->getItems();
+
+        foreach ($eavStore->getItems() as $groupId => $keys) {
+            foreach ($keys as $keyId => $languages) {
+                foreach ($languages as $language => $stored) {
+                    if ($stored === null) {
+                        continue;
+                    }
+
+                    if ($this->holdsTheSameValue($stored, $readItems[$groupId][$keyId][$language] ?? null)) {
+                        continue;
+                    }
+
+                    return sprintf(
+                        'group %d, key %d, language "%s"',
+                        (int) $groupId,
+                        (int) $keyId,
+                        (string) $language
+                    );
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -636,48 +838,70 @@ final class DocumentEngineMigrationService
     {
         $failures = [];
         $unproven = [];
+        $after = null;
 
-        foreach ($this->readDocumentRows($classId) as $row) {
-            $where = sprintf(
-                'object %d, field "%s", group %d',
-                (int) $row['id'],
-                (string) $row['fieldname'],
-                (int) $row['groupId']
-            );
+        while (($rows = $this->readDocumentRows($classId, $after)) !== []) {
+            foreach ($rows as $row) {
+                $where = sprintf(
+                    'object %d, field "%s", group %d',
+                    (int) $row['id'],
+                    (string) $row['fieldname'],
+                    (int) $row['groupId']
+                );
 
-            if ($row['checksum'] === null) {
-                // a document written before any writer stamped a checksum carries no evidence
-                // either way, so it is reported rather than called corrupt
-                if ($row['migratedAt'] === null) {
-                    $unproven[] = $where . ': written before checksums were stamped';
-                } else {
-                    $failures[] = $where . ': a drained document carries no checksum';
+                if ($row['checksum'] === null) {
+                    // a document written before any writer stamped a checksum carries no evidence
+                    // either way, so it is reported rather than called corrupt
+                    if ($row['migratedAt'] === null) {
+                        $unproven[] = $where . ': written before checksums were stamped';
+                    } else {
+                        $failures[] = $where . ': a drained document carries no checksum';
+                    }
+
+                    continue;
                 }
 
-                continue;
+                if (!hash_equals((string) $row['checksum'], sha1((string) $row['values']))) {
+                    $failures[] = $where . ': the stored checksum does not match its values';
+                }
             }
 
-            if (!hash_equals((string) $row['checksum'], sha1((string) $row['values']))) {
-                $failures[] = $where . ': the stored checksum does not match its values';
-            }
+            $last = $rows[array_key_last($rows)];
+            $after = [(int) $last['id'], (string) $last['fieldname'], (int) $last['groupId']];
         }
 
         return [$failures, $unproven];
     }
 
     /**
+     * One batch of document rows, from the primary key the previous batch ended on.
+     *
+     * The `values` column is a LONGTEXT holding everything one group of one object stores, so a
+     * query over the whole table would put the entire stored data of the class in memory at once -
+     * on exactly the installations this migration is for. The table is walked along its primary
+     * key instead, {@see self::VERIFY_BATCH_SIZE} rows at a time, which bounds both the verify and
+     * the cleanup that re-runs it to one batch. The row-value comparison is what lets the three
+     * leading primary key columns be resumed from with the index.
+     *
+     * @param array{0: int, 1: string, 2: int}|null $after the (id, fieldname, groupId) to resume after
+     *
      * @return array<array<string, mixed>>
      *
      * @throws Exception
      */
-    private function readDocumentRows(string $classId): array
+    private function readDocumentRows(string $classId, ?array $after = null): array
     {
+        $sql = 'SELECT `id`, `fieldname`, `groupId`, `values`, `checksum`, `migratedAt` FROM '
+            . $this->db->quoteIdentifier($this->documentEngine->getDocumentTableName($classId));
+
+        if ($after !== null) {
+            $sql .= ' WHERE (`id`, `fieldname`, `groupId`) > (?, ?, ?)';
+        }
+
+        $sql .= ' ORDER BY `id`, `fieldname`, `groupId` LIMIT ' . self::VERIFY_BATCH_SIZE;
+
         try {
-            return $this->db->fetchAllAssociative(
-                'SELECT `id`, `fieldname`, `groupId`, `values`, `checksum`, `migratedAt` FROM '
-                . $this->db->quoteIdentifier($this->documentEngine->getDocumentTableName($classId))
-                . ' ORDER BY `id`, `fieldname`, `groupId`'
-            );
+            return $this->db->fetchAllAssociative($sql, $after ?? []);
         } catch (TableNotFoundException) {
             return [];
         }
@@ -754,6 +978,19 @@ final class DocumentEngineMigrationService
         }
 
         return (string) (StoreConfig::getById($storeId)?->getName() ?? self::DEFAULT_STORE_NAME);
+    }
+
+    /**
+     * A store as a refusal has to name it: by id as well as by name, which is what an operator
+     * passes to the next command.
+     */
+    private function describeStore(?int $storeId): string
+    {
+        if ($storeId === null) {
+            return self::DEFAULT_STORE_NAME;
+        }
+
+        return sprintf('store %d ("%s")', $storeId, $this->nameStore($storeId));
     }
 
     /**

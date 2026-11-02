@@ -43,6 +43,12 @@ trait MigrationClassFixtureTrait
     private const COLLECTION_KEY = 'csMigrationCollection';
 
     /**
+     * @var string[] every brick key this fixture registered, which is what its tables are named
+     *               after and what the runtime cache holds it under
+     */
+    private array $registeredBrickKeys = [];
+
+    /**
      * @var string[]
      */
     private array $createdClassIds = [];
@@ -85,11 +91,15 @@ trait MigrationClassFixtureTrait
         $this->getMigrationService()->flip($store);
     }
 
-    protected function createMigrationGroup(int $storeId): int
+    /**
+     * @param string|null $name a name of the caller's own, for the tests that create many groups
+     *                          and cannot rely on the clock telling them apart
+     */
+    protected function createMigrationGroup(int $storeId, ?string $name = null): int
     {
         $group = new Classificationstore\GroupConfig();
         $group->setStoreId($storeId);
-        $group->setName(uniqid('csMigrationGroup', false));
+        $group->setName($name ?? uniqid('csMigrationGroup', false));
         $group->save();
 
         $groupId = (int) $group->getId();
@@ -137,9 +147,14 @@ trait MigrationClassFixtureTrait
 
     /**
      * @param ClassDefinition\Data[] $fieldDefinitions
+     * @param string|null            $name the class name, for an id a name cannot be derived from -
+     *                                     a numeric id, which is what a class gets by default
      */
-    protected function buildMigrationClass(string $classId, array $fieldDefinitions): ClassDefinition
-    {
+    protected function buildMigrationClass(
+        string $classId,
+        array $fieldDefinitions,
+        ?string $name = null
+    ): ClassDefinition {
         // the fields go in through the layout, because that is what a saved class is rebuilt from
         $layout = new Panel();
         $layout->setName('root');
@@ -147,7 +162,7 @@ trait MigrationClassFixtureTrait
 
         $class = new ClassDefinition();
         $class->setId($classId);
-        $class->setName(lcfirst($classId));
+        $class->setName($name ?? lcfirst($classId));
         $class->setLayoutDefinitions($layout);
 
         return $class;
@@ -156,9 +171,12 @@ trait MigrationClassFixtureTrait
     /**
      * @param ClassDefinition\Data[] $fieldDefinitions
      */
-    protected function saveMigrationClass(string $classId, array $fieldDefinitions): ClassDefinition
-    {
-        $class = $this->buildMigrationClass($classId, $fieldDefinitions);
+    protected function saveMigrationClass(
+        string $classId,
+        array $fieldDefinitions,
+        ?string $name = null
+    ): ClassDefinition {
+        $class = $this->buildMigrationClass($classId, $fieldDefinitions, $name);
         $class->save();
 
         $this->createdClassIds[] = $classId;
@@ -168,15 +186,30 @@ trait MigrationClassFixtureTrait
 
     protected function registerMigrationBrick(ClassificationstoreField ...$fieldDefinitions): Objectbricks
     {
-        $brick = new ObjectbrickDefinition();
-        $brick->setKey(self::BRICK_KEY);
-        $brick->setFieldDefinitions($this->byName(...$fieldDefinitions));
+        return $this->registerMigrationBricks([self::BRICK_KEY => $fieldDefinitions]);
+    }
 
-        RuntimeCache::set('objectbrick_' . self::BRICK_KEY, $brick);
+    /**
+     * One object bricks field allowing more than one brick, each brick carrying its own
+     * classification store fields - which is how one field name comes to be defined twice in one
+     * class, on two stores, without either definition shadowing the other.
+     *
+     * @param array<string, ClassificationstoreField[]> $fieldsByBrickKey
+     */
+    protected function registerMigrationBricks(array $fieldsByBrickKey): Objectbricks
+    {
+        foreach ($fieldsByBrickKey as $brickKey => $fieldDefinitions) {
+            $brick = new ObjectbrickDefinition();
+            $brick->setKey($brickKey);
+            $brick->setFieldDefinitions($this->byName(...$fieldDefinitions));
+
+            RuntimeCache::set('objectbrick_' . $brickKey, $brick);
+            $this->registeredBrickKeys[] = $brickKey;
+        }
 
         $bricks = new Objectbricks();
         $bricks->setName('bricks');
-        $bricks->setAllowedTypes([self::BRICK_KEY]);
+        $bricks->setAllowedTypes(array_keys($fieldsByBrickKey));
 
         return $bricks;
     }
@@ -268,7 +301,11 @@ trait MigrationClassFixtureTrait
         }
         $this->createdStoreIds = [];
 
-        RuntimeCache::getInstance()->offsetUnset('objectbrick_' . self::BRICK_KEY);
+        foreach ($this->registeredBrickKeys as $brickKey) {
+            RuntimeCache::getInstance()->offsetUnset('objectbrick_' . $brickKey);
+        }
+        $this->registeredBrickKeys = [];
+
         RuntimeCache::getInstance()->offsetUnset('fieldcollection_' . self::COLLECTION_KEY);
     }
 
@@ -277,14 +314,19 @@ trait MigrationClassFixtureTrait
      */
     private function valueTablesOf(string $classId): array
     {
-        return [
+        $tables = [
             self::DATA_TABLE_PREFIX . $classId,
             self::GROUPS_TABLE_PREFIX . $classId,
             self::DOCUMENT_TABLE_PREFIX . $classId,
-            'object_brick_store_' . self::BRICK_KEY . '_' . $classId,
-            'object_brick_query_' . self::BRICK_KEY . '_' . $classId,
             'object_collection_' . self::COLLECTION_KEY . '_' . $classId,
         ];
+
+        foreach ($this->registeredBrickKeys as $brickKey) {
+            $tables[] = 'object_brick_store_' . $brickKey . '_' . $classId;
+            $tables[] = 'object_brick_query_' . $brickKey . '_' . $classId;
+        }
+
+        return $tables;
     }
 
     /**

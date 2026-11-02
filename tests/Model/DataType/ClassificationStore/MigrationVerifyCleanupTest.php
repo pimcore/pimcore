@@ -40,6 +40,16 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
 
     private const PENDING_FIELD = 'csCleanupPending';
 
+    /**
+     * A class of its own holding more documents than one verification batch, to walk the table
+     * across two of its boundaries.
+     */
+    private const BATCH_CLASS_ID = 'CsMigrationBatch';
+
+    private const BATCH_FIELD = 'csBatchField';
+
+    private const BATCH_ROWS = 201;
+
     protected function tearDown(): void
     {
         $this->cleanUpMigrationFixture();
@@ -145,6 +155,69 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
         $this->assertStringContainsString('written before checksums were stamped', $tester->getDisplay());
+    }
+
+    /**
+     * The `values` column holds everything one group of one object stores, so the verification
+     * walks the document table along its primary key a batch at a time rather than reading it in
+     * one query - which is what keeps a class whose data does not fit in the process verifiable at
+     * all. The rows either side of every batch boundary are the ones a resumption gets wrong, so
+     * those are the ones corrupted here.
+     */
+    public function testVerifyWalksEveryDocumentOfAClassThatHoldsMoreThanOneBatch(): void
+    {
+        $storeId = $this->createMigrationStore();
+        $class = $this->saveMigrationClass(
+            self::BATCH_CLASS_ID,
+            [$this->migrationStoreField(self::BATCH_FIELD, $storeId)]
+        );
+        $this->flipMigrationStore($storeId);
+
+        $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, 'unrelated', 'verify-batches')->getId();
+
+        $groupIds = [];
+        for ($index = 0; $index < self::BATCH_ROWS; $index++) {
+            $groupIds[] = $this->createMigrationGroup($storeId, sprintf('csBatchGroup_%s_%d', uniqid(), $index));
+        }
+        sort($groupIds);
+
+        foreach ($groupIds as $groupId) {
+            $this->insertBatchDocumentRow($objectId, $groupId, '{"group":' . $groupId . '}');
+        }
+
+        // the first row, the two either side of each batch boundary, and the last one
+        $corrupted = [
+            $groupIds[0],
+            $groupIds[99],
+            $groupIds[100],
+            $groupIds[199],
+            $groupIds[self::BATCH_ROWS - 1],
+        ];
+
+        foreach ($corrupted as $groupId) {
+            Db::get()->update(
+                self::DOCUMENT_TABLE_PREFIX . self::BATCH_CLASS_ID,
+                ['checksum' => sha1('something else')],
+                ['id' => $objectId, 'fieldname' => self::BATCH_FIELD, 'groupId' => $groupId]
+            );
+        }
+
+        $report = $this->getMigrationService()->verify($class);
+
+        foreach ($corrupted as $groupId) {
+            $this->assertContains(
+                sprintf(
+                    'object %d, field "%s", group %d: the stored checksum does not match its values',
+                    $objectId,
+                    self::BATCH_FIELD,
+                    $groupId
+                ),
+                $report->failures
+            );
+        }
+
+        $this->assertCount(count($corrupted), $report->failures, 'and no row is seen twice');
+        $this->assertSame([], $report->unproven);
     }
 
     /**
@@ -269,6 +342,23 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
         }
 
         $this->assertSame([], $service->getBacklog($class));
+    }
+
+    /**
+     * One document row, stamped the way the drain stamps it, so the verification has a checksum to
+     * recompute rather than an unproven row.
+     */
+    private function insertBatchDocumentRow(int $objectId, int $groupId, string $values): void
+    {
+        Db::get()->insert(self::DOCUMENT_TABLE_PREFIX . self::BATCH_CLASS_ID, [
+            'id' => $objectId,
+            'fieldname' => self::BATCH_FIELD,
+            'groupId' => $groupId,
+            'collectionId' => null,
+            'values' => $values,
+            'checksum' => sha1($values),
+            'migratedAt' => self::MIGRATED_AT,
+        ]);
     }
 
     private function runVerify(): CommandTester

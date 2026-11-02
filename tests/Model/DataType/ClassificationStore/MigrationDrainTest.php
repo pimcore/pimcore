@@ -47,6 +47,16 @@ class MigrationDrainTest extends AbstractMigrationTest
      */
     private const NEXT_CLASS_FIELDS = ['csNextOne', 'csNextTwo', 'csNextThree'];
 
+    /**
+     * A class whose id is numeric, which is what a class gets by default - the name has to be given
+     * separately, as a class name cannot start with a digit.
+     */
+    private const NUMERIC_CLASS_ID = '990001';
+
+    private const NUMERIC_CLASS_NAME = 'csMigrationNumericId';
+
+    private const NUMERIC_CLASS_FIELD = 'csNumericField';
+
     protected function tearDown(): void
     {
         $this->cleanUpMigrationFixture();
@@ -101,8 +111,8 @@ class MigrationDrainTest extends AbstractMigrationTest
     }
 
     /**
-     * A pair that already holds a document is counted as migrated: nothing is written, nothing is
-     * compared, and the EAV rows that survived beside it are removed.
+     * A pair that already holds a document is counted as migrated: nothing is written over it, and
+     * the EAV rows that survived beside it are removed when they hold nothing the documents do not.
      */
     public function testAPairThatAlreadyHoldsADocumentIsNotRewritten(): void
     {
@@ -118,9 +128,9 @@ class MigrationDrainTest extends AbstractMigrationTest
         $before = $this->readDocumentRows($objectId);
         $this->assertCount(1, $before);
 
-        // the EAV rows the user save removed are put back, so that the drain finds the pair in its
-        // backlog with a document already written
-        $this->seedEavRows($objectId, 'a value nobody should read again');
+        // the EAV rows the user save removed are put back, holding what the documents hold, so that
+        // the drain finds the pair in its backlog with a document already written
+        $this->seedEavRows($objectId, 'by a user');
         $this->assertGreaterThan(0, $this->countEavRowsFor($objectId));
 
         $result = $this->getMigrationService()
@@ -129,6 +139,66 @@ class MigrationDrainTest extends AbstractMigrationTest
         $this->assertSame(DrainOutcome::AlreadyMigrated, $result->outcome);
         $this->assertSame($before, $this->readDocumentRows($objectId), 'the document bytes stay as they were');
         $this->assertSame(0, $this->countEavRowsFor($objectId));
+    }
+
+    /**
+     * Which engine a store resolves to is memoized for the length of a request, so a process that
+     * resolved EAV before the flip keeps writing EAV rows after its pair was converted. Those rows
+     * hold values no document holds: the drain reports the pair and leaves both sides where they
+     * are, because a drain that deleted them would be the one losing them.
+     */
+    public function testAConvertedPairWhoseEavRowsHoldOtherValuesIsReportedRatherThanDeleted(): void
+    {
+        $object = $this->createObjectWithValue(self::INPUT_KEY, 'written on eav', 'drain-stale-writer');
+        $objectId = (int) $object->getId();
+
+        $this->flipStore();
+        $service = $this->getMigrationService();
+
+        $this->assertSame(
+            DrainOutcome::Converted,
+            $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT)->outcome
+        );
+        $converted = $this->readDocumentRows($objectId);
+        $this->assertCount(1, $converted);
+        $this->assertSame(0, $this->countEavRowsFor($objectId));
+
+        // the writer that still resolved the EAV engine saves after the pair was drained
+        $this->seedEavRows($objectId, 'written by a process that had not seen the flip');
+        $eavRows = $this->countEavRowsFor($objectId);
+        $this->assertGreaterThan(0, $eavRows);
+
+        $result = $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT);
+
+        $this->assertSame(DrainOutcome::Diverged, $result->outcome);
+        $this->assertStringContainsString('does not account for', (string) $result->divergence);
+        $this->assertSame($eavRows, $this->countEavRowsFor($objectId), 'the newer values are not deleted');
+        $this->assertSame($converted, $this->readDocumentRows($objectId), 'and nothing is written over them');
+    }
+
+    /**
+     * The question is asked one way round: a surviving group activation row with no values holds
+     * nothing the documents could be missing, so it is removed rather than reported - and neither
+     * is the pair reported for the values the documents hold and the surviving rows do not.
+     */
+    public function testAConvertedPairWhoseSurvivingEavRowsHoldNoValueIsStillCountedAsMigrated(): void
+    {
+        $object = $this->createObjectWithValue(self::INPUT_KEY, 'written on eav', 'drain-empty-group-row');
+        $objectId = (int) $object->getId();
+
+        $this->flipStore();
+        $service = $this->getMigrationService();
+        $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT);
+
+        $converted = $this->readDocumentRows($objectId);
+        $this->seedEmptyGroupRow($objectId);
+        $this->assertSame(1, $this->countEavRowsFor($objectId));
+
+        $result = $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT);
+
+        $this->assertSame(DrainOutcome::AlreadyMigrated, $result->outcome);
+        $this->assertSame(0, $this->countEavRowsFor($objectId));
+        $this->assertSame($converted, $this->readDocumentRows($objectId));
     }
 
     /**
@@ -308,9 +378,61 @@ class MigrationDrainTest extends AbstractMigrationTest
         $this->assertSame([], $this->getMigrationService()->getBacklog($this->getClass()));
     }
 
+    /**
+     * The backlog is keyed by class id, and PHP makes an array key of a numeric string an int - so
+     * a class with the id it gets by default hands every method taking a class id an int unless the
+     * drain puts the string back. The dry run reports the backlog without reaching those calls,
+     * which is why this runs the conversion itself.
+     */
+    public function testTheDrainConvertsAClassWhoseIdIsNumeric(): void
+    {
+        $storeId = $this->createMigrationStore();
+        $groupId = $this->createMigrationGroup($storeId);
+        $keyId = $this->createMigrationKey($storeId, $groupId);
+
+        $class = $this->saveMigrationClass(
+            self::NUMERIC_CLASS_ID,
+            [$this->migrationStoreField(self::NUMERIC_CLASS_FIELD, $storeId)],
+            self::NUMERIC_CLASS_NAME
+        );
+        $this->assertSame(self::NUMERIC_CLASS_ID, $class->getId());
+
+        $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, 'unrelated', 'numeric-owner')->getId();
+        $this->seedMigrationEavRows(
+            self::NUMERIC_CLASS_ID,
+            $objectId,
+            self::NUMERIC_CLASS_FIELD,
+            $groupId,
+            $keyId,
+            'converted under a numeric class id'
+        );
+
+        $this->flipMigrationStore($storeId);
+
+        $tester = $this->runDrain(['--class' => self::NUMERIC_CLASS_ID]);
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertStringContainsString('1 pair(s) converted', $tester->getDisplay());
+        $this->assertSame([], $this->getMigrationService()->getBacklog($class));
+        $this->assertSame(
+            [self::NUMERIC_CLASS_FIELD],
+            $this->fieldNamesIn(self::DOCUMENT_TABLE_PREFIX . self::NUMERIC_CLASS_ID)
+        );
+    }
+
     private function drainCommand(): DrainClassificationStoreCommand
     {
         return new DrainClassificationStoreCommand($this->getMigrationService());
+    }
+
+    /**
+     * @return string[] the distinct field names a value table holds
+     */
+    private function fieldNamesIn(string $table): array
+    {
+        return Db::get()->fetchFirstColumn(
+            'SELECT DISTINCT fieldname FROM ' . Db::get()->quoteIdentifier($table) . ' ORDER BY fieldname'
+        );
     }
 
     /**
@@ -408,6 +530,22 @@ class MigrationDrainTest extends AbstractMigrationTest
             . ' (`id`, `groupId`, `keyId`, `fieldname`, `language`, `type`, `value`)'
             . ' VALUES (?, ?, ?, ?, ?, ?, ?)',
             [$objectId, $groupId, $this->getKeyId(self::INPUT_KEY), self::FIELDNAME, 'default', 'input', $value]
+        );
+    }
+
+    /**
+     * A group activation row with no value rows under it: the EAV side reads it back as an active
+     * group holding nothing, which is a row the backlog finds and no value the documents could be
+     * missing.
+     */
+    private function seedEmptyGroupRow(int $objectId): void
+    {
+        $db = Db::get();
+
+        $db->executeStatement(
+            'INSERT IGNORE INTO ' . $db->quoteIdentifier($this->getGroupsTable())
+            . ' (`id`, `groupId`, `fieldname`) VALUES (?, ?, ?)',
+            [$objectId, $this->getGroupId(self::FIRST_GROUP), self::FIELDNAME]
         );
     }
 }

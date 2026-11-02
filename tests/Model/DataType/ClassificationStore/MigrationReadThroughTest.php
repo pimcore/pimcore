@@ -154,6 +154,50 @@ class MigrationReadThroughTest extends AbstractMigrationTest
         $this->assertSame([], $store->getItems());
     }
 
+    /**
+     * Deleting an object's classification store values takes the EAV rows of a pair the drain has
+     * not converted yet along with the documents. A delete that took the documents alone would be
+     * undone by the read-through on the very next load, which would hand back the values that were
+     * just deleted.
+     */
+    public function testDeletingAnUnconvertedPairTakesItsEavRowsSoTheReadThroughDoesNotServeThemAgain(): void
+    {
+        $object = $this->createObjectWithValueAndCollection();
+        $objectId = (int) $object->getId();
+        $groupId = $this->getGroupId();
+
+        $this->flipStore();
+        $this->assertSame([], $this->readDocumentRows($objectId), 'precondition: the pair is not converted');
+        $this->assertGreaterThan(0, $this->countRows($this->getDataTable(), self::FIELDNAME));
+
+        $this->reload($objectId)->getCsstore()->getDao()->delete();
+
+        $this->assertSame(0, $this->countRows($this->getDataTable(), self::FIELDNAME));
+        $this->assertSame(0, $this->countRows($this->getGroupsTable(), self::FIELDNAME));
+
+        $store = $this->reload($objectId)->getCsstore();
+        $this->assertSame([], $store->getActiveGroups());
+        $this->assertNull($store->getLocalizedKeyValue($groupId, $this->getKeyId(self::INPUT_KEY)));
+    }
+
+    /**
+     * And the delete reaches a class whose EAV tables were never created - a store born on the
+     * document engine - without raising table-not-found over the tables that are not there.
+     */
+    public function testDeletingSucceedsWhenTheEavTablesAreGone(): void
+    {
+        $object = $this->createObjectWithoutValues();
+        $objectId = (int) $object->getId();
+
+        $this->flipStore();
+        $this->dropTable($this->getDataTable());
+        $this->dropTable($this->getGroupsTable());
+
+        $this->reload($objectId)->getCsstore()->getDao()->delete();
+
+        $this->assertSame([], $this->readDocumentRows($objectId));
+    }
+
     private function createObjectWithValueAndCollection(): Csstore
     {
         $groupId = $this->getGroupId();

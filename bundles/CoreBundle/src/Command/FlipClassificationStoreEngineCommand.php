@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\StoreFlipConflictException;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -40,6 +42,18 @@ class FlipClassificationStoreEngineCommand extends AbstractCommand
         . ' reverse migration: putting the store back on "eav" does not bring those values back, it'
         . ' hides them behind the EAV rows that are left.';
 
+    /**
+     * Which engine a store resolves to is memoized for the length of a request or a messenger
+     * message, so a process that resolved the EAV engine before the flip keeps writing EAV rows
+     * until it reaches that boundary. Those rows are invisible to document reads, and the drain
+     * refuses to delete them, so the step between the flip and the drain is to let the writers
+     * that predate it finish.
+     */
+    private const WAIT_FOR_OLD_WRITERS =
+        'Before draining, let the requests and messenger messages that were already running finish'
+        . ' - a process that resolved the EAV engine before this flip keeps writing EAV rows until'
+        . ' its next reset, and those rows are not read back and not drained.';
+
     public function __construct(private readonly DocumentEngineMigrationService $migrationService)
     {
         parent::__construct();
@@ -49,42 +63,70 @@ class FlipClassificationStoreEngineCommand extends AbstractCommand
     {
         $this->addArgument(
             'store',
-            InputArgument::REQUIRED,
-            'The id or the name of the Classification Store to flip'
+            InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+            'The ids or the names of the Classification Stores to flip. Stores sharing a'
+            . ' classification store field name have to be named together: the value tables key'
+            . ' their rows by field name, so such a group cannot be split across two engines'
         );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $argument = (string) $input->getArgument('store');
-        $store = $this->migrationService->resolveStore($argument);
+        $stores = [];
 
-        if (!$store) {
-            $this->io->error(sprintf('No Classification Store found for "%s".', $argument));
+        /** @var string[] $arguments */
+        $arguments = (array) $input->getArgument('store');
 
-            return self::FAILURE;
+        foreach ($arguments as $argument) {
+            $store = $this->migrationService->resolveStore($argument);
+
+            if (!$store) {
+                $this->io->error(sprintf('No Classification Store found for "%s".', $argument));
+
+                return self::FAILURE;
+            }
+
+            $stores[] = $store;
         }
 
         $this->io->warning(self::CONFIRMATION);
 
-        if (!$this->io->confirm(sprintf('Flip store "%s" to the document engine?', (string) $store->getName()))) {
+        if (!$this->io->confirm(sprintf('Flip %s to the document engine?', $this->nameStores($stores)))) {
             $this->io->writeln('Nothing was changed.');
 
             return self::SUCCESS;
         }
 
-        $classIds = $this->migrationService->flip($store);
+        try {
+            $classIds = $this->migrationService->flip(...$stores);
+        } catch (StoreFlipConflictException $exception) {
+            $this->io->error($exception->getMessage());
+
+            return self::FAILURE;
+        }
 
         $this->io->success(sprintf(
-            'Store "%s" is on the document engine. Document tables created for: %s',
-            (string) $store->getName(),
-            $classIds === [] ? 'no class carries a field on this store' : implode(', ', $classIds)
+            '%s now on the document engine. Document tables created for: %s',
+            $this->nameStores($stores),
+            $classIds === [] ? 'no class carries a field on these stores' : implode(', ', $classIds)
         ));
         $this->io->writeln(
             'The values the store already holds are read from the EAV tables until'
             . ' pimcore:classificationstore:drain converts them.'
         );
+        $this->io->warning(self::WAIT_FOR_OLD_WRITERS);
 
         return self::SUCCESS;
+    }
+
+    /**
+     * @param StoreConfig[] $stores
+     */
+    private function nameStores(array $stores): string
+    {
+        return implode(', ', array_map(
+            static fn (StoreConfig $store): string => sprintf('store "%s"', (string) $store->getName()),
+            $stores
+        ));
     }
 }

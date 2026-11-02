@@ -407,18 +407,20 @@ final class EavEngine extends AbstractDao implements EngineInterface
      */
     public function deletePairRows(string $classId, ?int $objectId, string $fieldname): void
     {
-        // the data table first: its composite foreign key on the group table cascades, so deleting
-        // the group rows first would remove the data rows out of this statement's sight
-        foreach ([$this->getDataTableName($classId), $this->getGroupsTableName($classId)] as $table) {
-            try {
-                $this->db->executeStatement(
-                    'DELETE FROM ' . $this->db->quoteIdentifier($table) . ' WHERE `id` = ? AND `fieldname` = ?',
-                    [$objectId, $fieldname]
-                );
-            } catch (TableNotFoundException) {
-                // the class keeps no EAV rows for this pair, which is what the delete asked for
-            }
-        }
+        $this->deleteValueRows($classId, ['id' => $objectId, 'fieldname' => $fieldname]);
+    }
+
+    /**
+     * Removes the rows of every field name an object carries, under the caveats of
+     * {@see self::deletePairRows()} - this is {@see self::delete()} with an absent table tolerated,
+     * for {@see DocumentEngine::delete()}, which has to take the rows of a pair the drain has not
+     * converted yet along with the documents and cannot know whether the two tables are there.
+     *
+     * @throws Exception
+     */
+    public function deleteObjectRows(string $classId, ?int $objectId): void
+    {
+        $this->deleteValueRows($classId, ['id' => $objectId]);
     }
 
     /**
@@ -440,6 +442,24 @@ final class EavEngine extends AbstractDao implements EngineInterface
     public function getGroupsTableName(string $classId): string
     {
         return self::GROUPS_TABLE_PREFIX . $classId;
+    }
+
+    /**
+     * @param array<string, mixed> $criteria
+     *
+     * @throws Exception
+     */
+    private function deleteValueRows(string $classId, array $criteria): void
+    {
+        // the data table first: its composite foreign key on the group table cascades, so deleting
+        // the group rows first would remove the data rows out of this statement's sight
+        foreach ([$this->getDataTableName($classId), $this->getGroupsTableName($classId)] as $table) {
+            try {
+                $this->db->delete($table, $criteria);
+            } catch (TableNotFoundException) {
+                // the class keeps no EAV rows under these criteria, which is what the delete asked for
+            }
+        }
     }
 
     /**

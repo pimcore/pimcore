@@ -403,7 +403,7 @@ Four commands move the values a store already holds. They run in this order, and
 
 | command | scope | what it does |
 |---|---|---|
-| `pimcore:classificationstore:flip <store>` | one store | sets `engine` to `document` and creates the document table of every class carrying a field on that store |
+| `pimcore:classificationstore:flip <store>...` | one store, or the stores sharing a field name | creates the document table of every class carrying a field on those stores, then sets their `engine` to `document` |
 | `pimcore:classificationstore:drain [--class=] [--max-divergences=] [--dry-run]` | the classes holding values | converts the EAV rows of one (object, field) pair at a time |
 | `pimcore:classificationstore:verify [--class=]` | one class, or every class | recomputes each document's checksum and asserts that no EAV row survived |
 | `pimcore:classificationstore:cleanup [--class=] [--dry-run]` | one class, or every class | drops the two EAV tables of a class once every store it uses is converted |
@@ -417,12 +417,35 @@ bin/console pimcore:classificationstore:cleanup --class=PRODUCT --dry-run
 bin/console pimcore:classificationstore:cleanup --class=PRODUCT
 ```
 
-`<store>` is a store id or a store name, resolved in that order; `--class=` is a class **id**. Rolling out per
-class, smallest class first, is what the drain's own ordering does when `--class=` is left out.
+`<store>` is a store id or a store name, resolved in that order, and the flip takes more than one of them;
+`--class=` is a class **id**. Rolling out per class, smallest class first, is what the drain's own ordering does
+when `--class=` is left out.
 
 **The flip takes no engine argument and there is nothing that undoes it.** Every value written to the store after
 the flip exists only as a document, so putting the store back on `eav` does not bring those values back - it hides
 them behind whatever EAV rows are left. The flip asks for confirmation; `--no-interaction` proceeds without asking.
+
+**The flip creates the document tables first and writes the `engine` column last.** Every other process reads that
+column, so a save that saw the switch before the table of its class existed would fail with table-not-found - and a
+`CREATE TABLE` that failed half way would otherwise leave the store pointing at tables that are not there. A table
+created for a store the command then refuses is an empty table and nothing else.
+
+**Stores sharing a classification store field name have to be flipped together.** A field name identifies a group
+of definitions rather than one - two allowed bricks of a class can define the same field on two different stores -
+and the value tables key their rows by (object, fieldname), so that group reads and writes one set of rows and
+cannot be split across two engines. The flip refuses before it writes anything if it would leave such a group
+split, and names the class, the field and the stores that have to come along; pass them all in one invocation:
+
+```bash
+bin/console pimcore:classificationstore:flip myStore myOtherStore
+```
+
+**Let the writers that predate the flip finish before draining.** Which engine a store resolves to is memoized for
+the length of a request or a messenger message, so a process that resolved `eav` before the flip keeps writing EAV
+rows until it reaches that boundary. Document reads do not see those rows, and the drain will not delete them: a
+pair that holds documents *and* EAV rows is reported as a divergence with its object id and field name, for a human
+to reconcile, rather than silently losing the newer values. Draining after the in-flight requests and messages have
+finished is what avoids that report.
 
 **Reads and writes keep working throughout.** Between the flip and the drain the values of a (object, field) pair
 are read through to the EAV tables, so nothing goes missing and nothing is merged: a pair that holds no document at
@@ -431,6 +454,10 @@ derived at read time; no column records which of the two answered. An ordinary s
 deletes that pair's rows from both EAV tables in the same transaction, so an object a user saves while the drain is
 running is converted by that save. A drain the user save got to first writes nothing over it. An unchanged save
 still writes nothing at all - a pair whose documents are already what the save wants has no EAV rows left to take.
+Deleting an object's classification store values takes both sides in one transaction as well, so a pair the drain
+has not reached is not served again by the read-through afterwards. Which of the two sources answers a load, and
+what it answers with, are decided in one snapshot, so a load that runs while a pair is being converted sees the
+pair either wholly on EAV or wholly on documents and never between the two.
 
 **The drain is one transaction per (object, field) pair.** Per pair it reads the EAV side with inheritance off,
 writes the documents if the pair holds none, reads them back, compares the two and only then removes the pair's EAV
@@ -450,7 +477,10 @@ throttling and the run lock come from `Pimcore\Console\Traits\Parallelization`.
 ordinary save alike. `migratedAt` is written by the drain alone, so a document with no `migratedAt` was created by a
 user save. `verify` recomputes each checksum and reports every row that does not match, plus every pair that still
 holds EAV rows, and exits non-zero if there is one; a row written before this release carries neither stamp and is
-reported as unproven rather than as corrupt.
+reported as unproven rather than as corrupt. The `values` column holds everything one group of one object stores,
+so the check walks the document table along its primary key a batch at a time rather than reading it in one query -
+its memory is bounded by one batch however much the class holds, and `cleanup`, which re-runs the check inline, is
+bounded by the same.
 
 **`cleanup` is per class while the flip is per store.** It drops the two EAV tables of a class only when every store
 used by any classification store field on that class resolves to `document` and the verification of that class

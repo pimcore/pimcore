@@ -138,6 +138,10 @@ class DrainClassificationStoreCommand extends AbstractCommand
         $items = [];
 
         foreach ($this->migrationService->getBacklogByClass($this->getClassId($input)) as $classId => $pairs) {
+            // a class id is numeric by default, and PHP makes an array key of such a string an
+            // int - which every method taking a class id would refuse under strict types
+            $classId = (string) $classId;
+
             $this->io->writeln(sprintf(self::BACKLOG_LINE, $classId, count($pairs)));
 
             // a store flipped by hand has no document table, and the first write of this class

@@ -57,7 +57,8 @@ use Throwable;
  * The values of a store that was flipped to this engine are read through to the EAV tables until the
  * drain reaches them: a (object, fieldname) pair holding no document at all is read from the EAV
  * engine, a pair holding at least one document from the document alone. Nothing is merged, and a
- * save of such a pair writes its documents and takes its EAV rows with it.
+ * save of such a pair writes its documents and takes its EAV rows with it - as does a delete, which
+ * has to, or the read-through would serve the deleted values again.
  * {@see \Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService}
  * is what drives that migration.
  *
@@ -240,23 +241,56 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     /**
      * Whether the given pair holds at least one document, which is what makes it converted.
      *
+     * The rows are read as of now and locked until the end of the transaction, the way
+     * {@see self::readRowsForUpdate()} reads them: a caller that decides what to write from this
+     * answer has to hold the lock before it reads anything else, or its consistent-read snapshot
+     * is older than the state this question answered about. An empty pair is locked as well - the
+     * gap the rows would go in is what another writer has to wait for.
+     *
      * @throws Exception
      */
     public function hasDocuments(string $classId, int $objectId, string $fieldname): bool
     {
-        return $this->db->fetchOne(
-            'SELECT 1 FROM `' . $this->getDocumentTableName($classId) . '`'
-            . ' WHERE `id` = ? AND `fieldname` = ? LIMIT 1',
-            [$objectId, $fieldname]
-        ) !== false;
+        return $this->readRowsForUpdate($this->getDocumentTableName($classId), $objectId, $fieldname) !== [];
     }
 
+    /**
+     * Removes the values of the whole object, from the documents and from the EAV rows that a pair
+     * the drain has not converted yet still holds.
+     *
+     * Both sides go, and in one transaction: the EAV rows of an unconverted pair are what it is
+     * read from, {@see self::readThroughEav()}, so a delete that took the documents alone would be
+     * undone by the next load rather than by anything the caller did. The scope stays the object's
+     * - every field name it carries - which is the scope {@see EavEngine::delete()} takes as well,
+     * and an absent EAV table is a no-op: a store born on this engine never had one, and the
+     * cleanup of a converted class drops it.
+     *
+     * @throws Exception
+     */
     public function delete(Classificationstore $classificationStore): void
     {
-        $this->db->delete(
-            $this->getDocumentTableName($classificationStore->getClass()->getId()),
-            ['id' => $classificationStore->getObject()->getId()]
-        );
+        $classId = $classificationStore->getClass()->getId();
+        $objectId = $classificationStore->getObject()->getId();
+
+        $ownTransaction = !$this->db->isTransactionActive();
+        if ($ownTransaction) {
+            $this->db->beginTransaction();
+        }
+
+        try {
+            $this->db->delete($this->getDocumentTableName($classId), ['id' => $objectId]);
+            $this->eavEngine->deleteObjectRows($classId, $objectId);
+        } catch (Throwable $exception) {
+            if ($ownTransaction) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+
+        if ($ownTransaction) {
+            $this->db->commit();
+        }
     }
 
     /**
@@ -264,18 +298,55 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      */
     public function load(Classificationstore $classificationStore): void
     {
-        $object = $classificationStore->getObject();
         $rows = $this->readDocumentRows($classificationStore);
 
+        // a pair that holds at least one document is read from the documents alone, so the two
+        // sources are never merged and nothing is derived from both
+        if ($rows !== []) {
+            $this->applyDocumentRows($classificationStore, $rows);
+
+            return;
+        }
+
         // a pair that holds no document at all has not been drained yet, and its values are still
-        // the EAV rows. A pair that holds at least one is read from the documents alone, so the
-        // two sources are never merged and nothing is derived from both
-        if ($rows === []) {
+        // the EAV rows. Which of the two answers and what it answers with have to be decided in
+        // one snapshot: a conversion commits the pair's documents and the deletion of its EAV rows
+        // together, so a source chosen by one autocommit read and loaded by the next can fall
+        // between those two states and answer with neither. Inside a transaction the caller
+        // already owns one, and the re-read below is what that snapshot is established on.
+        //
+        // The read above is what keeps that off the path of a store with nothing left to convert:
+        // a pair that holds documents is answered by one statement, as it was. A pair that holds
+        // none pays a begin and a commit of a read-only transaction for the consistency
+        if ($this->db->isTransactionActive()) {
             $this->readThroughEav($classificationStore);
 
             return;
         }
 
+        $this->db->transactional(function () use ($classificationStore): void {
+            $rows = $this->readDocumentRows($classificationStore);
+
+            if ($rows === []) {
+                $this->readThroughEav($classificationStore);
+
+                return;
+            }
+
+            $this->applyDocumentRows($classificationStore, $rows);
+        });
+    }
+
+    /**
+     * Puts the stored documents of one pair onto the model.
+     *
+     * @param array<array<string, mixed>> $rows
+     *
+     * @throws Exception
+     */
+    private function applyDocumentRows(Classificationstore $classificationStore, array $rows): void
+    {
+        $object = $classificationStore->getObject();
         $activeGroups = [];
         $groupCollectionMapping = [];
         $documents = [];
