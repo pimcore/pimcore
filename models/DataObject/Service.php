@@ -393,7 +393,6 @@ class Service extends Model\Element\Service
      * Writes the block back only if a row got a new localizedfields element, so that an inherited block
      * (read through the getter) is not turned into an own value.
      *
-     * @param Concrete|Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new
      * @param array<string, int> $editableLanguages
      */
     private function applyBlockLanguages(
