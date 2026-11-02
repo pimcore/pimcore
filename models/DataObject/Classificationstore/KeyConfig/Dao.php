@@ -159,6 +159,11 @@ class Dao extends Model\Dao\AbstractDao
             $type = $this->model->getObjectVars();
 
             foreach ($type as $key => $value) {
+                // a key built with `new` carries no title of its own, and must not clear a stored one
+                if ($key === 'title' && !$this->model->isTitleInitialized() && !$this->model->isTitleSeeded()) {
+                    continue;
+                }
+
                 // written by writeIdentifier(), which is the only place allowed to touch the column
                 if ($key === 'identifier') {
                     continue;

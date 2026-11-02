@@ -42,9 +42,23 @@ final class KeyConfig extends Model\AbstractModel
      */
     protected string $name;
 
-    /** Pseudo column for title
+    /** The title the key is shown under, seeded from the definition's own title
      */
     protected ?string $title = null;
+
+    /**
+     * Whether `title` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $titleInitialized = false;
+
+    /**
+     * Whether `title` carries a value the save in progress seeded from the definition.
+     *
+     * @internal
+     */
+    protected bool $titleSeeded = false;
 
     /**
      * The key description.
@@ -221,12 +235,7 @@ final class KeyConfig extends Model\AbstractModel
 
         $isUpdate = false;
 
-        $def = json_decode($this->definition, true);
-        if ($def && isset($def['title'])) {
-            $this->title = $def['title'];
-        } else {
-            $this->title = null;
-        }
+        $this->seedTitleFromDefinition();
 
         if ($this->getId()) {
             self::removeCache();
@@ -304,6 +313,23 @@ final class KeyConfig extends Model\AbstractModel
     public function setTitle(string $title): void
     {
         $this->title = $title;
+        $this->titleInitialized = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function isTitleInitialized(): bool
+    {
+        return $this->titleInitialized;
+    }
+
+    /**
+     * @internal
+     */
+    public function isTitleSeeded(): bool
+    {
+        return $this->titleSeeded;
     }
 
     public function getStoreId(): int
@@ -314,6 +340,30 @@ final class KeyConfig extends Model\AbstractModel
     public function setStoreId(int $storeId): void
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * Seeds the column of a key whose title was neither loaded nor explicitly set. The property is
+     * assigned without marking the title initialised, so every save seeds it again.
+     */
+    private function seedTitleFromDefinition(): void
+    {
+        $this->titleSeeded = false;
+
+        if ($this->titleInitialized) {
+            return;
+        }
+
+        $definition = json_decode($this->definition, true);
+        $title = is_array($definition) ? ($definition['title'] ?? null) : null;
+
+        // a definition without a title serialises it as null, and an empty one is nothing to seed
+        if (!is_string($title) || $title === '') {
+            return;
+        }
+
+        $this->title = $title;
+        $this->titleSeeded = true;
     }
 
     /**
