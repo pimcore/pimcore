@@ -215,7 +215,7 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertSame('second', $second[1]->getMetadataUpper());
 
         $rows = (int) \Pimcore\Db::get()->fetchOne(
-            "SELECT COUNT(*) FROM object_metadata_" . $object->getClassId() . " WHERE id = ? AND ownertype = 'fieldcollection'",
+            'SELECT COUNT(*) FROM object_metadata_' . $object->getClassId() . " WHERE id = ? AND ownertype = 'fieldcollection'",
             [$object->getId()]
         );
         $this->assertSame(3, $rows, 'Only the cleared row is gone.');
