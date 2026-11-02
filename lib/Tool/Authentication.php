@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use __PHP_Incomplete_Class;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
-use ErrorException;
 use Exception;
 use Pimcore;
 use Pimcore\Config;
@@ -23,9 +23,12 @@ use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserProvider;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 
 class Authentication
 {
@@ -70,37 +73,62 @@ class Authentication
 
     protected static function safelyUnserialize(string $serializedToken): mixed
     {
-        $token = null;
-        $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
-        $prevErrorHandler = set_error_handler(static function (int $type, string $msg, string $file, int $line, array $context = []) use (&$prevErrorHandler) {
-            if (__FILE__ === $file) {
-                throw new ErrorException($msg, 0x37313BC, $type, $file, $line);
-            }
+        // Restrict deserialization to the known session-token object graph. Any other class
+        // (e.g. a PHP object-injection gadget planted in the session store) is reduced to
+        // __PHP_Incomplete_Class, so none of its magic methods (__wakeup/__destruct/...) run.
+        $token = @unserialize($serializedToken, ['allowed_classes' => self::getSessionTokenAllowedClasses()]);
 
-            return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;
-        });
+        // A tampered or foreign payload deserializes to false or an incomplete class; the
+        // caller additionally requires an instanceof TokenInterface, so we just drop it here.
+        if ($token === false || $token instanceof __PHP_Incomplete_Class) {
+            Logger::warning('Failed to safely unserialize the security token from the session.', ['key' => 'pimcore_admin']);
 
-        try {
-            $token = unserialize($serializedToken);
-        } catch (ErrorException $e) {
-            if (0x37313BC !== $e->getCode()) {
-                throw $e;
-            }
-            Logger::warning('Failed to unserialize the security token from the session.', ['key' => 'pimcore_admin', 'received' => $serializedToken, 'exception' => $e]);
-        } finally {
-            restore_error_handler();
-            ini_set('unserialize_callback_func', $prevUnserializeHandler);
+            return null;
         }
 
         return $token;
     }
 
     /**
+     * Classes that legitimately occur in a serialized "pimcore_admin" session security token.
+     * Custom authenticators can extend this list via the
+     * `pimcore.security.session_token_allowed_classes` container parameter.
+     *
+     * @return array<int, class-string>
+     *
      * @internal
      */
-    public static function handleUnserializeCallback(string $class): never
+    public static function getSessionTokenAllowedClasses(): array
     {
-        throw new ErrorException('Class not found: '.$class, 0x37313BC);
+        $allowedClasses = [
+            \Pimcore\Security\User\User::class,
+            User::class,
+            PostAuthenticationToken::class,
+            UsernamePasswordToken::class,
+            // The classic admin-ui-classic-bundle "/admin/login" firewall (Pimcore < 2026.1 and the
+            // LTS line) stores a PostAuthenticationToken normally, or this subclass while 2FA is
+            // pending. Referenced by name because admin-ui-classic-bundle is not a core dependency.
+            'Pimcore\\Bundle\\AdminBundle\\Security\\Authentication\\Token\\TwoFactorRequiredToken',
+        ];
+
+        // scheb/2fa stores a TwoFactorToken (wrapping the authenticated token) during the 2FA step.
+        if (class_exists(\Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorToken::class)) {
+            $allowedClasses[] = \Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorToken::class;
+        }
+
+        if (Pimcore::hasContainer()) {
+            try {
+                $extraAllowedClasses = (array) Pimcore::getContainer()->getParameter('pimcore.security.session_token_allowed_classes');
+                $allowedClasses = array_merge(
+                    $allowedClasses,
+                    array_values(array_filter($extraAllowedClasses, 'is_string'))
+                );
+            } catch (InvalidArgumentException) {
+                // parameter not configured – use defaults
+            }
+        }
+
+        return $allowedClasses;
     }
 
     protected static function refreshUser(TokenInterface $token, UserProvider $provider): ?TokenInterface

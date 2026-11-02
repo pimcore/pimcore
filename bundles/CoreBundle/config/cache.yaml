@@ -50,6 +50,8 @@ services:
             - '@event_dispatcher'
         calls:
             - [setLogger, ['@logger']]
+            - [setMaxWriteToCacheItems, ['%pimcore.cache.max_write_items%']]
+            - [setHandleCli, ['%pimcore.cache.handle_cli%']]
         tags:
             - { name: monolog.logger, channel: cache }
 

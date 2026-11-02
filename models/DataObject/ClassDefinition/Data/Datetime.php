@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
 
-class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, UserDefinedColumnTypeInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
 
@@ -343,6 +343,13 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         return null;
+    }
+
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        // the default is resolved at runtime (use current date), the configured default value alone does not tell
+        return parent::hasApplicableDefaultValue($object, $context)
+            || !$this->isEmpty($this->doGetDefaultValue($object, $context));
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool

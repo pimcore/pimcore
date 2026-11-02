@@ -10,8 +10,8 @@ a custom preview image from the video.
 
 > **IMPORTANT**
 > To use all the following functionalities, you must install FFMPEG on the server.
-> For details, see
-> [Additional Tools Installation](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/07_Additional_Tools_Installation.md).
+> It is pre-installed in the official [Pimcore Docker images](https://hub.docker.com/r/pimcore/pimcore); for details, see
+> [System Requirements](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/01_System_Requirements.md#additional-server-software).
 
 ## Explanation of the Transformations
 
@@ -70,6 +70,20 @@ if($asset instanceof Asset\Video) {
    }
 }
 ```
+
+#### Frontend paths outside of a frontend request
+
+`getThumbnail()` returns frontend paths (prefixed with `pimcore.assets.frontend_prefixes.thumbnail` and
+URL-encoded) only while a frontend request is being handled. In any other context, e.g. a CLI command, a cron job or
+a Messenger worker, the paths are returned as stored. Use `getFrontendThumbnail()` to get the frontend paths
+regardless of the context:
+
+```php
+$thumbnail = $asset->getFrontendThumbnail("myVideoThumbnail");
+```
+
+It takes the same arguments as `getThumbnail()` and returns the same structure. The
+`pimcore.frontend.path.asset.video.thumbnail` event is dispatched in either case.
 
 ### Adaptive Bitrate Video-Streaming
 

@@ -15,7 +15,6 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Exception;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -61,10 +60,6 @@ class MaintenanceModeCommand extends AbstractCommand
         $disable = ($input->getOption('disable') ?? false);
 
         if ($disable) {
-            //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
-            if (Admin::isInMaintenanceMode()) {
-                Admin::deactivateMaintenanceMode();
-            }
             $this->maintenanceModeHelper->deactivate();
             if ($output->isVerbose()) {
                 $output->writeln('Maintenance mode has been disabled');

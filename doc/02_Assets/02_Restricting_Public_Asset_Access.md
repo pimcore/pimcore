@@ -64,8 +64,8 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 }
 ```
 
-A full configuration example can be found on the
-[Nginx Configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/02_Nginx_Configuration.md) page.
+A full configuration example can be found in the skeleton
+[nginx.conf](https://github.com/pimcore/skeleton/blob/2026.x/.docker/nginx.conf).
 
 
 Because of this rule, all assets located within `/protected` (including all their thumbnails)
@@ -116,8 +116,8 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 }
 ```
 
-A full configuration example can be found on the
-[Nginx Configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/02_Nginx_Configuration.md) page.
+A full configuration example can be found in the skeleton
+[nginx.conf](https://github.com/pimcore/skeleton/blob/2026.x/.docker/nginx.conf).
 
 
 In the application, define a route in `config/routes.yaml` and a controller action that handles the request:
@@ -152,6 +152,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MyAssetController extends FrontendController
 {
@@ -171,11 +172,22 @@ class MyAssetController extends FrontendController
             }, 200, [
                 'Content-Type' => $asset->getMimeType(),
             ]);
-        } else {
-            return Asset\Service::getStreamedResponseByUri($pathInfo);
         }
 
-        throw new AccessDeniedHttpException('Access denied.');
+        // throws when the uri is not a thumbnail uri at all (it cannot be parsed), and returns
+        // null when the thumbnail cannot be resolved or when the thumbnail storage cannot serve
+        // it (e.g. an I/O problem) - deliver your own 404 or placeholder in both cases
+        try {
+            $response = Asset\Service::getStreamedResponseByUri($pathInfo);
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException('Asset not found.', $e);
+        }
+
+        if ($response) {
+            return $response;
+        }
+
+        throw new NotFoundHttpException('Asset not found.');
     }
 }
 ```

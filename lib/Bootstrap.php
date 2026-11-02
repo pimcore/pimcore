@@ -18,7 +18,6 @@ use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
@@ -79,7 +78,7 @@ class Bootstrap
         if (!$pimcoreConsole) {
             $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
             // skip if maintenance mode is on and the flag is not set
-            if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
+            if (($maintenanceModeHelper->isActive()) &&
                 !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
                 die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution\n");
             }

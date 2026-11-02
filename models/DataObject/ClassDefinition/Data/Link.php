@@ -35,6 +35,26 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @var null|string[]
      */
+    public ?array $allowedAssetSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedDocumentSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedObjectSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedClasses = null;
+
+    /**
+     * @var null|string[]
+     */
     public ?array $allowedTargets = null;
 
     /**
@@ -80,7 +100,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
-        $link = Serialize::unserialize($data);
+        // Restrict to DataObject\Data\Link to prevent PHP Object Injection via the DB.
+        $link = Serialize::unserialize($data, [DataObject\Data\Link::class]);
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
@@ -141,6 +162,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
+        if (!is_array($data)) {
+            $data = [];
+        }
+
         $link = new DataObject\Data\Link();
         $link->setValues($data);
 
@@ -324,6 +349,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             unset($oldValue['_owner']);
             unset($oldValue['_fieldname']);
             unset($oldValue['_language']);
+        } elseif ($this->isEmpty($oldValue)) {
+            // e.g. version-diff templates fall back to an empty string for an unset
+            // localized value, which is not a valid `?array` for isEqualArray()
+            $oldValue = null;
         }
 
         if ($newValue instanceof DataObject\Data\Link) {
@@ -332,6 +361,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             unset($newValue['_owner']);
             unset($newValue['_fieldname']);
             unset($newValue['_language']);
+        } elseif ($this->isEmpty($newValue)) {
+            $newValue = null;
         }
 
         return $this->isEqualArray($oldValue, $newValue);
@@ -411,6 +442,86 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function setAllowedTypes(?array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedAssetSubtypes(): ?array
+    {
+        return $this->allowedAssetSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedAssetSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedAssetSubtypes(?array $allowedAssetSubtypes): static
+    {
+        $this->allowedAssetSubtypes = $allowedAssetSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedDocumentSubtypes(): ?array
+    {
+        return $this->allowedDocumentSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedDocumentSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedDocumentSubtypes(?array $allowedDocumentSubtypes): static
+    {
+        $this->allowedDocumentSubtypes = $allowedDocumentSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedObjectSubtypes(): ?array
+    {
+        return $this->allowedObjectSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedObjectSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedObjectSubtypes(?array $allowedObjectSubtypes): static
+    {
+        $this->allowedObjectSubtypes = $allowedObjectSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedClasses(): ?array
+    {
+        return $this->allowedClasses;
+    }
+
+    /**
+     * @param null|string[] $allowedClasses
+     *
+     * @return $this
+     */
+    public function setAllowedClasses(?array $allowedClasses): static
+    {
+        $this->allowedClasses = $allowedClasses;
 
         return $this;
     }

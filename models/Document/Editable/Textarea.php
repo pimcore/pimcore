@@ -48,11 +48,11 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
 
         $text = $this->text;
         if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
-            $text = htmlspecialchars($this->text);
+            $text = htmlspecialchars((string)$this->text);
         }
 
         if (isset($config['nl2br']) && $config['nl2br']) {
-            $text = nl2br($text);
+            $text = nl2br((string)$text);
         }
 
         return $text;
@@ -72,8 +72,8 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
 
     public function setDataFromEditmode(mixed $data): static
     {
-        // this is because the input is now an div contenteditable -> therefore in entities
-        $data = html_entity_decode($data, ENT_HTML5 | ENT_QUOTES);
+        // this is because the input is now a div contenteditable -> therefore in entities
+        $data = html_entity_decode((string)$data, ENT_HTML5 | ENT_QUOTES);
         $this->text = $data;
 
         return $this;

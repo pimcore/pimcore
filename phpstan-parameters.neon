@@ -59,6 +59,8 @@ parameters:
             enabled: false
         noParameterWithNullDefaultValue:
             enabled: false
+        noPhpstanIgnore:
+            enabled: false
         noReturnByReference:
             enabled: false
         noSwitch:

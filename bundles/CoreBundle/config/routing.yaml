@@ -25,7 +25,7 @@ _pimcore_service_thumbnail:
         filename: '.*'
 
 _fos_js_routing:
-    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing-sf4.xml"
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.php"
 
 # auto loads routes from all bundles in config/pimcore/routing.yaml
 _pimcore_bundle_auto:

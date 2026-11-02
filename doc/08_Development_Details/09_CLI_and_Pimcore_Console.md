@@ -125,3 +125,18 @@ su -l www-data -s /bin/bash -c "bin/console awesome:command"
 | `pimcore:bundle:list` | List all registered Pimcore bundles |
 
 Run any command with `--help` for a full description of its options and arguments.
+
+## Console Completion
+
+Some commands (e.g. `pimcore:bundle:install` and `pimcore:bundle:uninstall`) provide tab completion
+for their arguments and options. Completion does not work out of the box — it has to be installed
+once for your shell, as described in the
+[Symfony console completion documentation](https://symfony.com/doc/current/console.html#console-completion):
+
+```bash
+bin/console completion bash | sudo tee /etc/bash_completion.d/console
+```
+
+> On bash, the completion script requires the `bash-completion` package to be installed —
+> otherwise completion fails with errors like `_get_comp_words_by_ref: command not found`.
+> This is especially relevant in minimal Docker images.

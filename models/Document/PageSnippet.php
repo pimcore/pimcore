@@ -217,9 +217,13 @@ abstract class PageSnippet extends Model\Document
 
     protected function doDelete(): void
     {
-        // Dispatch Symfony Message Bus to delete versions
+        // Dispatch Symfony Message Bus to delete versions, bounded to the currently existing ones
         Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+            new VersionDeleteMessage(
+                Service::getElementType($this),
+                $this->getId(),
+                Model\Version::getHighestIdForElement(Service::getElementType($this), $this->getId(), true) ?? 0
+            )
         );
 
         // remove all tasks
@@ -464,7 +468,27 @@ abstract class PageSnippet extends Model\Document
 
             if (self::getGetInheritedValues() && $this->supportsContentMain() && $this->getContentMainDocument()) {
                 $contentMainEditables = $this->getContentMainDocument()->getEditables();
-                $documentEditables = array_merge($contentMainEditables, $documentEditables);
+
+                // Clone and mark every editable coming from the content-main document
+                // as inherited so that the DAO's update() loop skips persisting them
+                // onto this child document. Without this, any editable present in the
+                // merged map (e.g. an areablock and all its children) gets written to
+                // the child on the first Save & Publish, permanently shadowing the
+                // inheritance and causing the content-main content to disappear on
+                // subsequent page loads.
+                //
+                // PageSnippet::update() already guards against saving inherited editables:
+                //   if (!$editable->getInherited()) { $editable->save(); }
+                // getEditable() applies the same clone+setInherited pattern for the
+                // single-editable lookup path; this keeps getEditables() consistent.
+                $markedContentMainEditables = [];
+                foreach ($contentMainEditables as $key => $contentMainEditable) {
+                    $cloned = clone $contentMainEditable;
+                    $cloned->setInherited(true);
+                    $markedContentMainEditables[$key] = $cloned;
+                }
+
+                $documentEditables = array_merge($markedContentMainEditables, $documentEditables);
                 $this->inheritedEditables = $documentEditables;
             }
 

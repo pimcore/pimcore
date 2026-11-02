@@ -14,31 +14,121 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Sandbox;
 
+use InvalidArgumentException;
+use Pimcore\Model\AbstractModel;
+use ReflectionMethod;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedMethodError;
+use Twig\Sandbox\SecurityNotAllowedPropertyError;
 use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityPolicyInterface;
 
 /**
- * Note: Reused to disable checks on object methods and properties.
- *
- * Represents a security policy which need to be enforced when sandbox mode is enabled.
+ * Represents a security policy which needs to be enforced when sandbox mode is enabled.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 final class SecurityPolicy implements SecurityPolicyInterface
 {
+    /**
+     * Built-in mutation-method patterns, used when no patterns are passed to the constructor so that
+     * consumers which build their own policy (and do not know this option) are protected as well.
+     * Mirrors the `sandbox_security_policy.hard_blocked_method_patterns` default in default.yaml.
+     */
+    private const DEFAULT_HARD_BLOCKED_METHOD_PATTERNS = [
+        'Pimcore\\Model\\AbstractModel' => ['/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'],
+        'Pimcore\\Model\\DataObject\\ClassDefinition\\Data' => ['/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i', '/editmode/i'],
+        'Pimcore\\Model\\Asset\\Image' => ['/^getDimensions$/iD'],
+        'Pimcore\\Model\\DataObject\\Data\\UrlSlug' => ['/^(set|save|delete|create|handle)/i', '/^getAction$/iD'],
+    ];
+
+    /**
+     * Read operations that listings delegate to their DAO and that are therefore not declared on the
+     * model, lower-cased. Everything else a model forwards through `AbstractModel::__call()` is denied.
+     */
+    private const DAO_DELEGATED_READ_METHODS = [
+        'load',
+        'loadidlist',
+        'loadidpathlist',
+        'gettotalcount',
+        'getcount',
+        'count',
+    ];
+
     private array $allowedTags;
 
     private array $allowedFilters;
 
+    /**
+     * Explicitly allowed functions - always allowed, in addition to whatever the
+     * `pimcore_*` prefix rule permits.
+     */
     private array $allowedFunctions;
 
-    public function __construct(array $allowedTags = [], array $allowedFilters = [], array $allowedFunctions = [])
-    {
+    /**
+     * Classes to deny - includes Pimcore's built-in denylist (database/infrastructure
+     * layer, `Pimcore\Model\User`) via the `sandbox_security_policy.blocked_classes`
+     * default in default.yaml, plus whatever a site appends to that same option. Ignored
+     * whenever $allowedClasses is non-empty (allowlist mode takes over entirely).
+     */
+    private array $blockedClasses;
+
+    /**
+     * When non-empty, switches from denylist mode to allowlist mode: only instances of
+     * these classes (and their subclasses) may have their methods/properties accessed
+     * from a sandboxed template. Every other object is denied, and $blockedClasses is no
+     * longer consulted.
+     */
+    private array $allowedClasses;
+
+    /**
+     * `pimcore_*` function names to exclude from the prefix auto-allow - includes
+     * Pimcore's built-in denylist of id/path lookup functions via the
+     * `sandbox_security_policy.blocked_functions` default in default.yaml, plus whatever
+     * a site appends to that same option.
+     */
+    private array $blockedFunctions;
+
+    /**
+     * FQCN => method names map. Methods listed here can never be called on a matching
+     * instance from a sandboxed template, no matter the blocklist/allowlist
+     * configuration - unlike $blockedClasses/$allowedClasses, this check is not bypassed
+     * by allowlist mode. Populated via the `sandbox_security_policy.hard_blocked_methods`
+     * default in default.yaml (secret/content-returning getters such as
+     * `User::getPassword`, `Asset::getData`, ...), extendable by a site via that same
+     * option.
+     */
+    private array $hardBlockedMethods;
+
+    /**
+     * FQCN => PCRE pattern list map. A matching instance may never call a method whose
+     * name matches any of these patterns, subject to the same "not bypassed by allowlist
+     * mode" guarantee as $hardBlockedMethods. Populated via the
+     * `sandbox_security_policy.hard_blocked_method_patterns` default in default.yaml -
+     * used for method families (e.g. every dynamically-generated `setXxx` setter on a
+     * DataObject class) that cannot be enumerated by exact name.
+     */
+    private array $hardBlockedMethodPatterns;
+
+    public function __construct(
+        array $allowedTags = [],
+        array $allowedFilters = [],
+        array $allowedFunctions = [],
+        array $blockedClasses = [],
+        array $allowedClasses = [],
+        array $blockedFunctions = [],
+        array $hardBlockedMethods = [],
+        ?array $hardBlockedMethodPatterns = null,
+    ) {
         $this->allowedTags = $allowedTags;
         $this->allowedFilters = $allowedFilters;
         $this->allowedFunctions = $allowedFunctions;
+        $this->blockedClasses = $blockedClasses;
+        $this->allowedClasses = $allowedClasses;
+        $this->blockedFunctions = $blockedFunctions;
+        $this->hardBlockedMethods = $hardBlockedMethods;
+        $this->setHardBlockedMethodPatterns($hardBlockedMethodPatterns ?? self::DEFAULT_HARD_BLOCKED_METHOD_PATTERNS);
     }
 
     public function setAllowedTags(array $tags): void
@@ -54,6 +144,65 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function setAllowedFunctions(array $functions): void
     {
         $this->allowedFunctions = $functions;
+    }
+
+    public function setBlockedClasses(array $blockedClasses): void
+    {
+        $this->blockedClasses = $blockedClasses;
+    }
+
+    public function setAllowedClasses(array $allowedClasses): void
+    {
+        $this->allowedClasses = $allowedClasses;
+    }
+
+    public function setBlockedFunctions(array $blockedFunctions): void
+    {
+        $this->blockedFunctions = $blockedFunctions;
+    }
+
+    public function setHardBlockedMethods(array $hardBlockedMethods): void
+    {
+        $this->hardBlockedMethods = $hardBlockedMethods;
+    }
+
+    /**
+     * @throws InvalidArgumentException if a pattern is not a valid PCRE pattern - this is a deny
+     *                                   rule, so a malformed one must never be silently ignored
+     */
+    public function setHardBlockedMethodPatterns(array $hardBlockedMethodPatterns): void
+    {
+        foreach ($hardBlockedMethodPatterns as $class => $patterns) {
+            if (!is_array($patterns)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid hard-blocked method patterns for class "%s": expected a list of patterns, got %s',
+                    $class,
+                    get_debug_type($patterns),
+                ));
+            }
+
+            foreach ($patterns as $pattern) {
+                if (!is_string($pattern) || @preg_match($pattern, '') === false) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Invalid hard-blocked method pattern for class "%s": %s',
+                        $class,
+                        is_string($pattern) ? $pattern : get_debug_type($pattern),
+                    ));
+                }
+            }
+        }
+
+        $this->hardBlockedMethodPatterns = $hardBlockedMethodPatterns;
+    }
+
+    /**
+     * True once at least one class has been configured in the allowlist. In that mode
+     * the denylist (built-in + configured) is bypassed entirely: only allowlisted
+     * classes are reachable from sandboxed templates.
+     */
+    private function isAllowlistMode(): bool
+    {
+        return [] !== $this->allowedClasses;
     }
 
     /**
@@ -76,8 +225,11 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
 
         foreach ($functions as $function) {
-            //check if a function is allowed or a pimcore twig functions
-            if (!in_array($function, $this->allowedFunctions) && !str_starts_with($function, 'pimcore_')) {
+            if (in_array($function, $this->allowedFunctions, true)) {
+                continue;
+            }
+
+            if (!str_starts_with($function, 'pimcore_') || !$this->isPimcoreFunctionAllowed($function)) {
                 throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed.', $function), $function);
             }
         }
@@ -89,7 +241,33 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkMethodAllowed($obj, $method): void
     {
-        //do not perform any checks
+        $this->assertNotHardBlockedMethod($obj, $method);
+        $this->assertNotHardBlockedMethodPattern($obj, $method);
+        $this->assertNotDaoDelegatedMethod($obj, $method);
+
+        if ($this->isAllowlistMode()) {
+            if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
+                $class = $obj::class;
+
+                throw new SecurityNotAllowedMethodError(
+                    sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $class),
+                    $class,
+                    $method,
+                );
+            }
+
+            return;
+        }
+
+        if ($this->matchesAnyClass($obj, $this->blockedClasses)) {
+            $class = $obj::class;
+
+            throw new SecurityNotAllowedMethodError(
+                sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $class),
+                $class,
+                $method,
+            );
+        }
     }
 
     /**
@@ -98,6 +276,156 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkPropertyAllowed($obj, $property): void
     {
-        //do not perform any checks
+        if ($this->isAllowlistMode()) {
+            if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
+                $class = $obj::class;
+
+                throw new SecurityNotAllowedPropertyError(
+                    sprintf('Accessing property "%s" on "%s" is not allowed in templates.', $property, $class),
+                    $class,
+                    $property,
+                );
+            }
+
+            return;
+        }
+
+        if ($this->matchesAnyClass($obj, $this->blockedClasses)) {
+            $class = $obj::class;
+
+            throw new SecurityNotAllowedPropertyError(
+                sprintf('Accessing property "%s" on "%s" is not allowed in templates.', $property, $class),
+                $class,
+                $property,
+            );
+        }
+    }
+
+    /**
+     * @param string $function a function name already known to start with `pimcore_`
+     */
+    private function isPimcoreFunctionAllowed(string $function): bool
+    {
+        return !in_array($function, $this->blockedFunctions, true);
+    }
+
+    /**
+     * @param object $obj
+     * @param string $method
+     */
+    private function assertNotHardBlockedMethod($obj, $method): void
+    {
+        foreach ($this->hardBlockedMethods as $class => $methods) {
+            if (!class_exists($class, false) && !interface_exists($class, false)) {
+                continue;
+            }
+
+            // PHP method names are case-insensitive: `GETPASSWORD` reaches `getPassword`
+            if ($obj instanceof $class && in_array(strtolower($method), array_map('strtolower', $methods), true)) {
+                $objClass = $obj::class;
+
+                throw new SecurityNotAllowedMethodError(
+                    sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $objClass),
+                    $objClass,
+                    $method,
+                );
+            }
+        }
+    }
+
+    /**
+     * @param object $obj
+     * @param string $method
+     */
+    private function assertNotHardBlockedMethodPattern($obj, $method): void
+    {
+        foreach ($this->hardBlockedMethodPatterns as $class => $patterns) {
+            if (!class_exists($class, false) && !interface_exists($class, false)) {
+                continue;
+            }
+
+            if (!$obj instanceof $class) {
+                continue;
+            }
+
+            foreach ($patterns as $pattern) {
+                // a PCRE runtime error (e.g. backtrack limit) yields false: fail closed
+                if (preg_match($pattern, $method) !== 0) {
+                    $objClass = $obj::class;
+
+                    throw new SecurityNotAllowedMethodError(
+                        sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $objClass),
+                        $objClass,
+                        $method,
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * `AbstractModel::__call()` delegates every method the model does not declare to its DAO
+     * (`beginTransaction()`, `commit()`, `rollBack()`, `moveThumbnailCache()`, `getVersionCountForUpdate()`
+     * - which takes row locks -, ...), so those calls reach the database layer under the model's class
+     * and bypass a check on the DAO class itself. Calling the magic methods themselves (`__call`, `__get`,
+     * ...) is denied for the same reason.
+     *
+     * Only the delegated read operations that listings need are let through (see
+     * DAO_DELEGATED_READ_METHODS). Models that serve their own magic accessors through an overridden
+     * `__call()` (e.g. ObjectMetadata) keep their `get*`/`is*`/`has*`/`load*`/`count*` accessors.
+     *
+     * @param object $obj
+     * @param string $method
+     */
+    private function assertNotDaoDelegatedMethod($obj, $method): void
+    {
+        if (!$obj instanceof AbstractModel) {
+            return;
+        }
+
+        $isMagicMethod = str_starts_with($method, '__');
+
+        if (!$isMagicMethod && method_exists($obj, $method)) {
+            return;
+        }
+
+        if (!$isMagicMethod) {
+            $delegatesToDao = (new ReflectionMethod($obj, '__call'))->getDeclaringClass()->getName() === AbstractModel::class;
+
+            $allowed = $delegatesToDao
+                ? in_array(strtolower($method), self::DAO_DELEGATED_READ_METHODS, true)
+                : 1 === preg_match('/^(get|is|has|load|count)/i', $method);
+
+            if ($allowed) {
+                return;
+            }
+        }
+
+        $objClass = $obj::class;
+
+        throw new SecurityNotAllowedMethodError(
+            sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $objClass),
+            $objClass,
+            $method,
+        );
+    }
+
+    /**
+     * @param object $obj
+     * @param string[] $classes
+     */
+    private function matchesAnyClass($obj, array $classes): bool
+    {
+        foreach ($classes as $candidate) {
+            if (!class_exists($candidate, false) && !interface_exists($candidate, false)) {
+                continue;
+            }
+
+            if ($obj instanceof $candidate) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

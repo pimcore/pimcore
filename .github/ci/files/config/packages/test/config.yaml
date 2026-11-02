@@ -18,11 +18,6 @@ doctrine:
             default:
                 server_version: '10.11'
                 url: '%pimcore_test.db.dsn%'
-                host: ~
-                port: ~
-                dbname: ~
-                user: ~
-                password: ~
                 mapping_types:
                     bit: boolean
 
@@ -30,6 +25,15 @@ pimcore:
     product_registration:
         instance_identifier: '%env(PIMCORE_INSTANCE_IDENTIFIER)%'
         product_key: '%env(PIMCORE_PRODUCT_KEY)%'
+    objects:
+        class_definitions:
+            data:
+                map:
+                    # custom field type used by BlockTest::testCustomMarshallerValueObjectInsideBlock()
+                    customValueObject: Pimcore\Tests\Support\Helper\DataType\CustomValueObjectField
+        block:
+            unserialize_allowed_classes:
+                - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
 
 
 parameters:

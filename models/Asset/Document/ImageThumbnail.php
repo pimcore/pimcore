@@ -23,6 +23,7 @@ use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Tool\Storage;
@@ -111,10 +112,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         }
 
         if (empty($this->pathReference)) {
-            $this->pathReference = [
-                'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-            ];
+            $this->pathReference = $this->getErrorPathReference();
         }
 
         $event = new GenericEvent($this, [
@@ -129,6 +127,10 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     private function getCacheFileStream()
     {
+        if (!$this->asset instanceof Model\Asset\Document) {
+            return null;
+        }
+
         $storage = Storage::get('asset_cache');
         $cacheFilePath = sprintf(
             '%s/%s/image-thumb__%s__document_original_image/page_%d%s.png',
@@ -198,11 +200,8 @@ final class ImageThumbnail implements ImageThumbnailInterface
             throw new NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
         }
 
-        if ($config) {
-            $format = strtolower($config->getFormat());
-            if ($format == 'source') {
-                $config->setFormat('PNG');
-            }
+        if ($config && Config::isAutoFormat($config->getFormat())) {
+            $config->setFormat('PNG');
         }
 
         return $config;

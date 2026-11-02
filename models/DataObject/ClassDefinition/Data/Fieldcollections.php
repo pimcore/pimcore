@@ -329,6 +329,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            // a calculated value cannot own a dependency: it is computed on read and
+                            // CalculatedValue does not override Data::resolveDependencies(), which
+                            // returns an empty array. Calling the getter would run the calculator
+                            // for nothing.
+                            continue;
+                        }
+
                         $getter = 'get' . ucfirst($fd->getName());
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
                     }
@@ -720,12 +728,30 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . DataObject\Fieldcollection::class . '|null';
+        $types = array_map(
+            static fn ($type) => '\Pimcore\Model\DataObject\Fieldcollection\Data\\' . ucfirst($type),
+            $this->getAllowedTypes(),
+        );
+
+        if ([] === $types) {
+            return '\\' . DataObject\Fieldcollection::class . '|null';
+        }
+
+        return '\\' . DataObject\Fieldcollection::class . '<' . implode('|', $types) . '>|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . DataObject\Fieldcollection::class . '|null';
+        $types = array_map(
+            static fn ($type) => '\Pimcore\Model\DataObject\Fieldcollection\Data\\' . ucfirst($type),
+            $this->getAllowedTypes(),
+        );
+
+        if ([] === $types) {
+            return '\\' . DataObject\Fieldcollection::class . '|null';
+        }
+
+        return '\\' . DataObject\Fieldcollection::class . '<' . implode('|', $types) . '>|null';
     }
 
     public function normalize(mixed $value, array $params = []): ?array
@@ -789,10 +815,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $resultItems[] = $collection;
             }
 
-            $resultCollection = new DataObject\Fieldcollection();
-            $resultCollection->setItems($resultItems);
-
-            return $resultCollection;
+            return new DataObject\Fieldcollection($resultItems);
         }
 
         return null;

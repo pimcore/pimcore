@@ -1,4 +1,6 @@
 pimcore_custom_reports:
     adapters:
         sql: pimcore.custom_report.adapter.factory.sql
+    enabled_adapters:
+        sql: true
 

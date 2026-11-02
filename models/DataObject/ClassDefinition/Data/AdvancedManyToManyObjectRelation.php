@@ -302,7 +302,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                         if (!$value) {
                             continue;
                         }
-                        $subItems[] = $key . ': ' . $value;
+                        // the metadata is free text and this string is rendered as HTML in the
+                        // version preview, so a value must not be able to close the span below
+                        $subItems[] = htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8')
+                            . ': ' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
                     }
 
                     if (count($subItems)) {
@@ -426,14 +429,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $index = $context['index'] ?? null;
-            $containerName = $context['fieldname'] ?? null;
-
-            if ($context['containerType'] === 'fieldcollection') {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%';
-            } else {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
-            }
+            $ownerName = DataObject\Localizedfield\ContainerOwnerName::likePattern($context);
 
             $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
@@ -511,15 +507,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            if ($context['containerType'] === 'objectbrick') {
-                throw new Exception('deletemeta not implemented');
-            }
-            $containerName = $context['fieldname'] ?? null;
-            $index = $context['index'];
             $db->executeStatement(
-                'DELETE FROM object_metadata_' . $object->getClassId()
-                . ' WHERE ' . Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
+                'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
+                Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', DataObject\Localizedfield\ContainerOwnerName::likePattern($context))
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
             );
         } else {
@@ -530,6 +521,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             if ($context) {
                 if (!empty($context['fieldname'])) {
                     $deleteConditions['ownername'] = $context['fieldname'];
+                }
+
+                // the metadata of a brick is stored with the brick type as position, keep the other bricks' metadata
+                if (($context['containerType'] ?? null) === 'objectbrick' && !empty($context['containerKey'])) {
+                    $deleteConditions['position'] = $context['containerKey'];
                 }
 
                 if (!DataObject::isDirtyDetectionDisabled()) {

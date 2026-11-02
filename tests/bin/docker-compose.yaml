@@ -15,7 +15,7 @@ services:
 
     php:
 #        user: '1000:1000' # set to your uid:gid
-        image: pimcore/pimcore:php8.3-debug-latest
+        image: pimcore/pimcore:php8.4-debug-latest
         environment:
             PHP_IDE_CONFIG: "serverName=localhost"
             COMPOSER_HOME: /var/www/html

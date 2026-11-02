@@ -228,7 +228,7 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
-        $workerSourceFile = $asset->getTemporaryFile();
+        $workerSourceFile = $asset->getLocalFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
@@ -249,7 +249,10 @@ class Processor
                     }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
 
-                    fclose($source);
+                    // some storage adapters close the passed stream themselves inside writeStream()
+                    if (is_resource($source)) {
+                        fclose($source);
+                    }
 
                     unlink($converter->getDestinationFile());
 
@@ -307,8 +310,6 @@ class Processor
             $asset->save();
             Model\Version::enable();
         }
-
-        @unlink($workerSourceFile);
 
         TmpStore::delete($instance->getJobStoreId());
     }

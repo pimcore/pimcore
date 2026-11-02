@@ -333,7 +333,6 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
     public function getEditableDialogBoxConfiguration(Document\Editable $area, ?Info $info): EditableDialogBoxConfiguration
     {
         $config = new EditableDialogBoxConfiguration();
-        $config->setWidth(600);
         //$config->setReloadOnClose(true);
         
         $config->setItems([
@@ -379,7 +378,6 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
     public function getEditableDialogBoxConfiguration(Editable $area, ?Info $info): EditableDialogBoxConfiguration
     {
         $config = new EditableDialogBoxConfiguration();
-        $config->setWidth(600);
         
         $config->setItems([
             'type' => 'tabpanel',

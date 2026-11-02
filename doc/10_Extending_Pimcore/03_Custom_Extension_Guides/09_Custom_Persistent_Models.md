@@ -386,6 +386,9 @@ class Dao extends Listing\Dao\AbstractDao
         ) {
             return (int)$this->db->fetchOne(
                 'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') as XYZ'
+            ,
+                $queryBuilder->getParameters(),
+                $queryBuilder->getParameterTypes()
             );
         } else {
             return (int)$this->db->fetchOne(
