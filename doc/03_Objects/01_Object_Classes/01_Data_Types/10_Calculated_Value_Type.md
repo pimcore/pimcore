@@ -278,3 +278,36 @@ $object = DataObject::getByPath("/demoobject");
 $valueDe =  $object->getSum("de");   // => 38
 $valueEn =  $object->getSum("en");   // => 11
 ```
+
+## Versioning
+
+Calculated fields have no stored value, so by default a version of an object does not contain them: version previews
+and version comparisons compute the value at view time, against the current object data and the current calculator.
+Two versions taken before and after a change of an input the calculator reads from elsewhere therefore show the
+same value, and an old version shows a value that did not exist when it was taken.
+
+Enable `calculated_value_snapshot` to capture the values of calculated fields when a version is created:
+
+```yaml
+pimcore:
+    objects:
+        versions:
+            calculated_value_snapshot: true
+```
+
+With the option enabled, the current values of all calculated fields on object level and in localized fields are
+computed when a version is created and stored as part of the version. Version previews and comparisons then show the
+value as of the snapshot, and objects restored from a version return the snapshot values from the calculated-field
+getters until they are saved again. A version that is written again later (for example when its note is changed)
+keeps the values it stored. The edit view is not affected: it always shows freshly computed values, also when a draft
+version is loaded, and so do calculators and expressions that read other calculated fields while it is rendered. The
+value is still computed live in the following cases: for versions created while the option was disabled, for auto-save
+versions (which never capture calculated values), for calculated fields inside field collections, object bricks or
+classification stores (including their localized fields), and for values that cannot be stored safely in the version
+(objects or arrays containing objects; `Stringable` values are stored as strings).
+
+Keep the cost in mind before enabling it: every calculator of the class runs on every version creation except
+auto-saves, including manual drafts, with the queries and side effects the calculator has. Long-running imports or
+queue workers that save objects in a loop pay this on every save. Calculators that read inherited data or data of
+related objects also change behaviour: a version of a child object then shows the parent's value as of the snapshot
+instead of the parent's current value.

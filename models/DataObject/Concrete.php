@@ -91,6 +91,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected bool $allLazyKeysMarkedAsLoaded = false;
 
     /**
+     * Values of calculated fields as of the time this instance was serialized into a version
+     * snapshot, keyed by DataObject\Service::getCalculatedValueSnapshotKey(). Only populated
+     * on instances restored from a version, never on live objects.
+     *
+     * @internal
+     *
+     * @var array<string, scalar|array|null>|null
+     */
+    protected ?array $__calculatedValueSnapshot = null;
+
+    /**
      * returns the class ID of the current object class
      *
      */
@@ -235,9 +246,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     protected function doDelete(): void
     {
-        // Dispatch Symfony Message Bus to delete versions
+        // Dispatch Symfony Message Bus to delete versions, bounded to the currently existing ones
         Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
+            new VersionDeleteMessage(
+                Model\Element\Service::getElementType($this),
+                $this->getId(),
+                Model\Version::getHighestIdForElement(Model\Element\Service::getElementType($this), $this->getId(), true) ?? 0
+            )
         );
 
         $this->getDao()->deleteAllTasks();
@@ -323,6 +338,30 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     public function setVersions(array $versions): static
     {
         $this->versions = $versions;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @return array<string, scalar|array|null>|null
+     */
+    public function __getCalculatedValueSnapshot(): ?array
+    {
+        return $this->__calculatedValueSnapshot;
+    }
+
+    /**
+     * @internal
+     *
+     * @param array<string, scalar|array|null>|null $calculatedValueSnapshot
+     *
+     * @return $this
+     */
+    public function __setCalculatedValueSnapshot(?array $calculatedValueSnapshot): static
+    {
+        $this->__calculatedValueSnapshot = $calculatedValueSnapshot;
 
         return $this;
     }
@@ -649,6 +688,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function save(array $parameters = []): static
     {
+        // an object restored from a version becomes a live object again when it is saved, so calculated fields
+        // have to be computed freshly from now on - before the pre-save events, so listeners already see that
+        $this->__calculatedValueSnapshot = null;
+
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
         // if the class is newer then better disable the dirty detection. This should fix issues with the query table if
