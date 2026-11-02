@@ -170,6 +170,8 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * The collection and the items of every active group, which is what a document is written from.
      *
      * @return array<int, array<string, mixed>> groupId => the collection and items of a group
+     *
+     * @throws Exception
      */
     private function collectGroups(Classificationstore $classificationStore): array
     {
@@ -479,9 +481,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * A mapping that is identical to the one an inheritable parent holds is left out, as the parent
      * is what answers it: {@see Classificationstore::getGroupCollectionMappings()} merges the
      * parents' mappings into the object's own when inheritance is on. The object is checked for a
-     * parent first, so that the mappings of a top-level object are not mistaken for inherited ones.
+     * parent first, so that the mappings of a top-level object are not mistaken for inherited ones -
+     * which {@see self::getInheritedCollectionMappings()} does by walking the chain.
      *
      * @return array<int, int>
+     *
+     * @throws Exception
      */
     private function getCollectionMappingToStore(Classificationstore $classificationStore): array
     {
@@ -491,20 +496,107 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return $collectionMapping;
         }
 
-        $parent = DataObjectService::hasInheritableParentObject($classificationStore->getObject());
-        if (!$parent) {
-            return $collectionMapping;
-        }
-
-        $parentStore = $parent->{'get' . ucfirst($classificationStore->getFieldname())}();
-        if (!$parentStore instanceof Classificationstore) {
-            return $collectionMapping;
-        }
-
         return array_diff_assoc(
             $collectionMapping,
-            DataObjectService::useInheritedValues(true, $parentStore->getGroupCollectionMappings(...))
+            $this->getInheritedCollectionMappings($classificationStore)
         );
+    }
+
+    /**
+     * The collection mappings an inheritable ancestor of this pair answers, nearest ancestor first.
+     *
+     * The chain is walked here rather than asked of
+     * {@see Classificationstore::getGroupCollectionMappings()} with inheritance on, because that
+     * reaches `get<Fieldname>()` on every ancestor - a getter that exists only for a classification
+     * store defined among the class's own fields. One defined inside an object brick or a field
+     * collection stores its rows under the very same (object, fieldname) key and has no getter of
+     * that name on the object at all, so asking for it would throw a BadMethodCallException instead
+     * of converting the field's values. The ancestor's own mappings are read from the pair instead,
+     * {@see self::readCollectionMapping()}, which is the row the getter would have led to.
+     *
+     * @return array<int, int> groupId => collectionId
+     *
+     * @throws Exception
+     */
+    public function getInheritedCollectionMappings(Classificationstore $classificationStore): array
+    {
+        $classId = $classificationStore->getClass()->getId();
+        $fieldname = $classificationStore->getFieldname();
+        $object = $classificationStore->getObject();
+        $mappings = [];
+
+        while ($object !== null && ($parent = DataObjectService::hasInheritableParentObject($object)) !== null) {
+            // the nearer ancestor answers first, which is the precedence
+            // Classificationstore::getAllDataFromField() merges these with
+            $mappings += $this->readCollectionMapping($classId, (int) $parent->getId(), $fieldname);
+            $object = $parent;
+        }
+
+        return $mappings;
+    }
+
+    /**
+     * The collection mappings one object owns for one field name, from the side that pair is still
+     * read from: its documents, or - for a pair the drain has not converted yet - the EAV rows the
+     * read-through serves it from, {@see self::readThroughEav()}. A data row of a group the group
+     * table does not activate contributes nothing, which is the rule {@see EavEngine::load()}
+     * applies there.
+     *
+     * A null collection is no mapping to inherit: it can be neither the collection an object shares
+     * with this ancestor nor the one the drain's comparison is looking for.
+     *
+     * @return array<int, int> groupId => collectionId
+     *
+     * @throws Exception
+     */
+    private function readCollectionMapping(string $classId, int $objectId, string $fieldname): array
+    {
+        $rows = $this->fetchCollectionMappingRows(
+            'SELECT `groupId`, `collectionId` FROM '
+            . $this->db->quoteIdentifier($this->getDocumentTableName($classId))
+            . ' WHERE `id` = ? AND `fieldname` = ?',
+            $objectId,
+            $fieldname
+        );
+
+        if ($rows === []) {
+            $dataTable = $this->db->quoteIdentifier($this->eavEngine->getDataTableName($classId));
+            $groupsTable = $this->db->quoteIdentifier($this->eavEngine->getGroupsTableName($classId));
+
+            $rows = $this->fetchCollectionMappingRows(
+                'SELECT d.`groupId`, d.`collectionId` FROM ' . $dataTable . ' d INNER JOIN '
+                . $groupsTable . ' g ON g.`id` = d.`id` AND g.`fieldname` = d.`fieldname`'
+                . ' AND g.`groupId` = d.`groupId` WHERE d.`id` = ? AND d.`fieldname` = ?',
+                $objectId,
+                $fieldname
+            );
+        }
+
+        $mapping = [];
+
+        foreach ($rows as $row) {
+            if ($row['collectionId'] !== null) {
+                $mapping[(int) $row['groupId']] = (int) $row['collectionId'];
+            }
+        }
+
+        return $mapping;
+    }
+
+    /**
+     * @return array<array<string, mixed>>
+     *
+     * @throws Exception
+     */
+    private function fetchCollectionMappingRows(string $sql, int $objectId, string $fieldname): array
+    {
+        try {
+            return $this->db->fetchAllAssociative($sql, [$objectId, $fieldname]);
+        } catch (TableNotFoundException) {
+            // a store born on this engine never had the EAV tables, and the cleanup of a converted
+            // class drops them: either way the ancestor answers no mapping from there
+            return [];
+        }
     }
 
     /**

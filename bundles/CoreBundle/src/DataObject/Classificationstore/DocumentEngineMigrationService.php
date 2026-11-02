@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DataObject\Classificationstore;
 
+use DateTimeInterface;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\DBAL\ParameterType;
 use Exception;
+use Generator;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Listing as ClassDefinitionListing;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -27,6 +30,7 @@ use Pimcore\Model\DataObject\Classificationstore\Service as ClassificationstoreS
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Service as DataObjectService;
+use Pimcore\Model\Element\ElementInterface;
 use Throwable;
 
 /**
@@ -67,6 +71,29 @@ final class DocumentEngineMigrationService
      * does not fit in the process.
      */
     private const VERIFY_BATCH_SIZE = 100;
+
+    /**
+     * (objectId, fieldname) pairs the backlog reads from a value table at a time. The table is
+     * walked along the leading columns of its primary key, so what the drain holds in memory is one
+     * batch of pairs rather than the backlog of the class. One batch is one statement and a hundred
+     * transactions, so there is nothing to be gained by making it large.
+     */
+    private const BACKLOG_BATCH_SIZE = 100;
+
+    /**
+     * The order the pairs of a class are walked in, which is the order of the leading columns of the
+     * primary key of both value tables.
+     */
+    private const ORDER_BY_PAIR = ' ORDER BY `id`, `fieldname`';
+
+    /**
+     * How deep {@see self::holdsTheSameValue()} walks into a value before it stops calling the two
+     * sides equal. A denormalised value is a few levels at most - an array of rows, a quantity value
+     * and its unit - while a model object reached through one carries a back reference to its own
+     * DAO, which is a cycle. Running out of depth is reported as a divergence rather than as
+     * equality: that is the direction the drain may be wrong in.
+     */
+    private const MAX_COMPARISON_DEPTH = 8;
 
     public function __construct(
         private readonly EngineResolver $engineResolver,
@@ -320,61 +347,98 @@ final class DocumentEngineMigrationService
     }
 
     /**
-     * The backlog of every class that still holds EAV rows for a field name on the document engine,
-     * smallest class first - so the smallest one is the canary of a run over a whole installation.
+     * How many pairs every class that still holds EAV rows for a field name on the document engine
+     * has left, smallest class first - so the smallest one is the canary of a run over a whole
+     * installation.
+     *
+     * A count rather than the pairs themselves: the order a run goes in has to be known before it
+     * starts, and reading every pending pair of every class to work it out is what would exhaust a
+     * large installation before it converted anything. The pairs of one class are then streamed,
+     * {@see self::streamBacklog()}.
      *
      * @param string|null $classId restricts the run to one class
      *
-     * @return array<string, array<array{0: int, 1: string}>> class id => its (objectId, fieldname) pairs
+     * @return array<string, int> class id => its pending (objectId, fieldname) pairs
      *
      * @throws Exception
      */
-    public function getBacklogByClass(?string $classId = null): array
+    public function getBacklogSizeByClass(?string $classId = null): array
     {
-        $backlog = [];
+        $sizes = [];
 
         foreach ($this->getClasses($classId) as $class) {
-            $pairs = $this->getBacklog($class);
-            if ($pairs !== []) {
-                $backlog[$class->getId()] = $pairs;
+            $size = $this->countBacklog($class);
+            if ($size > 0) {
+                $sizes[$class->getId()] = $size;
             }
         }
 
-        uasort($backlog, static fn (array $first, array $second): int => count($first) <=> count($second));
+        asort($sizes);
 
-        return $backlog;
+        return $sizes;
+    }
+
+    /**
+     * How many (objectId, fieldname) pairs the EAV tables of a class still hold for a field name
+     * whose store is on the document engine.
+     *
+     * @throws Exception
+     */
+    public function countBacklog(ClassDefinition $class): int
+    {
+        $fieldNames = $this->getDocumentFieldNames($class);
+        if ($fieldNames === []) {
+            return 0;
+        }
+
+        // no batch limit: this counts the whole backlog, which is one pass over each table and one
+        // number out of it
+        $union = $this->buildPairUnion($class->getId(), $fieldNames, null, null);
+        if ($union === null) {
+            return 0;
+        }
+
+        [$sql, $parameters, $types] = $union;
+
+        return (int) $this->db->fetchOne(
+            'SELECT COUNT(*) FROM (' . $sql . ') pairs',
+            $parameters,
+            $types
+        );
     }
 
     /**
      * The (objectId, fieldname) pairs the EAV tables of a class still hold for a field name whose
-     * store is on the document engine.
+     * store is on the document engine, a bounded batch at a time.
      *
-     * Both tables are asked: a data row whose group was never activated is read by neither engine
-     * and is still an EAV row the verification finds. Neither table carries `fieldname` as the
-     * leading column of an index, so this is a scan - which is acceptable for a one-off migration,
-     * and is the reason the drain reports the rate it measures rather than promising one.
+     * Both tables are asked, as the one union {@see self::countBacklog()} counts, so that a pair
+     * both of them hold is one pair here as well. Each is walked along the leading columns of its
+     * primary key, `(id, fieldname)`: a batch is an index range from where the previous one ended
+     * rather than a fresh scan, and what is held in memory is that batch instead of the backlog of
+     * the class. The `fieldname` filter is not indexed, which is why the drain reports the rate it
+     * measures rather than promising one.
      *
-     * @return array<array{0: int, 1: string}>
+     * The cursor only moves forward, so a pair the drain converted is not read again and one it
+     * left on EAV - a divergence - does not stall the run on itself.
+     *
+     * @return Generator<int, array{0: int, 1: string}>
      *
      * @throws Exception
      */
-    public function getBacklog(ClassDefinition $class): array
+    public function streamBacklog(ClassDefinition $class): Generator
     {
         $fieldNames = $this->getDocumentFieldNames($class);
         if ($fieldNames === []) {
-            return [];
+            return;
         }
 
-        $classId = $class->getId();
-        $pairs = [];
+        $after = null;
 
-        foreach ($this->getEavTableNames($classId) as $table) {
-            foreach ($this->readPairs($table, $fieldNames) as $pair) {
-                $pairs[$pair[0] . "\0" . $pair[1]] = $pair;
-            }
+        while (($pairs = $this->readPairs($class->getId(), $fieldNames, $after)) !== []) {
+            yield from $pairs;
+
+            $after = $pairs[array_key_last($pairs)];
         }
-
-        return array_values($pairs);
     }
 
     /**
@@ -395,21 +459,46 @@ final class DocumentEngineMigrationService
      * Recomputes the checksum of every document row of a class and asserts that no EAV row survived
      * for a field name on the document engine.
      *
+     * What it found is reported as it is found: a store that was never checksummed has one message
+     * per row of the class, which is as many messages as the class has stored groups, and keeping
+     * them to hand back at the end would make the report grow with the data it is a report about -
+     * on exactly the installations the batching of {@see self::readDocumentRows()} is for. The
+     * caller is handed each finding and the report carries the counts alone, which is all the
+     * cleanup needs of it.
+     *
+     * @param (callable(VerificationFinding, string): void)|null $onFinding
+     *
      * @throws Exception
      */
-    public function verify(ClassDefinition $class): VerificationReport
+    public function verify(ClassDefinition $class, ?callable $onFinding = null): VerificationReport
     {
-        [$failures, $unproven] = $this->verifyChecksums($class->getId());
+        $onFinding ??= static function (): void {
+        };
 
-        foreach ($this->getBacklog($class) as [$objectId, $fieldname]) {
-            $failures[] = sprintf(
+        $counts = [VerificationFinding::Failure->name => 0, VerificationFinding::Unproven->name => 0];
+
+        $record = static function (VerificationFinding $finding, string $message) use (
+            $onFinding,
+            &$counts
+        ): void {
+            $counts[$finding->name]++;
+            $onFinding($finding, $message);
+        };
+
+        $this->verifyChecksums($class->getId(), $record);
+
+        foreach ($this->streamBacklog($class) as [$objectId, $fieldname]) {
+            $record(VerificationFinding::Failure, sprintf(
                 'object %d, field "%s": EAV rows survive for a field on the document engine',
                 $objectId,
                 $fieldname
-            );
+            ));
         }
 
-        return new VerificationReport($failures, $unproven);
+        return new VerificationReport(
+            $counts[VerificationFinding::Failure->name],
+            $counts[VerificationFinding::Unproven->name]
+        );
     }
 
     /**
@@ -484,6 +573,8 @@ final class DocumentEngineMigrationService
         string $fieldname,
         int $migratedAt
     ): DrainPairResult {
+        $this->lockObjectRow($objectId);
+
         // a user save that converted the pair while the drain was running owns it: its document is
         // what the pair is read from, so nothing is written over it. The question is asked under the
         // lock it takes, and before anything else is read, so that this transaction's snapshot is
@@ -523,6 +614,30 @@ final class DocumentEngineMigrationService
         }
 
         return new DrainPairResult(DrainOutcome::Converted, $objectId, $fieldname);
+    }
+
+    /**
+     * Takes the object's row before anything of the document engine is locked, which is the order
+     * an ordinary save takes the two in.
+     *
+     * A save locks the object's row first - {@see \Pimcore\Model\DataObject\AbstractObject::save()}
+     * through `getCurrentFullPathForUpdate()` - and only then the pair's document rows, while the
+     * conversion below locks the document rows to ask whether the pair is already converted and
+     * then needs the object's row for the foreign key of its own insert,
+     * {@see DocumentEngine::createUpdateTables()}. Taken in that order the two would deadlock on
+     * each other: the save waiting for the document gap the drain holds while the drain waits for
+     * the object row the save holds. The statement is the one the save issues, so both sides queue
+     * on the same lock and the drain simply waits for the save to finish.
+     *
+     * This is a locking read, so it establishes no consistent-read snapshot: the question
+     * {@see DocumentEngine::hasDocuments()} asks next is still the first read of this transaction
+     * that one could be taken from, which is what its own contract requires.
+     *
+     * @throws Exception
+     */
+    private function lockObjectRow(int $objectId): void
+    {
+        $this->db->fetchOne('SELECT `id` FROM `objects` WHERE `id` = ? FOR UPDATE', [$objectId]);
     }
 
     /**
@@ -701,8 +816,10 @@ final class DocumentEngineMigrationService
      * child would shadow the collection the parent maps. Neither is a group whose EAV rows disagree
      * on a collection id among themselves - a document holds one id per group and cannot carry two.
      * And a mapping the inheritable parent already answers is deliberately left out of the child's
-     * own rows, {@see DocumentEngine::getCollectionMappingToStore()}, so the document answers it
-     * through inheritance rather than from the row.
+     * own rows, so the document answers it through inheritance rather than from the row - which is
+     * asked of {@see DocumentEngine::getInheritedCollectionMappings()} rather than of the model,
+     * because the model reaches a getter named after the field and a classification store defined
+     * inside a brick or a field collection has none.
      *
      * @throws Exception
      */
@@ -729,8 +846,10 @@ final class DocumentEngineMigrationService
                 continue;
             }
 
-            $inheritedMappings ??= $this->normaliseMappings(
-                DataObjectService::useInheritedValues(true, $documentStore->getGroupCollectionMappings(...))
+            // the object's own mappings win over its ancestors', which is the precedence the model
+            // merges the two with
+            $inheritedMappings ??= $readMappings + $this->normaliseMappings(
+                $this->documentEngine->getInheritedCollectionMappings($documentStore)
             );
 
             if (($inheritedMappings[$groupId] ?? null) !== $stored) {
@@ -796,21 +915,101 @@ final class DocumentEngineMigrationService
     /**
      * Two denormalised values hold the same thing.
      *
-     * They are compared by value rather than identically, which is the comparison
-     * {@see \Pimcore\Tests\Model\DataType\ClassificationStore\DocumentEngineRoundTripTest} already
-     * holds the two engines to: both sides come back through the same field definitions, but a
-     * value that travelled through JSON and one that travelled through a LONGTEXT column can differ
-     * in their PHP type without differing in what they hold, and a drain that halted over that
-     * would halt over nothing. A value that is null on exactly one side is a divergence all the
-     * same - that is the shape a lost value has.
+     * The one difference the two storage shapes explain is a type: both sides come back through the
+     * same field definitions, but the EAV value columns are LONGTEXT, so a number or a flag arrives
+     * from them as the text it was written as while the same value arrives out of a JSON document as
+     * the int, float or bool it went in as - and a drain that halted over that would halt over
+     * nothing. Two *texts* are held to exact equality all the same: `'00123'` and `'123'` are two
+     * different inputs, {@see \Pimcore\Model\DataObject\Traits\SimpleNormalizerTrait} keeps either
+     * verbatim, and calling them equal is what would have the reconciliation of a converted pair
+     * delete the first while the documents hold the second. A value that is null on exactly one side
+     * is a divergence too - that is the shape a lost value has.
+     *
+     * The rule reaches inside the value rather than only its top level: a multiselect, a table or a
+     * quantity value carries its text one or two levels down, where equating two different strings
+     * loses exactly as much.
      */
-    private function holdsTheSameValue(mixed $stored, mixed $read): bool
+    private function holdsTheSameValue(mixed $stored, mixed $read, int $depth = 0): bool
     {
-        if (($stored === null) !== ($read === null)) {
+        if ($stored === $read) {
+            return true;
+        }
+
+        if ($stored === null || $read === null || $depth >= self::MAX_COMPARISON_DEPTH) {
             return false;
         }
 
-        return $stored == $read;
+        if (is_array($stored) && is_array($read)) {
+            return $this->holdTheSameValues($stored, $read, $depth);
+        }
+
+        if (is_object($stored) && is_object($read)) {
+            return $this->holdTheSameObject($stored, $read, $depth);
+        }
+
+        if (!is_scalar($stored) || !is_scalar($read)) {
+            return false;
+        }
+
+        // two texts were already asked for identity above, and nothing else may equate them
+        if (is_string($stored) && is_string($read)) {
+            return false;
+        }
+
+        // one side is the text a LONGTEXT column hands back, which is what casting the value the
+        // other side holds produces - a float as `12.57`, a flag as `1`
+        return (string) $stored === (string) $read;
+    }
+
+    /**
+     * Two values member by member: the same keys on both sides, and the same value under each of
+     * them under {@see self::holdsTheSameValue()}.
+     *
+     * @param array<array-key, mixed> $stored
+     * @param array<array-key, mixed> $read
+     */
+    private function holdTheSameValues(array $stored, array $read, int $depth): bool
+    {
+        if (count($stored) !== count($read)) {
+            return false;
+        }
+
+        foreach ($stored as $key => $value) {
+            if (!array_key_exists($key, $read)
+                || !$this->holdsTheSameValue($value, $read[$key], $depth + 1)
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Two objects of a denormalised value, compared as the values they carry.
+     *
+     * A date is compared by the instant it stands for, which is what PHP's own comparison of two
+     * date objects answers and what the two sides have to agree on - not by the bookkeeping
+     * properties a Carbon carries beside it. An element is referenced rather than held, so its
+     * identity is the value and its loaded state is nothing the two engines could differ about.
+     * Anything else - a quantity value, an rgba colour, an encrypted field - is compared property
+     * by property, which is where its text is.
+     */
+    private function holdTheSameObject(object $stored, object $read, int $depth): bool
+    {
+        if ($stored instanceof DateTimeInterface && $read instanceof DateTimeInterface) {
+            return $stored == $read;
+        }
+
+        if ($stored::class !== $read::class) {
+            return false;
+        }
+
+        if ($stored instanceof ElementInterface && $read instanceof ElementInterface) {
+            return $stored->getId() === $read->getId();
+        }
+
+        return $this->holdTheSameValues((array) $stored, (array) $read, $depth);
     }
 
     /**
@@ -830,14 +1029,12 @@ final class DocumentEngineMigrationService
     }
 
     /**
-     * @return array{0: string[], 1: string[]} the failing rows and the unproven ones
+     * @param callable(VerificationFinding, string): void $record
      *
      * @throws Exception
      */
-    private function verifyChecksums(string $classId): array
+    private function verifyChecksums(string $classId, callable $record): void
     {
-        $failures = [];
-        $unproven = [];
         $after = null;
 
         while (($rows = $this->readDocumentRows($classId, $after)) !== []) {
@@ -853,24 +1050,31 @@ final class DocumentEngineMigrationService
                     // a document written before any writer stamped a checksum carries no evidence
                     // either way, so it is reported rather than called corrupt
                     if ($row['migratedAt'] === null) {
-                        $unproven[] = $where . ': written before checksums were stamped';
+                        $record(
+                            VerificationFinding::Unproven,
+                            $where . ': written before checksums were stamped'
+                        );
                     } else {
-                        $failures[] = $where . ': a drained document carries no checksum';
+                        $record(
+                            VerificationFinding::Failure,
+                            $where . ': a drained document carries no checksum'
+                        );
                     }
 
                     continue;
                 }
 
                 if (!hash_equals((string) $row['checksum'], sha1((string) $row['values']))) {
-                    $failures[] = $where . ': the stored checksum does not match its values';
+                    $record(
+                        VerificationFinding::Failure,
+                        $where . ': the stored checksum does not match its values'
+                    );
                 }
             }
 
             $last = $rows[array_key_last($rows)];
             $after = [(int) $last['id'], (string) $last['fieldname'], (int) $last['groupId']];
         }
-
-        return [$failures, $unproven];
     }
 
     /**
@@ -893,44 +1097,177 @@ final class DocumentEngineMigrationService
     {
         $sql = 'SELECT `id`, `fieldname`, `groupId`, `values`, `checksum`, `migratedAt` FROM '
             . $this->db->quoteIdentifier($this->documentEngine->getDocumentTableName($classId));
+        $parameters = [];
+        $types = [];
 
         if ($after !== null) {
-            $sql .= ' WHERE (`id`, `fieldname`, `groupId`) > (?, ?, ?)';
+            [$condition, $parameters, $types] = $this->buildKeysetSeek(
+                ['id', 'fieldname', 'groupId'],
+                $after
+            );
+            $sql .= ' WHERE ' . $condition;
         }
 
         $sql .= ' ORDER BY `id`, `fieldname`, `groupId` LIMIT ' . self::VERIFY_BATCH_SIZE;
 
         try {
-            return $this->db->fetchAllAssociative($sql, $after ?? []);
+            return $this->db->fetchAllAssociative($sql, $parameters, $types);
         } catch (TableNotFoundException) {
             return [];
         }
     }
 
     /**
-     * @param string[] $fieldNames
+     * Where the next batch of a walk along the leading columns of an index starts.
+     *
+     * The row-constructor form of this - `(a, b) > (?, ?)` - reads better and is not a range
+     * condition to the optimizer: it starts at the beginning of the index and filters, so a walk of
+     * n batches scans the index n times and the cost of reading a table in batches grows with the
+     * square of its size. Expanded by hand the same condition is a seek. Measured on MariaDB 10.11
+     * over 50,000 rows, a batch of 500 taken from the middle: 998 index reads expanded against
+     * 50,998 as a row constructor, for the same rows.
+     *
+     * @param string[]          $columns the index columns, in index order
+     * @param array<int, mixed> $after   the row to resume after, one value per column
+     *
+     * @return array{0: string, 1: array<mixed>, 2: array<ParameterType>}
+     */
+    private function buildKeysetSeek(array $columns, array $after): array
+    {
+        $parameters = [];
+        $types = [];
+        $last = count($columns) - 1;
+
+        // every column but the last is compared twice, once for `>` and once for the `=` that
+        // carries the comparison on to the next one
+        foreach ($after as $index => $value) {
+            $repeats = $index < $last ? 2 : 1;
+
+            for ($repeat = 0; $repeat < $repeats; $repeat++) {
+                $parameters[] = $value;
+                $types[] = is_int($value) ? ParameterType::INTEGER : ParameterType::STRING;
+            }
+        }
+
+        return [$this->buildKeysetCondition($columns), $parameters, $types];
+    }
+
+    /**
+     * @param string[] $columns
+     */
+    private function buildKeysetCondition(array $columns): string
+    {
+        $column = $this->db->quoteIdentifier((string) array_shift($columns));
+
+        if ($columns === []) {
+            return $column . ' > ?';
+        }
+
+        return '(' . $column . ' > ? OR (' . $column . ' = ? AND '
+            . $this->buildKeysetCondition($columns) . '))';
+    }
+
+    /**
+     * One batch of pending pairs, from the pair the previous batch ended on.
+     *
+     * @param string[]                      $fieldNames
+     * @param array{0: int, 1: string}|null $after the (objectId, fieldname) to resume after
      *
      * @return array<array{0: int, 1: string}>
      *
      * @throws Exception
      */
-    private function readPairs(string $table, array $fieldNames): array
+    private function readPairs(string $classId, array $fieldNames, ?array $after): array
     {
-        try {
-            $rows = $this->db->fetchAllAssociative(
-                'SELECT DISTINCT `id`, `fieldname` FROM ' . $this->db->quoteIdentifier($table)
-                . ' WHERE `fieldname` IN (?) ORDER BY `id`, `fieldname`',
-                [$fieldNames],
-                [ArrayParameterType::STRING]
-            );
-        } catch (TableNotFoundException) {
+        $union = $this->buildPairUnion($classId, $fieldNames, $after, self::BACKLOG_BATCH_SIZE);
+        if ($union === null) {
             return [];
         }
+
+        [$sql, $parameters, $types] = $union;
+
+        $rows = $this->db->fetchAllAssociative(
+            $sql . self::ORDER_BY_PAIR . ' LIMIT ' . self::BACKLOG_BATCH_SIZE,
+            $parameters,
+            $types
+        );
 
         return array_map(
             static fn (array $row): array => [(int) $row['id'], (string) $row['fieldname']],
             $rows
         );
+    }
+
+    /**
+     * The pending pairs of a class as one `UNION` over its two value tables, which is what makes a
+     * pair both of them hold one pair - the count and the stream are then the same set.
+     *
+     * The keyset seek of {@see self::buildKeysetSeek()} goes into each branch rather than around the
+     * union, so that a batch starts at a position in each table's primary key rather than at the
+     * beginning of it. `$limit` goes into each branch as well, and has to: a `UNION` has to produce
+     * both branches in full before a `LIMIT` on the union can be applied, so the limit alone around
+     * it would read what is left of both tables for every batch. Bounding each branch to the same
+     * `$limit` is what makes a batch cost a batch - and it reads the same pairs, because a pair
+     * among the first `$limit` of the union is among the first `$limit` of every branch that holds
+     * it. A branch carrying its own `LIMIT` has to be parenthesised, which the caller's trailing
+     * `ORDER BY` and `LIMIT` then apply past, to the union as a whole.
+     *
+     * A table that is not there contributes no branch: a store born on the document engine never
+     * had one, and the cleanup of a converted class drops both. With neither there the class has no
+     * backlog at all, which is what the null answers.
+     *
+     * @param string[]                      $fieldNames
+     * @param array{0: int, 1: string}|null $after
+     * @param int|null                      $limit the pairs one branch may contribute, or null for
+     *                                             all of them
+     *
+     * @return array{0: string, 1: array<mixed>, 2: array<ArrayParameterType|ParameterType>}|null
+     *
+     * @throws Exception
+     */
+    private function buildPairUnion(string $classId, array $fieldNames, ?array $after, ?int $limit): ?array
+    {
+        $branches = [];
+        $parameters = [];
+        $types = [];
+
+        foreach ($this->getEavTableNames($classId) as $table) {
+            if (!$this->tableExists($table)) {
+                continue;
+            }
+
+            // DISTINCT, and it carries the batch: both tables hold many rows per pair - a value row
+            // per key and language, a group row per group - and a LIMIT that counted those instead
+            // of pairs would hand back fewer pairs than it was asked for while the cursor moved on
+            // past the ones it did not return
+            $branch = 'SELECT DISTINCT `id`, `fieldname` FROM ' . $this->db->quoteIdentifier($table)
+                . ' WHERE `fieldname` IN (?)';
+            $parameters[] = $fieldNames;
+            $types[] = ArrayParameterType::STRING;
+
+            if ($after !== null) {
+                [$condition, $seekParameters, $seekTypes] = $this->buildKeysetSeek(
+                    ['id', 'fieldname'],
+                    $after
+                );
+
+                $branch .= ' AND ' . $condition;
+                $parameters = [...$parameters, ...$seekParameters];
+                $types = [...$types, ...$seekTypes];
+            }
+
+            if ($limit !== null) {
+                $branch = '(' . $branch . self::ORDER_BY_PAIR . ' LIMIT ' . $limit . ')';
+            }
+
+            $branches[] = $branch;
+        }
+
+        if ($branches === []) {
+            return null;
+        }
+
+        return [implode(' UNION ', $branches), $parameters, $types];
     }
 
     /**

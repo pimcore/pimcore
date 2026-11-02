@@ -127,7 +127,7 @@ class MigrationDrainScopeTest extends AbstractMigrationTest
         $this->flipMigrationStore($documentStoreId);
         $service = $this->getMigrationService();
 
-        $backlog = $service->getBacklog($class);
+        $backlog = $this->pendingPairs($class);
         $this->assertSame(
             [[$objectId, self::BRICK_FIELD], [$objectId, self::ROOT_FIELD]],
             $this->sortPairs($backlog)
@@ -231,6 +231,89 @@ class MigrationDrainScopeTest extends AbstractMigrationTest
             $class = $this->getClass();
             $class->setAllowInherit(false);
             $class->save();
+        }
+    }
+
+    /**
+     * A classification store defined only inside an object brick, on a class that allows
+     * inheritance, for a child object whose parent is inheritable too.
+     *
+     * Its rows are keyed by (object, fieldname) like any other's, but there is no
+     * `getCsScopeBrick()` on the object - that getter belongs to the brick. Resolving what the
+     * parent answers for the pair through such a getter therefore throws a BadMethodCallException
+     * instead of converting the field, and the collection mappings of the child are resolved on both
+     * sides of the conversion: when its own rows are written, and when the written document is
+     * compared against them.
+     */
+    public function testADrainConvertsAContainerOnlyFieldOnAnInheritableChild(): void
+    {
+        $storeId = $this->createMigrationStore();
+        $groupId = $this->createMigrationGroup($storeId);
+        $keyId = $this->createMigrationKey($storeId, $groupId);
+
+        $class = $this->saveMigrationClass(self::SCOPE_CLASS_ID, [
+            $this->registerMigrationBrick($this->migrationStoreField(self::BRICK_FIELD, $storeId)),
+        ]);
+        $class->setAllowInherit(true);
+        $class->save();
+
+        // the objects are of the shipped class, whose value tables are not the ones seeded below:
+        // what matters is that the child has an inheritable parent and that neither of them has a
+        // getter for the field name the brick defines
+        $owner = $this->getClass();
+        $owner->setAllowInherit(true);
+        $owner->save();
+
+        try {
+            $parent = new Csstore();
+            $parent->setParentId(1);
+            $parent->setKey('container-only-parent');
+            $parent->setPublished(true);
+            $parent->save();
+
+            $child = new Csstore();
+            $child->setParentId((int) $parent->getId());
+            $child->setKey('container-only-child');
+            $child->setPublished(true);
+            $child->save();
+
+            $childId = (int) $child->getId();
+            $this->assertInstanceOf(
+                Csstore::class,
+                Csstore::getById($childId, ['force' => true]),
+                'precondition: the child is a real inheritable object'
+            );
+            $this->assertFalse(
+                method_exists(Csstore::class, 'get' . ucfirst(self::BRICK_FIELD)),
+                'precondition: the field the brick defines has no getter on the object'
+            );
+
+            $this->seedMigrationEavRows(
+                self::SCOPE_CLASS_ID,
+                $childId,
+                self::BRICK_FIELD,
+                $groupId,
+                $keyId,
+                'defined inside a brick'
+            );
+
+            $this->flipMigrationStore($storeId);
+            $service = $this->getMigrationService();
+
+            $this->assertSame([[$childId, self::BRICK_FIELD]], $this->pendingPairs($class));
+
+            $result = $service->drainPair($class, $childId, self::BRICK_FIELD, self::MIGRATED_AT);
+
+            $this->assertSame(DrainOutcome::Converted, $result->outcome, (string) $result->divergence);
+            $this->assertSame(
+                [self::BRICK_FIELD],
+                $this->fieldNamesIn(self::DOCUMENT_TABLE_PREFIX . self::SCOPE_CLASS_ID)
+            );
+            $this->assertSame([], $this->pendingPairs($class));
+        } finally {
+            $owner = $this->getClass();
+            $owner->setAllowInherit(false);
+            $owner->save();
         }
     }
 

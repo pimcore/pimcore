@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\VerificationFinding;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -60,15 +61,16 @@ class VerifyClassificationStoreCommand extends AbstractCommand
         $failed = false;
 
         foreach ($classes as $class) {
-            $report = $this->migrationService->verify($class);
-
-            foreach ($report->unproven as $row) {
-                $this->io->writeln(sprintf('<comment>%s unproven</comment>: %s', $class->getId(), $row));
-            }
-
-            foreach ($report->failures as $row) {
-                $this->io->writeln(sprintf('<error>%s</error>: %s', $class->getId(), $row));
-            }
+            // the findings are written as they are found rather than collected first: a class whose
+            // documents were all written before checksums were stamped has one per stored group
+            $report = $this->migrationService->verify(
+                $class,
+                function (VerificationFinding $finding, string $message) use ($class): void {
+                    $this->io->writeln($finding === VerificationFinding::Unproven
+                        ? sprintf('<comment>%s unproven</comment>: %s', $class->getId(), $message)
+                        : sprintf('<error>%s</error>: %s', $class->getId(), $message));
+                }
+            );
 
             $failed = $failed || $report->hasFailed();
         }

@@ -466,6 +466,13 @@ place, it is reported with its object id and field name, and the class stops onc
 is reached - while the next class carries on. The command exits non-zero when any class stopped that way. There is
 no cursor: a re-run reads its backlog from the EAV rows that are left.
 
+The pair the drain locks first is the object's row, which is the lock an ordinary save takes first as well, so a
+save and a drain of the same object queue on each other rather than deadlocking on opposite orders. What it reads
+up front is one pending-pair count per class - that is the order the run goes in, smallest class first - and the
+pairs of a class are then read from its value tables a bounded batch at a time, so the backlog of an installation
+is never held in the process at once. The progress bar of `--processes` therefore has no total; the
+`n of m pair(s) converted` line the drain prints does, from those counts.
+
 While it runs the drain reports the pairs it converted, the time that took, the rate that works out to and how long
 the rest would take at that rate, so "how long for millions of values" is answered from the installation's own
 hardware rather than from a figure of ours. `--dry-run` reports the backlog of every class and converts nothing.
@@ -480,7 +487,8 @@ holds EAV rows, and exits non-zero if there is one; a row written before this re
 reported as unproven rather than as corrupt. The `values` column holds everything one group of one object stores,
 so the check walks the document table along its primary key a batch at a time rather than reading it in one query -
 its memory is bounded by one batch however much the class holds, and `cleanup`, which re-runs the check inline, is
-bounded by the same.
+bounded by the same. What it finds it writes as it finds it; the report it hands back carries the counts alone, so a
+store whose every row is unproven does not have to fit in the process either.
 
 **`cleanup` is per class while the flip is per store.** It drops the two EAV tables of a class only when every store
 used by any classification store field on that class resolves to `document` and the verification of that class

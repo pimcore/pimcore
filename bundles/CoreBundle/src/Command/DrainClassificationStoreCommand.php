@@ -131,34 +131,42 @@ class DrainClassificationStoreCommand extends AbstractCommand
     }
 
     /**
-     * @return string[]
+     * The pairs to convert, read as they are converted rather than collected first.
+     *
+     * The order a run goes in has to be known before it starts, and the backlog of a whole
+     * installation does not fit in the process this command is one of - so what is read up front is
+     * one count per class, and the pairs of a class are streamed from its value tables a bounded
+     * batch at a time, {@see DocumentEngineMigrationService::streamBacklog()}. The parallelization
+     * contract takes any iterable, and caches the item strings it has handed out so that it can
+     * rewind; nothing of a pair but that string is kept.
+     *
+     * @return iterable<string>
      */
-    protected function fetchItems(InputInterface $input, OutputInterface $output): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): iterable
     {
-        $items = [];
+        $sizes = $this->migrationService->getBacklogSizeByClass($this->getClassId($input));
+        $this->backlogSize = array_sum($sizes);
 
-        foreach ($this->migrationService->getBacklogByClass($this->getClassId($input)) as $classId => $pairs) {
+        foreach ($sizes as $classId => $size) {
             // a class id is numeric by default, and PHP makes an array key of such a string an
             // int - which every method taking a class id would refuse under strict types
             $classId = (string) $classId;
 
-            $this->io->writeln(sprintf(self::BACKLOG_LINE, $classId, count($pairs)));
+            $this->io->writeln(sprintf(self::BACKLOG_LINE, $classId, $size));
+
+            $class = $this->migrationService->getClassDefinition($classId);
+            if (!$class) {
+                continue;
+            }
 
             // a store flipped by hand has no document table, and the first write of this class
             // would be the one to find that out
-            $class = $this->migrationService->getClassDefinition($classId);
-            if ($class) {
-                $this->migrationService->createDocumentTable($class);
-            }
+            $this->migrationService->createDocumentTable($class);
 
-            foreach ($pairs as [$objectId, $fieldname]) {
-                $items[] = implode(self::ITEM_SEPARATOR, [$classId, $objectId, $fieldname]);
+            foreach ($this->migrationService->streamBacklog($class) as [$objectId, $fieldname]) {
+                yield implode(self::ITEM_SEPARATOR, [$classId, $objectId, $fieldname]);
             }
         }
-
-        $this->backlogSize = count($items);
-
-        return $items;
     }
 
     protected function runSingleCommand(string $item, InputInterface $input, OutputInterface $output): void
@@ -186,11 +194,14 @@ class DrainClassificationStoreCommand extends AbstractCommand
     }
 
     /**
-     * @param string[] $items
+     * @param iterable<string> $items the parallelization hands this one batch; an install without
+     *                                the parallelization package hands it the whole item stream,
+     *                                which has been consumed by then and is not an array - nothing
+     *                                here reads it either way
      */
-    protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
+    protected function runAfterBatch(InputInterface $input, OutputInterface $output, iterable $items): void
     {
-        $this->collectGarbageAfterBatch($input, $output, $items);
+        $this->collectGarbageAfterBatch($input, $output, is_array($items) ? $items : []);
         $this->reportProgress($output);
     }
 
@@ -204,16 +215,16 @@ class DrainClassificationStoreCommand extends AbstractCommand
      */
     private function reportBacklog(): int
     {
-        $backlog = $this->migrationService->getBacklogByClass($this->getClassId($this->input));
+        $sizes = $this->migrationService->getBacklogSizeByClass($this->getClassId($this->input));
 
-        if ($backlog === []) {
+        if ($sizes === []) {
             $this->io->writeln($this->dryRunMessage('No class holds EAV rows for a field on the document engine.'));
 
             return self::SUCCESS;
         }
 
-        foreach ($backlog as $classId => $pairs) {
-            $this->io->writeln($this->dryRunMessage(sprintf(self::BACKLOG_LINE, $classId, count($pairs))));
+        foreach ($sizes as $classId => $size) {
+            $this->io->writeln($this->dryRunMessage(sprintf(self::BACKLOG_LINE, $classId, $size)));
         }
 
         return self::SUCCESS;

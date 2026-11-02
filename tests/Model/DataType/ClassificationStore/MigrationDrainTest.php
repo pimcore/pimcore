@@ -57,6 +57,15 @@ class MigrationDrainTest extends AbstractMigrationTest
 
     private const NUMERIC_CLASS_FIELD = 'csNumericField';
 
+    /**
+     * A class carrying more pending pairs than the backlog reads in one batch, to walk the two value
+     * tables across two batch boundaries. The pairs are field names of one object rather than many
+     * objects, which is the cheap way to hold a few hundred of them.
+     */
+    private const BATCHED_CLASS_ID = 'CsMigrationBatchedBacklog';
+
+    private const BATCHED_PAIRS = 201;
+
     protected function tearDown(): void
     {
         $this->cleanUpMigrationFixture();
@@ -177,6 +186,41 @@ class MigrationDrainTest extends AbstractMigrationTest
     }
 
     /**
+     * And the two values are compared as texts, not as numbers: `'00123'` and `'123'` are two
+     * different inputs of an input field, which keeps either verbatim. A comparison that equated
+     * them would have the reconciliation call this pair migrated and delete the surviving row -
+     * deleting the newer of the two values while the documents keep the older one.
+     */
+    public function testAConvertedPairWhoseEavRowHoldsANumericLookingStringIsReportedRatherThanDeleted(): void
+    {
+        $object = $this->createObjectWithValue(self::INPUT_KEY, '123', 'drain-numeric-string');
+        $objectId = (int) $object->getId();
+
+        $this->flipStore();
+        $service = $this->getMigrationService();
+
+        $this->assertSame(
+            DrainOutcome::Converted,
+            $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT)->outcome
+        );
+        $converted = $this->readDocumentRows($objectId);
+        $this->assertSame(0, $this->countEavRowsFor($objectId));
+
+        // the writer that had not seen the flip writes a value that compares equal to '123' under
+        // PHP's loose comparison and is a different string
+        $this->seedEavRows($objectId, '00123');
+        $eavRows = $this->countEavRowsFor($objectId);
+        $this->assertGreaterThan(0, $eavRows);
+
+        $result = $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT);
+
+        $this->assertSame(DrainOutcome::Diverged, $result->outcome);
+        $this->assertStringContainsString('does not account for', (string) $result->divergence);
+        $this->assertSame($eavRows, $this->countEavRowsFor($objectId), "'00123' is not '123'");
+        $this->assertSame($converted, $this->readDocumentRows($objectId));
+    }
+
+    /**
      * The question is asked one way round: a surviving group activation row with no values holds
      * nothing the documents could be missing, so it is removed rather than reported - and neither
      * is the pair reported for the values the documents hold and the surviving rows do not.
@@ -202,6 +246,69 @@ class MigrationDrainTest extends AbstractMigrationTest
     }
 
     /**
+     * The backlog of a class is read a bounded batch at a time, so a class holding more pairs than
+     * one batch has to come back whole all the same - and its count has to agree with what the walk
+     * yields, because that count is what the run's progress is measured against.
+     *
+     * Both value tables hold several rows per pair - a value row per key and language, a group row
+     * per group - so a batch that counted rows instead of pairs would return fewer pairs than it was
+     * asked for and move its cursor past the ones it did not return. The pairs here therefore carry
+     * two value rows each, and the boundaries of the batches are where they would be dropped.
+     */
+    public function testTheBacklogComesBackWholeAcrossItsBatchBoundaries(): void
+    {
+        $storeId = $this->createMigrationStore();
+        $groupId = $this->createMigrationGroup($storeId);
+        $keyId = $this->createMigrationKey($storeId, $groupId);
+        $secondKeyId = $this->createMigrationKey($storeId, $groupId);
+
+        $fieldNames = [];
+        for ($index = 0; $index < self::BATCHED_PAIRS; $index++) {
+            $fieldNames[] = sprintf('csBatched%03d', $index);
+        }
+
+        $class = $this->saveMigrationClass(
+            self::BATCHED_CLASS_ID,
+            array_map(fn (string $name) => $this->migrationStoreField($name, $storeId), $fieldNames)
+        );
+
+        $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, 'unrelated', 'batched-owner')->getId();
+
+        foreach ($fieldNames as $fieldname) {
+            $this->seedMigrationEavRows(
+                self::BATCHED_CLASS_ID,
+                $objectId,
+                $fieldname,
+                $groupId,
+                $keyId,
+                'first row of ' . $fieldname
+            );
+            // a second value row under the same pair, so the pair is two rows of the data table
+            Db::get()->insert(self::DATA_TABLE_PREFIX . self::BATCHED_CLASS_ID, [
+                'id' => $objectId,
+                'groupId' => $groupId,
+                'keyId' => $secondKeyId,
+                'fieldname' => $fieldname,
+                'language' => 'default',
+                'type' => 'input',
+                'value' => 'second row of ' . $fieldname,
+            ]);
+        }
+
+        $this->flipMigrationStore($storeId);
+        $service = $this->getMigrationService();
+
+        $expected = array_map(static fn (string $name): array => [$objectId, $name], $fieldNames);
+
+        $this->assertSame($expected, $this->pendingPairs($class), 'every pair, once, in order');
+        $this->assertSame(count($expected), $service->countBacklog($class), 'and the count agrees');
+        $this->assertSame(
+            [self::BATCHED_CLASS_ID => count($expected)],
+            $service->getBacklogSizeByClass(self::BATCHED_CLASS_ID)
+        );
+    }
+
+    /**
      * There is no cursor: a re-run reads the backlog from the EAV rows that are left, so the pairs
      * an interrupted run did not reach convert and the ones it did are not written again.
      */
@@ -213,13 +320,13 @@ class MigrationDrainTest extends AbstractMigrationTest
         $this->flipStore();
         $service = $this->getMigrationService();
 
-        $this->assertCount(2, $service->getBacklog($this->getClass()));
+        $this->assertCount(2, $this->pendingPairs($this->getClass()));
 
         // the run is interrupted after one pair
         $service->drainPair($this->getClass(), (int) $first->getId(), self::FIELDNAME, self::MIGRATED_AT);
         $converted = $this->readDocumentRows((int) $first->getId());
 
-        $backlog = $service->getBacklog($this->getClass());
+        $backlog = $this->pendingPairs($this->getClass());
         $this->assertSame([[(int) $second->getId(), self::FIELDNAME]], $backlog);
 
         foreach ($backlog as [$objectId, $fieldname]) {
@@ -229,7 +336,7 @@ class MigrationDrainTest extends AbstractMigrationTest
             );
         }
 
-        $this->assertSame([], $service->getBacklog($this->getClass()));
+        $this->assertSame([], $this->pendingPairs($this->getClass()));
         $this->assertSame($converted, $this->readDocumentRows((int) $first->getId()));
         $this->assertNotSame([], $this->readDocumentRows((int) $second->getId()));
     }
@@ -324,7 +431,7 @@ class MigrationDrainTest extends AbstractMigrationTest
         $this->assertSame([], $this->readDocumentRows($objectId));
 
         // and the next class was drained all the same
-        $this->assertSame([], $this->getMigrationService()->getBacklog($nextClass));
+        $this->assertSame([], $this->pendingPairs($nextClass));
         $this->assertCount(
             count(self::NEXT_CLASS_FIELDS),
             Db::get()->fetchAllAssociative(
@@ -375,7 +482,7 @@ class MigrationDrainTest extends AbstractMigrationTest
         $this->assertStringContainsString('estimated ', $display);
         $this->assertStringContainsString('remaining', $display);
 
-        $this->assertSame([], $this->getMigrationService()->getBacklog($this->getClass()));
+        $this->assertSame([], $this->pendingPairs($this->getClass()));
     }
 
     /**
@@ -413,7 +520,7 @@ class MigrationDrainTest extends AbstractMigrationTest
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
         $this->assertStringContainsString('1 pair(s) converted', $tester->getDisplay());
-        $this->assertSame([], $this->getMigrationService()->getBacklog($class));
+        $this->assertSame([], $this->pendingPairs($class));
         $this->assertSame(
             [self::NUMERIC_CLASS_FIELD],
             $this->fieldNamesIn(self::DOCUMENT_TABLE_PREFIX . self::NUMERIC_CLASS_ID)

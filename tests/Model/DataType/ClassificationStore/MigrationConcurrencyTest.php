@@ -120,6 +120,95 @@ class MigrationConcurrencyTest extends AbstractMigrationTest
     }
 
     /**
+     * The drain and an ordinary save take the object's row and the pair's document rows in the same
+     * order, which is what keeps them from deadlocking on each other.
+     *
+     * A save locks the object's row first - {@see \Pimcore\Model\DataObject\AbstractObject::save()}
+     * through `getCurrentFullPathForUpdate()` - and the pair's documents second. The drain asks
+     * whether the pair holds documents before it writes, and its insert then needs the object's row
+     * for the foreign key of the document table: taken in that order the two would deadlock, the
+     * save waiting on the document gap the drain holds while the drain waits on the object row the
+     * save holds. The drain therefore takes the object's row itself, first.
+     *
+     * What that lock is is what this asserts: an *exclusive* lock on the object's row. The foreign
+     * key of the insert takes a shared one, which a second shared reader would be let past - so a
+     * second connection that cannot read the row in share mode is one the drain is holding
+     * deliberately rather than as a side effect of its own insert.
+     */
+    public function testTheDrainHoldsTheObjectRowItselfRatherThanThroughItsForeignKey(): void
+    {
+        $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, self::VALUE, 'concurrency-order')->getId();
+        $this->flipStore();
+
+        $db = Db::get();
+        $db->beginTransaction();
+
+        try {
+            $this->getMigrationService()->drainPair($this->getClass(), $objectId, self::FIELDNAME, time());
+
+            $this->assertHeldAgainstTheOtherConnection(
+                // LOCK IN SHARE MODE rather than FOR SHARE: the older spelling is the one both
+                // MySQL and MariaDB accept
+                fn (Connection $other): mixed => $other->fetchOne(
+                    'SELECT `id` FROM `objects` WHERE `id` = ? LOCK IN SHARE MODE',
+                    [$objectId]
+                )
+            );
+
+            // and the pair's documents are held as well, so the whole conversion is one unit
+            $this->assertHeldAgainstTheOtherConnection(
+                fn (Connection $other): mixed => $other->executeStatement(
+                    'UPDATE ' . $other->quoteIdentifier($this->getDocumentTable())
+                    . ' SET `collectionId` = 1 WHERE `id` = ? AND `fieldname` = ?',
+                    [$objectId, self::FIELDNAME]
+                )
+            );
+        } finally {
+            $db->rollBack();
+        }
+    }
+
+    /**
+     * And from the save's side: while the object's row is held the way a save holds it, the drain
+     * waits there instead of racing ahead, and the pair it could not convert is left wholly on EAV.
+     */
+    public function testADrainWaitsForTheObjectRowAnotherWriterHolds(): void
+    {
+        $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, self::VALUE, 'concurrency-wait')->getId();
+        $this->flipStore();
+
+        $eavRows = $this->countRows($this->getDataTable(), self::FIELDNAME);
+        $this->assertGreaterThan(0, $eavRows);
+
+        $other = $this->otherConnection();
+        $other->beginTransaction();
+
+        $db = Db::get();
+        $db->executeStatement('SET SESSION innodb_lock_wait_timeout = ' . self::LOCK_WAIT_SECONDS);
+
+        try {
+            // the statement a save takes the object's row with, issued by the other connection
+            $other->fetchOne(
+                'SELECT CONCAT(`path`, `key`) FROM objects WHERE id = ? FOR UPDATE',
+                [$objectId]
+            );
+
+            try {
+                $this->getMigrationService()->drainPair($this->getClass(), $objectId, self::FIELDNAME, time());
+                $this->fail('the drain has to wait for the object row the other writer holds');
+            } catch (RetryableException) {
+                // a lock wait timeout or a deadlock: either way the drain had to wait there
+            }
+        } finally {
+            $other->rollBack();
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = DEFAULT');
+        }
+
+        $this->assertSame([], $this->readDocumentRows($objectId), 'and wrote no document');
+        $this->assertSame($eavRows, $this->countRows($this->getDataTable(), self::FIELDNAME));
+    }
+
+    /**
      * A conversion commits the pair's documents and the deletion of its EAV rows together, so a
      * load that chose its source by one autocommit read and loaded it by the next could fall
      * between those two states and answer with neither. The source of an unconverted pair is

@@ -70,6 +70,7 @@ class MigrationFlipTest extends AbstractMigrationTest
         'bundles/CoreBundle/src/DataObject/Classificationstore/DocumentEngineMigrationService.php',
         'bundles/CoreBundle/src/DataObject/Classificationstore/DrainOutcome.php',
         'bundles/CoreBundle/src/DataObject/Classificationstore/DrainPairResult.php',
+        'bundles/CoreBundle/src/DataObject/Classificationstore/VerificationFinding.php',
         'bundles/CoreBundle/src/DataObject/Classificationstore/VerificationReport.php',
         'bundles/CoreBundle/src/DataObject/Classificationstore/StoreFlipConflictException.php',
     ];

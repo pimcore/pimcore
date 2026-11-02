@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Bundle\CoreBundle\Command\CleanupClassificationStoreEavTablesCommand;
 use Pimcore\Bundle\CoreBundle\Command\VerifyClassificationStoreCommand;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\VerificationFinding;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
@@ -49,6 +50,16 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
     private const BATCH_FIELD = 'csBatchField';
 
     private const BATCH_ROWS = 201;
+
+    /**
+     * What {@see self::setUpClassWithTwoStores()} seeded the already-converted field with, so that a
+     * test can put an EAV row back beside the documents it was converted into.
+     */
+    private int $convertedGroupId = 0;
+
+    private int $convertedKeyId = 0;
+
+    private int $ownerObjectId = 0;
 
     protected function tearDown(): void
     {
@@ -202,7 +213,13 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
             );
         }
 
-        $report = $this->getMigrationService()->verify($class);
+        $findings = [];
+        $report = $this->getMigrationService()->verify(
+            $class,
+            static function (VerificationFinding $finding, string $message) use (&$findings): void {
+                $findings[$finding->name][] = $message;
+            }
+        );
 
         foreach ($corrupted as $groupId) {
             $this->assertContains(
@@ -212,12 +229,15 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
                     self::BATCH_FIELD,
                     $groupId
                 ),
-                $report->failures
+                $findings[VerificationFinding::Failure->name] ?? []
             );
         }
 
-        $this->assertCount(count($corrupted), $report->failures, 'and no row is seen twice');
-        $this->assertSame([], $report->unproven);
+        // the report itself carries counts rather than the messages, so that it does not grow with
+        // the data it is a report about
+        $this->assertSame(count($corrupted), $report->failures, 'and no row is seen twice');
+        $this->assertSame(0, $report->unproven);
+        $this->assertArrayNotHasKey(VerificationFinding::Unproven->name, $findings);
     }
 
     /**
@@ -256,6 +276,70 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
         $this->assertFalse($this->tableExists(self::DATA_TABLE_PREFIX . self::CLEANUP_CLASS_ID));
         $this->assertFalse($this->tableExists(self::GROUPS_TABLE_PREFIX . self::CLEANUP_CLASS_ID));
+    }
+
+    /**
+     * Every store of the class is on the document engine, so nothing blocks the cleanup on that
+     * count - and an EAV row that survived all the same is undrained data the drop would destroy.
+     * The verification gate is what has to catch it, and it is the only thing that can: there is no
+     * stored marker of an earlier verify and no `--force`.
+     */
+    public function testCleanupRefusesWhenEavRowsSurviveAlthoughEveryStoreIsConverted(): void
+    {
+        [$class, $pendingStoreId] = $this->setUpClassWithTwoStores();
+
+        $this->convertRemainingStore($class, $pendingStoreId);
+        $this->assertSame([], $this->pendingPairs($class), 'precondition: the class is drained');
+
+        // a writer that still resolved the EAV engine saves after the pair was converted
+        $this->seedMigrationEavRows(
+            self::CLEANUP_CLASS_ID,
+            $this->ownerObjectId,
+            self::CONVERTED_FIELD,
+            $this->convertedGroupId,
+            $this->convertedKeyId,
+            'written after the conversion'
+        );
+
+        $tester = $this->runCleanup();
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('EAV rows survive', $tester->getDisplay());
+
+        $this->assertTrue($this->tableExists(self::DATA_TABLE_PREFIX . self::CLEANUP_CLASS_ID));
+        $this->assertTrue($this->tableExists(self::GROUPS_TABLE_PREFIX . self::CLEANUP_CLASS_ID));
+    }
+
+    /**
+     * And the other half of the gate: a document whose `values` no longer match the checksum the
+     * writer stamped is a converted class whose conversion cannot be trusted, so the tables it was
+     * converted from stay where they are.
+     */
+    public function testCleanupRefusesWhenADocumentNoLongerMatchesItsChecksum(): void
+    {
+        [$class, $pendingStoreId] = $this->setUpClassWithTwoStores();
+
+        $this->convertRemainingStore($class, $pendingStoreId);
+
+        $table = self::DOCUMENT_TABLE_PREFIX . self::CLEANUP_CLASS_ID;
+        $this->assertSame(
+            2,
+            (int) Db::get()->fetchOne('SELECT COUNT(*) FROM ' . Db::get()->quoteIdentifier($table)),
+            'precondition: both fields were converted'
+        );
+
+        Db::get()->executeStatement(
+            'UPDATE ' . Db::get()->quoteIdentifier($table) . ' SET `values` = ? WHERE `fieldname` = ?',
+            ['{"v":1,"k":{}}', self::CONVERTED_FIELD]
+        );
+
+        $tester = $this->runCleanup();
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('checksum does not match', $tester->getDisplay());
+
+        $this->assertTrue($this->tableExists(self::DATA_TABLE_PREFIX . self::CLEANUP_CLASS_ID));
+        $this->assertTrue($this->tableExists(self::GROUPS_TABLE_PREFIX . self::CLEANUP_CLASS_ID));
     }
 
     /**
@@ -301,6 +385,10 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
 
         $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, 'unrelated', 'cleanup-owner')->getId();
 
+        $this->convertedGroupId = $convertedGroupId;
+        $this->convertedKeyId = $convertedKeyId;
+        $this->ownerObjectId = $objectId;
+
         $this->seedMigrationEavRows(
             self::CLEANUP_CLASS_ID,
             $objectId,
@@ -337,11 +425,11 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
     {
         $service = $this->getMigrationService();
 
-        foreach ($service->getBacklog($class) as [$objectId, $fieldname]) {
+        foreach ($this->pendingPairs($class) as [$objectId, $fieldname]) {
             $service->drainPair($class, $objectId, $fieldname, self::MIGRATED_AT);
         }
 
-        $this->assertSame([], $service->getBacklog($class));
+        $this->assertSame([], $this->pendingPairs($class));
     }
 
     /**

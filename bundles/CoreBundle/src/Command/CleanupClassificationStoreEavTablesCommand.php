@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\VerificationFinding;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -106,12 +107,19 @@ class CleanupClassificationStoreEavTablesCommand extends AbstractCommand
             return false;
         }
 
-        $report = $this->migrationService->verify($class);
-        if ($report->hasFailed()) {
-            foreach ($report->failures as $failure) {
-                $this->io->writeln(sprintf('<error>%s</error>: %s', $classId, $failure));
+        // the verification is re-run inline here rather than trusted from an earlier run, and what
+        // it finds is written as it finds it: this gate is the only thing between an undrained class
+        // and an irreversible DROP TABLE
+        $report = $this->migrationService->verify(
+            $class,
+            function (VerificationFinding $finding, string $message) use ($classId): void {
+                if ($finding === VerificationFinding::Failure) {
+                    $this->io->writeln(sprintf('<error>%s</error>: %s', $classId, $message));
+                }
             }
+        );
 
+        if ($report->hasFailed()) {
             return false;
         }
 

@@ -14,27 +14,24 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DataObject\Classificationstore;
 
 /**
- * What the verification of one class found.
+ * How much the verification of one class found, by kind - {@see VerificationFinding} says what each
+ * kind is.
  *
- * `failures` are the checks that did not hold - a document row whose recomputed checksum differs
- * from its stamp, or a pair that still holds EAV rows. `unproven` are the document rows that carry
- * neither a checksum nor a `migratedAt`: they were written before any writer stamped a checksum, so
- * there is nothing to compare against and they are reported rather than called corrupt.
+ * Counts rather than the messages: a store that was never checksummed has one finding per stored
+ * group, so a report that carried them all would grow with the data it is a report about. Each one
+ * is handed to the caller of {@see DocumentEngineMigrationService::verify()} as it is found, and
+ * what the cleanup needs to refuse is whether anything failed.
  *
  * @internal
  */
 final readonly class VerificationReport
 {
-    /**
-     * @param string[] $failures
-     * @param string[] $unproven
-     */
-    public function __construct(public array $failures = [], public array $unproven = [])
+    public function __construct(public int $failures = 0, public int $unproven = 0)
     {
     }
 
     public function hasFailed(): bool
     {
-        return $this->failures !== [];
+        return $this->failures > 0;
     }
 }

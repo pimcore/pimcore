@@ -183,6 +183,17 @@ abstract class AbstractMigrationTest extends AbstractClassificationStoreTest
         return $object;
     }
 
+    /**
+     * The pairs a class still has to convert. The service streams them in bounded batches, so what
+     * a test wants - the whole of a backlog it seeded itself - is collected here.
+     *
+     * @return array<array{0: int, 1: string}>
+     */
+    protected function pendingPairs(ClassDefinition $class): array
+    {
+        return iterator_to_array($this->getMigrationService()->streamBacklog($class), false);
+    }
+
     protected function getDocumentTable(): string
     {
         return self::DOCUMENT_TABLE_PREFIX . $this->getClassId();
