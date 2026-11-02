@@ -46,16 +46,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     protected function getCondition(): string
     {
-        $condition = parent::getCondition();
-        if (!empty($condition)) {
-            $condition .= ' AND ';
-        } else {
-            $condition = ' WHERE ';
+        $typeCondition = 'id > 0 AND `type` = ' . $this->db->quote($this->model->getType());
+
+        if ($modelCondition = $this->model->getCondition()) {
+            return ' WHERE (' . $modelCondition . ') AND ' . $typeCondition;
         }
 
-        $condition .= 'id > 0 AND `type` = ' . $this->db->quote($this->model->getType());
-
-        return $condition;
+        return ' WHERE ' . $typeCondition;
     }
 
     public function getTotalCount(): int
