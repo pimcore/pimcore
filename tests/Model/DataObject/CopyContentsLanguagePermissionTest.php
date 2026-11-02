@@ -349,7 +349,10 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
 
         $item = UnittestLocalizedBlock::getById($target->getId(), ['force' => true])->getLfblock()[0];
-        $this->assertSame('target de', $item['localizedfields']->getData()->getLocalizedValue('blocklinput', 'de'));
+        $localizedfield = $item['localizedfields']->getData();
+        $this->assertSame('target de', $localizedfield->getLocalizedValue('blocklinput', 'de'));
+        // en is editable and the source row has no value for it, so the target's en is not kept
+        $this->assertNotSame('target en', $localizedfield->getLocalizedValue('blocklinput', 'en'));
     }
 
     /**

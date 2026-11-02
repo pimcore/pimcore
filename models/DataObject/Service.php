@@ -303,7 +303,7 @@ class Service extends Model\Element\Service
             } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
                 $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
             } elseif ($definition instanceof ClassDefinition\Data\Block) {
-                $new->set($name, $this->restoreBlockLanguages($definition, $newValue, $targetValue, $editableLanguages));
+                $this->applyBlockLanguages($new, $name, $definition, $targetValue, $editableLanguages);
             } elseif ($newValue instanceof DataObject\Objectbrick) {
                 $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
             } elseif ($newValue instanceof DataObject\Fieldcollection) {
@@ -384,8 +384,29 @@ class Service extends Model\Element\Service
     ): void {
         foreach ($new->getDefinition()->getFieldDefinitions() as $name => $definition) {
             if ($definition instanceof ClassDefinition\Data\Block) {
-                $new->set($name, $this->restoreBlockLanguages($definition, $new->get($name), $target?->get($name), $editableLanguages));
+                $this->applyBlockLanguages($new, $name, $definition, $target?->get($name), $editableLanguages);
             }
+        }
+    }
+
+    /**
+     * Writes the block back only if a row got a new localizedfields element, so that an inherited block
+     * (read through the getter) is not turned into an own value.
+     *
+     * @param Concrete|Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new
+     * @param array<string, int> $editableLanguages
+     */
+    private function applyBlockLanguages(
+        Concrete|Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new,
+        string $name,
+        ClassDefinition\Data\Block $definition,
+        mixed $target,
+        array $editableLanguages
+    ): void {
+        $value = $new->get($name);
+        $restored = $this->restoreBlockLanguages($definition, $value, $target, $editableLanguages);
+        if ($restored !== $value) {
+            $new->set($name, $restored);
         }
     }
 
@@ -410,7 +431,7 @@ class Service extends Model\Element\Service
             $targetElement = is_array($target) ? ($target[$index]['localizedfields'] ?? null) : null;
             $targetLocalizedfield = $targetElement instanceof DataObject\Data\BlockElement ? $targetElement->getData() : null;
 
-            if ($element instanceof DataObject\Data\BlockElement) {
+            if ($element instanceof DataObject\Data\BlockElement && $element->getData() instanceof DataObject\Localizedfield) {
                 $this->restoreLocalizedfields($element->getData(), $targetLocalizedfield, $editableLanguages);
             } elseif ($targetLocalizedfield instanceof DataObject\Localizedfield) {
                 $localizedfield = new DataObject\Localizedfield();
@@ -418,7 +439,11 @@ class Service extends Model\Element\Service
                 $localizedfield->setContext($targetLocalizedfield->getContext());
                 $this->restoreLocalizedfields($localizedfield, $targetLocalizedfield, $editableLanguages);
                 if ($localizedfield->getItems()) {
-                    $new[$index]['localizedfields'] = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', $localizedfield);
+                    if ($element instanceof DataObject\Data\BlockElement) {
+                        $element->setData($localizedfield);
+                    } else {
+                        $new[$index]['localizedfields'] = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', $localizedfield);
+                    }
                 }
             }
         }
