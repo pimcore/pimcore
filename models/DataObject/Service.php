@@ -303,7 +303,7 @@ class Service extends Model\Element\Service
             } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
                 $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
             } elseif ($definition instanceof ClassDefinition\Data\Block) {
-                $this->restoreBlockLanguages($definition, $newValue, $targetValue, $editableLanguages);
+                $new->set($name, $this->restoreBlockLanguages($definition, $newValue, $targetValue, $editableLanguages));
             } elseif ($newValue instanceof DataObject\Objectbrick) {
                 $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
             } elseif ($newValue instanceof DataObject\Fieldcollection) {
@@ -384,33 +384,46 @@ class Service extends Model\Element\Service
     ): void {
         foreach ($new->getDefinition()->getFieldDefinitions() as $name => $definition) {
             if ($definition instanceof ClassDefinition\Data\Block) {
-                $this->restoreBlockLanguages($definition, $new->get($name), $target?->get($name), $editableLanguages);
+                $new->set($name, $this->restoreBlockLanguages($definition, $new->get($name), $target?->get($name), $editableLanguages));
             }
         }
     }
 
     /**
-     * Only blocks with a localizedfields child hold languages. Block items are matched by index.
+     * Only blocks with a localizedfields child hold languages. Block items are matched by index. A matched item
+     * without a localizedfields element gets one holding only the target's protected languages.
      *
      * @param array<string, int> $editableLanguages
      */
-    private function restoreBlockLanguages(ClassDefinition\Data\Block $definition, mixed $new, mixed $target, array $editableLanguages): void
+    private function restoreBlockLanguages(ClassDefinition\Data\Block $definition, mixed $new, mixed $target, array $editableLanguages): mixed
     {
         if (!$definition->getFieldDefinition('localizedfields') || !is_array($new)) {
-            return;
+            return $new;
         }
 
         foreach ($new as $index => $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
             $element = $item['localizedfields'] ?? null;
             $targetElement = is_array($target) ? ($target[$index]['localizedfields'] ?? null) : null;
+            $targetLocalizedfield = $targetElement instanceof DataObject\Data\BlockElement ? $targetElement->getData() : null;
+
             if ($element instanceof DataObject\Data\BlockElement) {
-                $this->restoreLocalizedfields(
-                    $element->getData(),
-                    $targetElement instanceof DataObject\Data\BlockElement ? $targetElement->getData() : null,
-                    $editableLanguages
-                );
+                $this->restoreLocalizedfields($element->getData(), $targetLocalizedfield, $editableLanguages);
+            } elseif ($targetLocalizedfield instanceof DataObject\Localizedfield) {
+                $localizedfield = new DataObject\Localizedfield();
+                $localizedfield->setObject($targetLocalizedfield->getObject());
+                $localizedfield->setContext($targetLocalizedfield->getContext());
+                $this->restoreLocalizedfields($localizedfield, $targetLocalizedfield, $editableLanguages);
+                if ($localizedfield->getItems()) {
+                    $new[$index]['localizedfields'] = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', $localizedfield);
+                }
             }
         }
+
+        return $new;
     }
 
     /**

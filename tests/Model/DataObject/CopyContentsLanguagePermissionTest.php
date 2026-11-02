@@ -339,6 +339,19 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->assertSame('target de', $item['localizedfields']->getData()->getLocalizedValue('blocklinput', 'de'));
     }
 
+    public function testBlockRowWithoutLocalizedFieldsKeepsNonEditableLanguages(): void
+    {
+        $source = $this->createLocalizedBlock(['en' => 'source en']);
+        $source->setLfblock([[]]);
+        $source->save();
+        $target = $this->createLocalizedBlock(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $item = UnittestLocalizedBlock::getById($target->getId(), ['force' => true])->getLfblock()[0];
+        $this->assertSame('target de', $item['localizedfields']->getData()->getLocalizedValue('blocklinput', 'de'));
+    }
+
     /**
      * @param array<string, string> $values
      */
