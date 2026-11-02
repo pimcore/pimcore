@@ -132,6 +132,11 @@ final class Tag extends Model\AbstractModel
     public static function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $tag = new Tag();
+        $batchEvent = new TagEvent($tag, [
+            'tagIds' => array_map(static fn (Tag $assignedTag) => $assignedTag->getId(), $tags),
+            'elementType' => $cType,
+            'elementIds' => [$cId],
+        ]);
 
         $newTags = [];
         foreach ($tags as $newTag) {
@@ -151,6 +156,8 @@ final class Tag extends Model\AbstractModel
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
 
         self::dispatchAssignmentEvents($events, 'post');
+
+        $tag->dispatchEvent($batchEvent, TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT);
     }
 
     /**

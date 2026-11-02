@@ -271,4 +271,45 @@ class TagEventTest extends ModelTestCase
 
         $this->assertSame(1, $calls);
     }
+
+    public function testSetTagsForElementDispatchesPostBatchAssignEvent(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $tagA = $this->createTag('batchset_a');
+        $tagB = $this->createTag('batchset_b');
+
+        /** @var TagEvent[] $captured */
+        $captured = [];
+        $listener = function (TagEvent $event) use (&$captured): void {
+            $captured[] = $event;
+        };
+        Pimcore::getEventDispatcher()->addListener(TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT, $listener);
+        $this->registeredListeners[] = [TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT, $listener];
+
+        Tag::setTagsForElement('object', $object->getId(), [$tagA, $tagB]);
+
+        $this->assertCount(1, $captured);
+        $this->assertSame('object', $captured[0]->getArgument('elementType'));
+        $this->assertSame([$object->getId()], $captured[0]->getArgument('elementIds'));
+        $this->assertSame([$tagA->getId(), $tagB->getId()], $captured[0]->getArgument('tagIds'));
+    }
+
+    public function testSetTagsForElementWithEmptyArrayDispatchesPostBatchAssignEvent(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        Tag::setTagsForElement('object', $object->getId(), [$this->createTag('batchempty')]);
+
+        $captured = [];
+        $listener = function (TagEvent $event) use (&$captured): void {
+            $captured[] = $event;
+        };
+        Pimcore::getEventDispatcher()->addListener(TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT, $listener);
+        $this->registeredListeners[] = [TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT, $listener];
+
+        Tag::setTagsForElement('object', $object->getId(), []);
+
+        $this->assertCount(1, $captured);
+        $this->assertSame([$object->getId()], $captured[0]->getArgument('elementIds'));
+        $this->assertSame([], $captured[0]->getArgument('tagIds'));
+    }
 }

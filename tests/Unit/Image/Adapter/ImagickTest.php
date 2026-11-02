@@ -29,6 +29,9 @@ use Pimcore\Tests\Support\Test\TestCase;
  * #184 (platform-version): images carrying a plain Photoshop path were clipped as
  * if that path was a clipping path, which left the thumbnails empty.
  *
+ * Images whose clipping path is not the first of their saved Photoshop paths were
+ * clipped by that first path instead of the clipping path.
+ *
  * #540 (platform-version): resizing an SVG re-rendered it at a higher density, but
  * kept the original rendering next to the new one and then dropped the new one, so
  * the following steps worked on the stale rendering - cover() ended up with 1x1 px.
@@ -56,6 +59,16 @@ final class ImagickTest extends TestCase
     private const DELTA_CONVERTED = 45;
 
     private const FIXTURE_SIZE = 40;
+
+    /**
+     * Corners of the fixture paths as pairs of vertical and horizontal coordinates relative to the image
+     * dimensions.
+     */
+    private const CENTERED_SQUARE = [[0.25, 0.25], [0.25, 0.75], [0.75, 0.75], [0.75, 0.25]];
+
+    private const LEFT_RECTANGLE = [[0.25, 0.1], [0.25, 0.4], [0.75, 0.4], [0.75, 0.1]];
+
+    private const RIGHT_RECTANGLE = [[0.25, 0.6], [0.25, 0.9], [0.75, 0.9], [0.75, 0.6]];
 
     /**
      * @var string[]
@@ -159,6 +172,54 @@ final class ImagickTest extends TestCase
         $this->assertPixelOpaque($result, 20, 20);
         $this->assertPixelColor(self::SOURCE_RGB, $result, 20, 20, self::DELTA);
         $this->assertPixelTransparent($result, 2, 2);
+    }
+
+    /**
+     * An image can carry any number of saved paths, but only the one named by the 'Name of clipping path'
+     * resource (8BIM 2999) is its clipping path - which does not have to be the first one.
+     */
+    public function testImageIsClippedByTheDesignatedClippingPath(): void
+    {
+        $path = $this->createImageWith8BIMResources(
+            $this->pathImageResource(2000, 'Path 1', self::LEFT_RECTANGLE)
+            . $this->pathImageResource(2001, 'Path 2', self::RIGHT_RECTANGLE)
+            . $this->clippingPathNameImageResource('Path 2')
+        );
+        $this->assertClippingPathIsSupported($path);
+
+        $adapter = $this->adapter($path, false);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        // inside of 'Path 2'
+        $this->assertPixelOpaque($result, 30, 20);
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 30, 20, self::DELTA);
+        // inside of 'Path 1', which is not the clipping path
+        $this->assertPixelTransparent($result, 10, 20);
+    }
+
+    /**
+     * When the path named by the 'Name of clipping path' resource does not exist, the image is clipped by the
+     * first path, which is what \Imagick::clipImage() does.
+     */
+    public function testImageIsClippedByTheFirstPathWhenTheClippingPathCannotBeFound(): void
+    {
+        $path = $this->createImageWith8BIMResources(
+            $this->pathImageResource(2000, 'Path 1', self::LEFT_RECTANGLE)
+            . $this->pathImageResource(2001, 'Path 2', self::RIGHT_RECTANGLE)
+            . $this->clippingPathNameImageResource('Path 3')
+        );
+        $this->assertClippingPathIsSupported($path);
+
+        $adapter = $this->adapter($path, false);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        // inside of 'Path 1'
+        $this->assertPixelOpaque($result, 10, 20);
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 10, 20, self::DELTA);
+        // inside of 'Path 2'
+        $this->assertPixelTransparent($result, 30, 20);
     }
 
     /**
@@ -331,6 +392,14 @@ final class ImagickTest extends TestCase
      */
     private function createImageWithPhotoshopPath(): string
     {
+        return $this->createImageWith8BIMResources($this->pathImageResource());
+    }
+
+    /**
+     * Creates an opaque image carrying the given 8BIM image resources, holding at least one path.
+     */
+    private function createImageWith8BIMResources(string $resources): string
+    {
         $image = new \Imagick();
         $image->newImage(
             self::FIXTURE_SIZE,
@@ -338,7 +407,7 @@ final class ImagickTest extends TestCase
             new ImagickPixel(sprintf('rgb(%d,%d,%d)', ...self::SOURCE_RGB))
         );
         $image->setImageFormat('tiff');
-        $image->profileImage('8bim', $this->pathImageResource());
+        $image->profileImage('8bim', $resources);
 
         $path = $this->tmpFile('tif');
         $image->writeImage($path);
@@ -389,24 +458,36 @@ final class ImagickTest extends TestCase
     /**
      * Builds an 8BIM image resource block holding one closed path, see
      * https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
+     *
+     * @param float[][] $corners
      */
-    private function pathImageResource(): string
-    {
+    private function pathImageResource(
+        int $resourceId = 2000,
+        string $name = 'Path 1',
+        array $corners = self::CENTERED_SQUARE
+    ): string {
         // 'Closed subpath length record': selector 0, followed by the number of knots
-        $data = pack('nn', 0, 4) . str_repeat("\x00", 22);
+        $data = pack('nn', 0, count($corners)) . str_repeat("\x00", 22);
 
-        // one 'Closed subpath Bezier knot' record per corner of a centered square, each holding
-        // the preceding control point, the anchor point and the leaving control point as pairs of
-        // 8.24 fixed point numbers relative to the image dimensions (vertical before horizontal)
-        foreach ([[0.25, 0.25], [0.25, 0.75], [0.75, 0.75], [0.75, 0.25]] as [$vertical, $horizontal]) {
+        // one 'Closed subpath Bezier knot' record per corner, each holding the preceding control
+        // point, the anchor point and the leaving control point as pairs of 8.24 fixed point numbers
+        // relative to the image dimensions (vertical before horizontal)
+        foreach ($corners as [$vertical, $horizontal]) {
             $point = pack('NN', (int) ($vertical * (1 << 24)), (int) ($horizontal * (1 << 24)));
             $data .= pack('n', 2) . str_repeat($point, 3);
         }
 
-        // the resource name is a pascal string padded to an even length
-        $name = "\x06" . 'Path 1' . "\x00";
+        return '8BIM' . pack('n', $resourceId) . $this->paddedPascalString($name) . pack('N', strlen($data)) . $data;
+    }
 
-        return '8BIM' . pack('n', 2000) . $name . pack('N', strlen($data)) . $data;
+    /**
+     * The name of an image resource is a pascal string padded to an even length.
+     */
+    private function paddedPascalString(string $value): string
+    {
+        $pascalString = chr(strlen($value)) . $value;
+
+        return strlen($pascalString) % 2 === 0 ? $pascalString : $pascalString . "\x00";
     }
 
     /**
@@ -450,9 +531,9 @@ final class ImagickTest extends TestCase
      * Builds an 8BIM image resource block naming the clipping path of the image, holding the
      * name of the path as a pascal string followed by the flatness as an 8.24 fixed point number.
      */
-    private function clippingPathNameImageResource(): string
+    private function clippingPathNameImageResource(string $pathName = 'Path 1'): string
     {
-        $data = "\x06" . 'Path 1' . pack('N', 1 << 24);
+        $data = chr(strlen($pathName)) . $pathName . pack('N', 1 << 24);
 
         return '8BIM' . pack('n', 2999) . "\x00\x00" . pack('N', strlen($data)) . $data;
     }
