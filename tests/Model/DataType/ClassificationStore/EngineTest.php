@@ -339,7 +339,7 @@ class EngineTest extends ModelTestCase
             $this->foreignKeysOf($table)
         );
 
-        // checksum and migratedAt belong to the drain and are written by nothing in this release
+        // checksum is stamped by every writer of a row and migratedAt by the drain alone
         $this->assertSame(
             [
                 'id' => 'int unsigned',
