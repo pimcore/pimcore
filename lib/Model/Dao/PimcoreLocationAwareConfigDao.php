@@ -74,6 +74,11 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         return $this->locationAwareConfigRepository->fetchAllKeys();
     }
 
+    protected function loadIdListFromContainerConfig(): array
+    {
+        return $this->locationAwareConfigRepository->fetchContainerConfigKeys();
+    }
+
     protected function loadIdListByReadTargets(): array
     {
         return $this->locationAwareConfigRepository->fetchAllKeysByReadTargets();

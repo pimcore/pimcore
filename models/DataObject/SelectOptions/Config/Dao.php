@@ -42,9 +42,10 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * The default read target (symfony-config) keeps the class build independent of the settings store, but it
-     * would hide every definition saved to the settings store. With the settings store as write target the
-     * definitions are therefore read from the container config first and from the settings store second.
+     * The default read target (symfony-config) would hide every definition saved to the settings store. With the
+     * settings store as write target the definitions are therefore read from the container config first and from
+     * the settings store second (an explicit symfony-config read target is treated the same way). The class build
+     * lists the container config only (Listing::setContainerConfigOnly()), so it stays independent of the database.
      */
     public static function resolveStorageConfig(array $storageConfig): array
     {
