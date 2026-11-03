@@ -32,9 +32,9 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionProperty;
 use RuntimeException;
-use Throwable;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Throwable;
 
 /**
  * Moving or renaming a document through Document::save() (Studio, PHP API) must create the
