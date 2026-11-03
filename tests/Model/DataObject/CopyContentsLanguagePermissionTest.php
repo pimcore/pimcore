@@ -355,25 +355,71 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->assertNotSame('target en', $localizedfield->getLocalizedValue('blocklinput', 'en'));
     }
 
+    public function testEveryRowOfAMultiRowBlockKeepsItsNonEditableLanguages(): void
+    {
+        $source = $this->createLocalizedBlockRows([
+            ['en' => 'source en 0', 'de' => 'source de 0'],
+            ['en' => 'source en 1', 'de' => 'source de 1'],
+        ]);
+        $target = $this->createLocalizedBlockRows([
+            ['en' => 'target en 0', 'de' => 'target de 0'],
+            ['en' => 'target en 1', 'de' => 'target de 1'],
+        ]);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $items = UnittestLocalizedBlock::getById($target->getId(), ['force' => true])->getLfblock();
+        $this->assertCount(2, $items);
+        foreach ([0, 1] as $index) {
+            $localizedfield = $items[$index]['localizedfields']->getData();
+            $this->assertSame('source en ' . $index, $localizedfield->getLocalizedValue('blocklinput', 'en'));
+            $this->assertSame('target de ' . $index, $localizedfield->getLocalizedValue('blocklinput', 'de'));
+        }
+    }
+
+    public function testBlockLocalizedFieldsAreAllCopiedWithoutLanguageRestriction(): void
+    {
+        $source = $this->createLocalizedBlock(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createLocalizedBlock(['en' => 'target en', 'de' => 'target de']);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, null));
+
+        $localizedfield = UnittestLocalizedBlock::getById($target->getId(), ['force' => true])->getLfblock()[0]['localizedfields']->getData();
+        $this->assertSame('source en', $localizedfield->getLocalizedValue('blocklinput', 'en'));
+        $this->assertSame('source de', $localizedfield->getLocalizedValue('blocklinput', 'de'));
+    }
+
     /**
      * @param array<string, string> $values
      */
     private function createLocalizedBlock(array $values): UnittestLocalizedBlock
     {
+        return $this->createLocalizedBlockRows([$values]);
+    }
+
+    /**
+     * @param list<array<string, string>> $rows localized values per block row
+     */
+    private function createLocalizedBlockRows(array $rows): UnittestLocalizedBlock
+    {
         $object = TestHelper::createEmptyObject('', false, true, UnittestLocalizedBlock::class);
-        $localizedfield = new Localizedfield();
-        $localizedfield->setObject($object);
-        $localizedfield->setContext([
-            'containerType' => 'block',
-            'fieldname' => 'lfblock',
-            'index' => 0,
-            'containerKey' => 'lfblock',
-            'classId' => $object->getClassId(),
-        ]);
-        foreach ($values as $language => $value) {
-            $localizedfield->setLocalizedValue('blocklinput', $value, $language);
+        $items = [];
+        foreach ($rows as $index => $values) {
+            $localizedfield = new Localizedfield();
+            $localizedfield->setObject($object);
+            $localizedfield->setContext([
+                'containerType' => 'block',
+                'fieldname' => 'lfblock',
+                'index' => $index,
+                'containerKey' => 'lfblock',
+                'classId' => $object->getClassId(),
+            ]);
+            foreach ($values as $language => $value) {
+                $localizedfield->setLocalizedValue('blocklinput', $value, $language);
+            }
+            $items[] = ['localizedfields' => new BlockElement('localizedfields', 'localizedfields', $localizedfield)];
         }
-        $object->setLfblock([['localizedfields' => new BlockElement('localizedfields', 'localizedfields', $localizedfield)]]);
+        $object->setLfblock($items);
         $object->save();
 
         return $object;
