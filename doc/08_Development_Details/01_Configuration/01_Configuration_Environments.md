@@ -110,6 +110,9 @@ pimcore:
                     directory: '/var/www/html/var/config/select_options'
 ```
 
+Select options are read from the container config (`symfony-config`) by default. If their `write_target` is
+`settings-store`, definitions saved there are found as well, without having to set a `read_target`.
+
 For some optional bundles:
 
 ```yaml

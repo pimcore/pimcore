@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\SelectOptions\Config;
 
 use InvalidArgumentException;
 use Pimcore\Config;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use RuntimeException;
 
@@ -31,13 +32,30 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $config = Config::getSystemConfiguration();
 
-        $storageConfig = $config['config_location'][self::CONFIG_KEY];
+        $storageConfig = self::resolveStorageConfig($config['config_location'][self::CONFIG_KEY]);
 
         parent::configure([
             'containerConfig' => $config['objects']['select_options']['definitions'],
             'settingsStoreScope' => 'pimcore_select_options',
             'storageConfig' => $storageConfig,
         ]);
+    }
+
+    /**
+     * The default read target (symfony-config) keeps the class build independent of the settings store, but it
+     * would hide every definition saved to the settings store. With the settings store as write target the
+     * definitions are therefore read from the container config first and from the settings store second.
+     */
+    public static function resolveStorageConfig(array $storageConfig): array
+    {
+        if (
+            ($storageConfig[LocationAwareConfigRepository::WRITE_TARGET][LocationAwareConfigRepository::TYPE] ?? null) === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE
+            && ($storageConfig[LocationAwareConfigRepository::READ_TARGET][LocationAwareConfigRepository::TYPE] ?? null) === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG
+        ) {
+            $storageConfig[LocationAwareConfigRepository::READ_TARGET][LocationAwareConfigRepository::TYPE] = null;
+        }
+
+        return $storageConfig;
     }
 
     public function getById(?string $id = null): void
