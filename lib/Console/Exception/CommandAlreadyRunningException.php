@@ -18,9 +18,8 @@ use RuntimeException;
 /**
  * Thrown by Parallelization::runBeforeFirstCommand() when another process holds the
  * command's lock, and caught by ParallelizationBase::execute(), which ends the run
- * without processing any items.
- *
- * @internal
+ * without processing any items. A command that overrides runBeforeFirstCommand() or execute()
+ * and calls the trait's version itself may have to handle it.
  */
 final class CommandAlreadyRunningException extends RuntimeException
 {
