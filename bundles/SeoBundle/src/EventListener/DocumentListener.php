@@ -172,20 +172,31 @@ class DocumentListener implements EventSubscriberInterface
             $this->doCreateRedirectForFormerPath($this->stripSiteRootPath($oldPath, $sourceSite), $document->getId(), $sourceSite, $targetSite);
         }
 
-        // a moved folder or page redirects the documents below it, too (a folder is no redirect target)
+        // a moved folder or page redirects the documents below it, too (only pages, links and hardlinks are redirect targets)
         if ($document->hasChildren(true)) {
             $list = new Document\Listing();
             $list->setUnpublished(true);
-            $list->setCondition('`path` LIKE :path AND `type` != \'folder\'', [
+            $list->setCondition('`path` LIKE :path AND `type` IN (\'page\', \'link\', \'hardlink\')', [
                 'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
             ]);
 
+            $sites = (new Site\Listing())->load();
+            $oldRealPath = $oldDocument->getRealFullPath();
             $count = 0;
 
             foreach ($list->loadIdPathList() as $child) {
-                $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument->getRealFullPath(), $child['path']);
+                $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldRealPath, $child['path']);
 
-                $this->doCreateRedirectForFormerPath($this->stripSiteRootPath($source, $sourceSite), $child['id'], $sourceSite, $targetSite);
+                // site membership is path specific: a folder can contain a site root
+                $childSourceSite = $this->findSiteForPath($sites, $source);
+                $childTargetSite = $this->findSiteForPath($sites, $child['path']);
+                $publicSource = $this->stripSiteRootPath($source, $childSourceSite);
+
+                if ($childSourceSite?->getId() !== $childTargetSite?->getId()
+                    || $publicSource !== $this->stripSiteRootPath($child['path'], $childTargetSite)
+                ) {
+                    $this->doCreateRedirectForFormerPath($publicSource, $child['id'], $childSourceSite, $childTargetSite);
+                }
 
                 $count++;
                 if ($count % 10 === 0) {
@@ -193,6 +204,20 @@ class DocumentListener implements EventSubscriberInterface
                 }
             }
         }
+    }
+
+    /**
+     * @param Site[] $sites
+     */
+    private function findSiteForPath(array $sites, string $path): ?Site
+    {
+        foreach ($sites as $site) {
+            if (str_starts_with($path . '/', $site->getRootPath() . '/')) {
+                return $site;
+            }
+        }
+
+        return null;
     }
 
     private function stripSiteRootPath(string $path, ?Site $site): string

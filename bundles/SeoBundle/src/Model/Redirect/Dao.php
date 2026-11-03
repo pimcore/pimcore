@@ -92,6 +92,14 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save(): void
     {
+        // the row is inserted empty first: a failing update must not leave it behind
+        $this->db->transactional(function (): void {
+            $this->doSave();
+        });
+    }
+
+    private function doSave(): void
+    {
         if (!$this->model->getId()) {
             // create in database
             $this->db->insert('redirects', []);

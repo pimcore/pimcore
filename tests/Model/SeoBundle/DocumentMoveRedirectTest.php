@@ -20,6 +20,7 @@ use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Bundle\SeoBundle\EventListener\DocumentListener;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document;
@@ -31,6 +32,7 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionProperty;
 use RuntimeException;
+use Throwable;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
@@ -298,7 +300,6 @@ class DocumentMoveRedirectTest extends ModelTestCase
 
         $oldPagePath = $page->getRealFullPath();
         $oldDraftPath = $unpublished->getRealFullPath();
-        $oldEmailPath = $email->getRealFullPath();
 
         $folder->setParentId($newParent->getId());
         $folder->save();
@@ -306,11 +307,10 @@ class DocumentMoveRedirectTest extends ModelTestCase
         $expected = [
             $oldPagePath => $page->getId(),
             $oldDraftPath => $unpublished->getId(),
-            $oldEmailPath => $email->getId(),
         ];
         ksort($expected);
 
-        // neither the folder nor its sub folder get a redirect, they are no redirect target
+        // neither the folder, its sub folder nor the email get a redirect, they are no redirect target
         $this->assertSame($expected, $this->targetsBySource());
     }
 
@@ -336,6 +336,72 @@ class DocumentMoveRedirectTest extends ModelTestCase
         $this->assertCount(1, $redirects);
         $this->assertSame('/' . $page->getKey(), $redirects[0]->getSource());
         $this->assertSame($this->site->getId(), $redirects[0]->getSourceSite());
+    }
+
+    public function testMovingAFolderWithASiteRootBelowUsesTheSitePerDescendant(): void
+    {
+        $newParent = TestHelper::createDocumentFolder('seo_move_site_target');
+        $folder = TestHelper::createDocumentFolder('seo_move_site_folder');
+        $siteRoot = TestHelper::createEmptyDocumentPage('seo_move_sub_site', false);
+        $siteRoot->setParentId($folder->getId());
+        $siteRoot->save();
+        $inSite = TestHelper::createEmptyDocumentPage('seo_move_site_page', false);
+        $inSite->setParentId($siteRoot->getId());
+        $inSite->save();
+        $outside = TestHelper::createEmptyDocumentPage('seo_move_outside_page', false);
+        $outside->setParentId($folder->getId());
+        $outside->save();
+
+        $this->site = new Site();
+        $this->site->setRootId($siteRoot->getId());
+        $this->site->setMainDomain('seo-move-sub.example.com');
+        $this->site->save();
+        RuntimeCache::getInstance()->offsetUnset('sites_path_mapping');
+
+        $oldOutsidePath = $outside->getRealFullPath();
+        $folder->setParentId($newParent->getId());
+        $folder->save();
+
+        $bySource = [];
+        foreach ($this->autoRedirects() as $redirect) {
+            $bySource[$redirect->getSource()] = $redirect;
+        }
+
+        // the page inside the site keeps its public URL: no redirect for it, the site root itself redirects
+        $this->assertArrayNotHasKey('/' . $inSite->getKey(), $bySource);
+        $this->assertArrayNotHasKey('/' . $siteRoot->getKey() . '/' . $inSite->getKey(), $bySource);
+        $this->assertSame($outside->getId(), (int) $bySource[$oldOutsidePath]->getTarget());
+        $this->assertNull($bySource[$oldOutsidePath]->getSourceSite());
+    }
+
+    public function testRedirectSaveIsAtomic(): void
+    {
+        $page = TestHelper::createEmptyDocumentPage('seo_move_atomic', false);
+
+        $redirect = new Redirect();
+        $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+        $redirect->setSource('/' . str_repeat('x', 5000));
+        $redirect->setTarget((string) $page->getId());
+        $redirect->setStatusCode(301);
+
+        $before = count((new Redirect\Listing())->load());
+
+        // the oversized source only fails the update in strict mode
+        $db = Db::get();
+        $sqlMode = $db->fetchOne('SELECT @@SESSION.sql_mode');
+        $db->executeStatement("SET SESSION sql_mode = 'STRICT_ALL_TABLES'");
+        $failed = false;
+
+        try {
+            $redirect->save();
+        } catch (Throwable) {
+            $failed = true;
+        } finally {
+            $db->executeStatement('SET SESSION sql_mode = ?', [$sqlMode]);
+        }
+
+        $this->assertTrue($failed, 'The oversized source must fail the redirect update');
+        $this->assertCount($before, (new Redirect\Listing())->load());
     }
 
     public function testUserWithoutRedirectsPermissionGetsNoRedirect(): void
