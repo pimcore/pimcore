@@ -28,11 +28,15 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     private const CONFIG_KEY = 'select_options';
 
+    private bool $readsContainerConfigOnly = false;
+
     public function configure(): void
     {
         $config = Config::getSystemConfiguration();
 
-        $storageConfig = self::resolveStorageConfig($config['config_location'][self::CONFIG_KEY]);
+        $configuredStorageConfig = $config['config_location'][self::CONFIG_KEY];
+        $this->readsContainerConfigOnly = ($configuredStorageConfig[LocationAwareConfigRepository::READ_TARGET][LocationAwareConfigRepository::TYPE] ?? null) === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG;
+        $storageConfig = self::resolveStorageConfig($configuredStorageConfig);
 
         parent::configure([
             'containerConfig' => $config['objects']['select_options']['definitions'],
@@ -44,8 +48,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * The default read target (symfony-config) would hide every definition saved to the settings store. With the
      * settings store as write target the definitions are therefore read from the container config first and from
-     * the settings store second (an explicit symfony-config read target is treated the same way). The class build
-     * lists the container config only (Listing::setContainerConfigOnly()), so it stays independent of the database.
+     * the settings store second (an explicit symfony-config read target is treated the same way).
      */
     public static function resolveStorageConfig(array $storageConfig): array
     {
@@ -57,6 +60,20 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
 
         return $storageConfig;
+    }
+
+    /**
+     * The ids of the container config, without any access to the settings store (and therefore the database).
+     * Only available when the configured read target is symfony-config, see Listing::setContainerConfigOnly().
+     */
+    protected function loadContainerConfigIds(): array
+    {
+        return array_keys(Config::getSystemConfiguration()['objects']['select_options']['definitions']);
+    }
+
+    protected function isContainerConfigReadTarget(): bool
+    {
+        return $this->readsContainerConfigOnly;
     }
 
     public function getById(?string $id = null): void

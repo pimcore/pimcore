@@ -25,7 +25,7 @@ class Dao extends Config\Dao
     public function loadList(): array
     {
         $configs = [];
-        $ids = $this->model->isContainerConfigOnly() ? $this->loadIdListFromContainerConfig() : $this->loadIdListByReadTargets();
+        $ids = $this->model->isContainerConfigOnly() && $this->isContainerConfigReadTarget() ? $this->loadContainerConfigIds() : $this->loadIdListByReadTargets();
         foreach ($ids as $id) {
             $configs[] = Config::getById($id);
         }

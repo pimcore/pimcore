@@ -112,8 +112,9 @@ pimcore:
 
 Select options are read from the container config (`symfony-config`) by default. If their `write_target` is
 `settings-store`, definitions saved there are found as well, without having to set a `read_target`. This also applies
-to an explicit `read_target` of type `symfony-config` in that setup. `pimcore:build:classes` only uses the container
-config and does not need the database.
+to an explicit `read_target` of type `symfony-config` in that setup. As long as the `read_target` is `symfony-config`,
+`pimcore:build:classes` only uses the container config and does not need the database; with an explicit
+`read_target` of type `settings-store` it reads the definitions from the settings store.
 
 For some optional bundles:
 

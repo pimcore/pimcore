@@ -35,25 +35,31 @@ class SettingsStoreSelectOptionsTest extends ModelTestCase
         parent::setUp();
 
         $this->previousConfiguration = Config::getSystemConfiguration();
-
-        $configuration = $this->previousConfiguration;
-        $configuration['config_location']['select_options'] = [
-            'write_target' => ['type' => 'settings-store', 'options' => ['directory' => '/tmp/unused']],
-            'read_target' => ['type' => 'symfony-config', 'options' => ['directory' => '/tmp/unused']],
-        ];
-        $configuration['objects']['select_options']['definitions'] = [
-            'PmeT3964FromContainer' => ['id' => 'PmeT3964FromContainer', 'selectOptions' => []],
-        ];
-        Config::setSystemConfiguration($configuration);
+        $this->configureReadTarget('symfony-config');
     }
 
     protected function tearDown(): void
     {
+        // deleting through the model also clears the runtime cache of the Dao
+        SelectOptionsConfig::getById(self::ID)?->delete();
         SettingsStore::delete(self::ID, self::SCOPE);
         @unlink((new SelectOptionsConfig())->setId(self::ID)->getPhpClassFile());
         Config::setSystemConfiguration($this->previousConfiguration);
 
         parent::tearDown();
+    }
+
+    private function configureReadTarget(string $readTarget): void
+    {
+        $configuration = $this->previousConfiguration;
+        $configuration['config_location']['select_options'] = [
+            'write_target' => ['type' => 'settings-store', 'options' => ['directory' => '/tmp/unused']],
+            'read_target' => ['type' => $readTarget, 'options' => ['directory' => '/tmp/unused']],
+        ];
+        $configuration['objects']['select_options']['definitions'] = [
+            'PmeT3964FromContainer' => ['id' => 'PmeT3964FromContainer', 'selectOptions' => []],
+        ];
+        Config::setSystemConfiguration($configuration);
     }
 
     private function saveOption(): void
@@ -77,7 +83,7 @@ class SettingsStoreSelectOptionsTest extends ModelTestCase
         $this->assertContains('PmeT3964FromContainer', $ids);
     }
 
-    public function testContainerConfigOnlyListingNeedsNoSettingsStore(): void
+    public function testContainerConfigOnlyListingOfSymfonyConfigReadTargetNeedsNoSettingsStore(): void
     {
         $this->saveOption();
 
@@ -85,5 +91,17 @@ class SettingsStoreSelectOptionsTest extends ModelTestCase
         $ids = array_map(static fn (SelectOptionsConfig $config) => $config->getId(), $listing->load());
 
         $this->assertSame(['PmeT3964FromContainer'], $ids);
+    }
+
+    public function testContainerConfigOnlyListingFollowsAnExplicitSettingsStoreReadTarget(): void
+    {
+        $this->configureReadTarget('settings-store');
+        $this->saveOption();
+
+        $listing = (new Listing())->setContainerConfigOnly(true);
+        $ids = array_map(static fn (SelectOptionsConfig $config) => $config->getId(), $listing->load());
+
+        $this->assertContains(self::ID, $ids);
+        $this->assertNotContains('PmeT3964FromContainer', $ids);
     }
 }

@@ -35,7 +35,10 @@ class Listing extends Model\AbstractModel implements IteratorAggregate
     protected bool $containerConfigOnly = false;
 
     /**
-     * Restricts the listing to the definitions of the container config, so it does not need the database.
+     * Restricts the listing to the definitions of the container config, so it does not need the database. Only
+     * applies while the configured read target is symfony-config; any other read target lists as configured.
+     *
+     * @internal
      */
     public function setContainerConfigOnly(bool $containerConfigOnly): static
     {
@@ -44,6 +47,9 @@ class Listing extends Model\AbstractModel implements IteratorAggregate
         return $this;
     }
 
+    /**
+     * @internal
+     */
     public function isContainerConfigOnly(): bool
     {
         return $this->containerConfigOnly;

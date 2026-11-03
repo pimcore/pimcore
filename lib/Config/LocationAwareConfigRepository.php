@@ -263,14 +263,6 @@ class LocationAwareConfigRepository
         ));
     }
 
-    /**
-     * Keys of the container config only, never touches the settings store (and therefore the database).
-     */
-    public function fetchContainerConfigKeys(): array
-    {
-        return array_keys($this->containerConfig);
-    }
-
     public function fetchAllKeysByReadTargets(): array
     {
         if (empty($this->storageConfig[self::READ_TARGET][self::TYPE])) {
@@ -278,7 +270,7 @@ class LocationAwareConfigRepository
         }
 
         if ($this->storageConfig[self::READ_TARGET][self::TYPE] === self::LOCATION_SYMFONY_CONFIG) {
-            return $this->fetchContainerConfigKeys();
+            return array_keys($this->containerConfig);
         }
 
         return array_unique(SettingsStore::getIdsByScope($this->settingsStoreScope));
