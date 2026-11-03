@@ -14,21 +14,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\TokenParser;
 
-use Countable;
-use LogicException;
 use Pimcore\Twig\Node\CacheNode;
-use Pimcore\ValueObject\Collection\ArrayOfStrings;
 use Twig\Error\SyntaxError;
-use Twig\Node\Expression\ArrayExpression;
+use Twig\Node\Expression\AbstractExpression;
+use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 use Twig\TokenStream;
-use ValueError;
-use function count;
 use function in_array;
 use function is_int;
 use function is_null;
+use function is_string;
 use function sprintf;
 
 /**
@@ -41,49 +38,50 @@ class CacheParser extends AbstractTokenParser
         $lineno = $token->getLine();
 
         $stream = $this->parser->getStream();
-        $key = $stream->expect(Token::STRING_TYPE, null, 'Please specify a cache key')->getValue();
+        if ($stream->test(Token::BLOCK_END_TYPE)) {
+            $this->throwSyntaxError('Please specify a cache key', $stream);
+        }
 
-        $expressionParser = $this->parser->getExpressionParser();
+        $key = $this->parser->parseExpression();
 
         $ttl = null;
-        $tags = [];
-        $force = false;
+        $tags = null;
+        $force = null;
         while ($stream->test(Token::NAME_TYPE)) {
             $k = $stream->getCurrent()->getValue();
             $stream->next();
 
-            $args = $expressionParser->parseArguments();
-            $this->validateModifier($args, $k, $stream);
-            $node = $args->getNode('0');
+            $this->validateModifier($k, $stream);
+            $node = $this->parseModifierArgument($k, $stream);
 
             switch ($k) {
                 case 'ttl':
-                    $ttl = $node->getAttribute('value');
-                    if (!is_int($ttl) && ! is_null($ttl)) {
+                    if ($node instanceof ConstantExpression
+                        && !is_int($node->getAttribute('value'))
+                        && !is_null($node->getAttribute('value'))
+                    ) {
                         $this->throwSyntaxError(
                             'The "ttl" modifier requires an integer or null.',
                             $stream
                         );
                     }
+                    $ttl = $node;
 
                     break;
 
                 case 'tags':
-                    try {
-                        $tags = $this->getArrayValue($node);
-                        $tags = new ArrayOfStrings($tags);
-                        $tags = $tags->getValue();
-                    } catch (ValueError|LogicException $e) {
+                    if ($node instanceof ConstantExpression && !is_string($node->getAttribute('value'))) {
                         $this->throwSyntaxError(
                             'The "tags" modifier requires a string or an array of strings.',
                             $stream
                         );
                     }
+                    $tags = $node;
 
                     break;
 
                 case 'force':
-                    $force = (bool) $node->getAttribute('value');
+                    $force = $node;
 
                     break;
             }
@@ -93,7 +91,7 @@ class CacheParser extends AbstractTokenParser
         $body = $this->parser->subparse([$this, 'decideCacheEnd'], true);
         $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
 
-        return new CacheNode($key, $ttl, $tags, $force, $body, $lineno, $this->getTag());
+        return new CacheNode($key, $ttl, $tags, $force, $body, $lineno);
     }
 
     public function decideCacheEnd(Token $token): bool
@@ -106,32 +104,35 @@ class CacheParser extends AbstractTokenParser
         return 'pimcorecache';
     }
 
-    private function getArrayValue(Node $node): array
-    {
-        if ($node instanceof ArrayExpression) {
-            $tags = $node->getKeyValuePairs();
-
-            return array_map(static fn ($pair) => $pair['value']->getAttribute('value'), $tags);
-        }
-
-        return [$node->getAttribute('value')];
-    }
-
     /**
      * @throws SyntaxError
      */
-    private function validateModifier(Countable $args, string $modifierName, TokenStream $stream): void
+    private function validateModifier(string $modifierName, TokenStream $stream): void
     {
         if (!in_array($modifierName, ['ttl', 'tags', 'force'], true)) {
             $this->throwSyntaxError(sprintf('Unknown "%s" configuration.', $modifierName), $stream);
         }
+    }
 
-        if (count($args) !== 1) {
+    /**
+     * Parses `(expression)`, the single argument of a modifier.
+     *
+     * @throws SyntaxError
+     */
+    private function parseModifierArgument(string $modifierName, TokenStream $stream): AbstractExpression
+    {
+        $stream->expect(Token::OPERATOR_TYPE, '(', 'A list of arguments must begin with an opening parenthesis');
+        $argument = $this->parser->parseExpression();
+
+        if (!$stream->test(Token::PUNCTUATION_TYPE, ')')) {
             $this->throwSyntaxError(
-                sprintf('The "%s" modifier takes exactly one argument (%d given).', $modifierName, count($args)),
+                sprintf('The "%s" modifier takes exactly one argument.', $modifierName),
                 $stream
             );
         }
+        $stream->next();
+
+        return $argument;
     }
 
     /**

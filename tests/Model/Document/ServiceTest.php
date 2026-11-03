@@ -118,6 +118,57 @@ class ServiceTest extends ModelTestCase
         }
     }
 
+    /**
+     * Regression test (pimcore/pimcore#17256): a site page and a main site page share the same pretty URL
+     * and the site page has the lower id. A request without a site must resolve to the main site page.
+     *
+     * @see \Pimcore\Model\Document\Service\Dao::getDocumentIdByPrettyUrlOutsideSites()
+     */
+    public function testPrettyUrlOutsideSitesIgnoresDocumentsOfSites(): void
+    {
+        $prettyUrl = '/lorem-' . uniqid();
+
+        $siteRoot = $this->createPage('site-' . uniqid(), 1);
+        $this->createSite($siteRoot, 'site-' . uniqid() . '.example.com');
+
+        $sitePage = $this->createPage('lorem', $siteRoot->getId(), $prettyUrl);
+        $mainPage = $this->createPage('lorem-' . uniqid(), 1, $prettyUrl);
+
+        $this->assertLessThan(
+            $mainPage->getId(),
+            $sitePage->getId(),
+            'The site page is expected to carry the lower id.'
+        );
+
+        $dao = (new Service())->getDao();
+
+        $this->assertSame(
+            $mainPage->getId(),
+            $dao->getDocumentIdByPrettyUrlOutsideSites($prettyUrl),
+            'A request without a site must resolve the pretty URL to the main site page, not to the lower id page of a site.'
+        );
+
+        $this->assertSame(
+            $mainPage->getId(),
+            $dao->getDocumentIdByPrettyUrlOutsideSites($prettyUrl . '/'),
+            'A trailing slash must not change the lookup.'
+        );
+
+        $this->assertSame(
+            0,
+            $dao->getDocumentIdByPrettyUrlOutsideSites('/unknown-' . uniqid()),
+            'An unknown pretty URL must not resolve to a document.'
+        );
+
+        $onlySitePrettyUrl = '/only-site-' . uniqid();
+        $this->createPage('only-site', $siteRoot->getId(), $onlySitePrettyUrl);
+        $this->assertSame(
+            0,
+            $dao->getDocumentIdByPrettyUrlOutsideSites($onlySitePrettyUrl),
+            'A pretty URL that exists only inside a site must not resolve outside of it.'
+        );
+    }
+
     private function createPage(string $key, int $parentId, ?string $prettyUrl = null): Page
     {
         $page = new Page();

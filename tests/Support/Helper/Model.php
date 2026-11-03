@@ -44,6 +44,7 @@ class Model extends AbstractDefinitionHelper
 
             $csField = $this->createDataChild('classificationstore', 'csstore');
             $csField->setStoreId($params['storeId']);
+            $csField->setLocalized((bool) ($params['localized'] ?? false));
             $panel->addChild($csField);
 
             $root->addChild($rootPanel);
@@ -409,6 +410,38 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
             $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a class with a block that contains localized fields.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LocalizedBlock(string $name = 'unittestLocalizedBlock', string $filename = 'localized-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('lfblock');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('input', 'blocklinput'));
+            $block->addChild($lFields);
+
+            $panel->addChild($block);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
         }
 
         return $class;
@@ -785,6 +818,76 @@ class Model extends AbstractDefinitionHelper
         }
 
         return $class;
+    }
+
+    /**
+     * Set up a class with a lazy loading Block inside localizedfields, inheritance enabled.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LazyLocalizedBlock(string $name = 'unittestLazyBlock', string $filename = 'lazy-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lblock = new ClassDefinition\Data\Block();
+            $lblock->setName('lazyblock');
+            $lblock->setLazyLoading(true);
+            $lblock->addChild($this->createDataChild('input', 'lazyblockinput'));
+
+            $lFields->addChild($lblock);
+
+            $panel->addChild($lFields);
+            $panel->addChild($this->createDataChild('fieldcollections', 'lazyfc')
+                ->setAllowedTypes(['LazyBlockFc']));
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a fieldcollection with a lazy loading Block inside localizedfields.
+     *
+     * @throws Exception
+     */
+    public function setupFieldcollection_LazyBlockFc(string $name = 'LazyBlockFc', string $filename = 'lazy-block-fc-import.json'): ?Definition
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lblock = new ClassDefinition\Data\Block();
+            $lblock->setName('lazyblock');
+            $lblock->setLazyLoading(true);
+            $lblock->addChild($this->createDataChild('input', 'lazyblockinput'));
+
+            $lFields->addChild($lblock);
+
+            $panel->addChild($lFields);
+            $root->addChild($rootPanel);
+            $definition = $this->createFieldcollection($name, $root, $filename);
+        }
+
+        return $definition;
     }
 
     protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, ?string $id = null): DataObject\ClassDefinitionInterface

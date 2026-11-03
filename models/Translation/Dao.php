@@ -240,16 +240,27 @@ class Dao extends Model\Dao\AbstractDao
      * createOrUpdateTable(), only created), so a cached `true` is left untouched -
      * otherwise every save() to an already-valid domain would force a redundant
      * re-query on the next isAValidDomain() call.
+     *
+     * While the RuntimeCache is disabled, RuntimeCache::set() ignores writes, so the whole
+     * map is removed instead - the other domains are simply queried again.
      */
     private function resetValidDomainCache(): void
     {
         $domain = $this->model->getDomain();
         $validDomains = $this->getValidDomainsCache();
 
-        if (($validDomains[$domain] ?? null) === false) {
-            unset($validDomains[$domain]);
-            RuntimeCache::set(self::VALID_DOMAINS_CACHE_KEY, $validDomains);
+        if (($validDomains[$domain] ?? null) !== false) {
+            return;
         }
+
+        if (!RuntimeCache::isEnabled()) {
+            RuntimeCache::getInstance()->offsetUnset(self::VALID_DOMAINS_CACHE_KEY);
+
+            return;
+        }
+
+        unset($validDomains[$domain]);
+        RuntimeCache::set(self::VALID_DOMAINS_CACHE_KEY, $validDomains);
     }
 
     protected function updateModificationInfos(): void
