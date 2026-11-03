@@ -87,6 +87,8 @@ class DocumentMoveRedirectTest extends ModelTestCase
             $this->site->delete();
             RuntimeCache::getInstance()->offsetUnset('sites_path_mapping');
         }
+        // saving a page inside a site renders it, which makes that site the current one for the rest of the process
+        (new ReflectionProperty(Site::class, 'currentSite'))->setValue(null, null);
         Pimcore::getEventDispatcher()->removeSubscriber($this->listener);
         foreach ($this->removedListeners as [$eventName, $listener]) {
             Pimcore::getEventDispatcher()->addListener($eventName, $listener);
