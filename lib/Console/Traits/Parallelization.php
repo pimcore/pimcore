@@ -54,7 +54,7 @@ trait Parallelization
             // Not exit(): that would skip the console.terminate event and everything
             // else the Application does after a command. ParallelizationBase::execute()
             // catches this and ends the run.
-            throw new CommandAlreadyRunningException();
+            throw new CommandAlreadyRunningException('The command is already running.');
         }
     }
 
