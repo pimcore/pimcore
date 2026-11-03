@@ -55,7 +55,8 @@ final class Version20261029120000 extends AbstractMigration
                 . 'PRIMARY KEY (`id`), '
                 . 'INDEX `storeId` (`storeId`), '
                 . 'INDEX `name` (`name`), '
-                . 'UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)'
+                . 'UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`), '
+                . 'UNIQUE INDEX `storeId_name` (`storeId`, `name`)'
                 . ') DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
             );
         }
