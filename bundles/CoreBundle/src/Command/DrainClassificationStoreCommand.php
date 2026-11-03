@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService;
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DrainOutcome;
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DrainPairResult;
@@ -51,6 +53,19 @@ class DrainClassificationStoreCommand extends AbstractCommand
 
     private const BACKLOG_LINE = '%s: %d pair(s) to convert';
 
+    /**
+     * How many converted pairs the runtime cache is allowed to accumulate.
+     *
+     * Every pair loads its object, and a loaded object stays registered in the runtime cache -
+     * {@see \Pimcore\Model\DataObject\AbstractObject::getById()} registers it even for a forced
+     * load - so a drain of a whole installation would hold every object it touched. The
+     * parallelization clears the cache once a batch, but the fallback used when the optional
+     * parallelization package is absent has no batches at all: it hands the whole item stream to
+     * the after-batch hook once, at the end, {@see \Pimcore\Console\Traits\ParallelizationBase}.
+     * Counting the pairs here bounds the cache in either case.
+     */
+    public const GARBAGE_INTERVAL = 100;
+
     private int $maxDivergences = self::DEFAULT_MAX_DIVERGENCES;
 
     private int $migratedAt = 0;
@@ -62,6 +77,8 @@ class DrainClassificationStoreCommand extends AbstractCommand
     private int $converted = 0;
 
     private int $alreadyMigrated = 0;
+
+    private int $pairsSinceGarbageCollection = 0;
 
     /**
      * @var array<string, string[]> class id => the pairs that did not compare equal
@@ -112,7 +129,8 @@ class DrainClassificationStoreCommand extends AbstractCommand
 
         // the divergence threshold is per class, so the pairs of one class have to be counted by
         // one process. An operator asking for --processes gets the throughput and a threshold per
-        // worker instead.
+        // worker instead - and a report of the run read back from the backlog rather than from
+        // counters the workers hold, {@see self::report()}.
         if ($input->hasOption('main-process') && $input->getOption('processes') === null) {
             $input->setOption('main-process', true);
         }
@@ -125,9 +143,9 @@ class DrainClassificationStoreCommand extends AbstractCommand
             $this->release();
         }
 
-        $this->report();
+        $remaining = $this->report();
 
-        return $this->haltedClasses === [] ? $status : self::FAILURE;
+        return $this->haltedClasses === [] && $remaining === 0 ? $status : self::FAILURE;
     }
 
     /**
@@ -186,6 +204,20 @@ class DrainClassificationStoreCommand extends AbstractCommand
 
         $result = $this->migrationService->drainPair($class, (int) $objectId, $fieldname, $this->migratedAt);
 
+        $this->recordOutcome($classId, $result);
+
+        $this->collectGarbageAfterInterval($output);
+    }
+
+    /**
+     * Counts what became of one pair.
+     *
+     * The count belongs to the process that converted the pair: with `--processes` that is a
+     * worker, and none of it reaches the process that reports the run - which is why the report
+     * reads its totals back from the backlog instead, {@see self::report()}.
+     */
+    protected function recordOutcome(string $classId, DrainPairResult $result): void
+    {
         match ($result->outcome) {
             DrainOutcome::Converted => $this->converted++,
             DrainOutcome::AlreadyMigrated => $this->alreadyMigrated++,
@@ -201,6 +233,8 @@ class DrainClassificationStoreCommand extends AbstractCommand
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, iterable $items): void
     {
+        // the trait's own hook is what collects garbage once a batch; the interval in
+        // runSingleCommand() is what bounds the runtime cache when there are no batches to speak of
         $this->collectGarbageAfterBatch($input, $output, is_array($items) ? $items : []);
         $this->reportProgress($output);
     }
@@ -228,6 +262,27 @@ class DrainClassificationStoreCommand extends AbstractCommand
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Clears the runtime cache once every {@see self::GARBAGE_INTERVAL} converted pairs, so that
+     * the objects the run has loaded are not held for the length of it.
+     */
+    private function collectGarbageAfterInterval(OutputInterface $output): void
+    {
+        $this->pairsSinceGarbageCollection++;
+
+        if ($this->pairsSinceGarbageCollection < self::GARBAGE_INTERVAL) {
+            return;
+        }
+
+        $this->pairsSinceGarbageCollection = 0;
+
+        if ($output->isVeryVerbose()) {
+            $output->writeln(sprintf('Collect garbage after %d pair(s).', self::GARBAGE_INTERVAL));
+        }
+
+        Pimcore::collectGarbage();
     }
 
     private function recordDivergence(string $classId, DrainPairResult $result): void
@@ -258,10 +313,23 @@ class DrainClassificationStoreCommand extends AbstractCommand
             return;
         }
 
-        $elapsed = max(microtime(true) - $this->startedAt, 0.001);
         $done = $this->converted + $this->alreadyMigrated;
+
+        $this->writeProgress(
+            $output,
+            $done,
+            max($this->backlogSize - $done - $this->countDivergences(), 0)
+        );
+    }
+
+    /**
+     * One line of how far the run has got: the pairs behind it, out of the backlog it announced,
+     * at the rate those took and what that rate makes of the ones in front of it.
+     */
+    private function writeProgress(OutputInterface $output, int $done, int $remaining): void
+    {
+        $elapsed = max(microtime(true) - $this->startedAt, 0.001);
         $rate = $done / $elapsed;
-        $remaining = max($this->backlogSize - $done - $this->countDivergences(), 0);
 
         $output->writeln(sprintf(
             '%d of %d pair(s) converted in %s, rate %s pair(s)/s, estimated %s remaining',
@@ -273,33 +341,97 @@ class DrainClassificationStoreCommand extends AbstractCommand
         ));
     }
 
-    private function report(): void
+    /**
+     * What the run achieved, counted from the EAV rows that are gone rather than from this
+     * process's counters.
+     *
+     * An outcome is counted by the process that converted the pair. With `--processes` that is a
+     * worker, and this - the process that discovered the backlog and reports it - converted
+     * nothing: its counters would report a successful run as `0 of N`, at a rate of zero. What
+     * every process can read back instead is the backlog, which the conversion of a pair empties
+     * by the pair it deletes. A run that drained everything leaves none of it, so what is left is
+     * also the gate: a worker's divergences and a worker's halted class are both pairs still on
+     * EAV, whether or not the process reporting them is the one that found them.
+     *
+     * @return int the pairs still on EAV, 0 in a process that discovered no backlog of its own
+     *
+     * @throws Exception
+     */
+    private function report(): int
     {
-        $this->reportProgress($this->output);
+        // a worker was handed its items and never counted a backlog; the totals of the run are the
+        // discovering process's to print, and it is still running when this one finishes
+        $remaining = $this->backlogSize === 0
+            ? 0
+            : array_sum($this->migrationService->getBacklogSizeByClass($this->getClassId($this->input)));
 
-        if ($this->divergences === []) {
-            $this->io->success(sprintf(
-                '%d pair(s) converted, %d already migrated.',
-                $this->converted,
-                $this->alreadyMigrated
-            ));
-
-            return;
+        if ($this->backlogSize > 0) {
+            $this->writeProgress($this->output, max($this->backlogSize - $remaining, 0), $remaining);
         }
 
-        $this->io->section('Pairs that did not compare equal and were left on EAV');
-        foreach ($this->divergences as $classId => $pairs) {
-            foreach ($pairs as $pair) {
-                $this->io->writeln($classId . ': ' . $pair);
+        if ($this->divergences !== []) {
+            $this->io->section('Pairs that did not compare equal and were left on EAV');
+            foreach ($this->divergences as $classId => $pairs) {
+                foreach ($pairs as $pair) {
+                    $this->io->writeln($classId . ': ' . $pair);
+                }
             }
         }
 
-        $this->io->error(sprintf(
-            '%d pair(s) diverged, %d class(es) halted: %s',
-            $this->countDivergences(),
-            count($this->haltedClasses),
-            implode(', ', array_keys($this->haltedClasses))
-        ));
+        if ($remaining === 0 && $this->divergences === []) {
+            // nothing is left, so the whole backlog is what was drained
+            $this->io->success($this->describeDrained($this->backlogSize));
+
+            return 0;
+        }
+
+        $this->io->error(implode('; ', $this->describeFailure($remaining)));
+
+        return $remaining;
+    }
+
+    /**
+     * The breakdown of a successful run, which only the process that converted the pairs has: the
+     * two counters add up to the drained pairs there, and to nothing in a process that reports a
+     * backlog its workers drained.
+     */
+    private function describeDrained(int $drained): string
+    {
+        // a process that discovered no backlog - a worker - reports the pairs it converted itself
+        if ($this->backlogSize === 0 || $this->converted + $this->alreadyMigrated === $drained) {
+            return sprintf(
+                '%d pair(s) converted, %d already migrated.',
+                $this->converted,
+                $this->alreadyMigrated
+            );
+        }
+
+        return sprintf('%d pair(s) converted.', $drained);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function describeFailure(int $remaining): array
+    {
+        $messages = [];
+
+        if ($this->divergences !== []) {
+            $messages[] = sprintf(
+                '%d pair(s) diverged, %d class(es) halted: %s',
+                $this->countDivergences(),
+                count($this->haltedClasses),
+                implode(', ', array_keys($this->haltedClasses))
+            );
+        }
+
+        if ($remaining > 0) {
+            // with --processes the divergences above are a worker's and were reported by it, so
+            // this is what the run has to be judged on here
+            $messages[] = sprintf('%d pair(s) are still on EAV', $remaining);
+        }
+
+        return $messages;
     }
 
     private function countDivergences(): int

@@ -43,6 +43,12 @@ trait MigrationClassFixtureTrait
     private const COLLECTION_KEY = 'csMigrationCollection';
 
     /**
+     * What MySQL allows a table name to be, which the container prefixes above can carry a class id
+     * past - {@see self::valueTablesOf()}.
+     */
+    private const MAX_IDENTIFIER_LENGTH = 64;
+
+    /**
      * @var string[] every brick key this fixture registered, which is what its tables are named
      *               after and what the runtime cache holds it under
      */
@@ -310,6 +316,12 @@ trait MigrationClassFixtureTrait
     }
 
     /**
+     * The tables a class of this fixture may have, which are the ones its clean-up drops.
+     *
+     * A name longer than what MySQL allows an identifier to be is left out: no such table was ever
+     * created, and `DROP TABLE IF EXISTS` on it is not a no-op but an error - which a long class id
+     * combined with the container prefixes here is enough to reach.
+     *
      * @return string[]
      */
     private function valueTablesOf(string $classId): array
@@ -326,7 +338,10 @@ trait MigrationClassFixtureTrait
             $tables[] = 'object_brick_query_' . $brickKey . '_' . $classId;
         }
 
-        return $tables;
+        return array_values(array_filter(
+            $tables,
+            static fn (string $table): bool => strlen($table) <= self::MAX_IDENTIFIER_LENGTH
+        ));
     }
 
     /**

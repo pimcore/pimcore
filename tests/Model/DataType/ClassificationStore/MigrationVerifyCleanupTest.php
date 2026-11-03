@@ -438,7 +438,7 @@ class MigrationVerifyCleanupTest extends AbstractMigrationTest
      */
     private function insertBatchDocumentRow(int $objectId, int $groupId, string $values): void
     {
-        Db::get()->insert(self::DOCUMENT_TABLE_PREFIX . self::BATCH_CLASS_ID, [
+        $this->insertRow(Db::get(), self::DOCUMENT_TABLE_PREFIX . self::BATCH_CLASS_ID, [
             'id' => $objectId,
             'fieldname' => self::BATCH_FIELD,
             'groupId' => $groupId,

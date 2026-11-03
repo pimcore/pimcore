@@ -470,22 +470,28 @@ pair either wholly on EAV or wholly on documents and never between the two.
 writes the documents if the pair holds none, reads them back, compares the two and only then removes the pair's EAV
 rows. A pair that does not compare equal is a divergence: its document is rolled back, its EAV rows are left in
 place, it is reported with its object id and field name, and the class stops once `--max-divergences` (default: 1)
-is reached - while the next class carries on. The command exits non-zero when any class stopped that way. There is
-no cursor: a re-run reads its backlog from the EAV rows that are left.
+is reached - while the next class carries on. **The command exits non-zero when any pair is left on EAV**, which a
+divergence and a stopped class both are. There is no cursor: a re-run reads its backlog from the EAV rows that are
+left.
 
 The pair the drain locks first is the object's row, which is the lock an ordinary save takes first as well, so a
 save and a drain of the same object queue on each other rather than deadlocking on opposite orders. What it reads
 up front is one pending-pair count per class - that is the order the run goes in, smallest class first - and the
 pairs of a class are then read from its value tables a bounded batch at a time, so the backlog of an installation
-is never held in the process at once. The progress bar of `--processes` therefore has no total; the
-`n of m pair(s) converted` line the drain prints does, from those counts.
+is never held in the process at once. The objects it loads are not held either: converting a pair loads its object,
+and the runtime cache is cleared every hundred pairs so that a run does not grow by the objects behind it. The
+progress bar of `--processes` therefore has no total; the `n of m pair(s) converted` line the drain prints does,
+from those counts.
 
 While it runs the drain reports the pairs it converted, the time that took, the rate that works out to and how long
 the rest would take at that rate, so "how long for millions of values" is answered from the installation's own
 hardware rather than from a figure of ours. `--dry-run` reports the backlog of every class and converts nothing.
 Without `--processes` the drain runs in the main process, because the divergence threshold is per class and has to
-be counted in one place; `--processes` trades that for throughput and counts the threshold per worker. Batching,
-throttling and the run lock come from `Pimcore\Console\Traits\Parallelization`.
+be counted in one place; `--processes` trades that for throughput and counts the threshold per worker. The totals
+of the run and its exit code do not depend on that choice: what a pair became is counted in the process that
+converted it, so the figures at the end are read back from the backlog the conversions emptied rather than from
+counters a worker holds. Batching, throttling and the run lock come from
+`Pimcore\Console\Traits\Parallelization`.
 
 **Every document row carries a `sha1` of its `values` column in `checksum`**, written by the drain and by an
 ordinary save alike. `migratedAt` is written by the drain alone, so a document with no `migratedAt` was created by a

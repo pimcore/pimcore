@@ -514,6 +514,15 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * of converting the field's values. The ancestor's own mappings are read from the pair instead,
      * {@see self::readCollectionMapping()}, which is the row the getter would have led to.
      *
+     * An ancestor that maps a group to no collection takes part in the union with a null entry and
+     * is only dropped once the union is complete. The model merges the chain the same way: an entry
+     * holding null is still an entry, so it shadows the collection a more distant ancestor maps the
+     * group to and the group is then no inherited mapping at all - which the child has to store
+     * itself rather than leave to its parents. Dropping the null before the union would let the
+     * distant ancestor answer in its place and the child's own mapping be left out of its document,
+     * so that reading the child back would give the parent's null instead of the collection it was
+     * saved with.
+     *
      * @return array<int, int> groupId => collectionId
      *
      * @throws Exception
@@ -532,7 +541,9 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $object = $parent;
         }
 
-        return $mappings;
+        // what the nearest ancestor holding the group answers is in hand now: a null of its is no
+        // collection to inherit, and has shadowed the ancestors behind it already
+        return array_filter($mappings, static fn (?int $collectionId): bool => $collectionId !== null);
     }
 
     /**
@@ -542,16 +553,26 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * table does not activate contributes nothing, which is the rule {@see EavEngine::load()}
      * applies there.
      *
-     * A null collection is no mapping to inherit: it can be neither the collection an object shares
-     * with this ancestor nor the one the drain's comparison is looking for.
+     * Each side answers the entries its own load puts on the model, because that is what the
+     * ancestor would contribute to the union the model builds:
      *
-     * @return array<int, int> groupId => collectionId
+     * - a document row that holds no collection is left out, the way
+     *   {@see self::applyDocumentRows()} leaves it out. An active group always has a row here, and
+     *   that row carries null precisely when the mapping is an ancestor's to answer, so an entry
+     *   of null would shadow the very mapping the row was written empty for.
+     * - an EAV group mapped to no collection is an entry holding null, the way
+     *   {@see EavEngine::load()} keeps it. Nothing there distinguishes "mapped to nothing" from
+     *   "the parent's to answer", so such an entry shadows the collection a more distant ancestor
+     *   maps the group to - and is dropped by the caller once it has done that shadowing,
+     *   {@see self::getInheritedCollectionMappings()}.
+     *
+     * @return array<int, int|null> groupId => collectionId, null for an EAV group mapped to none
      *
      * @throws Exception
      */
     private function readCollectionMapping(string $classId, int $objectId, string $fieldname): array
     {
-        $rows = $this->fetchCollectionMappingRows(
+        $documentRows = $this->fetchCollectionMappingRows(
             'SELECT `groupId`, `collectionId` FROM '
             . $this->db->quoteIdentifier($this->getDocumentTableName($classId))
             . ' WHERE `id` = ? AND `fieldname` = ?',
@@ -559,25 +580,36 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $fieldname
         );
 
-        if ($rows === []) {
-            $dataTable = $this->db->quoteIdentifier($this->eavEngine->getDataTableName($classId));
-            $groupsTable = $this->db->quoteIdentifier($this->eavEngine->getGroupsTableName($classId));
+        if ($documentRows !== []) {
+            $mapping = [];
 
-            $rows = $this->fetchCollectionMappingRows(
-                'SELECT d.`groupId`, d.`collectionId` FROM ' . $dataTable . ' d INNER JOIN '
-                . $groupsTable . ' g ON g.`id` = d.`id` AND g.`fieldname` = d.`fieldname`'
-                . ' AND g.`groupId` = d.`groupId` WHERE d.`id` = ? AND d.`fieldname` = ?',
-                $objectId,
-                $fieldname
-            );
+            foreach ($documentRows as $row) {
+                if ($row['collectionId'] !== null) {
+                    $mapping[(int) $row['groupId']] = (int) $row['collectionId'];
+                }
+            }
+
+            return $mapping;
         }
+
+        $dataTable = $this->db->quoteIdentifier($this->eavEngine->getDataTableName($classId));
+        $groupsTable = $this->db->quoteIdentifier($this->eavEngine->getGroupsTableName($classId));
+
+        $eavRows = $this->fetchCollectionMappingRows(
+            'SELECT d.`groupId`, d.`collectionId` FROM ' . $dataTable . ' d INNER JOIN '
+            . $groupsTable . ' g ON g.`id` = d.`id` AND g.`fieldname` = d.`fieldname`'
+            . ' AND g.`groupId` = d.`groupId` WHERE d.`id` = ? AND d.`fieldname` = ?',
+            $objectId,
+            $fieldname
+        );
 
         $mapping = [];
 
-        foreach ($rows as $row) {
-            if ($row['collectionId'] !== null) {
-                $mapping[(int) $row['groupId']] = (int) $row['collectionId'];
-            }
+        foreach ($eavRows as $row) {
+            // the rows of one group are read in no particular order and the last of them is what
+            // EavEngine::load() leaves on the model, which is the value taken here as well; a group
+            // whose rows disagree is the drain's to report, not this read's to resolve
+            $mapping[(int) $row['groupId']] = $row['collectionId'] === null ? null : (int) $row['collectionId'];
         }
 
         return $mapping;

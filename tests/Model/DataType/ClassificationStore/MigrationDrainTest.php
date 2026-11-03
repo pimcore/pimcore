@@ -14,12 +14,15 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Bundle\CoreBundle\Command\DrainClassificationStoreCommand;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService;
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DrainOutcome;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DrainPairResult;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Folder;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -65,6 +68,15 @@ class MigrationDrainTest extends AbstractMigrationTest
     private const BATCHED_CLASS_ID = 'CsMigrationBatchedBacklog';
 
     private const BATCHED_PAIRS = 201;
+
+    /**
+     * A class carrying one pair more than the drain's garbage-collection interval, so that the
+     * interval goes by while the pairs are being converted. The pairs are field names of one object
+     * again, which is the cheap way to hold a hundred of them.
+     */
+    private const GARBAGE_CLASS_ID = 'CsMigrationGarbageInterval';
+
+    private const GARBAGE_PAIRS = DrainClassificationStoreCommand::GARBAGE_INTERVAL + 1;
 
     protected function tearDown(): void
     {
@@ -180,7 +192,7 @@ class MigrationDrainTest extends AbstractMigrationTest
         $result = $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT);
 
         $this->assertSame(DrainOutcome::Diverged, $result->outcome);
-        $this->assertStringContainsString('does not account for', (string) $result->divergence);
+        $this->assertStringContainsString('do not account for', (string) $result->divergence);
         $this->assertSame($eavRows, $this->countEavRowsFor($objectId), 'the newer values are not deleted');
         $this->assertSame($converted, $this->readDocumentRows($objectId), 'and nothing is written over them');
     }
@@ -215,7 +227,7 @@ class MigrationDrainTest extends AbstractMigrationTest
         $result = $service->drainPair($this->getClass(), $objectId, self::FIELDNAME, self::MIGRATED_AT);
 
         $this->assertSame(DrainOutcome::Diverged, $result->outcome);
-        $this->assertStringContainsString('does not account for', (string) $result->divergence);
+        $this->assertStringContainsString('do not account for', (string) $result->divergence);
         $this->assertSame($eavRows, $this->countEavRowsFor($objectId), "'00123' is not '123'");
         $this->assertSame($converted, $this->readDocumentRows($objectId));
     }
@@ -527,9 +539,166 @@ class MigrationDrainTest extends AbstractMigrationTest
         );
     }
 
+    /**
+     * Every pair loads its object, and a loaded object stays registered in the runtime cache - so a
+     * drain of an installation's backlog would hold every object it had touched. The parallelization
+     * clears the cache once a batch, which an install without the optional parallelization package
+     * reaches only once, after the whole item stream: the drain therefore counts the pairs itself
+     * and clears the cache on the interval, in whichever of the two it is running.
+     */
+    public function testTheRuntimeCacheIsClearedOnAnIntervalWhileThePairsAreConverted(): void
+    {
+        $class = $this->setUpGarbageIntervalClass();
+
+        $tester = new CommandTester($this->drainCommand());
+        $tester->execute(
+            ['--class' => self::GARBAGE_CLASS_ID],
+            ['interactive' => false, 'verbosity' => OutputInterface::VERBOSITY_VERY_VERBOSE]
+        );
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+
+        $this->assertSame(
+            1,
+            substr_count(
+                $tester->getDisplay(),
+                sprintf('Collect garbage after %d pair(s).', DrainClassificationStoreCommand::GARBAGE_INTERVAL)
+            ),
+            'the one interval the backlog goes past was collected on, while the pairs were converting'
+        );
+
+        $this->assertSame([], $this->pendingPairs($class), 'and the whole backlog converted');
+    }
+
+    /**
+     * With `--processes` the pairs are converted in worker processes, and the outcome of a pair is
+     * counted in the process that converted it. The process that discovered the backlog and prints
+     * the report is not that process: its own counters stay at zero, and a report taken from them
+     * would announce a successful run as `0 of 2 pair(s)` at a rate of nothing per second.
+     *
+     * Real workers cannot be spawned from here - the command runs through a CommandTester, with no
+     * console application for the parallelization to build a child command line from - so what this
+     * runs is a drain whose outcomes are recorded where the reporting process cannot see them,
+     * which is what a worker's are.
+     */
+    public function testTheTotalsDoNotDependOnTheProcessThatConvertedThePairs(): void
+    {
+        $first = $this->createObjectWithValue(self::INPUT_KEY, 'first', 'worker-first');
+        $second = $this->createObjectWithValue(self::INPUT_KEY, 'second', 'worker-second');
+
+        $this->flipStore();
+
+        $tester = new CommandTester($this->workerDrainCommand());
+        $tester->execute(['--class' => $this->getClassId()], ['interactive' => false]);
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+
+        // the progress line of a batch is the counters of the process running the batch, which is
+        // why this run reports `0 of 2` on its way through and the totals are not taken from there
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('2 of 2 pair(s) converted in', $display);
+        $this->assertStringContainsString('2 pair(s) converted.', $display);
+
+        // and the pairs the report counted really did convert
+        $this->assertSame([], $this->pendingPairs($this->getClass()));
+        $this->assertNotSame([], $this->readDocumentRows((int) $first->getId()));
+        $this->assertNotSame([], $this->readDocumentRows((int) $second->getId()));
+    }
+
+    /**
+     * A pair a worker left on EAV fails the run as well, though the divergence that left it there
+     * was reported in the worker: what is left of the backlog is read back here, and a run that did
+     * not empty it exits non-zero.
+     */
+    public function testAPairLeftOnEavByAWorkerFailsTheRun(): void
+    {
+        // the value tables carry a foreign key on `objects`, which a folder satisfies: the pair is
+        // then one no concrete object answers, which is a divergence
+        $folder = new Folder();
+        $folder->setParentId(1);
+        $folder->setKey('worker-divergence-folder');
+        $folder->save();
+
+        $object = $this->createObjectWithValue(self::INPUT_KEY, 'converts fine', 'worker-divergence');
+
+        $this->flipStore();
+        $this->seedEavRows((int) $folder->getId(), 'a row no object answers');
+
+        $tester = new CommandTester($this->workerDrainCommand());
+        $tester->execute(['--class' => $this->getClassId()], ['interactive' => false]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('1 pair(s) are still on EAV', $tester->getDisplay());
+
+        // the pair that diverged kept its rows, and the one behind it converted all the same
+        $this->assertGreaterThan(0, $this->countEavRowsFor((int) $folder->getId()));
+        $this->assertSame([], $this->readDocumentRows((int) $folder->getId()));
+        $this->assertSame(0, $this->countEavRowsFor((int) $object->getId()));
+    }
+
     private function drainCommand(): DrainClassificationStoreCommand
     {
         return new DrainClassificationStoreCommand($this->getMigrationService());
+    }
+
+    /**
+     * The command as the process that discovers a backlog its workers convert: the pairs are
+     * drained, and what became of each of them is counted in a process this one does not share.
+     */
+    private function workerDrainCommand(): DrainClassificationStoreCommand
+    {
+        return new class($this->getMigrationService()) extends DrainClassificationStoreCommand {
+            public function __construct(DocumentEngineMigrationService $migrationService)
+            {
+                parent::__construct($migrationService);
+
+                // an anonymous class does not inherit the #[AsCommand] attribute of the class it
+                // extends, and the run lock is taken on the name that attribute carries
+                $this->setName('pimcore:classificationstore:drain');
+            }
+
+            protected function recordOutcome(string $classId, DrainPairResult $result): void
+            {
+                // counted in the worker that converted the pair
+            }
+        };
+    }
+
+    /**
+     * One class holding one pair more than the garbage-collection interval, on one object.
+     */
+    private function setUpGarbageIntervalClass(): ClassDefinition
+    {
+        $storeId = $this->createMigrationStore();
+        $groupId = $this->createMigrationGroup($storeId);
+        $keyId = $this->createMigrationKey($storeId, $groupId);
+
+        $fieldNames = [];
+        for ($index = 0; $index < self::GARBAGE_PAIRS; $index++) {
+            $fieldNames[] = sprintf('csGarbage%03d', $index);
+        }
+
+        $class = $this->saveMigrationClass(
+            self::GARBAGE_CLASS_ID,
+            array_map(fn (string $name) => $this->migrationStoreField($name, $storeId), $fieldNames)
+        );
+
+        $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, 'unrelated', 'garbage-owner')->getId();
+
+        foreach ($fieldNames as $fieldname) {
+            $this->seedMigrationEavRows(
+                self::GARBAGE_CLASS_ID,
+                $objectId,
+                $fieldname,
+                $groupId,
+                $keyId,
+                'value of ' . $fieldname
+            );
+        }
+
+        $this->flipMigrationStore($storeId);
+
+        return $class;
     }
 
     /**

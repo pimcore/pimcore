@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Doctrine\DBAL\Connection;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -207,6 +208,24 @@ abstract class AbstractMigrationTest extends AbstractClassificationStoreTest
     protected function getGroupsTable(): string
     {
         return self::GROUPS_TABLE_PREFIX . $this->getClassId();
+    }
+
+    /**
+     * Inserts one row with its column names quoted, which a document row has to have: `values` is a
+     * reserved word, and Doctrine's `insert()` puts the column names into the statement as they are
+     * - so a document row written through that errors with a syntax error rather than being written.
+     *
+     * @param array<string, mixed> $row column => value
+     */
+    protected function insertRow(Connection $db, string $table, array $row): void
+    {
+        $columns = array_map($db->quoteIdentifier(...), array_keys($row));
+
+        $db->executeStatement(
+            'INSERT INTO ' . $db->quoteIdentifier($table) . ' (' . implode(', ', $columns) . ')'
+            . ' VALUES (' . implode(', ', array_fill(0, count($row), '?')) . ')',
+            array_values($row)
+        );
     }
 
     protected function countRows(string $table, ?string $fieldname = null): int

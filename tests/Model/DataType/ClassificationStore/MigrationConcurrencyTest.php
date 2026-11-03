@@ -105,14 +105,16 @@ class MigrationConcurrencyTest extends AbstractMigrationTest
             );
 
             $this->assertHeldAgainstTheOtherConnection(
-                fn (Connection $other): mixed => $other->insert($this->getDocumentTable(), [
-                    'id' => $objectId,
-                    'fieldname' => self::FIELDNAME,
-                    'groupId' => $this->getGroupId(),
-                    'collectionId' => null,
-                    'values' => '{}',
-                    'checksum' => sha1('{}'),
-                ])
+                function (Connection $other) use ($objectId): void {
+                    $this->insertRow($other, $this->getDocumentTable(), [
+                        'id' => $objectId,
+                        'fieldname' => self::FIELDNAME,
+                        'groupId' => $this->getGroupId(),
+                        'collectionId' => null,
+                        'values' => '{}',
+                        'checksum' => sha1('{}'),
+                    ]);
+                }
             );
         } finally {
             $db->rollBack();
@@ -313,7 +315,7 @@ class MigrationConcurrencyTest extends AbstractMigrationTest
      */
     private function convertOnTheOtherConnection(Connection $other, int $objectId, string $document): void
     {
-        $other->insert($this->getDocumentTable(), [
+        $this->insertRow($other, $this->getDocumentTable(), [
             'id' => $objectId,
             'fieldname' => self::FIELDNAME,
             'groupId' => $this->getGroupId(),
