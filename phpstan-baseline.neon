@@ -42,12 +42,6 @@ parameters:
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
-			path: bundles/CoreBundle/src/Controller/WebDavController.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
 			path: bundles/CoreBundle/src/DependencyInjection/Compiler/SerializerPass.php
 
 		-

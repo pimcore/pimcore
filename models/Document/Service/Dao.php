@@ -15,6 +15,7 @@ namespace Pimcore\Model\Document\Service;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Model\Site;
 
 /**
@@ -48,6 +49,39 @@ class Dao extends Model\Dao\AbstractDao
 
         foreach ($candidates as $candidate) {
             if (!$this->isPathBelowAnyPath((string) $candidate['fullPath'], $nestedSiteRootPaths)) {
+                return (int) $candidate['id'];
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Resolves a pretty URL to a document of the main site, i.e. one that is not located below the
+     * root of any site. Used for requests without a site, where the global pretty URL lookup may
+     * return the document of a site that carries the same pretty URL.
+     */
+    public function getDocumentIdByPrettyUrlOutsideSites(string $path): int
+    {
+        $candidates = $this->db->fetchAllAssociative(
+            'SELECT documents.id, CONCAT(documents.`path`, documents.`key`) AS fullPath FROM documents
+            INNER JOIN documents_page ON documents.id = documents_page.id
+            WHERE documents_page.prettyUrl = :prettyUrl
+            ORDER BY documents.id',
+            ['prettyUrl' => Element\Service::correctPath($path)]
+        );
+
+        if ($candidates === []) {
+            return 0;
+        }
+
+        $siteRootPaths = $this->db->fetchFirstColumn(
+            'SELECT CONCAT(documents.`path`, documents.`key`) FROM sites
+            INNER JOIN documents ON sites.rootId = documents.id'
+        );
+
+        foreach ($candidates as $candidate) {
+            if (!$this->isPathBelowAnyPath((string) $candidate['fullPath'], $siteRootPaths)) {
                 return (int) $candidate['id'];
             }
         }
