@@ -31,11 +31,41 @@ key can only be added once to that object.
 A classification store does not get a database column per key. Every key of every group is stored as one row of the
 store's data table, which offers two generic columns for the value: `value` and `value2`.
 
-A data type whose value normalizes to a single scalar therefore works out of the box - this covers most of the simple
-types such as `input`, `textarea`, `numeric`, `date` or `select`.
+A data type whose value normalizes to a single scalar therefore works out of the box. A data type that normalizes to
+more than one value needs a marshaller that folds it into the two columns (see below).
 
-A data type that normalizes to more than one value needs a marshaller that folds it into the two columns, registered
-with the key `classificationstore_<fieldtype>`:
+### Data types that can be used as a key
+
+| Stored directly | Stored through a marshaller |
+|---|---|
+| `calculatedValue` | `booleanSelect` |
+| `checkbox` | `countrymultiselect` |
+| `country` | `encryptedField` |
+| `date` | `inputQuantityValue` |
+| `datetime` | `languagemultiselect` |
+| `input` | `multiselect` |
+| `language` | `numericRange` |
+| `numeric` | `quantityValue` |
+| `password` | `quantityValueRange` |
+| `select` | `rgbaColor` |
+| `slider` | `table` |
+| `textarea` | |
+| `time` | |
+| `user` | |
+| `wysiwyg` | |
+
+Notes:
+
+* `calculatedValue` is not persisted, its value is computed when the key is read.
+* `encryptedField` wraps another data type, which has to be one of the types listed above.
+* `inputQuantityValueRange` is handled by the store as well, but the Studio key editor does not offer it.
+* Which of these types the key editor offers depends on the admin UI in use. The store itself accepts any type that
+  satisfies the persistence contract described below, including custom ones.
+
+### Supporting a custom data type
+
+A data type that normalizes to more than one value needs a marshaller registered with the key
+`classificationstore_<fieldtype>`:
 
 ```yaml
 services:
@@ -72,10 +102,6 @@ class MyType implements MarshallerInterface
 Both columns are `LONGTEXT`, so numbers come back as strings and have to be cast in `unmarshal()` if the data type
 expects them typed. A type that needs more than two values can serialize them into `value`, as `quantityValueRange`
 does.
-
-The core ships marshallers for `booleanSelect`, `encryptedField`, `multiselect` (including the country and language
-variants), `rgbaColor`, `table`, `quantityValue`, `inputQuantityValue`, `quantityValueRange`, `inputQuantityValueRange`
-and `numericRange`.
 
 
 ## Configuration of Classification Stores
