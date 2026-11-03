@@ -849,8 +849,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         } elseif ($object instanceof DataObject\Localizedfield) {
 
-            $context = $params['context'];
-            $object = $context['object'];
+            $context = $params['context'] ?? $object->getContext();
+            $object = $context['object'] ?? $object->getObject();
             $containerType = $context['containerType'] ?? null;
 
             if ($containerType === 'fieldcollection') {
