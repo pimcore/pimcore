@@ -71,7 +71,7 @@ The strict policy rejects `javascript:`/`vbscript:` paths and most `data:` URIs 
 editor-supplied attribute keys that look like an event handler (`on*`) or aren't shaped like a
 conventional HTML attribute name. By default (both the permissive and the strict policy), the editable's own bookkeeping
 data (`path`, `linktype`, `text`, `parameters`, `anchor`, `internal*`, `fullPath`, `direct`) is not emitted as attributes
-on the `<a>` tag, as these are not valid HTML attributes. Until 2026.3.3 the permissive default still rendered them
+on the `<a>` tag, as these are not valid HTML attributes. Before Pimcore 2026.4.0 the permissive default still rendered them
 (e.g. `linktype="direct"`); a custom policy can restore that with `omitInternalDataAttributes: false`. An installed policy
 replaces the configured one, so on a site with `strict: true` pass the strict flags to it as well, otherwise the strict
 protection is off.
