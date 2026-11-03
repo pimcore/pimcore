@@ -17,7 +17,9 @@ namespace Pimcore\Tests\Unit\Console;
 use Codeception\Test\Unit;
 use Pimcore;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\Exception\CommandAlreadyRunningException;
 use Pimcore\Console\Traits\Parallelization;
+use Pimcore\Console\Traits\ParallelizationFallback;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
@@ -69,6 +71,32 @@ class ParallelizationLockTest extends Unit
         $lock->release();
     }
 
+    /**
+     * The sequential variant ParallelizationBase falls back to without webmozarts/console-parallelization
+     * (a require-dev package): tested through its own trait, so CI runs it whether the package is installed or not.
+     */
+    public function testFallbackVariantEndsWithSuccessWhenTheCommandIsAlreadyRunning(): void
+    {
+        $command = new ParallelizationFallbackTestCommand();
+        $command->alreadyRunning = true;
+        $tester = $this->runCommand($command);
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(Command::SUCCESS, $this->terminateExitCode, 'console.terminate was not dispatched');
+        $this->assertSame([], $command->processed);
+        $this->assertFalse($command->afterLastCommandRan, 'the run must end before the items and the cleanup');
+    }
+
+    public function testFallbackVariantProcessesItems(): void
+    {
+        $command = new ParallelizationFallbackTestCommand();
+        $tester = $this->runCommand($command);
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertSame(['a', 'b'], $command->processed);
+        $this->assertTrue($command->afterLastCommandRan);
+    }
+
     private function runCommand(Command $command): ApplicationTester
     {
         $dispatcher = new EventDispatcher();
@@ -107,6 +135,45 @@ class ParallelizationLockTestCommand extends AbstractCommand
     {
         $this->setName('test:parallelization-lock');
         self::configureCommand($this);
+    }
+
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
+    {
+        return ['a', 'b'];
+    }
+
+    protected function runSingleCommand(string $item, InputInterface $input, OutputInterface $output): void
+    {
+        $this->processed[] = $item;
+    }
+}
+
+class ParallelizationFallbackTestCommand extends AbstractCommand
+{
+    use ParallelizationFallback;
+
+    public bool $alreadyRunning = false;
+
+    public bool $afterLastCommandRan = false;
+
+    /** @var list<string> */
+    public array $processed = [];
+
+    protected function configure(): void
+    {
+        $this->setName('test:parallelization-lock');
+    }
+
+    protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
+    {
+        if ($this->alreadyRunning) {
+            throw new CommandAlreadyRunningException();
+        }
+    }
+
+    protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
+    {
+        $this->afterLastCommandRan = true;
     }
 
     protected function fetchItems(InputInterface $input, OutputInterface $output): array

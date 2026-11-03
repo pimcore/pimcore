@@ -49,34 +49,7 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
 } else {
     trait ParallelizationBase
     {
-        public function execute(InputInterface $input, OutputInterface $output): int
-        {
-            try {
-                $this->runBeforeFirstCommand($input, $output);
-            } catch (CommandAlreadyRunningException) {
-                return Command::SUCCESS;
-            }
-
-            $items = $this->fetchItems($input, $output);
-
-            //Method executed before executing all the items
-            if (method_exists($this, 'runBeforeBatch')) {
-                $this->runBeforeBatch($input, $output, $items);
-            }
-
-            foreach ($items as $item) {
-                $this->runSingleCommand(trim((string)$item), $input, $output);
-            }
-
-            //Method executed after executing all the items
-            if (method_exists($this, 'runAfterBatch')) {
-                $this->runAfterBatch($input, $output, $items);
-            }
-
-            $this->runAfterLastCommand($input, $output);
-
-            return 0;
-        }
+        use ParallelizationFallback;
 
         protected static function configureCommand(Command $command): void
         {
