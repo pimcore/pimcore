@@ -309,6 +309,25 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertNull($value1->getMinimum());
         $this->assertEquals(7, $value1->getMaximum());
 
+        // the same the other way round: checkValidity() compares the boundaries against each
+        // other, and an unguarded "7 > null" rejected a range that only carries a minimum
+        $o->getCsstore()->setLocalizedKeyValue(
+            $groupConfig->getId(),
+            $keyConfig->getId(),
+            new NumericRange(7, null)
+        );
+        $o->save();
+
+        Cache::clearAll();
+        Cache\RuntimeCache::clear();
+
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
+        /** @var NumericRange $value1 */
+        $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertInstanceOf(NumericRange::class, $value1);
+        $this->assertEquals(7, $value1->getMinimum());
+        $this->assertNull($value1->getMaximum());
+
         // nullify field
         $o->getCsstore()->setLocalizedKeyValue(
             $groupConfig->getId(),
