@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Config;
 
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Db;
+use Pimcore\Model\Asset\Video\Thumbnail\Config\Listing as VideoThumbnailListing;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
@@ -81,12 +82,13 @@ class LocationAwareConfigRepositoryTest extends ModelTestCase
         }
 
         $this->changeBehindTheBack('config-1', ['a' => 'changed']);
+        $this->changeBehindTheBack('config-2', ['a' => 'changed']);
 
         // the listing loaded the entries: no query, so the change is not seen
         $this->assertSame([['a' => 1], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $repository->loadConfigByKey('config-1'));
         $this->assertSame([['a' => 3], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $repository->loadConfigByKey('123'));
         // a new repository of the same scope, as every config model creates one, shares them
-        $this->assertSame([['a' => 1], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $this->createRepository(null)->loadConfigByKey('config-1'));
+        $this->assertSame([['a' => 2], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $this->createRepository(null)->loadConfigByKey('config-2'));
 
         // the container config still takes precedence, and missing keys behave as before
         $this->assertSame([['a' => 'container'], LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG], $repository->loadConfigByKey('from-container'));
@@ -112,6 +114,59 @@ class LocationAwareConfigRepositoryTest extends ModelTestCase
         ]);
 
         $this->assertSame([['a' => 2], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $repository->loadConfigByKey('config-2'));
+    }
+
+    public function testSettingsStoreReadTargetLoadsTheEntriesAtOnce(): void
+    {
+        $repository = $this->createRepository(LocationAwareConfigRepository::LOCATION_SETTINGS_STORE);
+        $repository->saveConfig('config-1', ['a' => 1]);
+        $repository->saveConfig('config-2', ['a' => 2]);
+
+        $this->assertEqualsCanonicalizing(['config-1', 'config-2'], $repository->fetchAllKeysByReadTargets());
+        $this->changeBehindTheBack('config-1', ['a' => 'changed']);
+
+        // answered from the entries the listing loaded, not by a query per key
+        $this->assertSame([['a' => 1], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $repository->loadConfigByKey('config-1'));
+    }
+
+    public function testListingOnlyTheKeysLoadsNoEntries(): void
+    {
+        $repository = $this->createRepository(null, ['from-container' => ['a' => 'container']]);
+        $repository->saveConfig('config-1', ['a' => 1]);
+
+        $this->assertEqualsCanonicalizing(['config-1', 'from-container'], $repository->fetchAllKeys(false));
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('config-1', self::SCOPE));
+        $this->changeBehindTheBack('config-1', ['a' => 'changed']);
+        $this->assertSame([['a' => 'changed'], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $repository->loadConfigByKey('config-1'));
+    }
+
+    public function testCountingAConfigListingLoadsNoEntries(): void
+    {
+        $scope = 'pimcore_video_thumbnails';
+        $existing = count(SettingsStore::getIdsByScope($scope));
+        SettingsStore::set('pme-count-only', json_encode(['name' => 'pme-count-only']), SettingsStore::TYPE_STRING, $scope);
+
+        try {
+            $listing = new VideoThumbnailListing();
+            $this->assertSame($existing + 1, $listing->getTotalCount());
+            $this->assertNull(SettingsStore::getFromScopeSnapshot('pme-count-only', $scope));
+        } finally {
+            SettingsStore::delete('pme-count-only', $scope);
+        }
+    }
+
+    public function testEntriesAreReleasedOnceLoaded(): void
+    {
+        $repository = $this->createRepository(null);
+        $repository->saveConfig('config-1', ['a' => 1]);
+
+        $repository->fetchAllKeys();
+        $this->assertSame([['a' => 1], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $repository->loadConfigByKey('config-1'));
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('config-1', self::SCOPE));
+
+        // the next read is a query again
+        $this->changeBehindTheBack('config-1', ['a' => 'changed']);
+        $this->assertSame([['a' => 'changed'], LocationAwareConfigRepository::LOCATION_SETTINGS_STORE], $repository->loadConfigByKey('config-1'));
     }
 
     public function testWritesDropTheLoadedEntries(): void

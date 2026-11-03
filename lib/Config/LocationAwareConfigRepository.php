@@ -257,10 +257,13 @@ class LocationAwareConfigRepository
         $this->stopMessengerWorkers();
     }
 
-    public function fetchAllKeys(): array
+    /**
+     * @param bool $loadEntries false when only the keys are needed (a count): the settings store entries are then not loaded
+     */
+    public function fetchAllKeys(bool $loadEntries = true): array
     {
         return array_unique(array_merge(
-            $this->fetchSettingsStoreKeys(),
+            $this->fetchSettingsStoreKeys($loadEntries),
             array_keys($this->containerConfig)
         ));
     }
@@ -282,10 +285,10 @@ class LocationAwareConfigRepository
      * settings store, the entries are loaded together with their ids, in the same single
      * query, and getDataFromSettingsStore() takes them from there.
      */
-    private function fetchSettingsStoreKeys(): array
+    private function fetchSettingsStoreKeys(bool $loadEntries = true): array
     {
         $readTarget = $this->storageConfig[self::READ_TARGET][self::TYPE] ?? null;
-        if (!$readTarget || $readTarget === self::LOCATION_SETTINGS_STORE) {
+        if ($loadEntries && (!$readTarget || $readTarget === self::LOCATION_SETTINGS_STORE)) {
             return SettingsStore::loadScopeSnapshot($this->settingsStoreScope);
         }
 

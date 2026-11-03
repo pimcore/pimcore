@@ -64,8 +64,10 @@ final class SettingsStore extends Model\AbstractModel
 
     /**
      * Entries of a scope as loaded by {@see self::loadScopeSnapshot()}, by scope and id.
+     * A row leaves the snapshot when {@see self::getFromScopeSnapshot()} returns it.
+     * Ids that are numeric strings become int keys.
      *
-     * @var array<string, array<string, array<string, mixed>>>
+     * @var array<string, array<int|string, array<string, mixed>>>
      */
     private static array $scopeSnapshots = [];
 
@@ -174,7 +176,8 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * Returns an entry from the snapshot taken by {@see self::loadScopeSnapshot()}.
+     * Returns an entry from the snapshot taken by {@see self::loadScopeSnapshot()} and releases its row:
+     * an entry is handed out once, the caller is expected to keep what it decoded from it.
      *
      * Null means that the entry is not in a snapshot - either no snapshot of the scope
      * exists, or the entry did not exist when it was taken. Use {@see self::get()} then.
@@ -187,6 +190,7 @@ final class SettingsStore extends Model\AbstractModel
         if ($row === null) {
             return null;
         }
+        unset(self::$scopeSnapshots[(string) $scope][$id]);
 
         $item = new self();
         $item->getDao()->assignRow($row);

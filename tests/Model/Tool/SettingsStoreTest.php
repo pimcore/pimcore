@@ -154,22 +154,26 @@ class SettingsStoreTest extends ModelTestCase
             $this->assertSame($expected->getType(), $actual->getType());
             $this->assertSame($expected->getData(), $actual->getData());
         }
-        $this->assertSame(42, SettingsStore::getFromScopeSnapshot('snapshot-2', 'snapshot-scope')->getData());
+        $this->assertSame(42, $actual->getData());
         $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-missing', 'snapshot-scope'));
         $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-other-scope'), 'only the loaded scope is in memory');
 
+        SettingsStore::loadScopeSnapshot('snapshot-scope');
         // served from memory: a change made behind the model's back is not seen ...
         $db->update(SettingsStore\Dao::TABLE_NAME, ['data' => 'changed'], ['id' => 'snapshot-1', 'scope' => 'snapshot-scope']);
-        $this->assertSame('data-1', SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->getData());
-        // ... and a returned entry is a copy
-        SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->setData('modified');
-        $this->assertSame('data-1', SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->getData());
+        $entry = SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope');
+        $this->assertSame('data-1', $entry->getData());
+        // ... an entry is handed out once, then its row is released ...
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
+        // ... and the returned entry is a copy
+        $entry->setData('modified');
 
         // the next snapshot of the scope replaces it
         SettingsStore::loadScopeSnapshot('snapshot-scope');
         $this->assertSame('changed', SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope')->getData());
 
         // set() and delete() drop the snapshots, whichever scope they write to
+        SettingsStore::loadScopeSnapshot('snapshot-scope');
         SettingsStore::set('snapshot-1', 'other', SettingsStore::TYPE_STRING, 'snapshot-other-scope');
         $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
         SettingsStore::loadScopeSnapshot('snapshot-scope');
@@ -177,10 +181,16 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
 
         SettingsStore::loadScopeSnapshot('snapshot-scope');
-        $this->assertNotNull(SettingsStore::getFromScopeSnapshot('snapshot-3', 'snapshot-scope'));
         SettingsStore::delete('snapshot-3', 'snapshot-scope');
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-3', 'snapshot-scope'));
         $this->assertNull(SettingsStore::getFromScopeSnapshot('snapshot-1', 'snapshot-scope'));
         $this->assertNull(SettingsStore::get('snapshot-3', 'snapshot-scope'));
+
+        foreach (['snapshot-scope', 'snapshot-other-scope'] as $scope) {
+            foreach (SettingsStore::getIdsByScope($scope) as $id) {
+                SettingsStore::delete($id, $scope);
+            }
+        }
     }
 
     public function testScopeSnapshotIsDroppedByWritesThroughAnotherSpellingOfTheScope(): void
@@ -198,10 +208,12 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
 
         // ... nor an entry deleted that way
+        SettingsStore::set('case-2', 'data-3', SettingsStore::TYPE_STRING, 'snapshot-case');
         SettingsStore::loadScopeSnapshot('snapshot-case');
-        $this->assertNotNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
         SettingsStore::delete('case-1', 'Snapshot-Case');
         $this->assertNull(SettingsStore::get('case-1', 'snapshot-case'));
-        $this->assertNull(SettingsStore::getFromScopeSnapshot('case-1', 'snapshot-case'));
+        $this->assertNull(SettingsStore::getFromScopeSnapshot('case-2', 'snapshot-case'), 'the whole snapshot is dropped');
+
+        SettingsStore::delete('case-2', 'snapshot-case');
     }
 }
