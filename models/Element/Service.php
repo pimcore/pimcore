@@ -631,12 +631,7 @@ class Service extends Model\AbstractModel
 
     public static function getElementType(ElementInterface $element): ?string
     {
-        return match (true) {
-            $element instanceof Asset => 'asset',
-            $element instanceof Document => 'document',
-            $element instanceof DataObject\AbstractObject => 'object',
-            default => null,
-        };
+        return ElementType::fromElement($element)?->value;
     }
 
     /**
