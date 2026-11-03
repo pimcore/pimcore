@@ -138,7 +138,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['dirtyFields']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+            // the calculated value snapshot belongs to the version dump of an object restored
+            // from a version (see Concrete::__getCalculatedValueSnapshot()) and must never leak into the cache
+            $blockedVars = array_merge($blockedVars, ['children', 'properties', '__calculatedValueSnapshot']);
         }
 
         return $blockedVars;

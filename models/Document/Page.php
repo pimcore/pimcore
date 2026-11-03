@@ -78,6 +78,11 @@ class Page extends PageSnippet
             // check for a pretty url
             $prettyUrl = $this->getPrettyUrl();
             if (!empty($prettyUrl) && strlen($prettyUrl) > 1) {
+                // a link to a site from outside of it is absolute: keep the domain of the site
+                if (preg_match('@^https?://[^/]+@i', $path, $origin)) {
+                    return $origin[0] . $prettyUrl;
+                }
+
                 return $prettyUrl;
             }
         }

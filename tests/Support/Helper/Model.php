@@ -449,6 +449,11 @@ class Model extends AbstractDefinitionHelper
             $calculatedValueExpression->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
             $panel->addChild($calculatedValueExpression);
 
+            $calculatedValueDependent = $this->createDataChild('calculatedValue', 'calculatedValueDependent');
+            $calculatedValueDependent->setCalculatorExpression("object.getCalculatedValue() ~ ' dependent'");
+            $calculatedValueDependent->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
+            $panel->addChild($calculatedValueDependent);
+
             $calculatedValueExpressionConstant = $this->createDataChild('calculatedValue', 'calculatedValueExpressionConstant');
             $calculatedValueExpressionConstant->setCalculatorExpression("constant('PIMCORE_PROJECT_ROOT')");
             $calculatedValueExpressionConstant->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
@@ -631,6 +636,9 @@ class Model extends AbstractDefinitionHelper
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
             $lFields->setName('localizedfields');
             $lFields->addChild($this->createDataChild('input', 'linput'));
+            $lcalculatedValue = $this->createDataChild('calculatedValue', 'lcalculatedValue');
+            $lcalculatedValue->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lcalculatedValue);
             $lFields->addChild($this->createDataChild('textarea', 'ltextarea'));
             $lFields->addChild($this->createDataChild('wysiwyg', 'lwysiwyg'));
             $lFields->addChild($this->createDataChild('numeric', 'lnumber'));
@@ -753,6 +761,76 @@ class Model extends AbstractDefinitionHelper
         return $class;
     }
 
+    /**
+     * Set up a class with a lazy loading Block inside localizedfields, inheritance enabled.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LazyLocalizedBlock(string $name = 'unittestLazyBlock', string $filename = 'lazy-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lblock = new ClassDefinition\Data\Block();
+            $lblock->setName('lazyblock');
+            $lblock->setLazyLoading(true);
+            $lblock->addChild($this->createDataChild('input', 'lazyblockinput'));
+
+            $lFields->addChild($lblock);
+
+            $panel->addChild($lFields);
+            $panel->addChild($this->createDataChild('fieldcollections', 'lazyfc')
+                ->setAllowedTypes(['LazyBlockFc']));
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a fieldcollection with a lazy loading Block inside localizedfields.
+     *
+     * @throws Exception
+     */
+    public function setupFieldcollection_LazyBlockFc(string $name = 'LazyBlockFc', string $filename = 'lazy-block-fc-import.json'): ?Definition
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lblock = new ClassDefinition\Data\Block();
+            $lblock->setName('lazyblock');
+            $lblock->setLazyLoading(true);
+            $lblock->addChild($this->createDataChild('input', 'lazyblockinput'));
+
+            $lFields->addChild($lblock);
+
+            $panel->addChild($lFields);
+            $root->addChild($rootPanel);
+            $definition = $this->createFieldcollection($name, $root, $filename);
+        }
+
+        return $definition;
+    }
+
     protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, ?string $id = null): DataObject\ClassDefinitionInterface
     {
         $cm = $this->getClassManager();
@@ -812,6 +890,11 @@ class Model extends AbstractDefinitionHelper
             $lFields->setName('localizedfields');
 
             $lFields->addChild($this->createDataChild('Input', 'linput'));
+
+            // same name as the localized calculated field of the unittest class on purpose
+            $lcalculatedValue = $this->createDataChild('calculatedValue', 'lcalculatedValue');
+            $lcalculatedValue->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lcalculatedValue);
 
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Closure;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Exception;
@@ -473,7 +474,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * call the getters of each object field, in case some of the are lazy loading and we need the data to be loaded
+     * call the getters of each object field (except derived values), in case some of them are lazy loading and we need the data to be loaded
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
@@ -485,6 +486,12 @@ class Service extends Model\Element\Service
                 //load all in case of lazy loading fields
                 $fd = $object->getClass()->getFieldDefinitions();
                 foreach ($fd as $def) {
+                    if ($def instanceof ClassDefinition\Data\DerivedValueInterface && $def->isValueDerived()) {
+                        // a derived value (e.g. the owning objects of a reverse relation) is not kept on the object,
+                        // so there is nothing to lazy load; the getter would load it only to discard it
+                        continue;
+                    }
+
                     $getter = 'get' . ucfirst($def->getName());
                     if (method_exists($object, $getter)) {
                         $value = $object->$getter();
@@ -1272,7 +1279,9 @@ class Service extends Model\Element\Service
 
         $data->setCalculatorData($fd->getCalculatorData());
 
-        return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
+        // the edit view always shows freshly computed values: evaluate without the snapshot of the object, so
+        // calculators and expressions that read other calculated fields of a loaded draft see live values as well
+        return self::computeWithoutCalculatedValueSnapshot($object, static fn () => DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                     $className = $fd->getCalculatorClass();
@@ -1296,7 +1305,7 @@ class Service extends Model\Element\Service
                 default:
                     return null;
             }
-        });
+        }));
     }
 
     public static function getCalculatedFieldValue(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|Concrete $object, ?Data\CalculatedValue $data): mixed
@@ -1322,6 +1331,11 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        // only values requested on the object itself can come from its version snapshot (object level and
+        // localized fields, see Version::marshalData()); a field collection item or object brick asking for
+        // one of its own fields never does, even if a field of the object has the same name
+        $snapshotOwner = $object instanceof Concrete ? $object : null;
+
         if (
             $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
             $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
@@ -1330,6 +1344,16 @@ class Service extends Model\Element\Service
         }
 
         $data->setCalculatorData($fd->getCalculatorData());
+
+        if ($snapshotOwner !== null) {
+            $snapshot = $snapshotOwner->__getCalculatedValueSnapshot();
+            if ($snapshot !== null) {
+                $snapshotKey = self::getCalculatedValueSnapshotKey($data);
+                if (array_key_exists($snapshotKey, $snapshot)) {
+                    return $snapshot[$snapshotKey];
+                }
+            }
+        }
 
         return DataObject\Service::useInheritedValues(true, static function () use ($object, $fd, $data) {
             switch ($fd->getCalculatorType()) {
@@ -1356,6 +1380,45 @@ class Service extends Model\Element\Service
                     return null;
             }
         });
+    }
+
+    /**
+     * Builds the key under which the value of a calculated field is stored in the
+     * calculated value snapshot of a version (see Concrete::__getCalculatedValueSnapshot()).
+     *
+     * @internal
+     */
+    public static function getCalculatedValueSnapshotKey(Data\CalculatedValue $data): string
+    {
+        return implode('~', [
+            $data->getOwnerType(),
+            (string) $data->getOwnerName(),
+            (string) $data->getIndex(),
+            (string) $data->getPosition(),
+            $data->getFieldname(),
+        ]);
+    }
+
+    /**
+     * Runs $closure with the calculated value snapshot of $object temporarily disabled, so calculated
+     * fields read inside it are computed freshly, and restores the snapshot afterwards.
+     *
+     * @internal
+     */
+    public static function computeWithoutCalculatedValueSnapshot(Concrete $object, Closure $closure): mixed
+    {
+        $snapshot = $object->__getCalculatedValueSnapshot();
+        if ($snapshot === null) {
+            return $closure();
+        }
+
+        $object->__setCalculatedValueSnapshot(null);
+
+        try {
+            return $closure();
+        } finally {
+            $object->__setCalculatedValueSnapshot($snapshot);
+        }
     }
 
     public static function getSystemFields(): array
