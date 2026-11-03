@@ -456,6 +456,15 @@ class NumericRange extends Data implements
         }
     }
 
+    public function isEmpty(mixed $data): bool
+    {
+        if ($data instanceof DataObject\Data\NumericRange) {
+            return $data->getMinimum() === null && $data->getMaximum() === null;
+        }
+
+        return parent::isEmpty($data);
+    }
+
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
