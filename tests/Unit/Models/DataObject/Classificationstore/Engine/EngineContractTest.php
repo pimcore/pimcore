@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
 use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
 
@@ -200,9 +201,15 @@ class EngineContractTest extends TestCase
 
         $this->assertStringNotContainsString('Helper::upsert', $source, 'the per-row upsert is gone');
         $this->assertStringNotContainsString('getPrimaryKey(', $source, 'the per-row upsert is gone');
+
+        // The shape this forbids is the pre-diff save, which cleared the whole (object, fieldname)
+        // pair and wrote it again. Clearing a pair is also what one method of this engine exists to
+        // do - {@see EavEngine::deletePairRows()}, the hand-off that drops the EAV rows of a pair
+        // the document engine has taken over - so that method is left out and the rest of the file,
+        // including every method added to it later, still has to stay clear of the shape.
         $this->assertStringNotContainsString(
             "'fieldname' => \$fieldname]",
-            $source,
+            $this->engineSourceWithout(EavEngine::class, 'deletePairRows'),
             'the save must not clear the whole field before writing it again'
         );
     }
@@ -213,6 +220,33 @@ class EngineContractTest extends TestCase
     private function engineSource(string $engine = EavEngine::class): string
     {
         return (string) file_get_contents((string) (new ReflectionClass($engine))->getFileName());
+    }
+
+    /**
+     * The engine source with the bodies of the named methods removed, for a guard that holds over
+     * everything but a method whose own purpose is the shape being guarded against.
+     *
+     * A renamed or removed method fails here rather than silently stopping the exclusion:
+     * {@see ReflectionClass::getMethod()} throws when the name is gone.
+     *
+     * @param class-string $engine
+     *
+     * @throws ReflectionException
+     */
+    private function engineSourceWithout(string $engine, string ...$methods): string
+    {
+        $class = new ReflectionClass($engine);
+        $lines = (array) file((string) $class->getFileName());
+
+        foreach ($methods as $name) {
+            $method = $class->getMethod($name);
+
+            for ($line = $method->getStartLine(); $line <= $method->getEndLine(); $line++) {
+                unset($lines[$line - 1]);
+            }
+        }
+
+        return implode('', $lines);
     }
 
     private function describe(ReflectionMethod $method): string

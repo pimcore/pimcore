@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\Engine;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore;
@@ -389,6 +390,76 @@ final class EavEngine extends AbstractDao implements EngineInterface
     public function supports(EngineFeature $feature): bool
     {
         return false;
+    }
+
+    /**
+     * Removes the rows of one (object, fieldname) pair from both value tables, which is what a
+     * document-engine save and the drain leave behind once the pair's documents are written.
+     *
+     * {@see self::delete()} cannot be used for this: it is object-wide and ignores the field name,
+     * so it would take the rows of the object's other classification store fields with it.
+     *
+     * An absent table is a no-op rather than an error. A store born on the document engine never
+     * had the two tables - {@see DocumentEngine::createUpdateTables()} creates only its own - and
+     * the cleanup of a fully converted class drops them.
+     *
+     * @throws Exception
+     */
+    public function deletePairRows(string $classId, ?int $objectId, string $fieldname): void
+    {
+        $this->deleteValueRows($classId, ['id' => $objectId, 'fieldname' => $fieldname]);
+    }
+
+    /**
+     * Removes the rows of every field name an object carries, under the caveats of
+     * {@see self::deletePairRows()} - this is {@see self::delete()} with an absent table tolerated,
+     * for {@see DocumentEngine::delete()}, which has to take the rows of a pair the drain has not
+     * converted yet along with the documents and cannot know whether the two tables are there.
+     *
+     * @throws Exception
+     */
+    public function deleteObjectRows(string $classId, ?int $objectId): void
+    {
+        $this->deleteValueRows($classId, ['id' => $objectId]);
+    }
+
+    /**
+     * The name of the value table of a class, for the migration that has to read and drop it.
+     *
+     * @internal
+     */
+    public function getDataTableName(string $classId): string
+    {
+        return self::DATA_TABLE_PREFIX . $classId;
+    }
+
+    /**
+     * The name of the group activation table of a class, under the same caveat as
+     * {@see self::getDataTableName()}.
+     *
+     * @internal
+     */
+    public function getGroupsTableName(string $classId): string
+    {
+        return self::GROUPS_TABLE_PREFIX . $classId;
+    }
+
+    /**
+     * @param array<string, mixed> $criteria
+     *
+     * @throws Exception
+     */
+    private function deleteValueRows(string $classId, array $criteria): void
+    {
+        // the data table first: its composite foreign key on the group table cascades, so deleting
+        // the group rows first would remove the data rows out of this statement's sight
+        foreach ([$this->getDataTableName($classId), $this->getGroupsTableName($classId)] as $table) {
+            try {
+                $this->db->delete($table, $criteria);
+            } catch (TableNotFoundException) {
+                // the class keeps no EAV rows under these criteria, which is what the delete asked for
+            }
+        }
     }
 
     /**
@@ -802,16 +873,6 @@ final class EavEngine extends AbstractDao implements EngineInterface
         }
 
         return $keyIds;
-    }
-
-    private function getDataTableName(string $classId): string
-    {
-        return self::DATA_TABLE_PREFIX . $classId;
-    }
-
-    private function getGroupsTableName(string $classId): string
-    {
-        return self::GROUPS_TABLE_PREFIX . $classId;
     }
 
     /**

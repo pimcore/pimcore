@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\Engine;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore\Element\MarshallerService;
@@ -52,6 +53,14 @@ use Throwable;
  * encryption is randomized, so a value that encodes through it keeps the string the document already
  * holds as long as it is still the same value - otherwise every save would rewrite every group that
  * carries a secret. {@see self::encodesTheSameValue()}.
+ *
+ * The values of a store that was flipped to this engine are read through to the EAV tables until the
+ * drain reaches them: a (object, fieldname) pair holding no document at all is read from the EAV
+ * engine, a pair holding at least one document from the document alone. Nothing is merged, and a
+ * save of such a pair writes its documents and takes its EAV rows with it - as does a delete, which
+ * has to, or the read-through would serve the deleted values again.
+ * {@see \Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService}
+ * is what drives that migration.
  *
  * @internal
  */
@@ -97,14 +106,23 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
     private const MARSHALLER_FORMAT = 'classificationstore';
 
-    private const DOCUMENT_COLUMNS = ['id', 'fieldname', 'groupId', 'collectionId', 'values'];
+    private const DOCUMENT_COLUMNS = ['id', 'fieldname', 'groupId', 'collectionId', 'values', 'checksum'];
+
+    /**
+     * What the drain writes on top of what a save writes. `migratedAt` is stamped by the drain
+     * alone, so a document carrying none was written by a user save.
+     */
+    private const MIGRATED_DOCUMENT_COLUMNS = [
+        'id', 'fieldname', 'groupId', 'collectionId', 'values', 'checksum', 'migratedAt',
+    ];
 
     /**
      * The columns a write updates when the row of that group is already there: everything the save
-     * writes that is not part of the primary key.
+     * writes that is not part of the primary key. `migratedAt` is not among them, so a user save of
+     * a drained document leaves the stamp of the run that converted it.
      */
     private const ON_DUPLICATE_UPDATE = ' ON DUPLICATE KEY UPDATE `collectionId` = VALUES(`collectionId`),'
-        . ' `values` = VALUES(`values`)';
+        . ' `values` = VALUES(`values`), `checksum` = VALUES(`checksum`)';
 
     /**
      * Rows per multi-row statement, so that an object on many groups does not build a statement of
@@ -130,6 +148,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         private readonly LoggerInterface $logger,
         private readonly MarshallerService $marshallerService,
         private readonly KeyGroupRelationCache $relationCache,
+        private readonly EavEngine $eavEngine,
         Connection $db
     ) {
         $this->db = $db;
@@ -144,6 +163,18 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return;
         }
 
+        $this->persistDocuments($classificationStore, $this->collectGroups($classificationStore));
+    }
+
+    /**
+     * The collection and the items of every active group, which is what a document is written from.
+     *
+     * @return array<int, array<string, mixed>> groupId => the collection and items of a group
+     *
+     * @throws Exception
+     */
+    private function collectGroups(Classificationstore $classificationStore): array
+    {
         $items = $classificationStore->getItems();
         $activeGroups = $classificationStore->getActiveGroups();
         $collectionMapping = $this->getCollectionMappingToStore($classificationStore);
@@ -161,15 +192,107 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             ];
         }
 
-        $this->persistDocuments($classificationStore, $groups);
+        return $groups;
     }
 
+    /**
+     * Writes the documents of one (object, fieldname) pair as the drain writes them, and only when
+     * the pair holds no document at all: a user save that converted the pair while the drain was
+     * running must not be overwritten with the EAV rows it has already replaced.
+     *
+     * The rows carry the run's timestamp in `migratedAt`, which no other writer sets. Nothing is
+     * compared and nothing is deleted here - the drain compares the written documents against the
+     * EAV side and removes the EAV rows itself, inside the transaction it has to own for that.
+     *
+     * @return bool whether the documents were written, false when the pair already held one
+     *
+     * @throws Exception
+     */
+    public function writeMigratedDocuments(Classificationstore $classificationStore, int $migratedAt): bool
+    {
+        $object = $classificationStore->getObject();
+        $objectId = $object->getId();
+        $fieldname = $classificationStore->getFieldname();
+        $table = $this->getDocumentTableName($classificationStore->getClass()->getId());
+
+        if ($this->readRowsForUpdate($table, $objectId, $fieldname) !== []) {
+            return false;
+        }
+
+        $rows = [];
+
+        foreach ($this->collectGroups($classificationStore) as $groupId => $group) {
+            $values = $this->serializeDocument($object, $group['keys'], null);
+
+            $rows[] = [
+                'id' => $objectId,
+                'fieldname' => $fieldname,
+                'groupId' => $groupId,
+                'collectionId' => $group['collectionId'],
+                'values' => $values,
+                'checksum' => sha1($values),
+                'migratedAt' => $migratedAt,
+            ];
+        }
+
+        $this->insertDocumentRows($table, self::MIGRATED_DOCUMENT_COLUMNS, $rows);
+
+        return true;
+    }
+
+    /**
+     * Whether the given pair holds at least one document, which is what makes it converted.
+     *
+     * The rows are read as of now and locked until the end of the transaction, the way
+     * {@see self::readRowsForUpdate()} reads them: a caller that decides what to write from this
+     * answer has to hold the lock before it reads anything else, or its consistent-read snapshot
+     * is older than the state this question answered about. An empty pair is locked as well - the
+     * gap the rows would go in is what another writer has to wait for.
+     *
+     * @throws Exception
+     */
+    public function hasDocuments(string $classId, int $objectId, string $fieldname): bool
+    {
+        return $this->readRowsForUpdate($this->getDocumentTableName($classId), $objectId, $fieldname) !== [];
+    }
+
+    /**
+     * Removes the values of the whole object, from the documents and from the EAV rows that a pair
+     * the drain has not converted yet still holds.
+     *
+     * Both sides go, and in one transaction: the EAV rows of an unconverted pair are what it is
+     * read from, {@see self::readThroughEav()}, so a delete that took the documents alone would be
+     * undone by the next load rather than by anything the caller did. The scope stays the object's
+     * - every field name it carries - which is the scope {@see EavEngine::delete()} takes as well,
+     * and an absent EAV table is a no-op: a store born on this engine never had one, and the
+     * cleanup of a converted class drops it.
+     *
+     * @throws Exception
+     */
     public function delete(Classificationstore $classificationStore): void
     {
-        $this->db->delete(
-            $this->getDocumentTableName($classificationStore->getClass()->getId()),
-            ['id' => $classificationStore->getObject()->getId()]
-        );
+        $classId = $classificationStore->getClass()->getId();
+        $objectId = $classificationStore->getObject()->getId();
+
+        $ownTransaction = !$this->db->isTransactionActive();
+        if ($ownTransaction) {
+            $this->db->beginTransaction();
+        }
+
+        try {
+            $this->db->delete($this->getDocumentTableName($classId), ['id' => $objectId]);
+            $this->eavEngine->deleteObjectRows($classId, $objectId);
+        } catch (Throwable $exception) {
+            if ($ownTransaction) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+
+        if ($ownTransaction) {
+            $this->db->commit();
+        }
     }
 
     /**
@@ -177,14 +300,134 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      */
     public function load(Classificationstore $classificationStore): void
     {
+        $rows = $this->readDocumentRows($classificationStore);
+
+        // a pair that holds at least one document is read from the documents alone, so the two
+        // sources are never merged and nothing is derived from both
+        if ($rows !== []) {
+            $this->applyDocumentRows($classificationStore, $rows);
+
+            return;
+        }
+
+        // a pair that holds no document at all has not been drained yet, and its values are still
+        // the EAV rows. Which of the two answers and what it answers with have to be decided in
+        // one snapshot: a conversion commits the pair's documents and the deletion of its EAV rows
+        // together, so a source chosen by one autocommit read and loaded by the next can fall
+        // between those two states and answer with neither. Inside a transaction the caller
+        // already owns one; outside of one the snapshot below is established by the statement that
+        // holds the EAV tables, and the documents are re-read inside it.
+        //
+        // The read above is what keeps that off the path of a store with nothing left to convert:
+        // a pair that holds documents is answered by one statement, as it was. A pair that holds
+        // none pays a begin and a commit of a read-only transaction for the consistency
+        if ($this->db->isTransactionActive()) {
+            $this->readThroughEav($classificationStore);
+
+            return;
+        }
+
+        try {
+            $this->db->transactional(function () use ($classificationStore): void {
+                // the snapshot is established on the EAV tables rather than on the documents, so
+                // that this transaction holds their metadata locks for as long as it may still read
+                // them, {@see self::holdEavTables()}
+                $this->holdEavTables($classificationStore->getClass()->getId());
+
+                $rows = $this->readDocumentRows($classificationStore);
+
+                if ($rows === []) {
+                    $this->readThroughEav($classificationStore);
+
+                    return;
+                }
+
+                $this->applyDocumentRows($classificationStore, $rows);
+            });
+        } catch (TableNotFoundException) {
+            // there is no EAV side to read: a store born on this engine never had those tables, and
+            // the cleanup of a converted class has dropped them. Either way the documents are the
+            // only source there is, and the snapshot that would have been read from both went with
+            // the rolled back transaction - so this read takes one of its own rather than an older
+            // one that could still predate the conversion
+            $this->applyDocumentsOrEmptyStore($classificationStore);
+        }
+    }
+
+    /**
+     * Takes the metadata locks of the two EAV tables, as the statement this transaction's consistent
+     * read is established on.
+     *
+     * A read-through serves a pair from the EAV rows, so the tables have to still be there when it
+     * gets to them - and the cleanup of a class drops them the moment its backlog is empty and its
+     * verification holds. Both of those can happen while a read-through is in flight: its snapshot
+     * is older than the conversion of the pair, so it still sees no document and will read the EAV
+     * rows the snapshot holds, while the DROP only needs the tables' exclusive metadata lock, which
+     * nothing a reader of the document table holds stands in the way of. The reader would then find
+     * its own source gone and answer with an empty store.
+     *
+     * A metadata lock taken here is held until this transaction ends, which is what orders the two:
+     * a cleanup that comes second waits for the read-through to finish - MySQL's `lock_wait_timeout`
+     * governs that wait rather than `innodb_lock_wait_timeout` - and a cleanup that came first is a
+     * table-not-found at this very statement, before a snapshot the documents would have to be
+     * judged against exists. The caller reads the documents alone in that case, which is what a
+     * class whose tables are gone holds all of its values in.
+     *
+     * @throws TableNotFoundException when either table is gone
+     * @throws Exception
+     */
+    private function holdEavTables(string $classId): void
+    {
+        // in the order the cleanup drops the two, {@see EavEngine::dropTables()}: a cleanup that
+        // reaches the first of them while this transaction holds it waits there, without having
+        // dropped the other one out from under a read that would then be holding half a source
+        $tables = [
+            $this->eavEngine->getDataTableName($classId),
+            $this->eavEngine->getGroupsTableName($classId),
+        ];
+
+        foreach ($tables as $table) {
+            $this->db->fetchOne('SELECT 1 FROM ' . $this->db->quoteIdentifier($table) . ' LIMIT 1');
+        }
+    }
+
+    /**
+     * Puts the stored documents of one pair on the model, or empties it when the pair holds none.
+     *
+     * This is the answer for a class whose EAV tables are not there, so the documents are the whole
+     * of what it holds. Inside a caller's transaction they are read as of now rather than as of its
+     * snapshot: that snapshot may have been taken before the conversion of this pair committed - it
+     * is what let the caller get here at all - and a consistent read of it would report a pair whose
+     * values are in a document it cannot see as an empty store. A locking read is the one read that
+     * sees the latest committed row, and the pair has nowhere else left to be read from.
+     *
+     * @throws Exception
+     */
+    private function applyDocumentsOrEmptyStore(Classificationstore $classificationStore): void
+    {
+        $rows = $this->readDocumentRows($classificationStore, $this->db->isTransactionActive());
+
+        if ($rows === []) {
+            $classificationStore->setActiveGroups([]);
+            $classificationStore->setGroupCollectionMappings([]);
+            $classificationStore->resetDirtyMap();
+
+            return;
+        }
+
+        $this->applyDocumentRows($classificationStore, $rows);
+    }
+
+    /**
+     * Puts the stored documents of one pair onto the model.
+     *
+     * @param array<array<string, mixed>> $rows
+     *
+     * @throws Exception
+     */
+    private function applyDocumentRows(Classificationstore $classificationStore, array $rows): void
+    {
         $object = $classificationStore->getObject();
-        $table = $this->getDocumentTableName($classificationStore->getClass()->getId());
-
-        $rows = $this->db->fetchAllAssociative(
-            'SELECT `groupId`, `collectionId`, `values` FROM `' . $table . '` WHERE `id` = ? AND `fieldname` = ?',
-            [$object->getId() ?? 0, $classificationStore->getFieldname()]
-        );
-
         $activeGroups = [];
         $groupCollectionMapping = [];
         $documents = [];
@@ -213,6 +456,59 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         $classificationStore->setActiveGroups($activeGroups);
         $classificationStore->setGroupCollectionMappings($groupCollectionMapping);
         $classificationStore->resetDirtyMap();
+    }
+
+    /**
+     * The stored documents of one (object, fieldname) pair.
+     *
+     * An absent table reads as no document rather than as an error: a store whose `engine` column
+     * was edited by hand is on this engine before any class carrying it has been saved, and a read
+     * must not raise table-not-found over that.
+     *
+     * @param bool $asOfNow reads the latest committed rows rather than this transaction's snapshot,
+     *                      which only {@see self::applyDocumentsOrEmptyStore()} asks for
+     *
+     * @return array<array<string, mixed>>
+     *
+     * @throws Exception
+     */
+    private function readDocumentRows(Classificationstore $classificationStore, bool $asOfNow = false): array
+    {
+        $table = $this->getDocumentTableName($classificationStore->getClass()->getId());
+
+        try {
+            return $this->db->fetchAllAssociative(
+                'SELECT `groupId`, `collectionId`, `values` FROM `' . $table . '`'
+                . ' WHERE `id` = ? AND `fieldname` = ?' . ($asOfNow ? ' LOCK IN SHARE MODE' : ''),
+                [$classificationStore->getObject()->getId() ?? 0, $classificationStore->getFieldname()]
+            );
+        } catch (TableNotFoundException) {
+            return [];
+        }
+    }
+
+    /**
+     * Reads a pair the drain has not converted yet from the EAV tables it still lives in.
+     *
+     * The values are derived, not stored: nothing is written here and no column records that the
+     * answer came from the other engine.
+     *
+     * A class whose EAV tables are not there has nothing to read through to: a store born on this
+     * engine never had them, and the cleanup of a converted class - which it only reaches with an
+     * empty backlog and a verification that holds - has dropped them. Both of those mean the
+     * documents are the whole of what the class holds, so the pair is answered from them rather than
+     * as an empty store: a caller whose transaction was opened before the conversion committed
+     * would otherwise be told that a pair the drain has converted holds nothing.
+     *
+     * @throws Exception
+     */
+    private function readThroughEav(Classificationstore $classificationStore): void
+    {
+        try {
+            $this->eavEngine->load($classificationStore);
+        } catch (TableNotFoundException) {
+            $this->applyDocumentsOrEmptyStore($classificationStore);
+        }
     }
 
     public function createUpdateTables(ClassDefinition $class, ?int $storeId): void
@@ -271,9 +567,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * A mapping that is identical to the one an inheritable parent holds is left out, as the parent
      * is what answers it: {@see Classificationstore::getGroupCollectionMappings()} merges the
      * parents' mappings into the object's own when inheritance is on. The object is checked for a
-     * parent first, so that the mappings of a top-level object are not mistaken for inherited ones.
+     * parent first, so that the mappings of a top-level object are not mistaken for inherited ones -
+     * which {@see self::getInheritedCollectionMappings()} does by walking the chain.
      *
      * @return array<int, int>
+     *
+     * @throws Exception
      */
     private function getCollectionMappingToStore(Classificationstore $classificationStore): array
     {
@@ -283,20 +582,139 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return $collectionMapping;
         }
 
-        $parent = DataObjectService::hasInheritableParentObject($classificationStore->getObject());
-        if (!$parent) {
-            return $collectionMapping;
-        }
-
-        $parentStore = $parent->{'get' . ucfirst($classificationStore->getFieldname())}();
-        if (!$parentStore instanceof Classificationstore) {
-            return $collectionMapping;
-        }
-
         return array_diff_assoc(
             $collectionMapping,
-            DataObjectService::useInheritedValues(true, $parentStore->getGroupCollectionMappings(...))
+            $this->getInheritedCollectionMappings($classificationStore)
         );
+    }
+
+    /**
+     * The collection mappings an inheritable ancestor of this pair answers, nearest ancestor first.
+     *
+     * The chain is walked here rather than asked of
+     * {@see Classificationstore::getGroupCollectionMappings()} with inheritance on, because that
+     * reaches `get<Fieldname>()` on every ancestor - a getter that exists only for a classification
+     * store defined among the class's own fields. One defined inside an object brick or a field
+     * collection stores its rows under the very same (object, fieldname) key and has no getter of
+     * that name on the object at all, so asking for it would throw a BadMethodCallException instead
+     * of converting the field's values. The ancestor's own mappings are read from the pair instead,
+     * {@see self::readCollectionMapping()}, which is the row the getter would have led to.
+     *
+     * An ancestor that maps a group to no collection takes part in the union with a null entry and
+     * is only dropped once the union is complete. The model merges the chain the same way: an entry
+     * holding null is still an entry, so it shadows the collection a more distant ancestor maps the
+     * group to and the group is then no inherited mapping at all - which the child has to store
+     * itself rather than leave to its parents. Dropping the null before the union would let the
+     * distant ancestor answer in its place and the child's own mapping be left out of its document,
+     * so that reading the child back would give the parent's null instead of the collection it was
+     * saved with.
+     *
+     * @return array<int, int> groupId => collectionId
+     *
+     * @throws Exception
+     */
+    public function getInheritedCollectionMappings(Classificationstore $classificationStore): array
+    {
+        $classId = $classificationStore->getClass()->getId();
+        $fieldname = $classificationStore->getFieldname();
+        $object = $classificationStore->getObject();
+        $mappings = [];
+
+        while ($object !== null && ($parent = DataObjectService::hasInheritableParentObject($object)) !== null) {
+            // the nearer ancestor answers first, which is the precedence
+            // Classificationstore::getAllDataFromField() merges these with
+            $mappings += $this->readCollectionMapping($classId, (int) $parent->getId(), $fieldname);
+            $object = $parent;
+        }
+
+        // what the nearest ancestor holding the group answers is in hand now: a null of its is no
+        // collection to inherit, and has shadowed the ancestors behind it already
+        return array_filter($mappings, static fn (?int $collectionId): bool => $collectionId !== null);
+    }
+
+    /**
+     * The collection mappings one object owns for one field name, from the side that pair is still
+     * read from: its documents, or - for a pair the drain has not converted yet - the EAV rows the
+     * read-through serves it from, {@see self::readThroughEav()}. A data row of a group the group
+     * table does not activate contributes nothing, which is the rule {@see EavEngine::load()}
+     * applies there.
+     *
+     * Each side answers the entries its own load puts on the model, because that is what the
+     * ancestor would contribute to the union the model builds:
+     *
+     * - a document row that holds no collection is left out, the way
+     *   {@see self::applyDocumentRows()} leaves it out. An active group always has a row here, and
+     *   that row carries null precisely when the mapping is an ancestor's to answer, so an entry
+     *   of null would shadow the very mapping the row was written empty for.
+     * - an EAV group mapped to no collection is an entry holding null, the way
+     *   {@see EavEngine::load()} keeps it. Nothing there distinguishes "mapped to nothing" from
+     *   "the parent's to answer", so such an entry shadows the collection a more distant ancestor
+     *   maps the group to - and is dropped by the caller once it has done that shadowing,
+     *   {@see self::getInheritedCollectionMappings()}.
+     *
+     * @return array<int, int|null> groupId => collectionId, null for an EAV group mapped to none
+     *
+     * @throws Exception
+     */
+    private function readCollectionMapping(string $classId, int $objectId, string $fieldname): array
+    {
+        $documentRows = $this->fetchCollectionMappingRows(
+            'SELECT `groupId`, `collectionId` FROM '
+            . $this->db->quoteIdentifier($this->getDocumentTableName($classId))
+            . ' WHERE `id` = ? AND `fieldname` = ?',
+            $objectId,
+            $fieldname
+        );
+
+        if ($documentRows !== []) {
+            $mapping = [];
+
+            foreach ($documentRows as $row) {
+                if ($row['collectionId'] !== null) {
+                    $mapping[(int) $row['groupId']] = (int) $row['collectionId'];
+                }
+            }
+
+            return $mapping;
+        }
+
+        $dataTable = $this->db->quoteIdentifier($this->eavEngine->getDataTableName($classId));
+        $groupsTable = $this->db->quoteIdentifier($this->eavEngine->getGroupsTableName($classId));
+
+        $eavRows = $this->fetchCollectionMappingRows(
+            'SELECT d.`groupId`, d.`collectionId` FROM ' . $dataTable . ' d INNER JOIN '
+            . $groupsTable . ' g ON g.`id` = d.`id` AND g.`fieldname` = d.`fieldname`'
+            . ' AND g.`groupId` = d.`groupId` WHERE d.`id` = ? AND d.`fieldname` = ?',
+            $objectId,
+            $fieldname
+        );
+
+        $mapping = [];
+
+        foreach ($eavRows as $row) {
+            // the rows of one group are read in no particular order and the last of them is what
+            // EavEngine::load() leaves on the model, which is the value taken here as well; a group
+            // whose rows disagree is the drain's to report, not this read's to resolve
+            $mapping[(int) $row['groupId']] = $row['collectionId'] === null ? null : (int) $row['collectionId'];
+        }
+
+        return $mapping;
+    }
+
+    /**
+     * @return array<array<string, mixed>>
+     *
+     * @throws Exception
+     */
+    private function fetchCollectionMappingRows(string $sql, int $objectId, string $fieldname): array
+    {
+        try {
+            return $this->db->fetchAllAssociative($sql, [$objectId, $fieldname]);
+        } catch (TableNotFoundException) {
+            // a store born on this engine never had the EAV tables, and the cleanup of a converted
+            // class drops them: either way the ancestor answers no mapping from there
+            return [];
+        }
     }
 
     /**
@@ -664,16 +1082,39 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                 'groupId' => $groupId,
                 'collectionId' => $document['collectionId'],
                 'values' => $document['values'],
+                'checksum' => sha1($document['values']),
             ];
         }
 
-        $this->insertDocumentRows($table, $rowsToWrite);
-        $this->deleteDocumentRows(
-            $table,
-            array_values(array_diff(array_keys($storedRows), array_keys($groups))),
-            $objectId,
-            $fieldname
-        );
+        $obsoleteGroupIds = array_values(array_diff(array_keys($storedRows), array_keys($groups)));
+
+        $this->insertDocumentRows($table, self::DOCUMENT_COLUMNS, $rowsToWrite, self::ON_DUPLICATE_UPDATE);
+        $this->deleteDocumentRows($table, $obsoleteGroupIds, $objectId, $fieldname);
+
+        if ($storedRows === [] || $rowsToWrite !== [] || $obsoleteGroupIds !== []) {
+            $this->takeThePairOffTheEavTables($classificationStore, $objectId, $fieldname);
+        }
+    }
+
+    /**
+     * The documents of this pair are now what it is read from, so its EAV rows go with them - in
+     * this transaction and without being compared first. Whether the drain has reached the pair or
+     * not makes no difference: this save has just converted it.
+     *
+     * A save that found the pair's documents already in the state it wants is not reached from
+     * here, so an unchanged save still writes nothing at all: a pair that holds documents has no
+     * EAV rows left to remove. A pair that holds none is reached whatever it writes - a save that
+     * deactivated every group of such a pair writes no document and still has to take its rows,
+     * which the read-through would otherwise serve again on the next load.
+     *
+     * @throws Exception
+     */
+    private function takeThePairOffTheEavTables(
+        Classificationstore $classificationStore,
+        ?int $objectId,
+        string $fieldname
+    ): void {
+        $this->eavEngine->deletePairRows($classificationStore->getClass()->getId(), $objectId, $fieldname);
     }
 
     /**
@@ -729,18 +1170,19 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
+     * @param string[] $columns
      * @param array<array<string, mixed>> $rows
      *
      * @throws Exception
      */
-    private function insertDocumentRows(string $table, array $rows): void
+    private function insertDocumentRows(string $table, array $columns, array $rows, string $onDuplicate = ''): void
     {
         if (!$rows) {
             return;
         }
 
-        $quotedColumns = array_map(static fn (string $column) => '`' . $column . '`', self::DOCUMENT_COLUMNS);
-        $rowPlaceholder = '(' . implode(',', array_fill(0, count(self::DOCUMENT_COLUMNS), '?')) . ')';
+        $quotedColumns = array_map(static fn (string $column) => '`' . $column . '`', $columns);
+        $rowPlaceholder = '(' . implode(',', array_fill(0, count($columns), '?')) . ')';
         $statement = 'INSERT INTO `' . $table . '` (' . implode(',', $quotedColumns) . ') VALUES ';
         $byteBudget = $this->getWriteBatchByteBudget();
 
@@ -751,7 +1193,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         foreach ($rows as $row) {
             $rowParameters = [];
             $rowSize = 0;
-            foreach (self::DOCUMENT_COLUMNS as $column) {
+            foreach ($columns as $column) {
                 $rowParameters[] = $row[$column];
                 $rowSize += $this->getParameterSize($row[$column]);
             }
@@ -759,7 +1201,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             // a row of its own is emitted whatever it weighs: a single document can exceed any
             // budget, and no batching makes that statement smaller
             if ($rowCount > 0 && ($rowCount >= self::WRITE_BATCH_SIZE || $size + $rowSize > $byteBudget)) {
-                $this->executeInsert($statement, $rowPlaceholder, $rowCount, $parameters);
+                $this->executeInsert($statement, $rowPlaceholder, $rowCount, $parameters, $onDuplicate);
 
                 $parameters = [];
                 $rowCount = 0;
@@ -773,7 +1215,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $size += $rowSize;
         }
 
-        $this->executeInsert($statement, $rowPlaceholder, $rowCount, $parameters);
+        $this->executeInsert($statement, $rowPlaceholder, $rowCount, $parameters, $onDuplicate);
     }
 
     /**
@@ -790,10 +1232,15 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * @throws Exception
      */
-    private function executeInsert(string $statement, string $rowPlaceholder, int $rowCount, array $parameters): void
-    {
+    private function executeInsert(
+        string $statement,
+        string $rowPlaceholder,
+        int $rowCount,
+        array $parameters,
+        string $onDuplicate
+    ): void {
         $this->db->executeStatement(
-            $statement . implode(',', array_fill(0, $rowCount, $rowPlaceholder)) . self::ON_DUPLICATE_UPDATE,
+            $statement . implode(',', array_fill(0, $rowCount, $rowPlaceholder)) . $onDuplicate,
             $parameters
         );
     }
@@ -884,7 +1331,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         return $keyIds;
     }
 
-    private function getDocumentTableName(string $classId): string
+    /**
+     * The name of the document table of a class, for the migration that has to read and verify it.
+     *
+     * @internal
+     */
+    public function getDocumentTableName(string $classId): string
     {
         return self::DOCUMENT_TABLE_PREFIX . $classId;
     }

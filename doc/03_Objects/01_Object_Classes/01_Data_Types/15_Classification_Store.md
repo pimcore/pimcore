@@ -383,8 +383,9 @@ $store->setEngine('document');
 $store->save();
 ```
 
-The tables of the selected engine are created the next time a class carrying a classification store field on that
-store is saved. There is **no migration of existing values** between engines, so flip a store before it holds data.
+A store that already holds values is moved over with the four commands of the next section rather than with the
+setter: the setter writes the `engine` column alone, and the tables of the selected engine are created only the next
+time a class carrying a classification store field on that store is saved.
 
 The two engines behave the same way through the model API: `getLocalizedKeyValue()`, the language fallback, the
 default-language fallback and inheritance are resolved in PHP at read time and do not depend on the storage.
@@ -396,6 +397,125 @@ stored value - mapped to `null` when it has no collection - while on a document 
 have one. `getGroupCollectionMapping($groupId)` answers `null` either way. A `null` entry is not recordable on the
 document engine: an object's mappings and its inheritable parent's are merged as an array union, so a `null` on the
 child would shadow the parent's collection. Use `getActiveGroups()` to ask which groups hold values.
+
+While a store is being migrated, that difference also moves **within** one store: an object whose values the drain
+has not converted yet is still read from the EAV tables and answers the EAV shape, and the same object answers the
+document shape once it is converted. Code that reads the full array rather than `getActiveGroups()` therefore sees
+the documented difference appear at a moment it cannot predict.
+
+## Migrating a store to the document engine
+
+Four commands move the values a store already holds. They run in this order, and only in this order - there is
+**no reverse migration**.
+
+| command | scope | what it does |
+|---|---|---|
+| `pimcore:classificationstore:flip <store>...` | one store, or the stores sharing a field name | creates the document table of every class carrying a field on those stores, then sets their `engine` to `document` |
+| `pimcore:classificationstore:drain [--class=] [--max-divergences=] [--dry-run]` | the classes holding values | converts the EAV rows of one (object, field) pair at a time |
+| `pimcore:classificationstore:verify [--class=]` | one class, or every class | recomputes each document's checksum and asserts that no EAV row survived |
+| `pimcore:classificationstore:cleanup [--class=] [--dry-run]` | one class, or every class | drops the two EAV tables of a class once every store it uses is converted |
+
+```bash
+bin/console pimcore:classificationstore:flip myStore
+bin/console pimcore:classificationstore:drain --class=PRODUCT --dry-run
+bin/console pimcore:classificationstore:drain --class=PRODUCT
+bin/console pimcore:classificationstore:verify --class=PRODUCT
+bin/console pimcore:classificationstore:cleanup --class=PRODUCT --dry-run
+bin/console pimcore:classificationstore:cleanup --class=PRODUCT
+```
+
+`<store>` is a store id or a store name, resolved in that order, and the flip takes more than one of them;
+`--class=` is a class **id**. Rolling out per class, smallest class first, is what the drain's own ordering does
+when `--class=` is left out.
+
+**The flip takes no engine argument and there is nothing that undoes it.** Every value written to the store after
+the flip exists only as a document, so putting the store back on `eav` does not bring those values back - it hides
+them behind whatever EAV rows are left. The flip asks for confirmation; `--no-interaction` proceeds without asking.
+
+**The flip creates the document tables first and writes the `engine` column last.** Every other process reads that
+column, so a save that saw the switch before the table of its class existed would fail with table-not-found - and a
+`CREATE TABLE` that failed half way would otherwise leave the store pointing at tables that are not there. A table
+created for a store the command then refuses is an empty table and nothing else.
+
+**Stores sharing a classification store field name have to be flipped together.** A field name identifies a group
+of definitions rather than one - two allowed bricks of a class can define the same field on two different stores -
+and the value tables key their rows by (object, fieldname), so that group reads and writes one set of rows and
+cannot be split across two engines. The flip refuses before it writes anything if it would leave such a group
+split, and names the class, the field and the stores that have to come along; pass them all in one invocation:
+
+```bash
+bin/console pimcore:classificationstore:flip myStore myOtherStore
+```
+
+**Let the writers that predate the flip finish before draining.** Which engine a store resolves to is memoized for
+the length of a request or a messenger message, so a process that resolved `eav` before the flip keeps writing EAV
+rows until it reaches that boundary. Document reads do not see those rows, and the drain will not delete them: a
+pair that holds documents *and* EAV rows is reported as a divergence with its object id and field name, for a human
+to reconcile, rather than silently losing the newer values. Draining after the in-flight requests and messages have
+finished is what avoids that report.
+
+**Reads and writes keep working throughout.** Between the flip and the drain the values of a (object, field) pair
+are read through to the EAV tables, so nothing goes missing and nothing is merged: a pair that holds no document at
+all is answered from the EAV rows, a pair that holds at least one document from the document alone. The values are
+derived at read time; no column records which of the two answered. An ordinary save writes the pair's documents and
+deletes that pair's rows from both EAV tables in the same transaction, so an object a user saves while the drain is
+running is converted by that save. A drain the user save got to first writes nothing over it. An unchanged save
+still writes nothing at all - a pair whose documents are already what the save wants has no EAV rows left to take.
+Deleting an object's classification store values takes both sides in one transaction as well, so a pair the drain
+has not reached is not served again by the read-through afterwards. Which of the two sources answers a load, and
+what it answers with, are decided in one snapshot, so a load that runs while a pair is being converted sees the
+pair either wholly on EAV or wholly on documents and never between the two.
+
+**The drain is one transaction per (object, field) pair.** Per pair it reads the EAV side with inheritance off,
+writes the documents if the pair holds none, reads them back, compares the two and only then removes the pair's EAV
+rows. A pair that does not compare equal is a divergence: its document is rolled back, its EAV rows are left in
+place, it is reported with its object id and field name, and the class stops once `--max-divergences` (default: 1)
+is reached - while the next class carries on. **The command exits non-zero when any pair is left on EAV**, which a
+divergence and a stopped class both are. There is no cursor: a re-run reads its backlog from the EAV rows that are
+left.
+
+The pair the drain locks first is the object's row, which is the lock an ordinary save takes first as well, so a
+save and a drain of the same object queue on each other rather than deadlocking on opposite orders. What it reads
+up front is one pending-pair count per class - that is the order the run goes in, smallest class first - and the
+pairs of a class are then read from its value tables a bounded batch at a time, so the backlog of an installation
+is never held in the process at once. The objects it loads are not held either: converting a pair loads its object,
+and the runtime cache is cleared every hundred pairs so that a run does not grow by the objects behind it. A
+converted object is also dropped from the runtime cache and has its cache entry invalidated as its pair commits,
+the way a save of the same rows would: an entry written before the conversion carries the values of the side the
+pair has left, and a group mapped to no collection is the one thing the two sides do not read the same way - so a
+cached parent holding such a mapping would answer a child's inherited collection with it. The
+progress bar of `--processes` therefore has no total; the `n of m pair(s) converted` line the drain prints does,
+from those counts.
+
+While it runs the drain reports the pairs it converted, the time that took, the rate that works out to and how long
+the rest would take at that rate, so "how long for millions of values" is answered from the installation's own
+hardware rather than from a figure of ours. `--dry-run` reports the backlog of every class and converts nothing.
+Without `--processes` the drain runs in the main process, because the divergence threshold is per class and has to
+be counted in one place; `--processes` trades that for throughput and counts the threshold per worker. The totals
+of the run and its exit code do not depend on that choice: what a pair became is counted in the process that
+converted it, so the figures at the end are read back from the backlog the conversions emptied rather than from
+counters a worker holds. Batching, throttling and the run lock come from
+`Pimcore\Console\Traits\Parallelization`.
+
+**Every document row carries a `sha1` of its `values` column in `checksum`**, written by the drain and by an
+ordinary save alike. `migratedAt` is written by the drain alone, so a document with no `migratedAt` was created by a
+user save. `verify` recomputes each checksum and reports every row that does not match, plus every pair that still
+holds EAV rows, and exits non-zero if there is one; a row written before this release carries neither stamp and is
+reported as unproven rather than as corrupt. The `values` column holds everything one group of one object stores,
+so the check walks the document table along its primary key a batch at a time rather than reading it in one query -
+its memory is bounded by one batch however much the class holds, and `cleanup`, which re-runs the check inline, is
+bounded by the same. What it finds it writes as it finds it; the report it hands back carries the counts alone, so a
+store whose every row is unproven does not have to fit in the process either.
+
+**`cleanup` is per class while the flip is per store.** It drops the two EAV tables of a class only when every store
+used by any classification store field on that class resolves to `document` and the verification of that class
+holds. When it refuses, it names the stores that are in the way by id and by name - a class carrying a second field
+on a store nobody has flipped keeps its tables. The `DROP` waits for the read-throughs that are still in flight: a
+read-through holds the metadata locks of both EAV tables for the length of its transaction, so a load that has
+chosen those rows as its source reads them before they go rather than finding them gone mid-load. Read-throughs
+that start while that `DROP` is waiting queue behind it, which by then is a drop of two empty tables. A load whose
+tables did go first - because it had not reached them yet - answers from the documents, which is where a class
+whose tables are gone holds all of its values.
 
 #### What the document engine does and does not do
 

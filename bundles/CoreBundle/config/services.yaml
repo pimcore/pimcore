@@ -115,11 +115,19 @@ services:
         tags:
             - { name: pimcore.classificationstore.engine, key: eav }
 
+    # $eavEngine: the read-through of a store that was flipped but not drained yet, and the removal
+    # of the EAV rows of a pair this engine has just written, both reach the other engine.
     Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine:
         arguments:
             $db: '@doctrine.dbal.default_connection'
         tags:
             - { name: pimcore.classificationstore.engine, key: document }
+
+    # drives the flip/drain/verify/cleanup route from EAV to the document engine, for the four
+    # commands of the same names
+    Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
 
     # public: it is consumed from the classification store DAO and the class definition DAO,
     # which are not container-managed.
