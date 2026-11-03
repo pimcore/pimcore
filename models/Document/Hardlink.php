@@ -155,11 +155,7 @@ class Hardlink extends Document
             }
         }
 
-        if (!static::getGetInheritedProperties()) {
-            return array_filter($this->properties, static fn (Model\Property $property) => !$property->isInherited());
-        }
-
-        return $this->properties;
+        return $this->filterInheritedProperties($this->properties);
     }
 
     public function getChildren(bool $includingUnpublished = false): Listing

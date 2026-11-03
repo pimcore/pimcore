@@ -17,7 +17,6 @@ use Exception;
 use Pimcore;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Listing;
-use Pimcore\Model\Property;
 
 /**
  * @internal
@@ -108,11 +107,7 @@ trait Wrapper
             }
         }
 
-        if (!static::getGetInheritedProperties()) {
-            return array_filter($this->properties, static fn (Property $property) => !$property->isInherited());
-        }
-
-        return $this->properties;
+        return $this->filterInheritedProperties($this->properties);
     }
 
     public function getProperty(string $name, bool $asContainer = false): mixed

@@ -254,7 +254,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @return array<string, Model\Property>
      */
-    private function filterInheritedProperties(array $properties): array
+    protected function filterInheritedProperties(array $properties): array
     {
         if (static::getGetInheritedProperties()) {
             return $properties;

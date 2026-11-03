@@ -244,7 +244,11 @@ class UseInheritedPropertiesTest extends Unit
             'hl_prop' => (new Property())->setName('hl_prop')->setType('text')->setData('h')->setInherited(false),
         ]);
 
+        $wrapperDao = $this->createMock(Dao::class);
+        $wrapperDao->method('getProperties')->willReturn([]);
+
         $wrapper = new WrapperPage();
+        $wrapper->setDao($wrapperDao);
         $wrapper->setHardLinkSource($hardlink);
         $wrapper->setSourceDocument($this->createSourcePage());
 
