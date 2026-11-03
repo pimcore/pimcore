@@ -246,6 +246,13 @@ $groupRel->setColId($collectionConfig->getId());
 $groupRel->save();
 ```
 
+A key carries a title of its own, which the example above does not set: the `title` of the definition it is given
+seeds the column instead, as long as the key was neither loaded nor given a title explicitly. `setTitle()` takes
+precedence over it, and once a title was set or loaded the definition no longer feeds the column - editing the
+definition of a loaded key therefore leaves its title as it was. A save that has neither a loaded nor an explicit
+nor a seeded title leaves the stored one alone rather than clearing it, so a key built with `new` to update one
+other field does not drop its title.
+
 ### Identifiers
 
 Stores, collections, groups and keys carry an `identifier` in addition to their auto increment id and their name.
