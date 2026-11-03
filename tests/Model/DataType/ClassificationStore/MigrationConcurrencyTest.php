@@ -294,6 +294,102 @@ class MigrationConcurrencyTest extends AbstractMigrationTest
     }
 
     /**
+     * The cleanup of a class and a read-through of one of its pairs cannot overtake each other: a
+     * read-through holds the metadata locks of both EAV tables for the length of its transaction,
+     * {@see DocumentEngine::load()}, so the `DROP TABLE` of a cleanup that comes second waits there
+     * rather than taking the source the reader is about to read.
+     *
+     * The two statements the read-through takes its snapshot with are issued here on the second
+     * connection, as the drop has to be the one this session issues to be waited for by it: this
+     * session is the cleanup's. The lock wait is this session's own, so a drop that is held fails
+     * instead of hanging the suite - and a wait of a metadata lock is what `lock_wait_timeout`
+     * governs rather than `innodb_lock_wait_timeout`.
+     */
+    public function testACleanupWaitsForAReadThroughThatStillHoldsTheEavTables(): void
+    {
+        $this->createObjectWithValue(self::INPUT_KEY, self::VALUE, 'concurrency-cleanup');
+        $this->flipStore();
+
+        $other = $this->otherConnection();
+        $other->beginTransaction();
+
+        foreach ([$this->getDataTable(), $this->getGroupsTable()] as $table) {
+            $other->fetchOne('SELECT 1 FROM ' . $other->quoteIdentifier($table) . ' LIMIT 1');
+        }
+
+        $db = Db::get();
+        $db->executeStatement('SET SESSION lock_wait_timeout = ' . self::LOCK_WAIT_SECONDS);
+
+        try {
+            $this->getMigrationService()->dropEavTables($this->getClass(), false);
+
+            $this->fail('the cleanup has to wait for the read-through holding the tables');
+        } catch (RetryableException) {
+            // the drop waited for the reader and gave up on this session's lock wait
+        } finally {
+            $db->executeStatement('SET SESSION lock_wait_timeout = DEFAULT');
+            $other->rollBack();
+        }
+
+        $this->assertTrue($this->tableExists($this->getDataTable()), 'the data table has to be there still');
+        $this->assertTrue($this->tableExists($this->getGroupsTable()), 'and so has the group table');
+    }
+
+    /**
+     * And the interleaving the locks above are what rules out, in the one shape they cannot: a
+     * caller whose transaction - and therefore whose snapshot - was opened before the conversion of
+     * this pair committed, and whose EAV tables a cleanup dropped before the read-through got to
+     * them. Its snapshot shows no document and its source is gone, which is the one state in which
+     * the pair's values are neither on the side it reads nor on the side it was told to read.
+     *
+     * The documents are what a class whose EAV tables are gone holds all of its values in - the
+     * cleanup only drops them with an empty backlog and a verification that holds - so they are
+     * what answers, read as of now rather than as of the snapshot that cannot see them. An empty
+     * store here is a pair the drain converted reading back as a pair that holds nothing.
+     */
+    public function testALoadWhoseEavTablesWereDroppedUnderItAnswersFromTheDocuments(): void
+    {
+        $this->skipUnlessRepeatableRead();
+
+        $donorId = (int) $this->createObjectWithValue(self::INPUT_KEY, self::VALUE, 'concurrency-dropped-donor')
+            ->getId();
+        $objectId = (int) $this->createObjectWithValue(self::INPUT_KEY, self::VALUE, 'concurrency-dropped')->getId();
+
+        $this->flipStore();
+
+        $document = $this->drainADonorAndTakeItsDocument($donorId);
+        $object = $this->concrete($objectId);
+
+        $db = Db::get();
+        $db->beginTransaction();
+
+        try {
+            // the snapshot of this transaction, established on the document table alone: this pair
+            // holds none of them, and nothing of the EAV tables is held - which is what lets the
+            // drop below through, as it does a reader that has not reached its source yet
+            $this->assertSame([], $this->readDocumentRows($objectId));
+
+            $other = $this->otherConnection();
+            $other->beginTransaction();
+            $this->convertOnTheOtherConnection($other, $objectId, $document);
+            $other->commit();
+
+            // the cleanup of the class, which the backlog this conversion emptied now permits
+            foreach ([$this->getDataTable(), $this->getGroupsTable()] as $table) {
+                $other->executeStatement('DROP TABLE ' . $other->quoteIdentifier($table));
+            }
+
+            $store = $this->buildStore($object);
+            $this->documentEngine()->load($store);
+
+            $this->assertSame(self::VALUE, $this->valueOf($store), 'the converted values have to come back');
+            $this->assertSame([$this->getGroupId() => true], $store->getActiveGroups());
+        } finally {
+            $db->rollBack();
+        }
+    }
+
+    /**
      * A document written by the engine itself, by draining an object kept for the purpose: the
      * payload the second connection writes has to be one the engine reads back, and guessing its
      * shape here would be testing this test's idea of it.

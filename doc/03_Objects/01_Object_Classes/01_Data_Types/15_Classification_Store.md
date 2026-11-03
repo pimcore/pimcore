@@ -479,7 +479,11 @@ save and a drain of the same object queue on each other rather than deadlocking 
 up front is one pending-pair count per class - that is the order the run goes in, smallest class first - and the
 pairs of a class are then read from its value tables a bounded batch at a time, so the backlog of an installation
 is never held in the process at once. The objects it loads are not held either: converting a pair loads its object,
-and the runtime cache is cleared every hundred pairs so that a run does not grow by the objects behind it. The
+and the runtime cache is cleared every hundred pairs so that a run does not grow by the objects behind it. A
+converted object is also dropped from the runtime cache and has its cache entry invalidated as its pair commits,
+the way a save of the same rows would: an entry written before the conversion carries the values of the side the
+pair has left, and a group mapped to no collection is the one thing the two sides do not read the same way - so a
+cached parent holding such a mapping would answer a child's inherited collection with it. The
 progress bar of `--processes` therefore has no total; the `n of m pair(s) converted` line the drain prints does,
 from those counts.
 
@@ -506,7 +510,12 @@ store whose every row is unproven does not have to fit in the process either.
 **`cleanup` is per class while the flip is per store.** It drops the two EAV tables of a class only when every store
 used by any classification store field on that class resolves to `document` and the verification of that class
 holds. When it refuses, it names the stores that are in the way by id and by name - a class carrying a second field
-on a store nobody has flipped keeps its tables.
+on a store nobody has flipped keeps its tables. The `DROP` waits for the read-throughs that are still in flight: a
+read-through holds the metadata locks of both EAV tables for the length of its transaction, so a load that has
+chosen those rows as its source reads them before they go rather than finding them gone mid-load. Read-throughs
+that start while that `DROP` is waiting queue behind it, which by then is a drop of two empty tables. A load whose
+tables did go first - because it had not reached them yet - answers from the documents, which is where a class
+whose tables are gone holds all of its values.
 
 #### What the document engine does and does not do
 

@@ -474,6 +474,33 @@ class MigrationDrainTest extends AbstractMigrationTest
     }
 
     /**
+     * A class id that resolves to no class definition is refused, on either execution path.
+     *
+     * Such an id contributes no backlog, so a dry run would report none and a real run would
+     * convert nothing and succeed - which is what would let a mistyped `--class` in a migration
+     * script read as a class that has nothing left to convert. The verify and the cleanup command
+     * refuse the same way, with the same message.
+     */
+    public function testAnUnknownClassIsRefusedOnBothExecutionPaths(): void
+    {
+        $this->createObjectWithValue(self::INPUT_KEY, 'untouched', 'unknown-class-owner');
+        $this->flipStore();
+
+        $pending = $this->pendingPairs($this->getClass());
+        $this->assertCount(1, $pending, 'precondition: the test class has a pair to convert');
+
+        foreach ([[], ['--dry-run' => true]] as $input) {
+            $tester = $this->runDrain($input + ['--class' => 'NoSuchClassId']);
+
+            $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+            $this->assertStringContainsString('No class definition found for NoSuchClassId', $tester->getDisplay());
+        }
+
+        // and nothing of the class that does exist was touched on the way to that refusal
+        $this->assertSame($pending, $this->pendingPairs($this->getClass()));
+    }
+
+    /**
      * A real run reports what it is achieving from its own measurement: the pairs it converted, the
      * time that took, the rate that works out to and how long the rest would take at it.
      */

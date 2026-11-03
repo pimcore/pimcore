@@ -220,13 +220,28 @@ class MigrationFlipTest extends AbstractMigrationTest
     }
 
     /**
+     * The root of the package these files belong to, which is where they are whichever layout the
+     * suite runs in.
+     *
+     * `PIMCORE_PROJECT_ROOT` is not that root: `tests/_bootstrap.php` resolves it to the consuming
+     * application when the suite runs from an installed pimcore/pimcore - a supported layout in
+     * which these files live under `vendor/pimcore/pimcore` instead, so a path built on it would not
+     * exist and this test would fail over the layout rather than over a dependency. This file sits
+     * four directories below the package root.
+     */
+    private function packageRoot(): string
+    {
+        return dirname(__DIR__, 4);
+    }
+
+    /**
      * Core gains no dependency on the execution engine bundle: the drain is a console command with
      * a transaction per pair, not a job.
      */
     public function testNoneOfTheNewCodeReachesForTheExecutionEngineBundle(): void
     {
         foreach (self::NEW_SOURCE_FILES as $file) {
-            $path = PIMCORE_PROJECT_ROOT . '/' . $file;
+            $path = $this->packageRoot() . '/' . $file;
 
             $this->assertFileExists($path);
             $this->assertStringNotContainsString(

@@ -315,7 +315,8 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         // one snapshot: a conversion commits the pair's documents and the deletion of its EAV rows
         // together, so a source chosen by one autocommit read and loaded by the next can fall
         // between those two states and answer with neither. Inside a transaction the caller
-        // already owns one, and the re-read below is what that snapshot is established on.
+        // already owns one; outside of one the snapshot below is established by the statement that
+        // holds the EAV tables, and the documents are re-read inside it.
         //
         // The read above is what keeps that off the path of a store with nothing left to convert:
         // a pair that holds documents is answered by one statement, as it was. A pair that holds
@@ -326,17 +327,95 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return;
         }
 
-        $this->db->transactional(function () use ($classificationStore): void {
-            $rows = $this->readDocumentRows($classificationStore);
+        try {
+            $this->db->transactional(function () use ($classificationStore): void {
+                // the snapshot is established on the EAV tables rather than on the documents, so
+                // that this transaction holds their metadata locks for as long as it may still read
+                // them, {@see self::holdEavTables()}
+                $this->holdEavTables($classificationStore->getClass()->getId());
 
-            if ($rows === []) {
-                $this->readThroughEav($classificationStore);
+                $rows = $this->readDocumentRows($classificationStore);
 
-                return;
-            }
+                if ($rows === []) {
+                    $this->readThroughEav($classificationStore);
 
-            $this->applyDocumentRows($classificationStore, $rows);
-        });
+                    return;
+                }
+
+                $this->applyDocumentRows($classificationStore, $rows);
+            });
+        } catch (TableNotFoundException) {
+            // there is no EAV side to read: a store born on this engine never had those tables, and
+            // the cleanup of a converted class has dropped them. Either way the documents are the
+            // only source there is, and the snapshot that would have been read from both went with
+            // the rolled back transaction - so this read takes one of its own rather than an older
+            // one that could still predate the conversion
+            $this->applyDocumentsOrEmptyStore($classificationStore);
+        }
+    }
+
+    /**
+     * Takes the metadata locks of the two EAV tables, as the statement this transaction's consistent
+     * read is established on.
+     *
+     * A read-through serves a pair from the EAV rows, so the tables have to still be there when it
+     * gets to them - and the cleanup of a class drops them the moment its backlog is empty and its
+     * verification holds. Both of those can happen while a read-through is in flight: its snapshot
+     * is older than the conversion of the pair, so it still sees no document and will read the EAV
+     * rows the snapshot holds, while the DROP only needs the tables' exclusive metadata lock, which
+     * nothing a reader of the document table holds stands in the way of. The reader would then find
+     * its own source gone and answer with an empty store.
+     *
+     * A metadata lock taken here is held until this transaction ends, which is what orders the two:
+     * a cleanup that comes second waits for the read-through to finish - MySQL's `lock_wait_timeout`
+     * governs that wait rather than `innodb_lock_wait_timeout` - and a cleanup that came first is a
+     * table-not-found at this very statement, before a snapshot the documents would have to be
+     * judged against exists. The caller reads the documents alone in that case, which is what a
+     * class whose tables are gone holds all of its values in.
+     *
+     * @throws TableNotFoundException when either table is gone
+     * @throws Exception
+     */
+    private function holdEavTables(string $classId): void
+    {
+        // in the order the cleanup drops the two, {@see EavEngine::dropTables()}: a cleanup that
+        // reaches the first of them while this transaction holds it waits there, without having
+        // dropped the other one out from under a read that would then be holding half a source
+        $tables = [
+            $this->eavEngine->getDataTableName($classId),
+            $this->eavEngine->getGroupsTableName($classId),
+        ];
+
+        foreach ($tables as $table) {
+            $this->db->fetchOne('SELECT 1 FROM ' . $this->db->quoteIdentifier($table) . ' LIMIT 1');
+        }
+    }
+
+    /**
+     * Puts the stored documents of one pair on the model, or empties it when the pair holds none.
+     *
+     * This is the answer for a class whose EAV tables are not there, so the documents are the whole
+     * of what it holds. Inside a caller's transaction they are read as of now rather than as of its
+     * snapshot: that snapshot may have been taken before the conversion of this pair committed - it
+     * is what let the caller get here at all - and a consistent read of it would report a pair whose
+     * values are in a document it cannot see as an empty store. A locking read is the one read that
+     * sees the latest committed row, and the pair has nowhere else left to be read from.
+     *
+     * @throws Exception
+     */
+    private function applyDocumentsOrEmptyStore(Classificationstore $classificationStore): void
+    {
+        $rows = $this->readDocumentRows($classificationStore, $this->db->isTransactionActive());
+
+        if ($rows === []) {
+            $classificationStore->setActiveGroups([]);
+            $classificationStore->setGroupCollectionMappings([]);
+            $classificationStore->resetDirtyMap();
+
+            return;
+        }
+
+        $this->applyDocumentRows($classificationStore, $rows);
     }
 
     /**
@@ -386,18 +465,21 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * was edited by hand is on this engine before any class carrying it has been saved, and a read
      * must not raise table-not-found over that.
      *
+     * @param bool $asOfNow reads the latest committed rows rather than this transaction's snapshot,
+     *                      which only {@see self::applyDocumentsOrEmptyStore()} asks for
+     *
      * @return array<array<string, mixed>>
      *
      * @throws Exception
      */
-    private function readDocumentRows(Classificationstore $classificationStore): array
+    private function readDocumentRows(Classificationstore $classificationStore, bool $asOfNow = false): array
     {
         $table = $this->getDocumentTableName($classificationStore->getClass()->getId());
 
         try {
             return $this->db->fetchAllAssociative(
                 'SELECT `groupId`, `collectionId`, `values` FROM `' . $table . '`'
-                . ' WHERE `id` = ? AND `fieldname` = ?',
+                . ' WHERE `id` = ? AND `fieldname` = ?' . ($asOfNow ? ' LOCK IN SHARE MODE' : ''),
                 [$classificationStore->getObject()->getId() ?? 0, $classificationStore->getFieldname()]
             );
         } catch (TableNotFoundException) {
@@ -409,8 +491,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * Reads a pair the drain has not converted yet from the EAV tables it still lives in.
      *
      * The values are derived, not stored: nothing is written here and no column records that the
-     * answer came from the other engine. A class whose EAV tables were never created - a store born
-     * on this engine - or whose tables the cleanup has dropped reads as an empty store.
+     * answer came from the other engine.
+     *
+     * A class whose EAV tables are not there has nothing to read through to: a store born on this
+     * engine never had them, and the cleanup of a converted class - which it only reaches with an
+     * empty backlog and a verification that holds - has dropped them. Both of those mean the
+     * documents are the whole of what the class holds, so the pair is answered from them rather than
+     * as an empty store: a caller whose transaction was opened before the conversion committed
+     * would otherwise be told that a pair the drain has converted holds nothing.
      *
      * @throws Exception
      */
@@ -419,9 +507,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         try {
             $this->eavEngine->load($classificationStore);
         } catch (TableNotFoundException) {
-            $classificationStore->setActiveGroups([]);
-            $classificationStore->setGroupCollectionMappings([]);
-            $classificationStore->resetDirtyMap();
+            $this->applyDocumentsOrEmptyStore($classificationStore);
         }
     }
 

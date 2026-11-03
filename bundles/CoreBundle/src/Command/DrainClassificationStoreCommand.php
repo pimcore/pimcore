@@ -119,6 +119,17 @@ class DrainClassificationStoreCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // before either execution path: a class id that resolves to nothing contributes no backlog,
+        // so a dry run would report none and a real run would convert nothing and succeed - which is
+        // what would let a mistyped class id in a migration script pass for a drained class. The
+        // verify and the cleanup command refuse the same way
+        $classId = $this->getClassId($input);
+        if ($classId !== null && $this->migrationService->getClasses($classId) === []) {
+            $this->io->error('No class definition found for ' . $classId);
+
+            return self::FAILURE;
+        }
+
         if ($this->isDryRun()) {
             return $this->reportBacklog();
         }

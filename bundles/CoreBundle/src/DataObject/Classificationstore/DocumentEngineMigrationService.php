@@ -20,6 +20,8 @@ use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\ParameterType;
 use Exception;
 use Generator;
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Listing as ClassDefinitionListing;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -31,6 +33,7 @@ use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service as ElementService;
 use Throwable;
 
 /**
@@ -504,6 +507,11 @@ final class DocumentEngineMigrationService
     /**
      * Drops the two EAV tables of a class, or names the ones a dry run would drop.
      *
+     * The DROP waits for every read-through that may still read those tables: such a read holds
+     * their metadata locks for the length of its transaction, {@see DocumentEngine::load()}, so a
+     * reader whose snapshot predates the last conversion finishes reading the rows that snapshot
+     * holds before the tables go - rather than finding its own source gone mid-load.
+     *
      * @return string[] the tables that were dropped, or that would be
      *
      * @throws Exception
@@ -560,7 +568,46 @@ final class DocumentEngineMigrationService
             throw $exception;
         }
 
+        $this->forgetConvertedObject($objectId);
+
         return $result;
+    }
+
+    /**
+     * Drops the converted object from the caches that hold it, now that the pair is committed.
+     *
+     * The conversion moves the rows an already loaded object was built from, and a loaded object is
+     * held in two places: the runtime cache, which `AbstractObject::getById()` registers it in even
+     * for a forced load, and the element cache any process that loaded it before the drain wrote it
+     * to. A classification store is not lazy loaded - `Concrete\Dao::getData()` loads it with the
+     * rest of the object - so such an entry carries the values of the side the pair has just left.
+     *
+     * The two sides do not read a null collection mapping the same way, which is what makes a stale
+     * entry wrong rather than merely old: an EAV group mapped to no collection is an entry holding
+     * null and shadows the collection an ancestor maps the group to, while the same group's document
+     * row carries null precisely so that the ancestor answers it - the two readings of
+     * {@see DocumentEngine::getInheritedCollectionMappings()}. A child whose own mapping was
+     * therefore left out of its document resolves it through its parent, and would resolve it to the
+     * null of a parent still served from one of these caches instead of to the collection it was
+     * stored with.
+     *
+     * Everything tagged with the object goes with it: a cached object carries its own tag,
+     * {@see \Pimcore\Model\Element\AbstractElement::getCacheTags()}, as does every entry built over
+     * it. That one tag is the whole of what a conversion invalidates, which is where this is
+     * narrower than the sweep `AbstractObject::clearDependentCacheByObjectId()` performs after
+     * a save: a drain runs over every object of an installation, and nothing it writes touches the
+     * properties or the rendered output of one.
+     */
+    private function forgetConvertedObject(int $objectId): void
+    {
+        $cacheTag = ElementService::getElementCacheTag('object', $objectId);
+
+        // the cache key of an element is its cache tag
+        if (RuntimeCache::isRegistered($cacheTag)) {
+            RuntimeCache::getInstance()->offsetUnset($cacheTag);
+        }
+
+        Cache::clearTag($cacheTag);
     }
 
     /**
