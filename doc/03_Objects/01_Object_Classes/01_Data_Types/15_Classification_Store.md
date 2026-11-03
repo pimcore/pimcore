@@ -58,7 +58,6 @@ Notes:
 
 * `calculatedValue` is not persisted, its value is computed when the key is read.
 * `encryptedField` wraps another data type, which has to be one of the types listed above.
-* `inputQuantityValueRange` is handled by the store as well, but the Studio key editor does not offer it.
 * Which of these types the key editor offers depends on the admin UI in use. The store itself accepts any type that
   satisfies the persistence contract described below, including custom ones.
 
