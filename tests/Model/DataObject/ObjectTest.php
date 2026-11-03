@@ -692,4 +692,26 @@ class ObjectTest extends ModelTestCase
 
         $this->assertFalse($dirtyDetectionDisabled);
     }
+
+    /**
+     * The child checks of the object DAO filter by parentId, type and published. They need a composite index on
+     * these columns; with the single-column indexes MySQL may scan the published index for a LIMIT 1 child check.
+     */
+    public function testObjectsTableHasParentTypePublishedIndex(): void
+    {
+        $db = Db::get();
+
+        $columnsByIndex = [];
+        foreach ($db->fetchAllAssociative('SHOW INDEX FROM objects') as $index) {
+            $columnsByIndex[$index['Key_name']][(int) $index['Seq_in_index']] = $index['Column_name'];
+        }
+
+        $this->assertArrayHasKey('parentId_type_published', $columnsByIndex);
+        $this->assertSame([1 => 'parentId', 2 => 'type', 3 => 'published'], $columnsByIndex['parentId_type_published']);
+
+        $explain = $db->fetchAssociative(
+            "EXPLAIN SELECT 1 FROM objects o WHERE parentId = 1 AND published = 1 AND `type` IN ('object', 'variant', 'folder') LIMIT 1"
+        );
+        $this->assertContains('parentId_type_published', explode(',', (string) $explain['possible_keys']));
+    }
 }
