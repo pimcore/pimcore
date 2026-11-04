@@ -33,6 +33,8 @@ class Video extends Model\Asset
 
     protected string $type = 'video';
 
+    private static bool $missingVideoAdapterLogged = false;
+
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
@@ -213,10 +215,7 @@ class Video extends Model\Asset
             if (!VideoAdapter::isAvailable()) {
                 // no adapter (e.g. ffmpeg not installed) says nothing about the file itself - don't mark it as
                 // failed, otherwise the dimensions would never be read again once an adapter is available
-                Logger::warning(sprintf(
-                    'Cannot read the dimensions of video %s: no video adapter is available',
-                    $this->getRealFullPath()
-                ));
+                self::logMissingVideoAdapterOnce();
 
                 return null;
             }
@@ -233,6 +232,23 @@ class Video extends Model\Asset
         }
 
         return $dimensions;
+    }
+
+    /**
+     * The missing adapter is a property of the environment, not of a single video - warn once per process instead of
+     * on every metadata read of every video (listings, grids and indexing read many).
+     */
+    private static function logMissingVideoAdapterOnce(): void
+    {
+        if (self::$missingVideoAdapterLogged) {
+            return;
+        }
+
+        self::$missingVideoAdapterLogged = true;
+        Logger::warning(
+            'Cannot read the dimensions of videos: no video adapter (ffmpeg) is available. '
+            . 'Videos are not marked as failed, their dimensions are read once an adapter is available.'
+        );
     }
 
     /**

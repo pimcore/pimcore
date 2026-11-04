@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Monolog\Handler\TestHandler;
+use Monolog\Level;
+use Monolog\Logger as MonologLogger;
+use Monolog\LogRecord;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\AssetEvents;
@@ -113,6 +117,34 @@ final class VideoMetadataTest extends ModelTestCase
         $this->assertArrayNotHasKey(Asset::CUSTOM_SETTING_PROCESSING_FAILED, $this->fetchCustomSettings($video));
         $this->assertSame(0, $this->postUpdateEvents);
         $this->assertSame(self::OLD_MODIFICATION_DATE, $this->fetchModificationDate($video));
+    }
+
+    public function testMissingVideoAdapterIsLoggedOncePerProcess(): void
+    {
+        $first = $this->createVideoWithoutCachedMetadata();
+        $second = $this->createVideoWithoutCachedMetadata();
+        $this->disableVideoAdapter();
+        $this->setStaticProperty(Video::class, 'missingVideoAdapterLogged', false);
+
+        /** @var MonologLogger $logger */
+        $logger = Pimcore::getContainer()->get('monolog.logger.pimcore');
+        $records = new TestHandler(Level::Warning);
+        $logger->pushHandler($records);
+
+        try {
+            foreach ([$first, $second] as $video) {
+                $this->assertNull($video->getWidth());
+                $this->assertNull($video->getHeight());
+            }
+        } finally {
+            $logger->popHandler();
+        }
+
+        $warnings = array_filter(
+            $records->getRecords(),
+            static fn (LogRecord $record): bool => str_contains($record->message, 'no video adapter')
+        );
+        $this->assertCount(1, $warnings);
     }
 
     public function testMetadataIsReadOnceTheVideoAdapterIsAvailableAgain(): void
