@@ -87,7 +87,8 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
             $this->collectionClassDumper->dumpPHPClass($fcDefinition);
         }
 
-        $selectOptionConfigurations = new DataObject\SelectOptions\Config\Listing();
+        // the container config only, so the build does not need the database
+        $selectOptionConfigurations = (new DataObject\SelectOptions\Config\Listing())->setContainerConfigOnly(true);
         foreach ($selectOptionConfigurations as $selectOptionConfiguration) {
             $this->selectOptionsEnumDumper->dumpPHPEnum($selectOptionConfiguration);
         }
