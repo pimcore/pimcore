@@ -140,11 +140,14 @@ final class VideoMetadataTest extends ModelTestCase
             $logger->popHandler();
         }
 
-        $warnings = array_filter(
-            $records->getRecords(),
-            static fn (LogRecord $record): bool => str_contains($record->message, 'no video adapter')
-        );
-        $this->assertCount(1, $warnings);
+        // the consequence (logged by Video) and the cause (logged by the adapter's availability probe) - once each
+        foreach (['no video adapter', "No 'ffmpeg' executable found"] as $message) {
+            $warnings = array_filter(
+                $records->getRecords(),
+                static fn (LogRecord $record): bool => str_contains($record->message, $message)
+            );
+            $this->assertCount(1, $warnings, $message);
+        }
     }
 
     public function testMetadataIsReadOnceTheVideoAdapterIsAvailableAgain(): void
@@ -262,7 +265,7 @@ final class VideoMetadataTest extends ModelTestCase
      */
     private function disableVideoAdapter(): void
     {
-        $this->setStaticProperty(VideoAdapterFactory::class, 'defaultAdapterInstance', null);
+        $this->resetVideoAdapterFactory();
         $cache = (new ReflectionProperty(Console::class, 'executableCache'))->getValue();
         $cache['ffmpeg'] = false;
         $this->setStaticProperty(Console::class, 'executableCache', $cache);
@@ -273,7 +276,13 @@ final class VideoMetadataTest extends ModelTestCase
         $cache = (new ReflectionProperty(Console::class, 'executableCache'))->getValue();
         unset($cache['ffmpeg']);
         $this->setStaticProperty(Console::class, 'executableCache', $cache);
+        $this->resetVideoAdapterFactory();
+    }
+
+    private function resetVideoAdapterFactory(): void
+    {
         $this->setStaticProperty(VideoAdapterFactory::class, 'defaultAdapterInstance', null);
+        $this->setStaticProperty(VideoAdapterFactory::class, 'defaultAdapterUnavailable', false);
     }
 
     private function setStaticProperty(string $class, string $property, mixed $value): void
