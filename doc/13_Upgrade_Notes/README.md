@@ -38,6 +38,12 @@
 
 ### [Security]
 - [2FA] When `pimcore.general.domain` is configured, it is now used as the default `scheb_two_factor.google.server_name`, so new Google Authenticator enrolments show the account as `<username>@<domain>` instead of just the username. The issuer is not changed. Existing enrolments keep working, as the shared secret is unchanged and only the label of new QR codes is affected. An explicitly configured `scheb_two_factor.google.server_name` still takes precedence. Without a configured domain nothing changes.
+## Pimcore 2026.3.5
+
+### [Assets]
+- [Videos] Reading the metadata of a video no longer saves the asset (bugfix). When `Video::getDuration()`, `Video::getDimensions()`, `Video::getWidth()` or `Video::getHeight()` had to read a value with the video adapter because it was not cached yet, they called a full `save()`. Every read - in a template, a grid, a listing or the search index - therefore fired the asset update events, advanced `modificationDate`, re-queued the asset and its dependents for indexing, and wrote any other unsaved change of the object. The values are now cached the way `Image::getDimensions()` caches image dimensions: only the custom settings are written, without events and without changing `modificationDate`. Nothing is written for an asset that is not saved yet, or whose data was replaced but not saved yet - the values are read again from the stored file after the next save. Code that relied on these getters dispatching `AssetEvents::PRE_UPDATE`/`POST_UPDATE` has to save the asset itself.
+- [Videos] A video is no longer marked as failed (`pimcore-asset-processing-failed`) when no video adapter is available - e.g. ffmpeg not installed in the container that reads the metadata or processes the asset update task. This is an environment problem, not a broken file, and the marker kept duration and dimensions at `null` even after ffmpeg became available. A warning is logged instead; a file the adapter cannot read is still marked as failed. Videos that were marked for this reason can be processed again with `bin/console pimcore:assets:add-to-update-task-queue --retry-failed`.
+
 ## Pimcore 2026.3.4
 
 ### [Assets]
