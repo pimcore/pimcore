@@ -49,7 +49,7 @@
     "defuse/php-encryption": "^2.2.0",
     "doctrine/dbal": "^4.4",
     "doctrine/doctrine-bundle": "^2.13.2 || ^3.0",
-    "doctrine/doctrine-migrations-bundle": "^3.2.2",
+    "doctrine/doctrine-migrations-bundle": "^3.2.2 || ^4.0",
     "doctrine/inflector": "^2.0.2",
     "doctrine/orm": "^3.0",
     "doctrine/persistence": "^3.0.3 || ^4.0",
