@@ -238,10 +238,12 @@ class Video extends Model\Asset
     /**
      * Persists only the custom settings (like Image::getDimensions() does) instead of saving the whole asset:
      * reading metadata must not fire save events, change the modification date or write other pending changes.
+     * Values read from replaced but unsaved data stay in memory: they don't describe the stored file, and the next
+     * save drops them anyway (see update()).
      */
     private function persistCustomSettings(): void
     {
-        if (!$this->getId()) {
+        if (!$this->getId() || $this->getDataChanged()) {
             return;
         }
 

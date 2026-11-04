@@ -141,6 +141,25 @@ final class VideoMetadataTest extends ModelTestCase
         $this->assertSame(0, $this->postUpdateEvents);
     }
 
+    /**
+     * The getters read the unsaved replacement data, so whatever they find (here: a failure) belongs to that
+     * data - it must not be persisted against the file that is still stored.
+     */
+    public function testMetadataOfUnsavedReplacementDataIsNotPersisted(): void
+    {
+        $this->skipWithoutVideoAdapter();
+        $video = $this->createVideoWithoutCachedMetadata();
+        $video->setData('this is not a video');
+
+        $this->assertNull($video->getWidth());
+        $this->assertNull($video->getDuration());
+
+        $settings = $this->fetchCustomSettings($video);
+        foreach (self::METADATA_SETTINGS as $key) {
+            $this->assertArrayNotHasKey($key, $settings);
+        }
+    }
+
     public function testUpdateTaskWithoutVideoAdapterDoesNotMarkProcessingAsFailed(): void
     {
         $video = $this->createVideoWithoutCachedMetadata();
