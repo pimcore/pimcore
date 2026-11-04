@@ -20,6 +20,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool;
+use Pimcore\Video as VideoAdapter;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -190,10 +191,7 @@ class Video extends Model\Asset
             $duration = $this->getDurationFromBackend();
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
-
-                Model\Version::disable();
-                $this->save(); // auto save
-                Model\Version::enable();
+                $this->persistCustomSettings();
             }
         }
 
@@ -212,6 +210,17 @@ class Video extends Model\Asset
                 'height' => $height,
             ];
         } elseif (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
+            if (!VideoAdapter::isAvailable()) {
+                // no adapter (e.g. ffmpeg not installed) says nothing about the file itself - don't mark it as
+                // failed, otherwise the dimensions would never be read again once an adapter is available
+                Logger::warning(sprintf(
+                    'Cannot read the dimensions of video %s: no video adapter is available',
+                    $this->getRealFullPath()
+                ));
+
+                return null;
+            }
+
             $dimensions = $this->getDimensionsFromBackend();
             if ($dimensions) {
                 $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
@@ -220,12 +229,24 @@ class Video extends Model\Asset
                 $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED, true);
             }
 
-            Model\Version::disable();
-            $this->save(); // auto save
-            Model\Version::enable();
+            $this->persistCustomSettings();
         }
 
         return $dimensions;
+    }
+
+    /**
+     * Persists only the custom settings (like Image::getDimensions() does) instead of saving the whole asset:
+     * reading metadata must not fire save events, change the modification date or write other pending changes.
+     */
+    private function persistCustomSettings(): void
+    {
+        if (!$this->getId()) {
+            return;
+        }
+
+        $this->getDao()->updateCustomSettings();
+        $this->clearDependentCache();
     }
 
     public function getWidth(): ?int
