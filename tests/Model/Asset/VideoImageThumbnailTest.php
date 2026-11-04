@@ -119,6 +119,32 @@ final class VideoImageThumbnailTest extends ModelTestCase
         $this->assertFileDoesNotExist($frameBeyondEnd);
     }
 
+    public function testSaveImageRemovesAndRejectsAnEmptyFile(): void
+    {
+        $stub = File::getLocalTempFilePath('sh');
+        file_put_contents($stub, "#!/bin/sh\nfor last; do :; done\n: > \"\$last\"\n");
+        chmod($stub, 0700);
+
+        $adapter = (new class() extends Ffmpeg {
+            public static string $cli = '';
+
+            public static function getFfmpegCli(): false|string
+            {
+                return self::$cli;
+            }
+        })->load(TestHelper::createVideoAsset()->getLocalFile());
+        $adapter::$cli = $stub;
+
+        $emptyFrame = File::getLocalTempFilePath('png');
+
+        try {
+            $this->assertFalse($adapter->saveImage($emptyFrame, 1));
+            $this->assertFileDoesNotExist($emptyFrame);
+        } finally {
+            unlink($stub);
+        }
+    }
+
     public function testThumbnailOfFrameBeyondEndFallsBackToPlaceholderWithoutWarning(): void
     {
         $this->skipUnlessFfmpegIsAvailable();

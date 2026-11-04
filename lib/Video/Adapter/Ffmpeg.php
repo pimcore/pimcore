@@ -246,6 +246,10 @@ class Ffmpeg implements AdapterInterface
             // FFmpeg exits successfully without writing anything when the time offset is beyond the end of the video
             clearstatcache(true, $file);
             if (!is_file($file) || filesize($file) === 0) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
+
                 Logger::info(sprintf('FFmpeg extracted no frame at %ss of %s', $timeOffset, $this->file));
 
                 return false;
