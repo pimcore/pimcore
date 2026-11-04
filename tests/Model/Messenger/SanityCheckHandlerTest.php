@@ -18,6 +18,7 @@ use Pimcore\Messenger\Handler\SanityCheckHandler;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionMethod;
@@ -111,14 +112,102 @@ class SanityCheckHandlerTest extends ModelTestCase
         $this->assertSame(0, $saved->getUserModification());
     }
 
+    public function testDeletedAssetIsNotReInserted(): void
+    {
+        $this->assertDeletedElementIsNotReInserted(TestHelper::createImageAsset(), 'assets');
+    }
+
+    public function testDeletedPageIsNotReInserted(): void
+    {
+        $this->assertDeletedElementIsNotReInserted(TestHelper::createEmptyDocumentPage(), 'documents');
+    }
+
+    public function testAssetWhoseParentRowIsGoneIsNotSaved(): void
+    {
+        $folder = TestHelper::createAssetFolder();
+        $asset = TestHelper::createImageAsset('', null, false);
+        $asset->setParentId($folder->getId());
+        $asset->save();
+
+        $this->assertElementWhoseParentRowIsGoneIsNotSaved($asset, $folder->getId(), 'assets');
+    }
+
+    public function testPageWhoseParentRowIsGoneIsNotSaved(): void
+    {
+        $folder = TestHelper::createDocumentFolder();
+        $page = TestHelper::createEmptyDocumentPage('', false);
+        $page->setParentId($folder->getId());
+        $page->save();
+
+        $this->assertElementWhoseParentRowIsGoneIsNotSaved($page, $folder->getId(), 'documents');
+    }
+
+    public function testExistingAssetIsSaved(): void
+    {
+        $this->assertExistingElementIsSaved(TestHelper::createImageAsset());
+    }
+
+    public function testExistingPageIsSaved(): void
+    {
+        $this->assertExistingElementIsSaved(TestHelper::createEmptyDocumentPage());
+    }
+
     private function performSanityCheck(ElementInterface $element): void
     {
         $method = new ReflectionMethod(SanityCheckHandler::class, 'performSanityCheck');
         $method->invoke(new SanityCheckHandler(), $element);
     }
 
-    private function countRows(int $id): int
+    private function countRows(int $id, string $table = 'objects'): int
     {
-        return (int) Db::get()->fetchOne('SELECT COUNT(*) FROM objects WHERE id = ?', [$id]);
+        return (int) Db::get()->fetchOne('SELECT COUNT(*) FROM ' . $table . ' WHERE id = ?', [$id]);
+    }
+
+    private function assertDeletedElementIsNotReInserted(ElementInterface $element, string $table): void
+    {
+        $id = $element->getId();
+        $stale = Service::getElementById(Service::getElementType($element), $id, ['force' => true]);
+        $this->assertInstanceOf(ElementInterface::class, $stale);
+
+        $element->delete();
+        $this->assertSame(0, $this->countRows($id, $table));
+
+        $this->performSanityCheck($stale);
+
+        $this->assertSame(0, $this->countRows($id, $table), 'the sanity check must not re-insert a deleted element');
+    }
+
+    private function assertElementWhoseParentRowIsGoneIsNotSaved(ElementInterface $element, int $parentId, string $table): void
+    {
+        $id = $element->getId();
+        $type = Service::getElementType($element);
+        $versionCount = $element->getVersionCount();
+        $stale = Service::getElementById($type, $id, ['force' => true]);
+        $this->assertInstanceOf(ElementInterface::class, $stale);
+
+        Db::get()->delete($table, ['id' => $parentId]);
+
+        try {
+            $this->performSanityCheck($stale);
+
+            $this->assertSame(1, $this->countRows($id, $table));
+            $this->assertSame($versionCount, (int) Db::get()->fetchOne('SELECT versionCount FROM ' . $table . ' WHERE id = ?', [$id]));
+            $this->assertSame(0, (int) Db::get()->fetchOne('SELECT COUNT(*) FROM versions WHERE ctype = ? AND cid = ? AND note = ?', [$type, $id, 'Sanity Check']));
+        } finally {
+            Db::get()->delete($table, ['id' => $id]);
+            Db::get()->delete('versions', ['ctype' => $type, 'cid' => $id]);
+        }
+    }
+
+    private function assertExistingElementIsSaved(ElementInterface $element): void
+    {
+        $type = Service::getElementType($element);
+        $versionCount = $element->getVersionCount();
+
+        $this->performSanityCheck(Service::getElementById($type, $element->getId(), ['force' => true]));
+
+        $saved = Service::getElementById($type, $element->getId(), ['force' => true]);
+        $this->assertInstanceOf(ElementInterface::class, $saved);
+        $this->assertGreaterThan($versionCount, $saved->getVersionCount());
     }
 }
