@@ -332,6 +332,10 @@ EOT;
      */
     private static function getEpsDimensionsFromHeader(string $path): ?array
     {
+        if (!is_file($path)) {
+            return null;
+        }
+
         $handle = @fopen($path, 'rb');
         if (!$handle) {
             return null;
@@ -483,6 +487,12 @@ EOT;
      */
     private static function positiveDimensions(float $width, float $height): ?array
     {
+        // a cast of a non-finite or out of range float is undefined; the size columns are 32 bit
+        $max = 2147483647;
+        if (!is_finite($width) || !is_finite($height) || abs($width) > $max || abs($height) > $max) {
+            return null;
+        }
+
         $width = (int) round($width);
         $height = (int) round($height);
 

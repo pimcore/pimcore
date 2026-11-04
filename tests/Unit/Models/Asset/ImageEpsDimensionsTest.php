@@ -178,15 +178,37 @@ class ImageEpsDimensionsTest extends Unit
         self::assertNull($parse->invoke(null, sys_get_temp_dir() . '/pimcore-eps-test-missing-' . uniqid()));
     }
 
+    public function testDeclinesAnOutOfRangeBoundingBox(): void
+    {
+        $huge = $this->eps("%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 999999999999999999999999 999999999999999999999\n%%EndComments\n");
+        $infinite = $this->eps("%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 " . str_repeat('9', 400) . " 200\n%%EndComments\n");
+
+        self::assertNull($this->dimensions($huge));
+        self::assertNull($this->dimensions($infinite));
+    }
+
+    public function testDeclinesADirectory(): void
+    {
+        self::assertNull($this->dimensions(sys_get_temp_dir()));
+    }
+
+    public function testGetDimensionsFromFileUsesTheParserForEps(): void
+    {
+        $file = $this->eps("%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 612 792\n%%EndComments\n");
+        $asset = new Image();
+        $asset->setFilename(basename($file));
+
+        // the adapter may or may not render EPS here, the size is the same either way
+        self::assertSame(['width' => 612, 'height' => 792], $asset->getDimensionsFromFile($file));
+    }
+
     /**
      * @return array{width: int, height: int}|null
      */
     private function dimensions(string $file): ?array
     {
-        $asset = new Image();
-        $asset->setFilename(basename($file));
-
-        return $asset->getDimensionsFromFile($file);
+        // the parser alone: through getDimensionsFromFile() the image adapter may yield the same size
+        return (new ReflectionMethod(Image::class, 'getEpsDimensionsFromHeader'))->invoke(null, $file);
     }
 
     private function eps(string $contents): string
