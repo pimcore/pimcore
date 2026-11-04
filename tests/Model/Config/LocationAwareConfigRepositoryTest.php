@@ -201,4 +201,27 @@ class LocationAwareConfigRepositoryTest extends ModelTestCase
         $this->assertNull(SettingsStore::getFromScopeSnapshot('config-1', self::SCOPE));
         $this->assertSame([['a' => 'container'], LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG], $repository->loadConfigByKey('from-container'));
     }
+
+    private const FROM_CONTAINER = ['FromContainer' => ['id' => 'FromContainer']];
+
+    public function testWithoutReadTargetKeysOfContainerAndSettingsStoreAreListed(): void
+    {
+        $repository = $this->createRepository(null, self::FROM_CONTAINER);
+        $repository->saveConfig('FromStore', ['id' => 'FromStore']);
+
+        $keys = $repository->fetchAllKeysByReadTargets();
+        sort($keys);
+
+        $this->assertSame(['FromContainer', 'FromStore'], $keys);
+        $this->assertSame(['id' => 'FromStore'], $repository->loadConfigByKey('FromStore')[0]);
+        $this->assertSame(['id' => 'FromContainer'], $repository->loadConfigByKey('FromContainer')[0]);
+    }
+
+    public function testExplicitReadTargetsLimitTheListedKeys(): void
+    {
+        $this->createRepository(null)->saveConfig('FromStore', ['id' => 'FromStore']);
+
+        $this->assertSame(['FromContainer'], $this->createRepository('symfony-config', self::FROM_CONTAINER)->fetchAllKeysByReadTargets());
+        $this->assertSame(['FromStore'], $this->createRepository('settings-store', self::FROM_CONTAINER)->fetchAllKeysByReadTargets());
+    }
 }

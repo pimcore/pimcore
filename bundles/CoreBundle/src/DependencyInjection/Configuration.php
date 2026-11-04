@@ -838,6 +838,20 @@ final class Configuration implements ConfigurationInterface
                             .'setting. Defaults to false to preserve existing behavior; the permissive default is deprecated '
                             .'since 2026.3 and will be removed in 2027.1. See Pimcore\\Model\\DataObject\\Data\\Link\\SanitizerPolicy.'
                         ))
+                        ->arrayNode('block')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('unserialize_allowed_classes')
+                                    ->info('Additional PHP classes to allow when unserializing the stored data of a Block field, on top of '
+                                        .'the value object classes the core block marshallers write. Register the classes a custom block '
+                                        .'marshaller (tag pimcore.dataobject.fielddefinition.marshaller, key block_<fieldtype>) or a custom '
+                                        .'field definition\'s normalize() places into a block; every other class in the stored data is '
+                                        .'reduced to __PHP_Incomplete_Class (see GHSA-6324-x2cv-h975).')
+                                    ->scalarPrototype()->end()
+                                    ->defaultValue([])
+                                ->end()
+                            ->end()
+                        ->end()
                         ->booleanNode('ignore_localized_query_fallback')
                             ->beforeNormalization()
                             ->ifString()
