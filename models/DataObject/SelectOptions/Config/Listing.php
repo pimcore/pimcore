@@ -30,6 +30,32 @@ class Listing extends Model\AbstractModel implements IteratorAggregate
     protected ?array $selectOptions = null;
 
     /**
+     * @internal
+     */
+    protected bool $containerConfigOnly = false;
+
+    /**
+     * Restricts the listing to the definitions of the container config, so it does not need the database. Only
+     * applies while the configured read target is symfony-config; any other read target lists as configured.
+     *
+     * @internal
+     */
+    public function setContainerConfigOnly(bool $containerConfigOnly): static
+    {
+        $this->containerConfigOnly = $containerConfigOnly;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     */
+    public function isContainerConfigOnly(): bool
+    {
+        return $this->containerConfigOnly;
+    }
+
+    /**
      * @return Model\DataObject\SelectOptions\Config[]
      */
     public function getSelectOptions(): array

@@ -18,6 +18,7 @@ use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
+use Pimcore\Video as VideoAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use function sprintf;
@@ -117,6 +118,33 @@ class AssetUpdateTasksHandler
 
     private function processVideo(Asset\Video $asset): void
     {
+        if (VideoAdapter::isAvailable()) {
+            $this->processVideoMetaData($asset);
+        } else {
+            // no adapter (e.g. ffmpeg not installed in this worker) says nothing about the file itself - don't mark
+            // it as failed, otherwise its metadata would never be read again once an adapter is available
+            $this->logger->warning(sprintf(
+                'Skipped reading duration and dimensions of video asset %s: no video adapter is available',
+                $asset->getId()
+            ));
+        }
+
+        $asset->removeCustomSetting('SphericalMetaData');
+        $sphericalMetaData = $asset->getSphericalMetaDataFromBackend();
+        if ($sphericalMetaData) {
+            $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
+        }
+
+        $asset->handleEmbeddedMetaData();
+        $this->saveAsset($asset);
+
+        if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
+            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        }
+    }
+
+    private function processVideoMetaData(Asset\Video $asset): void
+    {
         $failed = true;
 
         if ($duration = $asset->getDurationFromBackend()) {
@@ -133,19 +161,6 @@ class AssetUpdateTasksHandler
             $asset->removeCustomSetting('duration');
             $asset->removeCustomSetting('videoWidth');
             $asset->removeCustomSetting('videoHeight');
-        }
-
-        $asset->removeCustomSetting('SphericalMetaData');
-        $sphericalMetaData = $asset->getSphericalMetaDataFromBackend();
-        if ($sphericalMetaData) {
-            $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
-        }
-
-        $asset->handleEmbeddedMetaData();
-        $this->saveAsset($asset);
-
-        if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
-            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
         }
     }
 
