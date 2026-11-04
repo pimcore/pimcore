@@ -1,9 +1,31 @@
 # Upgrade Notes
 
-## Pimcore 2026.3.4
+## Pimcore 2026.3.5
+
+### [Assets]
+- [Videos] Reading the metadata of a video no longer saves the asset (bugfix). When `Video::getDuration()`, `Video::getDimensions()`, `Video::getWidth()` or `Video::getHeight()` had to read a value with the video adapter because it was not cached yet, they called a full `save()`. Every read - in a template, a grid, a listing or the search index - therefore fired the asset update events, advanced `modificationDate`, re-queued the asset and its dependents for indexing, and wrote any other unsaved change of the object. The values are now cached the way `Image::getDimensions()` caches image dimensions: only the custom settings are written, without events and without changing `modificationDate`. Nothing is written for an asset that is not saved yet, or whose data was replaced but not saved yet - the values are read again from the stored file after the next save. Code that relied on these getters dispatching `AssetEvents::PRE_UPDATE`/`POST_UPDATE` has to save the asset itself.
+- [Videos] A video is no longer marked as failed (`pimcore-asset-processing-failed`) when no video adapter is available - e.g. ffmpeg not installed in the container that reads the metadata or processes the asset update task. This is an environment problem, not a broken file, and the marker kept duration and dimensions at `null` even after ffmpeg became available. A warning is logged instead; a file the adapter cannot read is still marked as failed. Videos that were marked for this reason can be processed again with `bin/console pimcore:assets:add-to-update-task-queue --retry-failed`.
 
 ### [Messenger]
 - [Sanity check] The `SanityCheckHandler` (`pimcore_core` transport) no longer saves an element whose row, or whose parent's row, was deleted after the `SanityCheckMessage` was queued. `save()` re-inserted such an element (`Helper::updateOrInsert()`), so a bulk deletion with a running worker could leave orphaned objects with a broken path behind, followed by "ParentID not found" retries. The message is acknowledged and the element is skipped instead.
+
+## Pimcore 2026.3.4
+
+### [Assets]
+- [Thumbnails] Images with an embedded Photoshop clipping path are now clipped by that clipping path (bugfix). An image can carry any number of saved paths; the one designated as clipping path is named by the 'Name of clipping path' resource (8BIM 2999). The automatic clipping (`pimcore.assets.image.thumbnails.clip_auto_support`, enabled by default) always used the first saved path instead, so images whose clipping path is not the first path were cut along the wrong outline - e.g. a product photo whose first path outlines only part of the product lost the rest of it in every thumbnail. When the named clipping path cannot be found in the image, the first path is still used, as before, and a warning is logged. Thumbnails only change for images whose clipping path is not their first path:
+
+  | Image | Before | Now |
+  |-------|--------|-----|
+  | No clipping path | not clipped | not clipped (unchanged) |
+  | Clipping path is the only or the first saved path | clipped by the first path | clipped by the same path (unchanged) |
+  | Clipping path name that matches none of the saved paths | clipped by the first path | clipped by the first path (unchanged), warning logged |
+  | Clipping path is not the first saved path | clipped by the first path | **clipped by the clipping path** |
+
+  Existing thumbnails are not regenerated automatically. To apply the fix to affected images, clear their thumbnails - per asset with `Asset::clearThumbnails(true)`, or per thumbnail configuration with `bin/console pimcore:thumbnails:clear --type=image --name=<thumbnail config>`.
+
+### [DataObjects]
+- [Security] `Block::getDataFromResource()` no longer unserializes the block's stored data with every PHP class allowed (GHSA-6324-x2cv-h975). Only the value objects a block legitimately stores are reconstructed: `Consent`, `ExternalImage`, `StructuredTable`, `MarkerHotspotItem` and `Carbon`/`CarbonImmutable`. Any other object in the stored data comes back as `__PHP_Incomplete_Class`. This affects custom field definitions used inside a block whose `normalize()` output - or whose registered `block_<fieldtype>` marshaller - stores other objects: register those classes in the new `pimcore.objects.block.unserialize_allowed_classes` configuration (merged with the built-in list, see [Blocks](../03_Objects/01_Object_Classes/01_Data_Types/05_Blocks.md#custom-field-types-and-block-marshallers)), or switch them to scalars/arrays as the core marshallers do; otherwise that data is lost on the next load and save.
+- [Security] Hotspot images and image galleries inside a block now have block marshallers, so hotspot/marker metadata is stored as plain arrays with a referenced asset/document/object reduced to its id - the format the editmode and Studio already write. A `MarkerHotspotItem` built through the PHP API with the element object as value is therefore stored by id as well; after reloading, `$item['value']` (array access) still resolves to the element, while `getValue()` returns the id, exactly as for metadata saved through the admin UI. Element objects that older versions serialized into existing block data are reduced to their id on load, so nothing needs re-saving.
 
 ### [Documents]
 - [Page previews] `documents.preview_url_prefix` is now honoured for the page previews shown in the document tree, as it already was for version previews. `Document\Page::save()` and `pimcore:documents:generate-page-previews` (without `--urlPrefix`) used the host of the current request / the main domain for the URL Gotenberg's Chromium loads, so the setting - made for setups where Chromium cannot reach the admin hostname - had no effect there. Precedence is now: explicit `--urlPrefix` (CLI), then `documents.preview_url_prefix`, then the request host / main domain.
