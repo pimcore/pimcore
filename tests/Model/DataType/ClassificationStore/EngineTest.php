@@ -22,18 +22,29 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
+use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
+use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
 use ReflectionProperty;
+use Stringable;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
@@ -100,8 +111,23 @@ class EngineTest extends ModelTestCase
      */
     private array $groupIds = [];
 
+    /**
+     * @var int[]
+     */
+    private array $relationKeyIds = [];
+
+    private ?Concrete $anyObject = null;
+
     protected function tearDown(): void
     {
+        foreach ($this->relationKeyIds as $keyId) {
+            Classificationstore\KeyConfig::getById($keyId)?->delete();
+        }
+        $this->relationKeyIds = [];
+
+        $this->anyObject?->delete();
+        $this->anyObject = null;
+
         if ($this->registeredEngines !== null) {
             $this->setRegisteredEngines($this->registeredEngines);
             $this->registeredEngines = null;
@@ -567,6 +593,181 @@ class EngineTest extends ModelTestCase
             1,
             (int) $db->fetchOne('SELECT COUNT(*) FROM classificationstore_stores WHERE id = ?', [$storeId])
         );
+    }
+
+    /**
+     * The EAV storage addresses a value by (group, key, language) and holds it in two value
+     * columns: a relation's element descriptors have nowhere to go there, so the write is refused
+     * rather than normalized into the value column.
+     */
+    public function testAnEavStoreRefusesARelationKeyAndWritesNothing(): void
+    {
+        $storeId = $this->createStore();
+        $groupId = $this->createGroup($storeId);
+        $keyId = $this->createRelationKey($storeId, new ManyToManyObjectRelation());
+
+        $classificationStore = $this->buildStoreModelFor($storeId, self::ROUTED_CLASS_ID);
+        $classificationStore->setLocalizedKeyValue($groupId, $keyId, [$this->anyObject()]);
+
+        $message = null;
+
+        try {
+            $classificationStore->save();
+        } catch (UnsupportedEngineFeatureException $exception) {
+            $message = $exception->getMessage();
+        }
+
+        $this->assertIsString($message, 'the save has to be refused');
+        $this->assertStringContainsString('Relations', $message);
+        $this->assertStringContainsString((string) $keyId, $message);
+
+        $this->assertSame(
+            0,
+            (int) Db::get()->fetchOne(
+                'SELECT COUNT(*) FROM ' . Db::get()->quoteIdentifier(self::DATA_TABLE_PREFIX . self::ROUTED_CLASS_ID)
+                . ' WHERE groupId = ? AND keyId = ?',
+                [$groupId, $keyId]
+            )
+        );
+    }
+
+    /**
+     * A row written before that refusal existed, or by hand, must not take the whole load down with
+     * it - the treatment a descriptor whose target is gone gets.
+     */
+    public function testAnEavStoreToleratesAStoredRelationValueAndYieldsNothingForIt(): void
+    {
+        $storeId = $this->createStore();
+        $groupId = $this->createGroup($storeId);
+        $keyId = $this->createRelationKey($storeId, new ManyToManyObjectRelation());
+
+        $classificationStore = $this->buildStoreModelFor($storeId, self::ROUTED_CLASS_ID);
+        $objectId = $classificationStore->getObject()->getId();
+        $db = Db::get();
+
+        $db->insert(self::GROUPS_TABLE_PREFIX . self::ROUTED_CLASS_ID, [
+            'id' => $objectId,
+            'fieldname' => 'cs',
+            'groupId' => $groupId,
+        ]);
+        $db->insert(self::DATA_TABLE_PREFIX . self::ROUTED_CLASS_ID, [
+            'id' => $objectId,
+            'groupId' => $groupId,
+            'keyId' => $keyId,
+            'fieldname' => 'cs',
+            'language' => 'default',
+            'type' => 'manyToManyObjectRelation',
+            'value' => json_encode([['type' => 'object', 'id' => $objectId]]),
+        ]);
+
+        $logger = $this->collectingLogger();
+
+        (new EavEngine(
+            $logger,
+            Pimcore::getContainer()->get(RelationResolver::class),
+            $db
+        ))->load($classificationStore);
+
+        // a to-many relation answers the empty list where a to-one answers null; either is "no value"
+        $this->assertEmpty($classificationStore->getLocalizedKeyValue($groupId, $keyId));
+        $this->assertNotEmpty($logger->records, 'the skipped value has to be reported');
+    }
+
+    /**
+     * A reverse relation computes its value from the objects pointing at the owner, so there is
+     * nothing for a store to write and a stored value would never be what a read answers. Both
+     * engines refuse it, keyed on DerivedValueInterface rather than on a list of type names.
+     */
+    public function testBothEnginesRefuseAKeyWhoseTypeComputesItsValue(): void
+    {
+        $perEngineClass = [
+            self::ROUTED_CLASS_ID => null,
+            self::DOCUMENT_CLASS_ID => self::DOCUMENT_ENGINE,
+        ];
+
+        foreach ($perEngineClass as $classId => $engine) {
+            $storeId = $this->createStore($engine);
+            $groupId = $this->createGroup($storeId);
+            $keyId = $this->createRelationKey($storeId, new ReverseObjectRelation());
+
+            $classificationStore = $this->buildStoreModelFor($storeId, $classId);
+            $classificationStore->setLocalizedKeyValue($groupId, $keyId, [$this->anyObject()]);
+
+            $message = null;
+
+            try {
+                $classificationStore->save();
+            } catch (DerivedValueNotStorableException $exception) {
+                $message = $exception->getMessage();
+            }
+
+            $this->assertIsString($message, 'the save has to be refused on ' . ($engine ?? 'eav'));
+            $this->assertStringContainsString('reverseObjectRelation', $message);
+        }
+    }
+
+    /**
+     * A store model wired to a saved class carrying one classification store field on the given
+     * store, which is what reaches the engine of that store.
+     */
+    private function buildStoreModelFor(int $storeId, string $classId): Classificationstore
+    {
+        $class = $this->buildClass($classId, ['cs' => $this->storeField('cs', $storeId)]);
+        $class->save();
+
+        $classificationStore = new Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->setFieldname('cs');
+        $classificationStore->setObject($this->anyObject());
+
+        return $classificationStore;
+    }
+
+    private function createRelationKey(int $storeId, ClassDefinition\Data $definition): int
+    {
+        $name = uniqid('csEngineRelationKey', false);
+        $definition->setName($name);
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($storeId);
+        $keyConfig->setName($name);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType($definition->getFieldType());
+        $keyConfig->setDefinition(json_encode($definition));
+        $keyConfig->save();
+
+        $this->relationKeyIds[] = (int) $keyConfig->getId();
+
+        return (int) $keyConfig->getId();
+    }
+
+    /**
+     * The value tables carry a foreign key on `objects`, and a relation value needs a target that
+     * resolves - one object row serves as both.
+     */
+    private function anyObject(): Concrete
+    {
+        $this->anyObject ??= TestHelper::createEmptyObject('csEngineRelationTarget');
+
+        return $this->anyObject;
+    }
+
+    /**
+     * @return LoggerInterface&object{records: string[]}
+     */
+    private function collectingLogger(): LoggerInterface
+    {
+        return new class extends AbstractLogger {
+            /**
+             * @var string[]
+             */
+            public array $records = [];
+
+            public function log(mixed $level, string|Stringable $message, array $context = []): void
+            {
+                $this->records[] = (string) $message;
+            }
+        };
     }
 
     private function storedEngine(int $storeId): ?string

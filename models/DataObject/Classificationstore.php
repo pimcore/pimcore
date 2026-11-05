@@ -14,8 +14,12 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
+use Pimcore\Model\DataObject\Classificationstore\RelationDescriptor;
+use Pimcore\Model\DataObject\Classificationstore\RelationRequest;
+use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
@@ -176,6 +180,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // set the given group to active groups
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
+        // no ResourcePersistenceAwareInterface, so the comparison below cannot judge it
+        if (!$this->isFieldDirty('_self') && $this->getRelationResolver()->isRelation($dataDefinition)) {
+            $this->markFieldDirty('_self');
+        }
+
         if (!$this->isFieldDirty('_self') && $dataDefinition instanceof Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
             if ($this->object) {
                 $oldData = $this->items[$groupId][$keyId][$language] ?? null;
@@ -301,7 +310,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 && array_key_exists($keyId, $this->items[$groupId])
                 && array_key_exists($l, $this->items[$groupId][$keyId])
             ) {
-                $data = $this->items[$groupId][$keyId][$l];
+                $data = $this->readItem($groupId, $keyId, $l, $fielddefinition);
                 if (!$fielddefinition->isEmpty($data)) {
                     return $data;
                 }
@@ -345,7 +354,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         if (array_key_exists($groupId, $this->items) && array_key_exists($keyId, $this->items[$groupId])
                 && array_key_exists($language, $this->items[$groupId][$keyId])
         ) {
-            $data = $this->items[$groupId][$keyId][$language];
+            $data = $this->readItem($groupId, $keyId, $language, $fieldDefinition);
         }
 
         // check for fallback value
@@ -354,7 +363,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         if ($fieldDefinition->isEmpty($data) && !$ignoreDefaultLanguage && $language != 'default') {
-            $data = $this->items[$groupId][$keyId]['default'] ?? null;
+            $data = $this->readItem($groupId, $keyId, 'default', $fieldDefinition);
         }
 
         // check for inherited value
@@ -401,6 +410,146 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public static function doGetFallbackValues(): bool
     {
         return true;
+    }
+
+    /**
+     * One stored value, with a relation-typed one resolved into its elements on the way out.
+     *
+     * The resolved elements take the descriptor's place in the items, so that reading the same key
+     * twice resolves once; the store is not marked dirty for that, as nothing about what is stored
+     * changed. A descriptor whose target is gone does mark it dirty - the value the read answers
+     * with no longer matches the stored document, and the next ordinary save is what rewrites it.
+     *
+     * @throws Exception
+     */
+    private function readItem(int $groupId, int $keyId, string $language, ?ClassDefinition\Data $fieldDefinition): mixed
+    {
+        $data = $this->items[$groupId][$keyId][$language] ?? null;
+
+        if ($fieldDefinition === null || !$data instanceof RelationDescriptor) {
+            return $data;
+        }
+
+        $resolved = $this->getRelationResolver()->resolve($fieldDefinition, $data->getValue(), $this->getObject());
+        $this->items[$groupId][$keyId][$language] = $resolved->getData();
+
+        if ($resolved->hasDroppedTargets()) {
+            $this->markFieldDirty('_self');
+        }
+
+        return $resolved->getData();
+    }
+
+    /**
+     * Resolves every relation-typed value the store still holds as a descriptor, against one set of
+     * lookups.
+     *
+     * For the readers that take the items as they are instead of going through
+     * {@see self::getLocalizedKeyValue()} - the edit mode payload - so that they see elements, and
+     * see them without a lookup per key.
+     *
+     * What those readers see is merged across the inheritance chain, {@see self::getItems()}, so
+     * every store on that chain resolves its own descriptors - a value an ancestor contributes
+     * would otherwise reach the reader as the descriptor the ancestor still holds. The chain is
+     * walked the way the items are merged, and only when inheritance is on, as it is then.
+     *
+     * @internal
+     *
+     * @throws Exception
+     */
+    public function resolveRelationDescriptors(): void
+    {
+        $this->resolveOwnRelationDescriptors();
+
+        if (!Model\DataObject::doGetInheritedValues()) {
+            return;
+        }
+
+        $this->getAllDataFromField(static function (Classificationstore $store, array $carry): array {
+            $store->resolveOwnRelationDescriptors();
+
+            return $carry;
+        });
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function resolveOwnRelationDescriptors(): void
+    {
+        $requests = $this->collectRelationRequests();
+
+        if ($requests === []) {
+            return;
+        }
+
+        $resolved = $this->getRelationResolver()->resolveAll($requests, $this->getObject());
+
+        foreach ($requests as $index => $request) {
+            $relation = $resolved[$index];
+
+            $this->items[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()]
+                = $relation->getData();
+
+            if ($relation->hasDroppedTargets()) {
+                $this->markFieldDirty('_self');
+            }
+        }
+    }
+
+    /**
+     * @return list<RelationRequest>
+     *
+     * @throws Exception
+     */
+    private function collectRelationRequests(): array
+    {
+        $requests = [];
+
+        foreach ($this->items as $groupId => $keys) {
+            foreach ($keys as $keyId => $languages) {
+                $descriptors = array_filter(
+                    $languages,
+                    static fn (mixed $value): bool => $value instanceof RelationDescriptor
+                );
+
+                // only a key holding a descriptor pays for its key config here
+                $fieldDefinition = $descriptors === [] ? null : $this->resolveKeyDefinition((int) $keyId);
+
+                if ($fieldDefinition === null) {
+                    continue;
+                }
+
+                foreach ($descriptors as $language => $descriptor) {
+                    $requests[] = new RelationRequest(
+                        (int) $groupId,
+                        (int) $keyId,
+                        (string) $language,
+                        $fieldDefinition,
+                        $descriptor->getValue()
+                    );
+                }
+            }
+        }
+
+        return $requests;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function resolveKeyDefinition(int $keyId): ?ClassDefinition\Data
+    {
+        $keyConfig = Classificationstore\DefinitionCache::get($keyId);
+
+        return $keyConfig === null
+            ? null
+            : Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+    }
+
+    private function getRelationResolver(): RelationResolver
+    {
+        return Pimcore::getContainer()->get(RelationResolver::class);
     }
 
     /**

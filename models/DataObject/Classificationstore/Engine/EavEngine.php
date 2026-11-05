@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache;
+use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\DataObject\Classificationstore\Service;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -80,8 +81,11 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
     protected array $tableDefinitions = [];
 
-    public function __construct(private readonly LoggerInterface $logger, Connection $db)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly RelationResolver $relationResolver,
+        Connection $db
+    ) {
         $this->db = $db;
     }
 
@@ -141,6 +145,14 @@ final class EavEngine extends AbstractDao implements EngineInterface
                 }
                 $keyConfig = DefinitionCache::get($keyId);
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
+
+                // raised before anything is normalized and before persistRows() is reached at all
+                $this->relationResolver->assertStorable(
+                    $fd,
+                    (int) $groupId,
+                    (int) $keyId,
+                    $this->supports(EngineFeature::Relations)
+                );
 
                 foreach ($keyData as $language => $value) {
                     $collectionId = $collectionMapping[$groupId] ?? null;
@@ -290,6 +302,21 @@ final class EavEngine extends AbstractDao implements EngineInterface
                 }
 
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
+            }
+
+            // a row this storage cannot address yields no value rather than failing the load
+            if ($fd !== null
+                && ($this->relationResolver->isRelation($fd) || $this->relationResolver->isDerived($fd))
+            ) {
+                $this->logger->warning(sprintf(
+                    'Skipping the stored value of classification store key %d of group %d: its type "%s" needs a'
+                    . ' storage engine this store does not use.',
+                    (int) $keyId,
+                    (int) $groupId,
+                    $fd->getFieldtype()
+                ));
+
+                continue;
             }
 
             if ($fd instanceof NormalizerInterface) {

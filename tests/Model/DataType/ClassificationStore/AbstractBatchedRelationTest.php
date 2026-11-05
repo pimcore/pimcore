@@ -42,6 +42,14 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
 
     private const WRITE_STATEMENTS = ['INSERT', 'UPDATE', 'DELETE', 'REPLACE'];
 
+    /**
+     * The one statement {@see Classificationstore\RelationResolver} issues to find out which of a
+     * key's stored descriptors still have an element: one chunked IN query per element type,
+     * whatever the number of targets. What loading a surviving element then costs is the element
+     * loader's, not this field's, which is why it is counted apart from it.
+     */
+    private const DESCRIPTOR_LOOKUP_PATTERN = '/^SELECT `id` FROM `(objects|assets|documents)` WHERE `id` IN /i';
+
     private DebugDataHolder $debugDataHolder;
 
     /**
@@ -208,6 +216,26 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
     protected function countWriteStatements(): int
     {
         return count($this->grabStoreStatements(self::WRITE_STATEMENTS));
+    }
+
+    /**
+     * The bulk descriptor lookups of the relation resolver issued since the measurement started.
+     */
+    protected function countDescriptorLookupStatements(): int
+    {
+        $count = 0;
+
+        foreach ($this->debugDataHolder->getData() as $queries) {
+            foreach ($queries as $query) {
+                $sql = trim((string) preg_replace('/\s+/', ' ', (string) $query['sql']));
+
+                if (preg_match(self::DESCRIPTOR_LOOKUP_PATTERN, $sql) === 1) {
+                    $count++;
+                }
+            }
+        }
+
+        return $count;
     }
 
     /**

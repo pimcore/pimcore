@@ -213,15 +213,20 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
 
-        $items = $data->getItems();
-
         $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load(array_keys($data->getActiveGroups(), true, true));
 
         // the relations above bring the key configs of the keys that are still in their group with
         // them; the ones of values whose key was removed from the group are read here, in one go,
         // so that the loop below does not resolve them a statement at a time
-        DataObject\Classificationstore\DefinitionCache::load($this->getItemKeyIds($items, $data->getActiveGroups()));
+        DataObject\Classificationstore\DefinitionCache::load(
+            $this->getItemKeyIds($data->getItems(), $data->getActiveGroups())
+        );
+
+        // this reader takes the items as they are, so the relation descriptors are resolved here
+        $data->resolveRelationDescriptors();
+
+        $items = $data->getItems();
 
         foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
@@ -448,10 +453,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $dependencies = [];
 
         foreach ($this->getOwnStoredValues($data) as [$fieldDefinition, $value]) {
-            $dependencies = array_merge($dependencies, $fieldDefinition->resolveDependencies($value));
+            $dependencies = array_merge($dependencies, $this->resolveValueDependencies($fieldDefinition, $value));
         }
 
         return $dependencies;
+    }
+
+    /**
+     * A relation-typed key the object never read still holds the descriptors the document was
+     * loaded from. They name the elements the dependency rows need, so the rows are written without
+     * a target having to be instantiated - and without an ordinary save wiping the rows of a key
+     * nobody looked at.
+     */
+    private function resolveValueDependencies(Data $fieldDefinition, mixed $value): array
+    {
+        if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
+            return $this->getRelationResolver()->describeDependencies($value->getValue());
+        }
+
+        return $fieldDefinition->resolveDependencies($value);
     }
 
     /**
@@ -722,6 +742,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             );
                         } else {
                             $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
+                        }
+
+                        // an unread descriptor is the stored state, which was valid when written
+                        if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
+                            continue;
                         }
 
                         try {
@@ -1062,6 +1087,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     private function getKeyGroupRelationCache(): DataObject\Classificationstore\KeyGroupRelationCache
     {
         return Pimcore::getContainer()->get(DataObject\Classificationstore\KeyGroupRelationCache::class);
+    }
+
+    private function getRelationResolver(): DataObject\Classificationstore\RelationResolver
+    {
+        return Pimcore::getContainer()->get(DataObject\Classificationstore\RelationResolver::class);
     }
 
     /**

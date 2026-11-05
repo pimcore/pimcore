@@ -101,17 +101,20 @@ class EngineContractTest extends TestCase
     }
 
     /**
-     * The document engine ships without any of the four: it offers no capability the EAV engine
-     * does not, and no model API for a qualified value lands with it.
+     * The document engine offers Relations and nothing else: a document holds whatever normalize()
+     * returns, so a relation's element descriptors need no addressing of their own - while none of
+     * the other three has a model API for a qualified value yet.
      */
-    public function testDocumentEngineSupportsNoFeature(): void
+    public function testDocumentEngineSupportsRelationsAndNothingElse(): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
         $engine = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
 
         $this->assertInstanceOf(EngineInterface::class, $engine);
 
-        foreach (EngineFeature::cases() as $feature) {
+        $this->assertTrue($engine->supports(EngineFeature::Relations));
+
+        foreach ([EngineFeature::MultiValue, EngineFeature::Variants, EngineFeature::PerKeyLocalization] as $feature) {
             $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
         }
     }
@@ -159,16 +162,24 @@ class EngineContractTest extends TestCase
     }
 
     /**
-     * An unsupported feature is answered with `false`, not with an exception - this ticket adds no
-     * exception for it.
+     * A write of a value the engine cannot store is refused rather than skipped or written into
+     * whatever column its normalized form happens to fit - which is what the exception exists for.
      */
-    public function testNoUnsupportedEngineFeatureExceptionIsIntroduced(): void
+    public function testAnUnsupportedFeatureIsRefusedWithItsOwnException(): void
     {
         $exceptionDirectory = dirname(
             (string) (new ReflectionClass(UnknownClassificationStoreEngineException::class))->getFileName()
         );
 
-        $this->assertFileDoesNotExist($exceptionDirectory . '/UnsupportedEngineFeatureException.php');
+        $this->assertFileExists($exceptionDirectory . '/UnsupportedEngineFeatureException.php');
+
+        foreach ([EavEngine::class, DocumentEngine::class] as $engine) {
+            $this->assertStringContainsString(
+                'assertStorable',
+                $this->engineSource($engine),
+                $engine . ' has to refuse a value its storage cannot address'
+            );
+        }
     }
 
     /**

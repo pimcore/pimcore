@@ -17,7 +17,10 @@ namespace Pimcore\Model\DataObject\Classificationstore\Engine;
  * Capabilities a classification store engine may offer on top of the storage every engine provides.
  *
  * They exist so that a caller can ask an engine what it is able to do instead of testing for a
- * concrete engine class. The EAV engine offers none of them, and nothing consumes supports() yet.
+ * concrete engine class. The EAV engine offers none of them; the document engine offers Relations,
+ * because a document holds whatever normalize() returns and a relation's element descriptors need
+ * no addressing of their own. Both engines' write paths consume supports() to refuse a value the
+ * engine cannot store, {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::assertStorable()}.
  *
  * PerKeyLocalization is the one the existing value table could also serve - its primary key already
  * carries the language - so the EAV answer to it is expected to change when the capability lands,

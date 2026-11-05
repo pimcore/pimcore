@@ -108,6 +108,15 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
         public: true
 
+    # turns the stored descriptors of a relation-typed classification store key into its elements.
+    # public, for the same reason the caches further down are: it is consumed from the
+    # classification store model and from the class definition data type, neither of which is
+    # container-managed.
+    Pimcore\Model\DataObject\Classificationstore\RelationResolver:
+        public: true
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
     # Classification Store storage engines
     Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine:
         arguments:
