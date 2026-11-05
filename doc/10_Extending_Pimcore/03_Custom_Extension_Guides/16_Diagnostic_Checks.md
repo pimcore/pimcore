@@ -89,7 +89,7 @@ installed. Core itself registers nothing.
   broken or about to break.
 - `NotAvailable` states that the check could not determine something (for example a missing privilege). Use a short
   snake_case reason such as `not_readable`. Prefer it over guessing.
-- `metrics` holds scalars only (`bool`, `int`, `float`, `string`, `null`).
+- `metrics` holds scalars only (`bool`, `int`, `float`, `string`, `null`); floats must be finite (no `INF` or `NAN`).
 
 ## The Data Contract
 

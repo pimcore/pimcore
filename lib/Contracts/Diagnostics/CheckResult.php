@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Pimcore\Contracts\Diagnostics;
 
 use InvalidArgumentException;
+use function array_is_list;
 use function is_bool;
+use function is_finite;
 use function is_float;
 use function is_int;
 use function is_string;
@@ -32,6 +34,14 @@ final readonly class CheckResult
         public array $metrics = [],
         public array $notAvailable = [],
     ) {
+        if (!array_is_list($findings)) {
+            throw new InvalidArgumentException('"findings" must be a list.');
+        }
+
+        if (!array_is_list($notAvailable)) {
+            throw new InvalidArgumentException('"notAvailable" must be a list.');
+        }
+
         foreach ($findings as $finding) {
             if (!$finding instanceof Finding) {
                 throw new InvalidArgumentException('Every entry of "findings" must be a Finding.');
@@ -51,6 +61,10 @@ final readonly class CheckResult
 
             if ($value !== null && !is_bool($value) && !is_int($value) && !is_float($value) && !is_string($value)) {
                 throw new InvalidArgumentException('Every value of "metrics" must be a scalar or null.');
+            }
+
+            if (is_float($value) && !is_finite($value)) {
+                throw new InvalidArgumentException('Every float of "metrics" must be finite.');
             }
         }
     }

@@ -41,6 +41,13 @@ class DataContractTest extends TestCase
         new DataContract(returns: [DataClass::Metric], neverReturns: ['']);
     }
 
+    public function testRejectsAnEmptySourcesEntry(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('sources');
+        new DataContract(returns: [DataClass::Metric], sources: ['']);
+    }
+
     public function testAcceptsACompleteContractAndKeepsItsValues(): void
     {
         $contract = new DataContract(returns: [DataClass::Metric], neverReturns: ['password'], sources: ['t'], doc: 'd');

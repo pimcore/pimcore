@@ -68,6 +68,34 @@ class CheckResultTest extends TestCase
         new CheckResult(notAvailable: ['oops']);
     }
 
+    public function testRejectsAnInfiniteMetric(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('finite');
+        new CheckResult(metrics: ['ratio' => INF]);
+    }
+
+    public function testRejectsANanMetric(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('finite');
+        new CheckResult(metrics: ['ratio' => NAN]);
+    }
+
+    public function testRejectsFindingsThatAreNotAList(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('"findings" must be a list');
+        new CheckResult(findings: ['a' => new Finding('x', Severity::Info, 'T')]);
+    }
+
+    public function testRejectsNotAvailableEntriesThatAreNotAList(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('"notAvailable" must be a list');
+        new CheckResult(notAvailable: [1 => new NotAvailable('table', 'not_readable')]);
+    }
+
     public function testTheTagIsStable(): void
     {
         self::assertSame('pimcore.diagnostics.check', CheckInterface::TAG);

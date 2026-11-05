@@ -24,10 +24,17 @@ parameters:
             identifier: missingType.iterableValue
         -
             identifier: instanceof.alwaysTrue
-            path: lib/Contracts/Diagnostics/DataContract.php
+            paths:
+                - lib/Contracts/Diagnostics/CheckResult.php
+                - lib/Contracts/Diagnostics/DataContract.php
         -
             identifier: function.alreadyNarrowedType
-            path: lib/Contracts/Diagnostics/DataContract.php
+            paths:
+                - lib/Contracts/Diagnostics/CheckResult.php
+                - lib/Contracts/Diagnostics/DataContract.php
+        -
+            identifier: booleanAnd.alwaysFalse
+            path: lib/Contracts/Diagnostics/CheckResult.php
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
