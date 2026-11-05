@@ -238,4 +238,12 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         return 'checkbox';
     }
+
+    /**
+     * The classification store keeps the normalized value in a text column, so it reads back "1" or "".
+     */
+    public function denormalize(mixed $value, array $params = []): ?bool
+    {
+        return $value === null ? null : (bool) $value;
+    }
 }
