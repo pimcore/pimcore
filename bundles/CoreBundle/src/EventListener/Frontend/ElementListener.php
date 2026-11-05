@@ -272,15 +272,20 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             return;
         }
 
-        // substituting a (possibly unpublished) version needs the view grant and, like the document
-        // branch's pimcore_version handling, the versions grant. The persisted element is authorized:
-        // a version snapshot keeps its own parent, which decides the workspace grants.
-        if (!$persisted->isAllowed('view', $user) || !$persisted->isAllowed('versions', $user)) {
+        // the persisted element is authorized, as a version snapshot keeps its own parent, which decides
+        // the workspace grants
+        if (!$persisted->isAllowed('view', $user)) {
             $this->logger->warning(
-                "Denying access to object {$persisted->getFullPath()} as the user has no view/versions permission."
+                "Denying access to object {$persisted->getFullPath()} as the user has no view permission."
             );
 
             throw new AccessDeniedHttpException(sprintf('Access denied for object %d', $id));
+        }
+
+        // substituting the latest (possibly unpublished) version requires the "versions" grant, same as
+        // for documents; without it the object is served as published
+        if (!$persisted->isAllowed('versions', $user)) {
+            return;
         }
 
         $this->logObjectLoading(

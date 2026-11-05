@@ -20,7 +20,7 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Model\UserInterface;
@@ -54,6 +54,140 @@ class ElementListenerTest extends TestCase
             $request,
             $mainRequest ? HttpKernelInterface::MAIN_REQUEST : HttpKernelInterface::SUB_REQUEST,
         );
+    }
+
+    /**
+     * Runs a studio preview request for object 2 and returns the object that ended up in the runtime cache.
+     * A denied request must leave the cache untouched (checked before the cleanup, then rethrown).
+     *
+     * @param DataObject\Concrete|null $persisted the element as stored, authorization is evaluated on it
+     * @param DataObject\Concrete|null $draft the latest version, defaults to the persisted element when there is none
+     */
+    private function runObjectStudioPreview(?DataObject\Concrete $persisted, ?DataObject\Concrete $draft = null): ?DataObject\Concrete
+    {
+        $user = new User();
+        $user->setId(42);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn(null);
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $persisted, $draft) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private ?DataObject\Concrete $persisted,
+                private ?DataObject\Concrete $draft
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
+
+            protected function getPersistedObject(int $id): ?DataObject\Concrete
+            {
+                return $this->persisted;
+            }
+
+            protected function getLatestVersion(DataObject\Concrete $object, UserInterface $user): DataObject\Concrete
+            {
+                return $this->draft ?? $object;
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1', 'pimcore_object_preview' => '2']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        RuntimeCache::getInstance()->offsetUnset('object_2');
+
+        try {
+            try {
+                $listener->onKernelController($this->makeControllerEvent($request));
+            } catch (AccessDeniedHttpException $exception) {
+                $this->assertFalse(RuntimeCache::isRegistered('object_2'), 'a denied preview must not be cached');
+
+                throw $exception;
+            }
+
+            return RuntimeCache::isRegistered('object_2') ? RuntimeCache::get('object_2') : null;
+        } finally {
+            RuntimeCache::getInstance()->offsetUnset('object_2');
+        }
+    }
+
+    /**
+     * @param string[] $allowedPermissions
+     */
+    private function makeObject(array $allowedPermissions): DataObject\Concrete
+    {
+        $object = $this->createMock(DataObject\Concrete::class);
+        $object->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
+        );
+        $object->method('getId')->willReturn(2);
+        $object->method('getFullPath')->willReturn('/objects/preview');
+
+        return $object;
+    }
+
+    public function testObjectStudioPreviewIsDeniedWithoutViewPermission(): void
+    {
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($this->makeObject([]));
+    }
+
+    public function testObjectStudioPreviewIsDeniedWithOnlyVersionsPermission(): void
+    {
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($this->makeObject(['versions']));
+    }
+
+    public function testObjectStudioPreviewIsDeniedWhenTheDraftIsViewableButThePersistedObjectIsNot(): void
+    {
+        // a draft can carry another parent than the stored element and thereby other workspace grants
+        $persisted = $this->makeObject([]);
+        $draft = $this->makeObject(['view', 'versions']);
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($persisted, $draft);
+    }
+
+    public function testObjectStudioPreviewWithoutVersionsPermissionServesThePublishedObject(): void
+    {
+        $persisted = $this->makeObject(['view']);
+        $draft = $this->makeObject(['view', 'versions']);
+
+        $this->assertNull($this->runObjectStudioPreview($persisted, $draft), 'no draft may be substituted');
+    }
+
+    public function testObjectStudioPreviewCachesTheDraftWithViewAndVersionsPermission(): void
+    {
+        $persisted = $this->makeObject(['view', 'versions']);
+        $draft = $this->makeObject([]);
+
+        $this->assertSame($draft, $this->runObjectStudioPreview($persisted, $draft));
+    }
+
+    public function testObjectStudioPreviewCachesThePersistedObjectWhenThereIsNoDraft(): void
+    {
+        $persisted = $this->makeObject(['view', 'versions']);
+
+        $this->assertSame($persisted, $this->runObjectStudioPreview($persisted));
+    }
+
+    public function testObjectStudioPreviewWithoutResolvableObjectCachesNothing(): void
+    {
+        $this->assertNull($this->runObjectStudioPreview(null));
     }
 
     private function makeListener(?Document $document, bool $adminRequest, ?User $user, bool $stubObjectParams = false): ElementListener
@@ -354,137 +488,5 @@ class ElementListenerTest extends TestCase
 
         $this->expectException(AccessDeniedHttpException::class);
         $this->runWithVersionParam($routeDocument, $version, $documentResolver, ['view']);
-    }
-
-    /**
-     * Runs a studio preview request for object 2 and returns the object that ended up in the runtime cache.
-     * A denied request must leave the cache untouched (checked before the cleanup, then rethrown).
-     *
-     * @param Concrete|null $persisted the element as stored, authorization is evaluated on it
-     * @param Concrete|null $draft the latest version, defaults to the persisted element when there is none
-     */
-    private function runObjectStudioPreview(?Concrete $persisted, ?Concrete $draft = null): ?Concrete
-    {
-        $user = new User();
-        $user->setId(42);
-
-        $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn(null);
-
-        $editmodeResolver = $this->createMock(EditmodeResolver::class);
-        $requestHelper = $this->createMock(RequestHelper::class);
-        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
-        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn($user);
-        $contextResolver = $this->createMock(PimcoreContextResolver::class);
-        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
-
-        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $persisted, $draft) extends ElementListener {
-            public function __construct(
-                DocumentResolver $documentResolver,
-                EditmodeResolver $editmodeResolver,
-                RequestHelper $requestHelper,
-                UserLoader $userLoader,
-                private ?Concrete $persisted,
-                private ?Concrete $draft
-            ) {
-                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
-            }
-
-            protected function getPersistedObject(int $id): ?Concrete
-            {
-                return $this->persisted;
-            }
-
-            protected function getLatestVersion(Concrete $object, UserInterface $user): Concrete
-            {
-                return $this->draft ?? $object;
-            }
-        };
-        $listener->setLogger(new NullLogger());
-        $listener->setPimcoreContextResolver($contextResolver);
-
-        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1', 'pimcore_object_preview' => '2']);
-        $request->setSession(new Session(new MockArraySessionStorage()));
-
-        RuntimeCache::getInstance()->offsetUnset('object_2');
-
-        try {
-            try {
-                $listener->onKernelController($this->makeControllerEvent($request));
-            } catch (AccessDeniedHttpException $exception) {
-                $this->assertFalse(RuntimeCache::isRegistered('object_2'), 'a denied preview must not be cached');
-
-                throw $exception;
-            }
-
-            return RuntimeCache::isRegistered('object_2') ? RuntimeCache::get('object_2') : null;
-        } finally {
-            RuntimeCache::getInstance()->offsetUnset('object_2');
-        }
-    }
-
-    /**
-     * @param string[] $allowedPermissions
-     */
-    private function makeObject(array $allowedPermissions): Concrete
-    {
-        $object = $this->createMock(Concrete::class);
-        $object->method('isAllowed')->willReturnCallback(
-            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
-        );
-        $object->method('getId')->willReturn(2);
-        $object->method('getFullPath')->willReturn('/objects/preview');
-
-        return $object;
-    }
-
-    public function testObjectStudioPreviewIsDeniedWithoutViewPermission(): void
-    {
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->runObjectStudioPreview($this->makeObject([]));
-    }
-
-    public function testObjectStudioPreviewIsDeniedWithoutVersionsPermission(): void
-    {
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->runObjectStudioPreview($this->makeObject(['view']));
-    }
-
-    public function testObjectStudioPreviewIsDeniedWithOnlyVersionsPermission(): void
-    {
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->runObjectStudioPreview($this->makeObject(['versions']));
-    }
-
-    public function testObjectStudioPreviewAuthorizesThePersistedObjectNotTheDraft(): void
-    {
-        // a draft can carry another parent than the stored element and thereby other workspace grants
-        $persisted = $this->makeObject(['view']);
-        $draft = $this->makeObject(['view', 'versions']);
-
-        $this->expectException(AccessDeniedHttpException::class);
-        $this->runObjectStudioPreview($persisted, $draft);
-    }
-
-    public function testObjectStudioPreviewCachesTheDraftWithViewAndVersionsPermission(): void
-    {
-        $persisted = $this->makeObject(['view', 'versions']);
-        $draft = $this->makeObject([]);
-
-        $this->assertSame($draft, $this->runObjectStudioPreview($persisted, $draft));
-    }
-
-    public function testObjectStudioPreviewCachesThePersistedObjectWhenThereIsNoDraft(): void
-    {
-        $persisted = $this->makeObject(['view', 'versions']);
-
-        $this->assertSame($persisted, $this->runObjectStudioPreview($persisted));
-    }
-
-    public function testObjectStudioPreviewWithoutResolvableObjectCachesNothing(): void
-    {
-        $this->assertNull($this->runObjectStudioPreview(null));
     }
 }
