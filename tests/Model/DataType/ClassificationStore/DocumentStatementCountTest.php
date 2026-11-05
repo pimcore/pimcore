@@ -18,8 +18,11 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Csstorelocalized;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -33,19 +36,24 @@ use Pimcore\Tests\Support\Util\TestHelper;
  *
  * Two different bounds come out of that, and they are asserted as what they are:
  *
- * - Loading a store, and saving one whose relation keys were never read, does not scale with the
- *   number of keys or targets at all. Nothing is resolved, so the totals are equal.
- * - Reading a key, and building the edit mode payload, costs one element load per target and not a
- *   statement more. Pimcore instantiates elements one at a time -
+ * - Loading a store, saving one whose relation keys were never read, and building the edit mode
+ *   payload do not scale with the number of keys or targets at all. Nothing is instantiated - the
+ *   payload needs the columns of a target rather than the target,
+ *   {@see \Pimcore\Model\DataObject\Classificationstore\RelationEditModeResolver} - so the totals
+ *   are equal.
+ * - Reading a key costs one element load per target and not a statement more, because the caller
+ *   asked for the elements and Pimcore instantiates them one at a time:
  *   {@see \Pimcore\Model\DataObject\AbstractObject::getById()} has no bulk form and a plain
  *   relation field of a class pays the same per target,
- *   {@see \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::loadData()} - so
- *   the growth is measured against one measured element load rather than asserted away.
+ *   {@see \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::loadData()}. So
+ *   that growth is measured against one measured element load rather than asserted away.
  *
  * @group model.datatype.classificationstore
  */
 class DocumentStatementCountTest extends StatementCountTest
 {
+    use RelationFixtureTrait;
+
     private const FIELDNAME = 'csstore';
 
     private const KEY_PREFIX = 'cs-count-relation-';
@@ -53,6 +61,13 @@ class DocumentStatementCountTest extends StatementCountTest
     protected function getStoreEngine(): ?string
     {
         return 'document';
+    }
+
+    protected function tearDown(): void
+    {
+        $this->deleteRelationFixture();
+
+        parent::tearDown();
     }
 
     public function testLoadingDoesNotScaleWithRelationKeysOrTargets(): void
@@ -184,28 +199,61 @@ class DocumentStatementCountTest extends StatementCountTest
     }
 
     /**
-     * The payload pays one element load per target it renders and no statement of the store's own
-     * per target: 20 targets cost what two cost plus 18 element loads.
+     * The payload does not scale with the number of targets at all: it needs the columns of a
+     * target rather than the target, and reads them for the whole store in one chunked statement
+     * per element type, so 20 targets cost exactly what two cost.
+     *
+     * The count is the connection's total, so an element load behind the rendering would show up
+     * here; the assertion that none of the targets was instantiated says the same thing the other
+     * way round.
      */
-    public function testEditModeDataCostsOneElementLoadPerTargetAndNotAStatementMore(): void
+    public function testEditModeDataDoesNotScaleWithRelationTargets(): void
     {
         $few = $this->createLocalizedObjectWithRelations('relation-editmode-few', 2);
         $many = $this->createLocalizedObjectWithRelations('relation-editmode-many', 20);
-
-        $fewTargets = $this->storedTargetIds($few);
-        $elementLoad = $this->measureElementLoad($fewTargets[0], $fewTargets[1]);
+        $manyTargets = $this->storedTargetIds($many);
 
         $fewCount = $this->measureRelationEditModeData($few);
         $manyCount = $this->measureRelationEditModeData($many);
 
         $this->assertGreaterThan(0, $fewCount, 'precondition: building the editmode data reads the database');
         $this->assertSame(
-            18 * $elementLoad,
-            $manyCount - $fewCount,
-            'the editmode data of 20 targets instead of two must cost 18 element loads and nothing else'
+            $fewCount,
+            $manyCount,
+            'the editmode data of 20 targets must cost what two targets cost'
             . ', measured ' . $fewCount . ' against ' . $manyCount . ' statements'
-            . ' at ' . $elementLoad . ' per element'
         );
+        $this->assertNoElementInstantiated($manyTargets, 'the payload must instantiate no target');
+    }
+
+    /**
+     * The same bound, measured over every relation type a key may use rather than over the one the
+     * case above happens to store.
+     *
+     * The bound is claimed for "a store with relation-typed keys", so it is measured on a store
+     * carrying one key of each of the five: they share one set of lookups, and a type that resolved
+     * an element behind its rendering would show up here as a total that grows.
+     */
+    public function testEditModeDataOfEveryRelationTypeDoesNotScaleWithTargets(): void
+    {
+        $this->createRelationFixture();
+
+        $few = $this->createObjectWithEveryRelationType('relation-editmode-types-few', 2);
+        $many = $this->createObjectWithEveryRelationType('relation-editmode-types-many', 20);
+        $manyTargets = $this->storedTargetIds($many);
+
+        $fewCount = $this->measureRelationEditModeData($few);
+        $manyCount = $this->measureRelationEditModeData($many);
+
+        $this->assertGreaterThan(0, $fewCount, 'precondition: building the editmode data reads the database');
+        $this->assertCount(20, $manyTargets, 'precondition: the 20 targets reached the documents');
+        $this->assertSame(
+            $fewCount,
+            $manyCount,
+            'the editmode data of 20 targets per relation type must cost what two targets cost'
+            . ', measured ' . $fewCount . ' against ' . $manyCount . ' statements'
+        );
+        $this->assertNoElementInstantiated($manyTargets, 'no type of relation key may instantiate a target');
     }
 
     /**
@@ -303,14 +351,40 @@ class DocumentStatementCountTest extends StatementCountTest
         foreach ($this->readDocuments($object) as $keys) {
             foreach ($keys as $entries) {
                 foreach ($entries as $entry) {
-                    foreach ($entry['d'] ?? [] as $descriptor) {
-                        $ids[] = (int) $descriptor['id'];
-                    }
+                    $ids = array_merge($ids, $this->descriptorIdsOf($entry['d'] ?? null));
                 }
             }
         }
 
         return array_values(array_unique($ids));
+    }
+
+    /**
+     * The ids one stored value names, in each of the three shapes a relation type normalizes into:
+     * a single `{type, id}` map for a to-one relation, a list of them for a to-many one, and a list
+     * of entries carrying that map under `element` for the advanced pair.
+     *
+     * @return int[]
+     */
+    private function descriptorIdsOf(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return [];
+        }
+
+        if (isset($value['id'])) {
+            return [(int) $value['id']];
+        }
+
+        $ids = [];
+
+        foreach ($value as $entry) {
+            if (is_array($entry)) {
+                $ids = array_merge($ids, $this->descriptorIdsOf($entry['element'] ?? $entry));
+            }
+        }
+
+        return $ids;
     }
 
     /**
@@ -370,6 +444,62 @@ class DocumentStatementCountTest extends StatementCountTest
         $object->save();
 
         return $object;
+    }
+
+    /**
+     * One object whose store carries a key of every relation type, each holding the given number of
+     * targets - except the to-one type, which holds one whatever the number.
+     */
+    private function createObjectWithEveryRelationType(string $key, int $targetCount): Csstorelocalized
+    {
+        $targets = $this->createTargets($targetCount);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey($key);
+        $object->setPublished(true);
+
+        $store = $object->getCsstore();
+
+        foreach (array_keys(self::RELATION_TYPES) as $keyName) {
+            $store->setLocalizedKeyValue(
+                $this->getRelationGroupId(),
+                $this->getRelationKeyId($keyName),
+                $this->buildRelationValue($keyName, $targets)
+            );
+        }
+
+        $store->setActiveGroups([$this->getRelationGroupId() => true]);
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * @param ElementInterface[] $targets
+     */
+    private function buildRelationValue(string $keyName, array $targets): mixed
+    {
+        if ($keyName === 'csManyToOne') {
+            return $targets[0];
+        }
+
+        if (!in_array($keyName, self::ADVANCED_RELATION_TYPES, true)) {
+            return $targets;
+        }
+
+        $items = [];
+
+        foreach ($targets as $index => $target) {
+            $item = $keyName === 'csAdvancedManyToManyObject' && $target instanceof Concrete
+                ? new ObjectMetadata($keyName, [self::RELATION_COLUMN], $target)
+                : new ElementMetadata($keyName, [self::RELATION_COLUMN], $target);
+
+            $item->setData([self::RELATION_COLUMN => 'value-' . $index]);
+            $items[] = $item;
+        }
+
+        return $items;
     }
 
     private function fillWithRelations(Classificationstore $store, int $keyCount, int $targetCount): void

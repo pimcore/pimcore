@@ -18,8 +18,10 @@ use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\DataObject\Classificationstore\RelationDescriptor;
+use Pimcore\Model\DataObject\Classificationstore\RelationEditModeResolver;
 use Pimcore\Model\DataObject\Classificationstore\RelationRequest;
 use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
+use Pimcore\Model\DataObject\Classificationstore\RenderedRelation;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
@@ -441,63 +443,158 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * Resolves every relation-typed value the store still holds as a descriptor, against one set of
-     * lookups.
+     * The edit mode value of every relation-typed value the store holds, against one set of lookups
+     * and without instantiating a target.
      *
-     * For the readers that take the items as they are instead of going through
-     * {@see self::getLocalizedKeyValue()} - the edit mode payload - so that they see elements, and
-     * see them without a lookup per key.
+     * For the reader that takes the items as they are instead of going through
+     * {@see self::getLocalizedKeyValue()} - the edit mode payload. It needs the columns of a target
+     * rather than the target, {@see RelationEditModeResolver}, so what comes back is the rendered
+     * value rather than the elements, and the cost of the whole store is one chunked statement per
+     * element type instead of one element load per target.
      *
-     * What those readers see is merged across the inheritance chain, {@see self::getItems()}, so
-     * every store on that chain resolves its own descriptors - a value an ancestor contributes
-     * would otherwise reach the reader as the descriptor the ancestor still holds. The chain is
-     * walked the way the items are merged, and only when inheritance is on, as it is then.
+     * What that reader sees is merged across the inheritance chain, {@see self::getItems()}, so
+     * every store on that chain renders its own descriptors - a value an ancestor contributes would
+     * otherwise reach the reader as the descriptor the ancestor still holds. The chain is walked the
+     * way the items are merged, and only when inheritance is on, as it is then. A coordinate a store
+     * holds an already resolved value at contributes `null`, so that the ancestor's rendering does
+     * not take the place of the value the nearer store actually holds.
      *
      * @internal
      *
+     * @return array<int, array<int, array<string, RenderedRelation|null>>> groupId => keyId => language
+     *
      * @throws Exception
      */
-    public function resolveRelationDescriptors(): void
+    public function renderRelationsForEditMode(): array
     {
-        $this->resolveOwnRelationDescriptors();
-
         if (!Model\DataObject::doGetInheritedValues()) {
-            return;
+            return $this->renderOwnRelationsForEditMode();
         }
 
-        $this->getAllDataFromField(static function (Classificationstore $store, array $carry): array {
-            $store->resolveOwnRelationDescriptors();
-
-            return $carry;
-        });
+        return $this->getAllDataFromField(
+            fn (Classificationstore $store, array $carry): array => $this->mergeArrays(
+                $carry,
+                $store->renderOwnRelationsForEditMode()
+            )
+        );
     }
 
     /**
+     * @return array<int, array<int, array<string, RenderedRelation|null>>>
+     *
      * @throws Exception
      */
-    private function resolveOwnRelationDescriptors(): void
+    private function renderOwnRelationsForEditMode(): array
     {
-        $requests = $this->collectRelationRequests();
+        $renderer = $this->getRelationEditModeResolver();
+        $rendered = $this->collectResolvedCoordinates();
+        $renderable = [];
 
-        if ($requests === []) {
-            return;
+        foreach ($this->collectRelationRequests() as $request) {
+            if ($renderer->supports($request->getFieldDefinition())) {
+                $renderable[] = $request;
+
+                continue;
+            }
+
+            // a project relation type keeps the resolution it had: the elements go into the items,
+            // and the reader renders them itself
+            $this->resolveItem($request);
+            $rendered[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()] = null;
         }
 
-        $resolved = $this->getRelationResolver()->resolveAll($requests, $this->getObject());
+        return $this->applyRenderedRelations($rendered, $renderable, $renderer);
+    }
 
-        foreach ($requests as $index => $request) {
-            $relation = $resolved[$index];
+    /**
+     * The coordinates of this store whose value is not a descriptor, mapped to nothing to render.
+     *
+     * They are what keeps the rendering an ancestor contributes for a coordinate from standing in
+     * for the value this store holds there - a key read earlier in the request holds its elements
+     * rather than its descriptor, and those are the value the payload has to show. Deciding this
+     * needs no key config, so a key that holds no descriptor still pays for none.
+     *
+     * @return array<int, array<int, array<string, null>>>
+     */
+    private function collectResolvedCoordinates(): array
+    {
+        $coordinates = [];
 
-            $this->items[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()]
-                = $relation->getData();
-
-            if ($relation->hasDroppedTargets()) {
-                $this->markFieldDirty('_self');
+        foreach ($this->items as $groupId => $keys) {
+            foreach ($keys as $keyId => $languages) {
+                foreach ($languages as $language => $value) {
+                    if (!$value instanceof RelationDescriptor) {
+                        $coordinates[(int) $groupId][(int) $keyId][(string) $language] = null;
+                    }
+                }
             }
         }
+
+        return $coordinates;
     }
 
     /**
+     * @param array<int, array<int, array<string, RenderedRelation|null>>> $rendered
+     * @param list<RelationRequest> $renderable
+     *
+     * @return array<int, array<int, array<string, RenderedRelation|null>>>
+     *
+     * @throws Exception
+     */
+    private function applyRenderedRelations(
+        array $rendered,
+        array $renderable,
+        RelationEditModeResolver $renderer
+    ): array {
+        if ($renderable === []) {
+            return $rendered;
+        }
+
+        $relations = $renderer->renderAll($renderable);
+
+        foreach ($renderable as $index => $request) {
+            if ($relations[$index]->hasDroppedTargets()) {
+                // a descriptor whose target is gone has to come out of the stored value, and the
+                // per-relation column values of an advanced key are addressed by the position of
+                // the entry they belong to - so the key is resolved into its elements, which is
+                // what the save rebuilds both the document and those rows from. Rewriting the
+                // descriptor instead would reindex the document and leave the rows behind it.
+                // Only a key that actually lost a target pays for that resolution.
+                $this->resolveItem($request);
+                $rendered[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()] = null;
+
+                continue;
+            }
+
+            $rendered[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()]
+                = $relations[$index];
+        }
+
+        return $rendered;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function resolveItem(RelationRequest $request): void
+    {
+        $resolved = $this->getRelationResolver()->resolve(
+            $request->getFieldDefinition(),
+            $request->getNormalizedValue(),
+            $this->getObject()
+        );
+
+        $this->items[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()]
+            = $resolved->getData();
+
+        if ($resolved->hasDroppedTargets()) {
+            $this->markFieldDirty('_self');
+        }
+    }
+
+    /**
+     * One request per stored descriptor this store holds.
+     *
      * @return list<RelationRequest>
      *
      * @throws Exception
@@ -550,6 +647,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     private function getRelationResolver(): RelationResolver
     {
         return Pimcore::getContainer()->get(RelationResolver::class);
+    }
+
+    private function getRelationEditModeResolver(): RelationEditModeResolver
+    {
+        return Pimcore::getContainer()->get(RelationEditModeResolver::class);
     }
 
     /**

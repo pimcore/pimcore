@@ -31,11 +31,12 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  * Two costs are kept apart here, because only one of them is this field's to bound.
  *
- * Deciding whether a descriptor still resolves costs one chunked `IN` query per element type
- * whatever the number of targets, the way
+ * Deciding whether a descriptor still resolves, and describing the target it names, cost one
+ * chunked `IN` query per element type whatever the number of targets, the way
  * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait::loadRelationSummaries()}
- * does it. That is what the sweep, {@see self::findDangling()}, and the dependencies,
- * {@see self::describeDependencies()}, are answered from: neither reads a target.
+ * does it. That is what the sweep, {@see self::findDangling()}, the dependencies,
+ * {@see self::describeDependencies()}, and the edit mode payload, {@see self::summarize()} through
+ * {@see RelationEditModeResolver}, are answered from: none of them reads a target.
  *
  * Handing back the elements themselves costs one element load per surviving target, because
  * {@see \Pimcore\Model\Element\Service::getElementById()} is the only way to instantiate one and
@@ -45,7 +46,9 @@ use Pimcore\Normalizer\NormalizerInterface;
  * element read its own data. A plain class field pays exactly the same:
  * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::loadData()} loads
  * one object per relation row. So the resolution of a key adds no statement of its own per target,
- * and the descriptors of a key that is never read cost nothing at all.
+ * and the descriptors of a key that is never read cost nothing at all. That price is paid only
+ * where the caller asked for the elements - reading a key - and not by the edit mode payload,
+ * which needs the columns of a target rather than the target.
  *
  * Which descriptors a value carries is read off the shape {@see \Pimcore\Normalizer\NormalizerInterface::normalize()}
  * writes rather than off a list of type names, so a project relation type is answered as well: a
@@ -64,6 +67,20 @@ final class RelationResolver
         'object' => 'objects',
         'asset' => 'assets',
         'document' => 'documents',
+    ];
+
+    /**
+     * The columns a target is described by without being instantiated, per element table. They are
+     * the ones {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait::loadRelationSummaries()}
+     * reads, plus the two dates {@see \Pimcore\Model\Element\Service::gridElementData()} carries.
+     */
+    private const SUMMARY_COLUMNS = [
+        'object' => 'SELECT `id`, `parentId`, `path`, `key` AS `filename`, `type`, `className`,'
+            . ' `published`, `creationDate`, `modificationDate` FROM `objects`',
+        'asset' => 'SELECT `id`, `parentId`, `path`, `filename`, `type`, NULL AS `className`,'
+            . ' 1 AS `published`, `creationDate`, `modificationDate` FROM `assets`',
+        'document' => 'SELECT `id`, `parentId`, `path`, `key` AS `filename`, `type`,'
+            . ' NULL AS `className`, `published`, `creationDate`, `modificationDate` FROM `documents`',
     ];
 
     private const ELEMENT_MEMBER = 'element';
@@ -144,31 +161,65 @@ final class RelationResolver
     }
 
     /**
-     * The elements of several stored values.
+     * Describes the targets of the given descriptors without instantiating one of them, in one
+     * chunked statement per element type whatever the number of descriptors.
      *
-     * For the reader that holds a whole store rather than one key - the edit mode payload - so that
-     * it does not go through {@see \Pimcore\Model\DataObject\Classificationstore::getLocalizedKeyValue()}
-     * key by key.
+     * A descriptor whose target no longer exists is simply absent from the result, which is how
+     * {@see RelationEditModeResolver} tells a dead descriptor from a live one.
      *
-     * @param list<RelationRequest> $requests
+     * @param list<array{type: string, id: int}> $descriptors
      *
-     * @return list<ResolvedRelation> in the order the requests came in
+     * @return array<string, array<int, array<string, mixed>>> type => id => the target's columns
      *
      * @throws Exception
      */
-    public function resolveAll(array $requests, ?Concrete $object): array
+    public function summarize(array $descriptors): array
     {
-        $resolved = [];
+        $summaries = [];
 
-        foreach ($requests as $request) {
-            $resolved[] = $this->denormalize(
-                $request->getFieldDefinition(),
-                $request->getNormalizedValue(),
-                $object
-            );
+        foreach ($this->groupIdsByType($descriptors) as $type => $ids) {
+            foreach (array_chunk(array_unique($ids), self::LOOKUP_CHUNK_SIZE) as $chunk) {
+                $rows = $this->db->fetchAllAssociative(
+                    self::SUMMARY_COLUMNS[$type] . ' WHERE `id` IN (?)',
+                    [$chunk],
+                    [ArrayParameterType::INTEGER]
+                );
+
+                foreach ($rows as $row) {
+                    $summaries[$type][(int) $row['id']] = $this->describeTarget($type, $row);
+                }
+            }
         }
 
-        return $resolved;
+        return $summaries;
+    }
+
+    /**
+     * One target as the edit mode renders it from, in the shape
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\LightweightRelationLoadingInterface::loadRelationSummaries()}
+     * documents, with the two dates added.
+     *
+     * @param array<string, mixed> $row
+     *
+     * @return array<string, mixed>
+     */
+    private function describeTarget(string $type, array $row): array
+    {
+        $id = (int) $row['id'];
+        $isObject = $type === 'object';
+
+        return [
+            'id' => $id,
+            'parentId' => (int) $row['parentId'],
+            'type' => $type,
+            'subtype' => (string) $row['type'],
+            'className' => $isObject && $row['type'] !== 'folder' ? $row['className'] : null,
+            'fullpath' => $id === 1 && $isObject ? '/' : $row['path'] . $row['filename'],
+            'filename' => (string) $row['filename'],
+            'published' => (bool) $row['published'],
+            'creationDate' => (int) $row['creationDate'],
+            'modificationDate' => (int) $row['modificationDate'],
+        ];
     }
 
     /**
@@ -286,9 +337,12 @@ final class RelationResolver
     }
 
     /**
+     * The descriptor one entry of a normalized value carries, and null for an entry that carries
+     * none - which is how a caller tells a to-one value, a single descriptor, from a to-many one.
+     *
      * @return array{type: string, id: int}|null
      */
-    private function describeOne(array $entry): ?array
+    public function describeOne(array $entry): ?array
     {
         $element = $entry[self::ELEMENT_MEMBER] ?? $entry;
 
@@ -315,16 +369,9 @@ final class RelationResolver
      */
     private function findExisting(array $descriptors): array
     {
-        $idsByType = [];
-        foreach ($descriptors as $descriptor) {
-            if (isset(self::TABLES[$descriptor['type']])) {
-                $idsByType[$descriptor['type']][] = $descriptor['id'];
-            }
-        }
-
         $existing = [];
 
-        foreach ($idsByType as $type => $ids) {
+        foreach ($this->groupIdsByType($descriptors) as $type => $ids) {
             foreach (array_chunk(array_unique($ids), self::LOOKUP_CHUNK_SIZE) as $chunk) {
                 $rows = $this->db->fetchFirstColumn(
                     'SELECT `id` FROM ' . $this->db->quoteIdentifier(self::TABLES[$type]) . ' WHERE `id` IN (?)',
@@ -339,6 +386,27 @@ final class RelationResolver
         }
 
         return $existing;
+    }
+
+    /**
+     * The ids the given descriptors name, per element type, with a type no element table answers
+     * left out.
+     *
+     * @param list<array{type: string, id: int}> $descriptors
+     *
+     * @return array<string, list<int>>
+     */
+    private function groupIdsByType(array $descriptors): array
+    {
+        $idsByType = [];
+
+        foreach ($descriptors as $descriptor) {
+            if (isset(self::TABLES[$descriptor['type']])) {
+                $idsByType[$descriptor['type']][] = $descriptor['id'];
+            }
+        }
+
+        return $idsByType;
     }
 
     /**

@@ -16,8 +16,8 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 /**
- * One stored value handed to {@see RelationResolver::resolveAll()}: where it sits in the store, the
- * descriptor it holds and the field definition that denormalizes it.
+ * One stored descriptor handed to {@see RelationEditModeResolver::renderAll()}: where it sits in the
+ * store, the descriptor it holds and the field definition of its key.
  *
  * @internal
  */

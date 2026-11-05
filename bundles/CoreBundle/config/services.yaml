@@ -117,6 +117,11 @@ services:
         arguments:
             $db: '@doctrine.dbal.default_connection'
 
+    # renders the edit mode value of those keys from the same descriptors, without instantiating a
+    # target. public for the same reason as the resolver above.
+    Pimcore\Model\DataObject\Classificationstore\RelationEditModeResolver:
+        public: true
+
     # Classification Store storage engines
     Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine:
         arguments:

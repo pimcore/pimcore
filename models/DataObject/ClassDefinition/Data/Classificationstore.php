@@ -160,6 +160,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         foreach ($result['data'] as $language => &$groups) {
             foreach ($groups as $groupId => &$keys) {
                 foreach ($keys as $keyId => &$keyValue) {
+                    if ($keyValue instanceof DataObject\Classificationstore\RenderedRelation) {
+                        // a relation key the store rendered from its descriptors, so that the
+                        // payload costs no element load per target
+                        $keyValue = $keyValue->getData();
+
+                        continue;
+                    }
+
                     $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                     if ($keyConfig->getEnabled()) {
                         $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
@@ -223,8 +231,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $this->getItemKeyIds($data->getItems(), $data->getActiveGroups())
         );
 
-        // this reader takes the items as they are, so the relation descriptors are resolved here
-        $data->resolveRelationDescriptors();
+        // this reader takes the items as they are, so the relation descriptors are rendered here -
+        // from their stored descriptors, without instantiating a target
+        $renderedRelations = $data->renderRelationsForEditMode();
 
         $items = $data->getItems();
 
@@ -238,11 +247,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                     foreach ($languages as $language => $value) {
-                        $fdata = $value;
-                        if (!isset($fieldData[$language][$groupId][$keyId]) || $fd->isEmpty($fieldData[$language][$groupId][$keyId])) {
+                        $fdata = $renderedRelations[$groupId][$keyId][$language] ?? $value;
+                        if (!isset($fieldData[$language][$groupId][$keyId]) || $this->isValueEmpty($fd, $fieldData[$language][$groupId][$keyId])) {
                             // never override existing data
                             $fieldData[$language][$groupId][$keyId] = $fdata;
-                            if (!$fd->isEmpty($fdata)) {
+                            if (!$this->isValueEmpty($fd, $fdata)) {
                                 $metaData[$language][$groupId][$keyId] = ['inherited' => $level > 1, 'objectid' => $object->getId()];
                             }
                         }
@@ -279,7 +288,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         foreach (array_keys($relationCache->getRelations($groupId)) as $keyId) {
                             $fd = $relationCache->getFieldDefinition($groupId, $keyId);
 
-                            if ($fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
+                            if ($this->isValueEmpty($fd, $fieldData[$language][$groupId][$keyId] ?? null)) {
                                 $foundEmptyValue = true;
                                 $inherited = true;
                                 $metaData[$language][$groupId][$keyId] = ['inherited' => true, 'objectid' => $parent->getId()];
@@ -304,6 +313,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         ];
 
         return $result;
+    }
+
+    /**
+     * Whether the edit mode value of one key counts as empty, which decides whether the payload
+     * asks the inheritable parent for it.
+     *
+     * A relation key the store rendered answers for itself, {@see DataObject\Classificationstore\RenderedRelation::isEmpty()}:
+     * it carries one entry per target that was rendered, so the answer is the one the elements
+     * would have given.
+     */
+    private function isValueEmpty(Data $fd, mixed $value): bool
+    {
+        if ($value instanceof DataObject\Classificationstore\RenderedRelation) {
+            return $value->isEmpty();
+        }
+
+        return $fd->isEmpty($value);
     }
 
     /**
