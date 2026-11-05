@@ -93,9 +93,9 @@ installed. Core itself registers nothing.
 
 ## The Data Contract
 
-`#[DataContract]` is mandatory. Its `returns` list must contain at least one `DataClass` and `doc` must point to the
-description of the check: an anchor, a relative path with anchor into your bundle's documentation, or a URL. The
-diagnostics bundle verifies the attribute when the container is built, so a check without a valid contract fails the
+`#[DataContract]` is mandatory. Its `returns` list must contain at least one `DataClass`; the attribute rejects an empty list itself. `doc` must
+point to the description of the check: an anchor, a relative path with anchor into your bundle's documentation, or a
+URL. The attribute does not check `doc`; the diagnostics bundle does when the container is built, so a check without a valid contract fails the
 build instead of running unnoticed.
 
 There is deliberately no `DataClass` for secrets. Checks declaring `DataClass::Text` or `DataClass::PersonalData`

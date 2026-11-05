@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Contracts\Diagnostics;
 
+use InvalidArgumentException;
 use Pimcore\Contracts\Diagnostics\CheckInterface;
 use Pimcore\Contracts\Diagnostics\CheckResult;
 use Pimcore\Contracts\Diagnostics\Finding;
@@ -38,6 +39,33 @@ class CheckResultTest extends TestCase
             'metrics' => ['rows' => 3],
             'not_available' => [['subject' => 'table', 'reason' => 'not_readable']],
         ], $result->toArray());
+    }
+
+    public function testRejectsANonScalarMetric(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('metrics');
+        new CheckResult(metrics: ['nested' => ['a' => 1]]);
+    }
+
+    public function testRejectsANonStringMetricKey(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new CheckResult(metrics: [0 => 1]);
+    }
+
+    public function testRejectsAFindingOfTheWrongType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('findings');
+        new CheckResult(findings: ['oops']);
+    }
+
+    public function testRejectsANotAvailableEntryOfTheWrongType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('notAvailable');
+        new CheckResult(notAvailable: ['oops']);
     }
 
     public function testTheTagIsStable(): void

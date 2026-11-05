@@ -27,6 +27,13 @@ class DataContractTest extends TestCase
         new DataContract(returns: ['metric']);
     }
 
+    public function testRejectsAnEmptyReturnsList(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('returns');
+        new DataContract(returns: []);
+    }
+
     public function testRejectsAnEmptyNeverReturnsEntry(): void
     {
         $this->expectException(InvalidArgumentException::class);

@@ -14,6 +14,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Contracts\Diagnostics;
 
+use InvalidArgumentException;
+use function is_bool;
+use function is_float;
+use function is_int;
+use function is_string;
+
 final readonly class CheckResult
 {
     /**
@@ -26,6 +32,27 @@ final readonly class CheckResult
         public array $metrics = [],
         public array $notAvailable = [],
     ) {
+        foreach ($findings as $finding) {
+            if (!$finding instanceof Finding) {
+                throw new InvalidArgumentException('Every entry of "findings" must be a Finding.');
+            }
+        }
+
+        foreach ($notAvailable as $item) {
+            if (!$item instanceof NotAvailable) {
+                throw new InvalidArgumentException('Every entry of "notAvailable" must be a NotAvailable.');
+            }
+        }
+
+        foreach ($metrics as $key => $value) {
+            if (!is_string($key)) {
+                throw new InvalidArgumentException('Every key of "metrics" must be a string.');
+            }
+
+            if ($value !== null && !is_bool($value) && !is_int($value) && !is_float($value) && !is_string($value)) {
+                throw new InvalidArgumentException('Every value of "metrics" must be a scalar or null.');
+            }
+        }
     }
 
     /**

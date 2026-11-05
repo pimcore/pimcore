@@ -29,7 +29,7 @@ final readonly class DataContract
      * @param list<DataClass> $returns Data classes the check delivers; must not be empty
      * @param list<string> $neverReturns Fields or kinds of value present in the source that must never be returned
      * @param list<string> $sources Where the check reads from (table, command, service, config key)
-     * @param string $doc Anchor or relative path (with anchor) into the documentation of the providing bundle, or a URL
+     * @param string $doc Anchor or relative path (with anchor) into the documentation of the providing bundle, or a URL; not validated here, the diagnostics bundle requires it
      */
     public function __construct(
         public array $returns,
@@ -37,6 +37,10 @@ final readonly class DataContract
         public array $sources = [],
         public string $doc = '',
     ) {
+        if ($returns === []) {
+            throw new InvalidArgumentException('"returns" must contain at least one DataClass case.');
+        }
+
         foreach ($returns as $class) {
             if (!$class instanceof DataClass) {
                 throw new InvalidArgumentException('Every entry of "returns" must be a DataClass case.');
