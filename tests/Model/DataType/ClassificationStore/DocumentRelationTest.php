@@ -14,13 +14,17 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore;
+use Pimcore\Bundle\CoreBundle\Migrations\Version20261105100000;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\NullLogger;
 
 /**
  * What a relation-typed key of a document store actually puts on disk: the normalized descriptor
@@ -270,6 +274,45 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
         $this->assertSame('lowercase', $read[0]->getData()[self::RELATION_COLUMN]);
     }
 
+    /**
+     * The read path treats an absent metadata table as a class whose documents predate it and holds
+     * its per-relation column values in the document alone. The write path has to agree: a save
+     * that found the table gone would otherwise take the documents it had already written down with
+     * it, and the object could be loaded but never saved again.
+     */
+    public function testASaveSurvivesAnAbsentMetadataTableAndKeepsTheValuesInTheDocument(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX . 'no-table');
+
+        Db::get()->executeStatement('DROP TABLE ' . Db::get()->quoteIdentifier(self::METADATA_TABLE));
+
+        try {
+            $object = $this->createCsObject();
+            $object->getCsstore()->setLocalizedKeyValue(
+                (int) $group->getId(),
+                $keyId,
+                [$this->metadataItem($target, 'in-the-document')]
+            );
+            $object->save();
+
+            $read = Csstore::getById($object->getId(), ['force' => true])
+                ->getCsstore()
+                ->getLocalizedKeyValue((int) $group->getId(), $keyId);
+
+            $this->assertCount(1, $read);
+            $this->assertSame($target->getId(), $read[0]->getElement()->getId());
+            $this->assertSame(
+                'in-the-document',
+                $read[0]->getData()[self::RELATION_COLUMN],
+                'with no table to overlay, the column values the document carries are the value'
+            );
+        } finally {
+            $this->getDocumentEngine()->createMetadataTable(self::CLASS_NAME);
+        }
+    }
+
     public function testTheMetadataTableIsCreatedBesideTheDocumentTable(): void
     {
         $this->assertNotFalse(
@@ -286,6 +329,113 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
                 [self::METADATA_TABLE]
             )
         );
+    }
+
+    /**
+     * The migration is what gives the table to a class whose document table already exists, and it
+     * declares the same schema {@see DocumentEngine::createMetadataTable()} does - so it is asserted
+     * to produce the same columns and the same primary key as the test above.
+     *
+     * Only the statements addressing this class's table are run. The migration covers every class
+     * holding documents, and executing its `down()` wholesale would drop the tables of the classes
+     * the rest of the suite is using.
+     */
+    public function testTheMigrationAddsTheMetadataTableAndTakesItBack(): void
+    {
+        $db = Db::get();
+        $guarded = new Version20261105100000($db, new NullLogger());
+        $guarded->up($db->createSchemaManager()->introspectSchema());
+
+        $this->assertSame(
+            [],
+            $this->statementsForThisClass($guarded),
+            'a class that already has the table must be left alone by the hasTable() guard'
+        );
+
+        $db->executeStatement('DROP TABLE ' . $db->quoteIdentifier(self::METADATA_TABLE));
+
+        try {
+            $up = new Version20261105100000($db, new NullLogger());
+            $up->up($db->createSchemaManager()->introspectSchema());
+            $this->runStatements($up);
+
+            $this->assertNotFalse(
+                $db->fetchOne('SHOW TABLES LIKE ?', [self::METADATA_TABLE]),
+                'up() has to create the table of a class that already holds documents'
+            );
+            $this->assertSame(
+                ['id', 'fieldname', 'groupId', 'keyId', 'language', 'index', 'column', 'data'],
+                $db->fetchFirstColumn(
+                    'SELECT COLUMN_NAME FROM information_schema.COLUMNS'
+                    . ' WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION',
+                    [self::METADATA_TABLE]
+                ),
+                'the migration and the engine have to declare the same columns'
+            );
+            $this->assertSame(
+                ['id', 'fieldname', 'groupId', 'keyId', 'language', 'index', 'column'],
+                $db->fetchFirstColumn(
+                    'SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE'
+                    . " WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY'"
+                    . ' ORDER BY ORDINAL_POSITION',
+                    [self::METADATA_TABLE]
+                ),
+                'and the same primary key'
+            );
+
+            $down = new Version20261105100000($db, new NullLogger());
+            $down->down($db->createSchemaManager()->introspectSchema());
+            $this->runStatements($down);
+
+            $this->assertFalse(
+                $db->fetchOne('SHOW TABLES LIKE ?', [self::METADATA_TABLE]),
+                'down() has to take the table back'
+            );
+        } finally {
+            $this->getDocumentEngine()->createMetadataTable(self::CLASS_NAME);
+        }
+    }
+
+    /**
+     * The statements of the migration that address the metadata table of this class, matched on the
+     * quoted name so that the table of a class whose id merely starts with this one is not taken
+     * for it.
+     *
+     * @return string[]
+     */
+    private function statementsForThisClass(Version20261105100000 $migration): array
+    {
+        $statements = [];
+
+        foreach ($migration->getSql() as $query) {
+            if (str_contains($query->getStatement(), '`' . self::METADATA_TABLE . '`')) {
+                $statements[] = $query->getStatement();
+            }
+        }
+
+        return $statements;
+    }
+
+    private function runStatements(Version20261105100000 $migration): void
+    {
+        $statements = $this->statementsForThisClass($migration);
+
+        $this->assertNotSame([], $statements, 'the migration has to address the table of this class');
+
+        foreach ($statements as $statement) {
+            Db::get()->executeStatement($statement);
+        }
+    }
+
+    private function getDocumentEngine(): DocumentEngine
+    {
+        $resolver = Pimcore::getContainer()->get(EngineResolver::class);
+        $this->assertInstanceOf(EngineResolver::class, $resolver);
+
+        $engine = $resolver->getEngines()['document'] ?? null;
+        $this->assertInstanceOf(DocumentEngine::class, $engine);
+
+        return $engine;
     }
 
     private function createCsObject(): Csstore

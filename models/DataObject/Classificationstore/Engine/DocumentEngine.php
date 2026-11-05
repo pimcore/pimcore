@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\Dao as ClassDefinitionDaoHelper;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DanglingRelation;
+use Pimcore\Model\DataObject\Classificationstore\DanglingRelationSweep;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache;
 use Pimcore\Model\DataObject\Classificationstore\RelationDescriptor;
@@ -584,7 +585,13 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * The same cascades the document table declares: deleting an object or a group configuration
      * takes these rows with it, with no PHP involved.
      *
-     * @internal also called by the migration that adds the table to an existing class
+     * This is what creates the table for a class saved from here on, and for a class flipped to
+     * this engine later. A class whose document table already exists gets it from
+     * {@see \Pimcore\Bundle\CoreBundle\Migrations\Version20261105100000}, which declares the same
+     * schema in its own `addSql()` the way every per-class migration here does - so the two have to
+     * be kept in step.
+     *
+     * @internal
      *
      * @throws Exception
      */
@@ -608,7 +615,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * @internal also called by the migration that adds the table to an existing class
+     * @internal
      */
     public function getMetadataTableName(string $classId): string
     {
@@ -911,32 +918,34 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * @param string[] $fieldNames the field names of this class that are on this engine
      *
-     * @return list<DanglingRelation>
-     *
      * @internal
      *
      * @throws Exception
      */
-    public function sweepDanglingRelations(ClassDefinition $class, array $fieldNames, bool $dryRun): array
-    {
+    public function sweepDanglingRelations(
+        ClassDefinition $class,
+        array $fieldNames,
+        bool $dryRun
+    ): DanglingRelationSweep {
         if ($fieldNames === []) {
-            return [];
+            return new DanglingRelationSweep([], []);
         }
 
         $table = $this->getDocumentTableName($class->getId());
         $metadataTable = $this->getMetadataTableName($class->getId());
         $findings = [];
+        $skipped = [];
         $lastId = 0;
 
         while (true) {
             try {
                 $objectIds = $this->readSweepObjectIds($table, $lastId);
             } catch (TableNotFoundException) {
-                return $findings;
+                return new DanglingRelationSweep($findings, $skipped);
             }
 
             if ($objectIds === []) {
-                return $findings;
+                return new DanglingRelationSweep($findings, $skipped);
             }
 
             // advanced before the rows are read, so that a batch whose objects carry none of the
@@ -952,10 +961,9 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $this->relationCache->load(array_map(static fn (array $row): int => (int) $row['groupId'], $rows));
 
             foreach ($rows as $row) {
-                $findings = array_merge(
-                    $findings,
-                    $this->sweepDocument($table, $metadataTable, $row, $dryRun)
-                );
+                $swept = $this->sweepDocument($table, $metadataTable, $row, $dryRun);
+                $findings = array_merge($findings, $swept['findings']);
+                $skipped = array_merge($skipped, $swept['skipped']);
             }
         }
     }
@@ -1002,12 +1010,13 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * The write is a compare-and-swap against the checksum the row was read with, so a save made
      * between the read and the write is not discarded: the snapshot this sweep works from is then
-     * stale, nothing is written, and the row is reported as swept by neither this run nor as
-     * removed. The next run finds it again.
+     * stale and nothing is written. What the document holds is still reported as found - it is still
+     * stored - and reported as skipped as well, so that the caller can say the run left it there and
+     * has to be repeated. The next run finds it again.
      *
      * @param array<string, mixed> $row
      *
-     * @return list<DanglingRelation>
+     * @return array{findings: list<DanglingRelation>, skipped: list<DanglingRelation>}
      *
      * @throws Exception
      */
@@ -1016,7 +1025,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         $sweep = $this->sweepKeys($metadataTable, $row);
 
         if ($sweep['findings'] === [] || $dryRun) {
-            return $sweep['findings'];
+            return ['findings' => $sweep['findings'], 'skipped' => []];
         }
 
         // the document and the column values it addresses are written together or not at all
@@ -1028,12 +1037,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                     ['id' => $row['id'], 'fieldname' => $row['fieldname'], 'groupId' => $row['groupId']]
                 );
 
-                return [];
+                return ['findings' => $sweep['findings'], 'skipped' => $sweep['findings']];
             }
 
             $this->replaceMetadataRows($metadataTable, $sweep['metadata']);
 
-            return $sweep['findings'];
+            return ['findings' => $sweep['findings'], 'skipped' => []];
         });
     }
 
@@ -1675,6 +1684,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * A key still holding its descriptor is left alone: nothing about its column values changed, and
      * writing from the descriptor would store what the table itself answered the load with.
      *
+     * An absent table is a no-op, the way {@see self::readMetadataRows()} reads one and
+     * {@see self::deleteObjectMetadataRows()} deletes from one: a class whose documents predate the
+     * table holds those values in the document alone, and a save must not fail - nor leave the
+     * documents it has already written rolled back - over a table that class never had.
+     *
      * @param array<int, array<string, mixed>> $groups groupId => the collection and items of a group
      * @param int[] $obsoleteGroupIds
      *
@@ -1689,17 +1703,21 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         $fieldname = $classificationStore->getFieldname();
         $table = $this->getMetadataTableName($classificationStore->getClass()->getId());
 
-        $this->deleteMetadataRows($table, $objectId, $fieldname, $obsoleteGroupIds);
+        try {
+            $this->deleteMetadataRows($table, $objectId, $fieldname, $obsoleteGroupIds);
 
-        $rowsToWrite = [];
+            $rowsToWrite = [];
 
-        foreach ($this->collectMetadataRows($classificationStore, $groups) as $value) {
-            if ($value['rows'] !== $this->readMetadataRowsOf($table, $value['coordinate'])) {
-                $rowsToWrite[] = $value;
+            foreach ($this->collectMetadataRows($classificationStore, $groups) as $value) {
+                if ($value['rows'] !== $this->readMetadataRowsOf($table, $value['coordinate'])) {
+                    $rowsToWrite[] = $value;
+                }
             }
-        }
 
-        $this->replaceMetadataRows($table, $rowsToWrite);
+            $this->replaceMetadataRows($table, $rowsToWrite);
+        } catch (TableNotFoundException) {
+            return;
+        }
     }
 
     /**

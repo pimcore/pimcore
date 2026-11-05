@@ -18,7 +18,7 @@ use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigra
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Classificationstore\DanglingRelation;
+use Pimcore\Model\DataObject\Classificationstore\DanglingRelationSweep;
 use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
@@ -41,6 +41,8 @@ class PurgeClassificationStoreRelationsCommand extends AbstractCommand
     use DryRun;
 
     private const OPTION_FORCE = 'force';
+
+    private const OPTION_DRY_RUN = 'dry-run';
 
     public function __construct(
         private readonly DocumentEngineMigrationService $migrationService,
@@ -72,10 +74,14 @@ class PurgeClassificationStoreRelationsCommand extends AbstractCommand
      * Reporting is the default and removing has to be asked for, which is what --force switches the
      * dry run of the trait off with: this rewrites stored documents, and an operator who ran it to
      * see what it finds must not have changed anything by doing so.
+     *
+     * The --dry-run the trait registers still has the last word, so that the two options cannot
+     * contradict each other into a write: asking for a preview is never answered with one.
      */
     protected function isDryRun(): bool
     {
-        return $this->input->getOption(self::OPTION_FORCE) !== true;
+        return $this->input->getOption(self::OPTION_FORCE) !== true
+            || $this->input->getOption(self::OPTION_DRY_RUN) === true;
     }
 
     /**
@@ -96,16 +102,15 @@ class PurgeClassificationStoreRelationsCommand extends AbstractCommand
         $this->reportSkippedStores();
 
         $findings = [];
+        $skipped = [];
 
         foreach ($classes as $class) {
-            foreach ($this->sweepClass($class) as $finding) {
-                $findings[] = $finding;
-            }
+            $sweep = $this->sweepClass($class);
+            $findings = array_merge($findings, $sweep->getFindings());
+            $skipped = array_merge($skipped, $sweep->getSkipped());
         }
 
-        $this->report($findings);
-
-        return self::SUCCESS;
+        return $this->report(new DanglingRelationSweep($findings, $skipped));
     }
 
     /**
@@ -134,30 +139,31 @@ class PurgeClassificationStoreRelationsCommand extends AbstractCommand
     }
 
     /**
-     * @return list<DanglingRelation>
-     *
      * @throws Exception
      */
-    private function sweepClass(ClassDefinition $class): array
+    private function sweepClass(ClassDefinition $class): DanglingRelationSweep
     {
         $fieldNames = $this->migrationService->getDocumentFieldNames($class);
 
         if ($fieldNames === []) {
-            return [];
+            return new DanglingRelationSweep([], []);
         }
 
         return $this->documentEngine->sweepDanglingRelations($class, $fieldNames, $this->isDryRun());
     }
 
     /**
-     * @param list<DanglingRelation> $findings
+     * A run that could not remove everything it found fails, so that whoever reads only the exit
+     * code is told to run it again instead of reading a partial sweep as a finished one.
      */
-    private function report(array $findings): void
+    private function report(DanglingRelationSweep $sweep): int
     {
+        $findings = $sweep->getFindings();
+
         if ($findings === []) {
             $this->io->success('Every stored Classification Store relation resolves.');
 
-            return;
+            return self::SUCCESS;
         }
 
         $this->io->section('Relations whose target no longer exists');
@@ -166,6 +172,25 @@ class PurgeClassificationStoreRelationsCommand extends AbstractCommand
             $this->io->writeln($this->dryRunMessage($finding->describe()));
         }
 
-        $this->io->writeln($this->dryRunMessage(sprintf('%d relation(s) removed.', count($findings))));
+        $skipped = $sweep->getSkipped();
+
+        $this->io->writeln($this->dryRunMessage(
+            sprintf('%d relation(s) removed.', count($findings) - count($skipped))
+        ));
+
+        if ($skipped === []) {
+            return self::SUCCESS;
+        }
+
+        $documents = $sweep->describeSkippedDocuments();
+
+        $this->io->warning(sprintf(
+            '%d document(s) changed while they were being swept and were left alone - run the command'
+            . " again:\n%s",
+            count($documents),
+            implode("\n", $documents)
+        ));
+
+        return self::FAILURE;
     }
 }

@@ -102,6 +102,24 @@ class PurgeRelationsCommandTest extends AbstractClassificationStoreTest
         $this->assertSame([$kept], $this->storedTargetIds($object->getId(), $groupId, $keyId));
     }
 
+    /**
+     * --force switches the dry run off and --dry-run is registered beside it, so the two can be
+     * passed together. An operator who asks for a preview gets one: the combination reports, and
+     * the stored documents are what they were.
+     */
+    public function testAPreviewIsNeverAnsweredWithAWrite(): void
+    {
+        [$object, $groupId, $keyId, $kept, $removed] = $this->storeTwoTargetsAndDeleteOne();
+        $before = $this->readDocument($object->getId(), $groupId);
+
+        $tester = $this->runCommand(['--force' => true, '--dry-run' => true]);
+
+        $this->assertSame(0, $tester->getStatusCode());
+        $this->assertStringContainsString('DRY-RUN', $tester->getDisplay());
+        $this->assertSame($before, $this->readDocument($object->getId(), $groupId));
+        $this->assertSame([$kept, $removed], $this->storedTargetIds($object->getId(), $groupId, $keyId));
+    }
+
     public function testASecondForcedRunFindsNothingLeft(): void
     {
         $this->storeTwoTargetsAndDeleteOne();
