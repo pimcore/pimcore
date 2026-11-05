@@ -126,7 +126,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
                     $document = $version->getData();
                 } else {
-                    $this->logger->notice('Denying version {version} for document {document}: not public or not its version', [
+                    $this->logger->notice('Denying version {version} for document {document}: not public or foreign', [
                         'version' => $version->getId(),
                         'document' => $document->getFullPath(),
                     ]);
