@@ -342,6 +342,105 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
     }
 
     /**
+     * One fixture, both predictors: the payload answers a key with the languages it is kept in, and
+     * the save accepts exactly those. A value stored in a language the key lost is neither answered
+     * nor rewritten - it is only left alone, which is what {@see GeneralTest} asserts.
+     */
+    public function testTheEditModePayloadAndTheSaveAgreeOnTheLanguagesOfAKey(): void
+    {
+        $group = $this->createGroup('agreement');
+        $localizedKey = $this->createKeyWithFlag('agreement_localized', true);
+        $plainKey = $this->createKeyWithFlag('agreement_plain', false);
+        $this->assignKey($group, $localizedKey, 0);
+        $this->assignKey($group, $plainKey, 1);
+
+        $groupId = $group->getId();
+        $object = $this->createObject(Csstorelocalized::class, 'agreement', [$groupId => true]);
+
+        // written through the model, which no enumeration passes through, so that both keys hold a
+        // value in every language before either path is asked about them
+        $store = $object->getCsstore();
+        foreach ([$localizedKey, $plainKey] as $keyConfig) {
+            foreach ($this->getValidLanguages() as $language) {
+                $store->setLocalizedKeyValue($groupId, $keyConfig->getId(), 'stored ' . $language, $language);
+            }
+        }
+        $object->save();
+
+        $object = Csstorelocalized::getById($object->getId(), ['force' => true]);
+
+        $answered = [];
+        foreach ($this->getEditModePayload($object)['data'] as $language => $groups) {
+            foreach (array_keys($groups[$groupId] ?? []) as $keyId) {
+                $answered[$keyId][] = $language;
+            }
+        }
+
+        $saved = $object->getClass()->getFieldDefinition(self::FIELDNAME)->getDataFromEditmode(
+            $this->buildEditModeData($groupId, [$localizedKey, $plainKey]),
+            $object
+        );
+
+        $written = [];
+        foreach ([$localizedKey, $plainKey] as $keyConfig) {
+            foreach ($this->getValidLanguages() as $language) {
+                $value = $saved->getLocalizedKeyValue($groupId, $keyConfig->getId(), $language, true, true);
+                if ($value === 'posted ' . $language) {
+                    $written[$keyConfig->getId()][] = $language;
+                }
+            }
+        }
+
+        $expected = [
+            $localizedKey->getId() => $this->getValidLanguages(),
+            $plainKey->getId() => [self::DEFAULT_LANGUAGE],
+        ];
+
+        $this->assertSame(
+            $this->normaliseLanguageSets($expected),
+            $this->normaliseLanguageSets($answered),
+            'the payload answers each key with the languages that key is kept in'
+        );
+        $this->assertSame(
+            $this->normaliseLanguageSets($answered),
+            $this->normaliseLanguageSets($written),
+            'the save must accept exactly the languages the payload answered'
+        );
+    }
+
+    /**
+     * The upgrade window: the new code runs against the table of an installation whose migrations
+     * have not run yet. Every hydration path has to read such a row as a key that decides nothing,
+     * rather than fail on the column the table does not carry.
+     */
+    public function testTheHydrationPathsSurviveATableWithoutTheColumn(): void
+    {
+        $keyConfig = $this->createKeyWithFlag('premigration', true);
+
+        try {
+            $this->dropTheColumn();
+
+            DefinitionCache::clear(null);
+
+            $this->assertNull(KeyConfig::getById($keyConfig->getId(), true)?->getLocalized(), 'getById()');
+
+            $listing = new KeyConfig\Listing();
+            $listing->setCondition('id = ?', [$keyConfig->getId()]);
+            $this->assertNull($listing->load()[0]->getLocalized(), 'Listing\Dao::load()');
+
+            DefinitionCache::clear(null);
+            DefinitionCache::load([$keyConfig->getId()]);
+            $this->assertNull(
+                DefinitionCache::get($keyConfig->getId())?->getLocalized(),
+                'DefinitionCache::loadKeys()'
+            );
+        } finally {
+            $this->restoreTheColumn();
+            DefinitionCache::clear(null);
+        }
+    }
+
+    /**
      * The upgrade case: with no key flagged, both fixtures enumerate exactly what they do today.
      */
     public function testAKeyWithoutAFlagKeepsTodaysLanguages(): void
@@ -468,6 +567,76 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
         array_unshift($validLanguages, self::DEFAULT_LANGUAGE);
 
         return $validLanguages;
+    }
+
+    /**
+     * An edit mode payload holding one value per key and valid language, whatever the keys are
+     * kept in, so that the save is asked to write more than it may.
+     *
+     * @param KeyConfig[] $keyConfigs
+     *
+     * @return array<string, array>
+     */
+    private function buildEditModeData(int $groupId, array $keyConfigs): array
+    {
+        $data = [];
+        foreach ($this->getValidLanguages() as $language) {
+            foreach ($keyConfigs as $keyConfig) {
+                $data[$language][$groupId][$keyConfig->getId()] = 'posted ' . $language;
+            }
+        }
+
+        return ['activeGroups' => [$groupId => true], 'groupCollectionMapping' => [], 'data' => $data];
+    }
+
+    /**
+     * The language sets of two paths are the same set however each of them happened to order it.
+     *
+     * @param array<int, string[]> $languageSets
+     *
+     * @return array<int, string[]>
+     */
+    private function normaliseLanguageSets(array $languageSets): array
+    {
+        foreach ($languageSets as &$languages) {
+            sort($languages);
+        }
+        unset($languages);
+
+        ksort($languageSets);
+
+        return $languageSets;
+    }
+
+    /**
+     * The column taken off the table, through the migration itself so that the valid table columns
+     * cache is reset the way an installation resets it.
+     */
+    private function dropTheColumn(): void
+    {
+        $migration = new Version20261105100000(Db::get(), new NullLogger());
+        $schema = Db::get()->createSchemaManager()->introspectSchema();
+
+        $migration->down($schema);
+        $this->executeMigration($migration);
+        $migration->postDown($schema);
+    }
+
+    private function restoreTheColumn(): void
+    {
+        $migration = new Version20261105100000(Db::get(), new NullLogger());
+        $schema = Db::get()->createSchemaManager()->introspectSchema();
+
+        $migration->up($schema);
+        $this->executeMigration($migration);
+        $migration->postUp($schema);
+    }
+
+    private function executeMigration(Version20261105100000 $migration): void
+    {
+        foreach ($migration->getSql() as $query) {
+            Db::get()->executeStatement($query->getStatement());
+        }
     }
 
     private function executeOnCopy(Version20261105100000 $migration, string $table): void

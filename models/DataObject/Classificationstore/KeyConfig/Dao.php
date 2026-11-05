@@ -218,7 +218,8 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * The row as the model takes it. The tri-state `localized` column is left as NULL, which
      * {@see Model\AbstractModel::setValues()} skips, so the property keeps its default and the key
-     * stays on the flag of the class definition field.
+     * stays on the flag of the class definition field. A row that carries no such column at all -
+     * the table of an installation whose migrations have not run yet - reads the same way.
      *
      * @param array<string, mixed> $data
      *
@@ -226,10 +227,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     private function castRow(array $data): array
     {
-        $localized = $data[self::COLUMN_LOCALIZED];
-
         $data['enabled'] = (bool)$data['enabled'];
-        $data[self::COLUMN_LOCALIZED] = $localized === null ? null : (bool)$localized;
+        $data[self::COLUMN_LOCALIZED] = isset($data[self::COLUMN_LOCALIZED])
+            ? (bool)$data[self::COLUMN_LOCALIZED]
+            : null;
 
         return $data;
     }

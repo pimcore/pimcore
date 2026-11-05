@@ -36,8 +36,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         foreach ($configsData as $keyConfigData) {
             $keyConfig = new DataObject\Classificationstore\KeyConfig();
             $keyConfigData['enabled'] = (bool)$keyConfigData['enabled'];
-            // a NULL localized column stays NULL, which setValues() skips so the key keeps inheriting
-            $keyConfigData['localized'] = $keyConfigData['localized'] === null ? null : (bool)$keyConfigData['localized'];
+            // a NULL localized column, and a table that does not carry it yet, keep the key inheriting
+            $keyConfigData['localized'] = isset($keyConfigData['localized'])
+                ? (bool)$keyConfigData['localized']
+                : null;
             $keyConfig->setValues($keyConfigData, true);
             $configList[] = $keyConfig;
         }

@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
+use Pimcore\Model\DataObject\Classificationstore\KeyConfig\Dao as KeyConfigDao;
 
 /**
  * Answers which languages a classification store key is kept in.
@@ -65,7 +66,7 @@ final class LocalizationResolver
         }
 
         return (bool) $this->db->fetchOne(
-            'SELECT EXISTS(SELECT 1 FROM ' . KeyConfig\Dao::TABLE_NAME_KEYS
+            'SELECT EXISTS(SELECT 1 FROM ' . KeyConfigDao::TABLE_NAME_KEYS
             . ' WHERE storeId = :storeId AND localized = 1)',
             ['storeId' => $storeId]
         );

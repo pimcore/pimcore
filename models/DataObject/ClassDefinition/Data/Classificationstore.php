@@ -233,7 +233,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 if ($keyConfig->getEnabled()) {
                     $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                    foreach ($languages as $language => $value) {
+                    // a stored value is answered only for the languages the key is kept in
+                    $keyLanguages = array_flip($this->getValidLanguages($keyId));
+
+                    foreach (array_intersect_key($languages, $keyLanguages) as $language => $value) {
                         $fdata = $value;
                         if (!isset($fieldData[$language][$groupId][$keyId]) || $fd->isEmpty($fieldData[$language][$groupId][$keyId])) {
                             // never override existing data
@@ -329,6 +332,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             foreach ($data as $language => $groups) {
                 foreach ($groups as $groupId => $keys) {
                     foreach ($keys as $keyId => $value) {
+                        // the save writes the languages the key is kept in, which the payload answered
+                        if (!in_array($language, $this->getValidLanguages($keyId), true)) {
+                            continue;
+                        }
+
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
                         $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(

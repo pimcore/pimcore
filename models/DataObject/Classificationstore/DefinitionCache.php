@@ -109,7 +109,7 @@ class DefinitionCache
         // hydrated exactly as KeyConfig\Dao::getById() does, so a null column keeps the property default
         foreach ($list->getDao()->getDataArray() as $row) {
             $row['enabled'] = (bool) $row['enabled'];
-            $row['localized'] = $row['localized'] === null ? null : (bool) $row['localized'];
+            $row['localized'] = isset($row['localized']) ? (bool) $row['localized'] : null;
 
             $config = new KeyConfig();
             $config->setValues($row, true);
