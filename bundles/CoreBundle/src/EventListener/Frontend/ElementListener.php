@@ -220,7 +220,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // substituting the latest (possibly unpublished) version requires the "versions" grant,
-        // same as browsing historical versions by id via pimcore_version (GHSA-v36c-r89g-2226)
+        // same as browsing historical versions by id via pimcore_version
         if (!$document->isAllowed('versions', $user)) {
             return $document;
         }
@@ -304,7 +304,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     private function handleDocumentStudioPreview(Document $document, User $user): Document
     {
         // substituting the latest (possibly unpublished) version requires the "versions" grant,
-        // same as browsing historical versions by id via pimcore_version (GHSA-v36c-r89g-2226)
+        // same as browsing historical versions by id via pimcore_version
         if (!$document->isAllowed('versions', $user)) {
             return $document;
         }

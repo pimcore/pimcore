@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener\Frontend;
 
+use ArrayObject;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
@@ -24,9 +25,12 @@ use Pimcore\Model\Document\Page;
 use Pimcore\Model\User;
 use Pimcore\Model\UserInterface;
 use Pimcore\Model\Version;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Security\User\UserLoader;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tool\Serialize;
 use Psr\Log\NullLogger;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -356,36 +360,93 @@ class ElementListenerTest extends TestCase
     }
 
     /**
-     * Regression coverage for GHSA-xq8x-2fg5-827p: editmode must not hand out an unpublished
-     * draft (via getLatestVersion()) to a user who holds "view" but not the "versions" grant —
-     * the same grant already required by the pimcore_version branch above.
+     * A page double whose draft lookup is recorded: Document::getLatestVersion() is a magic dao call,
+     * which PHPUnit cannot configure on a mock.
+     *
+     * @param string[] $allowedPermissions
+     * @param ArrayObject<int, mixed> $lookups receives the user ids the latest version is requested for
      */
-    public function testEditmodeDoesNotSubstituteLatestVersionWithoutVersionsPermission(): void
+    private function createPage(array $allowedPermissions, ArrayObject $lookups, ?Version $latestVersion = null): Page
     {
-        $document = $this->createMock(Page::class);
-        $document->method('isPublished')->willReturn(true);
-        $document->method('getId')->willReturn(10);
-        $document->method('getFullPath')->willReturn('/page');
-        $document->expects($this->never())->method('getLatestVersion');
+        $page = new class($allowedPermissions, $latestVersion, $lookups) extends Page {
+            /**
+             * @param string[] $allowedPermissions
+             * @param ArrayObject<int, mixed> $lookups
+             */
+            public function __construct(private array $allowedPermissions, private ?Version $latestVersion, private ArrayObject $lookups)
+            {
+                parent::__construct();
+            }
 
+            public function isAllowed(string $type, ?User $user = null): bool
+            {
+                return in_array($type, $this->allowedPermissions, true);
+            }
+
+            public function getLatestVersion(?int $userId = null, bool $includingPublished = false): ?Version
+            {
+                $this->lookups[] = $userId;
+
+                return $this->latestVersion;
+            }
+        };
+        $page->setId(10);
+        $page->setKey('page');
+        $page->setPath('/');
+        $page->setPublished(true);
+
+        return $page;
+    }
+
+    /**
+     * A draft whose payload is a different page, loaded through the regular Version::loadData() path.
+     */
+    private function createDraftVersion(): Version
+    {
+        $draft = new Page();
+        $draft->setId(10);
+        $draft->setKey('draft');
+        $draft->setPath('/');
+
+        $storage = $this->createMock(VersionStorageAdapterInterface::class);
+        $storage->method('loadMetaData')->willReturn(Serialize::serialize($draft));
+
+        $reflection = new ReflectionClass(Version::class);
+        /** @var Version $version */
+        $version = $reflection->newInstanceWithoutConstructor();
+        $reflection->getProperty('storageAdapter')->setValue($version, $storage);
+        $version->setSerialized(true);
+        $version->setCtype('document');
+        $version->setCid(10);
+
+        return $version;
+    }
+
+    /**
+     * Runs the request through the listener as a backend user (id 42) and returns the document that was
+     * handed to the resolver.
+     *
+     * @param array<string, string> $query
+     */
+    private function dispatchAdminRequest(Page $document, array $query, bool $editmode): Document
+    {
+        $user = new User();
+        $user->setId(42);
+
+        $resolved = null;
         $documentResolver = $this->createMock(DocumentResolver::class);
         $documentResolver->method('getDocument')->willReturn($document);
         $documentResolver->expects($this->once())->method('setDocument')
-            ->with($this->anything(), $this->identicalTo($document));
-
-        $document->method('isAllowed')->willReturnCallback(
-            static fn (string $type): bool => $type === 'view'
-        );
+            ->willReturnCallback(static function (Request $request, Document $doc) use (&$resolved): void {
+                $resolved = $doc;
+            });
 
         $editmodeResolver = $this->createMock(EditmodeResolver::class);
-        $editmodeResolver->method('isEditmode')->willReturn(true);
+        $editmodeResolver->method('isEditmode')->willReturn($editmode);
 
         $requestHelper = $this->createMock(RequestHelper::class);
         $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
         $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
-
-        $user = new User();
-        $user->setId(42);
 
         $userLoader = $this->createMock(UserLoader::class);
         $userLoader->method('getUser')->willReturn($user);
@@ -401,163 +462,60 @@ class ElementListenerTest extends TestCase
         $listener->setLogger(new NullLogger());
         $listener->setPimcoreContextResolver($contextResolver);
 
-        // pimcore_studio=1 skips the session lookup branch in handleEditmode(), isolating the
-        // "versions" permission check under test
-        $request = Request::create('/page', 'GET', ['pimcore_studio' => '1']);
+        $request = Request::create('/page', 'GET', $query);
         $request->setSession(new Session(new MockArraySessionStorage()));
 
         $listener->onKernelController($this->makeControllerEvent($request));
+
+        $this->assertInstanceOf(Document::class, $resolved);
+
+        return $resolved;
+    }
+
+    public function testEditmodeKeepsDocumentWithoutVersionsPermission(): void
+    {
+        $lookups = new ArrayObject();
+        $document = $this->createPage(['view'], $lookups, $this->createDraftVersion());
+
+        // pimcore_studio skips the session lookup, isolating the draft substitution under test
+        $resolved = $this->dispatchAdminRequest($document, ['pimcore_studio' => '1'], true);
+
+        $this->assertSame($document, $resolved);
+        $this->assertSame('page', $resolved->getKey());
+        $this->assertSame([], $lookups->getArrayCopy());
     }
 
     public function testEditmodeSubstitutesLatestVersionWithVersionsPermission(): void
     {
-        $document = $this->createMock(Page::class);
-        $document->method('isPublished')->willReturn(true);
-        $document->method('getId')->willReturn(10);
-        $document->method('getFullPath')->willReturn('/page');
-        $document->method('isAllowed')->willReturnCallback(
-            static fn (string $type): bool => in_array($type, ['view', 'versions'], true)
-        );
+        $lookups = new ArrayObject();
+        $document = $this->createPage(['view', 'versions'], $lookups, $this->createDraftVersion());
 
-        $latestDocument = $this->createMock(Page::class);
+        $resolved = $this->dispatchAdminRequest($document, ['pimcore_studio' => '1'], true);
 
-        $version = $this->createMock(Version::class);
-        $version->method('loadData')->willReturn($latestDocument);
-
-        $document->method('getLatestVersion')->with(42)->willReturn($version);
-
-        $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
-        $documentResolver->expects($this->once())->method('setDocument')
-            ->with($this->anything(), $this->identicalTo($latestDocument));
-
-        $editmodeResolver = $this->createMock(EditmodeResolver::class);
-        $editmodeResolver->method('isEditmode')->willReturn(true);
-
-        $requestHelper = $this->createMock(RequestHelper::class);
-        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
-        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
-
-        $user = new User();
-        $user->setId(42);
-
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn($user);
-
-        $contextResolver = $this->createMock(PimcoreContextResolver::class);
-        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
-
-        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
-            protected function handleObjectParams(Request $request, UserInterface $user): void
-            {
-            }
-        };
-        $listener->setLogger(new NullLogger());
-        $listener->setPimcoreContextResolver($contextResolver);
-
-        $request = Request::create('/page', 'GET', ['pimcore_studio' => '1']);
-        $request->setSession(new Session(new MockArraySessionStorage()));
-
-        $listener->onKernelController($this->makeControllerEvent($request));
+        $this->assertSame('draft', $resolved->getKey());
+        $this->assertSame([42], $lookups->getArrayCopy());
     }
 
-    /**
-     * Regression coverage for GHSA-xq8x-2fg5-827p: document studio preview must not hand out an
-     * unpublished draft to a user who holds "view" but not the "versions" grant.
-     */
-    public function testStudioPreviewDoesNotSubstituteLatestVersionWithoutVersionsPermission(): void
+    public function testStudioPreviewKeepsDocumentWithoutVersionsPermission(): void
     {
-        $document = $this->createMock(Page::class);
-        $document->method('isPublished')->willReturn(true);
-        $document->method('getFullPath')->willReturn('/page');
-        $document->method('isAllowed')->willReturnCallback(
-            static fn (string $type): bool => $type === 'view'
-        );
-        $document->expects($this->never())->method('getLatestVersion');
+        $lookups = new ArrayObject();
+        $document = $this->createPage(['view'], $lookups, $this->createDraftVersion());
 
-        $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
-        $documentResolver->expects($this->once())->method('setDocument')
-            ->with($this->anything(), $this->identicalTo($document));
+        $resolved = $this->dispatchAdminRequest($document, ['pimcore_studio_preview' => '1'], false);
 
-        $editmodeResolver = $this->createMock(EditmodeResolver::class);
-        $editmodeResolver->method('isEditmode')->willReturn(false);
-
-        $requestHelper = $this->createMock(RequestHelper::class);
-        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
-        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
-
-        $user = new User();
-        $user->setId(42);
-
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn($user);
-
-        $contextResolver = $this->createMock(PimcoreContextResolver::class);
-        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
-
-        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
-            protected function handleObjectParams(Request $request, UserInterface $user): void
-            {
-            }
-        };
-        $listener->setLogger(new NullLogger());
-        $listener->setPimcoreContextResolver($contextResolver);
-
-        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1']);
-        $request->setSession(new Session(new MockArraySessionStorage()));
-
-        $listener->onKernelController($this->makeControllerEvent($request));
+        $this->assertSame($document, $resolved);
+        $this->assertSame('page', $resolved->getKey());
+        $this->assertSame([], $lookups->getArrayCopy());
     }
 
     public function testStudioPreviewSubstitutesLatestVersionWithVersionsPermission(): void
     {
-        $document = $this->createMock(Page::class);
-        $document->method('isPublished')->willReturn(true);
-        $document->method('getFullPath')->willReturn('/page');
-        $document->method('isAllowed')->willReturnCallback(
-            static fn (string $type): bool => in_array($type, ['view', 'versions'], true)
-        );
+        $lookups = new ArrayObject();
+        $document = $this->createPage(['view', 'versions'], $lookups, $this->createDraftVersion());
 
-        $latestDocument = $this->createMock(Page::class);
+        $resolved = $this->dispatchAdminRequest($document, ['pimcore_studio_preview' => '1'], false);
 
-        $version = $this->createMock(Version::class);
-        $version->method('loadData')->willReturn($latestDocument);
-
-        $document->method('getLatestVersion')->with(42)->willReturn($version);
-
-        $documentResolver = $this->createMock(DocumentResolver::class);
-        $documentResolver->method('getDocument')->willReturn($document);
-        $documentResolver->expects($this->once())->method('setDocument')
-            ->with($this->anything(), $this->identicalTo($latestDocument));
-
-        $editmodeResolver = $this->createMock(EditmodeResolver::class);
-        $editmodeResolver->method('isEditmode')->willReturn(false);
-
-        $requestHelper = $this->createMock(RequestHelper::class);
-        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
-        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
-
-        $user = new User();
-        $user->setId(42);
-
-        $userLoader = $this->createMock(UserLoader::class);
-        $userLoader->method('getUser')->willReturn($user);
-
-        $contextResolver = $this->createMock(PimcoreContextResolver::class);
-        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
-
-        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
-            protected function handleObjectParams(Request $request, UserInterface $user): void
-            {
-            }
-        };
-        $listener->setLogger(new NullLogger());
-        $listener->setPimcoreContextResolver($contextResolver);
-
-        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1']);
-        $request->setSession(new Session(new MockArraySessionStorage()));
-
-        $listener->onKernelController($this->makeControllerEvent($request));
+        $this->assertSame('draft', $resolved->getKey());
+        $this->assertSame([42], $lookups->getArrayCopy());
     }
 }
