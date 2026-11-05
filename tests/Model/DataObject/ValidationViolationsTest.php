@@ -368,7 +368,7 @@ class ValidationViolationsTest extends ModelTestCase
         $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
         $group = Classificationstore\GroupConfig::getByName(self::GROUP_NAME, $store->getId());
         $key = Classificationstore\KeyConfig::getByName(self::CS_KEY_NAME, $store->getId());
-        $definition = $this->input(self::CS_KEY_NAME, false);
+        $definition = json_decode((string) json_encode($this->input(self::CS_KEY_NAME, false)), true);
         unset($definition['name']);
         $key->setDefinition((string) json_encode($definition));
         $key->save();
