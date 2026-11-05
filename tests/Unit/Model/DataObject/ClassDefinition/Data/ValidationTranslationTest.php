@@ -38,6 +38,7 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * The data type validators keep their legacy message and additionally carry a translation key with parameters.
@@ -424,6 +425,9 @@ class ValidationTranslationTest extends TestCase
 
     public function testLinkReferencingMissingElements(): void
     {
+        // Link::checkValidity() looks the referenced element up in the database
+        TestHelper::checkDbSupport();
+
         $field = new Link();
         $field->setName('target');
 
