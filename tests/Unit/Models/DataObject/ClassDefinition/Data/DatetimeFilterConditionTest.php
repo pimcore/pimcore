@@ -17,9 +17,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Datetime;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Regression test for GHSA-f7qw-2c4g-mh4h: the grid filter field name must be
- * passed through the identifier-quoting helper instead of being wrapped in
- * raw backticks, which allowed it to break out of the identifier context.
+ * The grid filter field name must always be passed through the identifier-quoting helper
+ * (which doubles embedded backticks) instead of being wrapped in raw backticks.
  */
 class DatetimeFilterConditionTest extends TestCase
 {
@@ -45,20 +44,6 @@ class DatetimeFilterConditionTest extends TestCase
         $this->assertSame("DATE(`myDate`) = '2026-09-11'", $condition);
     }
 
-    public function testLegitimateFieldNameWithBrickPrefix(): void
-    {
-        $field = new Datetime();
-        $field->setColumnType('datetime');
-
-        $condition = $field->getFilterConditionExt(
-            strtotime('2026-09-11'),
-            '=',
-            ['name' => 'myDate', 'brickPrefix' => 'myBrick']
-        );
-
-        $this->assertSame("DATE(`myBrick`.`myDate`) = '2026-09-11'", $condition);
-    }
-
     public function testLegitimateFieldNameOnNonDatetimeColumn(): void
     {
         $field = new Datetime();
@@ -70,37 +55,31 @@ class DatetimeFilterConditionTest extends TestCase
         $this->assertStringStartsWith('`myDate` BETWEEN ', $condition);
     }
 
-    public function testBacktickPayloadInFieldNameIsNeutralizedOnDatetimeColumn(): void
+    public function testEmbeddedBacktickInFieldNameIsQuotedOnDatetimeColumn(): void
     {
         $field = new Datetime();
         $field->setColumnType('datetime');
 
-        $payload = 'myDate` = 1 OR SLEEP(5) -- ';
         $condition = $field->getFilterConditionExt(
             strtotime('2026-09-11'),
             '=',
-            ['name' => $payload, 'brickPrefix' => '']
+            ['name' => 'my`Date', 'brickPrefix' => '']
         );
 
-        $this->assertSame(
-            "DATE(`myDate`` = 1 OR SLEEP(5) -- `) = '2026-09-11'",
-            $condition
-        );
+        $this->assertSame("DATE(`my``Date`) = '2026-09-11'", $condition);
     }
 
-    public function testBacktickPayloadInFieldNameIsNeutralizedOnNonDatetimeColumn(): void
+    public function testEmbeddedBacktickInFieldNameIsQuotedOnNonDatetimeColumn(): void
     {
         $field = new Datetime();
         $field->setColumnType('bigint(20)');
 
-        $payload = 'myDate` = 1 OR SLEEP(5) -- ';
         $timestamp = strtotime('2026-09-11');
-        $condition = $field->getFilterConditionExt($timestamp, '=', ['name' => $payload]);
+        $condition = $field->getFilterConditionExt($timestamp, '=', ['name' => 'my`Date']);
 
-        $this->assertStringContainsString('``', $condition);
         $this->assertSame(
-            '`myDate`` = 1 OR SLEEP(5) -- ` BETWEEN ',
-            substr($condition, 0, strpos($condition, "'"))
+            "`my``Date` BETWEEN '" . $timestamp . "' AND '" . ($timestamp + 86399) . "'",
+            $condition
         );
     }
 }

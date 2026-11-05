@@ -17,9 +17,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Date;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Regression test for GHSA-f7qw-2c4g-mh4h: the grid filter field name must be
- * passed through the identifier-quoting helper instead of being wrapped in
- * raw backticks, which allowed it to break out of the identifier context.
+ * The grid filter field name must always be passed through the identifier-quoting helper
+ * (which doubles embedded backticks) instead of being wrapped in raw backticks.
  */
 class DateFilterConditionTest extends TestCase
 {
@@ -56,20 +55,27 @@ class DateFilterConditionTest extends TestCase
         $this->assertStringStartsWith('`myDate` BETWEEN ', $condition);
     }
 
-    public function testBacktickPayloadInFieldNameIsNeutralizedOnNonDateColumn(): void
+    public function testEmbeddedBacktickInFieldNameIsQuotedOnDateColumn(): void
+    {
+        $field = new Date();
+        $field->setColumnType('date');
+
+        $condition = $field->getFilterConditionExt(strtotime('2026-09-11'), '=', ['name' => 'my`Date']);
+
+        $this->assertSame("`my``Date` = '2026-09-11'", $condition);
+    }
+
+    public function testEmbeddedBacktickInFieldNameIsQuotedOnNonDateColumn(): void
     {
         $field = new Date();
         $field->setColumnType('bigint(20)');
 
-        $payload = 'myDate` = 1 OR SLEEP(5) -- ';
         $timestamp = strtotime('2026-09-11');
-        $condition = $field->getFilterConditionExt($timestamp, '=', ['name' => $payload]);
+        $condition = $field->getFilterConditionExt($timestamp, '=', ['name' => 'my`Date']);
 
-        // the injected backtick must be doubled by the identifier quoter, not left raw
-        $this->assertStringContainsString('``', $condition);
         $this->assertSame(
-            '`myDate`` = 1 OR SLEEP(5) -- ` BETWEEN ',
-            substr($condition, 0, strpos($condition, "'"))
+            "`my``Date` BETWEEN '" . $timestamp . "' AND '" . ($timestamp + 86399) . "'",
+            $condition
         );
     }
 }
