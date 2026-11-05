@@ -154,7 +154,7 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
 
     public function testRejectsPropertyAccess(): void
     {
-        // property access reaches public properties such as AbstractDao::$db without any method call
+        // only method calls are checked against the receiver, so property access is rejected outright
         $language = new CalculatedFieldExpressionLanguage();
 
         $this->expectException(SyntaxError::class);

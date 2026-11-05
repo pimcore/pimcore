@@ -22,9 +22,8 @@ use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 /**
- * Calculated value expressions are evaluated on every read of the object, so they must only be
- * able to read data of the object graph - never reach the database connection, run SQL built
- * from expression input, or persist anything (GHSA-93jv-p24f-gcpp).
+ * Calculated value expressions are evaluated on every read of the object, so they may only call
+ * read-only getters on the data of the object graph.
  *
  * @group model.dataobject.calculatedvalue
  */
