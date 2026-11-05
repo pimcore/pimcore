@@ -17,6 +17,7 @@ use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -497,5 +498,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getFieldType(): string
     {
         return 'numeric';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Numeric;
     }
 }

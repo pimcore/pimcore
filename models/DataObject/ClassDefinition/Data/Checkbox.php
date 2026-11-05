@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -237,5 +238,10 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getFieldType(): string
     {
         return 'checkbox';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Boolean;
     }
 }

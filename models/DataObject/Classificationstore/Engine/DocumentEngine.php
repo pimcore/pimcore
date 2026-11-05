@@ -24,10 +24,12 @@ use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\Dao as ClassDefinitionDaoHelper;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache;
+use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Model\DataObject\Classificationstore\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Service as DataObjectService;
@@ -149,6 +151,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         private readonly MarshallerService $marshallerService,
         private readonly KeyGroupRelationCache $relationCache,
         private readonly EavEngine $eavEngine,
+        private readonly KeyTypeSupport $keyTypeSupport,
         Connection $db
     ) {
         $this->db = $db;
@@ -556,9 +559,13 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         }
     }
 
+    /**
+     * A document holds whatever `normalize()` returns, so a structured value needs no marshaller
+     * here and no column to be packed into. That is the one capability this engine offers.
+     */
     public function supports(EngineFeature $feature): bool
     {
-        return false;
+        return $feature === EngineFeature::StructuredValues;
     }
 
     /**
@@ -885,6 +892,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return $normalizedData;
         }
 
+        if ($normalizedData !== null && $this->encryptsThroughAJsonEnvelope($fd)) {
+            // throwing, so that a value JSON cannot carry is not encrypted as the `false` of a
+            // failed encode and read back as nothing
+            $normalizedData = json_encode($normalizedData, JSON_THROW_ON_ERROR);
+        }
+
         $marshaller = $this->marshallerService
             ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype());
         $parameters = $this->getMarshallerParameters($fd, $object);
@@ -970,6 +983,10 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $value = $this->marshallerService
                 ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype())
                 ->unmarshal($value, $this->getMarshallerParameters($fd, $object));
+
+            if (is_string($value) && $this->encryptsThroughAJsonEnvelope($fd)) {
+                $value = json_decode($value, true);
+            }
         }
 
         return $fd->denormalize($value, ['object' => $object, 'fieldDefinition' => $fd]);
@@ -988,6 +1005,33 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     {
         return $fd->getFieldtype() === self::ENCRYPTED_FIELD_TYPE
             && $this->marshallerService->supportsFielddefinition(self::MARSHALLER_FORMAT, self::ENCRYPTED_FIELD_TYPE);
+    }
+
+    /**
+     * Whether the value of an `encryptedField` reaches the encryption as the JSON of what it
+     * normalizes to, rather than as the value itself.
+     *
+     * The classificationstore `encryptedField` marshaller encrypts a scalar, and hands an array to
+     * the marshaller of its delegate to be packed into the two value columns first - of which there
+     * are none here. A delegate the two columns cannot hold, which is exactly a delegate this engine
+     * unlocks, therefore has nothing the marshaller would encrypt and would be stored as `null`.
+     * One JSON envelope makes it a scalar again, and nothing about the encryption changes.
+     *
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport} is what decides it, the
+     * same predicate that refuses such a key on an EAV store, so the envelope covers exactly the
+     * delegates no marshaller packs: a delegate that normalizes to a scalar or has a marshaller of
+     * its own keeps the shape it has always been stored in.
+     */
+    private function encryptsThroughAJsonEnvelope(Data $fd): bool
+    {
+        if (!$fd instanceof EncryptedField) {
+            return false;
+        }
+
+        $delegate = $fd->getDelegate();
+
+        return $delegate instanceof Data
+            && !$this->keyTypeSupport->isHeldInValueColumns($delegate->getFieldtype());
     }
 
     /**

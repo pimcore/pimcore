@@ -29,7 +29,9 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache;
+use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Model\DataObject\Classificationstore\Service;
+use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Normalizer\NormalizerInterface;
 use Psr\Log\LoggerInterface;
@@ -43,6 +45,11 @@ use Throwable;
 final class EavEngine extends AbstractDao implements EngineInterface
 {
     use ClassDefinitionDaoHelper;
+
+    /**
+     * The name this engine is registered under, for the message of a value it cannot hold.
+     */
+    private const ENGINE_NAME = 'eav';
 
     private const DATA_TABLE_PREFIX = 'object_classificationstore_data_';
 
@@ -80,8 +87,11 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
     protected array $tableDefinitions = [];
 
-    public function __construct(private readonly LoggerInterface $logger, Connection $db)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly KeyTypeSupport $keyTypeSupport,
+        Connection $db
+    ) {
         $this->db = $db;
     }
 
@@ -176,6 +186,8 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
                     $data['value'] = $encodedData['value'] ?? null;
                     $data['value2'] = $encodedData['value2'] ?? null;
+
+                    $this->assertValueFitsTheValueColumns($data, $keyConfig->getStoreId());
 
                     $dataRows[$this->getDataRowKey($data)] = $data;
                     $alreadySavedGroups[] = $groupId;
@@ -390,6 +402,43 @@ final class EavEngine extends AbstractDao implements EngineInterface
     public function supports(EngineFeature $feature): bool
     {
         return false;
+    }
+
+    /**
+     * Refuses a value that this engine's two `LONGTEXT` columns cannot hold, before any row of the
+     * save is written.
+     *
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyConfig::save()} already refuses such a
+     * key when it is defined, from the declared
+     * return type of `normalize()` and the registered marshallers. That is a declaration: a type
+     * that declares `mixed` and returns a structure passes it, as does a key row an upgraded
+     * installation or a direct SQL edit wrote before the gate existed. This is what keeps it
+     * honest - an array or an object reaching the column names the key and the engine here, rather
+     * than failing as a type conversion inside the database layer several frames down.
+     *
+     * Only a type the gate governs is checked, so a type outside the accepted set keeps writing
+     * exactly what it wrote before.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @throws UnsupportedEngineFeatureException
+     */
+    private function assertValueFitsTheValueColumns(array $data, int $storeId): void
+    {
+        $type = (string) $data['type'];
+
+        if (!$this->keyTypeSupport->isAcceptedType($type)) {
+            return;
+        }
+
+        foreach (['value', 'value2'] as $column) {
+            $value = $data[$column];
+            if ($value === null || is_scalar($value)) {
+                continue;
+            }
+
+            throw new UnsupportedEngineFeatureException($type, $storeId, self::ENGINE_NAME);
+        }
     }
 
     /**

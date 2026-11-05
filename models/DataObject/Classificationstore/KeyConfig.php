@@ -14,12 +14,15 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
 
 /**
@@ -223,9 +226,13 @@ final class KeyConfig extends Model\AbstractModel
      * Saves the key config
      *
      * @throws Model\Exception\InvalidConfigException
+     * @throws Model\DataObject\Exception\UnsupportedEngineFeatureException
      */
     public function save(): void
     {
+        // first, so that a refused key consumes no identifier either
+        $this->assertTypeFitsTheStoreEngine();
+
         if ($this->getId() === null) {
             $this->generateIdentifier();
         }
@@ -340,6 +347,57 @@ final class KeyConfig extends Model\AbstractModel
     public function setStoreId(int $storeId): void
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * Refuses a key whose field type the engine of its store cannot hold, before anything is
+     * written and before an identifier is generated for it.
+     *
+     * Only a type of the accepted set is governed: a type outside it keeps the support core ships
+     * for it, which for `calculatedValue` is a computed read and an editmode payload.
+     *
+     * @throws Model\DataObject\Exception\UnsupportedEngineFeatureException
+     */
+    private function assertTypeFitsTheStoreEngine(): void
+    {
+        // the property carries no default, and a key saved to take an id carries no type yet
+        $type = $this->getObjectVars()['type'] ?? null;
+        if (!is_string($type) || $type === '') {
+            return;
+        }
+
+        $typeSupport = Pimcore::getContainer()->get(KeyTypeSupport::class);
+        if (!$typeSupport->isAcceptedType($type)) {
+            return;
+        }
+
+        if ($typeSupport->isHeldInValueColumns($type, $this->getDelegateType())) {
+            return;
+        }
+
+        $engineResolver = Pimcore::getContainer()->get(EngineResolver::class);
+        $engine = $engineResolver->resolveForStore($this->storeId);
+        if ($engine->supports(EngineFeature::StructuredValues)) {
+            return;
+        }
+
+        throw new Model\DataObject\Exception\UnsupportedEngineFeatureException(
+            $type,
+            $this->storeId,
+            $engineResolver->nameEngine($engine)
+        );
+    }
+
+    /**
+     * The delegate type an `encryptedField` key carries in its definition, which is what decides
+     * what such a key stores. Absent for every other type, and for a delegate that is not set.
+     */
+    private function getDelegateType(): ?string
+    {
+        $definition = json_decode($this->definition, true);
+        $delegateType = is_array($definition) ? ($definition['delegateDatatype'] ?? null) : null;
+
+        return is_string($delegateType) && $delegateType !== '' ? $delegateType : null;
     }
 
     /**

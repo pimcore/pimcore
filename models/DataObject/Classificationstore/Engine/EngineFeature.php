@@ -17,7 +17,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\Engine;
  * Capabilities a classification store engine may offer on top of the storage every engine provides.
  *
  * They exist so that a caller can ask an engine what it is able to do instead of testing for a
- * concrete engine class. The EAV engine offers none of them, and nothing consumes supports() yet.
+ * concrete engine class. The EAV engine offers none of them.
  *
  * PerKeyLocalization is the one the existing value table could also serve - its primary key already
  * carries the language - so the EAV answer to it is expected to change when the capability lands,
@@ -31,4 +31,14 @@ enum EngineFeature
     case Variants;
     case PerKeyLocalization;
     case Relations;
+
+    /**
+     * The engine holds a value that is not a scalar, which is what decides the field types a key of
+     * one of its stores may be defined with.
+     *
+     * The one capability that is consumed: it is read by
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyConfig::save()}, together with
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport}.
+     */
+    case StructuredValues;
 }

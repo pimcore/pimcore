@@ -21,6 +21,19 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
+    /**
+     * The thirteen field types the document engine unlocks: accepted, held by no value column of an
+     * EAV row, and not a relation type.
+     *
+     * @var string[]
+     */
+    protected const STRUCTURED_KEY_NAMES = [
+        'consent', 'dateRange', 'externalImage', 'geobounds', 'geopoint', 'geopolygon', 'geopolyline',
+        'hotspotimage', 'imageGallery', 'link', 'numericRange', 'structuredTable', 'video',
+    ];
+
+    protected const STRUCTURED_GROUP_NAME = 'testgroupStructured';
+
     public static int $configCount = 0;
 
     protected function configureStoreWithQuantityValueField(Classificationstore\StoreConfig $store): void
@@ -53,6 +66,75 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         $keygroupconfig->setGroupId($group->getId());
         $keygroupconfig->setSorter(1);
         $keygroupconfig->save();
+    }
+
+    /**
+     * Adds a group holding one key of every structured type to the store, which only an engine
+     * offering {@see Classificationstore\Engine\EngineFeature::StructuredValues} accepts - defining
+     * them on an EAV store is refused, which is why they are not part of the shared key set of
+     * {@see self::configureStore()} and are created and dropped by the test that needs them.
+     *
+     * @throws Exception
+     */
+    protected function configureStoreWithStructuredFields(
+        Classificationstore\StoreConfig $store
+    ): Classificationstore\GroupConfig {
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::STRUCTURED_GROUP_NAME);
+        $group->save();
+
+        foreach (self::STRUCTURED_KEY_NAMES as $sorter => $keyName) {
+            $keyConfig = new Classificationstore\KeyConfig();
+            $keyConfig->setStoreId($store->getId());
+            $keyConfig->setName($keyName);
+            $keyConfig->setDescription('keyDesc' . $keyName . 'Desc');
+            $keyConfig->setEnabled(true);
+            $keyConfig->setType($keyName);
+            $keyConfig->setDefinition($this->encodeKeyDefinition($keyName));
+            $keyConfig->save();
+
+            $relation = new Classificationstore\KeyGroupRelation();
+            $relation->setKeyId($keyConfig->getId());
+            $relation->setGroupId($group->getId());
+            $relation->setSorter($sorter);
+            $relation->save();
+        }
+
+        return $group;
+    }
+
+    /**
+     * Removes the group of {@see self::configureStoreWithStructuredFields()} and its keys again. The
+     * store is shared across the suite, and a key left behind would change the key count
+     * {@see GeneralTest::testBasics()} expects of it.
+     */
+    protected function dropStructuredFields(Classificationstore\StoreConfig $store): void
+    {
+        foreach (self::STRUCTURED_KEY_NAMES as $keyName) {
+            Classificationstore\KeyConfig::getByName($keyName, $store->getId(), true)?->delete();
+        }
+
+        Classificationstore\GroupConfig::getByName(self::STRUCTURED_GROUP_NAME, $store->getId())?->delete();
+    }
+
+    /**
+     * The field definition of a structured key, serialized the way a key config carries it.
+     *
+     * @throws Exception
+     */
+    private function encodeKeyDefinition(string $keyName): string
+    {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+        if (!$loader->supports($keyName)) {
+            throw new Exception($keyName . ' not supported');
+        }
+
+        /** @var ClassDefinition\Data $definition */
+        $definition = $loader->build($keyName);
+        $definition->setName($keyName);
+
+        return (string) json_encode($definition);
     }
 
     /**

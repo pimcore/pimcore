@@ -19,6 +19,7 @@ use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
@@ -424,6 +425,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getFieldType(): string
     {
         return 'datetime';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Date;
     }
 
     public function setColumnType(string $columnType): void
