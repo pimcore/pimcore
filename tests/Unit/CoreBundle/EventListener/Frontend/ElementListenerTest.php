@@ -20,6 +20,7 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\User;
@@ -465,7 +466,15 @@ class ElementListenerTest extends TestCase
         $request = Request::create('/page', 'GET', $query);
         $request->setSession(new Session(new MockArraySessionStorage()));
 
-        $listener->onKernelController($this->makeControllerEvent($request));
+        // Version::loadData() would otherwise restore key and path from a persisted element with the same id
+        $restoreKeyAndPath = DataObject\AbstractObject::doNotRestoreKeyAndPath();
+        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
+
+        try {
+            $listener->onKernelController($this->makeControllerEvent($request));
+        } finally {
+            DataObject\AbstractObject::setDoNotRestoreKeyAndPath($restoreKeyAndPath);
+        }
 
         $this->assertInstanceOf(Document::class, $resolved);
 
