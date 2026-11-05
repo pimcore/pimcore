@@ -34,6 +34,14 @@ class FilterConditionBrickPrefixTest extends TestCase
 {
     private const LISTING_PREFIX = 'object_5.';
 
+    // these tests only quote via the DB connection and don't mutate data, so cleanup can stay disabled
+    protected bool $cleanupDbInSetup = false;
+
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     public function testCheckboxConcatenatesThePrefixAsGiven(): void
     {
         $field = new Checkbox();
