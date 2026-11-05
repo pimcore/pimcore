@@ -82,3 +82,41 @@ There is a convenient method available to find all objects associated with a spe
 ```php
 $objects = \Pimcore\Model\DataObject\Service::getObjectsReferencingUser($userId);
 ```
+
+## User Types: Users and Service Users
+
+The users table stores every identity in one model hierarchy, selected by its `type`:
+
+- `user`: `Pimcore\Model\User`, a person who logs in with a password.
+- `serviceuser`: `Pimcore\Model\User\ServiceUser`, a machine identity for an integration, agent or pipeline.
+
+A service user is a Pimcore user for everything that authorizes it: it has roles, workspaces, permissions,
+class and document type restrictions, and MCP server access, just like a user. It differs in what it cannot do:
+
+- It has no password, is never an administrator and has no two-factor authentication.
+- It cannot log in interactively, and a password recovery never reaches it.
+- It is not counted or listed as a person.
+
+```php
+use Pimcore\Model\User\ServiceUser;
+
+$serviceUser = ServiceUser::create([
+    'name' => 'svc-erp-import',
+    'active' => true,
+]);
+
+$serviceUser = ServiceUser::getByName('svc-erp-import'); // null if there is none
+```
+
+Lookups keep the two types apart:
+
+- `User::getByName()` and `Pimcore\Model\User\Listing` return users only. Code that lists people, for example
+  notification recipients or a user picker, does not see service users.
+- `ServiceUser::getByName()` and `Pimcore\Model\User\ServiceUser\Listing` (`getServiceUsers()`) return service users only.
+- `User::getById()` returns the matching object for either type. Check `instanceof ServiceUser` or
+  `getType()` when the caller needs to know which one it got.
+
+Names are unique across both types: saving a user or service user with a name that the other type already uses throws
+`Pimcore\Model\User\Exception\DuplicateUserNameException`. Service users are not converted from users and users are not
+converted from service users. To give a service user the access of a person, copy its roles and workspaces to a new
+service user.
