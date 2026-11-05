@@ -418,7 +418,10 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             $items = [];
             $def = new Hotspotimage();
             foreach ($value as $rawValue) {
-                $items[] = $def->denormalize($rawValue, $params);
+                $item = $def->denormalize($rawValue, $params);
+                if ($item !== null) {
+                    $items[] = $item;
+                }
             }
 
             return new DataObject\Data\ImageGallery($items);
