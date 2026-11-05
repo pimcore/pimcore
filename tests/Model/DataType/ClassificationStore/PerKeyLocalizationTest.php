@@ -409,9 +409,11 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
     }
 
     /**
-     * The upgrade window: the new code runs against the table of an installation whose migrations
-     * have not run yet. Every hydration path has to read such a row as a key that decides nothing,
-     * rather than fail on the column the table does not carry.
+     * The upgrade window, for the hydration paths and for them alone: they read a row of a table
+     * that does not carry the column as a key that decides nothing, rather than failing on it. The
+     * probe of `LocalizationResolver::hasLocalizedKey()` is deliberately not part of that claim -
+     * it names the column in its `WHERE`, as `KeyConfig\Dao::getByIdentifier()` names `identifier`,
+     * so it wants the migration the way every query of a new column does.
      */
     public function testTheHydrationPathsSurviveATableWithoutTheColumn(): void
     {

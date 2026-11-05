@@ -323,6 +323,37 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         );
     }
 
+    /**
+     * The mirror of the case above, and the other half of "the key decides": a localized class whose
+     * key is flagged not localized. The field flag opens the gate, but the key decides against it and
+     * is copied wholesale, while the sibling that carries no flag still inherits the field and keeps
+     * the language the user may not edit.
+     */
+    public function testLocalizedClassificationstoreOfANonLocalizedKeyIsCopiedWholesale(): void
+    {
+        $this->flagKeyAsNotLocalized();
+
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de']);
+        $this->writeSiblingKey($source, 'source sibling');
+        $this->writeSiblingKey($target, 'target sibling');
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame(
+            'source de',
+            $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'),
+            'the key decides against the field, so it is copied as a non-localized field is'
+        );
+        $this->assertSame(
+            'target sibling',
+            $store->getLocalizedKeyValue($this->groupId, $this->siblingKeyId, 'de'),
+            'the key that carries no flag still inherits the field and keeps the non-editable language'
+        );
+    }
+
     public function testClassificationstoreLanguageIndependentValueIsCopiedIfListed(): void
     {
         $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de', 'default' => 'source default']);
@@ -520,6 +551,13 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
     {
         $key = Classificationstore\KeyConfig::getById($this->keyId, true);
         $key->setLocalized(true);
+        $key->save();
+    }
+
+    private function flagKeyAsNotLocalized(): void
+    {
+        $key = Classificationstore\KeyConfig::getById($this->keyId, true);
+        $key->setLocalized(false);
         $key->save();
     }
 

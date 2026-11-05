@@ -97,9 +97,10 @@ defined.
 
 ## Class definition
 
-* Localization is chosen per key: a key's own `localized` flag decides, and the class definition setting here is
-  only the default for the keys that carry none (it is deprecated for that reason). By default no key decides and
-  the setting is off, so only the `default` language is available
+* Localization is chosen per key: a key's own `localized` flag decides
+  (`Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()`), and the class definition setting
+  here is only the default for the keys that carry none (it is deprecated for that reason). By default no key
+  decides and the setting is off, so only the `default` language is available
 * Allowed groups can be restricted by providing a comma-separated list of group ids
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first
