@@ -362,6 +362,23 @@ class ValidationViolationsTest extends ModelTestCase
         $this->assertSame($expected, $this->describe($exception));
     }
 
+    public function testClassificationstoreKeyWithoutStoredNameFallsBackToTheKeyName(): void
+    {
+        $object = $this->createObject();
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $group = Classificationstore\GroupConfig::getByName(self::GROUP_NAME, $store->getId());
+        $key = Classificationstore\KeyConfig::getByName(self::CS_KEY_NAME, $store->getId());
+        $definition = $this->input(self::CS_KEY_NAME, false);
+        unset($definition['name']);
+        $key->setDefinition((string) json_encode($definition));
+        $key->save();
+        $object->getCs()->setActiveGroups([$group->getId() => true]);
+
+        $exception = $this->saveExpectingFailure($object);
+
+        $this->assertSame(self::CS_KEY_NAME, $exception->getViolations()[0]->getFieldName());
+    }
+
     public function testMissingMandatoryBlockElement(): void
     {
         $object = $this->createObject();

@@ -236,8 +236,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     /**
      * Drops the `value` parameter and any other string parameter that carries the plain value, so also custom
-     * delegate data types that report the entered value under another name cannot expose it. Numbers are kept:
-     * they are limits like `min` or `max` far more often than an echo of the entered value.
+     * delegate data types that report the entered value under another name cannot expose it. Numbers are kept
+     * unless they equal a numeric plain value: they are limits like `min` or `max` far more often than an echo.
      *
      * An error that lost a parameter loses its translation, too: its text may name the parameter (such as
      * "{{value}}") and would show the placeholder, so clients show the plain message of the error instead.
@@ -250,7 +250,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
 
         // setTranslation() scrubs invalid UTF-8, so compare against the scrubbed plain value
-        $plainString = is_string($plain) && $plain !== '' ? mb_scrub($plain, 'UTF-8') : null;
+        $plainString = match (true) {
+            is_string($plain) && $plain !== '' => mb_scrub($plain, 'UTF-8'),
+            is_int($plain), is_float($plain) => (string) $plain,
+            default => null,
+        };
         $parameters = $exception->getTranslationParameters();
         $remaining = array_filter(
             $parameters,
@@ -266,7 +270,16 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     private static function isPlainValue(mixed $value, ?string $plain): bool
     {
-        if ($plain === null || !is_string($value)) {
+        if ($plain === null) {
+            return false;
+        }
+
+        // a number echoed as such, e.g. an integer PIN
+        if (is_int($value) || is_float($value)) {
+            return (string) $value === $plain;
+        }
+
+        if (!is_string($value)) {
             return false;
         }
 

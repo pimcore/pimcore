@@ -111,6 +111,30 @@ class EncryptedFieldValidationTest extends TestCase
         }
     }
 
+    public function testNumericPlainValueUnderAnotherNameIsNeverReported(): void
+    {
+        $delegate = new class() extends Input {
+            public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
+            {
+                throw (new StructuredValidationException('custom'))
+                    ->setTranslation('custom.rule', ['given' => $data]);
+            }
+        };
+        $delegate->setName('secret');
+
+        $field = new EncryptedField();
+        $field->setName('secret');
+        $field->delegate = $delegate;
+
+        try {
+            $field->checkValidity(123456);
+            $this->fail('Expected a StructuredValidationException');
+        } catch (StructuredValidationException $exception) {
+            $this->assertNull($exception->getTranslationKey());
+            $this->assertSame([], $exception->getTranslationParameters());
+        }
+    }
+
     public function testPlainValueUnderAnotherNameRemovesTheTranslation(): void
     {
         $delegate = new class() extends Input {
@@ -151,7 +175,7 @@ class EncryptedFieldValidationTest extends TestCase
         $field->delegate = $delegate;
 
         try {
-            $field->checkValidity('3');
+            $field->checkValidity('4');
             $this->fail('Expected a StructuredValidationException');
         } catch (StructuredValidationException $exception) {
             $this->assertSame('custom.rule', $exception->getTranslationKey());

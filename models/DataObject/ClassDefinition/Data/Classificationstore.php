@@ -653,6 +653,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $subItems[] = $this->createKeyViolation(
                                     $exception,
                                     $keyDef,
+                                    $keyGroupRelation->getName(),
                                     $groupDefinition,
                                     $validLanguage
                                 );
@@ -681,6 +682,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     private function createKeyViolation(
         Exception $exception,
         Data $keyDefinition,
+        string $keyName,
         DataObject\Classificationstore\GroupConfig $group,
         string $language
     ): StructuredValidationException {
@@ -691,7 +693,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $title = $this->getTitle();
 
         return $violation
-            ->setField($keyDefinition->getName(), $keyDefinition->getTitle())
+            // the stored definition may carry no name of its own
+            ->setField($keyDefinition->getName() ?? $keyName, $keyDefinition->getTitle())
             ->addPathSegment(new ValidationPathSegment(
                 field: $group->getName(),
                 title: $group->getDescription() !== '' ? $group->getDescription() : null
