@@ -53,12 +53,16 @@ class Authentication
         $token = $token ? static::safelyUnserialize($token) : null;
 
         if ($token instanceof TokenInterface) {
-            $token = static::refreshUser($token, Pimcore::getContainer()->get(UserProvider::class));
-
             // A token still waiting for the second factor must not be treated as a completed
             // login: callers of authenticateSession() sit outside the firewall's own 2FA step
             // and have no other way to tell a pending login from a finished one.
-            if ($token instanceof TokenInterface && self::isPendingTwoFactorToken($token)) {
+            if (self::isPendingTwoFactorToken($token)) {
+                return null;
+            }
+
+            $token = static::refreshUser($token, Pimcore::getContainer()->get(UserProvider::class));
+
+            if (!$token instanceof TokenInterface) {
                 return null;
             }
 
