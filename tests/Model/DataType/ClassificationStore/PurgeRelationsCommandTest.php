@@ -21,7 +21,11 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Csstore;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Tests\Support\Helper\Pimcore as PimcoreModule;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -41,6 +45,8 @@ class PurgeRelationsCommandTest extends AbstractClassificationStoreTest
     private const CLASS_NAME = 'csstore';
 
     private const DOCUMENT_TABLE = 'object_classificationstore_doc_csstore';
+
+    private const METADATA_TABLE = 'object_classificationstore_meta_csstore';
 
     private const KEY_PREFIX = 'cs-purge-';
 
@@ -119,6 +125,79 @@ class PurgeRelationsCommandTest extends AbstractClassificationStoreTest
     }
 
     /**
+     * The per-relation column values of an advanced relation are addressed by the position of their
+     * entry in the value, and a purge reindexes the entries that survive it. The stored rows have to
+     * be reindexed with them: left where they were, the surviving relation would come back carrying
+     * the column values of the one that was removed.
+     */
+    public function testTheForcedRunReindexesThePerRelationColumnValuesOfTheSurvivors(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+
+        $removed = TestHelper::createEmptyObject(self::KEY_PREFIX . 'metaremoved');
+        $kept = TestHelper::createEmptyObject(self::KEY_PREFIX . 'metakept');
+
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey(self::KEY_PREFIX . 'metaowner');
+        $object->setPublished(true);
+        $object->save();
+
+        $object->getCsstore()->setLocalizedKeyValue((int) $group->getId(), $keyId, [
+            $this->metadataItem($removed, 'of-the-removed'),
+            $this->metadataItem($kept, 'of-the-kept'),
+        ]);
+        $object->save();
+
+        $removed->delete();
+
+        $this->runCommand(['--force' => true]);
+
+        $this->assertSame([$kept->getId()], $this->storedTargetIds($object->getId(), (int) $group->getId(), $keyId));
+        $this->assertSame(
+            [['index' => 0, 'column' => self::RELATION_COLUMN, 'data' => 'of-the-kept']],
+            $this->readMetadata($object->getId(), (int) $group->getId(), $keyId),
+            'the survivor keeps its own column values at the position it was reindexed to'
+        );
+
+        $read = Csstore::getById($object->getId(), ['force' => true])
+            ->getCsstore()
+            ->getLocalizedKeyValue((int) $group->getId(), $keyId);
+
+        $this->assertCount(1, $read);
+        $this->assertSame('of-the-kept', $read[0]->getData()[self::RELATION_COLUMN]);
+    }
+
+    /**
+     * The sweep reads a batch of rows and writes each of them back afterwards, so a save made in
+     * between must not be discarded. The write is therefore conditional on the checksum the row was
+     * read with, which is the column the save path keeps for exactly that comparison.
+     */
+    public function testTheForcedRunWritesADocumentOnlyWhileItIsStillTheOneItRead(): void
+    {
+        $this->storeTwoTargetsAndDeleteOne();
+
+        $this->resetStatements();
+        $this->runCommand(['--force' => true]);
+
+        $updates = array_filter(
+            $this->grabStatements(),
+            static fn (string $sql): bool => str_starts_with($sql, 'UPDATE `' . self::DOCUMENT_TABLE . '`')
+        );
+
+        $this->assertNotSame([], $updates, 'precondition: the forced run rewrites the document');
+
+        foreach ($updates as $sql) {
+            $this->assertStringContainsString(
+                '`checksum` <=> ?',
+                $sql,
+                'the rewrite has to be a compare-and-swap against the checksum the row was read with'
+            );
+        }
+    }
+
+    /**
      * @return array{0: Csstore, 1: int, 2: int, 3: int, 4: int} the object, group, key, the
      *         surviving target and the one that was deleted
      */
@@ -174,7 +253,74 @@ class PurgeRelationsCommandTest extends AbstractClassificationStoreTest
         $document = json_decode($this->readDocument($objectId, $groupId), true);
         $descriptors = $document['k'][$keyId][0]['d'] ?? [];
 
-        return array_map(static fn (array $descriptor): int => (int) $descriptor['id'], $descriptors);
+        return array_map(
+            static fn (array $descriptor): int => (int) ($descriptor['element']['id'] ?? $descriptor['id']),
+            $descriptors
+        );
+    }
+
+    private function metadataItem(ElementInterface $target, string $data): ObjectMetadata
+    {
+        $item = new ObjectMetadata('csAdvancedManyToManyObject', [self::RELATION_COLUMN], $target);
+        $item->setData([self::RELATION_COLUMN => $data]);
+
+        return $item;
+    }
+
+    /**
+     * @return array<array{index: int, column: string, data: string}>
+     */
+    private function readMetadata(int $objectId, int $groupId, int $keyId): array
+    {
+        $rows = Db::get()->fetchAllAssociative(
+            'SELECT `index`, `column`, `data` FROM ' . Db::get()->quoteIdentifier(self::METADATA_TABLE)
+            . ' WHERE `id` = ? AND `fieldname` = ? AND `groupId` = ? AND `keyId` = ?'
+            . ' ORDER BY `index`, `column`',
+            [$objectId, self::FIELDNAME, $groupId, $keyId]
+        );
+
+        return array_map(static fn (array $row): array => [
+            'index' => (int) $row['index'],
+            'column' => (string) $row['column'],
+            'data' => (string) $row['data'],
+        ], $rows);
+    }
+
+    /**
+     * Starts recording the statements the command issues.
+     */
+    private function resetStatements(): void
+    {
+        $this->getDebugDataHolder()->reset();
+    }
+
+    /**
+     * The statements issued since {@see self::resetStatements()}, on one line each.
+     *
+     * @return string[]
+     */
+    private function grabStatements(): array
+    {
+        $statements = [];
+
+        foreach ($this->getDebugDataHolder()->getData() as $queries) {
+            foreach ($queries as $query) {
+                $statements[] = trim((string) preg_replace('/\s+/', ' ', (string) $query['sql']));
+            }
+        }
+
+        return $statements;
+    }
+
+    private function getDebugDataHolder(): DebugDataHolder
+    {
+        $container = $this->getModule('\\' . PimcoreModule::class)->_getContainer();
+
+        if (!$container->has('doctrine.debug_data_holder')) {
+            $this->markTestSkipped('The Doctrine debug data holder is only registered when the kernel runs in debug mode.');
+        }
+
+        return $container->get('doctrine.debug_data_holder');
     }
 
     private function readDocument(int $objectId, int $groupId): string

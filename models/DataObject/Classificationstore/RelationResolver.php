@@ -26,14 +26,26 @@ use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Normalizer\NormalizerInterface;
 
 /**
- * Turns the stored descriptors of a relation-typed classification store key into its elements.
+ * Turns the stored descriptors of a relation-typed classification store key into its elements, and
+ * answers which of them no longer have one without instantiating anything.
  *
- * It follows {@see \Pimcore\Model\DataObject\ClassDefinition\Data\LightweightRelationLoadingInterface}
- * in shape rather than implementing it: that interface sources its rows from `object_relations_*`
- * through `loadRelationRows()`, which a document-stored relation has none of, and its parameter
- * union does not admit a classification store. What is taken from it is the part that matters here -
- * one chunked `IN` query per element type decides which descriptors still resolve, so that the cost
- * of answering a key does not grow with the number of targets it holds.
+ * Two costs are kept apart here, because only one of them is this field's to bound.
+ *
+ * Deciding whether a descriptor still resolves costs one chunked `IN` query per element type
+ * whatever the number of targets, the way
+ * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait::loadRelationSummaries()}
+ * does it. That is what the sweep, {@see self::findDangling()}, and the dependencies,
+ * {@see self::describeDependencies()}, are answered from: neither reads a target.
+ *
+ * Handing back the elements themselves costs one element load per surviving target, because
+ * {@see \Pimcore\Model\Element\Service::getElementById()} is the only way to instantiate one and
+ * Pimcore has no bulk form of it - {@see \Pimcore\Model\DataObject\AbstractObject::getById()} is
+ * per id, {@see \Pimcore\Model\DataObject\Listing\Dao::load()} loops over it, and
+ * {@see \Pimcore\Model\DataObject\Concrete\Dao::getData()} lets every non-lazy field of the loaded
+ * element read its own data. A plain class field pays exactly the same:
+ * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::loadData()} loads
+ * one object per relation row. So the resolution of a key adds no statement of its own per target,
+ * and the descriptors of a key that is never read cost nothing at all.
  *
  * Which descriptors a value carries is read off the shape {@see \Pimcore\Normalizer\NormalizerInterface::normalize()}
  * writes rather than off a list of type names, so a project relation type is answered as well: a
@@ -120,18 +132,23 @@ final class RelationResolver
     /**
      * The elements of one stored value, with the descriptors whose target is gone left out.
      *
+     * No lookup of its own is made: every relation type's `denormalize()` already omits a descriptor
+     * it cannot instantiate, so asking the database which ids are still there would read the same
+     * rows the element loads below read anyway.
+     *
      * @throws Exception
      */
     public function resolve(Data $fieldDefinition, mixed $normalizedValue, ?Concrete $object): ResolvedRelation
     {
-        $existing = $this->findExisting($this->describe($normalizedValue));
-
-        return $this->denormalize($fieldDefinition, $normalizedValue, $object, $existing);
+        return $this->denormalize($fieldDefinition, $normalizedValue, $object);
     }
 
     /**
-     * The elements of several stored values, resolved against one set of lookups: a caller holding a
-     * whole store pays for the element types its descriptors name, not for every key.
+     * The elements of several stored values.
+     *
+     * For the reader that holds a whole store rather than one key - the edit mode payload - so that
+     * it does not go through {@see \Pimcore\Model\DataObject\Classificationstore::getLocalizedKeyValue()}
+     * key by key.
      *
      * @param list<RelationRequest> $requests
      *
@@ -141,22 +158,13 @@ final class RelationResolver
      */
     public function resolveAll(array $requests, ?Concrete $object): array
     {
-        $descriptors = [];
-        foreach ($requests as $request) {
-            foreach ($this->describe($request->getNormalizedValue()) as $descriptor) {
-                $descriptors[] = $descriptor;
-            }
-        }
-
-        $existing = $this->findExisting($descriptors);
-
         $resolved = [];
+
         foreach ($requests as $request) {
             $resolved[] = $this->denormalize(
                 $request->getFieldDefinition(),
                 $request->getNormalizedValue(),
-                $object,
-                $existing
+                $object
             );
         }
 
@@ -342,27 +350,43 @@ final class RelationResolver
     }
 
     /**
-     * @param array<string, true> $existing
+     * A value denormalized into its elements, and whether that left any of its descriptors out -
+     * which is how {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations::load()}
+     * decides the same thing: fewer elements than there were rows means the value the read answers
+     * with no longer matches what is stored.
      */
     private function denormalize(
         Data $fieldDefinition,
         mixed $normalizedValue,
-        ?Concrete $object,
-        array $existing
+        ?Concrete $object
     ): ResolvedRelation {
         if (!$fieldDefinition instanceof NormalizerInterface) {
             // nothing wrote a descriptor for such a key, and nothing can read one back
             return new ResolvedRelation(null, false);
         }
 
-        $dangling = $this->dangling($this->describe($normalizedValue), $existing);
-
-        $data = $fieldDefinition->denormalize($this->without($normalizedValue, $dangling), [
+        $data = $fieldDefinition->denormalize($normalizedValue, [
             'object' => $object,
             'fieldDefinition' => $fieldDefinition,
         ]);
 
-        return new ResolvedRelation($data, $dangling !== []);
+        return new ResolvedRelation(
+            $data,
+            $this->countElements($data) < count($this->describe($normalizedValue))
+        );
+    }
+
+    /**
+     * How many elements a denormalized value holds: a to-one relation answers with the element
+     * itself rather than with a list of one.
+     */
+    private function countElements(mixed $data): int
+    {
+        if (is_array($data)) {
+            return count($data);
+        }
+
+        return $data === null ? 0 : 1;
     }
 
     /**

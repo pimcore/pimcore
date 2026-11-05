@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -41,14 +42,6 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
     private const READ_STATEMENTS = ['SELECT'];
 
     private const WRITE_STATEMENTS = ['INSERT', 'UPDATE', 'DELETE', 'REPLACE'];
-
-    /**
-     * The one statement {@see Classificationstore\RelationResolver} issues to find out which of a
-     * key's stored descriptors still have an element: one chunked IN query per element type,
-     * whatever the number of targets. What loading a surviving element then costs is the element
-     * loader's, not this field's, which is why it is counted apart from it.
-     */
-    private const DESCRIPTOR_LOOKUP_PATTERN = '/^SELECT `id` FROM `(objects|assets|documents)` WHERE `id` IN /i';
 
     private DebugDataHolder $debugDataHolder;
 
@@ -219,27 +212,11 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
     }
 
     /**
-     * The bulk descriptor lookups of the relation resolver issued since the measurement started.
-     */
-    protected function countDescriptorLookupStatements(): int
-    {
-        $count = 0;
-
-        foreach ($this->debugDataHolder->getData() as $queries) {
-            foreach ($queries as $query) {
-                $sql = trim((string) preg_replace('/\s+/', ' ', (string) $query['sql']));
-
-                if (preg_match(self::DESCRIPTOR_LOOKUP_PATTERN, $sql) === 1) {
-                    $count++;
-                }
-            }
-        }
-
-        return $count;
-    }
-
-    /**
      * Every statement issued since the measurement started, whichever table it addresses.
+     *
+     * This is what a bound stated in statements has to be measured against: a counter that sees the
+     * classification store's own SQL alone would report a bounded cost while the elements of a
+     * relation were being loaded one at a time behind it.
      */
     protected function countStatements(): int
     {
@@ -249,6 +226,51 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
         }
 
         return $count;
+    }
+
+    /**
+     * What one more element load costs, measured on two elements of the class the relation targets
+     * have.
+     *
+     * Resolving a relation hands back the elements themselves, and instantiating one costs this
+     * many statements however it is reached: Pimcore has no bulk element loader, and a plain
+     * relation field of a class pays the same per target. A bound on resolving a key is therefore
+     * stated against this number rather than as if it were zero.
+     *
+     * It is the second load that is measured. The first load of a class also reads its class
+     * definition - {@see \Pimcore\Model\DataObject\ClassDefinition::getById()} holds it in the
+     * runtime cache that every measurement here clears - and that is a cost per class, not per
+     * element, so counting it in would overstate what one more target costs.
+     */
+    protected function measureElementLoad(int $warmUpId, int $elementId): int
+    {
+        RuntimeCache::clear();
+        $this->startMeasurement();
+
+        DataObject::getById($warmUpId, ['force' => true]);
+
+        $this->startMeasurement();
+
+        DataObject::getById($elementId, ['force' => true]);
+
+        return $this->countStatements();
+    }
+
+    /**
+     * Asserts that none of the given elements was instantiated since the runtime cache was cleared,
+     * which is the precise form of "no target was read": the owning object's own load reads the
+     * `objects` table as well, so counting statements against it would not tell the two apart.
+     *
+     * @param int[] $elementIds
+     */
+    protected function assertNoElementInstantiated(array $elementIds, string $message = ''): void
+    {
+        foreach ($elementIds as $elementId) {
+            $this->assertFalse(
+                RuntimeCache::isRegistered('object_' . $elementId),
+                $message === '' ? 'object ' . $elementId . ' must not be instantiated' : $message
+            );
+        }
     }
 
     /**

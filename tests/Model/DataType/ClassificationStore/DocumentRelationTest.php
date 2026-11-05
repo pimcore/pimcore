@@ -239,6 +239,37 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
         }
     }
 
+    /**
+     * The document addresses a value by the alias of its language, and the primary key of the
+     * metadata table equates two spellings the same way. The per-relation column values therefore
+     * have to be written under the alias as well: under the raw spelling the two spellings collide
+     * on one row, and the document and its metadata disagree about which language the value is in.
+     */
+    public function testTwoSpellingsOfOneLanguageAddressOneSetOfPerRelationColumnValues(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX);
+
+        $object = $this->createCsObject();
+        $store = $object->getCsstore();
+        $store->setLocalizedKeyValue((int) $group->getId(), $keyId, [$this->metadataItem($target, 'uppercase')], 'EN');
+        $store->setLocalizedKeyValue((int) $group->getId(), $keyId, [$this->metadataItem($target, 'lowercase')], 'en');
+        $object->save();
+
+        $this->assertSame(
+            ['en'],
+            $this->storedMetadataLanguages($object->getId(), (int) $group->getId(), $keyId),
+            'the two spellings are one coordinate, held under the alias the document uses'
+        );
+
+        $read = Csstore::getById($object->getId(), ['force' => true])
+            ->getCsstore()
+            ->getLocalizedKeyValue((int) $group->getId(), $keyId, 'en');
+
+        $this->assertSame('lowercase', $read[0]->getData()[self::RELATION_COLUMN]);
+    }
+
     public function testTheMetadataTableIsCreatedBesideTheDocumentTable(): void
     {
         $this->assertNotFalse(
@@ -306,6 +337,31 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
             'column' => (string) $row['column'],
             'data' => (string) $row['data'],
         ], $rows);
+    }
+
+    private function metadataItem(ElementInterface $target, string $data): ObjectMetadata
+    {
+        $item = new ObjectMetadata('csAdvancedManyToManyObject', [self::RELATION_COLUMN], $target);
+        $item->setData([self::RELATION_COLUMN => $data]);
+
+        return $item;
+    }
+
+    /**
+     * The spellings the stored rows of one key hold. One row per column of one entry is written, so
+     * a key carrying one column and one entry has to come out as exactly one spelling: two of them
+     * would be two spellings of one language, which the primary key of the table cannot tell apart.
+     *
+     * @return string[]
+     */
+    private function storedMetadataLanguages(int $objectId, int $groupId, int $keyId): array
+    {
+        return Db::get()->fetchFirstColumn(
+            'SELECT `language` FROM ' . Db::get()->quoteIdentifier(self::METADATA_TABLE)
+            . ' WHERE `id` = ? AND `fieldname` = ? AND `groupId` = ? AND `keyId` = ?'
+            . ' ORDER BY `index`, `column`',
+            [$objectId, self::FIELDNAME, $groupId, $keyId]
+        );
     }
 
     /**

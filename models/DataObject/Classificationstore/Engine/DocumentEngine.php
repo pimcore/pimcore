@@ -924,6 +924,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         }
 
         $table = $this->getDocumentTableName($class->getId());
+        $metadataTable = $this->getMetadataTableName($class->getId());
         $findings = [];
         $lastId = 0;
 
@@ -951,7 +952,10 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $this->relationCache->load(array_map(static fn (array $row): int => (int) $row['groupId'], $rows));
 
             foreach ($rows as $row) {
-                $findings = array_merge($findings, $this->sweepDocument($table, $row, $dryRun));
+                $findings = array_merge(
+                    $findings,
+                    $this->sweepDocument($table, $metadataTable, $row, $dryRun)
+                );
             }
         }
     }
@@ -984,7 +988,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     private function readSweepRows(string $table, array $objectIds, array $fieldNames): array
     {
         return $this->db->fetchAllAssociative(
-            'SELECT `id`, `fieldname`, `groupId`, `values` FROM `' . $table . '`'
+            'SELECT `id`, `fieldname`, `groupId`, `values`, `checksum` FROM `' . $table . '`'
             . ' WHERE `id` IN (?) AND `fieldname` IN (?)',
             [$objectIds, $fieldNames],
             [ArrayParameterType::INTEGER, ArrayParameterType::STRING]
@@ -992,29 +996,76 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
+     * One stored document swept: what it holds that no longer resolves, and - unless this is a dry
+     * run - the document and the per-relation column values of its advanced keys rewritten without
+     * it.
+     *
+     * The write is a compare-and-swap against the checksum the row was read with, so a save made
+     * between the read and the write is not discarded: the snapshot this sweep works from is then
+     * stale, nothing is written, and the row is reported as swept by neither this run nor as
+     * removed. The next run finds it again.
+     *
      * @param array<string, mixed> $row
      *
      * @return list<DanglingRelation>
      *
      * @throws Exception
      */
-    private function sweepDocument(string $table, array $row, bool $dryRun): array
+    private function sweepDocument(string $table, string $metadataTable, array $row, bool $dryRun): array
+    {
+        $sweep = $this->sweepKeys($metadataTable, $row);
+
+        if ($sweep['findings'] === [] || $dryRun) {
+            return $sweep['findings'];
+        }
+
+        // the document and the column values it addresses are written together or not at all
+        return $this->db->transactional(function () use ($table, $metadataTable, $row, $sweep): array {
+            if (!$this->rewriteDocument($table, $row, $sweep['keys'])) {
+                $this->logger->notice(
+                    'Classification store sweep: the document of object {id}, field {fieldname}, group'
+                    . ' {groupId} was changed while it was being swept and was left alone',
+                    ['id' => $row['id'], 'fieldname' => $row['fieldname'], 'groupId' => $row['groupId']]
+                );
+
+                return [];
+            }
+
+            $this->replaceMetadataRows($metadataTable, $sweep['metadata']);
+
+            return $sweep['findings'];
+        });
+    }
+
+    /**
+     * The keys of one stored document with every descriptor whose target is gone taken out of them.
+     *
+     * The per-relation column values of an advanced key are put on its entries before the purge, so
+     * that they travel with the entry they belong to: the survivors are reindexed, and a stored row
+     * still addressed by the index its entry had before would reach the wrong relation.
+     *
+     * @param array<string, mixed> $row
+     *
+     * @return array{findings: list<DanglingRelation>, keys: array<int, array<array<string, mixed>>>,
+     *               metadata: list<array{coordinate: array<string, mixed>, rows: array<array<string, mixed>>}>}
+     *
+     * @throws Exception
+     */
+    private function sweepKeys(string $metadataTable, array $row): array
     {
         $objectId = (int) $row['id'];
         $fieldname = (string) $row['fieldname'];
         $groupId = (int) $row['groupId'];
 
         $keys = $this->deserializeDocument((string) $row['values']);
+        $definitions = $this->resolveRelationDefinitions($groupId, array_keys($keys));
+        $stored = $this->readSweepMetadata($metadataTable, $objectId, $fieldname, $groupId, $definitions);
+
         $findings = [];
+        $metadata = [];
 
-        foreach ($keys as $keyId => $entries) {
-            $fd = $this->resolveFieldDefinition($groupId, (int) $keyId);
-
-            if ($fd === null || !$this->relationResolver->isRelation($fd)) {
-                continue;
-            }
-
-            foreach ($entries as $index => $entry) {
+        foreach ($definitions as $keyId => $fd) {
+            foreach ($keys[$keyId] as $index => $entry) {
                 $value = $entry[self::VALUE_QUALIFIER] ?? null;
                 $dangling = $this->relationResolver->findDangling($value);
 
@@ -1024,19 +1075,126 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
                 $findings = array_merge(
                     $findings,
-                    $this->describeDangling($dangling, $objectId, $fieldname, $groupId, (int) $keyId)
+                    $this->describeDangling($dangling, $objectId, $fieldname, $groupId, $keyId)
                 );
 
-                $keys[$keyId][$index][self::VALUE_QUALIFIER] = $this->relationResolver
-                    ->without($value, $dangling);
+                $language = (string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE);
+                $coordinate = $this->buildMetadataCoordinate($objectId, $fieldname, $groupId, $keyId, $language);
+                $keyMetadata = $stored[$keyId][$coordinate['language']] ?? [];
+
+                $surviving = $this->relationResolver->without(
+                    $this->applyStoredMetadata($fd, $value, $keyMetadata),
+                    $dangling
+                );
+
+                $keys[$keyId][$index][self::VALUE_QUALIFIER] = $surviving;
+
+                if ($stored !== null && $this->getRelationMetadataDefinition($fd) !== null) {
+                    $metadata[] = [
+                        'coordinate' => $coordinate,
+                        'rows' => $this->buildMetadataRows($coordinate, $surviving),
+                    ];
+                }
             }
         }
 
-        if ($findings !== [] && !$dryRun) {
-            $this->rewriteDocument($table, $objectId, $fieldname, $groupId, $keys);
+        return ['findings' => $findings, 'keys' => $keys, 'metadata' => $metadata];
+    }
+
+    /**
+     * The definitions of the relation-typed keys among the given ones, which are the only keys a
+     * sweep has anything to do with.
+     *
+     * @param array<int|string> $keyIds
+     *
+     * @return array<int, Data>
+     *
+     * @throws Exception
+     */
+    private function resolveRelationDefinitions(int $groupId, array $keyIds): array
+    {
+        $definitions = [];
+
+        foreach ($keyIds as $keyId) {
+            $fd = $this->resolveFieldDefinition($groupId, (int) $keyId);
+
+            if ($fd !== null && $this->relationResolver->isRelation($fd)) {
+                $definitions[(int) $keyId] = $fd;
+            }
         }
 
-        return $findings;
+        return $definitions;
+    }
+
+    /**
+     * The per-relation column values of one group of one pair, read only for a document that carries
+     * an advanced relation key at all, and null for a class predating the metadata table - which
+     * holds those values in its documents alone and has no rows to reindex.
+     *
+     * @param array<int, Data> $definitions
+     *
+     * @return array<int, array<string, array<int, array<string, string|null>>>>|null
+     *         keyId => language => index => column => data
+     *
+     * @throws Exception
+     */
+    private function readSweepMetadata(
+        string $table,
+        int $objectId,
+        string $fieldname,
+        int $groupId,
+        array $definitions
+    ): ?array {
+        $advanced = array_filter(
+            $definitions,
+            fn (Data $fd): bool => $this->getRelationMetadataDefinition($fd) !== null
+        );
+
+        if ($advanced === []) {
+            return null;
+        }
+
+        try {
+            $rows = $this->db->fetchAllAssociative(
+                'SELECT `keyId`, `language`, `index`, `column`, `data` FROM `' . $table . '`'
+                . ' WHERE `id` = ? AND `fieldname` = ? AND `groupId` = ?',
+                [$objectId, $fieldname, $groupId]
+            );
+        } catch (TableNotFoundException) {
+            return null;
+        }
+
+        $metadata = [];
+
+        foreach ($rows as $row) {
+            $language = $this->getLanguageAlias((string) $row['language']);
+            $metadata[(int) $row['keyId']][$language][(int) $row['index']][(string) $row['column']]
+                = $row['data'] === null ? null : (string) $row['data'];
+        }
+
+        return $metadata;
+    }
+
+    /**
+     * The compare-and-swap the sweep writes a document with: the checksum the row was read with has
+     * to still be the one it carries. It is compared null-safely, as the column is nullable and a
+     * row that holds no checksum at all must be swept rather than skipped for ever.
+     *
+     * @param array<int, array<array<string, mixed>>> $keys
+     *
+     * @return bool whether the row was still the one that was read, and was therefore written
+     *
+     * @throws Exception
+     */
+    private function rewriteDocument(string $table, array $row, array $keys): bool
+    {
+        $values = $this->encodeDocument($keys);
+
+        return $this->db->executeStatement(
+            'UPDATE `' . $table . '` SET `values` = ?, `checksum` = ?'
+            . ' WHERE `id` = ? AND `fieldname` = ? AND `groupId` = ? AND `checksum` <=> ?',
+            [$values, sha1($values), $row['id'], $row['fieldname'], $row['groupId'], $row['checksum']]
+        ) > 0;
     }
 
     /**
@@ -1061,27 +1219,6 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                 $descriptor['id']
             ),
             $dangling
-        );
-    }
-
-    /**
-     * @param array<int, array<array<string, mixed>>> $keys
-     *
-     * @throws Exception
-     */
-    private function rewriteDocument(
-        string $table,
-        int $objectId,
-        string $fieldname,
-        int $groupId,
-        array $keys
-    ): void {
-        $values = $this->encodeDocument($keys);
-
-        $this->db->executeStatement(
-            'UPDATE `' . $table . '` SET `values` = ?, `checksum` = ?'
-            . ' WHERE `id` = ? AND `fieldname` = ? AND `groupId` = ?',
-            [$values, sha1($values), $objectId, $fieldname, $groupId]
         );
     }
 
@@ -1119,11 +1256,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
             foreach ($entries as $entry) {
                 $language = (string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE);
+                $languageAlias = $this->getLanguageAlias($language);
 
                 $classificationStore->setLocalizedKeyValue(
                     $groupId,
                     (int) $keyId,
-                    $this->readStoredValue($fd, $entry, $object, $metadata[(int) $keyId][$language] ?? []),
+                    $this->readStoredValue($fd, $entry, $object, $metadata[(int) $keyId][$languageAlias] ?? []),
                     $language
                 );
             }
@@ -1492,7 +1630,9 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * The per-relation column values of one (object, fieldname) pair.
+     * The per-relation column values of one (object, fieldname) pair, held under the language the
+     * document addresses a value by {@see self::getLanguageAlias()} - which is how they are written,
+     * and which a row an earlier release wrote under a raw spelling is read back under as well.
      *
      * @return array<int, array<int, array<string, array<int, array<string, string|null>>>>>
      *         groupId => keyId => language => index => column => data
@@ -1519,7 +1659,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         foreach ($rows as $row) {
             $groupId = (int) $row['groupId'];
             $keyId = (int) $row['keyId'];
-            $language = (string) $row['language'];
+            $language = $this->getLanguageAlias((string) $row['language']);
 
             $metadata[$groupId][$keyId][$language][(int) $row['index']][(string) $row['column']]
                 = $row['data'] === null ? null : (string) $row['data'];
@@ -1559,18 +1699,32 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             }
         }
 
-        if ($rowsToWrite === []) {
+        $this->replaceMetadataRows($table, $rowsToWrite);
+    }
+
+    /**
+     * The stored rows of every given coordinate replaced by the given ones, which is how both a save
+     * and a sweep write them: a coordinate is cleared before it is written, so that an entry that is
+     * gone leaves no row addressed by the index it used to sit at.
+     *
+     * @param list<array{coordinate: array<string, mixed>, rows: array<array<string, mixed>>}> $values
+     *
+     * @throws Exception
+     */
+    private function replaceMetadataRows(string $table, array $values): void
+    {
+        if ($values === []) {
             return;
         }
 
-        foreach ($rowsToWrite as $value) {
+        foreach ($values as $value) {
             $this->clearMetadataRowsOf($table, $value['coordinate']);
         }
 
         $this->insertDocumentRows(
             $table,
             self::METADATA_COLUMNS,
-            array_merge(...array_column($rowsToWrite, 'rows'))
+            array_merge(...array_column($values, 'rows'))
         );
     }
 
@@ -1580,6 +1734,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * A key still holding its descriptor is left out: nothing about its column values changed, and
      * writing from the descriptor would store what the table itself answered the load with.
+     *
+     * Two spellings of one language are one and the same value here, as they are in the document
+     * {@see self::serializeDocument()} writes and under the primary key of this table: the values are
+     * held by their coordinate, so the last of them is the one that is written rather than the two
+     * colliding on one row.
      *
      * @param array<int, array<string, mixed>> $groups groupId => the collection and items of a group
      *
@@ -1608,13 +1767,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                     }
 
                     $coordinate = $this->buildMetadataCoordinate(
-                        $classificationStore,
+                        $object->getId(),
+                        $classificationStore->getFieldname(),
                         (int) $groupId,
                         (int) $keyId,
                         (string) $language
                     );
 
-                    $values[] = [
+                    $values[$groupId . '-' . $keyId . '-' . $coordinate['language']] = [
                         'coordinate' => $coordinate,
                         'rows' => $this->buildMetadataRows(
                             $coordinate,
@@ -1625,26 +1785,32 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             }
         }
 
-        return $values;
+        return array_values($values);
     }
 
     /**
      * The primary key columns the rows of one stored value share.
      *
+     * The language is the one the document addresses the value under, {@see self::getLanguageAlias()}:
+     * the primary key of this table equates two spellings of one language the way the document does,
+     * so addressing the rows by the raw spelling would let the two disagree about which language one
+     * value belongs to.
+     *
      * @return array<string, mixed>
      */
     private function buildMetadataCoordinate(
-        Classificationstore $classificationStore,
+        ?int $objectId,
+        string $fieldname,
         int $groupId,
         int $keyId,
         string $language
     ): array {
         return [
-            'id' => $classificationStore->getObject()->getId(),
-            'fieldname' => $classificationStore->getFieldname(),
+            'id' => $objectId,
+            'fieldname' => $fieldname,
             'groupId' => $groupId,
             'keyId' => $keyId,
-            'language' => $language,
+            'language' => $this->getLanguageAlias($language),
         ];
     }
 
