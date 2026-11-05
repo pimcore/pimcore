@@ -88,31 +88,38 @@ class EngineContractTest extends TestCase
         );
     }
 
-    public function testEavEngineSupportsNoFeature(): void
+    public function testEavEngineSupportsPerKeyLocalizationOnly(): void
     {
-        // the engine needs no collaborator to answer supports(), and must not open a connection for it
-        $engine = (new ReflectionClass(EavEngine::class))->newInstanceWithoutConstructor();
-
-        $this->assertInstanceOf(EngineInterface::class, $engine);
-
-        foreach (EngineFeature::cases() as $feature) {
-            $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
-        }
+        $this->assertSupportsPerKeyLocalizationOnly(EavEngine::class);
     }
 
     /**
-     * The document engine ships without any of the four: it offers no capability the EAV engine
-     * does not, and no model API for a qualified value lands with it.
+     * The document engine offers the one capability the EAV engine offers: per key localization is
+     * a property of the key configuration, not of the storage. No model API for a qualified value
+     * has landed, so the other three stay false for both.
      */
-    public function testDocumentEngineSupportsNoFeature(): void
+    public function testDocumentEngineSupportsPerKeyLocalizationOnly(): void
+    {
+        $this->assertSupportsPerKeyLocalizationOnly(DocumentEngine::class);
+    }
+
+    /**
+     * @param class-string $engine
+     */
+    private function assertSupportsPerKeyLocalizationOnly(string $engine): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
-        $engine = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
+        $instance = (new ReflectionClass($engine))->newInstanceWithoutConstructor();
 
-        $this->assertInstanceOf(EngineInterface::class, $engine);
+        $this->assertInstanceOf(EngineInterface::class, $instance);
 
-        foreach (EngineFeature::cases() as $feature) {
-            $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
+        $this->assertTrue(
+            $instance->supports(EngineFeature::PerKeyLocalization),
+            'PerKeyLocalization must be supported'
+        );
+
+        foreach ([EngineFeature::MultiValue, EngineFeature::Variants, EngineFeature::Relations] as $feature) {
+            $this->assertFalse($instance->supports($feature), $feature->name . ' must not be supported');
         }
     }
 

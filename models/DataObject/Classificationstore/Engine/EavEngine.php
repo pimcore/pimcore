@@ -389,7 +389,7 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
     public function supports(EngineFeature $feature): bool
     {
-        return false;
+        return $feature === EngineFeature::PerKeyLocalization;
     }
 
     /**

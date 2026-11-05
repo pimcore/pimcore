@@ -76,6 +76,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
+     *
+     * @deprecated use the per key flag Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()
+     *             instead; this stays the default for the keys that carry none
      */
     public bool $localized = false;
 
@@ -171,24 +174,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
-        $validLanguages = $this->getValidLanguages();
-
         $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load(array_keys($activeGroupIds, true, true));
 
-        foreach ($validLanguages as $language) {
-            foreach ($activeGroupIds as $groupId => $enabled) {
-                if (!$enabled) {
+        foreach ($activeGroupIds as $groupId => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+
+            foreach ($relationCache->getRelations($groupId) as $keyId => $key) {
+                if ($key->getType() !== 'calculatedValue') {
                     continue;
                 }
 
-                foreach ($relationCache->getRelations($groupId) as $keyId => $key) {
-                    if ($key->getType() !== 'calculatedValue') {
-                        continue;
-                    }
+                $childDef = $relationCache->getFieldDefinition($groupId, $keyId);
 
-                    $childDef = $relationCache->getFieldDefinition($groupId, $keyId);
-
+                foreach ($this->getValidLanguages($keyId) as $language) {
                     $childData = new DataObject\Data\CalculatedValue($this->getName());
                     $childData->setContextualData('classificationstore', $this->getName(), null, $language, $groupId, $keyId, $childDef);
                     $childData = $childDef->getDataForEditmode($childData, $object, $params);
@@ -252,28 +253,21 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
                 // same type, iterate over all language and all fields and check if there is something missing
-                if ($this->localized) {
-                    $validLanguages = Tool::getValidLanguages();
-                } else {
-                    $validLanguages = [];
-                }
-                array_unshift($validLanguages, 'default');
-
                 $foundEmptyValue = false;
 
                 $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
                 $relationCache->load(array_keys($activeGroupIds, true, true));
 
-                foreach ($validLanguages as $language) {
-                    foreach ($activeGroupIds as $groupId => $enabled) {
-                        if (!$enabled) {
-                            continue;
-                        }
+                foreach ($activeGroupIds as $groupId => $enabled) {
+                    if (!$enabled) {
+                        continue;
+                    }
 
-                        foreach (array_keys($relationCache->getRelations($groupId)) as $keyId) {
-                            $fd = $relationCache->getFieldDefinition($groupId, $keyId);
+                    foreach (array_keys($relationCache->getRelations($groupId)) as $keyId) {
+                        $fd = $relationCache->getFieldDefinition($groupId, $keyId);
 
+                        foreach ($this->getValidLanguages($keyId) as $language) {
                             if ($fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
                                 $foundEmptyValue = true;
                                 $inherited = true;
@@ -691,7 +685,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             return;
         }
         $items = $data->getItems();
-        $validLanguages = $this->getValidLanguages();
         $subItems = [];
 
         if (!$omitMandatoryCheck) {
@@ -713,7 +706,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         $keyDef->setMandatory(true);
                     }
 
-                    foreach ($validLanguages as $validLanguage) {
+                    foreach ($this->getValidLanguages($keyId) as $validLanguage) {
                         $object = $data->getObject();
                         if ($object->getClass()->getAllowInherit()) {
                             $value = DataObject\Service::useInheritedValues(
@@ -825,11 +818,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->maxItems;
     }
 
+    /**
+     * @deprecated use the per key flag Pimcore\Model\DataObject\Classificationstore\KeyConfig::getLocalized()
+     *             instead; this stays the default for the keys that carry none
+     */
     public function isLocalized(): bool
     {
         return $this->localized;
     }
 
+    /**
+     * @deprecated use the per key flag Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()
+     *             instead; this stays the default for the keys that carry none
+     */
     public function setLocalized(bool $localized): void
     {
         $this->localized = $localized;
@@ -1045,11 +1046,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
+     * The languages one key of this field is kept in: `default` and, for a localized key, every
+     * valid language. A key that carries no flag of its own inherits this field's.
+     *
      * @return string[]
      */
-    private function getValidLanguages(): array
+    private function getValidLanguages(int $keyId): array
     {
-        if ($this->localized) {
+        if ($this->getLocalizationResolver()->isKeyLocalized($keyId, $this)) {
             $validLanguages = Tool::getValidLanguages();
         } else {
             $validLanguages = [];
@@ -1062,6 +1066,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     private function getKeyGroupRelationCache(): DataObject\Classificationstore\KeyGroupRelationCache
     {
         return Pimcore::getContainer()->get(DataObject\Classificationstore\KeyGroupRelationCache::class);
+    }
+
+    private function getLocalizationResolver(): DataObject\Classificationstore\LocalizationResolver
+    {
+        return Pimcore::getContainer()->get(DataObject\Classificationstore\LocalizationResolver::class);
     }
 
     /**

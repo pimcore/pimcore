@@ -296,7 +296,8 @@ class Service extends Model\Element\Service
 
             if ($newValue instanceof DataObject\Classificationstore) {
                 // like the editors, only localized stores are limited; a store without languages only holds 'default'
-                if ($definition instanceof ClassDefinition\Data\Classificationstore && $definition->isLocalized()) {
+                if ($definition instanceof ClassDefinition\Data\Classificationstore
+                    && self::getClassificationstoreLocalizationResolver()->hasLocalizedKey($definition)) {
                     $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
                 }
             } elseif (!$restrictLocalizedfields) {
@@ -355,6 +356,11 @@ class Service extends Model\Element\Service
 
         $new->setItems(array_filter($items));
         $new->setActiveGroups($activeGroups);
+    }
+
+    private static function getClassificationstoreLocalizationResolver(): DataObject\Classificationstore\LocalizationResolver
+    {
+        return Pimcore::getContainer()->get(DataObject\Classificationstore\LocalizationResolver::class);
     }
 
     /**
@@ -684,7 +690,7 @@ class Service extends Model\Element\Service
                     $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                     $csLanguage = $requestedLanguage;
 
-                    if (!$csFieldDefinition->isLocalized()) {
+                    if (!self::getClassificationstoreLocalizationResolver()->isKeyLocalized($keyid, $csFieldDefinition)) {
                         $csLanguage = 'default';
                     }
 

@@ -271,6 +271,24 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $this->assertSame('source default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
     }
 
+    /**
+     * The same non-localized class, with the one key of its store flagged localized: the languages
+     * the user may not edit are kept, because the key and not the field decides now.
+     */
+    public function testNonLocalizedClassificationstoreOfALocalizedKeyKeepsNonEditableLanguages(): void
+    {
+        $this->flagKeyAsLocalized();
+
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de'], self::PLAIN_STORE_CLASS);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de'], self::PLAIN_STORE_CLASS);
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+    }
+
     public function testClassificationstoreLanguageIndependentValueIsCopiedIfListed(): void
     {
         $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de', 'default' => 'source default']);
@@ -453,6 +471,13 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $object->save();
 
         return $object;
+    }
+
+    private function flagKeyAsLocalized(): void
+    {
+        $key = Classificationstore\KeyConfig::getById($this->keyId, true);
+        $key->setLocalized(true);
+        $key->save();
     }
 
     private function reloadCsstore(Concrete $object): Classificationstore

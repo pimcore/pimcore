@@ -31,6 +31,8 @@ class Dao extends Model\Dao\AbstractDao
 
     const TABLE_NAME_KEYS = 'classificationstore_keys';
 
+    private const COLUMN_LOCALIZED = 'localized';
+
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
@@ -46,8 +48,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?', [$this->model->getId()]);
 
         if ($data) {
-            $data['enabled'] = (bool)$data['enabled'];
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel($this->castRow($data));
         } else {
             throw new Model\Exception\NotFoundException('KeyConfig with id: ' . $this->model->getId() . ' does not exist');
         }
@@ -71,8 +72,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative($stmt);
 
         if ($data) {
-            $data['enabled'] = (bool)$data['enabled'];
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel($this->castRow($data));
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Classification store key config with name "%s" does not exist.', $name));
         }
@@ -90,8 +90,7 @@ class Dao extends Model\Dao\AbstractDao
         );
 
         if ($data) {
-            $data['enabled'] = (bool)$data['enabled'];
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel($this->castRow($data));
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Classification store key config with identifier "%s" does not exist.', $identifier));
         }
@@ -164,6 +163,12 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
+                // a key built with `new` carries no localization of its own either, and a stored
+                // flag must survive a save that never decided about it
+                if ($key === self::COLUMN_LOCALIZED && !$this->model->isLocalizedInitialized()) {
+                    continue;
+                }
+
                 // written by writeIdentifier(), which is the only place allowed to touch the column
                 if ($key === 'identifier') {
                     continue;
@@ -208,5 +213,24 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insert(self::TABLE_NAME_KEYS, []);
 
         $this->model->setId((int) $this->db->lastInsertId());
+    }
+
+    /**
+     * The row as the model takes it. The tri-state `localized` column is left as NULL, which
+     * {@see Model\AbstractModel::setValues()} skips, so the property keeps its default and the key
+     * stays on the flag of the class definition field.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    private function castRow(array $data): array
+    {
+        $localized = $data[self::COLUMN_LOCALIZED];
+
+        $data['enabled'] = (bool)$data['enabled'];
+        $data[self::COLUMN_LOCALIZED] = $localized === null ? null : (bool)$localized;
+
+        return $data;
     }
 }

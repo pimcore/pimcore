@@ -293,6 +293,14 @@ services:
         tags:
             - { name: kernel.reset, method: reset }
 
+    # answers which languages a classification store key is kept in, for the paths that enumerate
+    # them. public, for the same reason as the caches above: it is consumed from the classification
+    # store field definition and from the data object service, which are not container-managed.
+    Pimcore\Model\DataObject\Classificationstore\LocalizationResolver:
+        public: true
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
     # the supported contract the packages rendering a label bind to, so that none of them has to
     # type-hint the implementation above, which stays internal.
     Pimcore\Model\DataObject\Classificationstore\LabelResolverInterface:
