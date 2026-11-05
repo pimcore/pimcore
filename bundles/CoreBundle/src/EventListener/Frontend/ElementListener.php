@@ -272,14 +272,14 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             return;
         }
 
-        // reads a historical version: both the view and the versions grant are required,
-        // mirroring the document branch's pimcore_version check (GHSA-v36c-r89g-2226)
+        // substituting a (possibly unpublished) version needs the view grant and, like the document
+        // branch's pimcore_version handling, the versions grant
         if (!$object->isAllowed('view', $user) || !$object->isAllowed('versions', $user)) {
             $this->logger->warning(
                 "Denying access to object {$object->getFullPath()} as the user has no view/versions permission."
             );
 
-            throw new AccessDeniedHttpException(sprintf('Access denied for %s', $object->getFullPath()));
+            throw new AccessDeniedHttpException(sprintf('Access denied for object %d', $id));
         }
 
         $this->logObjectLoading(

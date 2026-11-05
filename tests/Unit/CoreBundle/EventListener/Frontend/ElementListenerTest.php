@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -356,16 +357,12 @@ class ElementListenerTest extends TestCase
     }
 
     /**
-     * @param string[] $allowedPermissions
+     * Runs a studio preview request for object 2 and returns whether the object ended up in the runtime cache.
      */
-    private function runObjectStudioPreview(Concrete $object, array $allowedPermissions): void
+    private function runObjectStudioPreview(?Concrete $object): bool
     {
         $user = new User();
         $user->setId(42);
-        $object->method('isAllowed')->willReturnCallback(
-            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
-        );
-
         $documentResolver = $this->createMock(DocumentResolver::class);
         $documentResolver->method('getDocument')->willReturn(null);
 
@@ -384,7 +381,7 @@ class ElementListenerTest extends TestCase
                 EditmodeResolver $editmodeResolver,
                 RequestHelper $requestHelper,
                 UserLoader $userLoader,
-                private Concrete $object
+                private ?Concrete $object
             ) {
                 parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
             }
@@ -399,44 +396,77 @@ class ElementListenerTest extends TestCase
 
         $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1', 'pimcore_object_preview' => '2']);
         $request->setSession(new Session(new MockArraySessionStorage()));
-        $listener->onKernelController($this->makeControllerEvent($request));
+
+        RuntimeCache::getInstance()->offsetUnset('object_2');
+
+        try {
+            $listener->onKernelController($this->makeControllerEvent($request));
+
+            return $this->isCached($object);
+        } finally {
+            RuntimeCache::getInstance()->offsetUnset('object_2');
+        }
+    }
+
+    private function isCached(?Concrete $object): bool
+    {
+        return $object !== null
+            && RuntimeCache::isRegistered('object_2')
+            && RuntimeCache::get('object_2') === $object;
     }
 
     /**
-     * Regression coverage for GHSA-vp7r-p7m6-76v6: handleObjectStudioPreview() must not inject an
-     * object into the runtime cache for a user who has no view permission on it.
+     * @param string[] $allowedPermissions
      */
+    private function makeObject(array $allowedPermissions): Concrete
+    {
+        $object = $this->createMock(Concrete::class);
+        $object->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
+        );
+        $object->method('getId')->willReturn(2);
+        $object->method('getFullPath')->willReturn('/objects/preview');
+
+        return $object;
+    }
+
     public function testObjectStudioPreviewIsDeniedWithoutViewPermission(): void
     {
-        $object = $this->createMock(Concrete::class);
-        $object->method('getFullPath')->willReturn('/objects/secret');
-
         $this->expectException(AccessDeniedHttpException::class);
-        $this->runObjectStudioPreview($object, []);
+        $this->runObjectStudioPreview($this->makeObject([]));
     }
 
-    /**
-     * Regression coverage for GHSA-vp7r-p7m6-76v6: reading a historical (non-published) version via
-     * studio preview additionally requires the "versions" grant, not just "view".
-     */
     public function testObjectStudioPreviewIsDeniedWithoutVersionsPermission(): void
     {
-        $object = $this->createMock(Concrete::class);
-        $object->method('getFullPath')->willReturn('/objects/secret');
-
         $this->expectException(AccessDeniedHttpException::class);
-        $this->runObjectStudioPreview($object, ['view']);
+        $this->runObjectStudioPreview($this->makeObject(['view']));
+    }
+
+    public function testObjectStudioPreviewIsDeniedWithOnlyVersionsPermission(): void
+    {
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($this->makeObject(['versions']));
+    }
+
+    public function testObjectStudioPreviewIsNotCachedWhenDenied(): void
+    {
+        $object = $this->makeObject(['view']);
+
+        try {
+            $this->runObjectStudioPreview($object);
+            $this->fail('Expected the preview to be denied');
+        } catch (AccessDeniedHttpException) {
+            $this->assertFalse($this->isCached($object));
+        }
     }
 
     public function testObjectStudioPreviewIsAllowedWithViewAndVersionsPermission(): void
     {
-        $object = $this->createMock(Concrete::class);
-        $object->method('getFullPath')->willReturn('/objects/allowed');
-        $object->method('getId')->willReturn(2);
+        $this->assertTrue($this->runObjectStudioPreview($this->makeObject(['view', 'versions'])));
+    }
 
-        $this->runObjectStudioPreview($object, ['view', 'versions']);
-
-        // No exception means the fully-permitted user is still served the preview.
-        $this->addToAssertionCount(1);
+    public function testObjectStudioPreviewWithoutResolvableObjectCachesNothing(): void
+    {
+        $this->assertFalse($this->runObjectStudioPreview(null));
     }
 }
