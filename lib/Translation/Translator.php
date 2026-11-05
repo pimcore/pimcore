@@ -214,6 +214,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      * Symfony discards its loaded catalogues whenever it has to build one from scratch (e.g. when the translations
      * cache is only partially warm), so the flag alone does not prove that the database translations are still
      * part of the current catalogue - the dummy key added in lazyInitialize() does.
+     * The in-memory check comes first, as this runs on every trans() call and the domain check can hit the database.
      */
     private function isInitialized(string $domain, string $locale): bool
     {
@@ -221,8 +222,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             return false;
         }
 
-        return !Translation::isAValidDomain($domain)
-            || $this->getCatalogue($locale)->defines('__pimcore_dummy', $domain);
+        return $this->getCatalogue($locale)->defines('__pimcore_dummy', $domain)
+            || !Translation::isAValidDomain($domain);
     }
 
     /**
@@ -291,7 +292,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         $t->setKey($id);
 
                         // add all available languages
-                        foreach (Translation::getValidLanguages() as $language) {
+                        foreach (Translation::getValidLanguages($domain) as $language) {
                             $t->addTranslation($language, '');
                         }
                     }

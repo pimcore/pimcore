@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Translation;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -40,6 +41,7 @@ final class TranslationValidDomainCacheTest extends TestCase
 
     protected function tearDown(): void
     {
+        RuntimeCache::enable();
         $this->dropAdminDomainTable();
 
         parent::tearDown();
@@ -113,6 +115,35 @@ final class TranslationValidDomainCacheTest extends TestCase
             Translation::isAValidDomain(Translation::DOMAIN_ADMIN),
             'A save() to an already-valid domain must not evict the memoized "true" result - '
             .'otherwise the next lookup would redundantly re-query the database.'
+        );
+    }
+
+    public function testIsAValidDomainMemoizesAnInvalidResult(): void
+    {
+        self::assertFalse(Translation::isAValidDomain(Translation::DOMAIN_ADMIN));
+
+        // Create the table without going through Pimcore's own API, so the memoized result is not invalidated.
+        // If only valid results were memoized, the second call would re-query and see the table.
+        Db::get()->executeStatement('CREATE TABLE translations_admin LIKE translations_messages');
+
+        self::assertFalse(
+            Translation::isAValidDomain(Translation::DOMAIN_ADMIN),
+            'A second call within the same request must trust the memoized "invalid" result as well.'
+        );
+    }
+
+    public function testIsAValidDomainCacheIsInvalidatedWhileTheRuntimeCacheIsDisabled(): void
+    {
+        self::assertFalse(Translation::isAValidDomain(Translation::DOMAIN_ADMIN));
+
+        // e.g. an importer disables the runtime cache, RuntimeCache::set() ignores writes from now on
+        RuntimeCache::disable();
+
+        $this->saveAdminDomainTranslation('valid_domain_cache_disabled_key');
+
+        self::assertTrue(
+            Translation::isAValidDomain(Translation::DOMAIN_ADMIN),
+            'The "invalid" result memoized before the runtime cache was disabled must not survive the creation of the table.'
         );
     }
 }

@@ -27,6 +27,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\User;
+use Pimcore\Routing\DocumentRoute;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Routing\Dynamic\DynamicRequestContext;
 use Pimcore\Security\User\User as SecurityUser;
@@ -180,6 +181,132 @@ class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
         $this->assertCount(1, $collection);
     }
 
+    public function testMainSitePageWithPrettyUrlOfASitePageIsRoutedOnTheMainDomain(): void
+    {
+        $prettyUrl = '/pretty-' . uniqid();
+        $this->siteDocument->setPrettyUrl($prettyUrl);
+        $this->siteDocument->save();
+        $mainDocument = $this->createDocument('main-' . uniqid(), 1);
+        $mainDocument->setPrettyUrl($prettyUrl);
+        $mainDocument->save();
+
+        $collection = $this->matchDocumentRoute(Request::create('http://example.com' . $prettyUrl));
+
+        $this->assertCount(1, $collection);
+        $this->assertSame($mainDocument->getRealFullPath(), $this->getRoutedDocumentPath($collection));
+    }
+
+    public function testPrettyUrlOnlyOfASitePageIsNotRoutedOnTheMainDomain(): void
+    {
+        $prettyUrl = '/pretty-' . uniqid();
+        $this->siteDocument->setPrettyUrl($prettyUrl);
+        $this->siteDocument->save();
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->matchDocumentRoute(Request::create('http://example.com' . $prettyUrl));
+    }
+
+    public function testHardlinkChildIsRoutedOnTheMainDomainDespiteSitePageWithSamePrettyUrl(): void
+    {
+        $source = $this->createDocument('hardlink-source-' . uniqid(), 1);
+        $child = $this->createDocument('child', $source->getId());
+
+        $hardlink = new Document\Hardlink();
+        $hardlink->setKey('hardlink-' . uniqid());
+        $hardlink->setPublished(true);
+        $hardlink->setParentId(1);
+        $hardlink->setSourceId($source->getId());
+        $hardlink->setChildrenFromSource(true);
+        $hardlink->setUserOwner(1);
+        $hardlink->setUserModification(1);
+        $hardlink->save();
+
+        $requestPath = $hardlink->getRealFullPath() . '/child';
+        $this->siteDocument->setPrettyUrl($requestPath);
+        $this->siteDocument->save();
+
+        $collection = $this->matchDocumentRoute(Request::create('http://example.com' . $requestPath));
+
+        $this->assertCount(1, $collection);
+        $this->assertSame($child->getId(), $this->getRoutedDocument($collection)?->getId());
+    }
+
+    public function testHardlinkFallbackDoesNotServeUnrelatedPageByPrettyUrlOfSource(): void
+    {
+        $source = $this->createDocument('hardlink-source-' . uniqid(), 1);
+        $hardlink = $this->createHardlink($source);
+        $other = $this->createDocument('secret', 1);
+        $other->setPrettyUrl($source->getRealFullPath() . '/secret');
+        $other->save();
+
+        $requestPath = $hardlink->getRealFullPath() . '/secret';
+        $this->siteDocument->setPrettyUrl($requestPath);
+        $this->siteDocument->save();
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->matchDocumentRoute(Request::create('http://example.com' . $requestPath));
+    }
+
+    public function testHardlinkFallbackDoesNotEnterNestedSiteRoot(): void
+    {
+        $source = $this->createDocument('hardlink-source-' . uniqid(), 1);
+        $nestedRoot = $this->createDocument('subsite', $source->getId());
+        $this->createDocument('child', $nestedRoot->getId());
+        $nestedSite = new Site();
+        $nestedSite->setRootDocument($nestedRoot);
+        $nestedSite->setMainDomain('nested-' . uniqid() . '.site-isolation.test');
+        $nestedSite->setRootPath($nestedRoot->getRealFullPath());
+        $nestedSite->save();
+        Cache::clearAll();
+        RuntimeCache::clear();
+
+        $hardlink = $this->createHardlink($source);
+        $requestPath = $hardlink->getRealFullPath() . '/subsite/child';
+        $this->siteDocument->setPrettyUrl($requestPath);
+        $this->siteDocument->save();
+
+        try {
+            $this->expectException(NotFoundHttpException::class);
+            $this->matchDocumentRoute(Request::create('http://example.com' . $requestPath));
+        } finally {
+            $nestedSite->delete();
+        }
+    }
+
+    public function testHardlinkFallbackStopsAtNearestPhysicalAncestor(): void
+    {
+        $source = $this->createDocument('hardlink-source-' . uniqid(), 1);
+        $sourceSection = $this->createDocument('section', $source->getId());
+        $this->createDocument('child', $sourceSection->getId());
+        $hardlink = $this->createHardlink($source);
+        $this->createDocument('section', $hardlink->getId());
+
+        $requestPath = $hardlink->getRealFullPath() . '/section/child';
+        $this->siteDocument->setPrettyUrl($requestPath);
+        $this->siteDocument->save();
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->matchDocumentRoute(Request::create('http://example.com' . $requestPath));
+    }
+
+    private function createHardlink(Document $source): Document\Hardlink
+    {
+        $hardlink = new Document\Hardlink();
+        $hardlink->setKey('hardlink-' . uniqid());
+        $hardlink->setPublished(true);
+        $hardlink->setParentId(1);
+        $hardlink->setSourceId($source->getId());
+        $hardlink->setChildrenFromSource(true);
+        $hardlink->setUserOwner(1);
+        $hardlink->setUserModification(1);
+        $hardlink->save();
+
+        return $hardlink;
+    }
+
     private function createAdminRequest(string $uri, bool $authenticated): Request
     {
         $request = Request::create($uri, 'GET', [self::ADMIN_PARAM => '1']);
@@ -273,6 +400,18 @@ class AdminFrontendRequestSiteIsolationTest extends ModelTestCase
         );
 
         return $collection;
+    }
+
+    private function getRoutedDocument(RouteCollection $collection): ?Document
+    {
+        $route = $collection->getIterator()->current();
+
+        return $route instanceof DocumentRoute ? $route->getDocument() : null;
+    }
+
+    private function getRoutedDocumentPath(RouteCollection $collection): ?string
+    {
+        return $this->getRoutedDocument($collection)?->getRealFullPath();
     }
 
     /**

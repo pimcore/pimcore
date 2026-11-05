@@ -143,6 +143,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     continue;
                 }
 
+                if ($fd instanceof DataObject\ClassDefinition\Data\DerivedValueInterface
+                    && $fd->isValueDerived()
+                    && (!$fd->getMandatory() || $this->getOmitMandatoryCheck())) {
+                    // a derived value (e.g. a reverse relation, the read-only mirror of a relation stored on
+                    // the owning objects) is not stored on this object; reading it can load every owning
+                    // object, only to validate objects that are not part of this save. Only a mandatory one
+                    // that is checked needs its value.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -280,9 +290,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     protected function doDelete(): void
     {
-        // Dispatch Symfony Message Bus to delete versions
+        // Dispatch Symfony Message Bus to delete versions, bounded to the currently existing ones
         Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
+            new VersionDeleteMessage(
+                Model\Element\Service::getElementType($this),
+                $this->getId(),
+                Model\Version::getHighestIdForElement(Model\Element\Service::getElementType($this), $this->getId(), true) ?? 0
+            )
         );
 
         $this->getDao()->deleteAllTasks();

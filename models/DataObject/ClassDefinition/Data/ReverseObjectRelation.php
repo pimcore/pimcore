@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
 
-class ReverseObjectRelation extends ManyToManyObjectRelation
+class ReverseObjectRelation extends ManyToManyObjectRelation implements DerivedValueInterface
 {
     /**
      * @internal
@@ -42,6 +42,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      *
      */
     public string $ownerFieldName;
+
+    public function isValueDerived(): bool
+    {
+        return true;
+    }
 
     /**
      * ReverseObjectRelation must be lazy loading!

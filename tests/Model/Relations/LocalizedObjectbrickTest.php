@@ -321,6 +321,79 @@ class LocalizedObjectbrickTest extends ModelTestCase
         $this->assertSame('PlainRelationBrickA', $relations[0]->getMetadataUpper());
     }
 
+    public function testClearingMetadataValueKeepsMetadataOfOtherLanguagesAndBricks(): void
+    {
+        [$t0, $t1, $t2] = $this->targets;
+
+        $object = $this->createDataObject();
+        foreach (['A' => new LocalizedRelationBrickA($object), 'B' => new LocalizedRelationBrickB($object)] as $tag => $brick) {
+            foreach (['en', 'de'] as $language) {
+                $brick->setLadvancedObjects([$this->objectMetadata($t0, "$tag-$language"), $this->objectMetadata($t1, "$tag-$language")], $language);
+                $brick->setLadvancedRelations([$this->elementMetadata($t0, "$tag-$language"), $this->elementMetadata($t1, "$tag-$language")], $language);
+            }
+            $object->getBricks()->set($brick->getType(), $brick);
+        }
+        $object->save();
+
+        // clear the value of the first relation of brick A in "en" only
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $first = $object->getBricks()->getLocalizedRelationBrickA();
+        $cleared = new ObjectMetadata('ladvancedObjects', ['metadata'], $t0);
+        $clearedElement = new ElementMetadata('ladvancedRelations', ['metadata'], $t0);
+        $first->setLadvancedObjects([$cleared, $this->objectMetadata($t1, 'A-en')], 'en');
+        $first->setLadvancedRelations([$clearedElement, $this->elementMetadata($t1, 'A-en')], 'en');
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $first = $object->getBricks()->getLocalizedRelationBrickA();
+        $second = $object->getBricks()->getLocalizedRelationBrickB();
+        $this->assertMetadata([$t0->getId() => null, $t1->getId() => 'A-en'], $first->getLadvancedObjects('en'));
+        $this->assertMetadata([$t0->getId() => null, $t1->getId() => 'A-en'], $first->getLadvancedRelations('en'));
+        foreach (['de' => 'A-de'] as $language => $value) {
+            $this->assertMetadata([$t0->getId() => $value, $t1->getId() => $value], $first->getLadvancedObjects($language));
+            $this->assertMetadata([$t0->getId() => $value, $t1->getId() => $value], $first->getLadvancedRelations($language));
+        }
+        foreach (['en', 'de'] as $language) {
+            $this->assertMetadata([$t0->getId() => "B-$language", $t1->getId() => "B-$language"], $second->getLadvancedObjects($language));
+            $this->assertMetadata([$t0->getId() => "B-$language", $t1->getId() => "B-$language"], $second->getLadvancedRelations($language));
+        }
+
+        // only the two cleared rows are gone: 2 bricks * 2 languages * 2 relations * 2 field types - 2
+        $this->assertSame(14, $this->countRows('object_metadata', 'id', $object->getId(), 'LocalizedRelationBrickA')
+            + $this->countRows('object_metadata', 'id', $object->getId(), 'LocalizedRelationBrickB'));
+    }
+
+    public function testClearingMetadataValueKeepsMetadataOfOtherPlainBricks(): void
+    {
+        [$t0, $t1] = $this->targets;
+
+        $object = $this->createDataObject();
+        foreach ([new PlainRelationBrickA($object), new PlainRelationBrickB($object)] as $brick) {
+            $metadata = new ElementMetadata('advancedRelations', ['metadataUpper'], $t0);
+            $metadata->setMetadataUpper($brick->getType());
+            $other = new ElementMetadata('advancedRelations', ['metadataUpper'], $t1);
+            $other->setMetadataUpper($brick->getType());
+            $brick->setAdvancedRelations([$metadata, $other]);
+            $object->getBricks()->set($brick->getType(), $brick);
+        }
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $cleared = new ElementMetadata('advancedRelations', ['metadataUpper'], $t0);
+        $kept = new ElementMetadata('advancedRelations', ['metadataUpper'], $t1);
+        $kept->setMetadataUpper('PlainRelationBrickA');
+        $object->getBricks()->getPlainRelationBrickA()->setAdvancedRelations([$cleared, $kept]);
+        $object->save();
+
+        $object = LocalizedBrickRelation::getById($object->getId(), ['force' => true]);
+        $first = $object->getBricks()->getPlainRelationBrickA()->getAdvancedRelations();
+        $this->assertNull($first[0]->getMetadataUpper());
+        $this->assertSame('PlainRelationBrickA', $first[1]->getMetadataUpper());
+        $second = $object->getBricks()->getPlainRelationBrickB()->getAdvancedRelations();
+        $this->assertSame('PlainRelationBrickB', $second[0]->getMetadataUpper());
+        $this->assertSame('PlainRelationBrickB', $second[1]->getMetadataUpper());
+    }
+
     public function testSlugsInBricksAreResolvedAndRemovedPerBrick(): void
     {
         $slugA = '/localized-slug-brick-a';
