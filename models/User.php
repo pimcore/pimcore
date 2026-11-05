@@ -13,15 +13,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Exception;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Model\User\Exception\DuplicateUserNameException;
+use Pimcore\Model\User\Exception\InvalidServiceUserException;
 use Pimcore\Model\User\Role;
+use Pimcore\Model\User\ServiceUser;
 use Pimcore\Tool;
 
 /**
+ * Not final because \Pimcore\Model\User\ServiceUser extends it; extending it elsewhere is not supported.
+ *
  * @method User\Dao getDao()
  */
-final class User extends User\UserRole implements UserInterface
+class User extends User\UserRole implements UserInterface
 {
     use TemporaryFileHelperTrait;
 
@@ -94,6 +100,29 @@ final class User extends User\UserRole implements UserInterface
      * OIDC Provider from pimcore/openid-connect
      */
     protected ?string $provider = null;
+
+    /**
+     * @return $this
+     *
+     * @throws DuplicateUserNameException if a user or service user of the other kind already has the name
+     * @throws InvalidServiceUserException if a user that is no service user is saved with the service user type
+     * @throws Exception
+     */
+    public function save(array $parameters = []): static
+    {
+        if (!$this instanceof ServiceUser && $this->getType() === 'serviceuser') {
+            throw new InvalidServiceUserException('Only a service user can be saved with the service user type.');
+        }
+
+        $name = $this->getName();
+        if ($name !== null && $this->getDao()->isNameTakenByOtherUserType()) {
+            throw new DuplicateUserNameException(
+                sprintf('The name "%s" is already used by another user or service user.', $name)
+            );
+        }
+
+        return parent::save($parameters);
+    }
 
     public function getPassword(): ?string
     {

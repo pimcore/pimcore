@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Tool;
 
 use __PHP_Incomplete_Class;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Pimcore\Model\User as PimcoreUser;
+use Pimcore\Model\User\ServiceUser;
 use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Authentication;
@@ -113,6 +115,64 @@ class AuthenticationTest extends TestCase
             'Pimcore\\Bundle\\AdminBundle\\Security\\Authentication\\Token\\TwoFactorRequiredToken',
             $allowed
         );
+    }
+
+    /**
+     * A session token never carries a service user: it stays outside the allowlist, so a
+     * serialized session holding one is reduced to an incomplete class and dropped.
+     */
+    public function testAllowedClassListDoesNotContainServiceUser(): void
+    {
+        $this->assertNotContains(ServiceUser::class, Authentication::getSessionTokenAllowedClasses());
+    }
+
+    /**
+     * @return array<string, array{PimcoreUser, bool}>
+     */
+    public static function isValidUserProvider(): array
+    {
+        return [
+            'active human with password' => [self::createHuman(true, 'hash-value'), true],
+            'active human without password' => [self::createHuman(true, null), false],
+            'inactive human with password' => [self::createHuman(false, 'hash-value'), false],
+            'active service user' => [self::createServiceUser(true, 7), true],
+            'inactive service user' => [self::createServiceUser(false, 7), false],
+            'unsaved service user' => [self::createServiceUser(true, null), false],
+        ];
+    }
+
+    #[DataProvider('isValidUserProvider')]
+    public function testIsValidUser(PimcoreUser $user, bool $expected): void
+    {
+        $this->assertSame($expected, Authentication::isValidUser($user));
+    }
+
+    public function testIsValidUserRejectsNull(): void
+    {
+        $this->assertFalse(Authentication::isValidUser(null));
+    }
+
+    private static function createHuman(bool $active, ?string $password): PimcoreUser
+    {
+        $user = new PimcoreUser();
+        $user->setId(5);
+        $user->setName('human');
+        $user->setActive($active);
+        $user->setPassword($password);
+
+        return $user;
+    }
+
+    private static function createServiceUser(bool $active, ?int $id): ServiceUser
+    {
+        $user = new ServiceUser();
+        if ($id !== null) {
+            $user->setId($id);
+        }
+        $user->setName('svc-test-matrix');
+        $user->setActive($active);
+
+        return $user;
     }
 
     private function createSecurityUser(string $name): SecurityUser

@@ -20,6 +20,28 @@ namespace Pimcore\Model\User;
 class Dao extends UserRole\Dao
 {
     /**
+     * Users and service users share one namespace of names, while the unique key only covers names
+     * within one type. Tells whether the other of the two types already uses the model's name.
+     */
+    public function isNameTakenByOtherUserType(): bool
+    {
+        $otherType = match ($this->model->getType()) {
+            'user' => 'serviceuser',
+            'serviceuser' => 'user',
+            default => null,
+        };
+
+        if ($otherType === null) {
+            return false;
+        }
+
+        return $this->db->fetchOne(
+            'SELECT `id` FROM `users` WHERE `type` = ? AND `name` = ? LIMIT 1',
+            [$otherType, $this->model->getName()]
+        ) !== false;
+    }
+
+    /**
      * Deletes object from database
      */
     public function delete(): void

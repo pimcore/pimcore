@@ -444,7 +444,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('user','userfolder','role','rolefolder') NOT NULL DEFAULT 'user',
+  `type` enum('user','userfolder','role','rolefolder','serviceuser') NOT NULL DEFAULT 'user',
   `name` varchar(50) DEFAULT NULL,
   `uniqueName` varchar(64) GENERATED ALWAYS AS (IF(`type` IN ('userfolder','rolefolder'), CONCAT(IFNULL(`parentId`, 0), '/', `name`), `name`)) STORED,
   `password` varchar(190) DEFAULT NULL,
