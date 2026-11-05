@@ -12,10 +12,13 @@
 
 namespace Pimcore\Model\Element\Tag;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
+use Throwable;
 
 /**
  * @internal
@@ -138,6 +141,30 @@ class Dao extends Model\Dao\AbstractDao
         return $tags;
     }
 
+    /**
+     * @param int[] $cIds
+     *
+     * @return array<int, int[]> element id => ids of the tags assigned to it
+     */
+    public function getTagIdsForElements(string $cType, array $cIds): array
+    {
+        $assigned = [];
+        if (empty($cIds)) {
+            return $assigned;
+        }
+
+        $rows = $this->db->fetchAllAssociative(
+            'SELECT cid, tagid FROM tags_assignment WHERE ctype = ? AND cid IN (?)',
+            [$cType, array_map('intval', $cIds)],
+            [ParameterType::STRING, ArrayParameterType::INTEGER]
+        );
+        foreach ($rows as $row) {
+            $assigned[(int) $row['cid']][] = (int) $row['tagid'];
+        }
+
+        return $assigned;
+    }
+
     public function addTagToElement(string $cType, int $cId): void
     {
         $this->doAddTagToElement($this->model->getId(), $cType, $cId);
@@ -185,20 +212,34 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     *
+     * @throws Throwable
+     */
     public function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace): void
     {
-        if ($replace) {
-            $quotedCIds = [];
-            foreach ($cIds as $cId) {
-                $quotedCIds[] = $this->db->quote($cId);
-            }
-            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
-        }
+        $this->db->beginTransaction();
 
-        foreach ($tagIds as $tagId) {
-            foreach ($cIds as $cId) {
-                $this->doAddTagToElement($tagId, $cType, $cId);
+        try {
+            if ($replace) {
+                $quotedCIds = [];
+                foreach ($cIds as $cId) {
+                    $quotedCIds[] = $this->db->quote($cId);
+                }
+                $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
             }
+
+            foreach ($tagIds as $tagId) {
+                foreach ($cIds as $cId) {
+                    $this->doAddTagToElement($tagId, $cType, $cId);
+                }
+            }
+
+            $this->db->commit();
+        } catch (Throwable $e) {
+            $this->db->rollBack();
+
+            throw $e;
         }
     }
 
