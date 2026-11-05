@@ -267,27 +267,28 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     private function handleObjectStudioPreview(int $id, User $user): void
     {
-        $object = $this->getLatestVersion($id, $user);
-        if (!$object instanceof Concrete) {
+        $persisted = $this->getPersistedObject($id);
+        if (!$persisted instanceof Concrete) {
             return;
         }
 
         // substituting a (possibly unpublished) version needs the view grant and, like the document
-        // branch's pimcore_version handling, the versions grant
-        if (!$object->isAllowed('view', $user) || !$object->isAllowed('versions', $user)) {
+        // branch's pimcore_version handling, the versions grant. The persisted element is authorized:
+        // a version snapshot keeps its own parent, which decides the workspace grants.
+        if (!$persisted->isAllowed('view', $user) || !$persisted->isAllowed('versions', $user)) {
             $this->logger->warning(
-                "Denying access to object {$object->getFullPath()} as the user has no view/versions permission."
+                "Denying access to object {$persisted->getFullPath()} as the user has no view/versions permission."
             );
 
             throw new AccessDeniedHttpException(sprintf('Access denied for object %d', $id));
         }
 
         $this->logObjectLoading(
-            $object,
+            $persisted,
             'Loading object {object} ({objectId}) for studio preview'
         );
 
-        $this->cacheObject($object);
+        $this->cacheObject($this->getLatestVersion($persisted, $user));
     }
 
     private function handleDocumentClassicPreview(Request $request, Document $document): Document
@@ -325,18 +326,19 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function getLatestVersion(int $id, UserInterface $user): ?Concrete
+    protected function getPersistedObject(int $id): ?Concrete
     {
-        $dataObject = Service::getElementById('object', $id);
+        $object = Service::getElementById('object', $id);
 
-        if (!$dataObject instanceof Concrete) {
-            return null;
-        }
+        return $object instanceof Concrete ? $object : null;
+    }
 
-        $version = $dataObject->getLatestVersion($user->getId());
+    protected function getLatestVersion(Concrete $object, UserInterface $user): Concrete
+    {
+        $version = $object->getLatestVersion($user->getId());
 
         if ($version === null || !$version->getData() instanceof Concrete) {
-            return $dataObject;
+            return $object;
         }
 
         return $version->getData();
