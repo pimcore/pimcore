@@ -83,6 +83,18 @@ class DataObjectChangeTest extends TestCase
         );
     }
 
+    public function testNamesThatHoldANulByteNeverShareAPlace(): void
+    {
+        $change = DataObjectChange::of(1)
+            ->withClassificationValue('attributes', "a\0b", 'c', 'first')
+            ->withClassificationValue('attributes', 'a', "b\0c", 'second');
+
+        self::assertSame(
+            ['first', 'second'],
+            array_map(static fn (FieldValue $v): mixed => $v->value, $change->values())
+        );
+    }
+
     public function testALocalizedFieldInABrickKeepsOneValuePerLanguage(): void
     {
         $change = DataObjectChange::of(1)

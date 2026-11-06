@@ -94,7 +94,8 @@ final readonly class FieldValue
     /** where the value goes: a second value for the same place replaces the first */
     public function place(): string
     {
-        return implode("\0", [
+        // serialized, not joined: a name may hold any separator, and two places must never read the same
+        return serialize([
             $this->kind->value,
             $this->field,
             $this->language,

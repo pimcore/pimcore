@@ -25,6 +25,8 @@ use InvalidArgumentException;
  * by id, an `ElementRef` for a one-to-one relation and a list of them for a many relation.
  *
  * Immutable: each `with…()` returns a new change. Setting the same place twice keeps the later value.
+ * An object given as a value is held as it is, not copied: changing it afterwards changes what every
+ * change holding it records, so give each value its own object.
  *
  * ```php
  * $change = DataObjectChange::of(42)
