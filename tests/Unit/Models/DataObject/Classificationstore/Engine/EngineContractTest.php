@@ -94,13 +94,26 @@ class EngineContractTest extends TestCase
     }
 
     /**
-     * The document engine offers the one capability the EAV engine offers: per key localization is
-     * a property of the key configuration, not of the storage. No model API for a qualified value
-     * has landed, so the other three stay false for both.
+     * The document engine offers the one capability the EAV engine offers - per key localization is
+     * a property of the key configuration, not of the storage - and Relations on top of it: a
+     * document holds whatever normalize() returns, so a relation's element descriptors need no
+     * addressing of their own. Neither MultiValue nor Variants has a model API for a qualified
+     * value yet, so those two stay false for both engines.
      */
-    public function testDocumentEngineSupportsPerKeyLocalizationOnly(): void
+    public function testDocumentEngineSupportsPerKeyLocalizationAndRelations(): void
     {
-        $this->assertSupportsPerKeyLocalizationOnly(DocumentEngine::class);
+        // the engine needs no collaborator to answer supports(), and must not open a connection for it
+        $instance = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
+
+        $this->assertInstanceOf(EngineInterface::class, $instance);
+
+        foreach ([EngineFeature::PerKeyLocalization, EngineFeature::Relations] as $feature) {
+            $this->assertTrue($instance->supports($feature), $feature->name . ' must be supported');
+        }
+
+        foreach ([EngineFeature::MultiValue, EngineFeature::Variants] as $feature) {
+            $this->assertFalse($instance->supports($feature), $feature->name . ' must not be supported');
+        }
     }
 
     /**
@@ -166,16 +179,24 @@ class EngineContractTest extends TestCase
     }
 
     /**
-     * An unsupported feature is answered with `false`, not with an exception - this ticket adds no
-     * exception for it.
+     * A write of a value the engine cannot store is refused rather than skipped or written into
+     * whatever column its normalized form happens to fit - which is what the exception exists for.
      */
-    public function testNoUnsupportedEngineFeatureExceptionIsIntroduced(): void
+    public function testAnUnsupportedFeatureIsRefusedWithItsOwnException(): void
     {
         $exceptionDirectory = dirname(
             (string) (new ReflectionClass(UnknownClassificationStoreEngineException::class))->getFileName()
         );
 
-        $this->assertFileDoesNotExist($exceptionDirectory . '/UnsupportedEngineFeatureException.php');
+        $this->assertFileExists($exceptionDirectory . '/UnsupportedEngineFeatureException.php');
+
+        foreach ([EavEngine::class, DocumentEngine::class] as $engine) {
+            $this->assertStringContainsString(
+                'assertStorable',
+                $this->engineSource($engine),
+                $engine . ' has to refuse a value its storage cannot address'
+            );
+        }
     }
 
     /**
