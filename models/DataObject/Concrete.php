@@ -219,7 +219,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, $params['versionNote'] ?? null, false, $params);
+            // only `existingVersion` is passed on, the versioning events keep their arguments
+            $this->saveVersion(false, false, $params['versionNote'] ?? null, false, array_intersect_key($params, ['existingVersion' => true]));
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
@@ -250,7 +251,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * it is false when the method is called by $this->update()
      *
      * @param string|null $versionNote version note
-     * @param array $parameters custom arguments passed on to the versioning events; `existingVersion` (Model\Version)
+     * @param array $parameters custom arguments passed on to the versioning events; `existingVersion` (Model\Version, internal)
      *                          writes the version data into that version instead of creating a new one
      *
      */

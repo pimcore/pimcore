@@ -266,6 +266,7 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         // a version of another asset, and a version whose binary data differs from the changed asset
         foreach ([$otherVersion, $version] as $rejectedVersion) {
             $asset->setData('changed binary data');
+
             try {
                 $asset->save(['existingVersion' => $rejectedVersion]);
                 $this->fail(sprintf('saving into version %d must be rejected', $rejectedVersion->getId()));
@@ -333,6 +334,65 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $outdatedVersionIds = (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]);
 
         $this->assertNotContains($olderVersion->getId(), array_map('intval', $outdatedVersionIds), 'the published version must not be cleaned up');
+    }
+
+    /**
+     * Scheduling an older version is a rollback: it is published as a new version, the older version is kept as it
+     * was in the history
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testScheduledPublishVersionPublishesAnOlderVersionAsANewVersion(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $this->publish($element);
+        $element->save();
+        $olderVersion = $element->getLatestVersion(null, true);
+        $this->assertNotNull($olderVersion, 'expected the element to have a version');
+        $this->reload($element)->save();
+        $versionCountBefore = $this->countVersions($element);
+
+        $task = Task::create([
+            'cid' => $element->getId(),
+            'ctype' => $type,
+            'date' => time() - 60,
+            'action' => 'publish-version',
+            'version' => $olderVersion->getId(),
+            'active' => true,
+            'userId' => $this->createAdminUser()->getId(),
+        ]);
+        $task->save();
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $this->assertSame($versionCountBefore + 1, $this->countVersions($element), 'the rollback must add a version');
+        $keptVersion = Version::getById($olderVersion->getId());
+        $this->assertNotNull($keptVersion, 'the older version must still exist');
+        $this->assertSame($olderVersion->getVersionCount(), $keptVersion->getVersionCount(), 'the older version must keep its version count');
+        $this->assertSame($olderVersion->getDate(), $keptVersion->getDate(), 'the older version must keep its date');
+        $this->assertSame(0, (int) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]), 'the task must be done');
+    }
+
+    /**
+     * The step-based cleanup still ranks versions by id: an explicitly set modification date (e.g. by an import)
+     * must not change which versions are cleaned up
+     */
+    public function testStepCleanupRanksVersionsByIdWithExplicitModificationDates(): void
+    {
+        $object = $this->createFreshElement('object');
+        $versionIds = [];
+        foreach ([200, 300, 100] as $age) {
+            $object = $this->reload($object);
+            $object->setModificationDate(time() - $age);
+            $object->save();
+            $versionIds[] = $object->getLatestVersion(null, true)?->getId();
+        }
+
+        $outdatedVersionIds = array_map('intval', (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]));
+
+        $this->assertContains($versionIds[0], $outdatedVersionIds, 'the oldest version by id must be cleaned up');
+        $this->assertNotContains($versionIds[1], $outdatedVersionIds, 'the newer versions by id must be kept');
+        $this->assertNotContains($versionIds[2], $outdatedVersionIds, 'the current version must be kept');
     }
 
     private function createFreshElement(string $type): Asset|Page|Concrete
