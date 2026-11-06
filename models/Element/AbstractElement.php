@@ -116,13 +116,18 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * The versions written in place (see doSaveVersion()) in the running transaction attempt of retryableFunction(),
-     * each with a copy as it was before and its stored data: the version storage may not be transactional (e.g. the
-     * file system), so the stored data is written back when the transaction is rolled back. An element has an entry
-     * only while such an attempt runs. A WeakMap keeps it out of serialization and deep copies.
+     * each with its stored state and data from before and the name of its lock: the version storage may not be
+     * transactional (e.g. the file system), so the stored data is written back when the transaction is rolled back. An
+     * element has an entry only while such an attempt runs. A WeakMap keeps it out of serialization and deep copies.
      *
-     * @var WeakMap<self, list<array{Model\Version, Model\Version, string}>>
+     * @var WeakMap<self, list<array{Model\Version, Model\Version, string, string}>>
      */
     private static WeakMap $versionsWrittenInPlace;
+
+    /**
+     * Seconds to wait for another writer in place of the same version (see rememberVersionWrittenInPlace())
+     */
+    private const VERSION_WRITTEN_IN_PLACE_LOCK_TIMEOUT = 30;
 
     public function getPath(): ?string
     {
@@ -732,7 +737,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * version written without the transaction of retryableFunction() (e.g. by saveVersion() alone) isn't rolled back,
      * so its data isn't kept.
      *
-     * @throws RuntimeException if the stored data of the version cannot be read
+     * @throws RuntimeException if the version is locked by another writer or its stored data cannot be read
      */
     private function rememberVersionWrittenInPlace(Model\Version $version): void
     {
@@ -740,34 +745,58 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return;
         }
 
-        // locked before its stored data is read: every write of a version locks its row first (Version\Dao::save()),
-        // so no other write of this version happens until the transaction is committed or rolled back
-        Db::get()->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE', [$version->getId()]);
+        // a named lock is kept by the connection when the transaction is rolled back (also by the database itself, e.g.
+        // on a deadlock): another writer in place of this version waits until it is committed or its data is restored
+        $db = Db::get();
+        $lockName = 'pimcore_version_written_in_place_' . $version->getId();
+        if ((int) $db->fetchOne('SELECT GET_LOCK(?, ?)', [$lockName, self::VERSION_WRITTEN_IN_PLACE_LOCK_TIMEOUT]) !== 1) {
+            throw new RuntimeException(sprintf('Version %d is written by another process, it cannot be written into', $version->getId()));
+        }
 
-        $metaData = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($version);
-        if ($metaData === null) {
-            throw new RuntimeException(sprintf(
-                'The stored data of version %d cannot be read, so it cannot be restored and the version cannot be written into',
-                $version->getId()
-            ));
+        try {
+            // every write of a version locks its row first (Version\Dao::save()), so no other write of this version
+            // happens until the transaction is committed or rolled back
+            $db->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE', [$version->getId()]);
+
+            // the stored state of the version, it may differ from the given one (e.g. moved to another storage)
+            $storedVersion = Model\Version::getById($version->getId());
+            $metaData = $storedVersion instanceof Model\Version
+                ? Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($storedVersion)
+                : null;
+            if ($metaData === null) {
+                throw new RuntimeException(sprintf(
+                    'The stored data of version %d cannot be read, so it cannot be restored and the version cannot be written into',
+                    $version->getId()
+                ));
+            }
+        } catch (Throwable $e) {
+            $this->releaseVersionLock($lockName);
+
+            throw $e;
         }
 
         $versions = self::$versionsWrittenInPlace[$this];
-        $versions[] = [$version, clone $version, $metaData];
+        $versions[] = [$version, $storedVersion, $metaData, $lockName];
         self::$versionsWrittenInPlace[$this] = $versions;
     }
 
     private function forgetVersionsWrittenInPlace(): void
     {
-        if (isset(self::$versionsWrittenInPlace)) {
-            self::$versionsWrittenInPlace->offsetUnset($this);
+        if (!isset(self::$versionsWrittenInPlace[$this])) {
+            return;
+        }
+
+        $versions = self::$versionsWrittenInPlace[$this];
+        self::$versionsWrittenInPlace->offsetUnset($this);
+        foreach ($versions as [, , , $lockName]) {
+            $this->releaseVersionLock($lockName);
         }
     }
 
     /**
      * Writes the stored data of the versions written in place back when the transaction fails, where the version
-     * storage didn't keep it. This runs before the rollback, while the transaction still locks the versions it wrote:
-     * a concurrent write of the same version waits for the rollback and its data isn't overwritten.
+     * storage didn't keep it. Another writer in place of the same version waits for the named lock, so its data isn't
+     * overwritten.
      */
     private function restoreVersionsWrittenInPlace(): void
     {
@@ -776,24 +805,46 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         $versions = self::$versionsWrittenInPlace[$this];
-        $this->forgetVersionsWrittenInPlace();
+        self::$versionsWrittenInPlace->offsetUnset($this);
         $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
-        foreach (array_reverse($versions) as [$writtenVersion, $version, $metaData]) {
-            // the written version may have moved to another storage (see Version::save()), a retry reads it from where
-            // it is stored
-            if ($version->getStorageType() !== null) {
-                $writtenVersion->setStorageType($version->getStorageType());
-            }
-            $writtenVersion->setBinaryFileId($version->getBinaryFileId());
-            $writtenVersion->setBinaryFileHash($version->getBinaryFileHash());
-
+        foreach (array_reverse($versions) as [$writtenVersion, $storedVersion, $metaData, $lockName]) {
             try {
-                if ($storageAdapter->loadMetaData($version) !== $metaData) {
-                    $storageAdapter->save($version, $metaData, null);
+                // the written version may have moved to another storage (see Version::save()), a retry reads it from
+                // where it is stored
+                if ($storedVersion->getStorageType() !== null) {
+                    $writtenVersion->setStorageType($storedVersion->getStorageType());
+                }
+                $writtenVersion->setBinaryFileId($storedVersion->getBinaryFileId());
+                $writtenVersion->setBinaryFileHash($storedVersion->getBinaryFileHash());
+
+                if ($storageAdapter->loadMetaData($storedVersion) !== $metaData) {
+                    // the binary data is written along, a storage that writes both at once would clear it otherwise;
+                    // it is the one of the version (see Version::save())
+                    $binaryDataStream = $storedVersion->getCtype() === 'asset' && $storedVersion->getBinaryFileHash() !== null
+                        ? $storageAdapter->loadBinaryData($storedVersion)
+                        : null;
+                    if (is_resource($binaryDataStream)) {
+                        // a storage may return it at its end (e.g. the database)
+                        rewind($binaryDataStream);
+                    } else {
+                        $binaryDataStream = null;
+                    }
+                    $storageAdapter->save($storedVersion, $metaData, $binaryDataStream);
                 }
             } catch (Throwable $e) {
-                Logger::error('Unable to restore the data of version ' . $version->getId() . ' after the transaction was rolled back: ' . $e);
+                Logger::error('Unable to restore the data of version ' . $storedVersion->getId() . ' after the transaction failed: ' . $e);
+            } finally {
+                $this->releaseVersionLock($lockName);
             }
+        }
+    }
+
+    private function releaseVersionLock(string $lockName): void
+    {
+        try {
+            Db::get()->fetchOne('SELECT RELEASE_LOCK(?)', [$lockName]);
+        } catch (Throwable $e) {
+            Logger::error('Unable to release the lock ' . $lockName . ': ' . $e);
         }
     }
 

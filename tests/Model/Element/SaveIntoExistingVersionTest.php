@@ -676,15 +676,7 @@ class SaveIntoExistingVersionTest extends ModelTestCase
      */
     public function testAVersionMovedToAnotherStorageCanBeWrittenAgainAfterAFailure(): void
     {
-        // needed for the DatabaseVersionStorageAdapter (same as in the version storage tests of the Service suite)
-        Db::get()->executeStatement("CREATE TABLE IF NOT EXISTS `versionsData` (
-                                  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                                  `cid` int(11) unsigned DEFAULT NULL,
-                                  `ctype` enum('document','asset','object') DEFAULT NULL,
-                                  `metaData` longblob DEFAULT NULL,
-                                  `binaryData` longblob DEFAULT NULL,
-                                  PRIMARY KEY (`id`)
-                                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci");
+        $this->createVersionsDataTable();
         $fileSystemAdapter = new FileSystemVersionStorageAdapter();
         $databaseAdapter = new DatabaseVersionStorageAdapter(Db::get());
         $proxy = $this->getStorageAdapterProxy();
@@ -725,6 +717,176 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $publishedVersion = Version::getById($draft->getId());
         $this->assertNotNull($publishedVersion);
         $this->assertSame($this->reload($object)->getVersionCount(), $publishedVersion->getVersionCount(), 'the retry must publish the version');
+    }
+
+    /**
+     * A version moved to another storage by another writer after it was loaded is restored where it is stored: the
+     * data kept for a restore is the stored one, not the one of the given version
+     */
+    public function testAVersionMovedByAnotherWriterIsRestoredWhereItIsStored(): void
+    {
+        $this->createVersionsDataTable();
+        $fileSystemAdapter = new FileSystemVersionStorageAdapter();
+        $databaseAdapter = new DatabaseVersionStorageAdapter(Db::get());
+        $proxy = $this->getStorageAdapterProxy();
+        $object = $this->createFreshElement('object');
+
+        try {
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(PHP_INT_MAX, $databaseAdapter, $fileSystemAdapter));
+            $draft = $object->saveVersion();
+            $this->assertNotNull($draft, 'expected a draft version to be saved');
+            $loadedDraft = Version::getById($draft->getId());
+            $this->assertNotNull($loadedDraft);
+            $this->assertSame('db', $loadedDraft->getStorageType(), 'expected the draft in the database');
+
+            // another writer moves the version to the file system after it was loaded
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(1, $databaseAdapter, $fileSystemAdapter));
+            $movedVersion = Version::getById($draft->getId());
+            $this->assertNotNull($movedVersion);
+            $movedVersion->save();
+            $movedVersion = Version::getById($draft->getId());
+            $this->assertNotNull($movedVersion);
+            $this->assertSame('fs', $movedVersion->getStorageType(), 'expected the version in the file system');
+            $movedMetaData = $fileSystemAdapter->loadMetaData($movedVersion);
+
+            $restored = $loadedDraft->getData();
+            $this->publish($restored);
+            $failingListener = static function (): void {
+                throw new Exception('publishing failed');
+            };
+            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+            try {
+                $restored->save(['existingVersion' => $loadedDraft]);
+                $this->fail('publishing must fail');
+            } catch (Exception $e) {
+                $this->assertSame('publishing failed', $e->getMessage());
+            } finally {
+                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            }
+        } finally {
+            $this->restoreStorageAdapter();
+        }
+
+        $this->assertSame($movedMetaData, $fileSystemAdapter->loadMetaData($movedVersion), 'the data of the moved version must be restored');
+    }
+
+    /**
+     * A version storage with its own database connection isn't rolled back with the element: restoring an asset version
+     * that owns its binary data keeps that data
+     */
+    public function testRestoringAnAssetVersionKeepsItsBinaryData(): void
+    {
+        $this->createVersionsDataTable();
+        $storageConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $databaseAdapter = new DatabaseVersionStorageAdapter($storageConnection);
+        $asset = $this->createFreshElement('asset');
+        $binaryData = stream_get_contents($asset->getStream());
+        // no other version of the asset, so the draft owns its binary data
+        Db::get()->executeStatement('DELETE FROM versions WHERE cid = ? AND ctype = ?', [$asset->getId(), 'asset']);
+
+        try {
+            $this->getStorageAdapterProxy()->setStorageAdapter($databaseAdapter);
+            $draft = $asset->saveVersion();
+            $this->assertNotNull($draft, 'expected a draft version to be saved');
+            $draft = Version::getById($draft->getId());
+            $this->assertNotNull($draft);
+            $this->assertEmpty($draft->getBinaryFileId(), 'expected the draft to own its binary data');
+            $restored = $draft->getData();
+
+            $failingListener = static function (): void {
+                throw new Exception('publishing failed');
+            };
+            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+            try {
+                $restored->save(['existingVersion' => $draft]);
+                $this->fail('publishing must fail');
+            } catch (Exception $e) {
+                $this->assertSame('publishing failed', $e->getMessage());
+            } finally {
+                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            }
+
+            $keptVersion = Version::getById($draft->getId());
+            $this->assertNotNull($keptVersion);
+            $binaryStream = $databaseAdapter->loadBinaryData($keptVersion);
+            $this->assertIsResource($binaryStream, 'the binary data of the version must still be stored');
+            rewind($binaryStream);
+            $this->assertSame($binaryData, stream_get_contents($binaryStream), 'the binary data of the version must be unchanged');
+        } finally {
+            $this->restoreStorageAdapter();
+            $storageConnection->close();
+        }
+    }
+
+    /**
+     * The database rolls back the transaction of a deadlock victim itself, releasing its row locks before the data is
+     * restored: the named lock of the version is kept until then, so another writer in place of it waits
+     */
+    public function testTheVersionStaysLockedWhenTheDatabaseRollsBackTheTransaction(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $lockName = 'pimcore_version_written_in_place_' . $draft->getId();
+
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $rowFreeAfterRollback = null;
+        $lockedAfterRollback = null;
+        $rollingBackListener = static function () use ($otherConnection, $draft, $lockName, &$rowFreeAfterRollback, &$lockedAfterRollback): void {
+            // as the database does for a deadlock victim
+            while (Db::get()->isTransactionActive()) {
+                Db::get()->rollBack();
+            }
+
+            try {
+                $otherConnection->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE NOWAIT', [$draft->getId()]);
+                $rowFreeAfterRollback = true;
+            } catch (DBALException) {
+                $rowFreeAfterRollback = false;
+            }
+            $lockedAfterRollback = (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]) === 0;
+
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $rollingBackListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $rollingBackListener);
+        }
+
+        try {
+            $this->assertTrue($rowFreeAfterRollback, 'expected the row lock to be released by the rollback');
+            $this->assertTrue($lockedAfterRollback, 'the version must stay locked until its data is restored');
+            $this->assertSame(1, (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]), 'the version must be unlocked after the restore');
+        } finally {
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * Needed for the DatabaseVersionStorageAdapter (same as in the version storage tests of the Service suite)
+     */
+    private function createVersionsDataTable(): void
+    {
+        Db::get()->executeStatement("CREATE TABLE IF NOT EXISTS `versionsData` (
+                                  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                                  `cid` int(11) unsigned DEFAULT NULL,
+                                  `ctype` enum('document','asset','object') DEFAULT NULL,
+                                  `metaData` longblob DEFAULT NULL,
+                                  `binaryData` longblob DEFAULT NULL,
+                                  PRIMARY KEY (`id`)
+                                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci");
     }
 
     /**
