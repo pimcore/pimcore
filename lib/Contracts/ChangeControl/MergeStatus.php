@@ -29,7 +29,8 @@ final readonly class MergeStatus
      * @param list<ObjectRef> $written the objects written, a new one by `ObjectRef::created()`; known once the
      *                                 merge is final
      * @param list<ObjectRef> $leftOut the objects that needed no write, as they already held what the branch
-     *                                 recorded; known once the merge is final
+     *                                 recorded and the mode did not change their published state; known once
+     *                                 the merge is final
      */
     private function __construct(
         public Uuid $branch,

@@ -83,8 +83,9 @@ interface BranchServiceInterface
      * nothing was written and the branch is open, so the consumer can take those objects out and
      * merge again, or discard the branch.
      *
-     * An object that already holds what the branch recorded needs no write: the merge leaves it out
-     * and its status names it.
+     * An object that already holds what the branch recorded, and whose published state the mode does
+     * not change, needs no write: the merge leaves it out and its status names it. With
+     * `MergeMode::Publish` an unpublished one is still written, to publish it.
      *
      * A write that fails after that ends the merge as `MergeState::Partial`: what was written stays,
      * the branch is closed and the status names both. A branch that holds nothing merges with a

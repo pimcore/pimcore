@@ -23,7 +23,7 @@ enum MergeState: string
     /** the check before writing found errors: nothing was written and the branch is open */
     case Refused = 'refused';
 
-    /** every object was written or already held what the branch recorded, and the branch is closed */
+    /** every object was written or needed no write, and the branch is closed */
     case Merged = 'merged';
 
     /** a write failed: what was written stays and the branch is closed */
