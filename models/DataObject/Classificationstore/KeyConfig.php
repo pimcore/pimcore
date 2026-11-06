@@ -82,6 +82,19 @@ final class KeyConfig extends Model\AbstractModel
 
     protected bool $enabled = false;
 
+    /**
+     * Whether the key holds a value per language, null for the `localized` flag of the class
+     * definition field it is rendered in.
+     */
+    protected ?bool $localized = null;
+
+    /**
+     * Whether `localized` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $localizedInitialized = false;
+
     public static function getById(int $id, ?bool $force = false): ?KeyConfig
     {
         $cacheKey = self::getCacheKey($id);
@@ -317,6 +330,25 @@ final class KeyConfig extends Model\AbstractModel
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
+    }
+
+    public function getLocalized(): ?bool
+    {
+        return $this->localized;
+    }
+
+    public function setLocalized(?bool $localized): void
+    {
+        $this->localized = $localized;
+        $this->localizedInitialized = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function isLocalizedInitialized(): bool
+    {
+        return $this->localizedInitialized;
     }
 
     public function getTitle(): ?string

@@ -89,36 +89,56 @@ class EngineContractTest extends TestCase
         );
     }
 
-    public function testEavEngineSupportsNoFeature(): void
+    public function testEavEngineSupportsPerKeyLocalizationOnly(): void
     {
-        // the engine needs no collaborator to answer supports(), and must not open a connection for it
-        $engine = (new ReflectionClass(EavEngine::class))->newInstanceWithoutConstructor();
-
-        $this->assertInstanceOf(EngineInterface::class, $engine);
-
-        foreach (EngineFeature::cases() as $feature) {
-            $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
-        }
+        $this->assertSupportsPerKeyLocalizationOnly(EavEngine::class);
     }
 
     /**
      * StructuredValues is the one capability the document engine offers that the EAV engine does
-     * not: a document holds what `normalize()` returns, with no column to pack it into. It still
-     * ships without the other four, and no model API for a qualified value lands with it.
+     * not: a document holds what `normalize()` returns, with no column to pack it into. Per key
+     * localization it answers as the EAV engine does, as a property of the key configuration rather
+     * than of the storage, and no model API for a qualified value lands with it, so the other three
+     * stay false for both.
      */
-    public function testDocumentEngineSupportsStructuredValuesOnly(): void
+    public function testDocumentEngineSupportsStructuredValuesAndPerKeyLocalization(): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
-        $engine = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
+        $instance = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
 
-        $this->assertInstanceOf(EngineInterface::class, $engine);
+        $this->assertInstanceOf(EngineInterface::class, $instance);
 
         foreach (EngineFeature::cases() as $feature) {
             $this->assertSame(
-                $feature === EngineFeature::StructuredValues,
-                $engine->supports($feature),
+                $feature === EngineFeature::StructuredValues || $feature === EngineFeature::PerKeyLocalization,
+                $instance->supports($feature),
                 $feature->name . ' is answered wrongly'
             );
+        }
+    }
+
+    /**
+     * @param class-string $engine
+     */
+    private function assertSupportsPerKeyLocalizationOnly(string $engine): void
+    {
+        // the engine needs no collaborator to answer supports(), and must not open a connection for it
+        $instance = (new ReflectionClass($engine))->newInstanceWithoutConstructor();
+
+        $this->assertInstanceOf(EngineInterface::class, $instance);
+
+        $this->assertTrue(
+            $instance->supports(EngineFeature::PerKeyLocalization),
+            'PerKeyLocalization must be supported'
+        );
+
+        foreach ([
+            EngineFeature::MultiValue,
+            EngineFeature::Variants,
+            EngineFeature::Relations,
+            EngineFeature::StructuredValues,
+        ] as $feature) {
+            $this->assertFalse($instance->supports($feature), $feature->name . ' must not be supported');
         }
     }
 

@@ -585,11 +585,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
     /**
      * A document holds whatever `normalize()` returns, so a structured value needs no marshaller
-     * here and no column to be packed into. That is the one capability this engine offers.
+     * here and no column to be packed into. That is the one capability this engine offers that the
+     * EAV engine does not; per key localization both engines answer, as it is a property of the key
+     * configuration rather than of the storage.
      */
     public function supports(EngineFeature $feature): bool
     {
-        return $feature === EngineFeature::StructuredValues;
+        return $feature === EngineFeature::StructuredValues
+            || $feature === EngineFeature::PerKeyLocalization;
     }
 
     /**

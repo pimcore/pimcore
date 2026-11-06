@@ -23,6 +23,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    private const COLUMN_LOCALIZED = 'localized';
+
     /**
      * Loads a list of Classificationstore key configs for the specified parameters, returns an array of config elements
      *
@@ -36,6 +38,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         foreach ($configsData as $keyConfigData) {
             $keyConfig = new DataObject\Classificationstore\KeyConfig();
             $keyConfigData['enabled'] = (bool)$keyConfigData['enabled'];
+            // a NULL localized column, and a table that does not carry it yet, keep the key inheriting
+            $keyConfigData[self::COLUMN_LOCALIZED] = isset($keyConfigData[self::COLUMN_LOCALIZED])
+                ? (bool)$keyConfigData[self::COLUMN_LOCALIZED]
+                : null;
             $keyConfig->setValues($keyConfigData, true);
             $configList[] = $keyConfig;
         }
