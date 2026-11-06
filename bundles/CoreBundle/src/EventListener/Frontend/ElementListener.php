@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
-use Pimcore\Model\UserInterface;
 use Pimcore\Model\Version;
 use Pimcore\Security\User\UserLoader;
 use Psr\Log\LoggerAwareInterface;
@@ -238,7 +237,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleObjectParams(Request $request, UserInterface $user): void
+    protected function handleObjectParams(Request $request, User $user): void
     {
 
         if ($request->query->has('pimcore_studio_preview')) {
@@ -265,7 +264,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->cacheObject($object);
     }
 
-    private function handleObjectStudioPreview(int $id, UserInterface $user): void
+    private function handleObjectStudioPreview(int $id, User $user): void
     {
         $object = $this->getLatestVersion($id, $user);
         if (!$object instanceof Concrete) {
@@ -315,11 +314,23 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    private function getLatestVersion(int $id, UserInterface $user): ?Concrete
+    protected function loadObject(int $id): ?Concrete
     {
         $dataObject = Service::getElementById('object', $id);
 
+        return $dataObject instanceof Concrete ? $dataObject : null;
+    }
+
+    private function getLatestVersion(int $id, User $user): ?Concrete
+    {
+        $dataObject = $this->loadObject($id);
+
         if (!$dataObject instanceof Concrete) {
+            return null;
+        }
+
+        // the object must be in the user's workspace before any of its (possibly unpublished) version data is exposed
+        if (!$dataObject->isAllowed('view', $user)) {
             return null;
         }
 

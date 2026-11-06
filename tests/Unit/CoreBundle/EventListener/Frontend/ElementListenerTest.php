@@ -15,10 +15,12 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Model\UserInterface;
@@ -352,5 +354,115 @@ class ElementListenerTest extends TestCase
 
         $this->expectException(AccessDeniedHttpException::class);
         $this->runWithVersionParam($routeDocument, $version, $documentResolver, ['view']);
+    }
+
+    /**
+     * Regression coverage for GHSA-36h3-7r7c-r763: the object preview path (handleObjectStudioPreview()
+     * -> getLatestVersion()) must consult the object's workspace permission (isAllowed('view', $user))
+     * before loading and caching its (possibly unpublished) latest version data.
+     */
+    private function makeObjectPreviewListener(?Concrete $object, User $user): ElementListener
+    {
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn(null);
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $editmodeResolver->method('isEditmode')->willReturn(false);
+
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $object) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private readonly ?Concrete $object
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
+
+            protected function loadObject(int $id): ?Concrete
+            {
+                return $this->object;
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        return $listener;
+    }
+
+    private function requestForObjectPreview(int $id): Request
+    {
+        $request = Request::create('/poc-preview/' . $id, 'GET', [
+            'pimcore_studio_preview' => '1',
+            'pimcore_object_preview' => (string) $id,
+        ]);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        return $request;
+    }
+
+    public function testBackendUserWithoutViewPermissionCannotReadObjectStudioPreview(): void
+    {
+        RuntimeCache::getInstance()->exchangeArray([]);
+
+        $object = $this->createMock(Concrete::class);
+        $object->method('getId')->willReturn(6);
+        $object->method('getFullPath')->willReturn('/secret/pub-B');
+
+        $user = new User();
+        $user->setId(99);
+
+        // The core assertion: isAllowed('view', $user) must be consulted and can deny the preview on its own.
+        $object->expects($this->once())
+            ->method('isAllowed')
+            ->with('view', $user)
+            ->willReturn(false);
+        $object->expects($this->never())->method('getLatestVersion');
+
+        $listener = $this->makeObjectPreviewListener($object, $user);
+        $listener->onKernelController($this->makeControllerEvent($this->requestForObjectPreview(6)));
+
+        $this->assertFalse(
+            RuntimeCache::isRegistered('object_6'),
+            'An object the user is not allowed to view must not be loaded into the render cache'
+        );
+    }
+
+    public function testBackendUserWithViewPermissionCanReadObjectStudioPreview(): void
+    {
+        RuntimeCache::getInstance()->exchangeArray([]);
+
+        $object = $this->createMock(Concrete::class);
+        $object->method('getId')->willReturn(6);
+        $object->method('getFullPath')->willReturn('/secret/pub-B');
+
+        $user = new User();
+        $user->setId(42);
+
+        $object->expects($this->once())
+            ->method('isAllowed')
+            ->with('view', $user)
+            ->willReturn(true);
+        $object->method('getLatestVersion')->willReturn(null);
+
+        $listener = $this->makeObjectPreviewListener($object, $user);
+        $listener->onKernelController($this->makeControllerEvent($this->requestForObjectPreview(6)));
+
+        $this->assertTrue(
+            RuntimeCache::isRegistered('object_6'),
+            'A legitimately permitted preview must still be loaded into the render cache'
+        );
+        $this->assertSame($object, RuntimeCache::get('object_6'));
     }
 }
