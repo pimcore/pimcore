@@ -847,4 +847,79 @@ class GeneralTest extends AbstractClassificationStoreTest
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
         $this->assertEquals($originalValue, $newValue);
     }
+
+    /**
+     * Turning a key's localization off destroys nothing: both engines write the languages the model
+     * holds, so the values of the other languages stay stored over an ordinary save and are readable
+     * again the moment the flag goes back on.
+     */
+    public function testUnLocalizingAKeyKeepsTheValuesOfItsOtherLanguages(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName('testgroupLocalizedFlip');
+        $group->save();
+
+        $definition = new Input();
+        $definition->setName('localizedFlip');
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName('localizedFlip');
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType('input');
+        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->setLocalized(true);
+        $keyConfig->save();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId($keyConfig->getId());
+        $relation->setGroupId($group->getId());
+        $relation->save();
+
+        try {
+            $groupId = $group->getId();
+            $keyId = $keyConfig->getId();
+
+            $object = $this->createCsObject();
+            $csField = $object->getCsstore();
+            $csField->setLocalizedKeyValue($groupId, $keyId, 'flip default', self::DEFAULT_LANGUAGE);
+            $csField->setLocalizedKeyValue($groupId, $keyId, 'flip en', 'en');
+            $csField->setLocalizedKeyValue($groupId, $keyId, 'flip de', 'de');
+            $object->save();
+
+            $keyConfig->setLocalized(false);
+            $keyConfig->save();
+
+            $object = \Pimcore\Model\DataObject\Csstore::getById($object->getId(), ['force' => true]);
+            $object->save();
+
+            $object = \Pimcore\Model\DataObject\Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertSame(
+                ['flip default', 'flip en', 'flip de'],
+                [
+                    $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId, self::DEFAULT_LANGUAGE, true, true),
+                    $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId, 'en', true, true),
+                    $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId, 'de', true, true),
+                ],
+                'un-localizing the key must not remove the values of its other languages'
+            );
+
+            $keyConfig->setLocalized(true);
+            $keyConfig->save();
+
+            $object = \Pimcore\Model\DataObject\Csstore::getById($object->getId(), ['force' => true]);
+            $result = $object->getClass()->getFieldDefinition(self::FIELDNAME)
+                ->getDataForEditmode($object->getCsstore(), $object);
+
+            $this->assertSame('flip en', $result['data']['en'][$groupId][$keyId]);
+            $this->assertSame('flip de', $result['data']['de'][$groupId][$keyId]);
+        } finally {
+            $relation->delete();
+            $keyConfig->delete();
+            $group->delete();
+        }
+    }
 }

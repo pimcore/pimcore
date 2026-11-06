@@ -679,7 +679,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * This is what creates the table for a class saved from here on, and for a class flipped to
      * this engine later. A class whose document table already exists gets it from
-     * {@see \Pimcore\Bundle\CoreBundle\Migrations\Version20261105100000}, which declares the same
+     * {@see \Pimcore\Bundle\CoreBundle\Migrations\Version20261105110000}, which declares the same
      * schema in its own `addSql()` the way every per-class migration here does - so the two have to
      * be kept in step.
      *
@@ -755,11 +755,13 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     /**
      * A document holds whatever {@see NormalizerInterface::normalize()} returns, so a relation's
      * element descriptors need no row of their own and no addressing the two value columns of the
-     * EAV engine cannot give them. The other three features are still nobody's.
+     * EAV engine cannot give them. PerKeyLocalization is answered by both engines, as it is a
+     * property of the key configuration rather than of the storage. The other two features are
+     * still nobody's.
      */
     public function supports(EngineFeature $feature): bool
     {
-        return $feature === EngineFeature::Relations;
+        return in_array($feature, [EngineFeature::Relations, EngineFeature::PerKeyLocalization], true);
     }
 
     /**

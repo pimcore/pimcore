@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore;
-use Pimcore\Bundle\CoreBundle\Migrations\Version20261105100000;
+use Pimcore\Bundle\CoreBundle\Migrations\Version20261105110000;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
@@ -611,7 +611,7 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
     public function testTheMigrationAddsTheMetadataTableAndTakesItBack(): void
     {
         $db = Db::get();
-        $guarded = new Version20261105100000($db, new NullLogger());
+        $guarded = new Version20261105110000($db, new NullLogger());
         $guarded->up($db->createSchemaManager()->introspectSchema());
 
         $this->assertSame(
@@ -623,7 +623,7 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
         $db->executeStatement('DROP TABLE ' . $db->quoteIdentifier(self::METADATA_TABLE));
 
         try {
-            $up = new Version20261105100000($db, new NullLogger());
+            $up = new Version20261105110000($db, new NullLogger());
             $up->up($db->createSchemaManager()->introspectSchema());
             $this->runStatements($up);
 
@@ -651,7 +651,7 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
                 'and the same primary key'
             );
 
-            $down = new Version20261105100000($db, new NullLogger());
+            $down = new Version20261105110000($db, new NullLogger());
             $down->down($db->createSchemaManager()->introspectSchema());
             $this->runStatements($down);
 
@@ -671,7 +671,7 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
      *
      * @return string[]
      */
-    private function statementsForThisClass(Version20261105100000 $migration): array
+    private function statementsForThisClass(Version20261105110000 $migration): array
     {
         $statements = [];
 
@@ -684,7 +684,7 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
         return $statements;
     }
 
-    private function runStatements(Version20261105100000 $migration): void
+    private function runStatements(Version20261105110000 $migration): void
     {
         $statements = $this->statementsForThisClass($migration);
 
