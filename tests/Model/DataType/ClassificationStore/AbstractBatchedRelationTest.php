@@ -274,6 +274,24 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
     }
 
     /**
+     * The statements issued since the measurement started whose SQL matches the given pattern,
+     * whichever table they address.
+     *
+     * For a bound on one kind of lookup rather than on the total: a round of target lookups is one
+     * statement with a recognisable shape, so counting the statements of that shape says how many
+     * rounds a path took.
+     *
+     * @return string[]
+     */
+    protected function grabStatementsMatching(string $pattern): array
+    {
+        return array_values(array_filter(
+            $this->grabStatements(),
+            static fn (string $sql): bool => (bool) preg_match($pattern, $sql)
+        ));
+    }
+
+    /**
      * The statements of the given kinds that address a classification store table. What a load or
      * a save touches besides them - the object row, its versions, the system settings - is not
      * what this field batches, and reading the system settings is uncached here anyway because
@@ -286,17 +304,30 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
     private function grabStoreStatements(array $kinds): array
     {
         $statements = [];
+        foreach ($this->grabStatements() as $sql) {
+            if (!preg_match(self::STORE_TABLE_PATTERN, $sql)) {
+                continue;
+            }
+
+            if (preg_match('/^(' . implode('|', $kinds) . ')\b/i', $sql)) {
+                $statements[] = $sql;
+            }
+        }
+
+        return $statements;
+    }
+
+    /**
+     * Every statement issued since the measurement started, its whitespace normalised.
+     *
+     * @return string[]
+     */
+    private function grabStatements(): array
+    {
+        $statements = [];
         foreach ($this->debugDataHolder->getData() as $queries) {
             foreach ($queries as $query) {
-                $sql = trim(preg_replace('/\s+/', ' ', (string) $query['sql']));
-
-                if (!preg_match(self::STORE_TABLE_PATTERN, $sql)) {
-                    continue;
-                }
-
-                if (preg_match('/^(' . implode('|', $kinds) . ')\b/i', $sql)) {
-                    $statements[] = $sql;
-                }
+                $statements[] = trim(preg_replace('/\s+/', ' ', (string) $query['sql']));
             }
         }
 

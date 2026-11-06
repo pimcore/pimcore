@@ -81,6 +81,22 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     protected array $groupCollectionMapping = [];
 
+    /**
+     * Counts the changes made to the items, so that an answer read for them is not reused once they
+     * are no longer the items it was read for.
+     */
+    private int $itemsRevision = 0;
+
+    /**
+     * The targets of the stored descriptors this store holds that still exist, keyed
+     * "<type>:<id>", and the items revision they were read for.
+     *
+     * @var array<string, true>|null
+     */
+    private ?array $existingTargets = null;
+
+    private int $existingTargetsRevision = -1;
+
     public function __construct(?array $items = null)
     {
         if ($items) {
@@ -92,12 +108,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function addItem(array $item): void
     {
         $this->items[] = $item;
+        $this->itemsRevision++;
         $this->markFieldDirty('_self');
     }
 
     public function setItems(array $items): static
     {
         $this->items = $items;
+        $this->itemsRevision++;
         $this->markFieldDirty('_self');
 
         return $this;
@@ -227,6 +245,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             $nonEmpty = true;
         }
 
+        $this->itemsRevision++;
+
         if ($nonEmpty || $value) {
             $this->items[$groupId][$keyId][$language] = $value;
         } elseif (isset($this->items[$groupId][$keyId][$language])) {
@@ -249,6 +269,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function removeGroupData(int $groupId): void
     {
         unset($this->items[$groupId]);
+        $this->itemsRevision++;
     }
 
     /** Returns an array of
@@ -498,21 +519,70 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * Whether this value is the key's empty one, which decides whether the fallback language, the
      * default language and the inheritance chain are consulted for it.
      *
-     * An unresolved relation value is asked of its descriptors rather than of the key: every
-     * relation type reads emptiness off the value itself - `empty($data)`,
+     * An unresolved relation value is asked of its surviving descriptors rather than of the key:
+     * every relation type reads emptiness off the value itself - `empty($data)`,
      * {@see ClassDefinition\Data::isEmpty()} - and a {@see RelationDescriptor} is an object, so a
-     * key storing no relation at all would otherwise count as holding one. No lookup is made, so a
-     * descriptor whose targets have all been deleted counts as present here; what it is checked
-     * against leaves those out,
-     * {@see Classificationstore\RelationResolver::checkStoredValidity()}.
+     * key storing no relation at all would otherwise count as holding one.
+     *
+     * A descriptor whose targets have all been deleted is the key holding nothing, the same answer
+     * the elements would have given: reading the key drops a dead target,
+     * {@see self::readItem()}, so counting one as present here would make the value this selects -
+     * and with it what a save refuses - depend on whether the key had been read. Deciding it costs
+     * no element load and one round of lookups for the whole store,
+     * {@see self::getExistingTargets()}.
      */
     private function isEmptyValue(ClassDefinition\Data $fieldDefinition, mixed $data): bool
     {
         if ($data instanceof RelationDescriptor) {
-            return $this->getRelationResolver()->describe($data->getValue()) === [];
+            return !$this->getRelationResolver()->hasSurvivingTarget(
+                $data->getValue(),
+                $this->getExistingTargets()
+            );
         }
 
         return $fieldDefinition->isEmpty($data);
+    }
+
+    /**
+     * The targets of every stored descriptor this store holds that still exist, keyed "<type>:<id>".
+     *
+     * Read for the whole store at once, in one chunked statement per element type, and held until
+     * the items change: the paths that ask whether a stored relation is empty ask for key after key
+     * and language after language - the validity check of a store with fifty relation keys asks
+     * once per key and language - and a lookup per question would be a statement per key where the
+     * store means to cost one round. Nothing is instantiated for it either.
+     *
+     * @return array<string, true>
+     *
+     * @throws Exception
+     */
+    private function getExistingTargets(): array
+    {
+        if ($this->existingTargets !== null && $this->existingTargetsRevision === $this->itemsRevision) {
+            return $this->existingTargets;
+        }
+
+        $resolver = $this->getRelationResolver();
+        $descriptors = [];
+
+        foreach ($this->items as $keys) {
+            foreach ($keys as $languages) {
+                foreach ($languages as $value) {
+                    if ($value instanceof RelationDescriptor) {
+                        foreach ($resolver->describe($value->getValue()) as $descriptor) {
+                            $descriptors[] = $descriptor;
+                        }
+                    }
+                }
+            }
+        }
+
+        // a store holding no descriptor pays for no statement: the lookup is per element type of
+        // the descriptors handed over, and there are none
+        $this->existingTargets = $resolver->findExistingTargets($descriptors);
+        $this->existingTargetsRevision = $this->itemsRevision;
+
+        return $this->existingTargets;
     }
 
     public static function doGetFallbackValues(): bool
@@ -527,6 +597,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * twice resolves once; the store is not marked dirty for that, as nothing about what is stored
      * changed. A descriptor whose target is gone does mark it dirty - the value the read answers
      * with no longer matches the stored document, and the next ordinary save is what rewrites it.
+     *
+     * A key that is not a relation any more keeps its stored descriptor: the definition in force
+     * cannot read one - it is not a normalizer, so the resolution answers null,
+     * {@see Classificationstore\RelationResolver::resolve()} - and memoizing that null would put it
+     * where the stored value was and have the next ordinary save write it over the document. The
+     * descriptor is handed back as it stands instead, which is what the callers that can be given
+     * one expect: the validity check leaves such a key alone,
+     * {@see ClassDefinition\Data\Classificationstore::checkValidity()}, and the hook of a
+     * definition that cannot read it is not asked either, {@see self::selectKeyValue()}.
      *
      * @param bool $resolveRelations false for a caller that wants the stored descriptor itself,
      *                               {@see self::getStoredKeyValue()}; nothing is resolved and
@@ -544,6 +623,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $data = $this->items[$groupId][$keyId][$language] ?? null;
 
         if ($fieldDefinition === null || !$resolveRelations || !$data instanceof RelationDescriptor) {
+            return $data;
+        }
+
+        if (!$this->getRelationResolver()->isRelation($fieldDefinition)) {
             return $data;
         }
 
@@ -574,57 +657,107 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * What that reader sees is merged across the inheritance chain, {@see self::getItems()}, so
      * every store on that chain renders its own descriptors - a value an ancestor contributes would
-     * otherwise reach the reader as the descriptor the ancestor still holds. The chain is walked the
-     * way the items are merged, and only when inheritance is on, as it is then. A coordinate a store
+     * otherwise reach the reader as the descriptor the ancestor still holds. A coordinate a store
      * holds an already resolved value at contributes `null`, so that the ancestor's rendering does
      * not take the place of the value the nearer store actually holds.
      *
+     * The whole chain is rendered here, against one round of lookups, and the answer carries one
+     * merged map per store on it - the one that store's own reader needs, with the stores nearer to
+     * the object left out of it. The reader walks the chain itself, one level per ancestor whose
+     * values it is still missing, and asking each level for its own rendering would render the
+     * ancestors of level two again at level two, those of level three again at level three: a chain
+     * of H levels would cost H(H+1)/2 rounds of lookups to show one editor tab. So the reader asks
+     * once, {@see ClassDefinition\Data\Classificationstore::getDataForEditmode()}, and takes the map
+     * of the object each of its levels is at.
+     *
+     * The chain is walked whatever {@see Model\DataObject::doGetInheritedValues()} says, because the
+     * reader walks it on the class allowing inheritance alone: with inherited values off, each level
+     * shows its own items, and each level still has to have its descriptors rendered.
+     *
      * @internal
      *
-     * @return array<int, array<int, array<string, RenderedRelation|null>>> groupId => keyId => language
+     * @return array<int, array<int, array<int, array<string, RenderedRelation|null>>>>
+     *         objectId => groupId => keyId => language
      *
      * @throws Exception
      */
     public function renderRelationsForEditMode(): array
     {
-        if (!Model\DataObject::doGetInheritedValues()) {
-            return $this->renderOwnRelationsForEditMode();
+        $chain = $this->collectInheritanceChain();
+        $own = $this->renderChainForEditMode($chain);
+
+        $byObject = [];
+        $merged = [];
+
+        // folded from the far end of the chain, so that every store's map holds its own rendering
+        // over its ancestors' - the way the items it reads are merged, {@see self::mergeArrays()}
+        for ($level = count($chain) - 1; $level >= 0; $level--) {
+            $merged = $this->mergeArrays($own[$level], $merged, self::ITEM_LEVELS);
+            $byObject[(int) $chain[$level]->getObject()?->getId()] = $merged;
         }
 
-        return $this->getAllDataFromField(
-            fn (Classificationstore $store, array $carry): array => $this->mergeArrays(
-                $carry,
-                $store->renderOwnRelationsForEditMode(),
-                self::ITEM_LEVELS
-            )
-        );
+        return $byObject;
     }
 
     /**
-     * @return array<int, array<int, array<string, RenderedRelation|null>>>
+     * The stores an edit mode reader walks from this one, nearest first.
+     *
+     * @return list<Classificationstore>
+     */
+    private function collectInheritanceChain(): array
+    {
+        $chain = [$this];
+        $object = $this->getObject();
+
+        while (!is_null($object) && ($parent = Service::hasInheritableParentObject($object)) !== null) {
+            $store = $parent->{'get' . ucfirst($this->getFieldname())}();
+
+            if (!$store instanceof self) {
+                break;
+            }
+
+            $chain[] = $store;
+            $object = $parent;
+        }
+
+        return $chain;
+    }
+
+    /**
+     * The rendering of each store on the chain, its own descriptors only, against one round of
+     * lookups for all of them together: the requests of every store go into one call, so a chain
+     * costs what a single store costs.
+     *
+     * @param list<Classificationstore> $chain
+     *
+     * @return array<int, array<int, array<int, array<string, RenderedRelation|null>>>> by level
      *
      * @throws Exception
      */
-    private function renderOwnRelationsForEditMode(): array
+    private function renderChainForEditMode(array $chain): array
     {
         $renderer = $this->getRelationEditModeResolver();
-        $rendered = $this->collectResolvedCoordinates();
+        $rendered = [];
         $renderable = [];
 
-        foreach ($this->collectRelationRequests() as $request) {
-            if ($renderer->supports($request->getFieldDefinition())) {
-                $renderable[] = $request;
+        foreach ($chain as $level => $store) {
+            $rendered[$level] = $store->collectResolvedCoordinates();
 
-                continue;
+            foreach ($store->collectRelationRequests() as $request) {
+                if ($renderer->supports($request->getFieldDefinition())) {
+                    $renderable[] = [$level, $request];
+
+                    continue;
+                }
+
+                // a project relation type keeps the resolution it had: the elements go into the
+                // items, and the reader renders them itself
+                $store->resolveItem($request);
+                $rendered[$level][$request->getGroupId()][$request->getKeyId()][$request->getLanguage()] = null;
             }
-
-            // a project relation type keeps the resolution it had: the elements go into the items,
-            // and the reader renders them itself
-            $this->resolveItem($request);
-            $rendered[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()] = null;
         }
 
-        return $this->applyRenderedRelations($rendered, $renderable, $renderer);
+        return $this->applyRenderedRelations($chain, $rendered, $renderable, $renderer);
     }
 
     /**
@@ -655,14 +788,17 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param array<int, array<int, array<string, RenderedRelation|null>>> $rendered
-     * @param list<RelationRequest> $renderable
+     * @param list<Classificationstore> $chain
+     * @param array<int, array<int, array<int, array<string, RenderedRelation|null>>>> $rendered by level
+     * @param list<array{0: int, 1: RelationRequest}> $renderable the level each request belongs to,
+     *                                                           and the request
      *
-     * @return array<int, array<int, array<string, RenderedRelation|null>>>
+     * @return array<int, array<int, array<int, array<string, RenderedRelation|null>>>> by level
      *
      * @throws Exception
      */
     private function applyRenderedRelations(
+        array $chain,
         array $rendered,
         array $renderable,
         RelationEditModeResolver $renderer
@@ -671,9 +807,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return $rendered;
         }
 
-        $relations = $renderer->renderAll($renderable);
+        $relations = $renderer->renderAll(array_column($renderable, 1));
 
-        foreach ($renderable as $index => $request) {
+        foreach ($renderable as $index => [$level, $request]) {
             if ($relations[$index]->hasDroppedTargets()) {
                 // a descriptor whose target is gone has to come out of the stored value, and the
                 // per-relation column values of an advanced key are addressed by the position of
@@ -681,13 +817,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 // what the save rebuilds both the document and those rows from. Rewriting the
                 // descriptor instead would reindex the document and leave the rows behind it.
                 // Only a key that actually lost a target pays for that resolution.
-                $this->resolveItem($request);
-                $rendered[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()] = null;
+                $chain[$level]->resolveItem($request);
+                $rendered[$level][$request->getGroupId()][$request->getKeyId()][$request->getLanguage()] = null;
 
                 continue;
             }
 
-            $rendered[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()]
+            $rendered[$level][$request->getGroupId()][$request->getKeyId()][$request->getLanguage()]
                 = $relations[$index];
         }
 

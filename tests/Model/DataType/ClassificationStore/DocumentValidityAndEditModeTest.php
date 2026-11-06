@@ -275,6 +275,85 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
+     * A stored descriptor whose every target has been deleted is the key holding nothing, so the
+     * value the validity check is handed is the one the inheritable parent contributes.
+     *
+     * Reading the key is what drops a dead target, {@see \Pimcore\Model\DataObject\Classificationstore::readItem()},
+     * so counting a descriptor of nothing but dead targets as a value would make the outcome depend
+     * on whether anyone had read the key: the unread save of a mandatory key would be refused while
+     * the same save after a read of the same unchanged state passed. Both cases are measured, and
+     * they have to agree.
+     *
+     * Nothing is instantiated to decide it: the targets of the whole store are looked up in one
+     * round, {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::findExistingTargets()}.
+     */
+    public function testAMandatoryRelationOfDeadTargetsFallsBackToTheParentOnAnUnreadSave(): void
+    {
+        [$child] = $this->createChildWhoseOwnRelationTargetIsGone('validity-dead-parent-unread');
+
+        $reloaded = Csstorelocalized::getById($child->getId(), ['force' => true]);
+        $reloaded->save();
+
+        $this->assertNotNull(
+            Csstorelocalized::getById($child->getId(), ['force' => true]),
+            'the live value the parent holds is what satisfies the mandatory key'
+        );
+    }
+
+    public function testAMandatoryRelationOfDeadTargetsFallsBackToTheParentWhenItWasReadFirst(): void
+    {
+        [$child, $groupId, $keyId] = $this->createChildWhoseOwnRelationTargetIsGone('validity-dead-parent-read');
+
+        $reloaded = Csstorelocalized::getById($child->getId(), ['force' => true]);
+
+        $this->assertCount(
+            1,
+            $reloaded->getCsstore()->getLocalizedKeyValue($groupId, $keyId),
+            'precondition: the read drops the dead target and inherits the value of the parent'
+        );
+
+        $reloaded->save();
+
+        $this->assertNotNull(Csstorelocalized::getById($child->getId(), ['force' => true]));
+    }
+
+    /**
+     * The same, one language in: a descriptor of nothing but dead targets in one language has to let
+     * the default language answer for the key, read first or not.
+     */
+    public function testAMandatoryRelationOfDeadTargetsFallsBackToTheDefaultLanguageOnAnUnreadSave(): void
+    {
+        [$object] = $this->createObjectWhoseRelationTargetIsGoneInOneLanguage('validity-dead-default-unread');
+
+        $reloaded = Csstorelocalized::getById($object->getId(), ['force' => true]);
+        $reloaded->save();
+
+        $this->assertNotNull(
+            Csstorelocalized::getById($object->getId(), ['force' => true]),
+            'the live value of the default language is what satisfies the mandatory key'
+        );
+    }
+
+    public function testAMandatoryRelationOfDeadTargetsFallsBackToTheDefaultLanguageWhenItWasReadFirst(): void
+    {
+        [$object, $groupId, $keyId] = $this->createObjectWhoseRelationTargetIsGoneInOneLanguage(
+            'validity-dead-default-read'
+        );
+
+        $reloaded = Csstorelocalized::getById($object->getId(), ['force' => true]);
+
+        $this->assertCount(
+            1,
+            $reloaded->getCsstore()->getLocalizedKeyValue($groupId, $keyId, 'en'),
+            'precondition: the read drops the dead target and falls back to the default language'
+        );
+
+        $reloaded->save();
+
+        $this->assertNotNull(Csstorelocalized::getById($object->getId(), ['force' => true]));
+    }
+
+    /**
      * Reading a child's own to-many key replaces its descriptor with the elements, while the parent
      * at the same coordinate still holds the descriptor it was loaded as. The two must not be
      * merged into one another: a value belongs to one store as a whole, and the nearer store's is
@@ -337,6 +416,77 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
         $this->assertIsArray($rows);
         $this->assertSame([$ofTheChild->getId()], array_column($rows, 'id'));
+    }
+
+    /**
+     * A parent holding a live relation value and a child holding its own at the same coordinate,
+     * whose target is then deleted - so the child's stored descriptor names nothing that exists.
+     * The key's assignment to the group is mandatory, which is what makes the value the check
+     * selects decide whether the save passes.
+     *
+     * @return array{0: Csstorelocalized, 1: int, 2: int} the child, and the coordinate of the key
+     */
+    private function createChildWhoseOwnRelationTargetIsGone(string $key): array
+    {
+        $group = $this->createGroup('validity_dead_parent');
+        $keyConfig = $this->createKey('validity_dead_parent_key', true, new ManyToManyObjectRelation());
+        $this->assignKey($group, $keyConfig, 0, true);
+
+        $groupId = (int) $group->getId();
+        $keyId = (int) $keyConfig->getId();
+
+        $ofTheParent = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'dead-parent-live');
+        $ofTheChild = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'dead-parent-dead');
+
+        $parent = new Csstorelocalized();
+        $parent->setParentId(1);
+        $parent->setKey($key . '-parent');
+        $parent->setPublished(true);
+        $parent->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofTheParent]);
+        $parent->save();
+
+        $child = new Csstorelocalized();
+        $child->setParentId($parent->getId());
+        $child->setKey($key . '-child');
+        $child->setPublished(true);
+        $child->getCsstore()->setActiveGroups([$groupId => true]);
+        $child->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofTheChild]);
+        $child->save();
+
+        $ofTheChild->delete();
+
+        return [$child, $groupId, $keyId];
+    }
+
+    /**
+     * One object whose mandatory relation key holds a live value in the default language and a
+     * value in `en` whose target is then deleted.
+     *
+     * @return array{0: Csstorelocalized, 1: int, 2: int} the object, and the coordinate of the key
+     */
+    private function createObjectWhoseRelationTargetIsGoneInOneLanguage(string $key): array
+    {
+        $group = $this->createGroup('validity_dead_default');
+        $keyConfig = $this->createKey('validity_dead_default_key', true, new ManyToManyObjectRelation());
+        $this->assignKey($group, $keyConfig, 0, true);
+
+        $groupId = (int) $group->getId();
+        $keyId = (int) $keyConfig->getId();
+
+        $ofTheDefault = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'dead-default-live');
+        $ofEnglish = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'dead-default-dead');
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey($key);
+        $object->setPublished(true);
+        $object->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofTheDefault]);
+        $object->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofEnglish], 'en');
+        $object->save();
+
+        $ofEnglish->delete();
+
+        return [$object, $groupId, $keyId];
     }
 
     private function createObjectWithRelation(Concrete $object, string $key): Concrete

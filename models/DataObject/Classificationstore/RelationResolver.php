@@ -497,9 +497,34 @@ final class RelationResolver
     public function findDangling(mixed $normalizedValue): array
     {
         $descriptors = $this->describe($normalizedValue);
-        $existing = $this->findExisting($descriptors);
+        $existing = $this->findExistingTargets($descriptors);
 
         return $this->dangling($descriptors, $existing);
+    }
+
+    /**
+     * Whether this stored value still names a target that exists, decided against existence results
+     * the caller already holds, {@see self::findExistingTargets()}.
+     *
+     * No lookup of its own is made, so a store asking it of value after value pays for one round of
+     * lookups rather than one round per value. What the answer decides: a value whose every target
+     * has been deleted is the key holding no relation, so the fallback language, the default
+     * language and the inheritance chain have to be consulted for it exactly as they are for a key
+     * that holds nothing at all - otherwise what a save refuses would depend on whether the key had
+     * been read, reading it first being what drops the dead targets.
+     *
+     * @param array<string, true> $existing {@see self::findExistingTargets()}, over at least the
+     *                                      descriptors this value names
+     */
+    public function hasSurvivingTarget(mixed $normalizedValue, array $existing): bool
+    {
+        foreach ($this->describe($normalizedValue) as $descriptor) {
+            if (isset($existing[$this->keyOf($descriptor)])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -608,7 +633,7 @@ final class RelationResolver
      *
      * @throws Exception
      */
-    private function findExisting(array $descriptors): array
+    public function findExistingTargets(array $descriptors): array
     {
         $existing = [];
 

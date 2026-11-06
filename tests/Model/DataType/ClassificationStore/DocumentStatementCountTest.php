@@ -345,6 +345,61 @@ class DocumentStatementCountTest extends StatementCountTest
     }
 
     /**
+     * The payload does not scale with the depth of the inheritance chain either.
+     *
+     * An unfilled optional key is what makes the payload ask the next ancestor for the values it is
+     * still missing, one level at a time, and every level of the chain holds relation values of its
+     * own. The rendering of the whole chain is read once for the payload,
+     * {@see \Pimcore\Model\DataObject\Classificationstore::renderRelationsForEditMode()}, so one
+     * round of target lookups serves every level: rendering per level would render the ancestors of
+     * level two again at level two and those of level three again at level three, which is
+     * H(H+1)/2 rounds for a chain of H levels.
+     *
+     * Two things are asserted, the second being the one that names the defect. A level costs the
+     * same whichever level it is, so the total grows by the same amount per ancestor - a round of
+     * lookups more per level would not. And the rounds of target lookups are counted directly: one,
+     * whatever the depth.
+     */
+    public function testTheEditModePayloadDoesNotScaleWithTheDepthOfTheChain(): void
+    {
+        $shallow = $this->createRelationHierarchy('relation-editmode-depth-two', 2);
+        $middle = $this->createRelationHierarchy('relation-editmode-depth-three', 3);
+        $deep = $this->createRelationHierarchy('relation-editmode-depth-four', 4);
+
+        $shallowCount = $this->measureRelationEditModeData($shallow);
+        $shallowRounds = $this->countTargetLookupRounds();
+
+        $middleCount = $this->measureRelationEditModeData($middle);
+        $middleRounds = $this->countTargetLookupRounds();
+
+        $deepCount = $this->measureRelationEditModeData($deep);
+        $deepRounds = $this->countTargetLookupRounds();
+        $deepTargets = $this->storedTargetIds($deep);
+
+        $this->assertGreaterThan(0, $shallowCount, 'precondition: building the editmode data reads the database');
+        $this->assertSame(
+            1,
+            $shallowRounds,
+            'precondition: the targets of the chain are looked up in one round'
+        );
+
+        $this->assertSame(
+            $middleCount - $shallowCount,
+            $deepCount - $middleCount,
+            'one more ancestor must cost what the ancestor before it cost, measured '
+            . $shallowCount . ', ' . $middleCount . ' and ' . $deepCount . ' statements'
+            . ' for two, three and four levels'
+        );
+        $this->assertSame(
+            [1, 1, 1],
+            [$shallowRounds, $middleRounds, $deepRounds],
+            'the chain is rendered once per payload whatever its depth, measured '
+            . $shallowRounds . ', ' . $middleRounds . ' and ' . $deepRounds . ' rounds of lookups'
+        );
+        $this->assertNoElementInstantiated($deepTargets, 'and no level may instantiate a target');
+    }
+
+    /**
      * The payload keeps the levels it has today - every active group and every valid language, not
      * only the group being rendered - with the relation value resolved into its elements.
      */
@@ -531,6 +586,64 @@ class DocumentStatementCountTest extends StatementCountTest
         $object->save();
 
         return $object;
+    }
+
+    /**
+     * The rounds of target lookups the measurement just taken issued, counted by the shape of the
+     * statement one round is: the columns the edit mode renders a target from, read for the ids of
+     * a whole chunk at once,
+     * {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::summarize()}.
+     */
+    private function countTargetLookupRounds(): int
+    {
+        $summary = '/^SELECT `id`, `parentId`, `path`.* FROM `objects` WHERE `id` IN/i';
+
+        return count($this->grabStatementsMatching($summary));
+    }
+
+    /**
+     * One chain of objects of the given depth, the deepest of them returned.
+     *
+     * Every level holds a relation value of its own, with targets of its own, so that every level
+     * has something to render. The group carries a second relation key nobody fills: an unfilled
+     * key is what keeps the payload asking the next ancestor for the values it is missing, so the
+     * chain is walked to the top whatever its depth.
+     */
+    private function createRelationHierarchy(string $key, int $depth): Csstorelocalized
+    {
+        $group = $this->createGroup('relationgroup');
+        $filledKey = $this->createRelationKey('relationkeyfilled');
+        $optionalKey = $this->createRelationKey('relationkeyoptional');
+        $this->assignKey($group, $filledKey, 0);
+        $this->assignKey($group, $optionalKey, 1);
+
+        $groupId = (int) $group->getId();
+        $parentId = 1;
+        $deepest = null;
+
+        for ($level = 0; $level < $depth; $level++) {
+            $object = new Csstorelocalized();
+            $object->setParentId($parentId);
+            $object->setKey($key . '-level-' . $level);
+            $object->setPublished(true);
+
+            $store = $object->getCsstore();
+            $store->setActiveGroups([$groupId => true]);
+            $store->setLocalizedKeyValue($groupId, (int) $filledKey->getId(), $this->createTargets(2));
+
+            $object->save();
+
+            $parentId = (int) $object->getId();
+            $deepest = $object;
+        }
+
+        $this->assertInstanceOf(
+            Csstorelocalized::class,
+            $deepest,
+            'precondition: a hierarchy has at least one level'
+        );
+
+        return $deepest;
     }
 
     private function createLocalizedObjectWithRelations(string $key, int $targetCount): Csstorelocalized

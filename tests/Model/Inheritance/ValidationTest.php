@@ -164,10 +164,11 @@ class ValidationTest extends ModelTestCase
      * restored when the read throws.
      *
      * Both reads the validity check can take are stubbed, because which one it takes is not what this test is
-     * about: it selects the value through {@see \Pimcore\Model\DataObject\Classificationstore::getStoredKeyValue()},
-     * which leaves a relation value as the stored descriptor, and resolves through
-     * {@see \Pimcore\Model\DataObject\Classificationstore::getLocalizedKeyValue()} elsewhere. Either way the mode
-     * has to be restored, and stubbing both keeps this test on that question alone.
+     * about: a relation-typed key is selected through
+     * {@see \Pimcore\Model\DataObject\Classificationstore::getStoredKeyValue()}, which leaves the value as its
+     * stored descriptor, and every other key - this fixture's `input` among them - is read through
+     * {@see \Pimcore\Model\DataObject\Classificationstore::getLocalizedKeyValue()} as it always was. Either way the
+     * mode has to be restored, and stubbing both keeps this test on that question alone.
      *
      * @dataProvider inheritedValuesProvider
      */

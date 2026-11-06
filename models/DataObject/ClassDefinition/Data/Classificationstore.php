@@ -215,9 +215,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param array $fieldData structure: [language][groupId][keyId] = field data
      * @param array $metaData structure: [language][groupId][keyId] = array with meta info
+     * @param array|null $renderedRelations the rendered relation values of every store on the
+     *                                      inheritance chain, as
+     *                                      {@see DataObject\Classificationstore::renderRelationsForEditMode()}
+     *                                      answers them: objectId => groupId => keyId => language.
+     *                                      Read once, at the level the payload was asked for, and
+     *                                      handed down from there - so that a chain of H levels
+     *                                      costs one round of lookups rather than H(H+1)/2.
      */
-    private function doGetDataForEditMode(DataObject\Classificationstore $data, Concrete $object, array &$fieldData, array &$metaData, int $level = 1): array
-    {
+    private function doGetDataForEditMode(
+        DataObject\Classificationstore $data,
+        Concrete $object,
+        array &$fieldData,
+        array &$metaData,
+        int $level = 1,
+        ?array $renderedRelations = null
+    ): array {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
@@ -233,8 +246,20 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         );
 
         // this reader takes the items as they are, so the relation descriptors are rendered here -
-        // from their stored descriptors, without instantiating a target
-        $renderedRelations = $data->renderRelationsForEditMode();
+        // from their stored descriptors, without instantiating a target. The whole inheritance
+        // chain is rendered in one round of lookups and the rendering of every store on it comes
+        // back from that one call, so the walk below reuses it rather than rendering the ancestors
+        // of each level again at that level
+        $renderedRelations ??= $data->renderRelationsForEditMode();
+
+        if (!isset($renderedRelations[(int) $object->getId()])) {
+            // a store the walk above did not reach from the object the payload was asked for: it
+            // renders itself, at a round of lookups of its own, rather than letting a descriptor
+            // reach the payload unrendered
+            $renderedRelations += $data->renderRelationsForEditMode();
+        }
+
+        $renderedHere = $renderedRelations[(int) $object->getId()] ?? [];
 
         $items = $data->getItems();
 
@@ -251,7 +276,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $keyLanguages = array_flip($this->getValidLanguages($keyId));
 
                     foreach (array_intersect_key($languages, $keyLanguages) as $language => $value) {
-                        $fdata = $renderedRelations[$groupId][$keyId][$language] ?? $value;
+                        $fdata = $renderedHere[$groupId][$keyId][$language] ?? $value;
                         if (!isset($fieldData[$language][$groupId][$keyId]) || $this->isValueEmpty($fd, $fieldData[$language][$groupId][$keyId])) {
                             // never override existing data
                             $fieldData[$language][$groupId][$keyId] = $fdata;
@@ -298,7 +323,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     // still some values are missing, ask the parent
                     $getter = 'get' . ucfirst($this->getName());
                     $parentData = $parent->$getter();
-                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                    $parentResult = $this->doGetDataForEditMode(
+                        $parentData,
+                        $parent,
+                        $fieldData,
+                        $metaData,
+                        $level + 1,
+                        $renderedRelations
+                    );
                 }
             }
         }
@@ -824,15 +856,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         $keyDef->setMandatory(true);
                     }
 
+                    // only a relation-typed key is selected without being resolved; every other key
+                    // is read the way it always was, through getLocalizedKeyValue(). The two reads
+                    // differ in that alone, and a key that is not stored as descriptors has to keep
+                    // the read the store offers for it: a store overriding that read answers for
+                    // every key it holds, and the inherited-values mode it leaves behind when it
+                    // throws is what Inheritance\ValidationTest guards.
+                    $isRelationKey = $this->getRelationResolver()->isRelation($keyDef);
+
                     foreach ($this->getValidLanguages($keyId) as $validLanguage) {
                         $object = $data->getObject();
                         if ($object->getClass()->getAllowInherit()) {
-                            // the inherited value is selected without a relation-typed one being
+                            // the inherited value of a relation key is selected without being
                             // resolved, so that a reload-and-save of an inheritable class reads no
                             // target of a key nobody looked at
                             $value = DataObject\Service::useInheritedValues(
                                 true,
-                                fn () => $data->getStoredKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                fn () => $isRelationKey
+                                    ? $data->getStoredKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                    : $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
                             );
                         } else {
                             $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;

@@ -18,7 +18,7 @@ key can only be added once to that object.
 * An object can have more than one classification store.
 * Localization is supported and chosen per key; the class definition setting is the default for the keys that do not decide.
 * The classification store introduces the concept of a fallback language.
-* All simple data types, plus the structured types that ship a Classification Store marshaller, are supported - see [Available Data Types](#available-data-types). The store can be extended with custom data types.
+* Which data types a key may use depends on the storage engine of its store - every simple data type on both, the structured types that ship a Classification Store marshaller on the EAV engine, and whatever `normalize()` returns, relations included, on the document engine. See [Available Data Types](#available-data-types). The store can be extended with custom data types.
 * Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc).
 * Keys can be organized in groups.
 * A key can belong to several groups.
