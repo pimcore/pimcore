@@ -173,11 +173,13 @@ class DocumentStatementCountTest extends StatementCountTest
     }
 
     /**
-     * A save that never read its relation keys writes the descriptors back as they are, so the rows
-     * of the store it touches do not grow with the number of targets they hold either.
+     * A save that never read its relation keys writes the descriptors back as they are, so what it
+     * costs does not grow with the number of targets they hold either.
      *
-     * The classification store's own statements are what is counted here, paired with the assertion
-     * that no target was instantiated - which is what a total would otherwise be hiding.
+     * Every statement the save issues is counted, not the classification store's own alone: an
+     * element load per descriptor is exactly the cost that would otherwise sit outside the counter
+     * while it reported a bound. The assertion that no target was instantiated is kept next to it,
+     * because it names the failure rather than only the number.
      */
     public function testSavingAnObjectWhoseRelationKeysWereNeverReadDoesNotTouchTheStorePerTarget(): void
     {
@@ -192,7 +194,7 @@ class DocumentStatementCountTest extends StatementCountTest
         $this->assertSame(
             $fewCount,
             $manyCount,
-            'saving an unread store of 20 targets must touch the rows one of one target touches'
+            'saving an unread store of 20 targets must cost what one of one target costs'
             . ', measured ' . $fewCount . ' against ' . $manyCount . ' statements'
         );
         $this->assertNoElementInstantiated($manyTargets, 'and must resolve none of them');
@@ -227,8 +229,8 @@ class DocumentStatementCountTest extends StatementCountTest
         $this->assertSame(
             $fewCount,
             $manyCount,
-            'saving an unread store of 20 targets on an inheritable class must touch the rows one of'
-            . ' one target touches, measured ' . $fewCount . ' against ' . $manyCount . ' statements'
+            'saving an unread store of 20 targets on an inheritable class must cost what one of one'
+            . ' target costs, measured ' . $fewCount . ' against ' . $manyCount . ' statements'
         );
         $this->assertNoElementInstantiated($manyTargets, 'and must resolve none of them');
     }
@@ -398,8 +400,16 @@ class DocumentStatementCountTest extends StatementCountTest
      *                                          whether the validity check walks the inheritance
      *                                          chain for its values
      *
-     * @return int the statements against a classification store table that loading the object and
-     *             saving it again cost, with none of its relation keys read in between
+     * @return int every statement that loading the object and saving it again cost, with none of its
+     *             relation keys read in between - whichever table it addresses,
+     *             {@see AbstractBatchedRelationTest::countStatements()}. A counter restricted to the
+     *             classification store's own tables would report the same number for both fixtures
+     *             while an element per descriptor was being loaded behind it, which is the one thing
+     *             the callers of this bound are asserting does not happen.
+     *
+     *             An untouched re-save adds no per-target cost of its own to compare against: the
+     *             dependency delta of {@see \Pimcore\Model\Dependency\Dao::save()} finds every row
+     *             already there, so it issues its one SELECT and neither inserts nor deletes.
      */
     private function measureUntouchedSave(int $objectId, string $className = Csstore::class): int
     {
@@ -408,7 +418,7 @@ class DocumentStatementCountTest extends StatementCountTest
 
         $className::getById($objectId, ['force' => true])->save();
 
-        return $this->countReadStatements() + $this->countWriteStatements();
+        return $this->countStatements();
     }
 
     /**

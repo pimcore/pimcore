@@ -163,6 +163,12 @@ class ValidationTest extends ModelTestCase
      * The classification store has no retry, but it reads each value in inherited-values mode. That mode must be
      * restored when the read throws.
      *
+     * Both reads the validity check can take are stubbed, because which one it takes is not what this test is
+     * about: it selects the value through {@see \Pimcore\Model\DataObject\Classificationstore::getStoredKeyValue()},
+     * which leaves a relation value as the stored descriptor, and resolves through
+     * {@see \Pimcore\Model\DataObject\Classificationstore::getLocalizedKeyValue()} elsewhere. Either way the mode
+     * has to be restored, and stubbing both keeps this test on that question alone.
+     *
      * @dataProvider inheritedValuesProvider
      */
     public function testFailedClassificationstoreReadRestoresInheritedValues(bool $inheritedValues): void
@@ -209,6 +215,16 @@ class ValidationTest extends ModelTestCase
                 }
 
                 public function getLocalizedKeyValue(
+                    int $groupId,
+                    int $keyId,
+                    ?string $language = 'default',
+                    bool $ignoreFallbackLanguage = false,
+                    bool $ignoreDefaultLanguage = false
+                ): mixed {
+                    throw new DomainException('read failed');
+                }
+
+                public function getStoredKeyValue(
                     int $groupId,
                     int $keyId,
                     ?string $language = 'default',
