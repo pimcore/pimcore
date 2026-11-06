@@ -315,6 +315,32 @@ class SaveIntoExistingVersionTest extends ModelTestCase
     }
 
     /**
+     * Once the element is saved again, the version published in place is no longer the current one: the step-based
+     * cleanup ranks it by its version count, as the previous state, ahead of a stale draft with a newer id
+     */
+    public function testStepCleanupRanksAVersionPublishedInPlaceByItsVersionCountAfterTheNextSave(): void
+    {
+        $object = $this->createFreshElement('object');
+        $firstDraft = $object->saveVersion();
+        $this->assertNotNull($firstDraft, 'expected a draft version to be saved');
+        $secondDraft = $object->saveVersion();
+        $this->assertNotNull($secondDraft, 'expected a second draft version to be saved');
+        $this->assertGreaterThan($firstDraft->getId(), $secondDraft->getId());
+
+        $firstDraft = Version::getById($firstDraft->getId());
+        $this->assertNotNull($firstDraft);
+        $restored = $firstDraft->getData();
+        $this->publish($restored);
+        $restored->save(['existingVersion' => $firstDraft]);
+        $this->reload($object)->save();
+
+        $outdatedVersionIds = array_map('intval', (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]));
+
+        $this->assertNotContains($firstDraft->getId(), $outdatedVersionIds, 'the previously published version must be kept as the step before the current state');
+        $this->assertContains($secondDraft->getId(), $outdatedVersionIds, 'the stale draft with the newer id must be cleaned up');
+    }
+
+    /**
      * Dates have second precision: versions saved within the same second as the publish must not outrank the
      * version that is published in place
      */
@@ -381,10 +407,10 @@ class SaveIntoExistingVersionTest extends ModelTestCase
     }
 
     /**
-     * The step-based cleanup still ranks versions by id: an explicitly set modification date (e.g. by an import)
-     * must not change which versions are cleaned up
+     * The step-based cleanup ranks versions by their version count, not by date: an explicitly set modification date
+     * (e.g. by an import) must not change which versions are cleaned up
      */
-    public function testStepCleanupRanksVersionsByIdWithExplicitModificationDates(): void
+    public function testStepCleanupRanksVersionsByVersionCountWithExplicitModificationDates(): void
     {
         $object = $this->createFreshElement('object');
         $versionIds = [];
@@ -397,8 +423,8 @@ class SaveIntoExistingVersionTest extends ModelTestCase
 
         $outdatedVersionIds = array_map('intval', (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]));
 
-        $this->assertContains($versionIds[0], $outdatedVersionIds, 'the oldest version by id must be cleaned up');
-        $this->assertNotContains($versionIds[1], $outdatedVersionIds, 'the newer versions by id must be kept');
+        $this->assertContains($versionIds[0], $outdatedVersionIds, 'the oldest version by version count must be cleaned up');
+        $this->assertNotContains($versionIds[1], $outdatedVersionIds, 'the newer versions by version count must be kept');
         $this->assertNotContains($versionIds[2], $outdatedVersionIds, 'the current version must be kept');
     }
 
