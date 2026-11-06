@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Block;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class PasswordTest extends TestCase
@@ -276,5 +278,135 @@ class PasswordTest extends TestCase
 
         $this->assertSame('******', $result);
         $this->assertStringNotContainsString(self::HASH, $result);
+    }
+
+    public function testGetDataFromEditmodeUsesSubmittedLanguageInsideFieldcollection(): void
+    {
+        $item = new class extends AbstractData {
+            public function getSecret(?string $language = null): ?string
+            {
+                // the active locale is English, the submitted language is German
+                return $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+            }
+        };
+        $object = new class($item) extends Concrete {
+            public function __construct(private AbstractData $item)
+            {
+            }
+
+            public function getCollection(): Fieldcollection
+            {
+                return new Fieldcollection([$this->item], 'collection');
+            }
+        };
+
+        $result = $this->buildField()->getDataFromEditmode('******', $object, [
+            'language' => 'de',
+            'context' => ['containerType' => 'fieldcollection', 'fieldname' => 'collection', 'index' => 0, 'oIndex' => 0],
+        ]);
+
+        $this->assertSame(self::HASH_FOR_ITEM, $result);
+    }
+
+    public function testGetDataFromEditmodeUsesSubmittedLanguageInsideObjectbrick(): void
+    {
+        $brick = new class() {
+            public function getSecret(?string $language = null): string
+            {
+                return $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+            }
+        };
+        $container = new class($brick) {
+            public function __construct(private object $brick)
+            {
+            }
+
+            public function getMyBrick(): object
+            {
+                return $this->brick;
+            }
+        };
+        $object = new class($container) extends Concrete {
+            public function __construct(private object $container)
+            {
+            }
+
+            public function getBricks(): object
+            {
+                return $this->container;
+            }
+        };
+
+        $result = $this->buildField()->getDataFromEditmode('******', $object, [
+            'language' => 'de',
+            'context' => ['containerType' => 'objectbrick', 'fieldname' => 'bricks', 'containerKey' => 'myBrick'],
+        ]);
+
+        $this->assertSame(self::HASH_FOR_ITEM, $result);
+    }
+
+    public function testGetDataFromEditmodeKeepsStoredHashOfLocalizedFieldInsideBlock(): void
+    {
+        $localized = (new Localizedfield())->setItems([
+            'de' => ['secret' => self::HASH_FOR_ITEM],
+            'en' => ['secret' => self::HASH],
+        ]);
+        $object = new class($localized) extends Concrete {
+            public function __construct(private readonly Localizedfield $localized)
+            {
+            }
+
+            public function getBlocks(?string $language = null): array
+            {
+                return [['localizedfields' => new BlockElement('localizedfields', 'localizedfields', $this->localized)]];
+            }
+        };
+        $field = $this->buildField();
+        $context = ['containerType' => 'block', 'fieldname' => 'blocks', 'index' => 0, 'oIndex' => 0];
+
+        $this->assertSame(self::HASH_FOR_ITEM, $field->getDataFromEditmode('******', $object, ['language' => 'de', 'context' => $context]));
+        $this->assertSame(self::HASH, $field->getDataFromEditmode('******', $object, ['language' => 'en', 'context' => $context]));
+    }
+
+    public function testGetDataFromEditmodeWithMaskFailsSafeWhenBlockElementIsMissing(): void
+    {
+        $object = new class extends Concrete {
+            public function getBlocks(?string $language = null): array
+            {
+                return [['other' => new BlockElement('other', 'input', 'x')]];
+            }
+        };
+
+        $this->expectException(Exception::class);
+
+        $this->buildField()->getDataFromEditmode('******', $object, [
+            'language' => 'de',
+            'context' => ['containerType' => 'block', 'fieldname' => 'blocks', 'index' => 0, 'oIndex' => 0],
+        ]);
+    }
+
+    public function testBlockForwardsTheSubmittedLanguageToItsPasswordChild(): void
+    {
+        // a block inside a localized field: the block receives the language and has to pass it on
+        $object = new class extends Concrete {
+            public function getBlocks(?string $language = null): array
+            {
+                $hash = $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+
+                return [['secret' => new BlockElement('secret', 'password', $hash)]];
+            }
+
+            public function getClassId(): string
+            {
+                return 'x';
+            }
+        };
+        $block = new Block();
+        $block->setName('blocks');
+        $block->setChildren([$this->buildField()]);
+
+        $result = $block->getDataFromEditmode([['oIndex' => 0, 'data' => ['secret' => '******']]], $object, ['language' => 'de']);
+
+        $this->assertSame(self::HASH_FOR_ITEM, $result[0]['secret']->getData());
     }
 }

@@ -340,6 +340,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $elementData,
                         $object,
                         [
+                            // keep the language of an enclosing localized field
+                            ...(isset($params['language']) ? ['language' => $params['language']] : []),
                             'context' => [
                                 'containerType' => 'block',
                                 'fieldname' => $this->getName(),

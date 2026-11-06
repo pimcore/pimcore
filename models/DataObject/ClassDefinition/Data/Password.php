@@ -221,7 +221,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             if ($item === null || !method_exists($item, $getter)) {
                 throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
             }
-            $value = $item->$getter();
+            $value = isset($params['language']) ? $item->$getter($params['language']) : $item->$getter();
         } elseif ($containerType === 'objectbrick') {
             $containerGetter = 'get' . ucfirst((string) ($context['fieldname'] ?? ''));
             $brickGetter = 'get' . ucfirst((string) ($context['containerKey'] ?? ''));
@@ -234,7 +234,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             if (!method_exists($brick, $getter)) {
                 throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
             }
-            $value = $brick->$getter();
+            $value = isset($params['language']) ? $brick->$getter($params['language']) : $brick->$getter();
         } elseif ($containerType === 'block') {
             $oIndex = $context['oIndex'] ?? null;
             if ($oIndex === null) {
@@ -245,9 +245,21 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             if (!method_exists($object, $blockGetter)) {
                 throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
             }
-            $items = $object->$blockGetter($params['language'] ?? null);
-            $element = is_array($items) ? ($items[$oIndex][$this->getName()] ?? null) : null;
-            $value = $element instanceof DataObject\Data\BlockElement ? $element->getData() : null;
+            $language = $params['language'] ?? null;
+            $items = $object->$blockGetter($language);
+            $row = is_array($items) ? ($items[$oIndex] ?? null) : null;
+            $element = is_array($row) ? ($row[$this->getName()] ?? null) : null;
+            $localizedElement = is_array($row) ? ($row['localizedfields'] ?? null) : null;
+
+            if ($element instanceof DataObject\Data\BlockElement) {
+                $value = $element->getData();
+            } elseif ($language !== null && $localizedElement instanceof DataObject\Data\BlockElement
+                && $localizedElement->getData() instanceof DataObject\Localizedfield) {
+                // a localized password keeps its values per language below the localized fields of the row
+                $value = $localizedElement->getData()->getItems()[$language][$this->getName()] ?? null;
+            } else {
+                throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+            }
         } else {
             // other containers: the stored value cannot be resolved reliably
             throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
