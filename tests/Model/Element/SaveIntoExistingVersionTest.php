@@ -772,6 +772,64 @@ class SaveIntoExistingVersionTest extends ModelTestCase
     }
 
     /**
+     * The stored state of a version is read from its locked row, not from the snapshot of the running transaction: a
+     * move of the version to another storage committed after that snapshot was taken is restored where it is stored
+     */
+    public function testTheStoredVersionIsReadFromTheLockedRow(): void
+    {
+        $this->createVersionsDataTable();
+        $fileSystemAdapter = new FileSystemVersionStorageAdapter();
+        $databaseAdapter = new DatabaseVersionStorageAdapter(Db::get());
+        $proxy = $this->getStorageAdapterProxy();
+        $object = $this->createFreshElement('object');
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+
+        try {
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(PHP_INT_MAX, $databaseAdapter, $fileSystemAdapter));
+            $draft = $object->saveVersion();
+            $this->assertNotNull($draft, 'expected a draft version to be saved');
+            $loadedDraft = Version::getById($draft->getId());
+            $this->assertNotNull($loadedDraft);
+            $this->assertSame('db', $loadedDraft->getStorageType(), 'expected the draft in the database');
+            $movedMetaData = $databaseAdapter->loadMetaData($loadedDraft);
+            $this->assertNotNull($movedMetaData);
+            $restored = $loadedDraft->getData();
+            $this->publish($restored);
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(1, $databaseAdapter, $fileSystemAdapter));
+
+            // the snapshot of the transaction is taken before another writer moves the version to the file system
+            Db::get()->beginTransaction();
+            $this->assertSame('db', Db::get()->fetchOne('SELECT storageType FROM versions WHERE id = ?', [$draft->getId()]));
+            $movedVersion = clone $loadedDraft;
+            $movedVersion->setStorageType('fs');
+            $fileSystemAdapter->save($movedVersion, $movedMetaData, null);
+            $otherConnection->executeStatement('UPDATE versions SET storageType = ? WHERE id = ?', ['fs', $draft->getId()]);
+
+            $failingListener = static function (): void {
+                throw new Exception('publishing failed');
+            };
+            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+            try {
+                $restored->save(['existingVersion' => $loadedDraft]);
+                $this->fail('publishing must fail');
+            } catch (Exception $e) {
+                $this->assertSame('publishing failed', $e->getMessage());
+            } finally {
+                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+                while (Db::get()->isTransactionActive()) {
+                    Db::get()->rollBack();
+                }
+            }
+        } finally {
+            $this->restoreStorageAdapter();
+            $otherConnection->close();
+        }
+
+        $this->assertSame($movedMetaData, $fileSystemAdapter->loadMetaData($movedVersion), 'the data of the moved version must be restored');
+    }
+
+    /**
      * A version storage with its own database connection isn't rolled back with the element: restoring an asset version
      * that owns its binary data keeps that data
      */

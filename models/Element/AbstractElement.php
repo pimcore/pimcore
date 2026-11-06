@@ -754,15 +754,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         try {
-            // every write of a version locks its row first (Version\Dao::save()), so no other write of this version
-            // happens until the transaction is committed or rolled back
-            $db->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE', [$version->getId()]);
-
-            // the stored state of the version, it may differ from the given one (e.g. moved to another storage)
-            $storedVersion = Model\Version::getById($version->getId());
-            $metaData = $storedVersion instanceof Model\Version
-                ? Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($storedVersion)
-                : null;
+            // the stored state of the version, it may differ from the given one (e.g. moved to another storage): its row
+            // is locked and read as it is stored, not from the snapshot of the transaction. Every write of a version
+            // locks its row first (Version\Dao::save()), so no other write of it happens until the transaction is
+            // committed or rolled back
+            /** @var Model\Version $storedVersion */
+            $storedVersion = self::getModelFactory()->build(Model\Version::class);
+            $storedVersion->getDao()->getById($version->getId(), true);
+            $metaData = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($storedVersion);
             if ($metaData === null) {
                 throw new RuntimeException(sprintf(
                     'The stored data of version %d cannot be read, so it cannot be restored and the version cannot be written into',
