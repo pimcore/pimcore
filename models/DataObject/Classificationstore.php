@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
 /**
@@ -171,12 +172,80 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return $this->items;
         }
 
+        // The walk starts at this store itself, whose own values are not inherited values: they are
+        // taken whatever their key's definition says about inheritance. Every store after it is an
+        // ancestor's and contributes only the keys that may be inherited at all, the same question
+        // {@see self::getLocalizedKeyValue()} asks of the one key it reads - a value a per-key read
+        // refuses to inherit must not arrive through the whole-store read instead.
+        $own = true;
+
         return $this->getAllDataFromField(
-            fn ($classificationStore, $fieldsArray) => $this->mergeArrays(
-                $fieldsArray,
-                $classificationStore->items
-            )
+            function ($classificationStore, $fieldsArray) use (&$own) {
+                $items = $own
+                    ? $classificationStore->items
+                    : $this->inheritableItems($classificationStore->items);
+                $own = false;
+
+                return $this->mergeArrays($fieldsArray, $items);
+            }
         );
+    }
+
+    /**
+     * The items of an ancestor's store this store may read as inherited values: the ones whose key
+     * is defined with a field type that supports inheritance.
+     *
+     * The question is asked of the KEY's definition rather than of the field's, because one store
+     * holds keys of many types at once. `consent` is the type in the set this release unlocks that
+     * answers no ({@see Model\DataObject\ClassDefinition\Data\Consent::supportsInheritance()}): a
+     * consent is the record of what one data subject agreed to, so a child object reading its
+     * parent's grant - and the id of the audit note behind it - would answer "has this one
+     * consented" with somebody else's answer. An `input` key beside it inherits as it always has.
+     *
+     * @param array<int, array<int, array<string, mixed>>> $items structure: [groupId][keyId][language]
+     *
+     * @return array<int, array<int, array<string, mixed>>>
+     */
+    private function inheritableItems(array $items): array
+    {
+        $keyIds = [];
+        foreach ($items as $keys) {
+            foreach (array_keys($keys) as $keyId) {
+                $keyIds[] = (int) $keyId;
+            }
+        }
+
+        // resolved in one statement on a cold cache rather than one per key: this runs on every
+        // read of a store that has an inheritable ancestor
+        Model\DataObject\Classificationstore\DefinitionCache::load($keyIds);
+
+        $inheritable = [];
+
+        foreach ($items as $groupId => $keys) {
+            foreach ($keys as $keyId => $values) {
+                if ($this->keySupportsInheritance((int) $keyId)) {
+                    $inheritable[$groupId][$keyId] = $values;
+                }
+            }
+        }
+
+        return $inheritable;
+    }
+
+    /**
+     * Whether a value of this key may be inherited. A key whose config has gone - deleted while
+     * values of it are still stored - is answered the way it was answered before this check
+     * existed, because nothing is known about it to answer otherwise.
+     */
+    private function keySupportsInheritance(int $keyId): bool
+    {
+        $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
+        if (!$keyConfig) {
+            return true;
+        }
+
+        return Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+            ->supportsInheritance();
     }
 
     public function setObject(Concrete $object): static
@@ -259,26 +328,42 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 $oldData = $dataDefinition->getDataForResource($oldValue, $this->object, ['owner' => $this]);
                 $newData = $dataDefinition->getDataForResource($value, $this->object, ['owner' => $this]);
 
-                // `null` on both sides is not evidence that the value is unchanged: it is also
-                // what a definition whose resource form cannot carry the value returns for every
-                // value it is handed. ClassDefinition\Data\EncryptedField::getDataForResource()
-                // does exactly that when its delegate is not ResourcePersistenceAware - a
-                // combination this release accepts, because the document engine stores what
-                // normalize() returns and needs no resource form at all - so every value of such
-                // a key would compare equal to the one before it, the save would find a clean
-                // store and the edit would be lost without an error. Two values that are both
-                // absent are the one case where two nulls do say the value is unchanged.
+                // two resource forms that are both `null` are not evidence that the value is
+                // unchanged: that is also what a definition whose resource form cannot carry the
+                // value returns for every value it is handed.
+                // ClassDefinition\Data\EncryptedField::getDataForResource() does exactly that when
+                // its delegate is not ResourcePersistenceAware - a combination this release
+                // accepts, because the document engine stores what normalize() returns and needs no
+                // resource form at all. Two values that are both absent are the one case where two
+                // nulls do say the value is unchanged.
                 $undecided = $newData === null && $oldData === null
                     && ($value !== null || $oldValue !== null);
 
                 if ($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\Password) {
                     $value = $newData;
+                    $differ = $newData != $oldData;
                 } else {
-                    $oldData = serialize($oldData);
-                    $newData = serialize($newData);
+                    $differ = serialize($newData) != serialize($oldData);
                 }
 
-                if ($undecided || $newData != $oldData) {
+                // Resource forms that differ say the value changed. Resource forms that are equal
+                // do not say it did not, and `null` on both sides is only the loudest way they
+                // mislead: a resource form can also be NARROWER than what is stored.
+                // StructuredTable::getDataForResource() returns one entry per configured row and
+                // column - `[]` for a table with none at all - while
+                // StructuredTable::normalize() keeps the whole table, and a document holds what
+                // normalize() returns. So two values a document tells apart have equal resource
+                // forms, the save finds a clean store and writes nothing, and the edit is lost
+                // without an error.
+                //
+                // An equal resource form is therefore confirmed against the normalized form, the
+                // representation the document engine stores. A definition that cannot answer there
+                // leaves the resource form's verdict standing, which is what every release before
+                // this one went on.
+                $sameValue = !$differ && ($this->normalizedFormsAgree($dataDefinition, $oldValue, $value)
+                    ?? !$undecided);
+
+                if (!$sameValue) {
                     $this->markFieldDirty('_self');
                 }
             } else {
@@ -314,6 +399,46 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         return $this;
+    }
+
+    /**
+     * Whether two values of a key normalize to the same thing, or `null` when nothing here can
+     * answer that.
+     *
+     * The normalized form is the one a document holds - {@see Classificationstore\Engine\DocumentEngine}
+     * stores what `normalize()` returns - so it is the representation that decides whether a write
+     * would change anything, and it is lossless for the value in a way a resource form built for
+     * two database columns need not be.
+     *
+     * The two are compared as JSON because that is how the document holds them, and because it is
+     * the one comparison a value that refers back to this store cannot take down: a value handed out
+     * by this store carries it as its owner ({@see self::attachOwner()}), and an owner is a way out
+     * of the value and into the whole object graph. `json_encode()` reports such a cycle as an
+     * error, where `serialize()` would walk it and `==` would exhaust the nesting limit. A form JSON
+     * cannot carry is no answer, the same as no normalizer at all.
+     *
+     * Only an Exception is read as "cannot tell" - that is what a form JSON cannot carry arrives as.
+     * A PHP Error is a fault in this code rather than evidence about a value, so it propagates, the
+     * same way {@see Classificationstore\Engine\DocumentEngine::encodesTheSameValue()} lets one
+     * through.
+     */
+    private function normalizedFormsAgree(
+        Model\DataObject\ClassDefinition\Data $dataDefinition,
+        mixed $oldValue,
+        mixed $value
+    ): ?bool {
+        if (!$dataDefinition instanceof NormalizerInterface) {
+            return null;
+        }
+
+        $params = ['object' => $this->object, 'fieldDefinition' => $dataDefinition];
+
+        try {
+            return json_encode($dataDefinition->normalize($oldValue, $params), JSON_THROW_ON_ERROR)
+                === json_encode($dataDefinition->normalize($value, $params), JSON_THROW_ON_ERROR);
+        } catch (Exception) {
+            return null;
+        }
     }
 
     /**
@@ -452,8 +577,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         // check for inherited value
+        //
+        // A key whose field type does not support inheritance does not read its ancestor's value,
+        // the same way DataObject\Localizedfield::getLocalizedValue() consults
+        // `$fieldDefinition->supportsInheritance()` before walking up, and DataObject\Concrete\Dao
+        // does for a field of the object itself. The question is the key's, not the field's: a
+        // store holds keys of many types, and `consent` is the one in the set this release unlocks
+        // that answers no - see {@see self::inheritableItems()} for why it does.
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
+        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues && $fieldDefinition->supportsInheritance()) {
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();

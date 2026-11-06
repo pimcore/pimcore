@@ -68,15 +68,34 @@ class EncryptedField implements OwnerAwareFieldInterface
     public function __sleep(): array
     {
         if ($this->plain) {
+            $detached = [];
+
             try {
                 $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
                 $key = Key::loadFromAsciiSafeString($key);
                 $data = $this->plain;
-                //clear owner to avoid recursion
-                if ($data instanceof OwnerAwareFieldInterface) {
-                    $data->_setOwner(null);
-                    $data->_setOwnerFieldname('');
-                }
+
+                // An owner anywhere in the plaintext is a way out of the plaintext and into the
+                // container this field sits in - which holds this field, whose __sleep() encrypts
+                // the plaintext by serializing it again. PHP's own cycle detection does not reach
+                // across that: each Serialize::serialize() call below is a fresh serialization in
+                // which this object has not been seen yet, so the nesting does not terminate and
+                // the serialization of a version (Model\Version::save()) exhausts memory.
+                //
+                // The whole graph has to go, not only its root. The plaintext of a key is as often
+                // a plain array of owner-aware values - a `geopolygon` is an array of
+                // Data\GeoCoordinates - as it is one of them, and an owner-aware value has
+                // owner-aware members of its own: an `imageGallery` holds its Data\Hotspotimage
+                // items, a `geobounds` its two corners. Each of those carries the owner that
+                // DataObject\Classificationstore::attachOwner() gave it so that its own setters
+                // reach the store's dirty flag, and each of them is the same way back out.
+                //
+                // They are put back in `finally`, whatever happened in between: the owner is what
+                // makes a later `$gallery->getItems()[0]->setCrop(...)` mark the store dirty, and
+                // serializing an object for a version must not quietly stop the next edit of that
+                // value from being saved.
+                $this->detachOwners($data, $detached);
+
                 $data = Serialize::serialize($data);
 
                 $data = Crypto::encrypt($data, $key, true);
@@ -85,12 +104,69 @@ class EncryptedField implements OwnerAwareFieldInterface
                 Logger::error((string) $e);
 
                 throw new Exception('could not load key');
+            } finally {
+                foreach ($detached as $owned) {
+                    $owned['value']
+                        ->_setOwner($owned['owner'])
+                        ->_setOwnerFieldname($owned['fieldname'])
+                        ->_setOwnerLanguage($owned['language']);
+                }
             }
 
             return ['encrypted', '_owner'];
         }
 
         return [];
+    }
+
+    /**
+     * Takes the owner off every owner-aware value the plaintext is made of, recording what each one
+     * held so that {@see self::__sleep()} can put it back.
+     *
+     * The walk is the one {@see \Pimcore\Model\DataObject\Classificationstore::attachOwner()} makes,
+     * in reverse and for the same reason: an array is descended into, so is an owner-aware value's
+     * own members, and nothing else - which stops it at the elements a value references, an asset
+     * or an object, rather than walking an element graph. The identity guard keeps a value that
+     * holds itself from looping, and this field is never descended into: it is the thing being
+     * serialized.
+     *
+     * @param array<int, array{value: OwnerAwareFieldInterface, owner: mixed, fieldname: ?string,
+     *     language: ?string}> $detached
+     * @param array<int, true> $seen the values already visited on this walk, by object id
+     */
+    private function detachOwners(mixed $value, array &$detached, array &$seen = []): void
+    {
+        if (is_array($value)) {
+            foreach ($value as $member) {
+                $this->detachOwners($member, $detached, $seen);
+            }
+
+            return;
+        }
+
+        if (!$value instanceof OwnerAwareFieldInterface || isset($seen[spl_object_id($value)])) {
+            return;
+        }
+
+        $seen[spl_object_id($value)] = true;
+
+        $detached[] = [
+            'value' => $value,
+            'owner' => $value->_getOwner(),
+            'fieldname' => $value->_getOwnerFieldname(),
+            'language' => $value->_getOwnerLanguage(),
+        ];
+
+        $value->_setOwner(null);
+        $value->_setOwnerFieldname('');
+
+        // the members of the value, whatever their visibility: a container holds its children in a
+        // protected property, and the one that reads them back is a getter this code cannot name
+        foreach ((array) $value as $member) {
+            if ($member !== $this) {
+                $this->detachOwners($member, $detached, $seen);
+            }
+        }
     }
 
     /**
