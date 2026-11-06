@@ -26,12 +26,13 @@ use Pimcore\Model\Version;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
+     * With $forUpdate the row is locked and read as it is stored, not from the snapshot of the running transaction
      *
      * @throws NotFoundException
      */
-    public function getById(int $id): void
+    public function getById(int $id, bool $forUpdate = false): void
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?', [$id]);
+        $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?' . ($forUpdate ? ' FOR UPDATE' : ''), [$id]);
 
         if (!$data) {
             throw new NotFoundException('version with id ' . $id . ' not found');
