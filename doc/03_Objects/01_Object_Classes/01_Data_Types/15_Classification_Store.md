@@ -100,7 +100,11 @@ defined.
 * Localization is chosen per key: a key's own `localized` flag decides
   (`Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()`), and the class definition setting
   here is only the default for the keys that carry none (it is deprecated for that reason). By default no key
-  decides and the setting is off, so only the `default` language is available
+  decides and the setting is off, so only the `default` language is available. Because the languages belong to
+  the key, the layout the object editor is handed carries each key's effective flag with it: every entry of
+  `activeGroupDefinitions[<groupId>]['keys']` has a `localized` boolean beside its `name`, `id`, `description`
+  and `definition`. It is answered for every enabled key of an active group, filled or empty, which is what
+  lets a client tell a localized key inside a non-localized field from its non-localized siblings
 * Allowed groups can be restricted by providing a comma-separated list of group ids
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first

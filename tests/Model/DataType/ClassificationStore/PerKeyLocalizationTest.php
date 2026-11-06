@@ -404,6 +404,79 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
     }
 
     /**
+     * An empty key that is not calculated appears nowhere in the edit mode data - there is neither a
+     * stored nor an inherited value to report - so the key's layout entry is the only place the
+     * editor can read the languages of that key from. It carries the effective flag whether the key
+     * holds a value or not, so a localized key inside a non-localized field is distinguishable from
+     * its non-localized siblings.
+     */
+    public function testTheLayoutEntryOfAnEmptyKeyCarriesItsEffectiveLocalization(): void
+    {
+        $group = $this->createGroup('emptylayout');
+        $localizedKey = $this->createKeyWithFlag('emptylayout_localized', true);
+        $inheritingKey = $this->createKeyWithFlag('emptylayout_inherit', null);
+        $plainKey = $this->createKeyWithFlag('emptylayout_plain', false);
+        $this->assignKey($group, $localizedKey, 0);
+        $this->assignKey($group, $inheritingKey, 1);
+        $this->assignKey($group, $plainKey, 2);
+
+        $object = $this->createObject(Csstore::class, 'empty-layout', [$group->getId() => true]);
+
+        // the premise: no key of the group holds a value, so the payload reports none of them
+        $data = $this->getEditModePayload($object)['data'];
+        foreach ([$localizedKey, $inheritingKey, $plainKey] as $keyConfig) {
+            foreach ($this->getValidLanguages() as $language) {
+                $this->assertArrayNotHasKey(
+                    $keyConfig->getId(),
+                    $data[$language][$group->getId()] ?? [],
+                    'an empty key is not part of the edit mode data of language ' . $language
+                );
+            }
+        }
+
+        $entries = $this->getKeyLayoutEntries($object, $group);
+
+        $this->assertTrue(
+            $entries[$localizedKey->getId()]['localized'],
+            'the flagged key is kept per language inside a field that is not localized'
+        );
+        $this->assertFalse(
+            $entries[$inheritingKey->getId()]['localized'],
+            'while the key that carries no flag inherits the field and is not'
+        );
+        $this->assertFalse(
+            $entries[$plainKey->getId()]['localized'],
+            'and neither is the key that decided against it'
+        );
+    }
+
+    /**
+     * The mirror of the case above in a localized field: the empty key flagged false reads false
+     * beside the sibling that inherits the field and reads true.
+     */
+    public function testTheLayoutEntryOfAnEmptyKeyInALocalizedFieldFollowsTheKey(): void
+    {
+        $group = $this->createGroup('emptylayoutlocalized');
+        $plainKey = $this->createKeyWithFlag('emptylayoutlocalized_plain', false);
+        $inheritingKey = $this->createKeyWithFlag('emptylayoutlocalized_inherit', null);
+        $this->assignKey($group, $plainKey, 0);
+        $this->assignKey($group, $inheritingKey, 1);
+
+        $object = $this->createObject(Csstorelocalized::class, 'empty-layout-localized', [$group->getId() => true]);
+
+        $entries = $this->getKeyLayoutEntries($object, $group);
+
+        $this->assertFalse(
+            $entries[$plainKey->getId()]['localized'],
+            'the key flagged false holds the one language independent value'
+        );
+        $this->assertTrue(
+            $entries[$inheritingKey->getId()]['localized'],
+            'while the key that carries no flag inherits the localized field'
+        );
+    }
+
+    /**
      * One fixture, both predictors: the payload answers a key with the languages it is kept in, and
      * the save accepts exactly those. A value stored in a language the key lost is neither answered
      * nor rewritten - it is only left alone, which is what {@see GeneralTest} asserts.
@@ -557,6 +630,40 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
         );
 
         return $layout;
+    }
+
+    /**
+     * The key entries one group contributes to the enriched layout, keyed by key id. The group is
+     * looked up by its own id rather than by the array key, because the enrichment re-indexes the
+     * groups when they are sorted by a collection.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function getKeyLayoutEntries(
+        Csstore|Csstorelocalized $object,
+        GroupConfig $group
+    ): array {
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+        $this->assertInstanceOf(Data\Classificationstore::class, $fieldDefinition);
+
+        // the class definition hands out the one instance it holds, and the enrichment writes to it
+        $layout = clone $fieldDefinition;
+        $layout->enrichLayoutDefinition($object);
+
+        $entries = [];
+        foreach ($layout->activeGroupDefinitions as $groupDefinition) {
+            if ($groupDefinition['id'] !== $group->getId()) {
+                continue;
+            }
+
+            foreach ($groupDefinition['keys'] as $entry) {
+                $entries[$entry['id']] = $entry;
+            }
+        }
+
+        $this->assertNotEmpty($entries, 'the group must contribute its keys to the layout');
+
+        return $entries;
     }
 
     /**

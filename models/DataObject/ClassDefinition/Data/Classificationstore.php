@@ -941,6 +941,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load($filteredGroupIds);
 
+        // the relations bring the key configs with them, so the per key flag below costs no statement
+        $localizationResolver = $this->getLocalizationResolver();
+
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
         $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($filteredGroupIds), '?')) . ')', $filteredGroupIds);
 
@@ -981,10 +984,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $definition = $definition->enrichLayoutDefinition($object, $context);
                 }
 
+                // the languages the key is kept in are decided by the key and only inherited from
+                // this field, so the editor cannot read them off the field's own localized flag:
+                // a key is answered here, filled or empty, and carries its effective flag with it
                 $keyList[] = [
                     'name' => $keyGroupRelation->getName(),
                     'id' => $keyGroupRelation->getKeyId(),
                     'description' => $keyGroupRelation->getDescription(),
+                    'localized' => $localizationResolver->isKeyLocalized($keyGroupRelation->getKeyId(), $this),
                     'definition' => $definition,
                 ];
             }
