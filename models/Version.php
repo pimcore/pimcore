@@ -180,25 +180,28 @@ final class Version extends AbstractModel
 
         $previousBinaryFileHash = $this->id !== null ? $this->getBinaryFileHash() : null;
 
+        // an asset version that is written into again (see AbstractElement::doSaveVersion()) keeps its binary data
+        // where it is: other versions may share it (binaryFileId) and the storage adapters write binary data only once
+        $keepsBinaryData = false;
         if ($data instanceof Asset && $data->getType() != 'folder') {
             $isAsset = true;
             $dataStream = $data->getStream();
             $ctx = hash_init('sha3-512');
             hash_update_stream($ctx, $dataStream);
-            $this->setBinaryFileHash(hash_final($ctx));
-        }
+            $binaryFileHash = hash_final($ctx);
 
-        // an asset version that is written into again (see AbstractElement::doSaveVersion()) keeps its binary data
-        // where it is: other versions may share it (binaryFileId) and the storage adapters write binary data only once
-        $keepsBinaryData = false;
-        if ($isAsset && $previousBinaryFileHash !== null) {
-            if (!hash_equals($previousBinaryFileHash, $this->getBinaryFileHash())) {
-                throw new LogicException(sprintf(
-                    'Version %d cannot be written with different binary data, save it as a new version instead',
-                    $this->id
-                ));
+            // checked before the hash is set, so the version keeps its hash and a retry is checked again
+            if ($previousBinaryFileHash !== null) {
+                if (!hash_equals($previousBinaryFileHash, $binaryFileHash)) {
+                    throw new LogicException(sprintf(
+                        'Version %d cannot be written with different binary data, save it as a new version instead',
+                        $this->id
+                    ));
+                }
+                $keepsBinaryData = true;
             }
-            $keepsBinaryData = true;
+
+            $this->setBinaryFileHash($binaryFileHash);
         }
 
         $metaDataSize = strlen($dataString);
