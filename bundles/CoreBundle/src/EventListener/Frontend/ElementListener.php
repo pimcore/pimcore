@@ -238,7 +238,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleObjectParams(Request $request, UserInterface $user): void
+    protected function handleObjectParams(Request $request, User $user): void
     {
 
         if ($request->query->has('pimcore_studio_preview')) {
@@ -265,19 +265,35 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->cacheObject($object);
     }
 
-    private function handleObjectStudioPreview(int $id, UserInterface $user): void
+    private function handleObjectStudioPreview(int $id, User $user): void
     {
-        $object = $this->getLatestVersion($id, $user);
-        if (!$object instanceof Concrete) {
+        $persisted = $this->getPersistedObject($id);
+        if (!$persisted instanceof Concrete) {
+            return;
+        }
+
+        // the persisted element is authorized, as a version snapshot keeps its own parent, which decides
+        // the workspace grants
+        if (!$persisted->isAllowed('view', $user)) {
+            $this->logger->warning(
+                "Denying access to object {$persisted->getFullPath()} as the user has no view permission."
+            );
+
+            throw new AccessDeniedHttpException(sprintf('Access denied for object %d', $id));
+        }
+
+        // substituting the latest (possibly unpublished) version requires the "versions" grant, same as
+        // for documents; without it the object is served as published
+        if (!$persisted->isAllowed('versions', $user)) {
             return;
         }
 
         $this->logObjectLoading(
-            $object,
+            $persisted,
             'Loading object {object} ({objectId}) for studio preview'
         );
 
-        $this->cacheObject($object);
+        $this->cacheObject($this->getLatestVersion($persisted, $user));
     }
 
     private function handleDocumentClassicPreview(Request $request, Document $document): Document
@@ -315,18 +331,19 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    private function getLatestVersion(int $id, UserInterface $user): ?Concrete
+    protected function getPersistedObject(int $id): ?Concrete
     {
-        $dataObject = Service::getElementById('object', $id);
+        $object = Service::getElementById('object', $id);
 
-        if (!$dataObject instanceof Concrete) {
-            return null;
-        }
+        return $object instanceof Concrete ? $object : null;
+    }
 
-        $version = $dataObject->getLatestVersion($user->getId());
+    protected function getLatestVersion(Concrete $object, UserInterface $user): Concrete
+    {
+        $version = $object->getLatestVersion($user->getId());
 
         if ($version === null || !$version->getData() instanceof Concrete) {
-            return $dataObject;
+            return $object;
         }
 
         return $version->getData();
