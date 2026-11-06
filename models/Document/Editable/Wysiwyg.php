@@ -108,6 +108,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         $html = new DomCrawler($this->text);
 
         $elements = $html->filter('a[pimcore_id], img[pimcore_id]');
+        $changed = false;
 
         /** @var DOMElement $el */
         foreach ($elements as $el) {
@@ -117,11 +118,16 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
                 if ($idMapping[$type][$id] ?? false) {
                     $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
+                    $changed = true;
                 }
             }
         }
 
-        $this->text = $html->html();
+        // only write back if an id was mapped: the DOM round trip re-encodes the text (e.g. &nbsp;),
+        // which would make the editable differ from its content main document and break the inheritance
+        if ($changed) {
+            $this->text = $html->html();
+        }
 
         $html->clear();
         unset($html);
