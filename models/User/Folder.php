@@ -24,10 +24,13 @@ class Folder extends UserRole\Folder
     {
         if ($this->children === null) {
             if ($this->getId()) {
-                $list = new Listing();
-                $list->setCondition('parentId = ?', $this->getId());
+                $userList = new Listing();
+                $userList->setCondition('parentId = ?', $this->getId());
 
-                $this->children = $list->getUsers();
+                $folderList = new Folder\Listing();
+                $folderList->setCondition('parentId = ?', $this->getId());
+
+                $this->children = array_merge($folderList->load(), $userList->load());
             } else {
                 $this->children = [];
             }

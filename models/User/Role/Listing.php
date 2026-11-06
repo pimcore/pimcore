@@ -16,7 +16,12 @@ namespace Pimcore\Model\User\Role;
 use Pimcore\Model;
 
 /**
+ * Lists Pimcore user roles (type "role") only.
+ *
+ * For role folders use {@see Folder\Listing}.
+ *
  * @method \Pimcore\Model\User\Role\Listing\Dao getDao()
+ * @method Model\User\Role[] load()
  */
 class Listing extends Model\User\Listing\AbstractListing
 {
