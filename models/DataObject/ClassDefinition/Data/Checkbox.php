@@ -174,7 +174,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         $value = $db->quote((string)$value);
         $key = $db->quoteIdentifier($this->name);
 
-        $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
+        // brickPrefix arrives ready to concatenate - already quoted where it needs to be and
+        // already carrying its trailing dot - so it must not be quoted again here.
+        $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
 
         return 'IFNULL(' . $brickPrefix . $key . ', 0) = ' . $value . ' ';
     }
