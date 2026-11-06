@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Closure;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DBALException;
 use Exception;
@@ -772,61 +773,102 @@ class SaveIntoExistingVersionTest extends ModelTestCase
     }
 
     /**
-     * The stored state of a version is read from its locked row, not from the snapshot of the running transaction: a
-     * move of the version to another storage committed after that snapshot was taken is restored where it is stored
+     * The stored state of a version that is written in place is read with Version\Dao::getById($id, true): within a
+     * transaction it returns the row as it is stored, not the snapshot taken before another writer changed it
      */
-    public function testTheStoredVersionIsReadFromTheLockedRow(): void
+    public function testTheVersionRowIsReadAsStoredWithinATransaction(): void
     {
-        $this->createVersionsDataTable();
-        $fileSystemAdapter = new FileSystemVersionStorageAdapter();
-        $databaseAdapter = new DatabaseVersionStorageAdapter(Db::get());
-        $proxy = $this->getStorageAdapterProxy();
         $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
         $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $storageType = Db::get()->fetchOne('SELECT storageType FROM versions WHERE id = ?', [$draft->getId()]);
+        $movedStorageType = $storageType === 'fs' ? 'db' : 'fs';
+
+        Db::get()->beginTransaction();
 
         try {
-            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(PHP_INT_MAX, $databaseAdapter, $fileSystemAdapter));
-            $draft = $object->saveVersion();
-            $this->assertNotNull($draft, 'expected a draft version to be saved');
-            $loadedDraft = Version::getById($draft->getId());
-            $this->assertNotNull($loadedDraft);
-            $this->assertSame('db', $loadedDraft->getStorageType(), 'expected the draft in the database');
-            $movedMetaData = $databaseAdapter->loadMetaData($loadedDraft);
-            $this->assertNotNull($movedMetaData);
-            $restored = $loadedDraft->getData();
-            $this->publish($restored);
-            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(1, $databaseAdapter, $fileSystemAdapter));
+            // the snapshot of the transaction is taken before another writer changes the version
+            $this->assertSame($storageType, Db::get()->fetchOne('SELECT storageType FROM versions WHERE id = ?', [$draft->getId()]));
+            $otherConnection->executeStatement('UPDATE versions SET storageType = ? WHERE id = ?', [$movedStorageType, $draft->getId()]);
 
-            // the snapshot of the transaction is taken before another writer moves the version to the file system
-            Db::get()->beginTransaction();
-            $this->assertSame('db', Db::get()->fetchOne('SELECT storageType FROM versions WHERE id = ?', [$draft->getId()]));
-            $movedVersion = clone $loadedDraft;
-            $movedVersion->setStorageType('fs');
-            $fileSystemAdapter->save($movedVersion, $movedMetaData, null);
-            $otherConnection->executeStatement('UPDATE versions SET storageType = ? WHERE id = ?', ['fs', $draft->getId()]);
+            $snapshotVersion = Version::getById($draft->getId());
+            $this->assertNotNull($snapshotVersion);
+            $this->assertSame($storageType, $snapshotVersion->getStorageType(), 'expected a plain read to return the snapshot');
 
-            $failingListener = static function (): void {
-                throw new Exception('publishing failed');
-            };
-            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+            $storedVersion = new Version();
+            $storedVersion->getDao()->getById($draft->getId(), true);
+            $this->assertSame($movedStorageType, $storedVersion->getStorageType(), 'the locked row must be read as it is stored');
+        } finally {
+            Db::get()->rollBack();
+            $otherConnection->executeStatement('UPDATE versions SET storageType = ? WHERE id = ?', [$storageType, $draft->getId()]);
+            $otherConnection->close();
+        }
+    }
 
-            try {
-                $restored->save(['existingVersion' => $loadedDraft]);
-                $this->fail('publishing must fail');
-            } catch (Exception $e) {
-                $this->assertSame('publishing failed', $e->getMessage());
-            } finally {
-                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
-                while (Db::get()->isTransactionActive()) {
-                    Db::get()->rollBack();
-                }
+    /**
+     * A version written in place within a transaction of the caller would not be restored if that transaction is rolled
+     * back after the save succeeded, so it isn't written into
+     */
+    public function testAVersionIsNotWrittenIntoWithinAnotherTransaction(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $originalMetaData = $storageAdapter->loadMetaData($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+
+        $rejected = false;
+        Db::get()->beginTransaction();
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+        } catch (RuntimeException $e) {
+            $rejected = true;
+            $this->assertStringContainsString('within another transaction', $e->getMessage());
+        } finally {
+            while (Db::get()->isTransactionActive()) {
+                Db::get()->rollBack();
             }
+        }
+
+        $this->assertTrue($rejected, 'writing into the version within another transaction must be rejected');
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion);
+        $this->assertSame($originalMetaData, $storageAdapter->loadMetaData($keptVersion), 'the stored data of the version must be unchanged');
+        $this->assertSame($draft->getVersionCount(), $keptVersion->getVersionCount(), 'the version must keep its version count');
+    }
+
+    /**
+     * A version written in place without a transaction (saveVersion() alone) is locked while its row and its data are
+     * written, like within one, so another writer in place of it waits
+     */
+    public function testAVersionWrittenWithoutTransactionIsLockedWhileItIsWritten(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Concrete::class, $restored);
+        $lockName = $this->getVersionLockName($draft);
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $adapter = $this->installStorageAdapterSpy();
+        $adapter->lockCheck = static fn (): bool => (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]) === 0;
+
+        try {
+            $restored->saveVersion(true, true, null, false, ['existingVersion' => $draft]);
+            $this->assertSame([true], $adapter->lockedWhileWritten, 'the version must be locked while its data is written');
+            $this->assertSame(1, (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]), 'the version must be unlocked after it is written');
         } finally {
             $this->restoreStorageAdapter();
             $otherConnection->close();
         }
-
-        $this->assertSame($movedMetaData, $fileSystemAdapter->loadMetaData($movedVersion), 'the data of the moved version must be restored');
     }
 
     /**
@@ -891,7 +933,7 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $this->assertNotNull($draft);
         $restored = $draft->getData();
         $this->publish($restored);
-        $lockName = 'pimcore_version_written_in_place_' . $draft->getId();
+        $lockName = $this->getVersionLockName($draft);
 
         $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
         $rowFreeAfterRollback = null;
@@ -933,6 +975,14 @@ class SaveIntoExistingVersionTest extends ModelTestCase
     }
 
     /**
+     * The name of the named lock of a version written in place (see AbstractElement): namespaced by the database
+     */
+    private function getVersionLockName(Version $version): string
+    {
+        return 'pimcore_version_' . substr(sha1((string) Db::get()->getDatabase()), 0, 16) . '_' . $version->getId();
+    }
+
+    /**
      * Needed for the DatabaseVersionStorageAdapter (same as in the version storage tests of the Service suite)
      */
     private function createVersionsDataTable(): void
@@ -948,8 +998,8 @@ class SaveIntoExistingVersionTest extends ModelTestCase
     }
 
     /**
-     * Wraps the file system storage in a spy that records for each write whether a transaction is active, and can
-     * make the stored data unreadable
+     * Wraps the file system storage in a spy that records for each write whether a transaction is active (and the
+     * result of a lock check), and can make the stored data unreadable
      */
     private function installStorageAdapterSpy(): FileSystemVersionStorageAdapter
     {
@@ -959,9 +1009,18 @@ class SaveIntoExistingVersionTest extends ModelTestCase
 
             public bool $unreadable = false;
 
+            /** @var (Closure(): bool)|null */
+            public ?Closure $lockCheck = null;
+
+            /** @var list<bool> */
+            public array $lockedWhileWritten = [];
+
             public function save(Version $version, string $metaData, mixed $binaryDataStream): void
             {
                 $this->writes[] = Db::get()->isTransactionActive();
+                if ($this->lockCheck !== null) {
+                    $this->lockedWhileWritten[] = ($this->lockCheck)();
+                }
                 parent::save($version, $metaData, $binaryDataStream);
             }
 

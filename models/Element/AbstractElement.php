@@ -646,10 +646,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected function doSaveVersion(?string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false, ?Model\Version $existingVersion = null): Model\Version
     {
         $version = null;
+        $versionLockName = null;
 
         if ($existingVersion instanceof Model\Version) {
             $this->assertVersionBelongsToElement($existingVersion);
-            $this->rememberVersionWrittenInPlace($existingVersion);
+            $versionLockName = $this->rememberVersionWrittenInPlace($existingVersion);
             $version = $existingVersion;
         } elseif ($isAutoSave) {
             $list = new Model\Version\Listing();
@@ -686,7 +687,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         $version->setVersionCount($versionCount);
-        $version->save();
+
+        try {
+            $version->save();
+        } finally {
+            // the lock of a version written without a transaction is held while its row and its data are written
+            if ($versionLockName !== null) {
+                $this->releaseVersionLock($versionLockName);
+            }
+        }
 
         return $version;
     }
@@ -733,24 +742,37 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * Keeps the stored data of a version that is written in place, to restore it if the transaction is rolled back. A
-     * version written without the transaction of retryableFunction() (e.g. by saveVersion() alone) isn't rolled back,
-     * so its data isn't kept.
+     * Locks a version that is written in place, so no other writer in place of it writes its row or its data at the
+     * same time. Within the transaction of retryableFunction(), its stored data is kept to restore it if the
+     * transaction is rolled back, and the lock is released after the commit or the restore. Without a transaction (e.g.
+     * by saveVersion() alone) nothing is rolled back, the returned lock is released after the version is written.
+     * Within another transaction the version would not be restored if that one is rolled back, so it is not written.
      *
-     * @throws RuntimeException if the version is locked by another writer or its stored data cannot be read
+     * @return string|null the lock to release after the version is written, null if it is released with the transaction
+     *
+     * @throws RuntimeException if the version is locked by another writer, is written within another transaction, or
+     *                          its stored data cannot be read
      */
-    private function rememberVersionWrittenInPlace(Model\Version $version): void
+    private function rememberVersionWrittenInPlace(Model\Version $version): ?string
     {
-        if (!isset(self::$versionsWrittenInPlace[$this])) {
-            return;
+        $db = Db::get();
+        $withinTransactionAttempt = isset(self::$versionsWrittenInPlace[$this]);
+        if ($withinTransactionAttempt ? $db->getTransactionNestingLevel() > 1 : $db->isTransactionActive()) {
+            throw new RuntimeException(sprintf(
+                'Version %d cannot be written into within another transaction, it would not be restored if that one is rolled back',
+                $version->getId()
+            ));
         }
 
         // a named lock is kept by the connection when the transaction is rolled back (also by the database itself, e.g.
         // on a deadlock): another writer in place of this version waits until it is committed or its data is restored
-        $db = Db::get();
-        $lockName = 'pimcore_version_written_in_place_' . $version->getId();
+        $lockName = self::getVersionLockName($version);
         if ((int) $db->fetchOne('SELECT GET_LOCK(?, ?)', [$lockName, self::VERSION_WRITTEN_IN_PLACE_LOCK_TIMEOUT]) !== 1) {
             throw new RuntimeException(sprintf('Version %d is written by another process, it cannot be written into', $version->getId()));
+        }
+
+        if (!$withinTransactionAttempt) {
+            return $lockName;
         }
 
         try {
@@ -777,6 +799,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $versions = self::$versionsWrittenInPlace[$this];
         $versions[] = [$version, $storedVersion, $metaData, $lockName];
         self::$versionsWrittenInPlace[$this] = $versions;
+
+        return null;
+    }
+
+    /**
+     * Named locks are server-wide, the database is part of the name: versions of different databases on the same
+     * server have the same ids (at most 64 characters)
+     */
+    private static function getVersionLockName(Model\Version $version): string
+    {
+        return 'pimcore_version_' . substr(sha1((string) Db::get()->getDatabase()), 0, 16) . '_' . $version->getId();
     }
 
     private function forgetVersionsWrittenInPlace(): void
