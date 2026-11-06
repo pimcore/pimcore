@@ -1,0 +1,1181 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Model\Element;
+
+use Closure;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Exception\LockWaitTimeoutException;
+use Exception;
+use InvalidArgumentException;
+use LogicException;
+use Pimcore;
+use Pimcore\Db;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Event\VersionEvents;
+use Pimcore\Maintenance\Tasks\ScheduledTasksTask;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
+use Pimcore\Model\Document\Page;
+use Pimcore\Model\Element\Service;
+use Pimcore\Model\Schedule\Task;
+use Pimcore\Model\User;
+use Pimcore\Model\Version;
+use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
+use Pimcore\SystemSettingsConfig;
+use Pimcore\Tests\Support\Helper\Pimcore as PimcoreHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\NullLogger;
+use RuntimeException;
+
+/**
+ * Publishing a prepared version writes the published state into that very version (`existingVersion` save
+ * parameter) instead of creating a new one, so the version history shows which version went live
+ * (pimcore/service-operations#1628).
+ */
+class SaveIntoExistingVersionTest extends ModelTestCase
+{
+    public static function elementTypeProvider(): array
+    {
+        return [
+            'asset' => ['asset'],
+            'document' => ['document'],
+            'object' => ['object'],
+        ];
+    }
+
+    /**
+     * @dataProvider elementTypeProvider
+     */
+    public function testSaveWritesIntoTheGivenVersionInsteadOfCreatingANewOne(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $this->assertNotNull($this->reload($element)->getLatestVersion(), 'the draft must be newer than the element');
+        $versionCountBefore = $this->countVersions($element);
+
+        $restored = $draft->getData();
+        $this->assertInstanceOf(get_class($element), $restored, 'the element must be restorable from the draft');
+        $this->publish($restored);
+        $restored->save(['existingVersion' => $draft]);
+
+        $published = $this->reload($element);
+        $this->assertSame($versionCountBefore, $this->countVersions($element), 'publishing a version must not add a version');
+
+        $publishedVersion = Version::getById($draft->getId());
+        $this->assertNotNull($publishedVersion, 'the published version must still exist');
+        $this->assertSame($published->getVersionCount(), $publishedVersion->getVersionCount(), 'the version must carry the element\'s version count');
+        $this->assertSame($published->getModificationDate(), $publishedVersion->getDate(), 'the version must carry the element\'s modification date');
+        $this->assertFalse($publishedVersion->isAutoSave(), 'a published version must not be an auto-save one');
+        $this->assertNull($published->getLatestVersion(), 'no draft must be left after publishing');
+        $this->assertSame($draft->getId(), $published->getLatestVersion(null, true)?->getId(), 'the published version must be the current one');
+        $this->assertInstanceOf(get_class($element), $publishedVersion->getData(), 'the version data must be readable after it was written again');
+    }
+
+    /**
+     * @dataProvider elementTypeProvider
+     */
+    public function testScheduledPublishVersionPublishesTheScheduledVersionItself(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $versionCountBefore = $this->countVersions($element);
+
+        $task = Task::create([
+            'cid' => $element->getId(),
+            'ctype' => $type,
+            'date' => time() - 60,
+            'action' => 'publish-version',
+            'version' => $draft->getId(),
+            'active' => true,
+            'userId' => $this->createAdminUser()->getId(),
+        ]);
+        $task->save();
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $published = $this->reload($element);
+        $this->assertSame($versionCountBefore, $this->countVersions($element), 'the scheduled publish must not add a version');
+        $this->assertNull($published->getLatestVersion(), 'no draft must be left after the scheduled publish');
+        if (!$published instanceof Asset) {
+            $this->assertTrue($published->isPublished(), 'the element must be published');
+        }
+
+        $publishedVersion = Version::getById($draft->getId());
+        $this->assertNotNull($publishedVersion, 'the scheduled version must still exist');
+        $this->assertSame($published->getVersionCount(), $publishedVersion->getVersionCount(), 'the scheduled version must be the current one');
+        $this->assertSame($published->getModificationDate(), $publishedVersion->getDate(), 'the scheduled version must carry the publish date');
+
+        $this->assertSame(0, (int) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]), 'the task must be done');
+    }
+
+    /**
+     * The version keeps its author when it is published by another user, the publisher is the element's user
+     * modification
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testPublishingAVersionKeepsItsAuthor(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $authorId = $draft->getUserId();
+        $publisher = $this->createAdminUser();
+        $this->assertNotSame($publisher->getId(), $authorId, 'the draft must have another author than the publisher');
+
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $restored->setUserModification($publisher->getId());
+        $restored->save(['existingVersion' => $draft]);
+
+        $this->assertSame($authorId, (int) Db::get()->fetchOne('SELECT userId FROM versions WHERE id = ?', [$draft->getId()]), 'the version must keep its author');
+        $this->assertSame($publisher->getId(), $this->reload($element)->getUserModification(), 'the publisher must be the element\'s user modification');
+    }
+
+    /**
+     * With a retention policy of zero versions a regular save adds no version, writing into an existing version
+     * must still happen: otherwise the version isn't published although the save succeeded
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testSaveWritesIntoTheGivenVersionWithoutVersionRetention(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $versionCountBefore = $this->countVersions($element);
+
+        /** @var SystemSettingsConfig $systemSettingsConfig */
+        $systemSettingsConfig = $this->getModule('\\' . PimcoreHelper::class)->grabService(SystemSettingsConfig::class);
+        $originalSystemSettings = $systemSettingsConfig->get();
+        $settings = $originalSystemSettings;
+        $settingsKey = $type . 's';
+        $settings[$settingsKey]['versions']['steps'] = 0;
+        $settings[$settingsKey]['versions']['days'] = null;
+        $systemSettingsConfig->testSave($settings);
+
+        try {
+            $restored = $draft->getData();
+            $this->publish($restored);
+            $restored->save(['existingVersion' => $draft]);
+        } finally {
+            $systemSettingsConfig->testSave($originalSystemSettings);
+        }
+
+        $published = $this->reload($element);
+        $this->assertSame($versionCountBefore, $this->countVersions($element), 'publishing a version must not add a version');
+        $publishedVersion = Version::getById($draft->getId());
+        $this->assertNotNull($publishedVersion, 'the published version must still exist');
+        $this->assertSame($published->getVersionCount(), $publishedVersion->getVersionCount(), 'the version must carry the element\'s version count');
+        $this->assertSame($published->getModificationDate(), $publishedVersion->getDate(), 'the version must carry the element\'s modification date');
+    }
+
+    public function testAVersionOfAnotherElementIsRejected(): void
+    {
+        $element = $this->createFreshElement('object');
+        $other = $this->createFreshElement('object');
+        $otherVersion = $other->saveVersion();
+        $this->assertNotNull($otherVersion, 'expected a version of the other element to be saved');
+        $otherVersionCount = $this->countVersions($other);
+
+        try {
+            $element->save(['existingVersion' => $otherVersion]);
+            $this->fail('saving into the version of another element must be rejected');
+        } catch (InvalidArgumentException) {
+        }
+
+        $this->assertSame($otherVersionCount, $this->countVersions($other), 'the other element must keep its versions');
+        $this->assertSame($other->getId(), Version::getById($otherVersion->getId())?->getCid(), 'the version must still belong to the other element');
+    }
+
+    /**
+     * Auto-save versions are rewritten by the editor of their user at any time, writing into them would race with that
+     */
+    public function testAnAutoSaveVersionIsRejected(): void
+    {
+        $element = $this->createFreshElement('object');
+        $autoSave = $element->saveVersion(true, true, null, true);
+        $this->assertNotNull($autoSave, 'expected an auto-save version to be saved');
+
+        try {
+            $element->save(['existingVersion' => $autoSave]);
+            $this->fail('saving into an auto-save version must be rejected');
+        } catch (InvalidArgumentException) {
+        }
+
+        $this->assertTrue(Version::getById($autoSave->getId())?->isAutoSave(), 'the auto-save version must be untouched');
+    }
+
+    /**
+     * A scheduled auto-save version is published as a new version, as before
+     */
+    public function testScheduledPublishVersionPublishesAnAutoSaveVersionAsANewVersion(): void
+    {
+        $element = $this->createFreshElement('object');
+        $autoSave = $element->saveVersion(true, true, null, true);
+        $this->assertNotNull($autoSave, 'expected an auto-save version to be saved');
+        $versionCountBefore = $this->countVersions($element);
+
+        $task = Task::create([
+            'cid' => $element->getId(),
+            'ctype' => 'object',
+            'date' => time() - 60,
+            'action' => 'publish-version',
+            'version' => $autoSave->getId(),
+            'active' => true,
+            'userId' => $this->createAdminUser()->getId(),
+        ]);
+        $task->save();
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $published = $this->reload($element);
+        $this->assertSame($versionCountBefore + 1, $this->countVersions($element), 'the auto-save version must be published as a new version');
+        $this->assertTrue(Version::getById($autoSave->getId())?->isAutoSave(), 'the auto-save version must be untouched');
+        $this->assertNotSame($autoSave->getId(), $published->getLatestVersion(null, true)?->getId(), 'a new version must be the current one');
+        $this->assertSame(0, (int) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]), 'the task must be done');
+    }
+
+    public function testAnInvalidExistingVersionParameterIsRejected(): void
+    {
+        $element = $this->createFreshElement('object');
+
+        $this->expectException(InvalidArgumentException::class);
+        $element->save(['existingVersion' => 'not a version']);
+    }
+
+    /**
+     * The asset storage isn't transactional, so a rejected `existingVersion` must be detected before the binary data
+     * of the asset is overwritten
+     */
+    public function testARejectedAssetSaveLeavesTheBinaryDataUntouched(): void
+    {
+        $asset = $this->createFreshElement('asset');
+        $originalData = $asset->getData();
+        $version = $asset->getLatestVersion(null, true);
+        $this->assertNotNull($version, 'expected the asset to have a version');
+        $otherVersion = $this->createFreshElement('asset')->getLatestVersion(null, true);
+        $this->assertNotNull($otherVersion, 'expected the other asset to have a version');
+
+        // a version of another asset, and a version whose binary data differs from the changed asset
+        foreach ([$otherVersion, $version] as $rejectedVersion) {
+            $asset->setData('changed binary data');
+
+            try {
+                $asset->save(['existingVersion' => $rejectedVersion]);
+                $this->fail(sprintf('saving into version %d must be rejected', $rejectedVersion->getId()));
+            } catch (InvalidArgumentException) {
+            }
+
+            $this->assertSame($originalData, $this->reload($asset)->getData(), 'the binary data of the asset must be untouched');
+        }
+    }
+
+    /**
+     * A version that is published in place keeps its id, so the step-based cleanup must not rank it by id: it is
+     * the current version and must be kept
+     */
+    public function testStepCleanupKeepsAVersionThatIsPublishedInPlace(): void
+    {
+        $object = $this->createFreshElement('object');
+        $object->save();
+        $olderVersion = $object->getLatestVersion(null, true);
+        $this->assertNotNull($olderVersion, 'expected the object to have a version');
+        $object->save();
+        $object->save();
+
+        // date the history back, so the publish below is clearly the latest change
+        $versionIds = Db::get()->fetchFirstColumn('SELECT id FROM versions WHERE cid = ? AND ctype = ? ORDER BY id', [$object->getId(), 'object']);
+        foreach ($versionIds as $index => $versionId) {
+            Db::get()->update('versions', ['date' => time() - 1000 + $index], ['id' => $versionId]);
+        }
+
+        $olderVersion = Version::getById($olderVersion->getId());
+        $this->assertNotNull($olderVersion);
+        $restored = $olderVersion->getData();
+        $restored->save(['existingVersion' => $olderVersion]);
+
+        $outdatedVersionIds = (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]);
+
+        $this->assertNotContains($olderVersion->getId(), array_map('intval', $outdatedVersionIds), 'the published version must not be cleaned up');
+        $this->assertContains((int) $versionIds[0], array_map('intval', $outdatedVersionIds), 'versions beyond the steps must still be cleaned up');
+    }
+
+    /**
+     * Dates have second precision: versions saved within the same second as the publish must not outrank the
+     * version that is published in place
+     */
+    public function testStepCleanupKeepsAVersionThatIsPublishedInPlaceWithinTheSameSecond(): void
+    {
+        $object = $this->createFreshElement('object');
+        $object->save();
+        $olderVersion = $object->getLatestVersion(null, true);
+        $this->assertNotNull($olderVersion, 'expected the object to have a version');
+        $object->save();
+        $object->save();
+
+        $olderVersion = Version::getById($olderVersion->getId());
+        $this->assertNotNull($olderVersion);
+        $restored = $olderVersion->getData();
+        $restored->save(['existingVersion' => $olderVersion]);
+
+        // all versions of the object share the date of the publish
+        Db::get()->executeStatement(
+            'UPDATE versions SET `date` = ? WHERE cid = ? AND ctype = ?',
+            [$this->reload($object)->getModificationDate(), $object->getId(), 'object']
+        );
+
+        $outdatedVersionIds = (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]);
+
+        $this->assertNotContains($olderVersion->getId(), array_map('intval', $outdatedVersionIds), 'the published version must not be cleaned up');
+    }
+
+    /**
+     * Scheduling an older version is a rollback: it is published as a new version, the older version is kept as it
+     * was in the history
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testScheduledPublishVersionPublishesAnOlderVersionAsANewVersion(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $this->publish($element);
+        $element->save();
+        $olderVersion = $element->getLatestVersion(null, true);
+        $this->assertNotNull($olderVersion, 'expected the element to have a version');
+        $this->reload($element)->save();
+        $versionCountBefore = $this->countVersions($element);
+
+        $task = Task::create([
+            'cid' => $element->getId(),
+            'ctype' => $type,
+            'date' => time() - 60,
+            'action' => 'publish-version',
+            'version' => $olderVersion->getId(),
+            'active' => true,
+            'userId' => $this->createAdminUser()->getId(),
+        ]);
+        $task->save();
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $this->assertSame($versionCountBefore + 1, $this->countVersions($element), 'the rollback must add a version');
+        $keptVersion = Version::getById($olderVersion->getId());
+        $this->assertNotNull($keptVersion, 'the older version must still exist');
+        $this->assertSame($olderVersion->getVersionCount(), $keptVersion->getVersionCount(), 'the older version must keep its version count');
+        $this->assertSame($olderVersion->getDate(), $keptVersion->getDate(), 'the older version must keep its date');
+        $this->assertSame(0, (int) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]), 'the task must be done');
+    }
+
+    /**
+     * The step-based cleanup still ranks versions by id: an explicitly set modification date (e.g. by an import)
+     * must not change which versions are cleaned up
+     */
+    public function testStepCleanupRanksVersionsByIdWithExplicitModificationDates(): void
+    {
+        $object = $this->createFreshElement('object');
+        $versionIds = [];
+        foreach ([200, 300, 100] as $age) {
+            $object = $this->reload($object);
+            $object->setModificationDate(time() - $age);
+            $object->save();
+            $versionIds[] = $object->getLatestVersion(null, true)?->getId();
+        }
+
+        $outdatedVersionIds = array_map('intval', (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]));
+
+        $this->assertContains($versionIds[0], $outdatedVersionIds, 'the oldest version by id must be cleaned up');
+        $this->assertNotContains($versionIds[1], $outdatedVersionIds, 'the newer versions by id must be kept');
+        $this->assertNotContains($versionIds[2], $outdatedVersionIds, 'the current version must be kept');
+    }
+
+    /**
+     * The versioning events of save() keep their own arguments: when writing the version fails, the inner failure
+     * event (of saveVersion()) carries only the core arguments, the save parameters are part of the outer one only
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testVersioningFailureEventKeepsItsArguments(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $failureEventName = match ($type) {
+            'asset' => AssetEvents::POST_UPDATE_FAILURE,
+            'document' => DocumentEvents::POST_UPDATE_FAILURE,
+            'object' => DataObjectEvents::POST_UPDATE_FAILURE,
+        };
+
+        $failureArguments = [];
+        $failureListener = static function (ElementEventInterface $event) use (&$failureArguments): void {
+            $failureArguments[] = $event->getArguments();
+        };
+        $failingListener = static function (): void {
+            throw new Exception('writing the version failed');
+        };
+        Pimcore::getEventDispatcher()->addListener($failureEventName, $failureListener);
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::PRE_SAVE, $failingListener);
+
+        try {
+            $element->save(['customParameter' => 'outer']);
+            $this->fail('writing the version must fail');
+        } catch (Exception $e) {
+            $this->assertSame('writing the version failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::PRE_SAVE, $failingListener);
+            Pimcore::getEventDispatcher()->removeListener($failureEventName, $failureListener);
+        }
+
+        $versioningFailures = array_values(array_filter($failureArguments, static fn (array $arguments) => isset($arguments['saveVersionOnly'])));
+        $saveFailures = array_values(array_filter($failureArguments, static fn (array $arguments) => !isset($arguments['saveVersionOnly'])));
+        $this->assertCount(1, $versioningFailures, 'the versioning failure event must be dispatched once');
+        $this->assertCount(1, $saveFailures, 'the save failure event must be dispatched once');
+
+        $expectedKeys = $type === 'asset' ? ['exception', 'saveVersionOnly'] : ['exception', 'isAutoSave', 'saveVersionOnly'];
+        $versioningKeys = array_keys($versioningFailures[0]);
+        sort($versioningKeys);
+        $this->assertSame($expectedKeys, $versioningKeys, 'the versioning failure event must carry only its core arguments');
+        $this->assertSame('outer', $saveFailures[0]['customParameter'] ?? null, 'the save failure event must keep the save parameters');
+    }
+
+    /**
+     * The version storage isn't necessarily transactional (the default one is the file system): when publishing in
+     * place fails after the version data was written, the stored data of the version is restored with the rollback
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testAFailedPublishLeavesTheVersionDataUntouched(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $originalMetaData = $storageAdapter->loadMetaData($draft);
+        $this->assertNotNull($originalMetaData, 'expected the draft data to be stored');
+        $restored = $draft->getData();
+        $this->publish($restored);
+
+        $failingListener = static function (): void {
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+        }
+
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion, 'the draft version must still exist');
+        $this->assertSame($originalMetaData, $storageAdapter->loadMetaData($keptVersion), 'the stored data of the draft must be restored');
+        $this->assertNotNull($this->reload($element)->getLatestVersion(), 'the draft must still be a draft');
+    }
+
+    /**
+     * A version whose binary data is rejected keeps its hash, so saving the same version again is rejected as well:
+     * the version is written again after the binary data of the asset was replaced
+     */
+    public function testARejectedBinaryChangeKeepsTheHashOfTheVersion(): void
+    {
+        $asset = $this->createFreshElement('asset');
+        $savedVersion = $asset->saveVersion();
+        $this->assertNotNull($savedVersion, 'expected a version to be saved');
+        $asset = $this->reload($asset);
+        $asset->setData('changed binary data');
+        $asset->save();
+
+        $version = Version::getById($savedVersion->getId());
+        $this->assertNotNull($version);
+        $binaryFileHash = $version->getBinaryFileHash();
+        $this->assertNotNull($binaryFileHash, 'expected the version to have a binary hash');
+        $version->setData($version->getData());
+
+        foreach ([1, 2] as $attempt) {
+            try {
+                $version->save();
+                $this->fail(sprintf('attempt %d to write different binary data must be rejected', $attempt));
+            } catch (LogicException) {
+                $this->assertSame($binaryFileHash, $version->getBinaryFileHash(), sprintf('attempt %d must not change the hash of the version', $attempt));
+            }
+        }
+
+        $this->assertSame($binaryFileHash, Version::getById($version->getId())?->getBinaryFileHash(), 'the stored hash must be unchanged');
+    }
+
+    /**
+     * The stored data of a failed in-place write is restored while the transaction still locks the version, so a
+     * concurrent write of the same version waits for the rollback and isn't overwritten by the restore
+     */
+    public function testTheVersionDataIsRestoredBeforeTheRollback(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $adapter = $this->installStorageAdapterSpy();
+
+        $failingListener = static function (): void {
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            $this->restoreStorageAdapter();
+        }
+
+        $this->assertCount(2, $adapter->writes, 'expected the in-place write and its restore');
+        $this->assertTrue($adapter->writes[1], 'the version data must be restored before the transaction is rolled back');
+    }
+
+    /**
+     * A version whose stored data cannot be read cannot be restored, so it isn't written into in a transaction
+     */
+    public function testAVersionWithUnreadableDataIsNotWrittenInto(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $adapter = $this->installStorageAdapterSpy();
+        $adapter->unreadable = true;
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('writing into a version with unreadable data must be rejected');
+        } catch (RuntimeException $e) {
+            $this->assertStringContainsString('cannot be read', $e->getMessage());
+        } finally {
+            $this->restoreStorageAdapter();
+        }
+
+        $this->assertSame([], $adapter->writes, 'the version must not be written');
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion);
+        $this->assertSame($draft->getVersionCount(), $keptVersion->getVersionCount(), 'the version must keep its version count');
+    }
+
+    /**
+     * A version written in place by saveVersion() alone isn't part of a transaction: a later failing save() of the
+     * same element must not restore the data the version had before
+     */
+    public function testAFailingSaveDoesNotRestoreAVersionWrittenWithoutTransaction(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Concrete::class, $restored);
+        $restored->saveVersion(true, true, null, false, ['existingVersion' => $draft]);
+        $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $writtenMetaData = $storageAdapter->loadMetaData($draft);
+
+        $failingListener = static function (): void {
+            throw new Exception('saving failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+        try {
+            $restored->save();
+            $this->fail('saving must fail');
+        } catch (Exception $e) {
+            $this->assertSame('saving failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+        }
+
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion);
+        $this->assertSame($writtenMetaData, $storageAdapter->loadMetaData($keptVersion), 'the data written by saveVersion() must be kept');
+    }
+
+    /**
+     * The version is locked before its stored data is kept for a restore: no other write of the version can happen
+     * between keeping its data and writing it, which a restore would overwrite
+     */
+    public function testTheVersionIsLockedBeforeItsDataIsKept(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $lockedForOthers = null;
+        $lockCheckingListener = static function () use ($otherConnection, $draft, &$lockedForOthers): void {
+            // the first point after the data was kept, before the version is written
+            try {
+                $otherConnection->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE NOWAIT', [$draft->getId()]);
+                $lockedForOthers = false;
+            } catch (DBALException) {
+                $lockedForOthers = true;
+            }
+
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::PRE_SAVE, $lockCheckingListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::PRE_SAVE, $lockCheckingListener);
+            $otherConnection->close();
+        }
+
+        $this->assertTrue($lockedForOthers, 'the version must be locked for other writers before it is written');
+    }
+
+    /**
+     * A version that moved to another storage in a failed attempt is read from its original storage again: the
+     * written version gets its storage back with the rollback, so writing it again succeeds
+     */
+    public function testAVersionMovedToAnotherStorageCanBeWrittenAgainAfterAFailure(): void
+    {
+        $this->createVersionsDataTable();
+        $fileSystemAdapter = new FileSystemVersionStorageAdapter();
+        $databaseAdapter = new DatabaseVersionStorageAdapter(Db::get());
+        $proxy = $this->getStorageAdapterProxy();
+        $object = $this->createFreshElement('object');
+
+        try {
+            // the draft is stored in the file system, the publish would move it to the database
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(1, $databaseAdapter, $fileSystemAdapter));
+            $draft = $object->saveVersion();
+            $this->assertNotNull($draft, 'expected a draft version to be saved');
+            $draft = Version::getById($draft->getId());
+            $this->assertNotNull($draft);
+            $this->assertSame('fs', $draft->getStorageType(), 'expected the draft in the file system');
+            $restored = $draft->getData();
+            $this->publish($restored);
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(PHP_INT_MAX, $databaseAdapter, $fileSystemAdapter));
+
+            $failingListener = static function (): void {
+                throw new Exception('publishing failed');
+            };
+            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+            try {
+                $restored->save(['existingVersion' => $draft]);
+                $this->fail('publishing must fail');
+            } catch (Exception $e) {
+                $this->assertSame('publishing failed', $e->getMessage());
+            } finally {
+                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            }
+
+            $this->assertSame('fs', $draft->getStorageType(), 'the version must be read from its original storage again');
+            $restored->save(['existingVersion' => $draft]);
+        } finally {
+            $this->restoreStorageAdapter();
+        }
+
+        $publishedVersion = Version::getById($draft->getId());
+        $this->assertNotNull($publishedVersion);
+        $this->assertSame($this->reload($object)->getVersionCount(), $publishedVersion->getVersionCount(), 'the retry must publish the version');
+    }
+
+    /**
+     * A version moved to another storage by another writer after it was loaded is restored where it is stored: the
+     * data kept for a restore is the stored one, not the one of the given version
+     */
+    public function testAVersionMovedByAnotherWriterIsRestoredWhereItIsStored(): void
+    {
+        $this->createVersionsDataTable();
+        $fileSystemAdapter = new FileSystemVersionStorageAdapter();
+        $databaseAdapter = new DatabaseVersionStorageAdapter(Db::get());
+        $proxy = $this->getStorageAdapterProxy();
+        $object = $this->createFreshElement('object');
+
+        try {
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(PHP_INT_MAX, $databaseAdapter, $fileSystemAdapter));
+            $draft = $object->saveVersion();
+            $this->assertNotNull($draft, 'expected a draft version to be saved');
+            $loadedDraft = Version::getById($draft->getId());
+            $this->assertNotNull($loadedDraft);
+            $this->assertSame('db', $loadedDraft->getStorageType(), 'expected the draft in the database');
+
+            // another writer moves the version to the file system after it was loaded
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(1, $databaseAdapter, $fileSystemAdapter));
+            $movedVersion = Version::getById($draft->getId());
+            $this->assertNotNull($movedVersion);
+            $movedVersion->save();
+            $movedVersion = Version::getById($draft->getId());
+            $this->assertNotNull($movedVersion);
+            $this->assertSame('fs', $movedVersion->getStorageType(), 'expected the version in the file system');
+            $movedMetaData = $fileSystemAdapter->loadMetaData($movedVersion);
+
+            $restored = $loadedDraft->getData();
+            $this->publish($restored);
+            $failingListener = static function (): void {
+                throw new Exception('publishing failed');
+            };
+            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+            try {
+                $restored->save(['existingVersion' => $loadedDraft]);
+                $this->fail('publishing must fail');
+            } catch (Exception $e) {
+                $this->assertSame('publishing failed', $e->getMessage());
+            } finally {
+                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            }
+        } finally {
+            $this->restoreStorageAdapter();
+        }
+
+        $this->assertSame($movedMetaData, $fileSystemAdapter->loadMetaData($movedVersion), 'the data of the moved version must be restored');
+    }
+
+    /**
+     * The stored state of a version that is written in place is read with Version\Dao::getById($id, true): within a
+     * transaction it returns the row as it is stored, not the snapshot taken before another writer changed it
+     */
+    public function testTheVersionRowIsReadAsStoredWithinATransaction(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $storageType = Db::get()->fetchOne('SELECT storageType FROM versions WHERE id = ?', [$draft->getId()]);
+        $movedStorageType = $storageType === 'fs' ? 'db' : 'fs';
+
+        Db::get()->beginTransaction();
+
+        try {
+            // the snapshot of the transaction is taken before another writer changes the version
+            $this->assertSame($storageType, Db::get()->fetchOne('SELECT storageType FROM versions WHERE id = ?', [$draft->getId()]));
+            $otherConnection->executeStatement('UPDATE versions SET storageType = ? WHERE id = ?', [$movedStorageType, $draft->getId()]);
+
+            $snapshotVersion = Version::getById($draft->getId());
+            $this->assertNotNull($snapshotVersion);
+            $this->assertSame($storageType, $snapshotVersion->getStorageType(), 'expected a plain read to return the snapshot');
+
+            $storedVersion = new Version();
+            $storedVersion->getDao()->getById($draft->getId(), true);
+            $this->assertSame($movedStorageType, $storedVersion->getStorageType(), 'the locked row must be read as it is stored');
+        } finally {
+            Db::get()->rollBack();
+            $otherConnection->executeStatement('UPDATE versions SET storageType = ? WHERE id = ?', [$storageType, $draft->getId()]);
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * A version written in place within a transaction of the caller would not be restored if that transaction is rolled
+     * back after the save succeeded, so it isn't written into
+     */
+    public function testAVersionIsNotWrittenIntoWithinAnotherTransaction(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $originalMetaData = $storageAdapter->loadMetaData($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+
+        $rejected = false;
+        Db::get()->beginTransaction();
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+        } catch (RuntimeException $e) {
+            $rejected = true;
+            $this->assertStringContainsString('within another transaction', $e->getMessage());
+        } finally {
+            while (Db::get()->isTransactionActive()) {
+                Db::get()->rollBack();
+            }
+        }
+
+        $this->assertTrue($rejected, 'writing into the version within another transaction must be rejected');
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion);
+        $this->assertSame($originalMetaData, $storageAdapter->loadMetaData($keptVersion), 'the stored data of the version must be unchanged');
+        $this->assertSame($draft->getVersionCount(), $keptVersion->getVersionCount(), 'the version must keep its version count');
+    }
+
+    /**
+     * A version written in place without a transaction (saveVersion() alone) is locked while its row and its data are
+     * written, like within one, so another writer in place of it waits
+     */
+    public function testAVersionWrittenWithoutTransactionIsLockedWhileItIsWritten(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Concrete::class, $restored);
+        $lockName = $this->getVersionLockName($draft);
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $adapter = $this->installStorageAdapterSpy();
+        $adapter->lockCheck = static fn (): bool => (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]) === 0;
+
+        try {
+            $restored->saveVersion(true, true, null, false, ['existingVersion' => $draft]);
+            $this->assertSame([true], $adapter->lockedWhileWritten, 'the version must be locked while its data is written');
+            $this->assertSame(1, (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]), 'the version must be unlocked after it is written');
+        } finally {
+            $this->restoreStorageAdapter();
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * save() locks the row of the element before the version it writes into, a version written without a transaction
+     * locks in the same order: while another writer holds the row, the version isn't locked yet, so neither waits for
+     * the other (and a failed wait for the row leaves no lock behind)
+     */
+    public function testAVersionWrittenWithoutTransactionLocksTheElementRowBeforeTheVersion(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Concrete::class, $restored);
+        $lockName = $this->getVersionLockName($draft);
+        $db = Db::get();
+        $lockWaitTimeout = (int) $db->fetchOne('SELECT @@SESSION.innodb_lock_wait_timeout');
+        $otherConnection = DriverManager::getConnection($db->getParams(), $db->getConfiguration());
+
+        try {
+            // another writer holds the row of the element, like save() does while it waits for the lock of the version
+            $otherConnection->beginTransaction();
+            $otherConnection->executeQuery('SELECT versionCount FROM objects WHERE id = ? FOR UPDATE', [$object->getId()]);
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = 1');
+
+            try {
+                $restored->saveVersion(true, true, null, false, ['existingVersion' => $draft]);
+                $this->fail('the writer must wait for the row of the element');
+            } catch (LockWaitTimeoutException) {
+            }
+
+            $this->assertSame(1, (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]), 'the version must not be locked while the writer waits for the row of the element');
+        } finally {
+            $db->executeStatement(sprintf('SET SESSION innodb_lock_wait_timeout = %d', $lockWaitTimeout));
+            if ($otherConnection->isTransactionActive()) {
+                $otherConnection->rollBack();
+            }
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * The binary data of an asset is written before its version is saved and isn't rolled back with the database, so
+     * writing into a version within another transaction is rejected before the binary data is written
+     */
+    public function testAnAssetVersionIsNotWrittenIntoWithinAnotherTransactionBeforeItsBinaryDataIsWritten(): void
+    {
+        $asset = $this->createFreshElement('asset');
+        $draft = $asset->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        // the stored binary data differs from the one of the draft
+        $asset->setData('changed binary data');
+        $asset->save();
+        $this->assertSame('changed binary data', $this->reload($asset)->getData());
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Asset::class, $restored);
+
+        $rejected = false;
+        Db::get()->beginTransaction();
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+        } catch (RuntimeException $e) {
+            $rejected = true;
+            $this->assertStringContainsString('within another transaction', $e->getMessage());
+        } finally {
+            while (Db::get()->isTransactionActive()) {
+                Db::get()->rollBack();
+            }
+        }
+
+        $this->assertTrue($rejected, 'writing into the version within another transaction must be rejected');
+        $this->assertSame('changed binary data', $this->reload($asset)->getData(), 'the binary data of the asset must be untouched');
+    }
+
+    /**
+     * A version storage with its own database connection isn't rolled back with the element: restoring an asset version
+     * that owns its binary data keeps that data
+     */
+    public function testRestoringAnAssetVersionKeepsItsBinaryData(): void
+    {
+        $this->createVersionsDataTable();
+        $storageConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $databaseAdapter = new DatabaseVersionStorageAdapter($storageConnection);
+        $asset = $this->createFreshElement('asset');
+        $binaryData = stream_get_contents($asset->getStream());
+        // no other version of the asset, so the draft owns its binary data
+        Db::get()->executeStatement('DELETE FROM versions WHERE cid = ? AND ctype = ?', [$asset->getId(), 'asset']);
+
+        try {
+            $this->getStorageAdapterProxy()->setStorageAdapter($databaseAdapter);
+            $draft = $asset->saveVersion();
+            $this->assertNotNull($draft, 'expected a draft version to be saved');
+            $draft = Version::getById($draft->getId());
+            $this->assertNotNull($draft);
+            $this->assertEmpty($draft->getBinaryFileId(), 'expected the draft to own its binary data');
+            $restored = $draft->getData();
+
+            $failingListener = static function (): void {
+                throw new Exception('publishing failed');
+            };
+            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+            try {
+                $restored->save(['existingVersion' => $draft]);
+                $this->fail('publishing must fail');
+            } catch (Exception $e) {
+                $this->assertSame('publishing failed', $e->getMessage());
+            } finally {
+                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            }
+
+            $keptVersion = Version::getById($draft->getId());
+            $this->assertNotNull($keptVersion);
+            $binaryStream = $databaseAdapter->loadBinaryData($keptVersion);
+            $this->assertIsResource($binaryStream, 'the binary data of the version must still be stored');
+            rewind($binaryStream);
+            $this->assertSame($binaryData, stream_get_contents($binaryStream), 'the binary data of the version must be unchanged');
+        } finally {
+            $this->restoreStorageAdapter();
+            $storageConnection->close();
+        }
+    }
+
+    /**
+     * The database rolls back the transaction of a deadlock victim itself, releasing its row locks before the data is
+     * restored: the named lock of the version is kept until then, so another writer in place of it waits
+     */
+    public function testTheVersionStaysLockedWhenTheDatabaseRollsBackTheTransaction(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $lockName = $this->getVersionLockName($draft);
+
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $rowFreeAfterRollback = null;
+        $lockedAfterRollback = null;
+        $rollingBackListener = static function () use ($otherConnection, $draft, $lockName, &$rowFreeAfterRollback, &$lockedAfterRollback): void {
+            // as the database does for a deadlock victim
+            while (Db::get()->isTransactionActive()) {
+                Db::get()->rollBack();
+            }
+
+            try {
+                $otherConnection->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE NOWAIT', [$draft->getId()]);
+                $rowFreeAfterRollback = true;
+            } catch (DBALException) {
+                $rowFreeAfterRollback = false;
+            }
+            $lockedAfterRollback = (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]) === 0;
+
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $rollingBackListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $rollingBackListener);
+        }
+
+        try {
+            $this->assertTrue($rowFreeAfterRollback, 'expected the row lock to be released by the rollback');
+            $this->assertTrue($lockedAfterRollback, 'the version must stay locked until its data is restored');
+            $this->assertSame(1, (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]), 'the version must be unlocked after the restore');
+        } finally {
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * The name of the named lock of a version written in place (see AbstractElement): namespaced by the database
+     */
+    private function getVersionLockName(Version $version): string
+    {
+        return 'pimcore_version_' . substr(sha1((string) Db::get()->getDatabase()), 0, 16) . '_' . $version->getId();
+    }
+
+    /**
+     * Needed for the DatabaseVersionStorageAdapter (same as in the version storage tests of the Service suite)
+     */
+    private function createVersionsDataTable(): void
+    {
+        Db::get()->executeStatement("CREATE TABLE IF NOT EXISTS `versionsData` (
+                                  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                                  `cid` int(11) unsigned DEFAULT NULL,
+                                  `ctype` enum('document','asset','object') DEFAULT NULL,
+                                  `metaData` longblob DEFAULT NULL,
+                                  `binaryData` longblob DEFAULT NULL,
+                                  PRIMARY KEY (`id`)
+                                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci");
+    }
+
+    /**
+     * Wraps the file system storage in a spy that records for each write whether a transaction is active (and the
+     * result of a lock check), and can make the stored data unreadable
+     */
+    private function installStorageAdapterSpy(): FileSystemVersionStorageAdapter
+    {
+        $adapter = new class() extends FileSystemVersionStorageAdapter {
+            /** @var list<bool> */
+            public array $writes = [];
+
+            public bool $unreadable = false;
+
+            /** @var (Closure(): bool)|null */
+            public ?Closure $lockCheck = null;
+
+            /** @var list<bool> */
+            public array $lockedWhileWritten = [];
+
+            public function save(Version $version, string $metaData, mixed $binaryDataStream): void
+            {
+                $this->writes[] = Db::get()->isTransactionActive();
+                if ($this->lockCheck !== null) {
+                    $this->lockedWhileWritten[] = ($this->lockCheck)();
+                }
+                parent::save($version, $metaData, $binaryDataStream);
+            }
+
+            public function loadMetaData(Version $version): ?string
+            {
+                return $this->unreadable ? null : parent::loadMetaData($version);
+            }
+        };
+        $this->getStorageAdapterProxy()->setStorageAdapter($adapter);
+
+        return $adapter;
+    }
+
+    private function restoreStorageAdapter(): void
+    {
+        $this->getStorageAdapterProxy()->setStorageAdapter(new FileSystemVersionStorageAdapter());
+    }
+
+    private function getStorageAdapterProxy(): ProxyVersionStorageAdapter
+    {
+        $proxy = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $this->assertInstanceOf(ProxyVersionStorageAdapter::class, $proxy);
+
+        return $proxy;
+    }
+
+    private function createFreshElement(string $type): Asset|Page|Concrete
+    {
+        $element = match ($type) {
+            'asset' => TestHelper::createImageAsset(),
+            'document' => TestHelper::createEmptyDocumentPage(),
+            'object' => TestHelper::createEmptyObject(),
+        };
+
+        return $this->reload($element);
+    }
+
+    /**
+     * Loads the element again from the database, bypassing the runtime cache
+     */
+    private function reload(Asset|Page|Concrete $element): Asset|Page|Concrete
+    {
+        $fresh = match (true) {
+            $element instanceof Asset => Asset::getById($element->getId(), ['force' => true]),
+            $element instanceof Page => Document::getById($element->getId(), ['force' => true]),
+            $element instanceof Concrete => DataObject::getById($element->getId(), ['force' => true]),
+        };
+        $this->assertNotNull($fresh);
+
+        return $fresh;
+    }
+
+    private function publish(Asset|Page|Concrete $element): void
+    {
+        if (!$element instanceof Asset) {
+            $element->setPublished(true);
+        }
+    }
+
+    private function countVersions(Asset|Page|Concrete $element): int
+    {
+        return (int) Db::get()->fetchOne(
+            'SELECT COUNT(*) FROM versions WHERE cid = ? AND ctype = ?',
+            [$element->getId(), Service::getElementType($element)]
+        );
+    }
+
+    private function createAdminUser(): User
+    {
+        $name = 'test-scheduled-publish-admin';
+        if (!$user = User::getByName($name)) {
+            $user = new User();
+            $user->setName($name);
+            $user->setAdmin(true);
+            $user->save();
+        }
+
+        return $user;
+    }
+}

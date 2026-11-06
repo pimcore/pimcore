@@ -106,6 +106,12 @@ abstract class PageSnippet extends Model\Document
 
     private static bool $getInheritedValues = false;
 
+    /**
+     * The version the next saveVersion() call writes into instead of a new one, set by update() from the
+     * `existingVersion` save parameter
+     */
+    private ?Model\Version $existingVersion = null;
+
     public function __construct()
     {
         $this->contentMasterDocumentId = & $this->contentMainDocumentId;
@@ -150,8 +156,14 @@ abstract class PageSnippet extends Model\Document
         }
 
         // scheduled tasks are saved in $this->saveVersion();
-        // save version if needed
-        $this->saveVersion(false, false, $params['versionNote'] ?? null);
+        // save version if needed, `existingVersion` writes it into that version instead of a new one
+        $this->existingVersion = $this->resolveExistingVersionParameter($params);
+
+        try {
+            $this->saveVersion(false, false, $params['versionNote'] ?? null);
+        } finally {
+            $this->existingVersion = null;
+        }
     }
 
     /**
@@ -161,6 +173,10 @@ abstract class PageSnippet extends Model\Document
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false): ?Model\Version
     {
+        // taken over before the version data is written, so it isn't part of it
+        $existingVersion = $this->existingVersion;
+        $this->existingVersion = null;
+
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
@@ -184,13 +200,15 @@ abstract class PageSnippet extends Model\Document
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
+            // with an existing version that version is written into, no version is added
             $documentsConfig = SystemSettingsConfig::get()['documents'];
             if ((is_null($documentsConfig['versions']['days'] ?? null) && is_null($documentsConfig['versions']['steps'] ?? null))
                 || (!empty($documentsConfig['versions']['steps']))
                 || !empty($documentsConfig['versions']['days'])
-                || $setModificationDate) {
+                || $setModificationDate
+                || $existingVersion !== null) {
                 $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected

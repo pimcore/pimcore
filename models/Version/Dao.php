@@ -26,12 +26,13 @@ use Pimcore\Model\Version;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
+     * With $forUpdate the row is locked and read as it is stored, not from the snapshot of the running transaction
      *
      * @throws NotFoundException
      */
-    public function getById(int $id): void
+    public function getById(int $id, bool $forUpdate = false): void
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?', [$id]);
+        $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?' . ($forUpdate ? ' FOR UPDATE' : ''), [$id]);
 
         if (!$data) {
             throw new NotFoundException('version with id ' . $id . ' not found');
@@ -135,10 +136,12 @@ class Dao extends Model\Dao\AbstractDao
             } else {
                 $countsPerCid = [];
 
+                // the version of the element's current state is always kept: a version that is published in place
+                // (see AbstractElement::doSaveVersion()) keeps its id, so it isn't necessarily among the newest ids
                 $sql = '
                     SELECT sub.cid as cid, sub.id as id, sub.`date`
                     FROM (
-                        SELECT id, cid, versions.`date`,
+                        SELECT id, cid, versions.`date`, versionCount,
                                ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
                         FROM versions
                         WHERE ctype = ? AND public = 0 AND autosave = 0
@@ -146,6 +149,7 @@ class Dao extends Model\Dao\AbstractDao
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
                     WHERE rownumber > ? AND IFNULL(active, 0) = 0 AND element.modificationDate >= sub.`date`
+                    AND NOT (sub.versionCount = element.versionCount AND sub.`date` = element.modificationDate)
                 ';
 
                 $iterator = $this->db->iterateAssociative(
