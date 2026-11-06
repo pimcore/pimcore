@@ -1407,6 +1407,21 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * Whether a classification store field keeps values per language: its own deprecated flag, or
+     * a key of its store that carries a flag of its own.
+     *
+     * The per language view and edit permissions follow the key, so a field that is not localized
+     * while one key of its store is carries the very same restriction a localized field carries -
+     * the editmode payload answers that key per language, and nothing else would keep a user out
+     * of a language they may not see.
+     */
+    private static function classificationstoreKeepsLanguages(
+        Model\DataObject\ClassDefinition\Data\Classificationstore $layout
+    ): bool {
+        return self::getClassificationstoreLocalizationResolver()->hasLocalizedKey($layout);
+    }
+
+    /**
      * Enriches the layout definition before it is returned to the admin interface.
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
@@ -1436,7 +1451,9 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields
+            || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore
+                && self::classificationstoreKeepsLanguages($layout)) {
             $user = self::getUser($user);
             if (!$user->isAdmin() && $permissionSubject) {
                 $allowedView = self::getLanguagePermissions($permissionSubject, $user, 'lView');
@@ -1479,7 +1496,9 @@ class Service extends Model\Element\Service
         ?array $allowedEdit,
         ?User $user = null
     ): void {
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields
+            || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore
+                && self::classificationstoreKeepsLanguages($layout)) {
             if (is_array($allowedView) && count($allowedView) > 0) {
                 $haveAllowedViewDefault = null;
                 if ($layout->getFieldtype() === 'localizedfields') {

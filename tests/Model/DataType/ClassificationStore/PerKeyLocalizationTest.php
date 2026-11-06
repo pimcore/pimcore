@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Csstorelocalized;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\User;
 use Pimcore\Tool;
 use Psr\Log\NullLogger;
 use ReflectionMethod;
@@ -342,6 +343,67 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
     }
 
     /**
+     * The per language view and edit restriction of a user follows the key as well: a field that is
+     * not localized while one key of its store is answers that key per language, so the languages
+     * the user may not see or edit have to reach the editor with it. Before the gate followed the
+     * key, permissionView and permissionEdit stayed unset for this field and the editor offered
+     * every language of the flagged key to a restricted user.
+     */
+    public function testTheLayoutPermissionsFollowTheKeyInANonLocalizedField(): void
+    {
+        $group = $this->createGroup('permissions');
+        $keyConfig = $this->createKeyWithFlag('permissions', null);
+        $this->assignKey($group, $keyConfig, 0);
+
+        $object = $this->createObject(Csstore::class, 'permissions', [$group->getId() => true]);
+        $user = $this->createUserWithLanguagePermissions($object, 'en,de', 'en');
+
+        try {
+            // no key of the store is kept per language yet, so the field is restricted by nothing
+            $layout = $this->enrichFieldDefinition($object, $user);
+            $this->assertFalse(
+                isset($layout->permissionView),
+                'a field holding no localized key must not be restricted per language'
+            );
+            $this->assertFalse(isset($layout->permissionEdit));
+
+            $keyConfig->setLocalized(true);
+            $keyConfig->save();
+            DefinitionCache::clear(null);
+
+            $layout = $this->enrichFieldDefinition($object, $user);
+            $this->assertSame(['en', 'de'], $layout->getPermissionView());
+            $this->assertSame(['en'], $layout->getPermissionEdit());
+        } finally {
+            $user->delete();
+        }
+    }
+
+    /**
+     * The same gate, through the shape grid configuration uses: it cannot hand over a Concrete
+     * object - field enrichment needs one - and passes the permission subject in the context
+     * instead. The grid has to restrict the languages of a flagged key exactly as the editor does.
+     */
+    public function testTheGridConfigurationPermissionsFollowTheKeyInANonLocalizedField(): void
+    {
+        $group = $this->createGroup('gridpermissions');
+        $keyConfig = $this->createKeyWithFlag('gridpermissions', true);
+        $this->assignKey($group, $keyConfig, 0);
+
+        $object = $this->createObject(Csstore::class, 'grid-permissions', [$group->getId() => true]);
+        $user = $this->createUserWithLanguagePermissions($object, 'en,de', 'en');
+
+        try {
+            $layout = $this->enrichFieldDefinition($object, $user, true);
+
+            $this->assertSame(['en', 'de'], $layout->getPermissionView());
+            $this->assertSame(['en'], $layout->getPermissionEdit());
+        } finally {
+            $user->delete();
+        }
+    }
+
+    /**
      * One fixture, both predictors: the payload answers a key with the languages it is kept in, and
      * the save accepts exactly those. A value stored in a language the key lost is neither answered
      * nor rewritten - it is only left alone, which is what {@see GeneralTest} asserts.
@@ -468,6 +530,59 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
             array_keys($localizedData),
             'the localized field answers every valid language'
         );
+    }
+
+    /**
+     * The field definition of the object's class, enriched the way the object editor enriches it -
+     * or, as grid configuration does it, with the permission subject handed over in the context
+     * because that caller has no object to enrich the fields with.
+     *
+     * The definition is cloned first: the class definition hands out the one instance it holds,
+     * and the enrichment writes the permissions onto it.
+     */
+    private function enrichFieldDefinition(
+        Csstore|Csstorelocalized $object,
+        User $user,
+        bool $asGridConfiguration = false
+    ): Data\Classificationstore {
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+        $this->assertInstanceOf(Data\Classificationstore::class, $fieldDefinition);
+
+        $layout = clone $fieldDefinition;
+        Service::enrichLayoutDefinition(
+            $layout,
+            $asGridConfiguration ? null : $object,
+            $asGridConfiguration ? ['purpose' => 'gridconfig', 'object' => $object] : [],
+            $user
+        );
+
+        return $layout;
+    }
+
+    /**
+     * A user whose workspace on the object lists the languages they may see and edit.
+     */
+    private function createUserWithLanguagePermissions(
+        Csstore|Csstorelocalized $object,
+        string $viewable,
+        string $editable
+    ): User {
+        $user = new User();
+        $user->setName('perkeylocalization_' . uniqid());
+        $user->setAdmin(false);
+
+        $workspace = new User\Workspace\DataObject();
+        $workspace->setCid($object->getId());
+        $workspace->setCpath($object->getRealFullPath());
+        $workspace->setList(true);
+        $workspace->setView(true);
+        $workspace->setSave(true);
+        $workspace->setLView($viewable);
+        $workspace->setLEdit($editable);
+        $user->setWorkspacesObject([$workspace]);
+        $user->save();
+
+        return $user;
     }
 
     private function createKeyWithFlag(string $label, ?bool $localized, ?Data $definition = null): KeyConfig

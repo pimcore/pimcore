@@ -18,6 +18,7 @@ use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\LocalizationResolver;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionClass;
 
 /**
@@ -90,12 +91,17 @@ class LocalizationResolverTest extends TestCase
 
     public function testAKeyIdThatResolvesToNoConfigurationFallsBackToTheField(): void
     {
+        // the only case here that looks the key up: an id the cache does not hold reaches the DAO
+        // through DefinitionCache::get(), so this one case needs a database
+        TestHelper::checkDbSupport();
+
         $this->assertTrue($this->resolver()->isKeyLocalized(self::VANISHED_KEY_ID, $this->field(true)));
         $this->assertFalse($this->resolver()->isKeyLocalized(self::VANISHED_KEY_ID, $this->field(false)));
     }
 
     /**
-     * The key flag alone answers this, so the resolver needs no connection for it.
+     * The key flag alone answers this, so the resolver's own connection is never used - the cases
+     * above hand the key config to the cache and the one case below reads it through the cache.
      */
     private function resolver(): LocalizationResolver
     {
