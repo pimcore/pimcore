@@ -18,11 +18,20 @@ use Pimcore\Bundle\CoreBundle\Migrations\Version20261105100000;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
+use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Psr\Log\NullLogger;
 
@@ -313,6 +322,265 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
         }
     }
 
+    /**
+     * The items of an advanced relation are mutable: a user reads the key, sets a column value on
+     * one of them and saves the object. Nothing about the store's items changed in the process, so
+     * the edit reaches the save only if the item itself marks the store dirty - which is why the
+     * items are bound to the store rather than to the object the denormalizer binds them to.
+     */
+    public function testEditingAColumnValueInPlaceReachesTheNextSave(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX . 'in-place');
+
+        $object = $this->createCsObject();
+        $object->getCsstore()->setLocalizedKeyValue(
+            (int) $group->getId(),
+            $keyId,
+            [$this->metadataItem($target, 'before')]
+        );
+        $object->save();
+
+        $loaded = Csstore::getById($object->getId(), ['force' => true]);
+        $store = $loaded->getCsstore();
+        $read = $store->getLocalizedKeyValue((int) $group->getId(), $keyId);
+
+        $read[0]->setData([self::RELATION_COLUMN => 'after']);
+
+        $this->assertTrue(
+            $store->isFieldDirty('_self'),
+            'an in-place column edit has to mark the store that holds the item dirty'
+        );
+
+        $loaded->save();
+
+        $this->assertSame(
+            [['index' => 0, 'column' => self::RELATION_COLUMN, 'data' => 'after']],
+            $this->readMetadata($object->getId(), (int) $group->getId(), $keyId)
+        );
+    }
+
+    /**
+     * Clearing a key leaves its group active, so the document loses the relation while nothing about
+     * the group is obsolete. Its stored column values have to go with it: left behind, they would be
+     * read back onto whatever entry later takes the index they sit at.
+     */
+    public function testClearingAnAdvancedRelationKeyRemovesItsStoredColumnValues(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX . 'cleared');
+
+        $object = $this->createCsObject();
+        $object->getCsstore()->setLocalizedKeyValue(
+            (int) $group->getId(),
+            $keyId,
+            [$this->metadataItem($target, 'to-be-cleared')]
+        );
+        $object->save();
+
+        $this->assertNotSame([], $this->readMetadata($object->getId(), (int) $group->getId(), $keyId));
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+        $reloaded->getCsstore()->setLocalizedKeyValue((int) $group->getId(), $keyId, null);
+        $reloaded->save();
+
+        $this->assertNull($this->readStoredValue($object->getId(), (int) $group->getId(), $keyId));
+        $this->assertSame(
+            [],
+            $this->readMetadata($object->getId(), (int) $group->getId(), $keyId),
+            'the rows of a key that is no longer in the document have to be removed with it'
+        );
+    }
+
+    /**
+     * And one language of a key is its own coordinate: clearing it takes its rows and leaves the
+     * rows of the other language where they are.
+     */
+    public function testClearingOneLanguageOfAnAdvancedRelationKeyLeavesTheOtherAlone(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX . 'one-language');
+
+        $object = $this->createCsObject();
+        $store = $object->getCsstore();
+        $store->setLocalizedKeyValue(
+            (int) $group->getId(),
+            $keyId,
+            [$this->metadataItem($target, 'english')],
+            'en'
+        );
+        $store->setLocalizedKeyValue(
+            (int) $group->getId(),
+            $keyId,
+            [$this->metadataItem($target, 'german')],
+            'de'
+        );
+        $object->save();
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+        $reloaded->getCsstore()->setLocalizedKeyValue((int) $group->getId(), $keyId, null, 'de');
+        $reloaded->save();
+
+        $this->assertSame(
+            ['en'],
+            $this->storedMetadataLanguages($object->getId(), (int) $group->getId(), $keyId),
+            'only the cleared language loses its rows'
+        );
+        $this->assertSame(
+            [['index' => 0, 'column' => self::RELATION_COLUMN, 'data' => 'english']],
+            $this->readMetadata($object->getId(), (int) $group->getId(), $keyId, 'en')
+        );
+    }
+
+    /**
+     * A key nobody read is written back as the descriptor it was loaded as, and its stored column
+     * values are what that descriptor was read from - so a save that touches another key must leave
+     * them exactly where they are.
+     */
+    public function testASaveKeepsTheStoredColumnValuesOfAKeyThatWasNeverRead(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject', 'csManyToOne']);
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $otherKeyId = $this->getRelationKeyId('csManyToOne');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX . 'untouched');
+        $other = TestHelper::createEmptyObject(self::KEY_PREFIX . 'other-key');
+
+        $object = $this->createCsObject();
+        $object->getCsstore()->setLocalizedKeyValue(
+            (int) $group->getId(),
+            $keyId,
+            [$this->metadataItem($target, 'kept')]
+        );
+        $object->save();
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+        $reloaded->getCsstore()->setLocalizedKeyValue((int) $group->getId(), $otherKeyId, $other);
+        $reloaded->save();
+
+        $this->assertSame(
+            [['index' => 0, 'column' => self::RELATION_COLUMN, 'data' => 'kept']],
+            $this->readMetadata($object->getId(), (int) $group->getId(), $keyId)
+        );
+    }
+
+    /**
+     * The stored descriptors of a key nobody read are checked against the key's declarations
+     * instead of against its elements, {@see RelationResolver::checkStoredValidity()} - so what
+     * that check refuses has to be what the key's own `checkValidity()` refuses, which the five
+     * types decide in three different ways. The two answers are compared rather than asserted
+     * against a list, so a type that changes its mind is a failure here.
+     */
+    public function testTheCheckOnAStoredDescriptorAgreesWithTheKeysOwnCheck(): void
+    {
+        $resolver = Pimcore::getContainer()->get(RelationResolver::class);
+        $this->assertInstanceOf(RelationResolver::class, $resolver);
+
+        $allowed = TestHelper::createEmptyObject(self::KEY_PREFIX . 'agree-allowed');
+        $foreign = $this->createCsObject();
+
+        $folder = new Folder();
+        $folder->setParentId(1);
+        $folder->setKey(self::KEY_PREFIX . 'agree-folder');
+        $folder->save();
+
+        $objectRelation = new ManyToManyObjectRelation();
+        $objectRelation->setName('csAgreeObject');
+        $objectRelation->setClasses([['classes' => self::RELATION_TARGET_CLASS]]);
+
+        $advancedObjectRelation = new AdvancedManyToManyObjectRelation();
+        $advancedObjectRelation->setName('csAgreeAdvancedObject');
+        $advancedObjectRelation->setAllowedClassId(self::RELATION_TARGET_CLASS);
+        $advancedObjectRelation->setColumns([[
+            'key' => self::RELATION_COLUMN,
+            'type' => 'text',
+            'label' => 'Quantity',
+            'position' => 1,
+        ]]);
+
+        $elementRelation = new ManyToManyRelation();
+        $elementRelation->setName('csAgreeElement');
+        $elementRelation->setObjectsAllowed(true);
+        $elementRelation->setClasses([['classes' => self::RELATION_TARGET_CLASS]]);
+
+        $toOneRelation = new ManyToOneRelation();
+        $toOneRelation->setName('csAgreeToOne');
+        $toOneRelation->setObjectsAllowed(true);
+        $toOneRelation->setClasses([['classes' => self::RELATION_TARGET_CLASS]]);
+
+        $cases = [
+            'object relation, a target of the class it allows' => [$objectRelation, $allowed],
+            'object relation, a target of another class' => [$objectRelation, $foreign],
+            'object relation, a folder' => [$objectRelation, $folder],
+            'advanced object relation, a target of the class it allows' => [$advancedObjectRelation, $allowed],
+            'advanced object relation, a target of another class' => [$advancedObjectRelation, $foreign],
+            'element relation, a target of the class it allows' => [$elementRelation, $allowed],
+            'element relation, a target of another class' => [$elementRelation, $foreign],
+            'element relation, a folder' => [$elementRelation, $folder],
+            'to-one relation, a target of the class it allows' => [$toOneRelation, $allowed],
+            'to-one relation, a target of another class' => [$toOneRelation, $foreign],
+        ];
+
+        foreach ($cases as $case => [$fieldDefinition, $target]) {
+            $value = $this->valueOf($fieldDefinition, $target);
+            $normalized = $fieldDefinition->normalize($value, ['fieldDefinition' => $fieldDefinition]);
+            $summaries = $resolver->summarize($resolver->describe($normalized));
+
+            $this->assertSame(
+                $this->refusedByItsOwnCheck($fieldDefinition, $value),
+                $this->refusedByTheStoredCheck($resolver, $fieldDefinition, $normalized, $summaries),
+                $case . ': the two checks have to agree'
+            );
+        }
+    }
+
+    /**
+     * The value one key holds for one target, in the shape its own `checkValidity()` is handed.
+     */
+    private function valueOf(Data $fieldDefinition, ElementInterface $target): mixed
+    {
+        if ($fieldDefinition instanceof AdvancedManyToManyObjectRelation) {
+            return [$this->metadataItem($target, 'agree')];
+        }
+
+        if ($fieldDefinition instanceof ManyToOneRelation) {
+            return $target;
+        }
+
+        return [$target];
+    }
+
+    private function refusedByItsOwnCheck(Data $fieldDefinition, mixed $value): bool
+    {
+        try {
+            $fieldDefinition->checkValidity($value, true);
+        } catch (ValidationException) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array<string, array<int, array<string, mixed>>> $summaries
+     */
+    private function refusedByTheStoredCheck(
+        RelationResolver $resolver,
+        AbstractRelations $fieldDefinition,
+        mixed $normalized,
+        array $summaries
+    ): bool {
+        try {
+            $resolver->checkStoredValidity($fieldDefinition, $normalized, $summaries, true);
+        } catch (ValidationException) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function testTheMetadataTableIsCreatedBesideTheDocumentTable(): void
     {
         $this->assertNotFalse(
@@ -473,13 +741,17 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
     /**
      * @return array<array{index: int, column: string, data: string}>
      */
-    private function readMetadata(int $objectId, int $groupId, int $keyId): array
-    {
+    private function readMetadata(
+        int $objectId,
+        int $groupId,
+        int $keyId,
+        string $language = self::DEFAULT_LANGUAGE
+    ): array {
         $rows = Db::get()->fetchAllAssociative(
             'SELECT `index`, `column`, `data` FROM ' . Db::get()->quoteIdentifier(self::METADATA_TABLE)
             . ' WHERE `id` = ? AND `fieldname` = ? AND `groupId` = ? AND `keyId` = ? AND `language` = ?'
             . ' ORDER BY `index`, `column`',
-            [$objectId, self::FIELDNAME, $groupId, $keyId, self::DEFAULT_LANGUAGE]
+            [$objectId, self::FIELDNAME, $groupId, $keyId, $language]
         );
 
         return array_map(static fn (array $row): array => [

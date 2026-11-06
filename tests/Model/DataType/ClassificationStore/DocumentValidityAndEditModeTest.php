@@ -17,6 +17,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Csstorelocalized;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
@@ -131,6 +132,120 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
         $this->assertIsArray($rows, 'the inherited relation value has to reach the payload');
         $this->assertSame([$target->getId()], array_column($rows, 'id'));
+    }
+
+    /**
+     * A stored descriptor is the state the definition in force when it was written allowed. Making
+     * the key's assignment to the group mandatory afterwards has to be noticed on the next save of
+     * an object whose value is still that descriptor - the one case the key's own check cannot be
+     * asked about, because it reads the element of every entry.
+     */
+    public function testAStoredRelationThatHasBecomeMandatoryFailsValidation(): void
+    {
+        $group = $this->createGroup('validity_mandatory_relation');
+        $keyConfig = $this->createKey('validity_mandatory_key', true, new ManyToManyObjectRelation());
+        $relation = $this->assignKey($group, $keyConfig, 0);
+
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey('validity-relation-mandatory');
+        $object->setPublished(true);
+
+        // the state a key whose every target was deleted is left in by a read: the resolved value
+        // takes the descriptor's place in the items, and the next save stores it as an empty one
+        $store = $object->getCsstore();
+        $store->setActiveGroups([$group->getId() => true]);
+        $store->setItems([$group->getId() => [$keyConfig->getId() => ['default' => []]]]);
+        $object->save();
+
+        $relation->setMandatory(true);
+        $relation->save();
+        $this->getRelationCache()->reset();
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+
+        $this->expectException(ValidationException::class);
+
+        $reloaded->save();
+    }
+
+    /**
+     * A stored descriptor is checked against what the key's assignment to the group allows now, and
+     * a target that is still allowed must not be refused.
+     */
+    public function testAStoredRelationThatStillSatisfiesItsDefinitionPassesValidation(): void
+    {
+        $object = $this->createObjectWithRelation(new Csstore(), 'validity-relation-allowed');
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+        $reloaded->save();
+
+        $this->assertNotNull(Csstore::getById($object->getId(), ['force' => true]));
+    }
+
+    /**
+     * Reading a child's own to-many key replaces its descriptor with the elements, while the parent
+     * at the same coordinate still holds the descriptor it was loaded as. The two must not be
+     * merged into one another: a value belongs to one store as a whole, and the nearer store's is
+     * the one that answers.
+     */
+    public function testReadingAChildsOwnRelationKeyLeavesTheInheritedItemsAndPayloadIntact(): void
+    {
+        $group = $this->createGroup('validity_merged_relation');
+        $keyConfig = $this->createKey('validity_merged_key', true, new ManyToManyObjectRelation());
+        $this->assignKey($group, $keyConfig, 0);
+
+        $groupId = (int) $group->getId();
+        $keyId = (int) $keyConfig->getId();
+
+        $ofTheParent = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'merged-parent');
+        $ofTheChild = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'merged-child');
+
+        $parent = new Csstorelocalized();
+        $parent->setParentId(1);
+        $parent->setKey('validity-merged-parent');
+        $parent->setPublished(true);
+        $parent->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofTheParent]);
+        $parent->save();
+
+        $child = new Csstorelocalized();
+        $child->setParentId($parent->getId());
+        $child->setKey('validity-merged-child');
+        $child->setPublished(true);
+        $child->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofTheChild]);
+        $child->save();
+
+        $child = Csstorelocalized::getById($child->getId(), ['force' => true]);
+        $store = $child->getCsstore();
+
+        $this->assertSame(
+            [$ofTheChild->getId()],
+            array_map(
+                static fn ($element): int => $element->getId(),
+                $store->getLocalizedKeyValue($groupId, $keyId)
+            ),
+            'precondition: the child answers with its own value, which resolves its descriptor'
+        );
+
+        $items = $store->getItems();
+
+        $this->assertSame(
+            [$ofTheChild->getId()],
+            array_map(
+                static fn ($element): int => $element->getId(),
+                $items[$groupId][$keyId]['default']
+            ),
+            'the parent\'s unread descriptor must not be merged into the value the child holds'
+        );
+
+        $payload = $child->getClass()
+            ->getFieldDefinition(self::FIELDNAME)
+            ->getDataForEditmode($store, $child);
+
+        $rows = $payload['data']['default'][$groupId][$keyId] ?? null;
+
+        $this->assertIsArray($rows);
+        $this->assertSame([$ofTheChild->getId()], array_column($rows, 'id'));
     }
 
     private function createObjectWithRelation(Concrete $object, string $key): Concrete

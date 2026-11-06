@@ -37,6 +37,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
+     * How many levels of the items are a map: a value is addressed by group, key and language, and
+     * what sits under the third of them is the value itself. {@see self::mergeArrays()}
+     *
+     * @internal
+     */
+    private const ITEM_LEVELS = 3;
+
+    /**
      * @internal
      *
      */
@@ -105,7 +113,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->getAllDataFromField(
             fn ($classificationStore, $fieldsArray) => $this->mergeArrays(
                 $fieldsArray,
-                $classificationStore->items
+                $classificationStore->items,
+                self::ITEM_LEVELS
             )
         );
     }
@@ -432,7 +441,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return $data;
         }
 
-        $resolved = $this->getRelationResolver()->resolve($fieldDefinition, $data->getValue(), $this->getObject());
+        $resolved = $this->getRelationResolver()->resolve(
+            $fieldDefinition,
+            $data->getValue(),
+            $this->getObject(),
+            $this
+        );
         $this->items[$groupId][$keyId][$language] = $resolved->getData();
 
         if ($resolved->hasDroppedTargets()) {
@@ -474,7 +488,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->getAllDataFromField(
             fn (Classificationstore $store, array $carry): array => $this->mergeArrays(
                 $carry,
-                $store->renderOwnRelationsForEditMode()
+                $store->renderOwnRelationsForEditMode(),
+                self::ITEM_LEVELS
             )
         );
     }
@@ -581,7 +596,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $resolved = $this->getRelationResolver()->resolve(
             $request->getFieldDefinition(),
             $request->getNormalizedValue(),
-            $this->getObject()
+            $this->getObject(),
+            $this
         );
 
         $this->items[$request->getGroupId()][$request->getKeyId()][$request->getLanguage()]
@@ -736,15 +752,26 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return Classificationstore\GroupConfig::getById($groupId);
     }
 
-    private function mergeArrays(array $a1, array $a2): array
+    /**
+     * Merges the nearer store's map over an ancestor's, down to the given number of levels.
+     *
+     * A value is a leaf, never a map to merge into: the items are addressed by group, key and
+     * language, and what sits under those three belongs to one store as a whole. A relation-typed
+     * value makes that unmistakable - one store can hold its elements while an ancestor still holds
+     * the descriptor it was loaded from, and merging a list of elements into a
+     * {@see RelationDescriptor} would ask for the descriptor as an array. It is no less true of
+     * every other value a key holds as an array: a child's multiselect is its own value, and the
+     * entries an ancestor happens to have beyond it are not part of it.
+     *
+     * The level count is what keeps that rule at the value and nowhere above it, and the type of
+     * both sides is checked as well, so a map one level shallower than it should be cannot make a
+     * merge of two arrays out of a value and a map.
+     */
+    private function mergeArrays(array $a1, array $a2, int $levels = PHP_INT_MAX): array
     {
         foreach ($a1 as $key => $value) {
-            if (array_key_exists($key, $a2)) {
-                if (is_array($value)) {
-                    $a2[$key] = $this->mergeArrays($value, $a2[$key]);
-                } else {
-                    $a2[$key] = $value;
-                }
+            if ($levels > 1 && is_array($value) && is_array($a2[$key] ?? null)) {
+                $a2[$key] = $this->mergeArrays($value, $a2[$key], $levels - 1);
             } else {
                 $a2[$key] = $value;
             }

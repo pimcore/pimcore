@@ -17,12 +17,17 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\DerivedValueInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
 /**
@@ -153,11 +158,192 @@ final class RelationResolver
      * it cannot instantiate, so asking the database which ids are still there would read the same
      * rows the element loads below read anyway.
      *
+     * @param Classificationstore|null $owner the store the value belongs to, which the items of an
+     *                                        advanced relation are bound to {@see self::bindToOwner()}
+     *
      * @throws Exception
      */
-    public function resolve(Data $fieldDefinition, mixed $normalizedValue, ?Concrete $object): ResolvedRelation
+    public function resolve(
+        Data $fieldDefinition,
+        mixed $normalizedValue,
+        ?Concrete $object,
+        ?Classificationstore $owner = null
+    ): ResolvedRelation {
+        $resolved = $this->denormalize($fieldDefinition, $normalizedValue, $object);
+
+        $this->bindToOwner($resolved->getData(), $owner);
+
+        return $resolved;
+    }
+
+    /**
+     * Binds the items of an advanced relation to the store that holds them, so that editing one of
+     * their column values in place reaches the store's dirty map.
+     *
+     * Both advanced denormalizers hand their items the Concrete object as the owner and the key
+     * definition's name as the owner field name, which is the right pair for a class field and the
+     * wrong one here: {@see \Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait::markMeDirty()}
+     * would then mark a field of the object that does not exist, while
+     * {@see \Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine::save()} asks the
+     * store whether anything about it is dirty and returns without writing when nothing is. An
+     * in-place column edit would be discarded with no error at all.
+     *
+     * `_self` is the field name the store marks dirty for every value of its own.
+     */
+    private function bindToOwner(mixed $data, ?Classificationstore $owner): void
     {
-        return $this->denormalize($fieldDefinition, $normalizedValue, $object);
+        if ($owner === null || !is_array($data)) {
+            return;
+        }
+
+        foreach ($data as $item) {
+            if ($item instanceof OwnerAwareFieldInterface) {
+                $item->_setOwner($owner);
+                $item->_setOwnerFieldname('_self');
+            }
+        }
+    }
+
+    /**
+     * Checks the stored descriptors of one relation-typed key against the definition as it stands
+     * now, without instantiating a target.
+     *
+     * A key nobody read holds the descriptors the document was loaded from, and a save writes them
+     * back unchanged - but the definition they were written under may not be the one in force now.
+     * Making a key mandatory, lowering its item limit, taking a class out of its allowed ones or
+     * turning multiple assignments off all make a stored value invalid without anything touching
+     * it, and the key's own `checkValidity()` cannot be asked: it reads the element of every entry,
+     * which is the load this field exists to avoid. So the same four constraints are checked here
+     * against what a descriptor says and what {@see self::summarize()} answers for its target - one
+     * chunked statement per element type for a whole store, and no element load at all. The messages
+     * are the ones the key's own check raises, so a reader cannot tell the two apart.
+     *
+     * A descriptor whose target is gone is not among the summaries and is skipped: the read drops
+     * it and the next save rewrites the document without it, {@see self::resolve()}, and refusing
+     * the save instead would leave the object no way back.
+     *
+     * @param array<string, array<int, array<string, mixed>>> $summaries {@see self::summarize()},
+     *                                                                   over the whole store
+     *
+     * @throws ValidationException
+     */
+    public function checkStoredValidity(
+        AbstractRelations $fieldDefinition,
+        mixed $normalizedValue,
+        array $summaries,
+        bool $omitMandatoryCheck = false
+    ): void {
+        $descriptors = $this->describe($normalizedValue);
+
+        if (!$omitMandatoryCheck && $fieldDefinition->getMandatory() && $descriptors === []) {
+            throw new ValidationException('Empty mandatory field [ ' . $fieldDefinition->getName() . ' ]');
+        }
+
+        $seen = [];
+
+        foreach ($descriptors as $descriptor) {
+            $summary = $summaries[$descriptor['type']][$descriptor['id']] ?? null;
+
+            if ($summary === null) {
+                continue;
+            }
+
+            if (!$this->allowsTarget($fieldDefinition, $summary)) {
+                throw new ValidationException(sprintf(
+                    'Invalid relation in field `%s` [type: %s]',
+                    $fieldDefinition->getName(),
+                    $fieldDefinition->getFieldtype()
+                ));
+            }
+
+            $key = $this->keyOf($descriptor);
+
+            if (isset($seen[$key]) && !$this->allowsMultipleAssignments($fieldDefinition)) {
+                throw new ValidationException(
+                    'Passing relations multiple times not allowed anymore: ' . $key
+                    . ' multiple times in field ' . $fieldDefinition->getName()
+                );
+            }
+
+            $seen[$key] = true;
+        }
+
+        $maxItems = method_exists($fieldDefinition, 'getMaxItems') ? $fieldDefinition->getMaxItems() : null;
+
+        if ($maxItems && count($descriptors) > $maxItems) {
+            throw new ValidationException(
+                'Number of allowed relations in field `' . $fieldDefinition->getName()
+                . '` exceeded (max. ' . $maxItems . ')'
+            );
+        }
+    }
+
+    private function allowsMultipleAssignments(AbstractRelations $fieldDefinition): bool
+    {
+        return method_exists($fieldDefinition, 'getAllowMultipleAssignments')
+            && $fieldDefinition->getAllowMultipleAssignments();
+    }
+
+    /**
+     * Whether this key may hold the described target, read off the same declarations the three
+     * allow-traits read: {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait},
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait} and
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait}.
+     * They take an element rather than a description of one, which is why the decision is made from
+     * the declarations here instead of by calling them - everything they look at is a column of the
+     * target, and {@see self::describeTarget()} carries all of it.
+     *
+     * The two object-only types answer it differently and are asked first, the advanced one before
+     * the type it extends. That this agrees with what each of the five types refuses is asserted
+     * over a fixture per type rather than here - see `DocumentRelationTest`.
+     *
+     * @param array<string, mixed> $summary
+     */
+    private function allowsTarget(AbstractRelations $fieldDefinition, array $summary): bool
+    {
+        // the advanced object relation names the one class it allows in a field of its own and
+        // compares the target's class name against it, rather than going through the allow-trait
+        if ($fieldDefinition instanceof AdvancedManyToManyObjectRelation) {
+            return $summary['type'] === 'object'
+                && $summary['subtype'] !== 'folder'
+                && (string) $summary['className'] === (string) $fieldDefinition->getAllowedClassId();
+        }
+
+        // an object relation requires a Concrete, which a folder is not - whatever its allowed
+        // classes say
+        if ($fieldDefinition instanceof ManyToManyObjectRelation && $summary['subtype'] === 'folder') {
+            return false;
+        }
+
+        return match ($summary['type']) {
+            'object' => $fieldDefinition->getObjectsAllowed()
+                && $this->isAllowedBy(
+                    array_column($fieldDefinition->getClasses(), 'classes'),
+                    $summary['subtype'] === 'folder' ? 'folder' : (string) $summary['className']
+                ),
+            'asset' => $fieldDefinition->getAssetsAllowed()
+                && $this->isAllowedBy(
+                    array_column($fieldDefinition->getAssetTypes(), 'assetTypes'),
+                    (string) $summary['subtype']
+                ),
+            'document' => $fieldDefinition->getDocumentsAllowed()
+                && $this->isAllowedBy(
+                    array_values(array_filter(array_column($fieldDefinition->getDocumentTypes(), 'documentTypes'))),
+                    (string) $summary['subtype']
+                ),
+            default => false,
+        };
+    }
+
+    /**
+     * An empty list of allowed values allows everything, which is how all three allow-traits read
+     * one.
+     *
+     * @param list<mixed> $allowed
+     */
+    private function isAllowedBy(array $allowed, string $value): bool
+    {
+        return $allowed === [] || in_array($value, $allowed, true);
     }
 
     /**

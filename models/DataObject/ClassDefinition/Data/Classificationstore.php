@@ -739,6 +739,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
         $subItems = [];
+        $storedRelations = [];
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
@@ -770,8 +771,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                         }
 
-                        // an unread descriptor is the stored state, which was valid when written
+                        // an unread descriptor names its targets without holding them, and the key's
+                        // own check reads the element of every entry. It is checked against the
+                        // definition in force now - this one, the group's - once the walk is done,
+                        // so that the whole store costs one round of lookups and no element load
                         if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
+                            if ($keyDef instanceof Relations\AbstractRelations) {
+                                $storedRelations[] = [$keyDef, $value->getValue(), $validLanguage];
+                            }
+
                             continue;
                         }
 
@@ -787,6 +795,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     }
                 }
             }
+
+            $subItems = array_merge($subItems, $this->checkStoredRelations($storedRelations));
         }
 
         if ($subItems) {
@@ -801,6 +811,55 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
             throw $validationException;
         }
+    }
+
+    /**
+     * The stored descriptors of the relation-typed keys nobody read, checked against the definition
+     * each of them is assigned to the group under.
+     *
+     * The targets of every one of them are described in one round of lookups,
+     * {@see DataObject\Classificationstore\RelationResolver::summarize()}, so a store holding fifty
+     * relation keys in seventeen languages costs one statement per element type rather than one
+     * element load per target. What is checked and why the key's own `checkValidity()` cannot be:
+     * {@see DataObject\Classificationstore\RelationResolver::checkStoredValidity()}.
+     *
+     * @param list<array{0: Relations\AbstractRelations, 1: mixed, 2: string}> $storedRelations
+     *
+     * @return list<Model\Element\ValidationException>
+     *
+     * @throws Exception
+     */
+    private function checkStoredRelations(array $storedRelations): array
+    {
+        if ($storedRelations === []) {
+            return [];
+        }
+
+        $resolver = $this->getRelationResolver();
+        $descriptors = [];
+
+        foreach ($storedRelations as [, $normalizedValue, ]) {
+            foreach ($resolver->describe($normalizedValue) as $descriptor) {
+                $descriptors[] = $descriptor;
+            }
+        }
+
+        $summaries = $resolver->summarize($descriptors);
+        $exceptions = [];
+
+        foreach ($storedRelations as [$keyDef, $normalizedValue, $language]) {
+            try {
+                $resolver->checkStoredValidity($keyDef, $normalizedValue, $summaries);
+            } catch (Model\Element\ValidationException $exception) {
+                $exceptions[] = new Model\Element\ValidationException(
+                    $exception->getMessage() . ' (' . $language . ')',
+                    $exception->getCode(),
+                    $exception->getPrevious()
+                );
+            }
+        }
+
+        return $exceptions;
     }
 
     /**

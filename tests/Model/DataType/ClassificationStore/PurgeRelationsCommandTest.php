@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Command\PurgeClassificationStoreRelationsCommand;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
@@ -185,6 +186,61 @@ class PurgeRelationsCommandTest extends AbstractClassificationStoreTest
 
         $this->assertCount(1, $read);
         $this->assertSame('of-the-kept', $read[0]->getData()[self::RELATION_COLUMN]);
+    }
+
+    /**
+     * The sweep rewrites the document under the object, so an entry built before it still answers
+     * with the descriptors it has removed. Editing another key of the group would then serialize
+     * those back - a save writes an unread descriptor as it stands - and the purge would be undone
+     * by the next ordinary edit.
+     */
+    public function testTheForcedRunTakesTheSweptObjectOutOfTheCaches(): void
+    {
+        $group = $this->createRelationFixture(['csManyToManyObject', 'csManyToOne']);
+        $groupId = (int) $group->getId();
+        $sweptKeyId = $this->getRelationKeyId('csManyToManyObject');
+        $otherKeyId = $this->getRelationKeyId('csManyToOne');
+
+        $kept = TestHelper::createEmptyObject(self::KEY_PREFIX . 'cache-kept');
+        $removed = TestHelper::createEmptyObject(self::KEY_PREFIX . 'cache-removed');
+        $other = TestHelper::createEmptyObject(self::KEY_PREFIX . 'cache-other');
+
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey(self::KEY_PREFIX . 'cache-owner');
+        $object->setPublished(true);
+        $object->save();
+
+        $object->getCsstore()->setLocalizedKeyValue($groupId, $sweptKeyId, [$kept, $removed]);
+        $object->save();
+
+        $removed->delete();
+
+        Cache::enable();
+
+        try {
+            // the entry the sweep has to invalidate: it carries the descriptors about to be removed
+            $this->assertNotNull(Csstore::getById($object->getId(), ['force' => true]));
+
+            $this->runCommand(['--force' => true]);
+
+            $this->assertFalse(
+                RuntimeCache::isRegistered('object_' . $object->getId()),
+                'the swept object must not be left in the runtime cache'
+            );
+
+            $edited = Csstore::getById($object->getId());
+            $edited->getCsstore()->setLocalizedKeyValue($groupId, $otherKeyId, $other);
+            $edited->save();
+
+            $this->assertSame(
+                [$kept->getId()],
+                $this->storedTargetIds($object->getId(), $groupId, $sweptKeyId),
+                'an edit of another key must not write the purged descriptor back'
+            );
+        } finally {
+            Cache::disable();
+        }
     }
 
     /**
