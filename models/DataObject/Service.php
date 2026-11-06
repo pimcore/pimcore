@@ -295,9 +295,10 @@ class Service extends Model\Element\Service
             $targetValue = $target->get($name);
 
             if ($newValue instanceof DataObject\Classificationstore) {
-                // like the editors, only localized stores are limited; a store without languages only holds 'default'
-                if ($definition instanceof ClassDefinition\Data\Classificationstore && $definition->isLocalized()) {
-                    $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
+                // like the editors, only the keys that are kept per language are limited
+                if ($definition instanceof ClassDefinition\Data\Classificationstore
+                    && self::getClassificationstoreLocalizationResolver()->hasLocalizedKey($definition)) {
+                    $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages, $definition);
                 }
             } elseif (!$restrictLocalizedfields) {
                 continue;
@@ -315,14 +316,17 @@ class Service extends Model\Element\Service
 
     /**
      * The values of a localized classification store are keyed by group, key and language ('default' is the
-     * language-independent value, which is only editable if the user's list contains it).
+     * language-independent value, which is only editable if the user's list contains it). The restriction
+     * follows the key: a key the field keeps per language is limited to the editable ones, while a key that
+     * holds the one language-independent value is copied as a non-localized field is.
      *
      * @param array<string, int> $editableLanguages
      */
     private function restoreClassificationstoreLanguages(
         DataObject\Classificationstore $new,
         mixed $target,
-        array $editableLanguages
+        array $editableLanguages,
+        ClassDefinition\Data\Classificationstore $definition
     ): void {
         // the object is saved with inheritance off, so own values must not be mixed with the parent's
         [$items, $activeGroups] = self::useInheritedValues(false, static fn (): array => [$new->getItems(), $new->getActiveGroups()]);
@@ -330,14 +334,24 @@ class Service extends Model\Element\Service
             ? self::useInheritedValues(false, static fn (): array => $target->getItems())
             : [];
 
+        $localizedKeys = self::getLocalizedClassificationstoreKeys($definition, $items, $targetItems);
+
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $values) {
+                if (!isset($localizedKeys[$keyId])) {
+                    continue;
+                }
+
                 $items[$groupId][$keyId] = array_intersect_key($values, $editableLanguages);
             }
         }
 
         foreach ($targetItems as $groupId => $group) {
             foreach ($group as $keyId => $values) {
+                if (!isset($localizedKeys[$keyId])) {
+                    continue;
+                }
+
                 $kept = array_diff_key($values, $editableLanguages);
                 if ($kept) {
                     $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
@@ -355,6 +369,45 @@ class Service extends Model\Element\Service
 
         $new->setItems(array_filter($items));
         $new->setActiveGroups($activeGroups);
+    }
+
+    private static function getClassificationstoreLocalizationResolver(): DataObject\Classificationstore\LocalizationResolver
+    {
+        return Pimcore::getContainer()->get(DataObject\Classificationstore\LocalizationResolver::class);
+    }
+
+    /**
+     * The keys held by either value set that the field keeps per language, as a set to test against. The
+     * key configs are read in one go, so that the loops above cost no statement per key.
+     *
+     * @param array<int, array<int, array<string, mixed>>> $items
+     * @param array<int, array<int, array<string, mixed>>> $targetItems
+     *
+     * @return array<int, true>
+     */
+    private static function getLocalizedClassificationstoreKeys(
+        ClassDefinition\Data\Classificationstore $definition,
+        array $items,
+        array $targetItems
+    ): array {
+        $keyIds = [];
+        foreach ([...array_values($items), ...array_values($targetItems)] as $keys) {
+            foreach (array_keys($keys) as $keyId) {
+                $keyIds[] = (int) $keyId;
+            }
+        }
+
+        DataObject\Classificationstore\DefinitionCache::load($keyIds);
+
+        $resolver = self::getClassificationstoreLocalizationResolver();
+        $localizedKeys = [];
+        foreach ($keyIds as $keyId) {
+            if ($resolver->isKeyLocalized($keyId, $definition)) {
+                $localizedKeys[$keyId] = true;
+            }
+        }
+
+        return $localizedKeys;
     }
 
     /**
@@ -684,7 +737,7 @@ class Service extends Model\Element\Service
                     $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                     $csLanguage = $requestedLanguage;
 
-                    if (!$csFieldDefinition->isLocalized()) {
+                    if (!self::getClassificationstoreLocalizationResolver()->isKeyLocalized($keyid, $csFieldDefinition)) {
                         $csLanguage = 'default';
                     }
 
@@ -1354,6 +1407,21 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * Whether a classification store field keeps values per language: its own deprecated flag, or
+     * a key of its store that carries a flag of its own.
+     *
+     * The per language view and edit permissions follow the key, so a field that is not localized
+     * while one key of its store is carries the very same restriction a localized field carries -
+     * the editmode payload answers that key per language, and nothing else would keep a user out
+     * of a language they may not see.
+     */
+    private static function classificationstoreKeepsLanguages(
+        Model\DataObject\ClassDefinition\Data\Classificationstore $layout
+    ): bool {
+        return self::getClassificationstoreLocalizationResolver()->hasLocalizedKey($layout);
+    }
+
+    /**
      * Enriches the layout definition before it is returned to the admin interface.
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
@@ -1383,7 +1451,9 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields
+            || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore
+                && self::classificationstoreKeepsLanguages($layout)) {
             $user = self::getUser($user);
             if (!$user->isAdmin() && $permissionSubject) {
                 $allowedView = self::getLanguagePermissions($permissionSubject, $user, 'lView');
@@ -1426,7 +1496,9 @@ class Service extends Model\Element\Service
         ?array $allowedEdit,
         ?User $user = null
     ): void {
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields
+            || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore
+                && self::classificationstoreKeepsLanguages($layout)) {
             if (is_array($allowedView) && count($allowedView) > 0) {
                 $haveAllowedViewDefault = null;
                 if ($layout->getFieldtype() === 'localizedfields') {
