@@ -24,6 +24,8 @@ use Pimcore\Logger;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\Dao as ClassDefinitionDaoHelper;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
@@ -174,6 +176,14 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
                         /** @var MarshallerService $marshallerService */
                         $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
+
+                        $this->assertTheMarshallerCanPackTheValue(
+                            $fd,
+                            $marshallerService,
+                            $normalizedData,
+                            (string) $data['type'],
+                            $keyConfig->getStoreId()
+                        );
 
                         if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                             $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
@@ -439,6 +449,52 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
             throw new UnsupportedEngineFeatureException($type, $storeId, self::ENGINE_NAME);
         }
+    }
+
+    /**
+     * Refuses a value whose marshaller would answer with two empty columns, before it is marshalled.
+     *
+     * {@see self::assertValueFitsTheValueColumns()} is the check on what is about to be written, and
+     * it cannot see this one: a marshaller that has nothing to pack returns `null` columns rather
+     * than the structure it was handed, so by the time that check runs the value is already gone and
+     * the two nulls it inspects look like an empty value. The save then succeeds and the value is
+     * lost without an error - which is the one outcome this engine is not allowed to have.
+     *
+     * The case that produces it is `encryptedField`: its marshaller encrypts a scalar as it stands
+     * and hands anything else to the marshaller of its delegate, so a delegate with no
+     * classification store marshaller of its own leaves both columns null
+     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::marshal()}).
+     * Such a key is refused when it is defined, but a key row that predates that gate, or one an
+     * upgrade or a direct SQL edit wrote, reaches here - and the delegate is read off the hydrated
+     * field definition rather than off the declared return type of anything, so a delegate that
+     * declares `mixed` and returns a structure is refused on the value it actually produced.
+     *
+     * @throws UnsupportedEngineFeatureException
+     */
+    private function assertTheMarshallerCanPackTheValue(
+        Data $fd,
+        MarshallerService $marshallerService,
+        mixed $normalizedData,
+        string $type,
+        int $storeId
+    ): void {
+        if (!$this->keyTypeSupport->isAcceptedType($type)) {
+            return;
+        }
+
+        if (!$fd instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
+            return;
+        }
+
+        $delegate = $fd->getDelegate();
+
+        if ($delegate instanceof Data
+            && $marshallerService->supportsFielddefinition('classificationstore', $delegate->getFieldtype())
+        ) {
+            return;
+        }
+
+        throw new UnsupportedEngineFeatureException($type, $storeId, self::ENGINE_NAME);
     }
 
     /**

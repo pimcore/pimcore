@@ -29,7 +29,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Helper\Dao as ClassDefinitionDaoHel
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache;
-use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Model\DataObject\Classificationstore\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Service as DataObjectService;
@@ -108,6 +107,15 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
     private const MARSHALLER_FORMAT = 'classificationstore';
 
+    /**
+     * The one member of the JSON envelope an `encryptedField` value is wrapped in when what it
+     * normalizes to is not a scalar. {@see self::needsAJsonEnvelope()} says when that is, and the
+     * member is what tells the read side an envelope is what it is holding - a delegate whose
+     * values are sometimes a scalar and sometimes not stores both shapes under one key, so the
+     * shape cannot be derived from the delegate's type.
+     */
+    private const ENVELOPE_MEMBER = '_csJson';
+
     private const DOCUMENT_COLUMNS = ['id', 'fieldname', 'groupId', 'collectionId', 'values', 'checksum'];
 
     /**
@@ -151,7 +159,6 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         private readonly MarshallerService $marshallerService,
         private readonly KeyGroupRelationCache $relationCache,
         private readonly EavEngine $eavEngine,
-        private readonly KeyTypeSupport $keyTypeSupport,
         Connection $db
     ) {
         $this->db = $db;
@@ -892,10 +899,10 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return $normalizedData;
         }
 
-        if ($normalizedData !== null && $this->encryptsThroughAJsonEnvelope($fd)) {
+        if ($this->needsAJsonEnvelope($fd, $normalizedData)) {
             // throwing, so that a value JSON cannot carry is not encrypted as the `false` of a
             // failed encode and read back as nothing
-            $normalizedData = json_encode($normalizedData, JSON_THROW_ON_ERROR);
+            $normalizedData = json_encode([self::ENVELOPE_MEMBER => $normalizedData], JSON_THROW_ON_ERROR);
         }
 
         $marshaller = $this->marshallerService
@@ -984,9 +991,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                 ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype())
                 ->unmarshal($value, $this->getMarshallerParameters($fd, $object));
 
-            if (is_string($value) && $this->encryptsThroughAJsonEnvelope($fd)) {
-                $value = json_decode($value, true);
-            }
+            $value = $this->openAJsonEnvelope($value);
         }
 
         return $fd->denormalize($value, ['object' => $object, 'fieldDefinition' => $fd]);
@@ -1008,30 +1013,62 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * Whether the value of an `encryptedField` reaches the encryption as the JSON of what it
+     * Whether this value of an `encryptedField` reaches the encryption as the JSON of what it
      * normalizes to, rather than as the value itself.
      *
-     * The classificationstore `encryptedField` marshaller encrypts a scalar, and hands an array to
-     * the marshaller of its delegate to be packed into the two value columns first - of which there
-     * are none here. A delegate the two columns cannot hold, which is exactly a delegate this engine
-     * unlocks, therefore has nothing the marshaller would encrypt and would be stored as `null`.
-     * One JSON envelope makes it a scalar again, and nothing about the encryption changes.
+     * The classificationstore `encryptedField` marshaller encrypts a scalar, and hands anything
+     * else to the marshaller of its delegate to be packed into the two value columns first - of
+     * which there are none here. A delegate with no marshaller of its own therefore has nothing
+     * that marshaller would encrypt, and is stored as two `null` columns: the value is lost without
+     * an error. One JSON envelope makes it a scalar again, and nothing about the encryption changes.
      *
-     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport} is what decides it, the
-     * same predicate that refuses such a key on an EAV store, so the envelope covers exactly the
-     * delegates no marshaller packs: a delegate that normalizes to a scalar or has a marshaller of
-     * its own keeps the shape it has always been stored in.
+     * It is decided from the value in hand and the registered marshallers, never from the
+     * delegate's declared `normalize()` return type. A type is free to declare `mixed` - which
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport} reads as
+     * scalar-compatible, correctly, because the declaration is all a key definition has to go on -
+     * and return a structure for some of its values. Reading the declaration here would send
+     * exactly those values into the marshaller's array branch and lose them, which is what asking
+     * the payload cannot do.
      */
-    private function encryptsThroughAJsonEnvelope(Data $fd): bool
+    private function needsAJsonEnvelope(?Data $fd, mixed $normalizedData): bool
     {
-        if (!$fd instanceof EncryptedField) {
+        if (!$fd instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
             return false;
         }
 
         $delegate = $fd->getDelegate();
 
-        return $delegate instanceof Data
-            && !$this->keyTypeSupport->isHeldInValueColumns($delegate->getFieldtype());
+        // a delegate with a classificationstore marshaller is packed into the two value columns by
+        // it and encrypted column by column, which is the shape such a key has always been stored in
+        return !($delegate instanceof Data
+            && $this->marshallerService->supportsFielddefinition(
+                self::MARSHALLER_FORMAT,
+                $delegate->getFieldtype()
+            ));
+    }
+
+    /**
+     * The value an envelope of {@see self::needsAJsonEnvelope()} carries, or the value as it stands
+     * when it is not one.
+     *
+     * The envelope is named rather than bare so that this is an answer and not a guess: a delegate
+     * with no marshaller may store a scalar for one value and an envelope for the next, and a
+     * scalar that happens to be the string `[1,2]` must not come back as an array. Only the one
+     * member this engine writes is unwrapped.
+     */
+    private function openAJsonEnvelope(mixed $value): mixed
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        $decoded = json_decode($value, true);
+
+        if (is_array($decoded) && count($decoded) === 1 && array_key_exists(self::ENVELOPE_MEMBER, $decoded)) {
+            return $decoded[self::ENVELOPE_MEMBER];
+        }
+
+        return $value;
     }
 
     /**

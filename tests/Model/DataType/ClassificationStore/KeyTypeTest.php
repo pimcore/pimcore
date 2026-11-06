@@ -25,8 +25,11 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
+use Pimcore\Model\DataObject\Data\EncryptedField as EncryptedFieldValue;
 use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
+use Pimcore\Tests\Support\Helper\DataType\MixedNormalizingField;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
@@ -57,6 +60,12 @@ class KeyTypeTest extends AbstractClassificationStoreTest
     private const INPUT_TYPE = 'input';
 
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
+
+    /**
+     * The test-only field type that declares `mixed` and returns an array.
+     * {@see MixedNormalizingField}, registered in the test container's class definition data map.
+     */
+    private const MIXED_NORMALIZING_TYPE = 'mixedNormalizingObject';
 
     private const DATA_TABLE = 'object_classificationstore_data_';
 
@@ -229,6 +238,67 @@ class KeyTypeTest extends AbstractClassificationStoreTest
             0,
             $this->countDataRows((int) $object->getId(), $group->getId(), (int) $keyConfig->getId()),
             'no value row was written for the refused key'
+        );
+    }
+
+    /**
+     * The declaration is not the value, and a refusal about storage has to be about the value.
+     *
+     * `mixedNormalizingObject` declares `mixed` and returns an array, so an `encryptedField`
+     * delegating to it passes the definition check - a declaration is all that check can have. The
+     * encryptedField marshaller then has nothing to pack into the two columns, hands both of them
+     * back as `null`
+     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::marshal()}), and
+     * a check on what is about to be written sees two nulls that look like an empty value. So the
+     * save has to be refused before the marshaller rather than after it, or it succeeds having
+     * stored nothing.
+     */
+    public function testAnEncryptedFieldWhoseDelegateReturnsAStructureIsRefusedWhenAValueIsWritten(): void
+    {
+        $store = $this->getStore();
+        $group = $this->getGroup();
+
+        $definition = new EncryptedField();
+        $definition->setDelegateDatatype(self::MIXED_NORMALIZING_TYPE);
+        $definition->setDelegate(new MixedNormalizingField());
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName(self::KEY_PREFIX . 'encryptedMixed');
+        $keyConfig->setType(self::ENCRYPTED_FIELD_TYPE);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setDefinition($this->encodeDefinition($definition));
+
+        // the definition check accepts it: the delegate declares a scalar-compatible normalized type
+        $keyConfig->save();
+        $this->createdKeys[] = $keyConfig;
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId((int) $keyConfig->getId());
+        $relation->setGroupId($group->getId());
+        $relation->setSorter(97);
+        $relation->save();
+
+        $object = $this->createObject('encrypted-mixed');
+        $csField = $object->getCsstore();
+        $csField->setActiveGroups([$group->getId() => true]);
+        $csField->setLocalizedKeyValue(
+            $group->getId(),
+            (int) $keyConfig->getId(),
+            new EncryptedFieldValue(new MixedNormalizingField(), new CustomValueObject('secret'))
+        );
+
+        try {
+            $object->save();
+            $this->fail('the engine has to refuse a value its marshaller cannot pack');
+        } catch (UnsupportedEngineFeatureException $exception) {
+            $this->assertStringContainsString(self::ENCRYPTED_FIELD_TYPE, $exception->getMessage());
+        }
+
+        $this->assertSame(
+            0,
+            $this->countDataRows((int) $object->getId(), $group->getId(), (int) $keyConfig->getId()),
+            'no value row was written, and no row of two nulls either'
         );
     }
 

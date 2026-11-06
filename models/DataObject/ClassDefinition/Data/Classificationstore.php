@@ -332,6 +332,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore->setGroupCollectionMappings($correctedMapping);
 
         if (is_array($data)) {
+            // read once, before the loop writes over it: a type whose conversion needs what the key
+            // held before - consent, whose audit note is written only on a change - gets it from
+            // here rather than from a getter of the object, which a key name has no claim on.
+            // Without inheritance, so that this is an array lookup and not a walk that loads every
+            // ancestor's store: what the object itself held is what this save is changing
+            $storedItems = DataObject\Service::useInheritedValues(
+                false,
+                static fn (): array => $classificationStore->getItems()
+            );
+
             foreach ($data as $language => $groups) {
                 foreach ($groups as $groupId => $keys) {
                     foreach ($keys as $keyId => $value) {
@@ -341,7 +351,20 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $keyConfig
                         );
 
-                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
+                        // the object is what a type needs to do anything beyond converting the
+                        // payload - Consent writes a note against it - and the context says where
+                        // in the store the value it is converting sits
+                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value, $object, [
+                            'owner' => $classificationStore,
+                            'context' => [
+                                'containerType' => 'classificationstore',
+                                'fieldname' => $this->getName(),
+                                'groupId' => $groupId,
+                                'keyId' => $keyId,
+                                'language' => $language,
+                            ],
+                            'oldData' => $storedItems[$groupId][$keyId][$language] ?? null,
+                        ]);
                         $activeGroups[$groupId] = true;
 
                         $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);

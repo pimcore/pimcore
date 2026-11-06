@@ -86,7 +86,52 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->items = $items;
         $this->markFieldDirty('_self');
 
+        foreach ($items as $group) {
+            if (!is_array($group)) {
+                continue;
+            }
+            foreach ($group as $key) {
+                if (!is_array($key)) {
+                    continue;
+                }
+                foreach ($key as $language => $value) {
+                    $this->attachOwner($value, (string) $language);
+                }
+            }
+        }
+
         return $this;
+    }
+
+    /**
+     * Makes a value that carries its own setters report a change back to this store.
+     *
+     * A value of a type such as geopoint, numericRange or quantityValue is handed out by
+     * {@see self::getLocalizedKeyValue()} as the object that is stored, and is as readily changed
+     * through its own setters as it is set again. Those setters call `markMeDirty()`, which reaches
+     * whatever the value carries as its owner - with no owner it reaches nothing, so
+     * {@see Classificationstore\Engine\EngineInterface::save()} finds a clean store and writes
+     * nothing: the change is lost without an error.
+     *
+     * The owner is this store and not the object, the same way a localized value's owner is its
+     * {@see Localizedfield} container rather than the object - that container hands itself down as
+     * `$params['owner']` from its own DAO, and `markMeDirty()` reads exactly that - because the
+     * container is what holds the dirty flag its storage reads. `_self` is the one field name this
+     * store's dirty map uses.
+     *
+     * This is the single site for it on purpose: both engines hydrate through
+     * {@see self::setLocalizedKeyValue()} and reset the dirty map afterwards, so one attachment
+     * covers assignment and hydration and cannot leave a freshly loaded store dirty.
+     */
+    private function attachOwner(mixed $value, ?string $language): void
+    {
+        if (!$value instanceof OwnerAwareFieldInterface) {
+            return;
+        }
+
+        $value->_setOwner($this);
+        $value->_setOwnerFieldname('_self');
+        $value->_setOwnerLanguage($language);
     }
 
     public function getItems(): array
@@ -209,6 +254,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         if ($nonEmpty || $value) {
             $this->items[$groupId][$keyId][$language] = $value;
+            $this->attachOwner($value, $language);
         } elseif (isset($this->items[$groupId][$keyId][$language])) {
             unset($this->items[$groupId][$keyId][$language]);
             if (empty($this->items[$groupId][$keyId])) {

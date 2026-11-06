@@ -192,6 +192,13 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
+            // the delegate's previous value is what the previous value of this field wraps, so a
+            // container that passes one down - a classification store key - means the same thing
+            // one level further in
+            if (($params['oldData'] ?? null) instanceof Model\DataObject\Data\EncryptedField) {
+                $params['oldData'] = $params['oldData']->getPlain();
+            }
+
             $result = $fd->getDataFromEditmode($data, $object, $params);
             $result = new Model\DataObject\Data\EncryptedField($this->delegate, $result);
 

@@ -108,7 +108,10 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     *
+     * The previous value decides whether this save writes an audit note, so a container that holds
+     * this field somewhere a getter on the object cannot reach - a classification store key, whose
+     * name is a label and not a class field - hands it over as `$params['oldData']`. Only the
+     * previous value is taken from there; the note is still written against the object.
      *
      * @see Data::getDataFromEditmode
      */
@@ -118,29 +121,57 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = false;
         }
 
-        /** @var DataObject\Data\Consent|null $oldData */
-        $oldData = null;
+        $oldData = $this->resolvePreviousConsent($object, $params);
         $noteId = null;
 
-        $getter = 'get' . ucfirst($this->getName());
-        if (method_exists($object, $getter)) {
-            $oldData = $object->$getter();
-        }
-
         if (!$oldData || $oldData->getConsent() != $data) {
-            $service = Pimcore::getContainer()->get(Service::class);
+            // without an object there is nothing to write the note against, so the value is
+            // converted and the note is left out rather than the conversion failing
+            if ($object !== null) {
+                $service = Pimcore::getContainer()->get(Service::class);
 
-            if ($data == true) {
-                $note = $service->insertConsentNote($object, $this->getName(), 'Manually by User via Pimcore Backend.');
-            } else {
-                $note = $service->insertRevokeNote($object, $this->getName());
+                if ($data == true) {
+                    $note = $service->insertConsentNote(
+                        $object,
+                        $this->getName(),
+                        'Manually by User via Pimcore Backend.'
+                    );
+                } else {
+                    $note = $service->insertRevokeNote($object, $this->getName());
+                }
+                $noteId = $note->getId();
             }
-            $noteId = $note->getId();
-        } elseif ($oldData instanceof DataObject\Data\Consent) {
+        } else {
             $noteId = $oldData->getNoteId();
         }
 
         return new DataObject\Data\Consent($data, $noteId);
+    }
+
+    /**
+     * What this field held before the payload being converted was sent.
+     *
+     * @param array<string, mixed> $params
+     */
+    private function resolvePreviousConsent(?DataObject\Concrete $object, array $params): ?DataObject\Data\Consent
+    {
+        $fromContainer = $params['oldData'] ?? null;
+        if ($fromContainer instanceof DataObject\Data\Consent) {
+            return $fromContainer;
+        }
+
+        if ($object === null) {
+            return null;
+        }
+
+        $getter = 'get' . ucfirst($this->getName());
+        if (!method_exists($object, $getter)) {
+            return null;
+        }
+
+        $oldData = $object->$getter();
+
+        return $oldData instanceof DataObject\Data\Consent ? $oldData : null;
     }
 
     /** Converts the data sent from the object merger plugin back to the internal object. Similar to

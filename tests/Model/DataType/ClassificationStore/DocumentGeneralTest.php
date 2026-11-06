@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -33,6 +34,8 @@ use Pimcore\Model\DataObject\Data\NumericRange;
 use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Data\Video;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
+use Pimcore\Tests\Support\Helper\DataType\MixedNormalizingField;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
@@ -56,6 +59,12 @@ class DocumentGeneralTest extends GeneralTest
     private const ENCRYPTED_GROUP_NAME = 'testgroupEncryptedGeopoint';
 
     private const ENCRYPTED_KEY_NAME = 'encryptedGeopoint';
+
+    private const MIXED_GROUP_NAME = 'testgroupEncryptedMixed';
+
+    private const MIXED_KEY_NAME = 'encryptedMixedNormalizing';
+
+    private const DEFAULT_LANGUAGE = 'default';
 
     protected function getStoreEngine(): ?string
     {
@@ -201,6 +210,223 @@ class DocumentGeneralTest extends GeneralTest
             Classificationstore\KeyConfig::getByName(self::ENCRYPTED_KEY_NAME, $store->getId(), true)?->delete();
             Classificationstore\GroupConfig::getByName(self::ENCRYPTED_GROUP_NAME, $store->getId())?->delete();
         }
+    }
+
+    /**
+     * A delegate whose declared normalized type and whose value disagree.
+     *
+     * `mixedNormalizingObject` declares `mixed` - which the holdability check reads as
+     * scalar-compatible, correctly, because a key definition has nothing but the declaration - and
+     * returns an array. The encryptedField marshaller has nothing to pack such a value into, so
+     * whether it needs the JSON envelope is decided from the value in hand and the registered
+     * marshallers; deciding it from the declaration sends this value into the marshaller's array
+     * branch and stores two nulls.
+     */
+    public function testAnEncryptedFieldDelegatingToAMixedNormalizingTypeRoundTripsOnADocumentStore(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::MIXED_GROUP_NAME);
+        $group->save();
+
+        try {
+            $definition = new EncryptedFieldDefinition();
+            $definition->setName(self::MIXED_KEY_NAME);
+            $definition->setDelegateDatatype('mixedNormalizingObject');
+            $definition->setDelegate(new MixedNormalizingField());
+
+            $keyConfig = new Classificationstore\KeyConfig();
+            $keyConfig->setStoreId($store->getId());
+            $keyConfig->setName(self::MIXED_KEY_NAME);
+            $keyConfig->setType('encryptedField');
+            $keyConfig->setEnabled(true);
+            $keyConfig->setDefinition((string) json_encode($definition));
+            $keyConfig->save();
+
+            $relation = new Classificationstore\KeyGroupRelation();
+            $relation->setKeyId((int) $keyConfig->getId());
+            $relation->setGroupId($group->getId());
+            $relation->setSorter(1);
+            $relation->save();
+
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'encrypted-mixed');
+            $object->setPublished(true);
+            $object->save();
+
+            $csField = $object->getCsstore();
+            $csField->setActiveGroups([$group->getId() => true]);
+            $csField->setLocalizedKeyValue(
+                $group->getId(),
+                (int) $keyConfig->getId(),
+                new EncryptedField(new MixedNormalizingField(), new CustomValueObject('a structured secret'))
+            );
+            $object->save();
+
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $reloaded);
+
+            $loaded = $reloaded->getCsstore()
+                ->getLocalizedKeyValue($group->getId(), (int) $keyConfig->getId());
+
+            $this->assertInstanceOf(EncryptedField::class, $loaded);
+            $plain = $loaded->getPlain();
+            $this->assertInstanceOf(CustomValueObject::class, $plain);
+            $this->assertSame('a structured secret', $plain->getText());
+
+            $stored = (string) Db::get()->fetchOne(
+                'SELECT `values` FROM ' . self::DOCUMENT_TABLE . ClassDefinition::getByName(self::CLASS_NAME)->getId()
+                . ' WHERE id = ? AND fieldname = ? AND groupId = ?',
+                [$object->getId(), self::FIELDNAME, $group->getId()]
+            );
+            $this->assertStringNotContainsString(
+                'a structured secret',
+                $stored,
+                'the value must not be in cleartext'
+            );
+        } finally {
+            Classificationstore\KeyConfig::getByName(self::MIXED_KEY_NAME, $store->getId(), true)?->delete();
+            Classificationstore\GroupConfig::getByName(self::MIXED_GROUP_NAME, $store->getId())?->delete();
+        }
+    }
+
+    /**
+     * A value of a structured type is handed out as the object that is stored, and is as readily
+     * changed through its own setters as it is set again. Such a change has to reach the store's
+     * dirty flag, or the engine finds a clean store and writes nothing: the edit is lost silently,
+     * which is what no owner on the value produces.
+     */
+    public function testMutatingAReloadedValueThroughItsOwnSettersIsSaved(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = $this->configureStoreWithStructuredFields($store);
+        $keyId = $this->keyId($store, 'geopoint');
+
+        try {
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'mutate-after-reload');
+            $object->setPublished(true);
+            $object->save();
+
+            $csField = $object->getCsstore();
+            $csField->setActiveGroups([$group->getId() => true]);
+            $csField->setLocalizedKeyValue($group->getId(), $keyId, new GeoCoordinates(48.2, 16.37));
+            $object->save();
+
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $reloaded);
+
+            $coordinates = $reloaded->getCsstore()->getLocalizedKeyValue($group->getId(), $keyId);
+            $this->assertInstanceOf(GeoCoordinates::class, $coordinates);
+
+            // the one thing this test is about: no setLocalizedKeyValue() call follows
+            $coordinates->setLatitude(51.5);
+            $this->assertTrue(
+                $reloaded->getCsstore()->hasDirtyFields(),
+                'mutating a loaded value has to mark the store dirty'
+            );
+
+            $reloaded->save();
+
+            $again = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $again);
+
+            $stored = $again->getCsstore()->getLocalizedKeyValue($group->getId(), $keyId);
+            $this->assertInstanceOf(GeoCoordinates::class, $stored);
+            $this->assertSame(51.5, $stored->getLatitude());
+            $this->assertSame(16.37, $stored->getLongitude());
+        } finally {
+            $this->dropStructuredFields($store);
+        }
+    }
+
+    /**
+     * The editor's payload reaches a key type through
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::getDataFromEditmode()},
+     * and `consent` needs two things from it that a bare payload does not carry: the object, which
+     * the audit note is written against, and what the key held before, which decides whether a note
+     * is written at all. A key name is not a class field, so the object has no getter to answer the
+     * second with.
+     */
+    public function testAConsentKeyConvertsAnEditorPayloadAndWritesOneNotePerChange(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = $this->configureStoreWithStructuredFields($store);
+        $keyId = $this->keyId($store, 'consent');
+        $fieldDefinition = $this->getCsstoreFieldDefinition();
+
+        try {
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'consent-editmode');
+            $object->setPublished(true);
+            $object->save();
+
+            $granted = $fieldDefinition->getDataFromEditmode(
+                $this->consentPayload($group->getId(), $keyId, true),
+                $object
+            );
+            $consent = $granted->getLocalizedKeyValue($group->getId(), $keyId);
+            $this->assertInstanceOf(Consent::class, $consent);
+            $this->assertTrue($consent->getConsent());
+            $this->assertNotNull($consent->getNoteId(), 'granting consent writes the audit note');
+
+            $object->setCsstore($granted);
+            $object->save();
+
+            // the same payload again: the value did not change, so the note of the change stands
+            // rather than a second one being written
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $reloaded);
+
+            $unchanged = $fieldDefinition->getDataFromEditmode(
+                $this->consentPayload($group->getId(), $keyId, true),
+                $reloaded
+            );
+            $secondConsent = $unchanged->getLocalizedKeyValue($group->getId(), $keyId);
+            $this->assertInstanceOf(Consent::class, $secondConsent);
+            $this->assertSame(
+                $consent->getNoteId(),
+                $secondConsent->getNoteId(),
+                'an unchanged consent keeps the note of the change that set it'
+            );
+        } finally {
+            $this->dropStructuredFields($store);
+        }
+    }
+
+    /**
+     * What the object editor posts for one consent key of one group.
+     *
+     * @return array<string, mixed>
+     */
+    private function consentPayload(int $groupId, int $keyId, bool $consent): array
+    {
+        return [
+            'data' => [self::DEFAULT_LANGUAGE => [$groupId => [$keyId => $consent]]],
+            'activeGroups' => [$groupId => true],
+            'groupCollectionMapping' => [],
+        ];
+    }
+
+    private function getCsstoreFieldDefinition(): ClassificationstoreField
+    {
+        $class = ClassDefinition::getByName(self::CLASS_NAME);
+        $this->assertNotNull($class);
+
+        $fieldDefinition = $class->getFieldDefinition(self::FIELDNAME);
+        $this->assertInstanceOf(ClassificationstoreField::class, $fieldDefinition);
+
+        return $fieldDefinition;
     }
 
     private function createEncryptedGeopointKey(
