@@ -52,13 +52,7 @@ final class RelationEditModeResolver
      * getting its own `getDataForEditmode()` run over resolved elements is the right answer for it
      * even though that costs an element load per target.
      */
-    private const RENDERED_TYPES = [
-        ManyToOneRelation::class,
-        ManyToManyRelation::class,
-        ManyToManyObjectRelation::class,
-        AdvancedManyToManyRelation::class,
-        AdvancedManyToManyObjectRelation::class,
-    ];
+    private const RENDERED_TYPES = RelationResolver::CORE_RELATION_TYPES;
 
     private const TYPE_ASSET = 'asset';
 

@@ -199,6 +199,92 @@ class DocumentStatementCountTest extends StatementCountTest
     }
 
     /**
+     * The same save on a class that allows inheritance, which is the other shape the validity check
+     * takes: the value it is handed comes out of the inheritance walk rather than out of the raw
+     * items, {@see \Pimcore\Model\DataObject\Classificationstore::getStoredKeyValue()}, and that
+     * walk must leave a relation value as the descriptor it is stored as. An ordinary
+     * reload-and-save of an inheritable class would otherwise instantiate every target of every key
+     * nobody looked at.
+     *
+     * Csstorelocalized is the class with `allowInherit` on, {@see \Pimcore\Tests\Support\Helper\Model::setupPimcoreClass_CsstoreLocalized()},
+     * and it is localized as well, so the walk runs once per valid language.
+     */
+    public function testSavingAnUnreadStoreOfAnInheritableClassReadsNoTarget(): void
+    {
+        $few = $this->createLocalizedObjectWithRelations('relation-save-inherit-few', 1);
+        $many = $this->createLocalizedObjectWithRelations('relation-save-inherit-many', 20);
+        $manyTargets = $this->storedTargetIds($many);
+
+        $this->assertTrue(
+            $few->getClass()->getAllowInherit(),
+            'precondition: the class has to allow inheritance for the walk under test to be taken'
+        );
+
+        $fewCount = $this->measureUntouchedSave($few->getId(), Csstorelocalized::class);
+        $manyCount = $this->measureUntouchedSave($many->getId(), Csstorelocalized::class);
+
+        $this->assertGreaterThan(0, $fewCount, 'precondition: loading and saving reads the store');
+        $this->assertSame(
+            $fewCount,
+            $manyCount,
+            'saving an unread store of 20 targets on an inheritable class must touch the rows one of'
+            . ' one target touches, measured ' . $fewCount . ' against ' . $manyCount . ' statements'
+        );
+        $this->assertNoElementInstantiated($manyTargets, 'and must resolve none of them');
+    }
+
+    /**
+     * And the value the walk inherits from an ancestor is left as a descriptor too: the child holds
+     * nothing at that coordinate, so the parent's store is what answers for it, and saving the child
+     * must not read the parent's targets either.
+     */
+    public function testSavingAChildWhoseInheritedRelationValueWasNeverReadReadsNoTarget(): void
+    {
+        $group = $this->createGroup('relationgroup');
+        $keyConfig = $this->createRelationKey('relationkeyinherited');
+        $this->assignKey($group, $keyConfig, 0);
+
+        $groupId = (int) $group->getId();
+        $keyId = (int) $keyConfig->getId();
+        $targets = $this->createTargets(3);
+
+        $parent = new Csstorelocalized();
+        $parent->setParentId(1);
+        $parent->setKey('relation-save-inherit-parent');
+        $parent->setPublished(true);
+        $parent->getCsstore()->setLocalizedKeyValue($groupId, $keyId, $targets);
+        $parent->save();
+
+        $child = new Csstorelocalized();
+        $child->setParentId($parent->getId());
+        $child->setKey('relation-save-inherit-child');
+        $child->setPublished(true);
+        $child->getCsstore()->setActiveGroups([$groupId => true]);
+        $child->save();
+
+        $this->assertSame(
+            $this->idsOf($targets),
+            $this->idsOf(
+                Csstorelocalized::getById($child->getId(), ['force' => true])
+                    ->getCsstore()
+                    ->getLocalizedKeyValue($groupId, $keyId)
+            ),
+            'precondition: the child inherits the parent\'s relation value'
+        );
+
+        RuntimeCache::clear();
+        $this->startMeasurement();
+
+        Csstorelocalized::getById($child->getId(), ['force' => true])->save();
+
+        $this->assertSame(0, $this->countWriteStatements(), 'an unchanged document must not be rewritten');
+        $this->assertNoElementInstantiated(
+            $this->idsOf($targets),
+            'the inherited value must stay a descriptor: no target of the parent may be read'
+        );
+    }
+
+    /**
      * The payload does not scale with the number of targets at all: it needs the columns of a
      * target rather than the target, and reads them for the whole store in one chunked statement
      * per element type, so 20 targets cost exactly what two cost.
@@ -308,15 +394,19 @@ class DocumentStatementCountTest extends StatementCountTest
     }
 
     /**
+     * @param class-string<Concrete> $className the class to load the object as, which decides
+     *                                          whether the validity check walks the inheritance
+     *                                          chain for its values
+     *
      * @return int the statements against a classification store table that loading the object and
      *             saving it again cost, with none of its relation keys read in between
      */
-    private function measureUntouchedSave(int $objectId): int
+    private function measureUntouchedSave(int $objectId, string $className = Csstore::class): int
     {
         RuntimeCache::clear();
         $this->startMeasurement();
 
-        Csstore::getById($objectId, ['force' => true])->save();
+        $className::getById($objectId, ['force' => true])->save();
 
         return $this->countReadStatements() + $this->countWriteStatements();
     }

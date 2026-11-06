@@ -310,8 +310,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->activeGroups = $activeGroups;
     }
 
-    private function getFallbackValue(int $groupId, int $keyId, string $language, ClassDefinition\Data $fielddefinition): mixed
-    {
+    private function getFallbackValue(
+        int $groupId,
+        int $keyId,
+        string $language,
+        ClassDefinition\Data $fielddefinition,
+        bool $resolveRelations = true
+    ): mixed {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);
         $data = null;
 
@@ -321,15 +326,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 && array_key_exists($keyId, $this->items[$groupId])
                 && array_key_exists($l, $this->items[$groupId][$keyId])
             ) {
-                $data = $this->readItem($groupId, $keyId, $l, $fielddefinition);
-                if (!$fielddefinition->isEmpty($data)) {
+                $data = $this->readItem($groupId, $keyId, $l, $fielddefinition, $resolveRelations);
+                if (!$this->isEmptyValue($fielddefinition, $data)) {
                     return $data;
                 }
             }
         }
 
         foreach ($fallbackLanguages as $l) {
-            $data = $this->getFallbackValue($groupId, $keyId, $l, $fielddefinition);
+            $data = $this->getFallbackValue($groupId, $keyId, $l, $fielddefinition, $resolveRelations);
         }
 
         return $data;
@@ -346,6 +351,67 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         ?string $language = 'default',
         bool $ignoreFallbackLanguage = false,
         bool $ignoreDefaultLanguage = false
+    ): mixed {
+        return $this->selectKeyValue(
+            $groupId,
+            $keyId,
+            $language,
+            $ignoreFallbackLanguage,
+            $ignoreDefaultLanguage,
+            true
+        );
+    }
+
+    /**
+     * The same value {@see self::getLocalizedKeyValue()} selects, with a relation-typed one left as
+     * the {@see RelationDescriptor} it is stored as instead of being resolved into its elements.
+     *
+     * For the callers that have something to do with the stored value rather than with the elements
+     * it names - validation, {@see ClassDefinition\Data\Classificationstore::checkValidity()}. They
+     * need the value the fallback language, the default language and the inheritance chain select,
+     * which is why this goes through the same walk rather than reading
+     * {@see self::getItems()}: a coordinate one store holds an empty value at and an ancestor holds
+     * a value at is answered here the way a read answers it, and a merge of the items is not.
+     *
+     * No target is instantiated on the way, so a save of an object whose relation keys were never
+     * read costs no element load. An unresolved descriptor counts as present exactly when it names
+     * a target, {@see self::isEmptyValue()}, so that an empty one falls through to the fallback
+     * language and the inheritance chain as a resolved empty value does.
+     *
+     * @internal
+     *
+     * @throws Exception
+     */
+    public function getStoredKeyValue(
+        int $groupId,
+        int $keyId,
+        ?string $language = 'default',
+        bool $ignoreFallbackLanguage = false,
+        bool $ignoreDefaultLanguage = false
+    ): mixed {
+        return $this->selectKeyValue(
+            $groupId,
+            $keyId,
+            $language,
+            $ignoreFallbackLanguage,
+            $ignoreDefaultLanguage,
+            false
+        );
+    }
+
+    /**
+     * @param bool $resolveRelations whether a relation-typed value is resolved into its elements,
+     *                               which is what the two callers above differ in
+     *
+     * @throws Exception
+     */
+    private function selectKeyValue(
+        int $groupId,
+        int $keyId,
+        ?string $language,
+        bool $ignoreFallbackLanguage,
+        bool $ignoreDefaultLanguage,
+        bool $resolveRelations
     ): mixed {
         $language = $this->getLanguage($language);
 
@@ -365,21 +431,21 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         if (array_key_exists($groupId, $this->items) && array_key_exists($keyId, $this->items[$groupId])
                 && array_key_exists($language, $this->items[$groupId][$keyId])
         ) {
-            $data = $this->readItem($groupId, $keyId, $language, $fieldDefinition);
+            $data = $this->readItem($groupId, $keyId, $language, $fieldDefinition, $resolveRelations);
         }
 
         // check for fallback value
-        if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
-            $data = $this->getFallbackValue($groupId, $keyId, $language, $fieldDefinition);
+        if ($this->isEmptyValue($fieldDefinition, $data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
+            $data = $this->getFallbackValue($groupId, $keyId, $language, $fieldDefinition, $resolveRelations);
         }
 
-        if ($fieldDefinition->isEmpty($data) && !$ignoreDefaultLanguage && $language != 'default') {
-            $data = $this->readItem($groupId, $keyId, 'default', $fieldDefinition);
+        if ($this->isEmptyValue($fieldDefinition, $data) && !$ignoreDefaultLanguage && $language != 'default') {
+            $data = $this->readItem($groupId, $keyId, 'default', $fieldDefinition, $resolveRelations);
         }
 
         // check for inherited value
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
+        if ($this->isEmptyValue($fieldDefinition, $data) && $doGetInheritedValues) {
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();
@@ -398,7 +464,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                             $classificationStore = $parent->$getter();
                             if ($classificationStore instanceof Classificationstore) {
                                 if ($classificationStore->object->getId() != $this->object->getId()) {
-                                    $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
+                                    // the ancestor is asked the same way it was asked itself, so
+                                    // that a store overriding either entry point keeps answering
+                                    // for the values it holds
+                                    $data = $resolveRelations
+                                        ? $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false)
+                                        : $classificationStore->getStoredKeyValue($groupId, $keyId, $language, false);
                                 }
                             }
                         }
@@ -407,7 +478,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             }
         }
 
-        if ($fieldDefinition instanceof PreGetDataInterface) {
+        // an unresolved descriptor is not a value this hook can be given: for a store container it
+        // hands the value straight back after filtering the unpublished elements out of it,
+        // {@see ClassDefinition\Data\ManyToOneRelation::preGetData()}, and a descriptor holds no
+        // element to filter. The value the caller gets is the stored one, which is what the
+        // non-inheriting branch of checkValidity() has always read.
+        if ($fieldDefinition instanceof PreGetDataInterface && !$data instanceof RelationDescriptor) {
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,
@@ -416,6 +492,27 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         return $data;
+    }
+
+    /**
+     * Whether this value is the key's empty one, which decides whether the fallback language, the
+     * default language and the inheritance chain are consulted for it.
+     *
+     * An unresolved relation value is asked of its descriptors rather than of the key: every
+     * relation type reads emptiness off the value itself - `empty($data)`,
+     * {@see ClassDefinition\Data::isEmpty()} - and a {@see RelationDescriptor} is an object, so a
+     * key storing no relation at all would otherwise count as holding one. No lookup is made, so a
+     * descriptor whose targets have all been deleted counts as present here; what it is checked
+     * against leaves those out,
+     * {@see Classificationstore\RelationResolver::checkStoredValidity()}.
+     */
+    private function isEmptyValue(ClassDefinition\Data $fieldDefinition, mixed $data): bool
+    {
+        if ($data instanceof RelationDescriptor) {
+            return $this->getRelationResolver()->describe($data->getValue()) === [];
+        }
+
+        return $fieldDefinition->isEmpty($data);
     }
 
     public static function doGetFallbackValues(): bool
@@ -431,13 +528,22 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * changed. A descriptor whose target is gone does mark it dirty - the value the read answers
      * with no longer matches the stored document, and the next ordinary save is what rewrites it.
      *
+     * @param bool $resolveRelations false for a caller that wants the stored descriptor itself,
+     *                               {@see self::getStoredKeyValue()}; nothing is resolved and
+     *                               nothing is memoized then
+     *
      * @throws Exception
      */
-    private function readItem(int $groupId, int $keyId, string $language, ?ClassDefinition\Data $fieldDefinition): mixed
-    {
+    private function readItem(
+        int $groupId,
+        int $keyId,
+        string $language,
+        ?ClassDefinition\Data $fieldDefinition,
+        bool $resolveRelations = true
+    ): mixed {
         $data = $this->items[$groupId][$keyId][$language] ?? null;
 
-        if ($fieldDefinition === null || !$data instanceof RelationDescriptor) {
+        if ($fieldDefinition === null || !$resolveRelations || !$data instanceof RelationDescriptor) {
             return $data;
         }
 

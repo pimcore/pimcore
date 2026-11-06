@@ -18,8 +18,11 @@ use Doctrine\DBAL\Connection;
 use Exception;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\DerivedValueInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
@@ -64,6 +67,25 @@ use Pimcore\Normalizer\NormalizerInterface;
  */
 final class RelationResolver
 {
+    /**
+     * The relation types core ships, which are the ones whose constraints and whose stored shape
+     * this class reproduces from descriptors. The one list the two questions asked of it are
+     * answered from - whether a stored value may be validated without its elements,
+     * {@see self::supportsStoredValidity()}, and whether it may be rendered without them,
+     * {@see RelationEditModeResolver::RENDERED_TYPES} - so that a sixth core type cannot be learnt
+     * by one of them and not the other.
+     *
+     * Matched exactly rather than by inheritance everywhere it is used: a type a project adds is
+     * resolved into its elements and asked its own methods.
+     */
+    public const CORE_RELATION_TYPES = [
+        ManyToOneRelation::class,
+        ManyToManyRelation::class,
+        ManyToManyObjectRelation::class,
+        AdvancedManyToManyRelation::class,
+        AdvancedManyToManyObjectRelation::class,
+    ];
+
     /**
      * The element tables a descriptor can address, and the id column of each. In the order
      * {@see \Pimcore\Model\Element\Service::getElementType()} names them.
@@ -222,6 +244,13 @@ final class RelationResolver
      * it and the next save rewrites the document without it, {@see self::resolve()}, and refusing
      * the save instead would leave the object no way back.
      *
+     * Every one of the four constraints is therefore measured over the surviving descriptors alone,
+     * which is what the key's own check is measured over: it is handed the denormalized value, and
+     * `denormalize()` has already left the dead ones out. Counting a dead descriptor towards the
+     * item limit, or towards whether a mandatory key holds anything, would make the outcome depend
+     * on whether the key had been read - reading it first drops the dead targets, and the same save
+     * then passes.
+     *
      * @param array<string, array<int, array<string, mixed>>> $summaries {@see self::summarize()},
      *                                                                   over the whole store
      *
@@ -233,15 +262,14 @@ final class RelationResolver
         array $summaries,
         bool $omitMandatoryCheck = false
     ): void {
-        $descriptors = $this->describe($normalizedValue);
-
-        if (!$omitMandatoryCheck && $fieldDefinition->getMandatory() && $descriptors === []) {
-            throw new ValidationException('Empty mandatory field [ ' . $fieldDefinition->getName() . ' ]');
-        }
-
         $seen = [];
 
-        foreach ($descriptors as $descriptor) {
+        // duplicates are retained, as every relation type counts the entries of its value rather
+        // than the distinct targets among them: a key allowing multiple assignments reaches its
+        // limit on repeats of one target
+        $surviving = 0;
+
+        foreach ($this->describe($normalizedValue) as $descriptor) {
             $summary = $summaries[$descriptor['type']][$descriptor['id']] ?? null;
 
             if ($summary === null) {
@@ -266,16 +294,43 @@ final class RelationResolver
             }
 
             $seen[$key] = true;
+            $surviving++;
+        }
+
+        // the key's own check raises this before looking at the entries; with nothing surviving
+        // none of the two above can have been raised, so the message a reader sees is the same one
+        if (!$omitMandatoryCheck && $fieldDefinition->getMandatory() && $surviving === 0) {
+            throw new ValidationException('Empty mandatory field [ ' . $fieldDefinition->getName() . ' ]');
         }
 
         $maxItems = method_exists($fieldDefinition, 'getMaxItems') ? $fieldDefinition->getMaxItems() : null;
 
-        if ($maxItems && count($descriptors) > $maxItems) {
+        if ($maxItems && $surviving > $maxItems) {
             throw new ValidationException(
                 'Number of allowed relations in field `' . $fieldDefinition->getName()
                 . '` exceeded (max. ' . $maxItems . ')'
             );
         }
+    }
+
+    /**
+     * Whether this key is one of the relation types core ships, {@see self::CORE_RELATION_TYPES},
+     * which is what a caller has to ask before answering anything about its stored value from the
+     * descriptors instead of from the key itself.
+     *
+     * The types are matched exactly rather than by inheritance, the way
+     * {@see RelationEditModeResolver::supports()} matches them. What is reproduced from descriptors
+     * is what those five declare: the four constraints of {@see self::checkStoredValidity()} and
+     * the dependency rows of {@see self::describeDependencies()}. A type a project adds - whether
+     * it extends one of them or replaces one of them in the data type map - may answer any of that
+     * differently from an overridden method, so its value is resolved into its elements and its own
+     * methods are asked instead. Nothing a save writes or refuses then depends on whether the key
+     * had been read.
+     */
+    public function isCoreRelation(?Data $fieldDefinition): bool
+    {
+        return $fieldDefinition !== null
+            && in_array($fieldDefinition::class, self::CORE_RELATION_TYPES, true);
     }
 
     private function allowsMultipleAssignments(AbstractRelations $fieldDefinition): bool

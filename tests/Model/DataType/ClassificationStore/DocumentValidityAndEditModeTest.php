@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Pimcore;
+use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Csstore;
@@ -24,9 +26,11 @@ use Pimcore\Tests\Support\Util\TestHelper;
  * ValidityAndEditModeTest against a store on the document engine: validation and the edit mode data
  * resolve in PHP at read time, so they have to come out the same whichever engine stored them.
  *
- * The relation cases cover the two shapes the validity check takes: a class with inheritance reads
- * its values through getLocalizedKeyValue(), one without it reads the raw items - which hold the
- * descriptor until the key is read.
+ * The relation cases cover the two shapes the validity check takes: a class with inheritance walks
+ * the chain for its values, {@see \Pimcore\Model\DataObject\Classificationstore::getStoredKeyValue()},
+ * one without it reads the raw items. Neither resolves a descriptor - the value the check is handed
+ * is the stored one until something reads the key - except for a relation type core does not ship,
+ * which is asked its own validator over the elements it expects.
  *
  * @group model.datatype.classificationstore
  */
@@ -35,6 +39,21 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     private const RELATION_KEY_PREFIX = 'cs-validity-relation-';
 
     private const FIELDNAME = 'csstore';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        DocumentValidityProjectRelation::reset();
+        $this->registerProjectRelationType();
+    }
+
+    protected function tearDown(): void
+    {
+        DocumentValidityProjectRelation::reset();
+
+        parent::tearDown();
+    }
 
     protected function getStoreEngine(): ?string
     {
@@ -132,6 +151,78 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
         $this->assertIsArray($rows, 'the inherited relation value has to reach the payload');
         $this->assertSame([$target->getId()], array_column($rows, 'id'));
+    }
+
+    /**
+     * A relation type a project adds keeps its own validator, and the stored descriptors of an
+     * unread key are resolved into the elements that validator expects before it is asked.
+     *
+     * The four constraints checked from the descriptors alone are the ones the five relation types
+     * core ships declare, {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::checkStoredValidity()}.
+     * A subclass may refuse what they allow from an overridden `checkValidity()`, so the bulk check
+     * is claimed for those five by exact class, the way
+     * {@see \Pimcore\Model\DataObject\Classificationstore\RelationEditModeResolver::supports()}
+     * claims the rendering. What a save refuses must not depend on whether the key had been read.
+     */
+    public function testAProjectRelationTypeKeepsItsOwnValidatorWhenTheKeyWasNeverRead(): void
+    {
+        $object = $this->createObjectWithProjectRelation('validity-project-unread');
+
+        // nothing reads the key, so its value is still the descriptor the document was loaded from
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+
+        DocumentValidityProjectRelation::reset();
+        DocumentValidityProjectRelation::$refuse = true;
+
+        $refusal = null;
+
+        try {
+            $reloaded->save();
+        } catch (ValidationException $exception) {
+            $refusal = $exception;
+        }
+
+        $this->assertNotNull(
+            $refusal,
+            'the project type\'s own checkValidity() has to be asked for a key nobody read'
+        );
+        $this->assertNotEmpty(
+            DocumentValidityProjectRelation::$received,
+            'and has to be asked about the value of that key'
+        );
+
+        foreach (DocumentValidityProjectRelation::$received as $received) {
+            $this->assertIsArray(
+                $received,
+                'the project validator must be handed the elements of the descriptor, not the descriptor'
+            );
+            $this->assertContainsOnlyInstancesOf(Concrete::class, $received);
+        }
+    }
+
+    /**
+     * The same key read before the save: the project type refuses it there as well, so its outcome
+     * is the one the unread save above reaches.
+     */
+    public function testAProjectRelationTypeIsRefusedTheSameWayWhenTheKeyWasReadFirst(): void
+    {
+        $object = $this->createObjectWithProjectRelation('validity-project-read');
+        [$groupId, $keyId] = $this->relationCoordinatesOf($object);
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+
+        $this->assertCount(
+            1,
+            $reloaded->getCsstore()->getLocalizedKeyValue($groupId, $keyId),
+            'precondition: reading the key resolves its descriptor'
+        );
+
+        DocumentValidityProjectRelation::reset();
+        DocumentValidityProjectRelation::$refuse = true;
+
+        $this->expectException(ValidationException::class);
+
+        $reloaded->save();
     }
 
     /**
@@ -266,6 +357,47 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
+     * One object whose store holds a key of a relation type a project adds, the way a bundle
+     * registering its own data type would leave it.
+     */
+    private function createObjectWithProjectRelation(string $key): Csstore
+    {
+        $group = $this->createGroup('validity_project_relation');
+        $keyConfig = $this->createKey('validity_project_key', true, new DocumentValidityProjectRelation());
+        $this->assignKey($group, $keyConfig, 0);
+
+        $target = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'project');
+
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey($key);
+        $object->setPublished(true);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), [$target]);
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * Puts the project relation type into the object data type map, which is what a bundle does in
+     * its configuration: the key config holds the type by name, and the field definition of the
+     * key's assignment to a group is built from it,
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache::getMutableFieldDefinition()}.
+     */
+    private function registerProjectRelationType(): void
+    {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+
+        if ($loader->supports(DocumentValidityProjectRelation::FIELD_TYPE)) {
+            return;
+        }
+
+        $loader->addLoader(new ClassMapLoader([
+            DocumentValidityProjectRelation::FIELD_TYPE => DocumentValidityProjectRelation::class,
+        ]));
+    }
+
+    /**
      * @return array{0: int, 1: int}
      */
     private function relationCoordinatesOf(Concrete $object): array
@@ -274,5 +406,49 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $groupId = (int) array_key_first($items);
 
         return [$groupId, (int) array_key_first($items[$groupId])];
+    }
+}
+
+/**
+ * A relation type a project adds, as a bundle extending a core one would declare it: it refuses
+ * what the core constraints allow, from a `checkValidity()` of its own.
+ */
+class DocumentValidityProjectRelation extends ManyToManyObjectRelation
+{
+    public const FIELD_TYPE = 'csProjectManyToManyObjectRelation';
+
+    /**
+     * Whether this type refuses the value it is handed, which is what no check reproduced from
+     * descriptors can know about it.
+     */
+    public static bool $refuse = false;
+
+    /**
+     * Every value its own validator was handed since the last reset.
+     *
+     * @var list<mixed>
+     */
+    public static array $received = [];
+
+    public static function reset(): void
+    {
+        self::$refuse = false;
+        self::$received = [];
+    }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
+
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
+    {
+        self::$received[] = $data;
+
+        if (self::$refuse) {
+            throw new ValidationException('the project relation type refuses this value');
+        }
+
+        parent::checkValidity($data, $omitMandatoryCheck, $params);
     }
 }

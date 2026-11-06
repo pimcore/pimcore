@@ -464,7 +464,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         foreach ($this->getOwnStoredValues($data) as [$fieldDefinition, $value]) {
-            $tags = $fieldDefinition->getCacheTags($value, $tags);
+            $tags = $fieldDefinition->getCacheTags(
+                $this->resolveForProjectType($data, $fieldDefinition, $value),
+                $tags
+            );
         }
 
         return $tags;
@@ -479,7 +482,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $dependencies = [];
 
         foreach ($this->getOwnStoredValues($data) as [$fieldDefinition, $value]) {
-            $dependencies = array_merge($dependencies, $this->resolveValueDependencies($fieldDefinition, $value));
+            $dependencies = array_merge(
+                $dependencies,
+                $this->resolveValueDependencies($data, $fieldDefinition, $value)
+            );
         }
 
         return $dependencies;
@@ -490,14 +496,71 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * loaded from. They name the elements the dependency rows need, so the rows are written without
      * a target having to be instantiated - and without an ordinary save wiping the rows of a key
      * nobody looked at.
+     *
+     * Only for the five relation types core ships, whose `resolveDependencies()` the descriptors
+     * reproduce exactly. A type a project adds is asked its own, {@see self::resolveForProjectType()}.
+     *
+     * @return array<string, array{id: int, type: string}>
+     *
+     * @throws Exception
      */
-    private function resolveValueDependencies(Data $fieldDefinition, mixed $value): array
-    {
-        if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
+    private function resolveValueDependencies(
+        DataObject\Classificationstore $data,
+        Data $fieldDefinition,
+        mixed $value
+    ): array {
+        if (
+            $value instanceof DataObject\Classificationstore\RelationDescriptor
+            && $this->getRelationResolver()->isCoreRelation($fieldDefinition)
+        ) {
             return $this->getRelationResolver()->describeDependencies($value->getValue());
         }
 
-        return $fieldDefinition->resolveDependencies($value);
+        return $fieldDefinition->resolveDependencies(
+            $this->resolveForProjectType($data, $fieldDefinition, $value)
+        );
+    }
+
+    /**
+     * The elements of an unread relation whose type core does not ship, and every other value as it
+     * stands.
+     *
+     * What this field answers from stored descriptors rather than from the key - the dependency
+     * rows, the four validity constraints, the edit mode payload - it answers for the five relation
+     * types core ships, which declare exactly that. A relation type a project adds may answer any
+     * of it differently from an overridden method, so its descriptors are resolved into the
+     * elements that method expects, at one element load per target: what an object saves must not
+     * depend on whether its keys had been read.
+     *
+     * A descriptor of one of the five is handed over as it stands. Nothing their own methods are
+     * asked here can turn on it - `getCacheTags()` answers with the tags it was given whatever the
+     * value, {@see Data::getCacheTags()}, and the dependency rows are read off the descriptors
+     * themselves - so resolving would buy an unchanged answer at an element load per target.
+     *
+     * @throws Exception
+     */
+    private function resolveForProjectType(
+        DataObject\Classificationstore $data,
+        Data $fieldDefinition,
+        mixed $value
+    ): mixed {
+        if (!$value instanceof DataObject\Classificationstore\RelationDescriptor) {
+            return $value;
+        }
+
+        $resolver = $this->getRelationResolver();
+
+        if (!$resolver->isRelation($fieldDefinition)) {
+            // the key is not a relation any more: the stored descriptor is not a value this
+            // definition can be asked about, and resolving it against one would be a guess
+            return null;
+        }
+
+        if ($resolver->isCoreRelation($fieldDefinition)) {
+            return $value;
+        }
+
+        return $resolver->resolve($fieldDefinition, $value->getValue(), $data->getObject(), $data)->getData();
     }
 
     /**
@@ -763,24 +826,45 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     foreach ($validLanguages as $validLanguage) {
                         $object = $data->getObject();
                         if ($object->getClass()->getAllowInherit()) {
+                            // the inherited value is selected without a relation-typed one being
+                            // resolved, so that a reload-and-save of an inheritable class reads no
+                            // target of a key nobody looked at
                             $value = DataObject\Service::useInheritedValues(
                                 true,
-                                fn () => $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                fn () => $data->getStoredKeyValue($activeGroupId, $keyId, $validLanguage, true)
                             );
                         } else {
                             $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                         }
 
-                        // an unread descriptor names its targets without holding them, and the key's
-                        // own check reads the element of every entry. It is checked against the
-                        // definition in force now - this one, the group's - once the walk is done,
-                        // so that the whole store costs one round of lookups and no element load
                         if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
-                            if ($keyDef instanceof Relations\AbstractRelations) {
-                                $storedRelations[] = [$keyDef, $value->getValue(), $validLanguage];
+                            if (!$keyDef instanceof Relations\AbstractRelations) {
+                                // the key is not a relation any more: the descriptor the document
+                                // holds is not a value this definition can be asked about
+                                continue;
                             }
 
-                            continue;
+                            $resolver = $this->getRelationResolver();
+
+                            if ($resolver->isCoreRelation($keyDef)) {
+                                // an unread descriptor names its targets without holding them, and
+                                // the key's own check reads the element of every entry. It is
+                                // checked against the definition in force now - this one, the
+                                // group's - once the walk is done, so that the whole store costs
+                                // one round of lookups and no element load
+                                $storedRelations[] = [$keyDef, $value->getValue(), $validLanguage];
+
+                                continue;
+                            }
+
+                            // a relation type core does not ship may refuse what the four core
+                            // constraints allow, and the bulk check implements those four alone. So
+                            // its own validator is asked, over the elements and the $params it
+                            // expects, at the cost of an element load per target - the same trade
+                            // {@see DataObject\Classificationstore\RelationEditModeResolver} makes
+                            // for such a type. Validation must not depend on whether the key had
+                            // been read.
+                            $value = $resolver->resolve($keyDef, $value->getValue(), $object, $data)->getData();
                         }
 
                         try {
