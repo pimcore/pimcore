@@ -37,6 +37,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @internal
      */
+    public string $searchPath = '';
+
+    /**
+     * @internal
+     */
     public ?int $ratioX = null;
 
     /**
@@ -88,6 +93,16 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function setUploadPath(string $uploadPath): void
     {
         $this->uploadPath = $uploadPath;
+    }
+
+    public function getSearchPath(): string
+    {
+        return $this->searchPath;
+    }
+
+    public function setSearchPath(string $searchPath): void
+    {
+        $this->searchPath = $searchPath;
     }
 
     /**
