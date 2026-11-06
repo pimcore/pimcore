@@ -22,7 +22,7 @@
   | Expression part | Example | Now |
   |-----------------|---------|-----|
   | Field getters of the object, system getters (`getId()`, `getKey()`, `getFullPath()`, `getParent()`, dates, `isPublished()`, …), getters of related elements | `object.getPrice()`, `object.getParent().getKey()` | allowed (unchanged) |
-  | Getters of field values: `data.*`, localized fields, object bricks, field collections (incl. `get(index)`), classification store, quantity value units, structured tables, relation metadata, dates/periods/timezones | `object.getQuantity().getUnit().getAbbreviation()` | allowed (unchanged) |
+  | Getters of field values: `data.*`, localized fields, object bricks, field collections (incl. `get(index)`), classification store, quantity value units, structured tables, relation metadata, hotspot/marker metadata, dates/periods/timezones | `object.getQuantity().getUnit().getAbbreviation()` | allowed (unchanged) |
   | Methods that are not `get*`/`is*`/`has*` | `object.getDate().format("Y")` | **rejected** |
   | Property access | `object.someProperty` | **rejected** |
   | Methods on anything else, e.g. the class definition, listings, services or custom objects returned by a getter | `object.getClass().getName()`, `object.getChildren()` | **rejected** |

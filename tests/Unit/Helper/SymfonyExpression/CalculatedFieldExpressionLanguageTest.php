@@ -30,6 +30,7 @@ use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 /**
@@ -225,6 +226,35 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         );
 
         $this->assertSame($store, $language->evaluate('key.getGroup().getClassificationStore()', ['key' => $key]));
+    }
+
+    public function testAllowsHotspotAndMarkerMetadataGetterChains(): void
+    {
+        // loaded hotspot/marker metadata is a list of MarkerHotspotItem value objects
+        $language = new CalculatedFieldExpressionLanguage();
+        $image = new Hotspotimage(null, [
+            ['name' => 'spot', 'data' => [new MarkerHotspotItem(['name' => 'title', 'type' => 'input', 'value' => 'Hello'])]],
+        ]);
+
+        $this->assertSame('Hello', $language->evaluate('image.getHotspots()[0]["data"][0].getValue()', ['image' => $image]));
+        $this->assertSame('title', $language->evaluate('image.getHotspots()[0]["data"][0].getName()', ['image' => $image]));
+        $this->assertSame('input', $language->evaluate('image.getHotspots()[0]["data"][0].getType()', ['image' => $image]));
+    }
+
+    public function testRejectsSettersAndInternalsOnHotspotMetadataItems(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+        $item = new MarkerHotspotItem(['name' => 'title', 'type' => 'input', 'value' => 'Hello']);
+
+        foreach (['item.setValue("x")', 'item.offsetGet("name")', 'item.value'] as $expression) {
+            try {
+                $language->evaluate($expression, ['item' => $item]);
+                $this->fail(sprintf('Expression `%s` should have been rejected.', $expression));
+            } catch (SyntaxError) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        $this->assertSame('Hello', $item->getValue());
     }
 
     public function testAllowsReadOnlyDatePeriodAndTimezoneChains(): void

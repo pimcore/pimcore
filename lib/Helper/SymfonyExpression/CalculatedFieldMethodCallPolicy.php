@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Model\Element\ElementInterface;
 use ReflectionMethod;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
@@ -110,6 +111,7 @@ final class CalculatedFieldMethodCallPolicy
         Classificationstore\Group::class,
         Classificationstore\Key::class,
         Unit::class,
+        MarkerHotspotItem::class,
         DateTimeInterface::class,
         DateTimeZone::class,
         DateInterval::class,
