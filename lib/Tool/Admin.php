@@ -27,9 +27,25 @@ use stdClass;
 class Admin
 {
     /**
+     * @var string[]|null
+     */
+    private static ?array $languages = null;
+
+    /**
      * finds installed languages
+     *
+     * Scans the translations directory once per process: Translation::getByKeyLocalized() calls
+     * this for every admin translation it looks up, and the files only change with a deployment.
      */
     public static function getLanguages(): array
+    {
+        return self::$languages ??= self::findLanguages();
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function findLanguages(): array
     {
         $languageDirs = [];
         $translatedLanguages = [];
