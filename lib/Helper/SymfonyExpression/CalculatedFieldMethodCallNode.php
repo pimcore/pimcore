@@ -63,7 +63,9 @@ final class CalculatedFieldMethodCallNode extends GetAttrNode
 
         CalculatedFieldMethodCallPolicy::assertMethodCallAllowed($receiver, $method);
 
-        return $receiver->$method(...array_values($this->nodes['arguments']->evaluate($functions, $values)));
+        // called through an internal function so that, as in Symfony's own evaluator, the arguments are
+        // coerced like in weak mode instead of following this file's strict_types declaration
+        return call_user_func_array([$receiver, $method], array_values($this->nodes['arguments']->evaluate($functions, $values)));
     }
 
     private static function isChainShortCircuited(Node $node): bool

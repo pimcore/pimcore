@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper\SymfonyExpression;
 
+use LogicException;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -55,6 +56,14 @@ class CalculatedFieldExpressionLanguage extends ExpressionLanguage
         $parsedExpression = parent::parse($expression, $names, $flags);
 
         return new ParsedExpression((string) $expression, $this->sandbox($parsedExpression->getNodes()));
+    }
+
+    /**
+     * Compiled expressions would bypass the receiver checks made at evaluation time.
+     */
+    public function compile(Expression|string $expression, array $names = []): string
+    {
+        throw new LogicException('Calculated value expressions cannot be compiled.');
     }
 
     private function sandbox(Node $node): Node

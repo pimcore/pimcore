@@ -287,6 +287,42 @@ final class CalculatedFieldExpressionLanguageTest extends TestCase
         $language->compile('data.getFieldname()', ['data']);
     }
 
+    public function testCompilingIsNotSupportedForExpressionsWithoutMethodCalls(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+
+        $this->expectException(LogicException::class);
+        $language->compile('1 + 1');
+    }
+
+    public function testCoercesScalarArgumentsLikeTheDefaultEvaluator(): void
+    {
+        // the call must not inherit strict_types from the evaluator: `get(int $index)` is called with a numeric string
+        $language = new CalculatedFieldExpressionLanguage();
+        $collection = new Fieldcollection();
+
+        $this->assertNull($language->evaluate('collection.get("0")', ['collection' => $collection]));
+    }
+
+    public function testNullSafeChainsShortCircuitFollowingCallsAndIndexing(): void
+    {
+        $language = new CalculatedFieldExpressionLanguage();
+        $image = new Hotspotimage(null, [
+            ['name' => 'spot', 'data' => [new MarkerHotspotItem(['name' => 'title', 'type' => 'input', 'value' => 'Hello'])]],
+        ]);
+
+        // the same (cached) expression is evaluated with a null and a non-null receiver, in both orders
+        foreach (['image?.getHotspots()[0]["data"][0].getValue()' => 'Hello', 'image?.getHotspots()[0]["name"]' => 'spot'] as $expression => $expected) {
+            $this->assertNull($language->evaluate($expression, ['image' => null]));
+            $this->assertSame($expected, $language->evaluate($expression, ['image' => $image]));
+            $this->assertNull($language->evaluate($expression, ['image' => null]));
+        }
+
+        $this->assertNull($language->evaluate('date?.getTimezone().getName()', ['date' => null]));
+        $this->assertSame('UTC', $language->evaluate('date?.getTimezone().getName()', ['date' => Carbon::create(2024, 1, 1, 0, 0, 0, 'UTC')]));
+        $this->assertNull($language->evaluate('date?.getTimezone().getName()', ['date' => null]));
+    }
+
     public function testStillRejectsConstantFunction(): void
     {
         $language = new CalculatedFieldExpressionLanguage();
