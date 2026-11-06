@@ -93,8 +93,22 @@ final class MixedNormalizingField extends Data implements NormalizerInterface
         return '\\' . CustomValueObject::class . '|null';
     }
 
+    /**
+     * Only an absent value is empty, whatever shape the value has.
+     *
+     * This has to follow {@see self::normalize()} rather than name one class: the type carries a
+     * {@see CustomValueObject} for some of its values and the value itself - a scalar, or the
+     * structure the JSON envelope exists for - for the rest, and reporting one of those empty does
+     * not merely mislabel it. {@see \Pimcore\Model\DataObject\Classificationstore::getLocalizedKeyValue()}
+     * replaces a value its field definition calls empty with the fallback value, which is `null`
+     * when the key has no fallback language, so a stored value would read back as nothing at all.
+     */
     public function isEmpty(mixed $data): bool
     {
-        return !$data instanceof CustomValueObject || $data->getText() === '';
+        if ($data instanceof CustomValueObject) {
+            return $data->getText() === '';
+        }
+
+        return $data === null || $data === '' || $data === [];
     }
 }

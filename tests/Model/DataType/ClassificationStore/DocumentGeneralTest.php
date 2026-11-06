@@ -500,7 +500,12 @@ class DocumentGeneralTest extends GeneralTest
 
             // the one thing this test is about: no setLocalizedKeyValue() call follows any of these
             $polygon[1]->setLatitude(49.9);
-            $galleryItems[0]->setCrop(['cropWidth' => 11.0, 'cropHeight' => 22.0, 'cropTop' => 3.0, 'cropLeft' => 4.0]);
+
+            // the crop numbers are deliberately not integral: a crop is a plain array that reaches
+            // the document as it stands, and JSON draws no line between the float `11.0` and the
+            // int `11`, so an integral float comes back as an int and says nothing about whether
+            // the edit was saved. Non-integral values keep the comparison below an identity one
+            $galleryItems[0]->setCrop(['cropWidth' => 11.5, 'cropHeight' => 22.5, 'cropTop' => 3.5, 'cropLeft' => 4.5]);
             $hotspot->setHotspots([['name' => 'spot', 'top' => 1.5, 'left' => 2.5, 'width' => 3.5, 'height' => 4.5]]);
 
             $this->assertTrue(
@@ -527,7 +532,7 @@ class DocumentGeneralTest extends GeneralTest
             $storedItems = $storedGallery->getItems();
             $this->assertInstanceOf(Hotspotimage::class, $storedItems[0]);
             $this->assertSame(
-                ['cropWidth' => 11.0, 'cropHeight' => 22.0, 'cropTop' => 3.0, 'cropLeft' => 4.0],
+                ['cropWidth' => 11.5, 'cropHeight' => 22.5, 'cropTop' => 3.5, 'cropLeft' => 4.5],
                 $storedItems[0]->getCrop(),
                 'the crop set on a gallery item was saved'
             );
@@ -830,7 +835,10 @@ class DocumentGeneralTest extends GeneralTest
         $hotspotimage->setImage($asset);
         $hotspotimage->setHotspots([['name' => 'spot', 'top' => 1.5, 'left' => 2.5, 'width' => 3.5, 'height' => 4.5]]);
         $hotspotimage->setMarker([['name' => 'marker', 'top' => 5.5, 'left' => 6.5]]);
-        $hotspotimage->setCrop(['cropWidth' => 10.0, 'cropHeight' => 20.0, 'cropTop' => 1.0, 'cropLeft' => 2.0]);
+        // non-integral for the same reason as the crop in
+        // self::testMutatingTheChildOfAReloadedValueThroughItsOwnSettersIsSaved(): nothing in a
+        // document test should rest on JSON telling an integral float from an int
+        $hotspotimage->setCrop(['cropWidth' => 10.5, 'cropHeight' => 20.5, 'cropTop' => 1.5, 'cropLeft' => 2.5]);
 
         $galleryItem = new Hotspotimage();
         $galleryItem->setImage($asset);
