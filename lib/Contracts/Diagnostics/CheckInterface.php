@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Pimcore\Contracts\Diagnostics;
 
 /**
- * A read-only diagnostic any bundle may provide. Services implementing this interface are collected by the Pimcore
- * diagnostics bundle through the tag {@see self::TAG}; without that bundle the check is simply never run.
+ * A read-only diagnostic any bundle may provide. Core registers and runs nothing: a consumer of the checks collects
+ * the services tagged with {@see self::TAG}; without such a consumer a check is never run.
  */
 interface CheckInterface
 {

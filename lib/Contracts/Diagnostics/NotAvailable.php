@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Contracts\Diagnostics;
 
+use InvalidArgumentException;
+
 /**
  * Something a check could not determine, e.g. because the database user lacks a privilege.
  */
@@ -23,6 +25,13 @@ final readonly class NotAvailable
         public string $subject,
         public string $reason,
     ) {
+        if ($subject === '') {
+            throw new InvalidArgumentException('"subject" must be a non-empty string.');
+        }
+
+        if ($reason === '') {
+            throw new InvalidArgumentException('"reason" must be a non-empty string.');
+        }
     }
 
     /**

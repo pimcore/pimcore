@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Contracts\Diagnostics;
 
+use InvalidArgumentException;
+
 /**
  * One observation of a check. The message is written by the check author as a fixed text and must never
  * embed values read from the instance (credentials, queries, personal data).
@@ -26,6 +28,17 @@ final readonly class Finding
         public string $message,
         public ?string $subject = null,
     ) {
+        if ($code === '') {
+            throw new InvalidArgumentException('"code" must be a non-empty string.');
+        }
+
+        if ($message === '') {
+            throw new InvalidArgumentException('"message" must be a non-empty string.');
+        }
+
+        if ($subject === '') {
+            throw new InvalidArgumentException('"subject" must be null or a non-empty string.');
+        }
     }
 
     /**

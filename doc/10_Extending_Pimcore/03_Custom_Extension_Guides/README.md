@@ -103,4 +103,3 @@ which layers it touches so you know what to expect before diving in.
 | Guide | Description | Layers |
 |-------|-------------|--------|
 | [Maintenance Tasks](./07_Maintenance_Tasks.md) | Register scheduled tasks for periodic operations | Core |
-| [Diagnostic Checks](./16_Diagnostic_Checks.md) | Ship a read-only diagnostic check that the diagnostics bundle collects | Core |

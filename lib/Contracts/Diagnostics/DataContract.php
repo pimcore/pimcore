@@ -20,7 +20,8 @@ use function is_string;
 use function sprintf;
 
 /**
- * Declares which data a diagnostic check delivers. The Pimcore diagnostics bundle enforces it at container build.
+ * Declares which data a diagnostic check delivers. Core only validates its shape; a consumer of the checks may
+ * enforce it further.
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class DataContract
@@ -29,7 +30,7 @@ final readonly class DataContract
      * @param list<DataClass> $returns Data classes the check delivers; must not be empty
      * @param list<string> $neverReturns Fields or kinds of value present in the source that must never be returned
      * @param list<string> $sources Where the check reads from (table, command, service, config key)
-     * @param string $doc Anchor or relative path (with anchor) into the documentation of the providing bundle, or a URL; not validated here, the diagnostics bundle requires it
+     * @param string $doc Anchor or relative path (with anchor) into the documentation of the providing bundle, or a URL; not validated here
      */
     public function __construct(
         public array $returns,
