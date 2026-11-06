@@ -33,12 +33,15 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
+use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tests\Support\Helper\Pimcore as PimcoreHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Psr\Log\NullLogger;
+use RuntimeException;
 
 /**
  * Publishing a prepared version writes the published state into that very version (`existingVersion` save
@@ -519,6 +522,147 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         }
 
         $this->assertSame($binaryFileHash, Version::getById($version->getId())?->getBinaryFileHash(), 'the stored hash must be unchanged');
+    }
+
+    /**
+     * The stored data of a failed in-place write is restored while the transaction still locks the version, so a
+     * concurrent write of the same version waits for the rollback and isn't overwritten by the restore
+     */
+    public function testTheVersionDataIsRestoredBeforeTheRollback(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $adapter = $this->installStorageAdapterSpy();
+
+        $failingListener = static function (): void {
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            $this->restoreStorageAdapter();
+        }
+
+        $this->assertCount(2, $adapter->writes, 'expected the in-place write and its restore');
+        $this->assertTrue($adapter->writes[1], 'the version data must be restored before the transaction is rolled back');
+    }
+
+    /**
+     * A version whose stored data cannot be read cannot be restored, so it isn't written into in a transaction
+     */
+    public function testAVersionWithUnreadableDataIsNotWrittenInto(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+        $adapter = $this->installStorageAdapterSpy();
+        $adapter->unreadable = true;
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('writing into a version with unreadable data must be rejected');
+        } catch (RuntimeException $e) {
+            $this->assertStringContainsString('cannot be read', $e->getMessage());
+        } finally {
+            $this->restoreStorageAdapter();
+        }
+
+        $this->assertSame([], $adapter->writes, 'the version must not be written');
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion);
+        $this->assertSame($draft->getVersionCount(), $keptVersion->getVersionCount(), 'the version must keep its version count');
+    }
+
+    /**
+     * A version written in place by saveVersion() alone isn't part of a transaction: a later failing save() of the
+     * same element must not restore the data the version had before
+     */
+    public function testAFailingSaveDoesNotRestoreAVersionWrittenWithoutTransaction(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Concrete::class, $restored);
+        $restored->saveVersion(true, true, null, false, ['existingVersion' => $draft]);
+        $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $writtenMetaData = $storageAdapter->loadMetaData($draft);
+
+        $failingListener = static function (): void {
+            throw new Exception('saving failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+        try {
+            $restored->save();
+            $this->fail('saving must fail');
+        } catch (Exception $e) {
+            $this->assertSame('saving failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+        }
+
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion);
+        $this->assertSame($writtenMetaData, $storageAdapter->loadMetaData($keptVersion), 'the data written by saveVersion() must be kept');
+    }
+
+    /**
+     * Wraps the file system storage in a spy that records for each write whether a transaction is active, and can
+     * make the stored data unreadable
+     */
+    private function installStorageAdapterSpy(): FileSystemVersionStorageAdapter
+    {
+        $adapter = new class() extends FileSystemVersionStorageAdapter {
+            /** @var list<bool> */
+            public array $writes = [];
+
+            public bool $unreadable = false;
+
+            public function save(Version $version, string $metaData, mixed $binaryDataStream): void
+            {
+                $this->writes[] = Db::get()->isTransactionActive();
+                parent::save($version, $metaData, $binaryDataStream);
+            }
+
+            public function loadMetaData(Version $version): ?string
+            {
+                return $this->unreadable ? null : parent::loadMetaData($version);
+            }
+        };
+        $this->getStorageAdapterProxy()->setStorageAdapter($adapter);
+
+        return $adapter;
+    }
+
+    private function restoreStorageAdapter(): void
+    {
+        $this->getStorageAdapterProxy()->setStorageAdapter(new FileSystemVersionStorageAdapter());
+    }
+
+    private function getStorageAdapterProxy(): ProxyVersionStorageAdapter
+    {
+        $proxy = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $this->assertInstanceOf(ProxyVersionStorageAdapter::class, $proxy);
+
+        return $proxy;
     }
 
     private function createFreshElement(string $type): Asset|Page|Concrete

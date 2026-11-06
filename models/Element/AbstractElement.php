@@ -31,6 +31,7 @@ use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Workflow\Manager;
+use RuntimeException;
 use Throwable;
 use WeakMap;
 
@@ -113,12 +114,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     private static bool $getInheritedProperties = true;
 
     /**
-     * The versions written in place (see doSaveVersion()) in the running transaction of an element, each as it was
-     * before with its stored data: the version storage may not be transactional (e.g. the file system), so the
-     * stored data is written back when the transaction is rolled back. A WeakMap keeps it out of serialization and
-     * deep copies.
+     * The versions written in place (see doSaveVersion()) in the running transaction attempt of retryableFunction(),
+     * each as it was before with its stored data: the version storage may not be transactional (e.g. the file
+     * system), so the stored data is written back when the transaction is rolled back. An element has an entry only
+     * while such an attempt runs. A WeakMap keeps it out of serialization and deep copies.
      *
-     * @var WeakMap<self, list<array{Model\Version, ?string}>>
+     * @var WeakMap<self, list<array{Model\Version, string}>>
      */
     private static WeakMap $versionsWrittenInPlace;
 
@@ -719,16 +720,34 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $existingVersion;
     }
 
+    private function trackVersionsWrittenInPlace(): void
+    {
+        self::$versionsWrittenInPlace ??= new WeakMap();
+        self::$versionsWrittenInPlace[$this] = [];
+    }
+
+    /**
+     * Keeps the stored data of a version that is written in place, to restore it if the transaction is rolled back. A
+     * version written without the transaction of retryableFunction() (e.g. by saveVersion() alone) isn't rolled back,
+     * so its data isn't kept.
+     *
+     * @throws RuntimeException if the stored data of the version cannot be read
+     */
     private function rememberVersionWrittenInPlace(Model\Version $version): void
     {
-        try {
-            $metaData = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($version);
-        } catch (Throwable) {
-            $metaData = null;
+        if (!isset(self::$versionsWrittenInPlace[$this])) {
+            return;
         }
 
-        self::$versionsWrittenInPlace ??= new WeakMap();
-        $versions = self::$versionsWrittenInPlace[$this] ?? [];
+        $metaData = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($version);
+        if ($metaData === null) {
+            throw new RuntimeException(sprintf(
+                'The stored data of version %d cannot be read, so it cannot be restored and the version cannot be written into',
+                $version->getId()
+            ));
+        }
+
+        $versions = self::$versionsWrittenInPlace[$this];
         $versions[] = [clone $version, $metaData];
         self::$versionsWrittenInPlace[$this] = $versions;
     }
@@ -741,8 +760,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * Writes the stored data of the versions written in place back after the transaction was rolled back, where the
-     * version storage kept the written data
+     * Writes the stored data of the versions written in place back when the transaction fails, where the version
+     * storage didn't keep it. This runs before the rollback, while the transaction still locks the versions it wrote:
+     * a concurrent write of the same version waits for the rollback and its data isn't overwritten.
      */
     private function restoreVersionsWrittenInPlace(): void
     {
@@ -754,10 +774,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->forgetVersionsWrittenInPlace();
         $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
         foreach (array_reverse($versions) as [$version, $metaData]) {
-            if ($metaData === null) {
-                continue;
-            }
-
             try {
                 if ($storageAdapter->loadMetaData($version) !== $metaData) {
                     $storageAdapter->save($version, $metaData, null);
@@ -921,6 +937,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 $this->beginTransaction();
+                $this->trackVersionsWrittenInPlace();
 
                 try {
                     if ($retryableFunc instanceof Closure) {
@@ -934,13 +951,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (Throwable $e) {
+                    $this->restoreVersionsWrittenInPlace();
+
                     try {
                         $this->rollBack();
                     } catch (Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
                         Logger::info((string)$er);
                     }
-                    $this->restoreVersionsWrittenInPlace();
 
                     if ($onBeforeRetry instanceof Closure) {
                         $onBeforeRetry($e);
