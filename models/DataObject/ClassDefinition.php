@@ -1036,7 +1036,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public function setCompositeIndices(array $compositeIndices): static
     {
-        $class = $this->getFieldDefinitions([]);
+        // Only the field types are needed. This runs while a definition is loaded (__set_state),
+        // where enrichment would run the options provider of every select field of the class.
+        $class = $this->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($compositeIndices as $indexInd => $compositeIndex) {
             $this->getDao()->assertValidIdentifier($compositeIndex['index_key'] ?? '');
             foreach ($compositeIndex['index_columns'] as $fieldInd => $fieldName) {
