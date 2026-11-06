@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception as DBALException;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
@@ -33,6 +35,8 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
+use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
@@ -622,6 +626,105 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $keptVersion = Version::getById($draft->getId());
         $this->assertNotNull($keptVersion);
         $this->assertSame($writtenMetaData, $storageAdapter->loadMetaData($keptVersion), 'the data written by saveVersion() must be kept');
+    }
+
+    /**
+     * The version is locked before its stored data is kept for a restore: no other write of the version can happen
+     * between keeping its data and writing it, which a restore would overwrite
+     */
+    public function testTheVersionIsLockedBeforeItsDataIsKept(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->publish($restored);
+
+        $otherConnection = DriverManager::getConnection(Db::get()->getParams(), Db::get()->getConfiguration());
+        $lockedForOthers = null;
+        $lockCheckingListener = static function () use ($otherConnection, $draft, &$lockedForOthers): void {
+            // the first point after the data was kept, before the version is written
+            try {
+                $otherConnection->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE NOWAIT', [$draft->getId()]);
+                $lockedForOthers = false;
+            } catch (DBALException) {
+                $lockedForOthers = true;
+            }
+
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::PRE_SAVE, $lockCheckingListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::PRE_SAVE, $lockCheckingListener);
+            $otherConnection->close();
+        }
+
+        $this->assertTrue($lockedForOthers, 'the version must be locked for other writers before it is written');
+    }
+
+    /**
+     * A version that moved to another storage in a failed attempt is read from its original storage again: the
+     * written version gets its storage back with the rollback, so writing it again succeeds
+     */
+    public function testAVersionMovedToAnotherStorageCanBeWrittenAgainAfterAFailure(): void
+    {
+        // needed for the DatabaseVersionStorageAdapter (same as in the version storage tests of the Service suite)
+        Db::get()->executeStatement("CREATE TABLE IF NOT EXISTS `versionsData` (
+                                  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                                  `cid` int(11) unsigned DEFAULT NULL,
+                                  `ctype` enum('document','asset','object') DEFAULT NULL,
+                                  `metaData` longblob DEFAULT NULL,
+                                  `binaryData` longblob DEFAULT NULL,
+                                  PRIMARY KEY (`id`)
+                                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci");
+        $fileSystemAdapter = new FileSystemVersionStorageAdapter();
+        $databaseAdapter = new DatabaseVersionStorageAdapter(Db::get());
+        $proxy = $this->getStorageAdapterProxy();
+        $object = $this->createFreshElement('object');
+
+        try {
+            // the draft is stored in the file system, the publish would move it to the database
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(1, $databaseAdapter, $fileSystemAdapter));
+            $draft = $object->saveVersion();
+            $this->assertNotNull($draft, 'expected a draft version to be saved');
+            $draft = Version::getById($draft->getId());
+            $this->assertNotNull($draft);
+            $this->assertSame('fs', $draft->getStorageType(), 'expected the draft in the file system');
+            $restored = $draft->getData();
+            $this->publish($restored);
+            $proxy->setStorageAdapter(new DelegateVersionStorageAdapter(PHP_INT_MAX, $databaseAdapter, $fileSystemAdapter));
+
+            $failingListener = static function (): void {
+                throw new Exception('publishing failed');
+            };
+            Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+            try {
+                $restored->save(['existingVersion' => $draft]);
+                $this->fail('publishing must fail');
+            } catch (Exception $e) {
+                $this->assertSame('publishing failed', $e->getMessage());
+            } finally {
+                Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+            }
+
+            $this->assertSame('fs', $draft->getStorageType(), 'the version must be read from its original storage again');
+            $restored->save(['existingVersion' => $draft]);
+        } finally {
+            $this->restoreStorageAdapter();
+        }
+
+        $publishedVersion = Version::getById($draft->getId());
+        $this->assertNotNull($publishedVersion);
+        $this->assertSame($this->reload($object)->getVersionCount(), $publishedVersion->getVersionCount(), 'the retry must publish the version');
     }
 
     /**

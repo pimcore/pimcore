@@ -21,6 +21,7 @@ use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -115,11 +116,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * The versions written in place (see doSaveVersion()) in the running transaction attempt of retryableFunction(),
-     * each as it was before with its stored data: the version storage may not be transactional (e.g. the file
-     * system), so the stored data is written back when the transaction is rolled back. An element has an entry only
-     * while such an attempt runs. A WeakMap keeps it out of serialization and deep copies.
+     * each with a copy as it was before and its stored data: the version storage may not be transactional (e.g. the
+     * file system), so the stored data is written back when the transaction is rolled back. An element has an entry
+     * only while such an attempt runs. A WeakMap keeps it out of serialization and deep copies.
      *
-     * @var WeakMap<self, list<array{Model\Version, string}>>
+     * @var WeakMap<self, list<array{Model\Version, Model\Version, string}>>
      */
     private static WeakMap $versionsWrittenInPlace;
 
@@ -739,6 +740,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return;
         }
 
+        // locked before its stored data is read: every write of a version locks its row first (Version\Dao::save()),
+        // so no other write of this version happens until the transaction is committed or rolled back
+        Db::get()->fetchOne('SELECT id FROM versions WHERE id = ? FOR UPDATE', [$version->getId()]);
+
         $metaData = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($version);
         if ($metaData === null) {
             throw new RuntimeException(sprintf(
@@ -748,7 +753,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         $versions = self::$versionsWrittenInPlace[$this];
-        $versions[] = [clone $version, $metaData];
+        $versions[] = [$version, clone $version, $metaData];
         self::$versionsWrittenInPlace[$this] = $versions;
     }
 
@@ -773,7 +778,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $versions = self::$versionsWrittenInPlace[$this];
         $this->forgetVersionsWrittenInPlace();
         $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
-        foreach (array_reverse($versions) as [$version, $metaData]) {
+        foreach (array_reverse($versions) as [$writtenVersion, $version, $metaData]) {
+            // the written version may have moved to another storage (see Version::save()), a retry reads it from where
+            // it is stored
+            if ($version->getStorageType() !== null) {
+                $writtenVersion->setStorageType($version->getStorageType());
+            }
+            $writtenVersion->setBinaryFileId($version->getBinaryFileId());
+            $writtenVersion->setBinaryFileHash($version->getBinaryFileHash());
+
             try {
                 if ($storageAdapter->loadMetaData($version) !== $metaData) {
                     $storageAdapter->save($version, $metaData, null);
