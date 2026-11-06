@@ -62,6 +62,15 @@ final class SettingsStore extends Model\AbstractModel
      */
     protected static ?self $instance = null;
 
+    /**
+     * Entries of a scope as loaded by {@see self::loadScopeSnapshot()}, by scope and id.
+     * A row leaves the snapshot when {@see self::getFromScopeSnapshot()} returns it.
+     * Ids that are numeric strings become int keys.
+     *
+     * @var array<string, array<int|string, array<string, mixed>>>
+     */
+    private static array $scopeSnapshots = [];
+
     private static function getInstance(): self
     {
         if (!self::$instance) {
@@ -92,6 +101,7 @@ final class SettingsStore extends Model\AbstractModel
     {
         self::validateType($type);
         $instance = self::getInstance();
+        self::clearScopeSnapshots();
 
         return $instance->getDao()->set($id, $data, $type, $scope);
     }
@@ -99,8 +109,20 @@ final class SettingsStore extends Model\AbstractModel
     public static function delete(string $id, ?string $scope = null): int|string
     {
         $instance = self::getInstance();
+        self::clearScopeSnapshots();
 
         return $instance->getDao()->delete($id, $scope);
+    }
+
+    /**
+     * Drops every snapshot, not only the one of the written scope: the `scope` column
+     * compares case-insensitively, so a write through another spelling of a scope
+     * (`SCOPE` for `scope`) changes rows of a snapshot that is keyed by the exact string.
+     * Writes are rare next to listings, which take a fresh snapshot anyway.
+     */
+    private static function clearScopeSnapshots(): void
+    {
+        self::$scopeSnapshots = [];
     }
 
     public static function get(string $id, ?string $scope = null): ?SettingsStore
@@ -124,6 +146,56 @@ final class SettingsStore extends Model\AbstractModel
         $instance = self::getInstance();
 
         return $instance->getDao()->getIdsByScope($scope);
+    }
+
+    /**
+     * Loads every entry of a scope with a single query and keeps the entries in memory,
+     * so that {@see self::getFromScopeSnapshot()} can return them without a query each.
+     *
+     * Meant for callers that list a scope and then read each of its entries, such as the
+     * configuration listings of {@see \Pimcore\Config\LocationAwareConfigRepository}.
+     * The snapshot of a scope is replaced by the next call for that scope; every snapshot
+     * is dropped by {@see self::set()} and {@see self::delete()}.
+     *
+     * @return string[] the ids of the scope, as {@see self::getIdsByScope()} returns them
+     *
+     * @internal
+     */
+    public static function loadScopeSnapshot(string $scope): array
+    {
+        $ids = [];
+        $rows = [];
+        foreach (self::getInstance()->getDao()->getRowsByScope($scope) as $row) {
+            $ids[] = $row['id'];
+            $rows[$row['id']] = $row;
+        }
+
+        self::$scopeSnapshots[$scope] = $rows;
+
+        return $ids;
+    }
+
+    /**
+     * Returns an entry from the snapshot taken by {@see self::loadScopeSnapshot()} and releases its row:
+     * an entry is handed out once, the caller is expected to keep what it decoded from it.
+     *
+     * Null means that the entry is not in a snapshot - either no snapshot of the scope
+     * exists, or the entry did not exist when it was taken. Use {@see self::get()} then.
+     *
+     * @internal
+     */
+    public static function getFromScopeSnapshot(string $id, ?string $scope = null): ?SettingsStore
+    {
+        $row = self::$scopeSnapshots[(string) $scope][$id] ?? null;
+        if ($row === null) {
+            return null;
+        }
+        unset(self::$scopeSnapshots[(string) $scope][$id]);
+
+        $item = new self();
+        $item->getDao()->assignRow($row);
+
+        return $item;
     }
 
     public function getId(): string
