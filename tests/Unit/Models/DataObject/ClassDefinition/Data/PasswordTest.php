@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 use Exception;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -24,7 +25,7 @@ class PasswordTest extends TestCase
 {
     public const HASH_FOR_ITEM = '$2y$12$itemitemitemitemitemitOuxFoo1pNFmo0Q9bZbc6PCkqzcLzXbJe';
 
-    private const HASH = '$2y$12$hvBjG/fHXnkrQXIuf2Rf4.Ev8Ln1roR3RB/zL9QOHGjbnFptgkSfi';
+    public const HASH = '$2y$12$hvBjG/fHXnkrQXIuf2Rf4.Ev8Ln1roR3RB/zL9QOHGjbnFptgkSfi';
 
     private function buildField(): Password
     {
@@ -181,6 +182,60 @@ class PasswordTest extends TestCase
         $this->assertSame(self::HASH_FOR_ITEM, $result);
     }
 
+    public function testGetDataFromEditmodeKeepsStoredHashInsideBlock(): void
+    {
+        $object = new class extends Concrete {
+            public function getBlocks(?string $language = null): array
+            {
+                return [
+                    ['secret' => new BlockElement('secret', 'password', 'first')],
+                    ['secret' => new BlockElement('secret', 'password', PasswordTest::HASH_FOR_ITEM)],
+                ];
+            }
+        };
+
+        $result = $this->buildField()->getDataFromEditmode('******', $object, [
+            'context' => ['containerType' => 'block', 'fieldname' => 'blocks', 'index' => 0, 'oIndex' => 1],
+        ]);
+
+        $this->assertSame(self::HASH_FOR_ITEM, $result);
+    }
+
+    public function testGetDataFromEditmodeWithMaskInsideUnresolvableBlockFailsSafe(): void
+    {
+        $object = new class extends Concrete {
+        };
+
+        $this->expectException(Exception::class);
+
+        $this->buildField()->getDataFromEditmode('******', $object, [
+            'context' => ['containerType' => 'block', 'fieldname' => 'blocks', 'index' => 0, 'oIndex' => 0],
+        ]);
+    }
+
+    public function testGetDataFromEditmodeKeepsStoredHashPerLanguageOfLocalizedField(): void
+    {
+        $object = new class extends Concrete {
+            public function getSecret(?string $language = null): ?string
+            {
+                return $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+            }
+        };
+        $field = $this->buildField();
+
+        $this->assertSame(self::HASH_FOR_ITEM, $field->getDataFromEditmode('******', $object, ['language' => 'de']));
+        $this->assertSame(self::HASH, $field->getDataFromEditmode('******', $object, ['language' => 'en']));
+    }
+
+    public function testGetDataFromEditmodeKeepsInjectedStoredValue(): void
+    {
+        // e.g. classification store, which resolves the stored value itself
+        $field = $this->buildField();
+
+        $this->assertSame(self::HASH, $field->getDataFromEditmode('******', null, ['injectedData' => self::HASH]));
+        $this->assertNull($field->getDataFromEditmode('******', null, ['injectedData' => null]));
+    }
+
     public function testGetDataFromEditmodeWithMaskInsideUnsupportedContainerFailsSafe(): void
     {
         $object = new class extends Concrete {
@@ -193,7 +248,7 @@ class PasswordTest extends TestCase
         $this->expectException(Exception::class);
 
         $this->buildField()->getDataFromEditmode('******', $object, [
-            'context' => ['containerType' => 'block', 'fieldname' => 'blocks', 'index' => 0, 'oIndex' => 0],
+            'context' => ['containerType' => 'somethingElse', 'fieldname' => 'x'],
         ]);
     }
 

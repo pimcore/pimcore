@@ -187,6 +187,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     private function resolveStoredValue(?DataObject\Concrete $object, array $params): ?string
     {
+        if (array_key_exists('injectedData', $params)) {
+            // the caller already resolved the stored value (e.g. classification store)
+            $injected = $params['injectedData'];
+
+            return is_string($injected) && $injected !== '' ? $injected : null;
+        }
+
         if ($object === null) {
             throw new Exception('Cannot keep the stored value of password field [ ' . $this->getName() . ' ] without an object');
         }
@@ -228,8 +235,21 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
                 throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
             }
             $value = $brick->$getter();
+        } elseif ($containerType === 'block') {
+            $oIndex = $context['oIndex'] ?? null;
+            if ($oIndex === null) {
+                // a newly added block item has no stored value yet
+                return null;
+            }
+            $blockGetter = 'get' . ucfirst((string) ($context['fieldname'] ?? ''));
+            if (!method_exists($object, $blockGetter)) {
+                throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+            }
+            $items = $object->$blockGetter($params['language'] ?? null);
+            $element = is_array($items) ? ($items[$oIndex][$this->getName()] ?? null) : null;
+            $value = $element instanceof DataObject\Data\BlockElement ? $element->getData() : null;
         } else {
-            // other containers (e.g. blocks): the stored value cannot be resolved reliably
+            // other containers: the stored value cannot be resolved reliably
             throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
         }
 
