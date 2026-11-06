@@ -13,8 +13,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Exception;
 use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Db;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Event\VersionEvents;
 use Pimcore\Maintenance\Tasks\ScheduledTasksTask;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -266,6 +273,7 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         // a version of another asset, and a version whose binary data differs from the changed asset
         foreach ([$otherVersion, $version] as $rejectedVersion) {
             $asset->setData('changed binary data');
+
             try {
                 $asset->save(['existingVersion' => $rejectedVersion]);
                 $this->fail(sprintf('saving into version %d must be rejected', $rejectedVersion->getId()));
@@ -333,6 +341,112 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $outdatedVersionIds = (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]);
 
         $this->assertNotContains($olderVersion->getId(), array_map('intval', $outdatedVersionIds), 'the published version must not be cleaned up');
+    }
+
+    /**
+     * Scheduling an older version is a rollback: it is published as a new version, the older version is kept as it
+     * was in the history
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testScheduledPublishVersionPublishesAnOlderVersionAsANewVersion(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $this->publish($element);
+        $element->save();
+        $olderVersion = $element->getLatestVersion(null, true);
+        $this->assertNotNull($olderVersion, 'expected the element to have a version');
+        $this->reload($element)->save();
+        $versionCountBefore = $this->countVersions($element);
+
+        $task = Task::create([
+            'cid' => $element->getId(),
+            'ctype' => $type,
+            'date' => time() - 60,
+            'action' => 'publish-version',
+            'version' => $olderVersion->getId(),
+            'active' => true,
+            'userId' => $this->createAdminUser()->getId(),
+        ]);
+        $task->save();
+
+        (new ScheduledTasksTask(new NullLogger()))->execute();
+
+        $this->assertSame($versionCountBefore + 1, $this->countVersions($element), 'the rollback must add a version');
+        $keptVersion = Version::getById($olderVersion->getId());
+        $this->assertNotNull($keptVersion, 'the older version must still exist');
+        $this->assertSame($olderVersion->getVersionCount(), $keptVersion->getVersionCount(), 'the older version must keep its version count');
+        $this->assertSame($olderVersion->getDate(), $keptVersion->getDate(), 'the older version must keep its date');
+        $this->assertSame(0, (int) Db::get()->fetchOne('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]), 'the task must be done');
+    }
+
+    /**
+     * The step-based cleanup still ranks versions by id: an explicitly set modification date (e.g. by an import)
+     * must not change which versions are cleaned up
+     */
+    public function testStepCleanupRanksVersionsByIdWithExplicitModificationDates(): void
+    {
+        $object = $this->createFreshElement('object');
+        $versionIds = [];
+        foreach ([200, 300, 100] as $age) {
+            $object = $this->reload($object);
+            $object->setModificationDate(time() - $age);
+            $object->save();
+            $versionIds[] = $object->getLatestVersion(null, true)?->getId();
+        }
+
+        $outdatedVersionIds = array_map('intval', (new Version())->getDao()->maintenanceGetOutdatedVersions([['elementType' => 'object', 'steps' => 1]]));
+
+        $this->assertContains($versionIds[0], $outdatedVersionIds, 'the oldest version by id must be cleaned up');
+        $this->assertNotContains($versionIds[1], $outdatedVersionIds, 'the newer versions by id must be kept');
+        $this->assertNotContains($versionIds[2], $outdatedVersionIds, 'the current version must be kept');
+    }
+
+    /**
+     * The versioning events of save() keep their own arguments: when writing the version fails, the inner failure
+     * event (of saveVersion()) carries only the core arguments, the save parameters are part of the outer one only
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testVersioningFailureEventKeepsItsArguments(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $failureEventName = match ($type) {
+            'asset' => AssetEvents::POST_UPDATE_FAILURE,
+            'document' => DocumentEvents::POST_UPDATE_FAILURE,
+            'object' => DataObjectEvents::POST_UPDATE_FAILURE,
+        };
+
+        $failureArguments = [];
+        $failureListener = static function (ElementEventInterface $event) use (&$failureArguments): void {
+            $failureArguments[] = $event->getArguments();
+        };
+        $failingListener = static function (): void {
+            throw new Exception('writing the version failed');
+        };
+        Pimcore::getEventDispatcher()->addListener($failureEventName, $failureListener);
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::PRE_SAVE, $failingListener);
+
+        try {
+            $element->save(['customParameter' => 'outer']);
+            $this->fail('writing the version must fail');
+        } catch (Exception $e) {
+            $this->assertSame('writing the version failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::PRE_SAVE, $failingListener);
+            Pimcore::getEventDispatcher()->removeListener($failureEventName, $failureListener);
+        }
+
+        $versioningFailures = array_values(array_filter($failureArguments, static fn (array $arguments) => isset($arguments['saveVersionOnly'])));
+        $saveFailures = array_values(array_filter($failureArguments, static fn (array $arguments) => !isset($arguments['saveVersionOnly'])));
+        $this->assertCount(1, $versioningFailures, 'the versioning failure event must be dispatched once');
+        $this->assertCount(1, $saveFailures, 'the save failure event must be dispatched once');
+
+        $expectedKeys = $type === 'asset' ? ['exception', 'saveVersionOnly'] : ['exception', 'isAutoSave', 'saveVersionOnly'];
+        $versioningKeys = array_keys($versioningFailures[0]);
+        sort($versioningKeys);
+        $this->assertSame($expectedKeys, $versioningKeys, 'the versioning failure event must carry only its core arguments');
+        $this->assertSame('outer', $saveFailures[0]['customParameter'] ?? null, 'the save failure event must keep the save parameters');
     }
 
     private function createFreshElement(string $type): Asset|Page|Concrete

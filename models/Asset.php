@@ -612,7 +612,8 @@ class Asset extends Element\AbstractElement
                     // an asset which is modified already got a version of its persisted state before this transaction
                     /** @var bool $isUpdate assigned by reference in beforeRetryables */
                     if ($isUpdate || !self::isInitialVersionSkipped()) {
-                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null, $parameters);
+                        // only `existingVersion` is passed on, the versioning events keep their arguments
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null, array_intersect_key($parameters, ['existingVersion' => true]));
                     } else {
                         // scheduled tasks are saved always, they are not versioned (see saveVersion())
                         $this->saveScheduledTasks();
@@ -1150,7 +1151,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
-     * with custom arguments that are passed on to the versioning events; `existingVersion` (Version)
+     * with custom arguments that are passed on to the versioning events; `existingVersion` (Version, internal)
      * writes the version data into that version instead of creating a new one. It will become a regular
      * method parameter in the next major version.
      *
