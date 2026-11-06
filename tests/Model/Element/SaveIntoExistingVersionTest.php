@@ -13,8 +13,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Exception;
 use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Db;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Event\VersionEvents;
 use Pimcore\Maintenance\Tasks\ScheduledTasksTask;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -393,6 +400,53 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $this->assertContains($versionIds[0], $outdatedVersionIds, 'the oldest version by id must be cleaned up');
         $this->assertNotContains($versionIds[1], $outdatedVersionIds, 'the newer versions by id must be kept');
         $this->assertNotContains($versionIds[2], $outdatedVersionIds, 'the current version must be kept');
+    }
+
+    /**
+     * The versioning events of save() keep their own arguments: when writing the version fails, the inner failure
+     * event (of saveVersion()) carries only the core arguments, the save parameters are part of the outer one only
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testVersioningFailureEventKeepsItsArguments(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $failureEventName = match ($type) {
+            'asset' => AssetEvents::POST_UPDATE_FAILURE,
+            'document' => DocumentEvents::POST_UPDATE_FAILURE,
+            'object' => DataObjectEvents::POST_UPDATE_FAILURE,
+        };
+
+        $failureArguments = [];
+        $failureListener = static function (ElementEventInterface $event) use (&$failureArguments): void {
+            $failureArguments[] = $event->getArguments();
+        };
+        $failingListener = static function (): void {
+            throw new Exception('writing the version failed');
+        };
+        Pimcore::getEventDispatcher()->addListener($failureEventName, $failureListener);
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::PRE_SAVE, $failingListener);
+
+        try {
+            $element->save(['customParameter' => 'outer']);
+            $this->fail('writing the version must fail');
+        } catch (Exception $e) {
+            $this->assertSame('writing the version failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::PRE_SAVE, $failingListener);
+            Pimcore::getEventDispatcher()->removeListener($failureEventName, $failureListener);
+        }
+
+        $versioningFailures = array_values(array_filter($failureArguments, static fn (array $arguments) => isset($arguments['saveVersionOnly'])));
+        $saveFailures = array_values(array_filter($failureArguments, static fn (array $arguments) => !isset($arguments['saveVersionOnly'])));
+        $this->assertCount(1, $versioningFailures, 'the versioning failure event must be dispatched once');
+        $this->assertCount(1, $saveFailures, 'the save failure event must be dispatched once');
+
+        $expectedKeys = $type === 'asset' ? ['exception', 'saveVersionOnly'] : ['exception', 'isAutoSave', 'saveVersionOnly'];
+        $versioningKeys = array_keys($versioningFailures[0]);
+        sort($versioningKeys);
+        $this->assertSame($expectedKeys, $versioningKeys, 'the versioning failure event must carry only its core arguments');
+        $this->assertSame('outer', $saveFailures[0]['customParameter'] ?? null, 'the save failure event must keep the save parameters');
     }
 
     private function createFreshElement(string $type): Asset|Page|Concrete
