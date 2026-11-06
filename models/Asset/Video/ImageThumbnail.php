@@ -215,7 +215,8 @@ final class ImageThumbnail implements ImageThumbnailInterface
         }
 
         $converter->load($asset->getLocalFile());
-        if (false === $converter->saveImage($tempFile, $timeOffset)) {
+        // an adapter may report success without having written the image
+        if (false === $converter->saveImage($tempFile, $timeOffset) || !is_file($tempFile)) {
             Logger::info('Creation of image thumbnail for video ' . $asset->getRealFullPath() . ' failed.');
 
             return false;
