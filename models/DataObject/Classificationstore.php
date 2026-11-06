@@ -251,25 +251,43 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // set the given group to active groups
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
-        if (!$this->isFieldDirty('_self') && $dataDefinition instanceof Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
-            if ($this->object) {
-                $oldData = $this->items[$groupId][$keyId][$language] ?? null;
-                $oldData = $dataDefinition->getDataForResource($oldData, $this->object, ['owner' => $this]);
-                if (!$dataDefinition instanceof Model\DataObject\ClassDefinition\Data\Password) {
-                    $oldData = serialize($oldData);
-                }
-
+        if (!$this->isFieldDirty('_self')) {
+            if ($this->object
+                && $dataDefinition instanceof Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+            ) {
+                $oldValue = $this->items[$groupId][$keyId][$language] ?? null;
+                $oldData = $dataDefinition->getDataForResource($oldValue, $this->object, ['owner' => $this]);
                 $newData = $dataDefinition->getDataForResource($value, $this->object, ['owner' => $this]);
+
+                // `null` on both sides is not evidence that the value is unchanged: it is also
+                // what a definition whose resource form cannot carry the value returns for every
+                // value it is handed. ClassDefinition\Data\EncryptedField::getDataForResource()
+                // does exactly that when its delegate is not ResourcePersistenceAware - a
+                // combination this release accepts, because the document engine stores what
+                // normalize() returns and needs no resource form at all - so every value of such
+                // a key would compare equal to the one before it, the save would find a clean
+                // store and the edit would be lost without an error. Two values that are both
+                // absent are the one case where two nulls do say the value is unchanged.
+                $undecided = $newData === null && $oldData === null
+                    && ($value !== null || $oldValue !== null);
+
                 if ($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\Password) {
                     $value = $newData;
                 } else {
+                    $oldData = serialize($oldData);
                     $newData = serialize($newData);
                 }
 
-                if ($newData != $oldData) {
+                if ($undecided || $newData != $oldData) {
                     $this->markFieldDirty('_self');
                 }
             } else {
+                // no object to resolve the value against, or a definition that has no resource
+                // form at all to compare in: nothing here can tell whether the value changed, and
+                // only a store that is marked dirty is one an engine writes. Being wrong this way
+                // costs the engine's own comparison - the document engine reads the stored
+                // documents and writes the groups that differ, which is none of them - where
+                // being wrong the other way loses the value.
                 $this->markFieldDirty('_self');
             }
         }

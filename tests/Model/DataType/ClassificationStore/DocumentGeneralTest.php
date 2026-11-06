@@ -64,6 +64,10 @@ class DocumentGeneralTest extends GeneralTest
 
     private const MIXED_KEY_NAME = 'encryptedMixedNormalizing';
 
+    private const NO_RESOURCE_FORM_GROUP_NAME = 'testgroupNoResourceForm';
+
+    private const PLAIN_MIXED_KEY_NAME = 'mixedNormalizing';
+
     private const DEFAULT_LANGUAGE = 'default';
 
     protected function getStoreEngine(): ?string
@@ -371,6 +375,103 @@ class DocumentGeneralTest extends GeneralTest
         } finally {
             Classificationstore\KeyConfig::getByName(self::MIXED_KEY_NAME, $store->getId(), true)?->delete();
             Classificationstore\GroupConfig::getByName(self::MIXED_GROUP_NAME, $store->getId())?->delete();
+        }
+    }
+
+    /**
+     * Replacing the value of a key reaches the store's dirty flag even when the key's field
+     * definition cannot produce a resource form of either value.
+     *
+     * Whether the store is dirty is decided by comparing what the field definition's
+     * `getDataForResource()` makes of the value that was there against what it makes of the one
+     * being set. Two kinds of key this release accepts answer `null` to that for every value they
+     * are handed: a type that is not `ResourcePersistenceAwareInterface` at all - the document
+     * engine stores what `normalize()` returns and asks for no resource form - and an
+     * `encryptedField` whose delegate is not one, because
+     * {@see EncryptedFieldDefinition::getDataForResource()} returns `null` unless the delegate can
+     * produce it. Both compared equal to whatever was stored before, so the engine found a clean
+     * store and wrote nothing: the edit was lost without an error.
+     *
+     * Nothing but the set is done here - no `setActiveGroups()`, no setter on the value itself -
+     * because each of those marks the store dirty on its own and would hide it.
+     */
+    public function testReplacingAValueWithNoResourceFormIsSaved(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::NO_RESOURCE_FORM_GROUP_NAME);
+        $group->save();
+
+        try {
+            $plainKeyId = (int) $this->createPlainMixedNormalizingKey($store, $group)->getId();
+            $encryptedKeyId = (int) $this->createMixedNormalizingKey($store, $group)->getId();
+
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'no-resource-form');
+            $object->setPublished(true);
+            $object->save();
+
+            $csField = $object->getCsstore();
+            $csField->setActiveGroups([$group->getId() => true]);
+            $csField->setLocalizedKeyValue($group->getId(), $plainKeyId, new CustomValueObject('first'));
+            $csField->setLocalizedKeyValue(
+                $group->getId(),
+                $encryptedKeyId,
+                new EncryptedField(new MixedNormalizingField(), new CustomValueObject('first secret'))
+            );
+            $object->save();
+
+            // a type with no resource form at all
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $reloaded);
+
+            $reloaded->getCsstore()->setLocalizedKeyValue(
+                $group->getId(),
+                $plainKeyId,
+                new CustomValueObject('second')
+            );
+            $this->assertTrue(
+                $reloaded->getCsstore()->hasDirtyFields(),
+                'replacing the value of a key whose type has no resource form marks the store dirty'
+            );
+            $reloaded->save();
+
+            $again = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $again);
+
+            $plainValue = $again->getCsstore()->getLocalizedKeyValue($group->getId(), $plainKeyId);
+            $this->assertInstanceOf(CustomValueObject::class, $plainValue);
+            $this->assertSame('second', $plainValue->getText(), 'the replaced value is the one stored');
+
+            // and an encryptedField whose delegate has none either, which is what makes its own
+            // getDataForResource() answer null for every value
+            $again->getCsstore()->setLocalizedKeyValue(
+                $group->getId(),
+                $encryptedKeyId,
+                new EncryptedField(new MixedNormalizingField(), new CustomValueObject('second secret'))
+            );
+            $this->assertTrue(
+                $again->getCsstore()->hasDirtyFields(),
+                'replacing the value of an encryptedField with such a delegate marks the store dirty'
+            );
+            $again->save();
+
+            $final = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $final);
+
+            $encryptedValue = $final->getCsstore()->getLocalizedKeyValue($group->getId(), $encryptedKeyId);
+            $this->assertInstanceOf(EncryptedField::class, $encryptedValue);
+            $plain = $encryptedValue->getPlain();
+            $this->assertInstanceOf(CustomValueObject::class, $plain);
+            $this->assertSame('second secret', $plain->getText(), 'the replaced secret is the one stored');
+        } finally {
+            Classificationstore\KeyConfig::getByName(self::PLAIN_MIXED_KEY_NAME, $store->getId(), true)?->delete();
+            Classificationstore\KeyConfig::getByName(self::MIXED_KEY_NAME, $store->getId(), true)?->delete();
+            Classificationstore\GroupConfig::getByName(self::NO_RESOURCE_FORM_GROUP_NAME, $store->getId())?->delete();
         }
     }
 
@@ -704,6 +805,35 @@ class DocumentGeneralTest extends GeneralTest
      * shape it has, and for which no classificationstore marshaller is registered - so the engine
      * itself decides whether the value needs the JSON envelope.
      */
+    /**
+     * A key of the mixed-normalizing type itself: a field type that normalizes and denormalizes but
+     * is not {@see \Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface},
+     * which the document engine holds without a resource form of any kind.
+     */
+    private function createPlainMixedNormalizingKey(
+        Classificationstore\StoreConfig $store,
+        Classificationstore\GroupConfig $group
+    ): Classificationstore\KeyConfig {
+        $definition = new MixedNormalizingField();
+        $definition->setName(self::PLAIN_MIXED_KEY_NAME);
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName(self::PLAIN_MIXED_KEY_NAME);
+        $keyConfig->setType('mixedNormalizingObject');
+        $keyConfig->setEnabled(true);
+        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->save();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId((int) $keyConfig->getId());
+        $relation->setGroupId($group->getId());
+        $relation->setSorter(1);
+        $relation->save();
+
+        return $keyConfig;
+    }
+
     private function createMixedNormalizingKey(
         Classificationstore\StoreConfig $store,
         Classificationstore\GroupConfig $group
