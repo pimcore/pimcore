@@ -289,7 +289,7 @@ CREATE TABLE `objects` (
   KEY `key` (`key`),
   KEY `index` (`index`),
   KEY `published` (`published`),
-  KEY `parentId` (`parentId`),
+  KEY `parentId_type_published` (`parentId`, `type`, `published`),
   KEY `type_path_classId` (`type`, `path`, `classId`),
   KEY `modificationDate` (`modificationDate`),
   KEY `classId` (`classId`),
