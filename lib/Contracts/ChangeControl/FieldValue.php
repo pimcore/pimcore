@@ -23,7 +23,8 @@ final readonly class FieldValue
 {
     /**
      * @param string $field the class field: the field itself, the localized field, the brick field or the store field
-     * @param string|null $language Localized and Classification: the language, `default` for a store's plain value
+     * @param string|null $language Localized and Classification: the language, `default` for a store's plain value;
+     *                              Brick: the language of a localized field inside the brick, else null
      * @param string|null $brick Brick: the brick's key
      * @param string|null $brickField Brick: the field inside the brick
      * @param string|null $group Classification: the group's name
@@ -56,12 +57,18 @@ final readonly class FieldValue
         );
     }
 
-    public static function inBrick(string $bricksField, string $brick, string $brickField, mixed $value): self
-    {
+    public static function inBrick(
+        string $bricksField,
+        string $brick,
+        string $brickField,
+        mixed $value,
+        ?string $language = null,
+    ): self {
         return new self(
             FieldKind::Brick,
             self::classField($bricksField, 'brick field'),
             $value,
+            language: $language === null ? null : self::name($language, 'language'),
             brick: self::name($brick, 'brick'),
             brickField: self::name($brickField, 'field'),
         );

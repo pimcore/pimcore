@@ -23,11 +23,13 @@ use Symfony\Component\Uid\Uuid;
 final readonly class MergeStatus
 {
     /**
-     * @param int $total the objects the merge covers
+     * @param int $total the objects the merge covers, the ones it left out included
      * @param int $done the objects written so far
      * @param list<MergeProblem> $problems why it was refused or ended as partial
      * @param list<ObjectRef> $written the objects written, a new one by `ObjectRef::created()`; known once the
      *                                 merge is final
+     * @param list<ObjectRef> $leftOut the objects that needed no write, as they already held what the branch
+     *                                 recorded; known once the merge is final
      */
     private function __construct(
         public Uuid $branch,
@@ -36,6 +38,7 @@ final readonly class MergeStatus
         public int $done,
         public array $problems,
         public array $written,
+        public array $leftOut = [],
     ) {
     }
 
@@ -61,29 +64,38 @@ final readonly class MergeStatus
 
     /**
      * @param list<ObjectRef> $written
+     * @param list<ObjectRef> $leftOut
      */
-    public static function merged(Uuid $branch, array $written): self
+    public static function merged(Uuid $branch, array $written, array $leftOut = []): self
     {
-        return new self($branch, MergeState::Merged, count($written), count($written), [], $written);
+        $total = count($written) + count($leftOut);
+
+        return new self($branch, MergeState::Merged, $total, count($written), [], $written, $leftOut);
     }
 
     /**
      * @param list<ObjectRef> $written
      * @param list<MergeProblem> $problems
+     * @param list<ObjectRef> $leftOut
      */
-    public static function partial(Uuid $branch, int $total, array $written, array $problems): self
-    {
-        self::assertTotal($total, count($written));
+    public static function partial(
+        Uuid $branch,
+        int $total,
+        array $written,
+        array $problems,
+        array $leftOut = [],
+    ): self {
+        self::assertTotal($total, count($written) + count($leftOut));
         self::assertProblems($problems);
 
-        return new self($branch, MergeState::Partial, $total, count($written), $problems, $written);
+        return new self($branch, MergeState::Partial, $total, count($written), $problems, $written, $leftOut);
     }
 
-    private static function assertTotal(int $total, int $written): void
+    private static function assertTotal(int $total, int $accounted): void
     {
-        if ($total < $written) {
+        if ($total < $accounted) {
             throw new InvalidArgumentException(
-                sprintf('%d written objects do not fit a total of %d.', $written, $total)
+                sprintf('%d written or left out objects do not fit a total of %d.', $accounted, $total)
             );
         }
     }

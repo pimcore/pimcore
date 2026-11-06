@@ -67,6 +67,38 @@ class DataObjectChangeTest extends TestCase
         );
     }
 
+    public function testValuesThatDifferOnlyInBrickFieldGroupOrKeyAreAllKept(): void
+    {
+        $change = DataObjectChange::of(1)
+            ->withBrickValue('bricks', 'Size', 'width', 1)
+            ->withBrickValue('bricks', 'Weight', 'width', 2)
+            ->withBrickValue('bricks', 'Size', 'height', 3)
+            ->withClassificationValue('store', 'Look', 'color', 4)
+            ->withClassificationValue('store', 'Other', 'color', 5)
+            ->withClassificationValue('store', 'Look', 'label', 6);
+
+        self::assertSame(
+            [1, 2, 3, 4, 5, 6],
+            array_map(static fn (FieldValue $v): mixed => $v->value, $change->values())
+        );
+    }
+
+    public function testALocalizedFieldInABrickKeepsOneValuePerLanguage(): void
+    {
+        $change = DataObjectChange::of(1)
+            ->withBrickValue('bricks', 'Size', 'label', 'Red', 'en')
+            ->withBrickValue('bricks', 'Size', 'label', 'Rot', 'de')
+            ->withBrickValue('bricks', 'Size', 'label', 'Crimson', 'en');
+
+        self::assertSame(
+            [[FieldKind::Brick, 'Crimson', 'en', 'Size', 'label'], [FieldKind::Brick, 'Rot', 'de', 'Size', 'label']],
+            array_map(
+                static fn (FieldValue $v): array => [$v->kind, $v->value, $v->language, $v->brick, $v->brickField],
+                $change->values()
+            )
+        );
+    }
+
     public function testEachWithReturnsANewChange(): void
     {
         $empty = DataObjectChange::of(1);

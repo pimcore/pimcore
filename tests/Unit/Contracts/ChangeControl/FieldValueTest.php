@@ -62,6 +62,10 @@ class FieldValueTest extends TestCase
                 static fn () => FieldValue::classification('store', 'Look', 'color', '', 1),
                 'language needs a name',
             ],
+            'an empty language in a brick' => [
+                static fn () => FieldValue::inBrick('bricks', 'Size', 'label', 1, ''),
+                'language needs a name',
+            ],
         ];
     }
 
@@ -73,5 +77,45 @@ class FieldValueTest extends TestCase
             FieldValue::localized('name', 'en', 1)->place(),
             FieldValue::localized('name', 'de', 1)->place()
         );
+    }
+
+    /**
+     * @dataProvider otherPlaces
+     */
+    public function testEachPartOfAPlaceTellsItApart(FieldValue $one, FieldValue $same, FieldValue $other): void
+    {
+        self::assertSame($one->place(), $same->place());
+        self::assertNotSame($one->place(), $other->place());
+    }
+
+    /**
+     * @return array<string, array{FieldValue, FieldValue, FieldValue}>
+     */
+    public static function otherPlaces(): array
+    {
+        $brick = FieldValue::inBrick('bricks', 'Size', 'width', 1);
+        $sameBrick = FieldValue::inBrick('bricks', 'Size', 'width', 2);
+        $store = FieldValue::classification('store', 'Look', 'color', 'default', 1);
+        $sameStore = FieldValue::classification('store', 'Look', 'color', 'default', 2);
+
+        return [
+            'another bricks field' => [$brick, $sameBrick, FieldValue::inBrick('other', 'Size', 'width', 1)],
+            'another brick' => [$brick, $sameBrick, FieldValue::inBrick('bricks', 'Weight', 'width', 1)],
+            'another field in the brick' => [$brick, $sameBrick, FieldValue::inBrick('bricks', 'Size', 'height', 1)],
+            'a language in the brick' => [$brick, $sameBrick, FieldValue::inBrick('bricks', 'Size', 'width', 1, 'en')],
+            'another language in the brick' => [
+                FieldValue::inBrick('bricks', 'Size', 'label', 1, 'en'),
+                FieldValue::inBrick('bricks', 'Size', 'label', 2, 'en'),
+                FieldValue::inBrick('bricks', 'Size', 'label', 1, 'de'),
+            ],
+            'another store field' => [
+                $store,
+                $sameStore,
+                FieldValue::classification('other', 'Look', 'color', 'default', 1),
+            ],
+            'another group' => [$store, $sameStore, FieldValue::classification('store', 'Other', 'color', 'default', 1)],
+            'another key' => [$store, $sameStore, FieldValue::classification('store', 'Look', 'label', 'default', 1)],
+            'another store language' => [$store, $sameStore, FieldValue::classification('store', 'Look', 'color', 'de', 1)],
+        ];
     }
 }

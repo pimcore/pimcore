@@ -78,9 +78,13 @@ interface BranchServiceInterface
      * Start merging the branch, as this user: the rights on the objects are checked for them. The
      * returned status may still be running; follow it with `mergeStatus()`.
      *
-     * Every object is checked before anything is written. Any check error ends the merge as
-     * `MergeState::Refused`, naming every object that failed: nothing was written and the branch is
-     * open, so the consumer can take those objects out and merge again, or discard the branch.
+     * Every object is checked before anything is written; one that no longer exists fails the check.
+     * Any check error ends the merge as `MergeState::Refused`, naming every object that failed:
+     * nothing was written and the branch is open, so the consumer can take those objects out and
+     * merge again, or discard the branch.
+     *
+     * An object that already holds what the branch recorded needs no write: the merge leaves it out
+     * and its status names it.
      *
      * A write that fails after that ends the merge as `MergeState::Partial`: what was written stays,
      * the branch is closed and the status names both. A branch that holds nothing merges with a
@@ -99,8 +103,13 @@ interface BranchServiceInterface
     ): MergeStatus;
 
     /**
-     * The branch's latest merge. A merge no one drives any more does not stay running: it ends as
-     * partial, or as refused when it wrote nothing.
+     * The branch's latest merge. Reading it takes no right on the branch, only its context, and this
+     * method throws no refusal.
+     *
+     * A merge no one drives any more is ended here, as this user: as partial, or as refused when it
+     * wrote nothing. While that cannot be done (this user may not, or an object is still being
+     * written) it reads as running and a later call ends it, so a consumer that polls needs a limit
+     * of its own.
      *
      * @return MergeStatus|null null when the branch never had one, there is no such branch, or it
      *                          belongs to another context

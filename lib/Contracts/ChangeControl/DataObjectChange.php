@@ -86,10 +86,16 @@ final readonly class DataObjectChange
      *
      * @param string $bricksField the class's object bricks field
      * @param string $brick the brick's key
+     * @param string|null $language the language, for a localized field inside the brick
      */
-    public function withBrickValue(string $bricksField, string $brick, string $field, mixed $value): self
-    {
-        return $this->with(FieldValue::inBrick($bricksField, $brick, $field, $value));
+    public function withBrickValue(
+        string $bricksField,
+        string $brick,
+        string $field,
+        mixed $value,
+        ?string $language = null,
+    ): self {
+        return $this->with(FieldValue::inBrick($bricksField, $brick, $field, $value, $language));
     }
 
     /**

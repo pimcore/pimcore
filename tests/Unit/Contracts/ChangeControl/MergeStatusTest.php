@@ -45,6 +45,7 @@ class MergeStatusTest extends TestCase
         self::assertSame([10, 4], [$status->total, $status->done]);
         self::assertSame([], $status->problems);
         self::assertSame([], $status->written);
+        self::assertSame([], $status->leftOut);
     }
 
     /**
@@ -107,6 +108,18 @@ class MergeStatusTest extends TestCase
         self::assertSame([], $status->problems);
     }
 
+    public function testAMergedBranchKeepsWhatNeededNoWriteInItsTotalAndNamesIt(): void
+    {
+        $written = [ObjectRef::of(41), ObjectRef::created('sku-1', 43)];
+        $leftOut = [ObjectRef::of(42)];
+        $status = MergeStatus::merged($this->branch, $written, $leftOut);
+
+        self::assertSame(MergeState::Merged, $status->state);
+        self::assertSame([3, 2], [$status->total, $status->done]);
+        self::assertSame($written, $status->written);
+        self::assertSame($leftOut, $status->leftOut);
+    }
+
     public function testABranchThatHoldsNothingMergesWithATotalOfZero(): void
     {
         $status = MergeStatus::merged($this->branch, []);
@@ -132,6 +145,22 @@ class MergeStatusTest extends TestCase
         $status = MergeStatus::partial($this->branch, 1, [ObjectRef::of(41)], [$this->problem]);
 
         self::assertSame([1, 1], [$status->total, $status->done]);
+    }
+
+    public function testAPartialMergeNamesWhatNeededNoWrite(): void
+    {
+        $leftOut = [ObjectRef::of(42)];
+        $status = MergeStatus::partial($this->branch, 10, [ObjectRef::of(41)], [$this->problem], $leftOut);
+
+        self::assertSame([10, 1], [$status->total, $status->done]);
+        self::assertSame($leftOut, $status->leftOut);
+    }
+
+    public function testAPartialMergeCannotLeaveOutMoreThanFitsItsTotal(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('do not fit');
+        MergeStatus::partial($this->branch, 1, [ObjectRef::of(41)], [$this->problem], [ObjectRef::of(42)]);
     }
 
     public function testAPartialMergeCannotGoWithoutAnError(): void
