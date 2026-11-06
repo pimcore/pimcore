@@ -429,7 +429,7 @@ class Asset extends Element\AbstractElement
         // this is the more efficient way
         $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
         if (is_string($localPathOrStream)) {
-            $size = @getimagesize($localPathOrStream);
+            $size = \Pimcore\Image::getImageSize($localPathOrStream);
         } else {
             $size = self::getImageSizeFromStream($localPathOrStream);
         }
@@ -2278,7 +2278,7 @@ class Asset extends Element\AbstractElement
     public function addThumbnailFileToCache(string $localFile, string $filename, ThumbnailConfig $config): void
     {
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
-        if ($imageSize = @getimagesize($localFile)) {
+        if ($imageSize = \Pimcore\Image::getImageSize($localFile)) {
             $dimensions = [
                 'width' => $imageSize[0],
                 'height' => $imageSize[1],

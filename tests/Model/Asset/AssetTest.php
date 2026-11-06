@@ -24,6 +24,7 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Service as AssetService;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
@@ -510,6 +511,33 @@ class AssetTest extends ModelTestCase
 
         try {
             $callback();
+        } finally {
+            Config::setSystemConfiguration($original, 'assets');
+        }
+    }
+
+    /**
+     * WBMP and XBM have no signature, so Image::getImageSize() reads their dimensions from the
+     * first bytes of the file instead of handing them to getimagesize(). An image asset in such
+     * a format must still be held to max_pixels.
+     */
+    public function testMaxPixelsAppliesToAnImageFormatWithoutASignature(): void
+    {
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/max-pixels-' . uniqid() . '.xbm';
+        imagexbm(imagecreate(200, 100), $file);
+        $data = file_get_contents($file);
+        unlink($file);
+
+        $original = Config::getSystemConfiguration('assets');
+        $assetsConfig = $original;
+        // fileinfo reports XBM as text/plain, so only a mapping makes it an image asset
+        $assetsConfig['mime_mappings'] = ['xbm' => 'image/x-xbitmap'];
+        $assetsConfig['image']['max_pixels'] = 10_000;
+        Config::setSystemConfiguration($assetsConfig, 'assets');
+
+        try {
+            $this->expectException(ValidationException::class);
+            Asset::create(1, ['filename' => 'max-pixels.xbm', 'data' => $data]);
         } finally {
             Config::setSystemConfiguration($original, 'assets');
         }
