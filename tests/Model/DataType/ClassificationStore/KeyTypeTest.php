@@ -17,6 +17,8 @@ use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
+use Pimcore\Event\DataObjectClassificationStoreEvents;
+use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
@@ -78,6 +80,11 @@ class KeyTypeTest extends AbstractClassificationStoreTest
      */
     private array $createdKeys = [];
 
+    /**
+     * @var array<array{string, callable}>
+     */
+    private array $listeners = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -88,6 +95,11 @@ class KeyTypeTest extends AbstractClassificationStoreTest
 
     protected function tearDown(): void
     {
+        foreach ($this->listeners as [$eventName, $listener]) {
+            Pimcore::getEventDispatcher()->removeListener($eventName, $listener);
+        }
+        $this->listeners = [];
+
         foreach ($this->createdKeys as $key) {
             Db::get()->delete(self::KEYS_TABLE, ['id' => $key->getId()]);
         }
@@ -349,6 +361,99 @@ class KeyTypeTest extends AbstractClassificationStoreTest
             $payload['data'][self::DEFAULT_LANGUAGE][$group->getId()] ?? [],
             'a calculatedValue key still reaches the editmode payload'
         );
+    }
+
+    /**
+     * The check runs again after the pre-save event, because the event can change what the save is
+     * about to write.
+     *
+     * {@see Classificationstore\KeyConfig::save()} dispatches `KEY_CONFIG_PRE_ADD` with this very
+     * object, so a listener is free to assign a different type, store or encrypted delegate between
+     * the first check and the DAO. Checked only before the event, an accepted `input` key would
+     * reach {@see Classificationstore\KeyConfig\Dao::save()} as the `geopoint` the listener made of
+     * it, and an EAV store would hold a key whose values it cannot store - the configuration the
+     * definition-time refusal exists to keep out.
+     */
+    public function testAListenerChangingTheTypeOnTheAddEventIsRefusedAndWritesNothing(): void
+    {
+        $store = $this->getStore();
+        $name = self::KEY_PREFIX . 'event-add';
+
+        $this->makeTheListenerAssignGeopoint(DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD, $name);
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName($name);
+        $keyConfig->setType(self::INPUT_TYPE);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setDefinition($this->encodeDefinition(new Input()));
+
+        try {
+            $keyConfig->save();
+            $this->fail('a type an EAV store cannot hold has to be refused however the save came by it');
+        } catch (UnsupportedEngineFeatureException $exception) {
+            $this->assertStringContainsString(self::GEOPOINT_TYPE, $exception->getMessage());
+            $this->assertStringContainsString('"eav"', $exception->getMessage());
+        }
+
+        $this->assertSame(
+            0,
+            $this->countKeyRows($name, $store->getId()),
+            'the row the listener made unsupported was not inserted'
+        );
+    }
+
+    /**
+     * The same on an update: the stored key keeps the type it was saved with, and the listener's
+     * change reaches no column.
+     */
+    public function testAListenerChangingTheTypeOnTheUpdateEventIsRefusedAndLeavesTheStoredRowAlone(): void
+    {
+        $keyConfig = $this->createInputKey('event-update');
+        $keyId = (int) $keyConfig->getId();
+
+        $this->makeTheListenerAssignGeopoint(
+            DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_UPDATE,
+            $keyConfig->getName()
+        );
+
+        $keyConfig->setEnabled(false);
+
+        try {
+            $keyConfig->save();
+            $this->fail('an update the listener made unsupported has to be refused');
+        } catch (UnsupportedEngineFeatureException $exception) {
+            $this->assertStringContainsString(self::GEOPOINT_TYPE, $exception->getMessage());
+        }
+
+        $this->assertSame(
+            self::INPUT_TYPE,
+            $this->readKeyType($keyId),
+            'the stored type is the one the key was saved with'
+        );
+    }
+
+    /**
+     * Registers a pre-save listener that turns the key of this name into a `geopoint` - the type
+     * {@see self::testDefiningAStructuredKeyOnAnEavStoreIsRefusedAndWritesNothing()} holds the
+     * definition-time refusal to. Keys of other names are left alone, so the listener cannot
+     * disturb the fixtures the rest of the suite saves.
+     */
+    private function makeTheListenerAssignGeopoint(string $eventName, string $name): void
+    {
+        $listener = function (KeyConfigEvent $event) use ($name): void {
+            $keyConfig = $event->getKeyConfig();
+
+            if ($keyConfig->getName() !== $name) {
+                return;
+            }
+
+            $keyConfig->setType(self::GEOPOINT_TYPE);
+            $keyConfig->setDefinition($this->encodeDefinition(new Geopoint()));
+        };
+
+        Pimcore::getEventDispatcher()->addListener($eventName, $listener);
+        $this->listeners[] = [$eventName, $listener];
     }
 
     private function createInputKey(string $suffix): Classificationstore\KeyConfig

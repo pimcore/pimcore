@@ -113,7 +113,7 @@ class DocumentEngineRoundTripTest extends AbstractClassificationStoreTest
         $documentValues = $this->writeAndReadBack('round-trip-document', $values, self::DOCUMENT_ENGINE);
 
         foreach (array_keys($values) as $keyName) {
-            $this->assertEquals(
+            $this->assertSameStoredValue(
                 $eavValues[$keyName],
                 $documentValues[$keyName],
                 'the document engine returns another value than the EAV engine for ' . $keyName
@@ -160,7 +160,7 @@ class DocumentEngineRoundTripTest extends AbstractClassificationStoreTest
         $this->assertNotSame([], $this->readDocumentRows($objectId));
 
         foreach ($this->readValues($objectId, $values, $store) as $keyName => $value) {
-            $this->assertEquals($expected[$keyName], $value, $keyName . ' did not survive the drain');
+            $this->assertSameStoredValue($expected[$keyName], $value, $keyName . ' did not survive the drain');
         }
     }
 

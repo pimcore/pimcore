@@ -253,6 +253,13 @@ final class KeyConfig extends Model\AbstractModel
             $this->dispatchEvent(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD);
         }
 
+        // again, and this time against what is about to be written: the pre-save event carries this
+        // very object, so a listener is free to change the type, the store or the encrypted
+        // delegate between the check above and here, and the configuration the DAO would persist is
+        // the one that has to fit the engine. The check above stays where it is so that a key
+        // refused outright consumes no identifier
+        $this->assertTypeFitsTheStoreEngine();
+
         $this->getDao()->save();
 
         if ($isUpdate) {

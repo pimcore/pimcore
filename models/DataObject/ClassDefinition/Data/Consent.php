@@ -151,13 +151,23 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * What this field held before the payload being converted was sent.
      *
+     * A container that hands the previous value over answers for it completely: `oldData` is
+     * present and null exactly when the place this field sits in holds nothing - an empty
+     * classification store key, {@see Classificationstore::getDataFromEditmode()}, which always
+     * sets the member. Falling through to the object's getter on that null would read
+     * the class field that happens to carry the same name as the key, and an equal payload would
+     * then reuse that unrelated field's note id and write no audit note for the key at all. The
+     * getter is for the case the member is absent: a caller that knows nothing of this parameter,
+     * which is every caller the object's own save path has.
+     *
      * @param array<string, mixed> $params
      */
     private function resolvePreviousConsent(?DataObject\Concrete $object, array $params): ?DataObject\Data\Consent
     {
-        $fromContainer = $params['oldData'] ?? null;
-        if ($fromContainer instanceof DataObject\Data\Consent) {
-            return $fromContainer;
+        if (array_key_exists('oldData', $params)) {
+            $fromContainer = $params['oldData'];
+
+            return $fromContainer instanceof DataObject\Data\Consent ? $fromContainer : null;
         }
 
         if ($object === null) {

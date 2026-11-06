@@ -29,9 +29,9 @@ class UnsupportedEngineFeatureException extends Exception
         parent::__construct(sprintf(
             'A classification store key of type "%s" cannot be stored by the storage engine "%s" of store %d,'
             . ' which holds a value only as a scalar. Put the key on a store using an engine that holds'
-            . ' structured values - set classificationstore_stores.engine of store %d to "document" and move the'
-            . ' values over with pimcore:classificationstore:flip/drain/verify/cleanup - or choose a type whose'
-            . ' value is a scalar.',
+            . ' structured values - move store %d over by running pimcore:classificationstore:flip for it and'
+            . ' then drain, verify and cleanup; the flip creates the document tables before it switches the'
+            . ' engine, so do not write the engine column by hand - or choose a type whose value is a scalar.',
             $type,
             $engine,
             $storeId,

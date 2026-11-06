@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use DateTimeInterface;
 use Exception;
 use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase
@@ -145,6 +148,92 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
     protected function getStoreEngine(): ?string
     {
         return null;
+    }
+
+    /**
+     * Two stored values hold the same thing.
+     *
+     * A value that carries its own setters carries a back-reference to the store holding it, so
+     * that a change made through one of those setters marks the store dirty -
+     * {@see Classificationstore::setLocalizedKeyValue()} attaches it and
+     * {@see \Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait::markMeDirty()} reads it. That
+     * reference says where the value lives, not what it holds, and a value read back from storage
+     * lives in a different store object than the one it is compared against - the other engine's
+     * store, or the same store reloaded after a drain. `assertEquals()` on the value itself
+     * compares objects member by member, all the way down
+     * ({@see \SebastianBergmann\Comparator\ObjectComparator::assertEquals()} casts both sides to
+     * arrays), so it would walk into both stores and both data objects behind them and fail on a
+     * value that came back perfectly.
+     *
+     * So the value is compared by its own members, which is how the house asserts such a value
+     * everywhere else: {@see \Pimcore\Tests\Support\Helper\DataType\TestDataHelper::assertQuantityValue()}
+     * reads `getValue()` and the unit rather than comparing the object. This does the same thing
+     * for any value, however deeply nested, and keeps each class name in the comparison so that a
+     * value coming back as the wrong type still fails. What a value reports as its owner is
+     * asserted where that is the subject, not here.
+     */
+    protected function assertSameStoredValue(mixed $expected, mixed $actual, string $message = ''): void
+    {
+        $this->assertEquals(
+            $this->describeValue($expected),
+            $this->describeValue($actual),
+            $message
+        );
+    }
+
+    /**
+     * A value as the members it is made of, without the owner bookkeeping of
+     * {@see OwnerAwareFieldInterface}.
+     *
+     * An element is described by its type and id: it is referenced by the value rather than part of
+     * it, and how much of it happens to be loaded is nothing the storage decides.
+     */
+    private function describeValue(mixed $value, int $depth = 0): mixed
+    {
+        if ($depth > 12) {
+            return '*too deep*';
+        }
+
+        if (is_array($value)) {
+            return array_map(fn (mixed $member): mixed => $this->describeValue($member, $depth + 1), $value);
+        }
+
+        if ($value instanceof ElementInterface) {
+            return ['__element' => $value->getType() . ':' . $value->getId()];
+        }
+
+        if (!is_object($value)) {
+            return $value;
+        }
+
+        if ($value instanceof DateTimeInterface) {
+            return ['__class' => $value::class, 'at' => $value->format('U.u')];
+        }
+
+        $described = ['__class' => $value::class];
+
+        foreach ((array) $value as $property => $member) {
+            if ($value instanceof OwnerAwareFieldInterface
+                && in_array($this->getPropertyName((string) $property), ['_owner', '_fieldname', '_language'], true)
+            ) {
+                continue;
+            }
+
+            $described[(string) $property] = $this->describeValue($member, $depth + 1);
+        }
+
+        return $described;
+    }
+
+    /**
+     * The name of a property as the array cast of its object keys it: a protected one as
+     * `"\0*\0<name>"` and a private one as `"\0<declaring class>\0<name>"`.
+     */
+    private function getPropertyName(string $key): string
+    {
+        $lastNul = strrpos($key, "\0");
+
+        return $lastNul === false ? $key : substr($key, $lastNul + 1);
     }
 
     protected function setUpTestClasses(): void

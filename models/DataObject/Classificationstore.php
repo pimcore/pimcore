@@ -119,19 +119,49 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * container is what holds the dirty flag its storage reads. `_self` is the one field name this
      * store's dirty map uses.
      *
+     * The walk reaches the values a value is made of, not only the value itself: a `geopolygon` is
+     * a plain array of {@see Data\GeoCoordinates}, an `imageGallery` holds its
+     * {@see Data\Hotspotimage} items, a `geobounds` its two corners and an `encryptedField` its
+     * plain value - each of them owner-aware and each with setters of its own, so a store that
+     * attached the outer value alone would lose `$gallery->getItems()[0]->setCrop(...)` after a
+     * reload exactly as it lost the outer setter before. Only an array and an owner-aware value are
+     * descended into, which stops the walk at the elements a value references - an asset, an object
+     * - rather than walking an element graph, and the identity guard keeps a value that holds
+     * itself from looping.
+     *
      * This is the single site for it on purpose: both engines hydrate through
      * {@see self::setLocalizedKeyValue()} and reset the dirty map afterwards, so one attachment
      * covers assignment and hydration and cannot leave a freshly loaded store dirty.
+     *
+     * @param array<int, true> $seen the values already attached on this walk, by object id
      */
-    private function attachOwner(mixed $value, ?string $language): void
+    private function attachOwner(mixed $value, ?string $language, array &$seen = []): void
     {
-        if (!$value instanceof OwnerAwareFieldInterface) {
+        if (is_array($value)) {
+            foreach ($value as $member) {
+                $this->attachOwner($member, $language, $seen);
+            }
+
             return;
         }
+
+        if (!$value instanceof OwnerAwareFieldInterface || isset($seen[spl_object_id($value)])) {
+            return;
+        }
+
+        $seen[spl_object_id($value)] = true;
 
         $value->_setOwner($this);
         $value->_setOwnerFieldname('_self');
         $value->_setOwnerLanguage($language);
+
+        // the members of the value, whatever their visibility: a container holds its children in a
+        // protected property, and the one that reads them back is a getter this code cannot name
+        foreach ((array) $value as $member) {
+            if ($member !== $this) {
+                $this->attachOwner($member, $language, $seen);
+            }
+        }
     }
 
     public function getItems(): array

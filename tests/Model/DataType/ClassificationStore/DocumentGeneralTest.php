@@ -233,24 +233,7 @@ class DocumentGeneralTest extends GeneralTest
         $group->save();
 
         try {
-            $definition = new EncryptedFieldDefinition();
-            $definition->setName(self::MIXED_KEY_NAME);
-            $definition->setDelegateDatatype('mixedNormalizingObject');
-            $definition->setDelegate(new MixedNormalizingField());
-
-            $keyConfig = new Classificationstore\KeyConfig();
-            $keyConfig->setStoreId($store->getId());
-            $keyConfig->setName(self::MIXED_KEY_NAME);
-            $keyConfig->setType('encryptedField');
-            $keyConfig->setEnabled(true);
-            $keyConfig->setDefinition((string) json_encode($definition));
-            $keyConfig->save();
-
-            $relation = new Classificationstore\KeyGroupRelation();
-            $relation->setKeyId((int) $keyConfig->getId());
-            $relation->setGroupId($group->getId());
-            $relation->setSorter(1);
-            $relation->save();
+            $keyConfig = $this->createMixedNormalizingKey($store, $group);
 
             $object = new Csstore();
             $object->setParentId(1);
@@ -287,6 +270,103 @@ class DocumentGeneralTest extends GeneralTest
                 'a structured secret',
                 $stored,
                 'the value must not be in cleartext'
+            );
+        } finally {
+            Classificationstore\KeyConfig::getByName(self::MIXED_KEY_NAME, $store->getId(), true)?->delete();
+            Classificationstore\GroupConfig::getByName(self::MIXED_GROUP_NAME, $store->getId())?->delete();
+        }
+    }
+
+    /**
+     * A scalar that happens to look like the engine's JSON envelope is stored as the scalar it is,
+     * read back as that scalar, and is never confused with a real envelope carrying the same
+     * members.
+     *
+     * The engine wraps a non-scalar `encryptedField` value in `{"_csJson":...}` so the encryption
+     * has a scalar to encrypt. The string `{"_csJson":[1,2]}` is a perfectly good value of such a
+     * key, is a scalar and is therefore stored unwrapped - and the ciphertext of the two is
+     * identical, because the envelope of `[1,2]` is that same string. So nothing inside the
+     * encrypted bytes can say which shape is stored, which is why the entry carries the answer
+     * beside them. Two things went wrong without it:
+     *
+     * - the read unwrapped whatever looked like an envelope, so a previously readable string came
+     *   back as the array `[1,2]`;
+     * - `encodesTheSameValue()` compares the two plaintexts to keep a stored ciphertext when the
+     *   value has not changed, and these two plaintexts are equal - so switching the value between
+     *   the two shapes kept the stored row and answered a read of one with the other.
+     *
+     * Both directions are asserted, because each keeps the other honest: writing the qualifier but
+     * leaving it out of the comparison fails the second half, and comparing it while still guessing
+     * the shape on read fails the first.
+     */
+    public function testAnEnvelopeShapedScalarIsNeitherUnwrappedNorConfusedWithAnEnvelope(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::MIXED_GROUP_NAME);
+        $group->save();
+
+        $envelopeShapedScalar = '{"_csJson":[1,2]}';
+
+        try {
+            $keyConfig = $this->createMixedNormalizingKey($store, $group);
+            $keyId = (int) $keyConfig->getId();
+
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'envelope-shaped-scalar');
+            $object->setPublished(true);
+            $object->save();
+
+            $csField = $object->getCsstore();
+            $csField->setActiveGroups([$group->getId() => true]);
+            $csField->setLocalizedKeyValue(
+                $group->getId(),
+                $keyId,
+                new EncryptedField(new MixedNormalizingField(), $envelopeShapedScalar)
+            );
+            $object->save();
+
+            $this->assertSame(
+                $envelopeShapedScalar,
+                $this->readPlainValue($object, $group, $keyId),
+                'a scalar that looks like an envelope comes back as the scalar it is'
+            );
+
+            // and the entry says nothing about an envelope, which is what every entry written
+            // before the qualifier existed looks like: such an entry is read as it stands
+            $this->assertFalse(
+                $this->entryClaimsAnEnvelope($object, $group, $keyId),
+                'a value that was not wrapped carries no envelope qualifier'
+            );
+
+            // the same key, now holding the array whose envelope is byte for byte the string above
+            $this->setPlainValue($object, $group, $keyId, [1, 2]);
+
+            $this->assertSame(
+                [1, 2],
+                $this->readPlainValue($object, $group, $keyId),
+                'the array is not answered with the stored string of equal plaintext'
+            );
+            $this->assertTrue(
+                $this->entryClaimsAnEnvelope($object, $group, $keyId),
+                'the wrapped value says so in its entry'
+            );
+
+            // and back again
+            $this->setPlainValue($object, $group, $keyId, $envelopeShapedScalar);
+
+            $this->assertSame(
+                $envelopeShapedScalar,
+                $this->readPlainValue($object, $group, $keyId),
+                'the scalar is not answered with the stored envelope of equal plaintext'
+            );
+            $this->assertFalse(
+                $this->entryClaimsAnEnvelope($object, $group, $keyId),
+                'the unwrapped value says so in its entry'
             );
         } finally {
             Classificationstore\KeyConfig::getByName(self::MIXED_KEY_NAME, $store->getId(), true)?->delete();
@@ -344,6 +424,191 @@ class DocumentGeneralTest extends GeneralTest
             $this->assertSame(16.37, $stored->getLongitude());
         } finally {
             $this->dropStructuredFields($store);
+        }
+    }
+
+    /**
+     * The same, one level down: the value a key hands out is often not the only thing with setters
+     * on it.
+     *
+     * A `geopolygon` is a plain array of {@see GeoCoordinates} and the key hands the array out, and
+     * an `imageGallery` hands out {@see ImageGallery} whose items are {@see Hotspotimage} objects.
+     * Each of those children carries its own setters and its own `markMeDirty()`, so a store that
+     * attached itself to the outer value alone would take `$polygon[1]->setLatitude()` or
+     * `$gallery->getItems()[0]->setCrop()` and find no owner to report to: the store stays clean and
+     * the engine writes nothing, which is the edit disappearing without an error.
+     *
+     * The two are the shapes the walk has to reach differently - through a bare array the key hands
+     * out, and through an array held in a protected property. A `hotspotimage` rides along as the
+     * control: it is the outer value itself, so it was already covered, and it has to keep working.
+     * The remaining shape, a property holding one owner-aware value, is
+     * {@see self::testMutatingThePlainValueOfAReloadedEncryptedFieldIsSaved()}.
+     */
+    public function testMutatingTheChildOfAReloadedValueThroughItsOwnSettersIsSaved(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = $this->configureStoreWithStructuredFields($store);
+        $polygonKeyId = $this->keyId($store, 'geopolygon');
+        $galleryKeyId = $this->keyId($store, 'imageGallery');
+        $hotspotKeyId = $this->keyId($store, 'hotspotimage');
+
+        try {
+            $asset = TestHelper::createImageAsset(self::KEY_PREFIX);
+
+            $galleryItem = new Hotspotimage();
+            $galleryItem->setImage($asset);
+
+            $hotspotimage = new Hotspotimage();
+            $hotspotimage->setImage($asset);
+
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'mutate-child-after-reload');
+            $object->setPublished(true);
+            $object->save();
+
+            $csField = $object->getCsstore();
+            $csField->setActiveGroups([$group->getId() => true]);
+            $csField->setLocalizedKeyValue($group->getId(), $polygonKeyId, [
+                new GeoCoordinates(48.1, 16.1),
+                new GeoCoordinates(48.2, 16.2),
+            ]);
+            $csField->setLocalizedKeyValue($group->getId(), $galleryKeyId, new ImageGallery([$galleryItem]));
+            $csField->setLocalizedKeyValue($group->getId(), $hotspotKeyId, $hotspotimage);
+            $object->save();
+
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $reloaded);
+            $reloadedField = $reloaded->getCsstore();
+
+            // a member of the array a geopolygon key hands out
+            $polygon = $reloadedField->getLocalizedKeyValue($group->getId(), $polygonKeyId);
+            $this->assertIsArray($polygon);
+            $this->assertInstanceOf(GeoCoordinates::class, $polygon[1]);
+
+            // an item of the gallery, reached through the protected property holding them
+            $gallery = $reloadedField->getLocalizedKeyValue($group->getId(), $galleryKeyId);
+            $this->assertInstanceOf(ImageGallery::class, $gallery);
+            $galleryItems = $gallery->getItems();
+            $this->assertInstanceOf(Hotspotimage::class, $galleryItems[0]);
+
+            // the one value a hotspotimage key hands out, whose setters are its own
+            $hotspot = $reloadedField->getLocalizedKeyValue($group->getId(), $hotspotKeyId);
+            $this->assertInstanceOf(Hotspotimage::class, $hotspot);
+
+            // the one thing this test is about: no setLocalizedKeyValue() call follows any of these
+            $polygon[1]->setLatitude(49.9);
+            $galleryItems[0]->setCrop(['cropWidth' => 11.0, 'cropHeight' => 22.0, 'cropTop' => 3.0, 'cropLeft' => 4.0]);
+            $hotspot->setHotspots([['name' => 'spot', 'top' => 1.5, 'left' => 2.5, 'width' => 3.5, 'height' => 4.5]]);
+
+            $this->assertTrue(
+                $reloadedField->hasDirtyFields(),
+                'mutating a child of a loaded value has to mark the store dirty'
+            );
+
+            $reloaded->save();
+
+            $again = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $again);
+            $againField = $again->getCsstore();
+
+            $storedPolygon = $againField->getLocalizedKeyValue($group->getId(), $polygonKeyId);
+            $this->assertIsArray($storedPolygon);
+            $this->assertInstanceOf(GeoCoordinates::class, $storedPolygon[1]);
+            $this->assertSame(49.9, $storedPolygon[1]->getLatitude(), 'the changed polygon vertex was saved');
+            $this->assertSame(16.2, $storedPolygon[1]->getLongitude());
+            $this->assertInstanceOf(GeoCoordinates::class, $storedPolygon[0]);
+            $this->assertSame(48.1, $storedPolygon[0]->getLatitude(), 'the untouched vertex is unchanged');
+
+            $storedGallery = $againField->getLocalizedKeyValue($group->getId(), $galleryKeyId);
+            $this->assertInstanceOf(ImageGallery::class, $storedGallery);
+            $storedItems = $storedGallery->getItems();
+            $this->assertInstanceOf(Hotspotimage::class, $storedItems[0]);
+            $this->assertSame(
+                ['cropWidth' => 11.0, 'cropHeight' => 22.0, 'cropTop' => 3.0, 'cropLeft' => 4.0],
+                $storedItems[0]->getCrop(),
+                'the crop set on a gallery item was saved'
+            );
+
+            $storedHotspot = $againField->getLocalizedKeyValue($group->getId(), $hotspotKeyId);
+            $this->assertInstanceOf(Hotspotimage::class, $storedHotspot);
+            $this->assertSame(
+                [['name' => 'spot', 'top' => 1.5, 'left' => 2.5, 'width' => 3.5, 'height' => 4.5]],
+                $storedHotspot->getHotspots(),
+                'the hotspots set on the value were saved'
+            );
+        } finally {
+            $this->dropStructuredFields($store);
+        }
+    }
+
+    /**
+     * The plain value inside an `encryptedField`, which is the one owner-aware child that is reached
+     * through a property rather than through a container's items, and the one whose loss would be
+     * invisible: the ciphertext in the document changes on every write, so nothing about the stored
+     * row would look stale.
+     */
+    public function testMutatingThePlainValueOfAReloadedEncryptedFieldIsSaved(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::ENCRYPTED_GROUP_NAME);
+        $group->save();
+
+        try {
+            $keyConfig = $this->createEncryptedGeopointKey($store, $group);
+            $keyId = (int) $keyConfig->getId();
+
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'mutate-encrypted-after-reload');
+            $object->setPublished(true);
+            $object->save();
+
+            $csField = $object->getCsstore();
+            $csField->setActiveGroups([$group->getId() => true]);
+            $csField->setLocalizedKeyValue(
+                $group->getId(),
+                $keyId,
+                new EncryptedField(new Geopoint(), new GeoCoordinates(48.2, 16.37))
+            );
+            $object->save();
+
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $reloaded);
+
+            $loaded = $reloaded->getCsstore()->getLocalizedKeyValue($group->getId(), $keyId);
+            $this->assertInstanceOf(EncryptedField::class, $loaded);
+            $coordinates = $loaded->getPlain();
+            $this->assertInstanceOf(GeoCoordinates::class, $coordinates);
+
+            // the one thing this test is about: no setLocalizedKeyValue() and no setPlain() follows
+            $coordinates->setLatitude(51.5);
+
+            $this->assertTrue(
+                $reloaded->getCsstore()->hasDirtyFields(),
+                'mutating the plain value of a loaded encrypted field has to mark the store dirty'
+            );
+
+            $reloaded->save();
+
+            $again = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $again);
+
+            $stored = $again->getCsstore()->getLocalizedKeyValue($group->getId(), $keyId);
+            $this->assertInstanceOf(EncryptedField::class, $stored);
+            $storedCoordinates = $stored->getPlain();
+            $this->assertInstanceOf(GeoCoordinates::class, $storedCoordinates);
+            $this->assertSame(51.5, $storedCoordinates->getLatitude());
+            $this->assertSame(16.37, $storedCoordinates->getLongitude());
+        } finally {
+            Classificationstore\KeyConfig::getByName(self::ENCRYPTED_KEY_NAME, $store->getId(), true)?->delete();
+            Classificationstore\GroupConfig::getByName(self::ENCRYPTED_GROUP_NAME, $store->getId())?->delete();
         }
     }
 
@@ -427,6 +692,101 @@ class DocumentGeneralTest extends GeneralTest
         $this->assertInstanceOf(ClassificationstoreField::class, $fieldDefinition);
 
         return $fieldDefinition;
+    }
+
+    /**
+     * An `encryptedField` key whose delegate is the test type that normalizes a value to whatever
+     * shape it has, and for which no classificationstore marshaller is registered - so the engine
+     * itself decides whether the value needs the JSON envelope.
+     */
+    private function createMixedNormalizingKey(
+        Classificationstore\StoreConfig $store,
+        Classificationstore\GroupConfig $group
+    ): Classificationstore\KeyConfig {
+        $definition = new EncryptedFieldDefinition();
+        $definition->setName(self::MIXED_KEY_NAME);
+        $definition->setDelegateDatatype('mixedNormalizingObject');
+        $definition->setDelegate(new MixedNormalizingField());
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName(self::MIXED_KEY_NAME);
+        $keyConfig->setType('encryptedField');
+        $keyConfig->setEnabled(true);
+        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->save();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId((int) $keyConfig->getId());
+        $relation->setGroupId($group->getId());
+        $relation->setSorter(1);
+        $relation->save();
+
+        return $keyConfig;
+    }
+
+    /**
+     * Sets the plain value of an `encryptedField` key on a freshly loaded object and saves it, which
+     * is what makes the save compare the new encoding against the stored one.
+     */
+    private function setPlainValue(
+        Csstore $object,
+        Classificationstore\GroupConfig $group,
+        int $keyId,
+        mixed $plain
+    ): void {
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertInstanceOf(Csstore::class, $reloaded);
+
+        $reloaded->getCsstore()->setLocalizedKeyValue(
+            $group->getId(),
+            $keyId,
+            new EncryptedField(new MixedNormalizingField(), $plain)
+        );
+        $reloaded->save();
+    }
+
+    private function readPlainValue(
+        Csstore $object,
+        Classificationstore\GroupConfig $group,
+        int $keyId
+    ): mixed {
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertInstanceOf(Csstore::class, $reloaded);
+
+        $loaded = $reloaded->getCsstore()->getLocalizedKeyValue($group->getId(), $keyId);
+        $this->assertInstanceOf(EncryptedField::class, $loaded);
+
+        return $loaded->getPlain();
+    }
+
+    /**
+     * Whether the stored entry of this key says its value is a JSON envelope rather than the value
+     * itself - the qualifier the engine writes beside the encrypted bytes, read straight out of the
+     * document because that is the storage-level fact under test.
+     */
+    private function entryClaimsAnEnvelope(
+        Csstore $object,
+        Classificationstore\GroupConfig $group,
+        int $keyId
+    ): bool {
+        $class = ClassDefinition::getByName(self::CLASS_NAME);
+        $this->assertNotNull($class);
+
+        $stored = (string) Db::get()->fetchOne(
+            'SELECT `values` FROM ' . self::DOCUMENT_TABLE . $class->getId()
+            . ' WHERE id = ? AND fieldname = ? AND groupId = ?',
+            [$object->getId(), self::FIELDNAME, $group->getId()]
+        );
+
+        $document = json_decode($stored, true);
+        $this->assertIsArray($document);
+
+        $entries = $document['k'][$keyId] ?? null;
+        $this->assertIsArray($entries, 'the document holds an entry for the key');
+        $this->assertIsArray($entries[0] ?? null);
+
+        return ($entries[0]['j'] ?? null) === true;
     }
 
     private function createEncryptedGeopointKey(
