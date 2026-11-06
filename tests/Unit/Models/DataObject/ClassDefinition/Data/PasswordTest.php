@@ -18,6 +18,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Block;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
+use Pimcore\Model\DataObject\Data\EncryptedField;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -408,5 +409,52 @@ class PasswordTest extends TestCase
         $result = $block->getDataFromEditmode([['oIndex' => 0, 'data' => ['secret' => '******']]], $object, ['language' => 'de']);
 
         $this->assertSame(self::HASH_FOR_ITEM, $result[0]['secret']->getData());
+    }
+
+    public function testGetDataFromEditmodeKeepsStoredHashOfEncryptedPassword(): void
+    {
+        $field = $this->buildField();
+        $wrapped = new EncryptedField($field, self::HASH);
+
+        $topLevel = new class($wrapped) extends Concrete {
+            public function __construct(private readonly EncryptedField $wrapped)
+            {
+            }
+
+            public function getSecret(): EncryptedField
+            {
+                return $this->wrapped;
+            }
+        };
+        $inBlock = new class($wrapped) extends Concrete {
+            public function __construct(private readonly EncryptedField $wrapped)
+            {
+            }
+
+            public function getBlocks(?string $language = null): array
+            {
+                return [['secret' => new BlockElement('secret', 'encryptedField', $this->wrapped)]];
+            }
+        };
+        $inLocalizedBlock = new class($wrapped) extends Concrete {
+            public function __construct(private readonly EncryptedField $wrapped)
+            {
+            }
+
+            public function getBlocks(?string $language = null): array
+            {
+                $localized = (new Localizedfield())->setItems(['de' => ['secret' => $this->wrapped]]);
+
+                return [['localizedfields' => new BlockElement('localizedfields', 'localizedfields', $localized)]];
+            }
+        };
+        $context = ['containerType' => 'block', 'fieldname' => 'blocks', 'index' => 0, 'oIndex' => 0];
+
+        $this->assertSame(self::HASH, $field->getDataFromEditmode('******', $topLevel));
+        $this->assertSame(self::HASH, $field->getDataFromEditmode('******', $inBlock, ['context' => $context]));
+        $this->assertSame(
+            self::HASH,
+            $field->getDataFromEditmode('******', $inLocalizedBlock, ['language' => 'de', 'context' => $context])
+        );
     }
 }

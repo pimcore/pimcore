@@ -189,7 +189,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         if (array_key_exists('injectedData', $params)) {
             // the caller already resolved the stored value (e.g. classification store)
-            $injected = $params['injectedData'];
+            $injected = $this->unwrapEncrypted($params['injectedData']);
 
             return is_string($injected) && $injected !== '' ? $injected : null;
         }
@@ -265,7 +265,17 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
         }
 
+        $value = $this->unwrapEncrypted($value);
+
         return is_string($value) && $value !== '' ? $value : null;
+    }
+
+    /**
+     * A password delegated to by an encrypted field is stored wrapped.
+     */
+    private function unwrapEncrypted(mixed $value): mixed
+    {
+        return $value instanceof DataObject\Data\EncryptedField ? $value->getPlain() : $value;
     }
 
     /**
@@ -274,6 +284,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getForCsvExport(DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): string
     {
         $value = $this->getDataFromObjectParam($object, $params);
+
+        $value = $this->unwrapEncrypted($value);
 
         return is_string($value) && $value !== '' ? self::EDITMODE_MASK : '';
     }
