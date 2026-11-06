@@ -63,7 +63,7 @@ class LinkTest extends TestCase
 
         $html = $link->getHtml();
 
-        $this->assertStringNotContainsString('onmouseover=', $html);
+        $this->assertStringNotContainsString('" onmouseover="', $html);
         $this->assertSame(
             '<a href="https://example.com/" '
             . 'class="x&quot; onmouseover=&quot;alert(document.domain)" '
@@ -86,7 +86,7 @@ class LinkTest extends TestCase
 
         $html = $link->getHtml();
 
-        $this->assertStringNotContainsString('onmouseover=', $html);
+        $this->assertStringNotContainsString('" onmouseover="', $html);
         $this->assertStringContainsString(
             'href="https://example.com/&quot; onmouseover=&quot;alert(document.domain)"',
             $html
