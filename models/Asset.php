@@ -1122,9 +1122,11 @@ class Asset extends Element\AbstractElement
     /**
      * The binary data is written to the storage before the version is saved and the storage isn't transactional,
      * so the `existingVersion` save parameter is validated before anything is changed: the version must belong to
-     * this asset and keep its binary data (see Version::save())
+     * this asset, must not be written within another transaction (the binary data would not be restored with the
+     * rollback) and keep its binary data (see Version::save())
      *
      * @throws InvalidArgumentException
+     * @throws \RuntimeException
      */
     private function assertExistingVersionCanBeWritten(array $parameters): void
     {
@@ -1132,6 +1134,8 @@ class Asset extends Element\AbstractElement
         if ($existingVersion === null || $this->getType() === 'folder') {
             return;
         }
+
+        $this->assertVersionIsNotWrittenWithinAnotherTransaction($existingVersion);
 
         $binaryFileHash = $existingVersion->getBinaryFileHash();
         if ($binaryFileHash === null) {

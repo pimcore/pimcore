@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\Element;
 use Closure;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
@@ -869,6 +870,83 @@ class SaveIntoExistingVersionTest extends ModelTestCase
             $this->restoreStorageAdapter();
             $otherConnection->close();
         }
+    }
+
+    /**
+     * save() locks the row of the element before the version it writes into, a version written without a transaction
+     * locks in the same order: while another writer holds the row, the version isn't locked yet, so neither waits for
+     * the other (and a failed wait for the row leaves no lock behind)
+     */
+    public function testAVersionWrittenWithoutTransactionLocksTheElementRowBeforeTheVersion(): void
+    {
+        $object = $this->createFreshElement('object');
+        $draft = $object->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Concrete::class, $restored);
+        $lockName = $this->getVersionLockName($draft);
+        $db = Db::get();
+        $lockWaitTimeout = (int) $db->fetchOne('SELECT @@SESSION.innodb_lock_wait_timeout');
+        $otherConnection = DriverManager::getConnection($db->getParams(), $db->getConfiguration());
+
+        try {
+            // another writer holds the row of the element, like save() does while it waits for the lock of the version
+            $otherConnection->beginTransaction();
+            $otherConnection->executeQuery('SELECT versionCount FROM objects WHERE id = ? FOR UPDATE', [$object->getId()]);
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = 1');
+
+            try {
+                $restored->saveVersion(true, true, null, false, ['existingVersion' => $draft]);
+                $this->fail('the writer must wait for the row of the element');
+            } catch (LockWaitTimeoutException) {
+            }
+
+            $this->assertSame(1, (int) $otherConnection->fetchOne('SELECT IS_FREE_LOCK(?)', [$lockName]), 'the version must not be locked while the writer waits for the row of the element');
+        } finally {
+            $db->executeStatement(sprintf('SET SESSION innodb_lock_wait_timeout = %d', $lockWaitTimeout));
+            if ($otherConnection->isTransactionActive()) {
+                $otherConnection->rollBack();
+            }
+            $otherConnection->close();
+        }
+    }
+
+    /**
+     * The binary data of an asset is written before its version is saved and isn't rolled back with the database, so
+     * writing into a version within another transaction is rejected before the binary data is written
+     */
+    public function testAnAssetVersionIsNotWrittenIntoWithinAnotherTransactionBeforeItsBinaryDataIsWritten(): void
+    {
+        $asset = $this->createFreshElement('asset');
+        $draft = $asset->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        // the stored binary data differs from the one of the draft
+        $asset->setData('changed binary data');
+        $asset->save();
+        $this->assertSame('changed binary data', $this->reload($asset)->getData());
+        $restored = $draft->getData();
+        $this->assertInstanceOf(Asset::class, $restored);
+
+        $rejected = false;
+        Db::get()->beginTransaction();
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+        } catch (RuntimeException $e) {
+            $rejected = true;
+            $this->assertStringContainsString('within another transaction', $e->getMessage());
+        } finally {
+            while (Db::get()->isTransactionActive()) {
+                Db::get()->rollBack();
+            }
+        }
+
+        $this->assertTrue($rejected, 'writing into the version within another transaction must be rejected');
+        $this->assertSame('changed binary data', $this->reload($asset)->getData(), 'the binary data of the asset must be untouched');
     }
 
     /**

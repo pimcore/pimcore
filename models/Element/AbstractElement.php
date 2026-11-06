@@ -650,7 +650,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         if ($existingVersion instanceof Model\Version) {
             $this->assertVersionBelongsToElement($existingVersion);
-            $versionLockName = $this->rememberVersionWrittenInPlace($existingVersion);
             $version = $existingVersion;
         } elseif ($isAutoSave) {
             $list = new Model\Version\Listing();
@@ -664,21 +663,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $version = self::getModelFactory()->build(Model\Version::class);
         }
 
-        $version->setCid($this->getId());
-        $version->setCtype(Service::getElementType($this));
-        $version->setDate($this->getModificationDate());
-        // a version that is written into (e.g. when it is published) keeps its author, the user who published it is
-        // the user modification of the element
-        if (!$existingVersion instanceof Model\Version) {
-            $version->setUserId($this->getUserModification());
-        }
-        $version->setData($this);
-        if ($versionNote !== null) {
-            $version->setNote($versionNote);
-        }
-        $version->setGenerateStackTrace($saveStackTrace);
-        $version->setAutoSave($isAutoSave);
-
         if ($saveOnlyVersion) {
             $versionCount = $this->getDao()->getVersionCountForUpdate();
             $versionCount++;
@@ -686,9 +670,29 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $versionCount = $this->getVersionCount();
         }
 
-        $version->setVersionCount($versionCount);
+        // locked after the element's row (getVersionCountForUpdate() above, updateModificationInfos() in save()), so
+        // every writer locks in the same order and none waits for the row while it holds the lock of the version.
+        // The given version is changed only once it is locked, a rejected write leaves it as it is
+        if ($existingVersion instanceof Model\Version) {
+            $versionLockName = $this->rememberVersionWrittenInPlace($existingVersion);
+        }
 
         try {
+            $version->setCid($this->getId());
+            $version->setCtype(Service::getElementType($this));
+            $version->setDate($this->getModificationDate());
+            // a version that is written into (e.g. when it is published) keeps its author, the user who published it is
+            // the user modification of the element
+            if (!$existingVersion instanceof Model\Version) {
+                $version->setUserId($this->getUserModification());
+            }
+            $version->setData($this);
+            if ($versionNote !== null) {
+                $version->setNote($versionNote);
+            }
+            $version->setGenerateStackTrace($saveStackTrace);
+            $version->setAutoSave($isAutoSave);
+            $version->setVersionCount($versionCount);
             $version->save();
         } finally {
             // the lock of a version written without a transaction is held while its row and its data are written
@@ -755,14 +759,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     private function rememberVersionWrittenInPlace(Model\Version $version): ?string
     {
+        $this->assertVersionIsNotWrittenWithinAnotherTransaction($version);
         $db = Db::get();
         $withinTransactionAttempt = isset(self::$versionsWrittenInPlace[$this]);
-        if ($withinTransactionAttempt ? $db->getTransactionNestingLevel() > 1 : $db->isTransactionActive()) {
-            throw new RuntimeException(sprintf(
-                'Version %d cannot be written into within another transaction, it would not be restored if that one is rolled back',
-                $version->getId()
-            ));
-        }
 
         // a named lock is kept by the connection when the transaction is rolled back (also by the database itself, e.g.
         // on a deadlock): another writer in place of this version waits until it is committed or its data is restored
@@ -801,6 +800,27 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         self::$versionsWrittenInPlace[$this] = $versions;
 
         return null;
+    }
+
+    /**
+     * A version written in place within a transaction of the caller would not be restored if that one is rolled back
+     * (see rememberVersionWrittenInPlace()), so it is rejected. Checked before anything is written that the database
+     * does not roll back (e.g. the binary data of an asset), and again before the version is locked.
+     *
+     * @throws RuntimeException if the version would be written within another transaction
+     *
+     * @internal
+     */
+    protected function assertVersionIsNotWrittenWithinAnotherTransaction(Model\Version $version): void
+    {
+        $db = Db::get();
+        $withinTransactionAttempt = isset(self::$versionsWrittenInPlace[$this]);
+        if ($withinTransactionAttempt ? $db->getTransactionNestingLevel() > 1 : $db->isTransactionActive()) {
+            throw new RuntimeException(sprintf(
+                'Version %d cannot be written into within another transaction, it would not be restored if that one is rolled back',
+                $version->getId()
+            ));
+        }
     }
 
     /**
