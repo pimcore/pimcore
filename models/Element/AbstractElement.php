@@ -29,8 +29,10 @@ use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Workflow\Manager;
 use Throwable;
+use WeakMap;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -109,6 +111,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $parentId = null;
 
     private static bool $getInheritedProperties = true;
+
+    /**
+     * The versions written in place (see doSaveVersion()) in the running transaction of an element, each as it was
+     * before with its stored data: the version storage may not be transactional (e.g. the file system), so the
+     * stored data is written back when the transaction is rolled back. A WeakMap keeps it out of serialization and
+     * deep copies.
+     *
+     * @var WeakMap<self, list<array{Model\Version, ?string}>>
+     */
+    private static WeakMap $versionsWrittenInPlace;
 
     public function getPath(): ?string
     {
@@ -630,6 +642,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         if ($existingVersion instanceof Model\Version) {
             $this->assertVersionBelongsToElement($existingVersion);
+            $this->rememberVersionWrittenInPlace($existingVersion);
             $version = $existingVersion;
         } elseif ($isAutoSave) {
             $list = new Model\Version\Listing();
@@ -704,6 +717,55 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         return $existingVersion;
+    }
+
+    private function rememberVersionWrittenInPlace(Model\Version $version): void
+    {
+        try {
+            $metaData = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->loadMetaData($version);
+        } catch (Throwable) {
+            $metaData = null;
+        }
+
+        self::$versionsWrittenInPlace ??= new WeakMap();
+        $versions = self::$versionsWrittenInPlace[$this] ?? [];
+        $versions[] = [clone $version, $metaData];
+        self::$versionsWrittenInPlace[$this] = $versions;
+    }
+
+    private function forgetVersionsWrittenInPlace(): void
+    {
+        if (isset(self::$versionsWrittenInPlace)) {
+            self::$versionsWrittenInPlace->offsetUnset($this);
+        }
+    }
+
+    /**
+     * Writes the stored data of the versions written in place back after the transaction was rolled back, where the
+     * version storage kept the written data
+     */
+    private function restoreVersionsWrittenInPlace(): void
+    {
+        if (!isset(self::$versionsWrittenInPlace[$this])) {
+            return;
+        }
+
+        $versions = self::$versionsWrittenInPlace[$this];
+        $this->forgetVersionsWrittenInPlace();
+        $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        foreach (array_reverse($versions) as [$version, $metaData]) {
+            if ($metaData === null) {
+                continue;
+            }
+
+            try {
+                if ($storageAdapter->loadMetaData($version) !== $metaData) {
+                    $storageAdapter->save($version, $metaData, null);
+                }
+            } catch (Throwable $e) {
+                Logger::error('Unable to restore the data of version ' . $version->getId() . ' after the transaction was rolled back: ' . $e);
+            }
+        }
     }
 
     /**
@@ -865,6 +927,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                         $retryableFunc();
                     }
                     $this->commit();
+                    $this->forgetVersionsWrittenInPlace();
                     if ($onCommit instanceof Closure) {
                         $onCommit();
                     }
@@ -877,6 +940,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                         // PDO adapter throws exceptions if rollback fails
                         Logger::info((string)$er);
                     }
+                    $this->restoreVersionsWrittenInPlace();
 
                     if ($onBeforeRetry instanceof Closure) {
                         $onBeforeRetry($e);

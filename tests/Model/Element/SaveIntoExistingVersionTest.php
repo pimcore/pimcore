@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Element;
 
 use Exception;
 use InvalidArgumentException;
+use LogicException;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\AssetEvents;
@@ -32,6 +33,7 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tests\Support\Helper\Pimcore as PimcoreHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -447,6 +449,76 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         sort($versioningKeys);
         $this->assertSame($expectedKeys, $versioningKeys, 'the versioning failure event must carry only its core arguments');
         $this->assertSame('outer', $saveFailures[0]['customParameter'] ?? null, 'the save failure event must keep the save parameters');
+    }
+
+    /**
+     * The version storage isn't necessarily transactional (the default one is the file system): when publishing in
+     * place fails after the version data was written, the stored data of the version is restored with the rollback
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testAFailedPublishLeavesTheVersionDataUntouched(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $draft = Version::getById($draft->getId());
+        $this->assertNotNull($draft);
+        $storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $originalMetaData = $storageAdapter->loadMetaData($draft);
+        $this->assertNotNull($originalMetaData, 'expected the draft data to be stored');
+        $restored = $draft->getData();
+        $this->publish($restored);
+
+        $failingListener = static function (): void {
+            throw new Exception('publishing failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(VersionEvents::POST_SAVE, $failingListener);
+
+        try {
+            $restored->save(['existingVersion' => $draft]);
+            $this->fail('publishing must fail');
+        } catch (Exception $e) {
+            $this->assertSame('publishing failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(VersionEvents::POST_SAVE, $failingListener);
+        }
+
+        $keptVersion = Version::getById($draft->getId());
+        $this->assertNotNull($keptVersion, 'the draft version must still exist');
+        $this->assertSame($originalMetaData, $storageAdapter->loadMetaData($keptVersion), 'the stored data of the draft must be restored');
+        $this->assertNotNull($this->reload($element)->getLatestVersion(), 'the draft must still be a draft');
+    }
+
+    /**
+     * A version whose binary data is rejected keeps its hash, so saving the same version again is rejected as well:
+     * the version is written again after the binary data of the asset was replaced
+     */
+    public function testARejectedBinaryChangeKeepsTheHashOfTheVersion(): void
+    {
+        $asset = $this->createFreshElement('asset');
+        $savedVersion = $asset->saveVersion();
+        $this->assertNotNull($savedVersion, 'expected a version to be saved');
+        $asset = $this->reload($asset);
+        $asset->setData('changed binary data');
+        $asset->save();
+
+        $version = Version::getById($savedVersion->getId());
+        $this->assertNotNull($version);
+        $binaryFileHash = $version->getBinaryFileHash();
+        $this->assertNotNull($binaryFileHash, 'expected the version to have a binary hash');
+        $version->setData($version->getData());
+
+        foreach ([1, 2] as $attempt) {
+            try {
+                $version->save();
+                $this->fail(sprintf('attempt %d to write different binary data must be rejected', $attempt));
+            } catch (LogicException) {
+                $this->assertSame($binaryFileHash, $version->getBinaryFileHash(), sprintf('attempt %d must not change the hash of the version', $attempt));
+            }
+        }
+
+        $this->assertSame($binaryFileHash, Version::getById($version->getId())?->getBinaryFileHash(), 'the stored hash must be unchanged');
     }
 
     private function createFreshElement(string $type): Asset|Page|Concrete
