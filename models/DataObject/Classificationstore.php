@@ -89,13 +89,21 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     /**
      * The targets of the stored descriptors this store holds that still exist, keyed
-     * "<type>:<id>", and the items revision they were read for.
+     * "<type>:<id>", and the items revision they were read for. Null outside a walk that may hold
+     * them, {@see self::getExistingTargets()}.
      *
      * @var array<string, true>|null
      */
     private ?array $existingTargets = null;
 
     private int $existingTargetsRevision = -1;
+
+    /**
+     * The target-existence walk they were read in, which they may not outlive.
+     *
+     * {@see Classificationstore\RelationResolver::inTargetExistenceWalk()}
+     */
+    private ?int $existingTargetsWalk = null;
 
     public function __construct(?array $items = null)
     {
@@ -109,6 +117,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     {
         $this->items[] = $item;
         $this->itemsRevision++;
+        $this->bindAssignedItems();
         $this->markFieldDirty('_self');
     }
 
@@ -116,9 +125,26 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     {
         $this->items = $items;
         $this->itemsRevision++;
+        $this->bindAssignedItems();
         $this->markFieldDirty('_self');
 
         return $this;
+    }
+
+    /**
+     * Binds the advanced relation items of an assigned items tree to this store, so that an
+     * in-place column edit reaches its dirty map whichever way the value got here.
+     *
+     * The tree a store is handed may carry items bound to something else entirely: the one
+     * {@see ClassDefinition\Data\Classificationstore::denormalize()} builds has them bound to the
+     * Concrete object the denormalizer was given, and the one
+     * {@see Model\DataObject\Service::restoreClassificationstoreLanguages()} moves over has them
+     * bound to the store they came from. Both would discard a column edit with no error,
+     * {@see Classificationstore\RelationResolver::bindItemsToOwner()}.
+     */
+    private function bindAssignedItems(): void
+    {
+        $this->getRelationResolver()->bindItemsToOwner($this->items, $this);
     }
 
     public function getItems(): array
@@ -209,8 +235,19 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // set the given group to active groups
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
+        $isRelation = $this->getRelationResolver()->isRelation($dataDefinition);
+
+        if ($isRelation) {
+            // the items of an advanced relation are bound to the store that holds them, which is
+            // what makes an in-place column edit reach the next save. A value assigned here has to
+            // be bound the way a hydrated one is, or editing a column of an item that was assigned
+            // rather than read would be discarded with no error,
+            // {@see Classificationstore\RelationResolver::bindToOwner()}
+            $this->getRelationResolver()->bindToOwner($value, $this);
+        }
+
         // no ResourcePersistenceAwareInterface, so the comparison below cannot judge it
-        if (!$this->isFieldDirty('_self') && $this->getRelationResolver()->isRelation($dataDefinition)) {
+        if ($isRelation && !$this->isFieldDirty('_self')) {
             $this->markFieldDirty('_self');
         }
 
@@ -546,11 +583,20 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * The targets of every stored descriptor this store holds that still exist, keyed "<type>:<id>".
      *
-     * Read for the whole store at once, in one chunked statement per element type, and held until
-     * the items change: the paths that ask whether a stored relation is empty ask for key after key
-     * and language after language - the validity check of a store with fifty relation keys asks
-     * once per key and language - and a lookup per question would be a statement per key where the
-     * store means to cost one round. Nothing is instantiated for it either.
+     * Read for the whole store at once, in one chunked statement per element type: the paths that
+     * ask whether a stored relation is empty ask for key after key and language after language -
+     * the validity check of a store with fifty relation keys asks once per key and language - and a
+     * lookup per question would be a statement per key where the store means to cost one round.
+     * Nothing is instantiated for it either.
+     *
+     * The answer is held for the walk that asked for it and no longer,
+     * {@see Classificationstore\RelationResolver::inTargetExistenceWalk()}. Deleting a target
+     * changes nothing about this store, so neither the items nor their revision can tell that a
+     * held answer has gone stale: a second validation of the same instance would still be told a
+     * dead descriptor names a target, select it over the live value the default language or an
+     * ancestor holds, and be refused by the summaries of that same validation, which are read
+     * fresh. Outside a walk nothing is held at all - a caller asking one question at a time is
+     * answered about the elements as they stand now.
      *
      * @return array<string, true>
      *
@@ -558,11 +604,18 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     private function getExistingTargets(): array
     {
-        if ($this->existingTargets !== null && $this->existingTargetsRevision === $this->itemsRevision) {
+        $resolver = $this->getRelationResolver();
+        $walk = $resolver->currentTargetExistenceWalk();
+
+        if (
+            $walk !== null
+            && $this->existingTargets !== null
+            && $this->existingTargetsWalk === $walk
+            && $this->existingTargetsRevision === $this->itemsRevision
+        ) {
             return $this->existingTargets;
         }
 
-        $resolver = $this->getRelationResolver();
         $descriptors = [];
 
         foreach ($this->items as $keys) {
@@ -579,10 +632,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         // a store holding no descriptor pays for no statement: the lookup is per element type of
         // the descriptors handed over, and there are none
-        $this->existingTargets = $resolver->findExistingTargets($descriptors);
-        $this->existingTargetsRevision = $this->itemsRevision;
+        $existingTargets = $resolver->findExistingTargets($descriptors);
 
-        return $this->existingTargets;
+        $this->existingTargets = $walk === null ? null : $existingTargets;
+        $this->existingTargetsRevision = $this->itemsRevision;
+        $this->existingTargetsWalk = $walk;
+
+        return $existingTargets;
     }
 
     public static function doGetFallbackValues(): bool

@@ -829,6 +829,29 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
+        // One walk, over this store and the ancestors it selects values from. Whether a stored
+        // descriptor still has a target is asked once per key and per language by every store in
+        // the chain and answered in one round of lookups per store, and the answer is dropped when
+        // this returns: deleting a target changes nothing about a store, so an answer that outlived
+        // the walk would have a second validation of the same instance select a dead descriptor
+        // over the live value a parent or the default language holds - and be refused by the
+        // summaries of that same validation, which are read fresh,
+        // {@see DataObject\Classificationstore\RelationResolver::inTargetExistenceWalk()}.
+        $this->getRelationResolver()->inTargetExistenceWalk(
+            function () use ($data, $omitMandatoryCheck, $params): void {
+                $this->checkStoreValidity($data, $omitMandatoryCheck, $params);
+            }
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @throws Model\Element\ValidationException
+     * @throws Exception
+     */
+    private function checkStoreValidity(mixed $data, bool $omitMandatoryCheck, array $params): void
+    {
         $activeGroups = $data->getActiveGroups();
         if (!$activeGroups) {
             return;

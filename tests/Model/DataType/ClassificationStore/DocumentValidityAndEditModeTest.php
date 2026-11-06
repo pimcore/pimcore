@@ -354,6 +354,63 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
+     * A target deleted between two validations of the same instance has to be seen by the second
+     * one.
+     *
+     * Whether a stored descriptor still has a target is looked up for the whole store at once, and
+     * held for the walk that asked - deleting the target changes nothing about the store, so
+     * neither its items nor their revision can tell that a held answer has gone stale. Held past
+     * the walk, the second validation would select the child's dead descriptor over the live value
+     * the parent holds, while the summaries of that same validation are read fresh,
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::checkStoredRelations()},
+     * and refuse a mandatory key the very same save passes after a reload.
+     */
+    public function testATargetDeletedBetweenTwoValidationsOfTheSameInstanceIsSeenByTheSecond(): void
+    {
+        $group = $this->createGroup('validity_deleted_between');
+        $keyConfig = $this->createKey('validity_deleted_between_key', true, new ManyToManyObjectRelation());
+        $this->assignKey($group, $keyConfig, 0, true);
+
+        $groupId = (int) $group->getId();
+        $keyId = (int) $keyConfig->getId();
+
+        $ofTheParent = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'between-parent');
+        $ofTheChild = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'between-child');
+
+        $parent = new Csstorelocalized();
+        $parent->setParentId(1);
+        $parent->setKey('validity-between-parent');
+        $parent->setPublished(true);
+        $parent->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofTheParent]);
+        $parent->save();
+
+        $child = new Csstorelocalized();
+        $child->setParentId($parent->getId());
+        $child->setKey('validity-between-child');
+        $child->setPublished(true);
+        $child->getCsstore()->setActiveGroups([$groupId => true]);
+        $child->getCsstore()->setLocalizedKeyValue($groupId, $keyId, [$ofTheChild]);
+        $child->save();
+
+        $reloaded = Csstorelocalized::getById($child->getId(), ['force' => true]);
+
+        // the first validation: the child's own target is alive, so its own value is what the
+        // mandatory key is satisfied by, and the lookup that says so is held for that walk
+        $reloaded->save();
+
+        $ofTheChild->delete();
+
+        // the same instance, nothing about its items changed - and the live value the parent holds
+        // is what the key has to be satisfied by now
+        $reloaded->save();
+
+        $this->assertNotNull(
+            Csstorelocalized::getById($child->getId(), ['force' => true]),
+            'the second save must select the live value of the parent, not the dead local descriptor'
+        );
+    }
+
+    /**
      * Reading a child's own to-many key replaces its descriptor with the elements, while the parent
      * at the same coordinate still holds the descriptor it was loaded as. The two must not be
      * merged into one another: a value belongs to one store as a whole, and the nearer store's is

@@ -27,6 +27,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
@@ -123,6 +125,18 @@ final class RelationResolver
      */
     private const LOOKUP_CHUNK_SIZE = 1000;
 
+    /**
+     * How many target-existence walks are open, so that a nested one does not end the outer one.
+     *
+     * {@see self::inTargetExistenceWalk()}
+     */
+    private int $targetExistenceDepth = 0;
+
+    /**
+     * Counts the walks, so that an answer read in one is not reused in the next.
+     */
+    private int $targetExistenceWalk = 0;
+
     public function __construct(private readonly Connection $db)
     {
     }
@@ -211,8 +225,13 @@ final class RelationResolver
      * in-place column edit would be discarded with no error at all.
      *
      * `_self` is the field name the store marks dirty for every value of its own.
+     *
+     * Hydration is not the only way such an item reaches a store: it is also assigned one, by
+     * {@see Classificationstore::setLocalizedKeyValue()} and by the paths that hand over a whole
+     * items tree, {@see self::bindItemsToOwner()}. Every one of them binds here, so that what an
+     * in-place edit reaches does not depend on how the value got into the store.
      */
-    private function bindToOwner(mixed $data, ?Classificationstore $owner): void
+    public function bindToOwner(mixed $data, ?Classificationstore $owner): void
     {
         if ($owner === null || !is_array($data)) {
             return;
@@ -222,6 +241,57 @@ final class RelationResolver
             if ($item instanceof OwnerAwareFieldInterface) {
                 $item->_setOwner($owner);
                 $item->_setOwnerFieldname('_self');
+            }
+        }
+    }
+
+    /**
+     * The same binding over a whole items tree, for a store that is handed one rather than a single
+     * value: {@see Classificationstore::setItems()}, which is what
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::denormalize()}
+     * builds a store with and what
+     * {@see \Pimcore\Model\DataObject\Service::restoreClassificationstoreLanguages()} moves the
+     * values of one store into another with. Both leave an advanced item bound to something that is
+     * not the store that now holds it - the Concrete object in the first case, the store it came
+     * from in the second - and an in-place column edit would again be discarded with no error.
+     *
+     * Only the metadata items of an advanced relation are touched. Every other value type binds its
+     * own owner where it is loaded, {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Link::getDataFromResource()}
+     * and the other `$params['owner']` readers, and rebinding those here would change a field this
+     * ticket does not touch.
+     *
+     * @param array<array-key, mixed> $items group => key => language => value, as the setter was
+     *                                       given it: it takes any array, so every level is checked
+     *                                       rather than assumed
+     */
+    public function bindItemsToOwner(array $items, ?Classificationstore $owner): void
+    {
+        if ($owner === null) {
+            return;
+        }
+
+        foreach ($items as $keys) {
+            if (!is_array($keys)) {
+                continue;
+            }
+
+            foreach ($keys as $languages) {
+                if (!is_array($languages)) {
+                    continue;
+                }
+
+                foreach ($languages as $value) {
+                    if (!is_array($value)) {
+                        continue;
+                    }
+
+                    foreach ($value as $item) {
+                        if ($item instanceof ElementMetadata || $item instanceof ObjectMetadata) {
+                            $item->_setOwner($owner);
+                            $item->_setOwnerFieldname('_self');
+                        }
+                    }
+                }
             }
         }
     }
@@ -652,6 +722,52 @@ final class RelationResolver
         }
 
         return $existing;
+    }
+
+    /**
+     * Runs one walk over the stored values of a store and the ancestors it inherits from, within
+     * which the answer to "does this descriptor still have a target" may be held, and after which
+     * it may not.
+     *
+     * Holding it is what keeps the cost of the walk bounded: the question is asked once per key and
+     * per language, by every store in the chain, so a lookup per question would be a statement per
+     * key where the store means to cost one round per store,
+     * {@see Classificationstore::getExistingTargets()}. Holding it past the walk is what makes the
+     * answer wrong: nothing about a store changes when one of its targets is deleted, so a second
+     * validation of the same instance would still be told the dead descriptor names a target - and
+     * select it over the live value the default language or the parent holds, while the summaries
+     * of the same validation are read fresh and refuse it,
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::checkStoredRelations()}.
+     *
+     * Re-entrant, and the walk is closed even when the body throws: the validity check of a store
+     * that refuses a value raises from inside it.
+     *
+     * @param callable(): void $walk
+     */
+    public function inTargetExistenceWalk(callable $walk): void
+    {
+        if ($this->targetExistenceDepth === 0) {
+            $this->targetExistenceWalk++;
+        }
+
+        $this->targetExistenceDepth++;
+
+        try {
+            $walk();
+        } finally {
+            $this->targetExistenceDepth--;
+        }
+    }
+
+    /**
+     * The walk a target-existence answer may be held for, or null when none is open - then every
+     * question is a question about the elements as they stand now.
+     *
+     * {@see self::inTargetExistenceWalk()}
+     */
+    public function currentTargetExistenceWalk(): ?int
+    {
+        return $this->targetExistenceDepth > 0 ? $this->targetExistenceWalk : null;
     }
 
     /**

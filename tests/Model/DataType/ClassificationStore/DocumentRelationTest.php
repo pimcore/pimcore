@@ -362,6 +362,99 @@ class DocumentRelationTest extends AbstractClassificationStoreTest
     }
 
     /**
+     * The same edit on an item that was assigned rather than read: the user builds the item, hands
+     * it to the setter, saves, and then edits its column value without having reloaded anything.
+     *
+     * Hydration is not the only way an advanced item reaches a store, so it cannot be the only
+     * place the binding is applied: an item built by hand is bound to nothing until the setter
+     * binds it, {@see \Pimcore\Model\DataObject\Classificationstore::setLocalizedKeyValue()}, and
+     * an edit of it would reach no dirty map at all - the save after it would find the store clean
+     * and return without writing, {@see \Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine::save()}.
+     */
+    public function testEditingAColumnValueOfAnAssignedItemReachesTheNextSave(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $groupId = (int) $group->getId();
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX . 'assigned-in-place');
+
+        $item = $this->metadataItem($target, 'before');
+
+        $object = $this->createCsObject();
+        $store = $object->getCsstore();
+        $store->setLocalizedKeyValue($groupId, $keyId, [$item]);
+        $object->save();
+
+        $this->assertSame($store, $item->_getOwner(), 'the assigned item has to be bound to the store');
+        $this->assertSame('_self', $item->_getOwnerFieldname());
+
+        // the state a load leaves the store in, and the state the dirty check of the engine
+        // decides anything at all in: with the map still carrying the assignment, a save writes
+        // whatever the items say and the binding is never asked
+        $store->resetDirtyMap();
+
+        // no reload: the item the user holds is the one the setter was given
+        $item->setData([self::RELATION_COLUMN => 'after']);
+
+        $this->assertTrue(
+            $store->isFieldDirty('_self'),
+            'an in-place column edit of an assigned item has to mark the store that holds it dirty'
+        );
+
+        $object->save();
+
+        $this->assertSame(
+            [['index' => 0, 'column' => self::RELATION_COLUMN, 'data' => 'after']],
+            $this->readMetadata($object->getId(), $groupId, $keyId),
+            'the edited column value has to reach the metadata table'
+        );
+    }
+
+    /**
+     * And the same for a store that is handed a whole items tree rather than one value: the tree
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::denormalize()}
+     * builds carries items the advanced denormalizer bound to the Concrete object, so the store
+     * that now holds them has to take the binding over,
+     * {@see \Pimcore\Model\DataObject\Classificationstore::setItems()}.
+     */
+    public function testEditingAColumnValueOfAnItemAssignedThroughSetItemsReachesTheNextSave(): void
+    {
+        $group = $this->createRelationFixture(['csAdvancedManyToManyObject']);
+        $groupId = (int) $group->getId();
+        $keyId = $this->getRelationKeyId('csAdvancedManyToManyObject');
+        $target = TestHelper::createEmptyObject(self::KEY_PREFIX . 'items-in-place');
+
+        $item = $this->metadataItem($target, 'before');
+        $item->_setOwner(TestHelper::createEmptyObject(self::KEY_PREFIX . 'items-wrong-owner'));
+        $item->_setOwnerFieldname('csAdvancedManyToManyObject');
+
+        $object = $this->createCsObject();
+        $store = $object->getCsstore();
+        $store->setActiveGroups([$groupId => true]);
+        $store->setItems([$groupId => [$keyId => [self::DEFAULT_LANGUAGE => [$item]]]]);
+        $object->save();
+
+        $this->assertSame($store, $item->_getOwner(), 'the store that holds the tree has to own its items');
+        $this->assertSame('_self', $item->_getOwnerFieldname());
+
+        $store->resetDirtyMap();
+
+        $item->setData([self::RELATION_COLUMN => 'after']);
+
+        $this->assertTrue(
+            $store->isFieldDirty('_self'),
+            'an item assigned with the whole tree has to be bound to the store that now holds it'
+        );
+
+        $object->save();
+
+        $this->assertSame(
+            [['index' => 0, 'column' => self::RELATION_COLUMN, 'data' => 'after']],
+            $this->readMetadata($object->getId(), $groupId, $keyId)
+        );
+    }
+
+    /**
      * Clearing a key leaves its group active, so the document loses the relation while nothing about
      * the group is obsolete. Its stored column values have to go with it: left behind, they would be
      * read back onto whatever entry later takes the index they sit at.
