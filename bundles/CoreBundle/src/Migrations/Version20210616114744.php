@@ -24,6 +24,11 @@ final class Version20210616114744 extends AbstractMigration
         return 'Add columns staticGeneratorEnabled & staticGeneratorLifetime to documents_page table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('documents_page')->hasColumn('staticGeneratorEnabled')) {

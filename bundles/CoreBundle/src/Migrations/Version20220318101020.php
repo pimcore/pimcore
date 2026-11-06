@@ -26,6 +26,11 @@ final class Version20220318101020 extends AbstractMigration
         return 'Updates object brick definition files';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->regenerateObjectBricks();

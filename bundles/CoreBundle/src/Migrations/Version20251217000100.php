@@ -23,6 +23,11 @@ final class Version20251217000100 extends AbstractMigration
         return 'Remove parametersPost, cookies and serverVars from http_error_log';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->hasTable('http_error_log')) {

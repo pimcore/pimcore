@@ -24,6 +24,11 @@ final class Version20250416120333 extends AbstractMigration
         return 'Add index to versions.public"';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $versionsTable = $schema->getTable('versions');

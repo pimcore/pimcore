@@ -31,6 +31,11 @@ final class Version20250312132759 extends AbstractMigration
         return 'Migrate customSettings asset column from php serialized to json';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     /**
      *
      * When migrating from serialized to json, we need to convert the data in the columns first.

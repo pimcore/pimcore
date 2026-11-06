@@ -27,6 +27,11 @@ final class Version20210324152821 extends AbstractMigration
         return 'Removes BC view `translations_website`';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('DROP VIEW IF EXISTS translations_website;');

@@ -23,6 +23,11 @@ use Pimcore\Db;
  */
 final class Version20210324152822 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $db = Db::get();

@@ -24,6 +24,11 @@ final class Version20230222174636 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->getTable('documents_page')->hasColumn('metaData')) {
