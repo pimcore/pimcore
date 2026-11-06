@@ -667,6 +667,7 @@ CREATE TABLE `classificationstore_keys` (
 	`definition` json NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
 	`identifier` VARCHAR(190) NULL DEFAULT NULL,
+	`localized` TINYINT(1) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `enabled` (`enabled`),

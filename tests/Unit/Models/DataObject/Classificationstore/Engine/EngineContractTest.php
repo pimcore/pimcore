@@ -88,34 +88,51 @@ class EngineContractTest extends TestCase
         );
     }
 
-    public function testEavEngineSupportsNoFeature(): void
+    public function testEavEngineSupportsPerKeyLocalizationOnly(): void
+    {
+        $this->assertSupportsPerKeyLocalizationOnly(EavEngine::class);
+    }
+
+    /**
+     * The document engine offers the one capability the EAV engine offers - per key localization is
+     * a property of the key configuration, not of the storage - and Relations on top of it: a
+     * document holds whatever normalize() returns, so a relation's element descriptors need no
+     * addressing of their own. Neither MultiValue nor Variants has a model API for a qualified
+     * value yet, so those two stay false for both engines.
+     */
+    public function testDocumentEngineSupportsPerKeyLocalizationAndRelations(): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
-        $engine = (new ReflectionClass(EavEngine::class))->newInstanceWithoutConstructor();
+        $instance = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
 
-        $this->assertInstanceOf(EngineInterface::class, $engine);
+        $this->assertInstanceOf(EngineInterface::class, $instance);
 
-        foreach (EngineFeature::cases() as $feature) {
-            $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
+        foreach ([EngineFeature::PerKeyLocalization, EngineFeature::Relations] as $feature) {
+            $this->assertTrue($instance->supports($feature), $feature->name . ' must be supported');
+        }
+
+        foreach ([EngineFeature::MultiValue, EngineFeature::Variants] as $feature) {
+            $this->assertFalse($instance->supports($feature), $feature->name . ' must not be supported');
         }
     }
 
     /**
-     * The document engine offers Relations and nothing else: a document holds whatever normalize()
-     * returns, so a relation's element descriptors need no addressing of their own - while none of
-     * the other three has a model API for a qualified value yet.
+     * @param class-string $engine
      */
-    public function testDocumentEngineSupportsRelationsAndNothingElse(): void
+    private function assertSupportsPerKeyLocalizationOnly(string $engine): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
-        $engine = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
+        $instance = (new ReflectionClass($engine))->newInstanceWithoutConstructor();
 
-        $this->assertInstanceOf(EngineInterface::class, $engine);
+        $this->assertInstanceOf(EngineInterface::class, $instance);
 
-        $this->assertTrue($engine->supports(EngineFeature::Relations));
+        $this->assertTrue(
+            $instance->supports(EngineFeature::PerKeyLocalization),
+            'PerKeyLocalization must be supported'
+        );
 
-        foreach ([EngineFeature::MultiValue, EngineFeature::Variants, EngineFeature::PerKeyLocalization] as $feature) {
-            $this->assertFalse($engine->supports($feature), $feature->name . ' must not be supported');
+        foreach ([EngineFeature::MultiValue, EngineFeature::Variants, EngineFeature::Relations] as $feature) {
+            $this->assertFalse($instance->supports($feature), $feature->name . ' must not be supported');
         }
     }
 
