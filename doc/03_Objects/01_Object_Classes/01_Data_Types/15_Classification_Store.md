@@ -36,7 +36,9 @@ without core being changed.
 
 ### The eight exclusions
 
-Never accepted, on any engine:
+Never accepted, on any engine - and, for the seven that are out because of what their value is, not
+as the delegate of an `encryptedField` either: encryption decides how a value is stored, not what the
+value is. `calculatedValue` is the one that refuses nothing, as a delegate no more than on its own.
 
 | type | why |
 |---|---|
@@ -61,6 +63,12 @@ marshaller packed, so on an `eav` store a delegate with no marshaller leaves it 
 and such a key is refused. On a `document` store the same key works - the value reaches the
 encryption as the JSON of what it normalizes to, so the cleartext is never in the document - and a
 delegate that normalizes to a scalar, or has a marshaller of its own, is stored exactly as before.
+
+Whether the delegate may be a key type at all is a separate question, and is asked first: a delegate
+that is one of the seven exclusions above is refused with
+`Pimcore\Model\Exception\InvalidConfigException` when the key is defined, on either engine. A
+`document` store holds the slug and the site id of a `urlSlug` perfectly well, and holding them
+registers no route - so the storage answer is "yes" about a key that does not work.
 
 A custom data type is added by registering the data type. On a `document` store that is all; on an
 `eav` store it also needs a marshaller under the key `classificationstore_<fieldtype>`, unless its

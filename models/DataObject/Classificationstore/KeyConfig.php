@@ -244,6 +244,7 @@ final class KeyConfig extends Model\AbstractModel
     public function save(): void
     {
         // first, so that a refused key consumes no identifier either
+        $this->assertTheDelegateMayBeAKeyType();
         $this->assertTypeFitsTheStoreEngine();
 
         if ($this->getId() === null) {
@@ -268,9 +269,10 @@ final class KeyConfig extends Model\AbstractModel
 
         // again, and this time against what is about to be written: the pre-save event carries this
         // very object, so a listener is free to change the type, the store or the encrypted
-        // delegate between the check above and here, and the configuration the DAO would persist is
-        // the one that has to fit the engine. The check above stays where it is so that a key
-        // refused outright consumes no identifier
+        // delegate between the checks above and here, and the configuration the DAO would persist is
+        // the one that has to be eligible and has to fit the engine. The checks above stay where
+        // they are so that a key refused outright consumes no identifier
+        $this->assertTheDelegateMayBeAKeyType();
         $this->assertTypeFitsTheStoreEngine();
 
         $this->getDao()->save();
@@ -389,6 +391,50 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
+     * Refuses a key whose `encryptedField` delegate is a field type a key is never defined with,
+     * before anything is written and before an identifier is generated for it.
+     *
+     * Eligibility is asked separately from storage capability, and before it. What an engine can
+     * hold is what {@see self::assertTypeFitsTheStoreEngine()} asks, and a store whose engine holds
+     * structured values answers it with "yes" for every value there is - so a delegate that cannot
+     * work in a key for a reason that has nothing to do with storage used to pass on the strength
+     * of that answer. `urlSlug` is that case: the slug and the site id are held perfectly well, and
+     * holding them registers no row in the route table the slug needs
+     * ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug}), so what the document stored
+     * was a slug that resolves to nothing.
+     *
+     * Encryption decides how a value is stored and not what the value is, which is why the delegate
+     * is asked the question the key's own type would be asked. The exclusions that are not about
+     * the value do not refuse here any more than they refuse on their own - `calculatedValue` keeps
+     * the support core ships for it, {@see KeyTypeSupport::isAcceptedDelegateType()}.
+     *
+     * @throws Model\Exception\InvalidConfigException
+     */
+    private function assertTheDelegateMayBeAKeyType(): void
+    {
+        // `delegateDatatype` is a property of the `encryptedField` definition and of no other, so a
+        // definition carrying one is an encrypted key whatever else it says
+        $delegateType = $this->getDelegateType();
+        if ($delegateType === null) {
+            return;
+        }
+
+        $typeSupport = Pimcore::getContainer()->get(KeyTypeSupport::class);
+        if ($typeSupport->isAcceptedDelegateType($delegateType)) {
+            return;
+        }
+
+        throw new Model\Exception\InvalidConfigException(sprintf(
+            'A classification store key encrypting a "%s" cannot be defined: a key is never defined'
+            . ' with that field type, and encrypting its value does not make it work - whatever the'
+            . ' storage engine of store %d can hold. Give the key a delegate of a field type a key'
+            . ' may be defined with.',
+            $delegateType,
+            $this->storeId
+        ));
+    }
+
+    /**
      * Refuses a key whose field type the engine of its store cannot hold, before anything is
      * written and before an identifier is generated for it.
      *
@@ -420,7 +466,7 @@ final class KeyConfig extends Model\AbstractModel
             return;
         }
 
-        throw new Model\DataObject\Exception\UnsupportedEngineFeatureException(
+        throw Model\DataObject\Exception\UnsupportedEngineFeatureException::forUnholdableType(
             $type,
             $this->storeId,
             $engineResolver->nameEngine($engine)

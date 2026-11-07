@@ -220,6 +220,33 @@ class EngineContractTest extends TestCase
     }
 
     /**
+     * The exception carries no `@internal`, so the names of its constructor parameters are part of
+     * the API: a caller anywhere may be passing them as named arguments, and a release that renames
+     * them turns such a call into an unknown-named-parameter error. The second call shape was added
+     * beside those names rather than over them, and is written at a call site as the named
+     * constructor rather than by reading a store id out of a parameter called `$groupId`.
+     */
+    public function testTheFeatureExceptionKeepsTheNamedArgumentsItShippedWith(): void
+    {
+        $missingFeature = new UnsupportedEngineFeatureException(
+            feature: EngineFeature::Relations,
+            groupId: 7,
+            keyId: 11,
+            type: 'manyToOneRelation'
+        );
+
+        $this->assertStringContainsString('Relations', $missingFeature->getMessage());
+        $this->assertStringContainsString('key 11 of group 7', $missingFeature->getMessage());
+        $this->assertStringContainsString('"manyToOneRelation"', $missingFeature->getMessage());
+
+        $unholdableType = UnsupportedEngineFeatureException::forUnholdableType('geopoint', 3, 'eav');
+
+        $this->assertStringContainsString('"geopoint"', $unholdableType->getMessage());
+        $this->assertStringContainsString('"eav"', $unholdableType->getMessage());
+        $this->assertStringContainsString('store 3', $unholdableType->getMessage());
+    }
+
+    /**
      * The engine was extracted once from a Dao that predated the row diff, which silently gave back
      * the delete-and-reinsert save inside a file the merge had nothing to compare against. The
      * behavioural guard is SaveDiffTest; this is the one that also fires without a database.

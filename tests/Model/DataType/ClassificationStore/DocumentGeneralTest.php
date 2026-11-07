@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue as CalculatedValueDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Consent as ConsentDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
@@ -24,6 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery as ImageGalleryDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable as StructuredTableDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug as UrlSlugDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\Consent;
@@ -40,6 +42,7 @@ use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Data\Video;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
 use Pimcore\Tests\Support\Helper\DataType\MixedNormalizingField;
@@ -79,6 +82,12 @@ class DocumentGeneralTest extends GeneralTest
     private const NO_RESOURCE_FORM_GROUP_NAME = 'testgroupNoResourceForm';
 
     private const SERIALIZATION_GROUP_NAME = 'testgroupEncryptedSerialization';
+
+    private const EXCLUDED_DELEGATE_GROUP_NAME = 'testgroupEncryptedExcludedDelegate';
+
+    private const ENCRYPTED_SLUG_KEY_NAME = 'encryptedUrlSlug';
+
+    private const ENCRYPTED_CALCULATED_KEY_NAME = 'encryptedCalculatedValue';
 
     private const ENCRYPTED_POLYGON_KEY_NAME = 'encryptedGeopolygon';
 
@@ -1002,6 +1011,99 @@ class DocumentGeneralTest extends GeneralTest
             Classificationstore\KeyConfig::getByName(self::ENCRYPTED_GALLERY_KEY_NAME, $storeId, true)?->delete();
             Classificationstore\GroupConfig::getByName(self::SERIALIZATION_GROUP_NAME, $store->getId())?->delete();
         }
+    }
+
+    /**
+     * A delegate a key is never defined with is refused here too - on a store whose engine holds
+     * structured values, which is where the refusal had nothing to stand on.
+     *
+     * Whether the engine can hold the value and whether a key may carry the type at all are two
+     * questions, and only the first of them was asked: a document holds the normalized slug and
+     * site id of a `urlSlug` perfectly well, so the capability check
+     * ({@see \Pimcore\Model\DataObject\Classificationstore\KeyConfig::assertTypeFitsTheStoreEngine()})
+     * passed, and what the key then stored was a slug with no row in the route table
+     * `object_url_slugs` behind it - the route is keyed by (object, fieldname), which a key cannot
+     * occupy, and that is the whole reason the type is excluded. Wrapping it in an `encryptedField`
+     * does not change what the value is, so the delegate is held to the same answer as the type.
+     *
+     * The second half is the exclusion that is NOT about the value: `calculatedValue` is outside the
+     * set this release unlocks, the support core ships for it inside a classification store is
+     * untouched, and nothing - here, at write time or through a delegate - refuses it.
+     */
+    public function testAnEncryptedFieldDelegatingToAnExcludedTypeIsRefusedAndWritesNothing(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::EXCLUDED_DELEGATE_GROUP_NAME);
+        $group->save();
+
+        try {
+            $slugDefinition = new EncryptedFieldDefinition();
+            $slugDefinition->setName(self::ENCRYPTED_SLUG_KEY_NAME);
+            $slugDefinition->setDelegateDatatype('urlSlug');
+            $slugDefinition->setDelegate(new UrlSlugDefinition());
+
+            $slugKey = new Classificationstore\KeyConfig();
+            $slugKey->setStoreId($store->getId());
+            $slugKey->setName(self::ENCRYPTED_SLUG_KEY_NAME);
+            $slugKey->setType('encryptedField');
+            $slugKey->setEnabled(true);
+            $slugKey->setDefinition((string) json_encode($slugDefinition));
+
+            try {
+                $slugKey->save();
+                $this->fail('an encryptedField delegating to urlSlug has to be refused');
+            } catch (InvalidConfigException $exception) {
+                $this->assertStringContainsString('urlSlug', $exception->getMessage());
+            }
+
+            $this->assertNull($slugKey->getId(), 'no row was inserted');
+            $this->assertNull($slugKey->getIdentifier(), 'the identifier of a refused key is not consumed');
+            $this->assertSame(
+                0,
+                $this->countKeyRows(self::ENCRYPTED_SLUG_KEY_NAME, $store->getId()),
+                'no key row for the refused name'
+            );
+
+            $calculatedDelegate = new CalculatedValueDefinition();
+            $calculatedDelegate->setCalculatorType(CalculatedValueDefinition::CALCULATOR_TYPE_EXPRESSION);
+            $calculatedDelegate->setCalculatorExpression('"computed"');
+
+            $calculatedDefinition = new EncryptedFieldDefinition();
+            $calculatedDefinition->setName(self::ENCRYPTED_CALCULATED_KEY_NAME);
+            $calculatedDefinition->setDelegateDatatype('calculatedValue');
+            $calculatedDefinition->setDelegate($calculatedDelegate);
+
+            $calculatedKey = new Classificationstore\KeyConfig();
+            $calculatedKey->setStoreId($store->getId());
+            $calculatedKey->setName(self::ENCRYPTED_CALCULATED_KEY_NAME);
+            $calculatedKey->setType('encryptedField');
+            $calculatedKey->setEnabled(true);
+            $calculatedKey->setDefinition((string) json_encode($calculatedDefinition));
+            $calculatedKey->save();
+
+            $this->assertNotNull($calculatedKey->getId(), 'a calculatedValue delegate is refused nowhere');
+        } finally {
+            $storeId = $store->getId();
+            Classificationstore\KeyConfig::getByName(self::ENCRYPTED_SLUG_KEY_NAME, $storeId, true)?->delete();
+            Classificationstore\KeyConfig::getByName(self::ENCRYPTED_CALCULATED_KEY_NAME, $storeId, true)?->delete();
+            Classificationstore\GroupConfig::getByName(self::EXCLUDED_DELEGATE_GROUP_NAME, $storeId)?->delete();
+        }
+    }
+
+    /**
+     * The number of key rows of this name in this store, read from the table rather than through the
+     * model, so that a refused key is counted by what was written rather than by what a cache holds.
+     */
+    private function countKeyRows(string $name, int $storeId): int
+    {
+        return (int) Db::get()->fetchOne(
+            'SELECT COUNT(*) FROM classificationstore_keys WHERE name = ? AND storeId = ?',
+            [$name, $storeId]
+        );
     }
 
     /**

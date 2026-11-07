@@ -36,9 +36,10 @@ use SplFileInfo;
 class KeyTypeSupportTest extends TestCase
 {
     /**
-     * The eight types a key is never defined with. {@see KeyTypeSupport} carries the reason of each.
+     * The seven types a key is never defined with because of what their value is.
+     * {@see KeyTypeSupport} carries the reason of each.
      */
-    private const EXCLUDED_TYPES = [
+    private const EXCLUDED_VALUE_TYPES = [
         'block',
         'objectbricks',
         'fieldcollections',
@@ -46,6 +47,13 @@ class KeyTypeSupportTest extends TestCase
         'classificationstore',
         'reverseObjectRelation',
         'urlSlug',
+    ];
+
+    /**
+     * The type that is outside the accepted set only because it is outside the set this release
+     * unlocks, and that nothing refuses anywhere.
+     */
+    private const TYPES_OUTSIDE_THE_UNLOCKED_SET = [
         'calculatedValue',
     ];
 
@@ -63,19 +71,56 @@ class KeyTypeSupportTest extends TestCase
     public function testEveryShippedFieldTypeIsAcceptedExceptTheEightExclusions(): void
     {
         $support = $this->support();
+        $excluded = $this->excludedTypes();
         $seen = [];
 
         foreach ($this->shippedFieldTypes() as $type) {
             $seen[] = $type;
             $this->assertSame(
-                !in_array($type, self::EXCLUDED_TYPES, true),
+                !in_array($type, $excluded, true),
                 $support->isAcceptedType($type),
                 $type . ' is answered wrongly by the acceptance predicate'
             );
         }
 
         // the walk has to have reached the exclusions, or the assertion above never ran for them
-        $this->assertSame([], array_diff(self::EXCLUDED_TYPES, $seen));
+        $this->assertSame([], array_diff($excluded, $seen));
+    }
+
+    /**
+     * An exclusion that is about the value is not borrowed around by wrapping the type in an
+     * `encryptedField`: encryption decides how a value is stored, not what the value is. A
+     * `urlSlug` delegate is the case that made the two questions worth separating - a store whose
+     * engine holds structured values holds the slug and the site id perfectly well, and holding
+     * them registers no route - so the key was definable and the slug it stored resolved to
+     * nothing.
+     *
+     * The exclusion that is not about the value refuses no delegate, exactly as it refuses nothing
+     * else: a `calculatedValue` is not a type this release unlocks, and the support core ships for
+     * it is untouched everywhere, including here.
+     */
+    public function testADelegateIsAcceptedExceptForTheExclusionsThatAreAboutTheValue(): void
+    {
+        $support = $this->support();
+
+        foreach (self::EXCLUDED_VALUE_TYPES as $type) {
+            $this->assertFalse(
+                $support->isAcceptedDelegateType($type),
+                $type . ' is no more a delegate of a key than it is a key type'
+            );
+        }
+
+        foreach (self::TYPES_OUTSIDE_THE_UNLOCKED_SET as $type) {
+            $this->assertTrue($support->isAcceptedDelegateType($type), $type . ' is refused nowhere');
+        }
+
+        foreach (['input', 'image', 'geopoint', 'manyToOneRelation'] as $type) {
+            $this->assertTrue($support->isAcceptedDelegateType($type), $type . ' is an eligible delegate');
+        }
+
+        // a misspelled delegate is answered by nothing here, which is what every release so far has
+        // done with one
+        $this->assertTrue($support->isAcceptedDelegateType('noSuchFieldType'));
     }
 
     public function testATypeNoLoaderResolvesIsNotAccepted(): void
@@ -184,6 +229,17 @@ class KeyTypeSupportTest extends TestCase
         };
 
         $this->assertSame(KeyFilter::None, $fieldDefinition->getClassificationStoreKeyFilter());
+    }
+
+    /**
+     * The eight exclusions: the seven a key is never defined with, and the one that is outside the
+     * set this release unlocks.
+     *
+     * @return string[]
+     */
+    private function excludedTypes(): array
+    {
+        return array_merge(self::EXCLUDED_VALUE_TYPES, self::TYPES_OUTSIDE_THE_UNLOCKED_SET);
     }
 
     private function support(): KeyTypeSupport

@@ -472,7 +472,7 @@ final class EavEngine extends AbstractDao implements EngineInterface
                 continue;
             }
 
-            throw new UnsupportedEngineFeatureException($type, $storeId, self::ENGINE_NAME);
+            throw UnsupportedEngineFeatureException::forUnholdableType($type, $storeId, self::ENGINE_NAME);
         }
     }
 
@@ -519,7 +519,7 @@ final class EavEngine extends AbstractDao implements EngineInterface
             return;
         }
 
-        throw new UnsupportedEngineFeatureException($type, $storeId, self::ENGINE_NAME);
+        throw UnsupportedEngineFeatureException::forUnholdableType($type, $storeId, self::ENGINE_NAME);
     }
 
     /**

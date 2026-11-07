@@ -32,30 +32,51 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
  *  - a value needing a named capability, which knows the feature and the key it belongs to
  *    ({@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::assertStorable()}).
  *
- * Hence the two call shapes below; the first argument says which one is in use.
+ * Hence the two call shapes below. The constructor is the one it shipped with, unchanged down to the
+ * names of its parameters, and the first argument says which shape it is being handed;
+ * {@see self::forUnholdableType()} is the second shape under a name, and is what the type refusals
+ * are written with.
  */
 class UnsupportedEngineFeatureException extends Exception
 {
     /**
-     * @param EngineFeature|string $featureOrType the capability the value needs, or the field type
-     *                                            of a key the store's engine cannot hold
-     * @param int                  $groupOrStoreId the group the key belongs to, or the store whose
-     *                                             engine refused the type
-     * @param int|string           $keyIdOrEngine  the key needing the capability, or the name of
-     *                                             the engine that cannot hold the type
-     * @param string|null          $type           the field type of that key, for the feature form
+     * The parameter NAMES are the ones this exception shipped with, and the second call shape reads
+     * them differently rather than renaming them: the class carries no `@internal`, so `feature:`,
+     * `groupId:`, `keyId:` and `type:` are a public API that a named argument anywhere may be
+     * passing. {@see self::forUnholdableType()} is how the second shape is written at a call site,
+     * so that no caller has to read a store id out of a parameter called `$groupId`.
+     *
+     * @param EngineFeature|string $feature the capability the value needs, or - in the type shape -
+     *                                      the field type of a key the store's engine cannot hold
+     * @param int                  $groupId the group the key belongs to, or the store whose engine
+     *                                      refused the type
+     * @param int|string           $keyId   the key needing the capability, or the name of the engine
+     *                                      that cannot hold the type
+     * @param string|null          $type    the field type of that key, for the feature shape
      */
     public function __construct(
-        EngineFeature|string $featureOrType,
-        int $groupOrStoreId,
-        int|string $keyIdOrEngine,
+        EngineFeature|string $feature,
+        int $groupId,
+        int|string $keyId,
         ?string $type = null
     ) {
         parent::__construct(
-            $featureOrType instanceof EngineFeature
-                ? self::describeMissingFeature($featureOrType, $groupOrStoreId, (int) $keyIdOrEngine, (string) $type)
-                : self::describeUnholdableType($featureOrType, $groupOrStoreId, (string) $keyIdOrEngine)
+            $feature instanceof EngineFeature
+                ? self::describeMissingFeature($feature, $groupId, (int) $keyId, (string) $type)
+                : self::describeUnholdableType($feature, $groupId, (string) $keyId)
         );
+    }
+
+    /**
+     * The type shape, named: a key of this field type cannot be stored by the engine of this store.
+     *
+     * @param string $type    the field type the engine cannot hold
+     * @param int    $storeId the store whose engine refused it
+     * @param string $engine  the name of that engine
+     */
+    public static function forUnholdableType(string $type, int $storeId, string $engine): self
+    {
+        return new self($type, $storeId, $engine);
     }
 
     private static function describeMissingFeature(

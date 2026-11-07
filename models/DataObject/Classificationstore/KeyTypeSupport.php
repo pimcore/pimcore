@@ -46,21 +46,18 @@ final class KeyTypeSupport
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
 
     /**
-     * The field types a classification store key is never defined with, and the reason each one is
-     * out. They are names rather than a derived property on purpose: every property that would
-     * make this list look self-deriving takes types with it that belong in the set - the rule
-     * "implements CustomResourcePersistingInterface" would take the relation types, which do.
+     * The field types a classification store key is never defined with because of what their value
+     * is, and the reason each one is out. They are names rather than a derived property on purpose:
+     * every property that would make this list look self-deriving takes types with it that belong
+     * in the set - the rule "implements CustomResourcePersistingInterface" would take the relation
+     * types, which do.
      *
-     * The list is scoped to the set this release unlocks: it says which of the types the document
-     * engine makes storable are not accepted, and it does not reach back and remove support core
-     * already ships. That is why `calculatedValue` appears here and is still neither refused at
-     * definition time nor at write time - the classification store model computes it on read and
-     * the classification store field definition builds it into the editmode payload, and both are
-     * untouched.
+     * An exclusion that is about the value is an exclusion an `encryptedField` cannot borrow its
+     * way around either, {@see self::isAcceptedDelegateType()}.
      *
      * @var string[]
      */
-    private const EXCLUDED_TYPES = [
+    private const EXCLUDED_VALUE_TYPES = [
         // the five container types: their value is the values of other field definitions, and a
         // key is one leaf of such a tree rather than a place to hang one
         'block',
@@ -73,7 +70,24 @@ final class KeyTypeSupport
         // its value is a row of the route table `object_url_slugs`, keyed by (object, fieldname),
         // which a key cannot occupy - storing the slug and site id alone registers no route
         'urlSlug',
-        // not one of the types unlocked here; the support core already ships for it is untouched
+    ];
+
+    /**
+     * The field types that are outside the accepted set only because they are outside the set this
+     * release unlocks. The accepted set says which of the ~25 types the document engine makes
+     * storable are accepted; it does not reach back and remove support core already ships, and this
+     * is the list of what it would otherwise have reached.
+     *
+     * So nothing refuses one of these: not the definition-time gate, not the write-time gate, and
+     * not the delegate of an `encryptedField`. `calculatedValue` works in a classification store
+     * today - the store model computes it on read ({@see \Pimcore\Model\DataObject\Classificationstore})
+     * and the classification store field definition builds it into the editmode payload
+     * ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore}) - and both paths
+     * are untouched.
+     *
+     * @var string[]
+     */
+    private const TYPES_OUTSIDE_THE_UNLOCKED_SET = [
         'calculatedValue',
     ];
 
@@ -107,11 +121,34 @@ final class KeyTypeSupport
     public function isAcceptedType(string $type): bool
     {
         if (!isset($this->accepted[$type])) {
-            $this->accepted[$type] = !in_array($type, self::EXCLUDED_TYPES, true)
+            $this->accepted[$type] = !in_array($type, self::EXCLUDED_VALUE_TYPES, true)
+                && !in_array($type, self::TYPES_OUTSIDE_THE_UNLOCKED_SET, true)
                 && $this->dataLoader->supports($type);
         }
 
         return $this->accepted[$type];
+    }
+
+    /**
+     * Whether the `delegateDatatype` of an `encryptedField` key is a field type a key may be
+     * defined with - which is a different question from what the engine behind the store can hold
+     * of it, {@see self::isHeldInValueColumns()}, and is asked before it.
+     *
+     * Encryption decides how a value is stored and not what the value is, so an exclusion that is
+     * about the value holds through the wrapper exactly as it holds on its own. `urlSlug` is the
+     * case that shows why the two questions cannot be one: its value needs a row of the route table
+     * keyed by (object, fieldname), a store whose engine holds structured values can hold the
+     * slug and the site id perfectly well, and holding them registers no route - so the capability
+     * answer is "yes" about a key that does not work.
+     *
+     * The types outside the unlocked set are not refused here, the same way they are not refused
+     * anywhere else: {@see self::TYPES_OUTSIDE_THE_UNLOCKED_SET}. Neither is a delegate name no
+     * loader resolves - a misspelled delegate is answered by nothing in this class, which is what
+     * every release so far has done with one.
+     */
+    public function isAcceptedDelegateType(string $delegateType): bool
+    {
+        return !in_array($delegateType, self::EXCLUDED_VALUE_TYPES, true);
     }
 
     /**

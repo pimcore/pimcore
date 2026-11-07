@@ -135,10 +135,11 @@ class EncryptedField implements OwnerAwareFieldInterface
      * held so that {@see self::__sleep()} can put it back.
      *
      * The walk is the one {@see \Pimcore\Model\DataObject\Classificationstore::attachOwner()} makes,
-     * in reverse and for the same reason: an array is descended into, so is an owner-aware value's
-     * own members, and nothing else - which stops it at the elements a value references, an asset
-     * or an object, rather than walking an element graph. The identity guard keeps a value that
-     * holds itself from looping, and this field is never descended into: it is the thing being
+     * in reverse and for the same reason: an array is descended into, so are an owner-aware value's
+     * own members ({@see self::membersOf()}, which is the value's properties less the owner
+     * back-reference), and nothing else - which stops it at the elements a value references, an
+     * asset or an object, rather than walking an element graph. The identity guard keeps a value
+     * that holds itself from looping, and this field is never descended into: it is the thing being
      * serialized.
      *
      * @param array<int, array{value: OwnerAwareFieldInterface, owner: mixed, fieldname: ?string,
@@ -171,9 +172,7 @@ class EncryptedField implements OwnerAwareFieldInterface
         $value->_setOwner(null);
         $value->_setOwnerFieldname('');
 
-        // the members of the value, whatever their visibility: a container holds its children in a
-        // protected property, and the one that reads them back is a getter this code cannot name
-        foreach ((array) $value as $member) {
+        foreach ($this->membersOf($value) as $member) {
             if ($member !== $this) {
                 $this->detachOwners($member, $detached, $seen);
             }
@@ -194,6 +193,9 @@ class EncryptedField implements OwnerAwareFieldInterface
      * The root is reattached by the same walk and not separately, because the root is as often an
      * array of owner-aware values as it is one of them: `geopolygon` normalizes to a plain array, so
      * the `instanceof` test the root used to be reattached by skipped it entirely.
+     *
+     * The walk reaches the plaintext and stops there: the owner this method assigns is not itself a
+     * member of the values it assigns it to, {@see self::membersOf()}.
      *
      * @param array<int, true> $seen the values already visited on this walk, by object id
      */
@@ -217,13 +219,58 @@ class EncryptedField implements OwnerAwareFieldInterface
         $value->_setOwnerFieldname($this->_fieldname);
         $value->_setOwnerLanguage($this->_language);
 
-        // the members of the value, whatever their visibility: a container holds its children in a
-        // protected property, and the one that reads them back is a getter this code cannot name
-        foreach ((array) $value as $member) {
+        foreach ($this->membersOf($value) as $member) {
             if ($member !== $this) {
                 $this->attachOwners($member, $seen);
             }
         }
+    }
+
+    /**
+     * The members of an owner-aware value: every property it holds, whatever the visibility - a
+     * container keeps its children in a protected one and the getter that reads them back is a name
+     * this code cannot know - except the one property that points back OUT of the value.
+     *
+     * `_owner` is a property like any other to `(array)`, and following it leaves the plaintext for
+     * the container this field sits in. That container is owner-aware itself whenever the field is
+     * localized: {@see \Pimcore\Model\DataObject\Localizedfield} implements
+     * {@see OwnerAwareFieldInterface}, so the walk gave it this field's owner - itself, since
+     * {@see self::attachOwners()} assigns `$this->_owner` - and this field's own field name and
+     * language, and then walked its `items` and did the same to every localized value of every
+     * field of the object. One encrypted key's metadata, written over the whole container.
+     *
+     * {@see self::detachOwners()} walks the same property and was saved from the same outcome only
+     * by the order of its own statements: it nulls the owner before descending, so the member it
+     * reaches is `null` rather than the container. Neither walk relies on that any more.
+     *
+     * The property is matched by name because the cast mangles it: a protected property's key is
+     * "\0*\0_owner" and a private one's is "\0<declaring class>\0_owner"
+     * ({@see \Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait} declares it protected).
+     *
+     * @return array<int, mixed>
+     */
+    private function membersOf(OwnerAwareFieldInterface $value): array
+    {
+        $members = [];
+
+        foreach ((array) $value as $property => $member) {
+            if (!$this->namesTheOwnerBackReference($property)) {
+                $members[] = $member;
+            }
+        }
+
+        return $members;
+    }
+
+    private function namesTheOwnerBackReference(int|string $property): bool
+    {
+        if (!is_string($property)) {
+            return false;
+        }
+
+        $separator = strrpos($property, "\0");
+
+        return ($separator === false ? $property : substr($property, $separator + 1)) === '_owner';
     }
 
     /**
