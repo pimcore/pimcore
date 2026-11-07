@@ -18,6 +18,7 @@ use Carbon\CarbonPeriod;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Consent as ConsentDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon;
@@ -68,6 +69,8 @@ class DocumentGeneralTest extends GeneralTest
     private const ENCRYPTED_GROUP_NAME = 'testgroupEncryptedGeopoint';
 
     private const ENCRYPTED_KEY_NAME = 'encryptedGeopoint';
+
+    private const ENCRYPTED_CONSENT_KEY_NAME = 'encryptedConsent';
 
     private const MIXED_GROUP_NAME = 'testgroupEncryptedMixed';
 
@@ -852,6 +855,156 @@ class DocumentGeneralTest extends GeneralTest
     }
 
     /**
+     * The store that comes BACK from a serialization is editable too: a member of an encrypted
+     * plaintext read off the deserialized object still marks that store dirty, and the edit is
+     * saved.
+     *
+     * This is the half the test above cannot cover. There, the original instance is edited and the
+     * graph it works on is the one `__sleep()` put back in its `finally`. A version is not read that
+     * way: {@see \Pimcore\Model\Version::loadData()} unserializes the stored object and the editor
+     * saves THAT, so the plaintext in hand is the one `__wakeup()` decrypted - and `__wakeup()`
+     * reconnected only the root of it, with the literal field name `_owner`. A `geopolygon`
+     * plaintext has no root to reconnect at all, being a plain array, and an `imageGallery`'s items
+     * are members of its root rather than the root. So a vertex and a gallery item came back with no
+     * owner, their setters reached nothing, the store stayed clean and
+     * {@see \Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine::save()} wrote
+     * nothing: the edit was lost with no error.
+     *
+     * The field name is asserted beside the owner because an owner on its own reaches nothing:
+     * `markMeDirty()` marks the field it names, and `_self` is the one name this store's dirty map
+     * uses ({@see \Pimcore\Model\DataObject\Classificationstore::attachOwner()}).
+     */
+    public function testAnEncryptedStructuredValueOfADeserializedStoreIsStillEditable(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::SERIALIZATION_GROUP_NAME);
+        $group->save();
+
+        try {
+            $polygonKeyId = (int) $this->createEncryptedDelegateKey(
+                $store,
+                $group,
+                self::ENCRYPTED_POLYGON_KEY_NAME,
+                'geopolygon',
+                new Geopolygon(),
+                1
+            )->getId();
+            $galleryKeyId = (int) $this->createEncryptedDelegateKey(
+                $store,
+                $group,
+                self::ENCRYPTED_GALLERY_KEY_NAME,
+                'imageGallery',
+                new ImageGalleryDefinition(),
+                2
+            )->getId();
+
+            $asset = TestHelper::createImageAsset(self::KEY_PREFIX);
+            $galleryItem = new Hotspotimage();
+            $galleryItem->setImage($asset);
+
+            $object = new Csstore();
+            $object->setParentId(1);
+            $object->setKey(self::KEY_PREFIX . 'encrypted-deserialized');
+            $object->setPublished(true);
+            $object->save();
+
+            $csField = $object->getCsstore();
+            $csField->setActiveGroups([$group->getId() => true]);
+            $csField->setLocalizedKeyValue($group->getId(), $polygonKeyId, new EncryptedField(
+                new Geopolygon(),
+                [new GeoCoordinates(48.1, 16.1), new GeoCoordinates(48.2, 16.2)]
+            ));
+            $csField->setLocalizedKeyValue($group->getId(), $galleryKeyId, new EncryptedField(
+                new ImageGalleryDefinition(),
+                new ImageGallery([$galleryItem])
+            ));
+            $object->save();
+
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $reloaded);
+
+            // the object through a serialization and back, which is what reading a version is
+            $revived = Serialize::unserialize(Serialize::serialize($reloaded), true);
+            $this->assertInstanceOf(Csstore::class, $revived);
+            $revived->markAllLazyLoadedKeysAsLoaded();
+            $revivedField = $revived->getCsstore();
+            $this->assertInstanceOf(Classificationstore::class, $revivedField);
+
+            $polygonField = $revivedField->getLocalizedKeyValue($group->getId(), $polygonKeyId);
+            $this->assertInstanceOf(EncryptedField::class, $polygonField);
+            $vertices = $polygonField->getPlain();
+            $this->assertIsArray($vertices);
+            $this->assertInstanceOf(GeoCoordinates::class, $vertices[1]);
+            $this->assertSame(16.2, $vertices[1]->getLongitude(), 'the plaintext survived the round trip');
+
+            $galleryField = $revivedField->getLocalizedKeyValue($group->getId(), $galleryKeyId);
+            $this->assertInstanceOf(EncryptedField::class, $galleryField);
+            $gallery = $galleryField->getPlain();
+            $this->assertInstanceOf(ImageGallery::class, $gallery);
+            $galleryItems = $gallery->getItems();
+            $this->assertInstanceOf(Hotspotimage::class, $galleryItems[0]);
+
+            // the owner and the field name it marks, on the deserialized graph
+            foreach ([
+                'the encrypted polygon field' => $polygonField,
+                'a vertex of the decrypted polygon' => $vertices[1],
+                'the encrypted gallery field' => $galleryField,
+                'the decrypted gallery' => $gallery,
+                'an item of the decrypted gallery' => $galleryItems[0],
+            ] as $what => $owned) {
+                $this->assertSame($revivedField, $owned->_getOwner(), $what . ' is owned by the revived store');
+                $this->assertSame('_self', $owned->_getOwnerFieldname(), $what . ' marks `_self`');
+            }
+
+            $revivedField->resetDirtyMap();
+            $vertices[1]->setLatitude(49.9);
+            // non-integral, for the reason given in
+            // self::testMutatingTheChildOfAReloadedValueThroughItsOwnSettersIsSaved()
+            $galleryItems[0]->setCrop(['cropWidth' => 11.5, 'cropHeight' => 22.5, 'cropTop' => 3.5, 'cropLeft' => 4.5]);
+
+            $this->assertTrue(
+                $revivedField->isFieldDirty('_self'),
+                'a setter on a member of a deserialized plaintext marks the store dirty'
+            );
+
+            $revived->save();
+
+            $again = Csstore::getById($object->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $again);
+            $againField = $again->getCsstore();
+
+            $storedPolygon = $againField->getLocalizedKeyValue($group->getId(), $polygonKeyId);
+            $this->assertInstanceOf(EncryptedField::class, $storedPolygon);
+            $storedVertices = $storedPolygon->getPlain();
+            $this->assertIsArray($storedVertices);
+            $this->assertInstanceOf(GeoCoordinates::class, $storedVertices[1]);
+            $this->assertSame(49.9, $storedVertices[1]->getLatitude(), 'the changed vertex was saved');
+            $this->assertSame(48.1, $storedVertices[0]->getLatitude(), 'the untouched vertex is unchanged');
+
+            $storedGallery = $againField->getLocalizedKeyValue($group->getId(), $galleryKeyId);
+            $this->assertInstanceOf(EncryptedField::class, $storedGallery);
+            $storedGalleryValue = $storedGallery->getPlain();
+            $this->assertInstanceOf(ImageGallery::class, $storedGalleryValue);
+            $storedItems = $storedGalleryValue->getItems();
+            $this->assertInstanceOf(Hotspotimage::class, $storedItems[0]);
+            $this->assertSame(
+                ['cropWidth' => 11.5, 'cropHeight' => 22.5, 'cropTop' => 3.5, 'cropLeft' => 4.5],
+                $storedItems[0]->getCrop(),
+                'the crop set on the deserialized gallery item was saved'
+            );
+        } finally {
+            $storeId = $store->getId();
+            Classificationstore\KeyConfig::getByName(self::ENCRYPTED_POLYGON_KEY_NAME, $storeId, true)?->delete();
+            Classificationstore\KeyConfig::getByName(self::ENCRYPTED_GALLERY_KEY_NAME, $storeId, true)?->delete();
+            Classificationstore\GroupConfig::getByName(self::SERIALIZATION_GROUP_NAME, $store->getId())?->delete();
+        }
+    }
+
+    /**
      * A key whose field type does not support inheritance does not read its parent's value, on any
      * of the three paths that reach one.
      *
@@ -945,6 +1098,134 @@ class DocumentGeneralTest extends GeneralTest
             $class->setAllowInherit(false);
             $class->save();
             $this->dropStructuredFields($store);
+        }
+    }
+
+    /**
+     * Encrypting a consent does not make it inheritable. An `encryptedField` key whose delegate is
+     * `consent` refuses its parent's value on the same three paths a plain `consent` key refuses it
+     * on.
+     *
+     * The wrapper is not the type that decides this. It stores, reads, validates and renders
+     * whatever its delegate says, and it does not override `supportsInheritance()` - so asking the
+     * wrapper got the base class's `true`
+     * ({@see \Pimcore\Model\DataObject\ClassDefinition\Data::supportsInheritance()}) where the
+     * delegate says `false`
+     * ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\Consent::supportsInheritance()}), and a
+     * child read its parent's grant and the id of the audit note behind it. All three paths ask
+     * {@see \Pimcore\Model\DataObject\Classificationstore\Service::supportsInheritance()}, which
+     * answers for the delegate.
+     *
+     * An encrypted `geopoint` key beside it inherits, which is what keeps this from asserting that
+     * encryption simply turns inheritance off.
+     */
+    public function testAnEncryptedKeyWhoseDelegateRefusesInheritanceDoesNotReadItsParentsValue(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::ENCRYPTED_GROUP_NAME);
+        $group->save();
+
+        $class = ClassDefinition::getByName(self::CLASS_NAME);
+        $class->setAllowInherit(true);
+        $class->save();
+
+        try {
+            $consentKeyId = (int) $this->createEncryptedDelegateKey(
+                $store,
+                $group,
+                self::ENCRYPTED_CONSENT_KEY_NAME,
+                'consent',
+                new ConsentDefinition(),
+                1
+            )->getId();
+            $geopointKeyId = (int) $this->createEncryptedGeopointKey($store, $group)->getId();
+
+            $parent = new Csstore();
+            $parent->setParentId(1);
+            $parent->setKey(self::KEY_PREFIX . 'encrypted-inheritance-parent');
+            $parent->setPublished(true);
+            $parent->save();
+
+            $parentField = $parent->getCsstore();
+            $parentField->setActiveGroups([$group->getId() => true]);
+            $parentField->setLocalizedKeyValue(
+                $group->getId(),
+                $consentKeyId,
+                new EncryptedField(new ConsentDefinition(), new Consent(true, 4711))
+            );
+            $parentField->setLocalizedKeyValue(
+                $group->getId(),
+                $geopointKeyId,
+                new EncryptedField(new Geopoint(), new GeoCoordinates(48.2, 16.37))
+            );
+            $parent->save();
+
+            $child = new Csstore();
+            $child->setParentId($parent->getId());
+            $child->setKey(self::KEY_PREFIX . 'encrypted-inheritance-child');
+            $child->setPublished(true);
+            $child->save();
+
+            $child = Csstore::getById($child->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $child);
+            $childField = $child->getCsstore();
+
+            // precondition: an encrypted key of a type that does support inheritance reads the
+            // parent, so the assertions below are about the delegate and not about encryption
+            $inheritedPoint = $childField->getLocalizedKeyValue($group->getId(), $geopointKeyId);
+            $this->assertInstanceOf(EncryptedField::class, $inheritedPoint);
+            $this->assertInstanceOf(GeoCoordinates::class, $inheritedPoint->getPlain());
+            $this->assertSame(48.2, $inheritedPoint->getPlain()->getLatitude());
+
+            // the per-key read
+            $this->assertNull(
+                $childField->getLocalizedKeyValue($group->getId(), $consentKeyId),
+                'an encrypted consent key does not read its parent grant'
+            );
+
+            // the whole-store read, which merges every ancestor's items
+            $items = $childField->getItems();
+            $this->assertArrayHasKey($geopointKeyId, $items[$group->getId()] ?? []);
+            $this->assertArrayNotHasKey(
+                $consentKeyId,
+                $items[$group->getId()] ?? [],
+                'the parent encrypted consent is not merged into the child items'
+            );
+
+            // and the editmode payload, which walks to the parent with a recursion of its own
+            $payload = $this->getCsstoreFieldDefinition()->getDataForEditmode($childField, $child);
+            $language = self::DEFAULT_LANGUAGE;
+            $this->assertArrayHasKey($geopointKeyId, $payload['data'][$language][$group->getId()] ?? []);
+            $this->assertArrayNotHasKey(
+                $consentKeyId,
+                $payload['data'][$language][$group->getId()] ?? [],
+                'the parent encrypted consent is not in the editmode payload'
+            );
+            $this->assertArrayNotHasKey(
+                $consentKeyId,
+                $payload['metaData'][$language][$group->getId()] ?? [],
+                'and it is not reported as inherited either'
+            );
+
+            // the parent itself still holds and reads its own encrypted consent
+            $storedParent = Csstore::getById($parent->getId(), ['force' => true]);
+            $this->assertInstanceOf(Csstore::class, $storedParent);
+            $ownConsent = $storedParent->getCsstore()->getLocalizedKeyValue($group->getId(), $consentKeyId);
+            $this->assertInstanceOf(EncryptedField::class, $ownConsent);
+            $this->assertInstanceOf(Consent::class, $ownConsent->getPlain());
+            $this->assertTrue($ownConsent->getPlain()->getConsent());
+            $this->assertSame(4711, $ownConsent->getPlain()->getNoteId());
+        } finally {
+            $class->setAllowInherit(false);
+            $class->save();
+            $storeId = $store->getId();
+            Classificationstore\KeyConfig::getByName(self::ENCRYPTED_CONSENT_KEY_NAME, $storeId, true)?->delete();
+            Classificationstore\KeyConfig::getByName(self::ENCRYPTED_KEY_NAME, $storeId, true)?->delete();
+            Classificationstore\GroupConfig::getByName(self::ENCRYPTED_GROUP_NAME, $storeId)?->delete();
         }
     }
 

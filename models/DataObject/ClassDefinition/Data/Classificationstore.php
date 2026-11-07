@@ -278,8 +278,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     // child reading its parent's grant would show somebody else's answer to "has
                     // this one consented". The per-key read refuses it
                     // (DataObject\Classificationstore::getLocalizedKeyValue()) and so does the
-                    // whole-store read, and the editmode payload must not be the one way in.
-                    if ($level > 1 && !$fd->supportsInheritance()) {
+                    // whole-store read, and the editmode payload must not be the one way in. All
+                    // three ask DataObject\Classificationstore\Service::supportsInheritance(), which
+                    // is also what answers an `encryptedField` by its delegate.
+                    if ($level > 1 && !DataObject\Classificationstore\Service::supportsInheritance($fd)) {
                         continue;
                     }
 
@@ -323,7 +325,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         // an empty value of a key that cannot inherit is not a gap the parent
                         // fills: it is not marked inherited, and it is not a reason to read the
                         // parent's store at all
-                        if (!$fd->supportsInheritance()) {
+                        if (!DataObject\Classificationstore\Service::supportsInheritance($fd)) {
                             continue;
                         }
 

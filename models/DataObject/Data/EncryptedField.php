@@ -113,7 +113,18 @@ class EncryptedField implements OwnerAwareFieldInterface
                 }
             }
 
-            return ['encrypted', '_owner'];
+            // `_fieldname` and `_language` travel beside the owner because an owner on its own
+            // reaches nothing: `markMeDirty()` calls `markFieldDirty($this->_fieldname)`, so the
+            // field name is what decides WHICH field of the owner a later edit marks dirty, and the
+            // language is what marks the right language of a Localizedfield. For a classification
+            // store key that field name is `_self`, the one name that store's dirty map uses
+            // ({@see \Pimcore\Model\DataObject\Classificationstore::attachOwner()}); for a field of
+            // an object it is the field's own name
+            // ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::getDataFromResource()}).
+            // Neither can be reconstructed on the other side, so {@see self::__wakeup()} is given
+            // them rather than left to guess - it used to write the literal `_owner`, which names no
+            // field of anything.
+            return ['encrypted', '_owner', '_fieldname', '_language'];
         }
 
         return [];
@@ -170,6 +181,52 @@ class EncryptedField implements OwnerAwareFieldInterface
     }
 
     /**
+     * Gives the owner back to every owner-aware value the decrypted plaintext is made of - the
+     * whole graph {@see self::detachOwners()} took it off, not only its root.
+     *
+     * The owner is what makes a value's own setters reach the container's dirty flag, so a value
+     * that comes back from a serialization without one is a value whose next edit is discarded with
+     * no error: a `geopolygon` whose vertices are plain {@see \Pimcore\Model\DataObject\Data\GeoCoordinates},
+     * an `imageGallery` whose items are {@see \Pimcore\Model\DataObject\Data\Hotspotimage}, a
+     * `geobounds` and its two corners. A version is read exactly this way - unserialized and then
+     * edited - and this is the one field type that drops ownership on the way in.
+     *
+     * The root is reattached by the same walk and not separately, because the root is as often an
+     * array of owner-aware values as it is one of them: `geopolygon` normalizes to a plain array, so
+     * the `instanceof` test the root used to be reattached by skipped it entirely.
+     *
+     * @param array<int, true> $seen the values already visited on this walk, by object id
+     */
+    private function attachOwners(mixed $value, array &$seen = []): void
+    {
+        if (is_array($value)) {
+            foreach ($value as $member) {
+                $this->attachOwners($member, $seen);
+            }
+
+            return;
+        }
+
+        if (!$value instanceof OwnerAwareFieldInterface || isset($seen[spl_object_id($value)])) {
+            return;
+        }
+
+        $seen[spl_object_id($value)] = true;
+
+        $value->_setOwner($this->_owner);
+        $value->_setOwnerFieldname($this->_fieldname);
+        $value->_setOwnerLanguage($this->_language);
+
+        // the members of the value, whatever their visibility: a container holds its children in a
+        // protected property, and the one that reads them back is a getter this code cannot name
+        foreach ((array) $value as $member) {
+            if ($member !== $this) {
+                $this->attachOwners($member, $seen);
+            }
+        }
+    }
+
+    /**
      * @throws Exception
      */
     public function __wakeup(): void
@@ -183,10 +240,15 @@ class EncryptedField implements OwnerAwareFieldInterface
 
                 $data = Serialize::unserialize($data, true);
 
-                if ($data instanceof OwnerAwareFieldInterface) {
-                    $data->_setOwner($this->_owner);
-                    $data->_setOwnerFieldname('_owner');
-                }
+                // a payload written before the field name travelled with the owner carries none,
+                // and `markMeDirty()` hands it straight to `markFieldDirty(string $field)`. The
+                // empty string is the "no field name" this class already writes when it detaches
+                // one, and it reaches no field of the owner - exactly as the literal `_owner`
+                // written here before reached none. Normalised on this field as well as on the
+                // plaintext, because this field's own setters go through the same method.
+                $this->_fieldname ??= '';
+
+                $this->attachOwners($data);
 
                 $this->plain = $data;
             } catch (Exception $e) {

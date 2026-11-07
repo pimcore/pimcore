@@ -254,11 +254,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * is defined with a field type that supports inheritance.
      *
      * The question is asked of the KEY's definition rather than of the field's, because one store
-     * holds keys of many types at once. `consent` is the type in the set this release unlocks that
-     * answers no ({@see Model\DataObject\ClassDefinition\Data\Consent::supportsInheritance()}): a
-     * consent is the record of what one data subject agreed to, so a child object reading its
-     * parent's grant - and the id of the audit note behind it - would answer "has this one
-     * consented" with somebody else's answer. An `input` key beside it inherits as it always has.
+     * holds keys of many types at once, and it is asked through
+     * {@see Model\DataObject\Classificationstore\Service::supportsInheritance()} so that this path
+     * and the other two give the same answer - including for an `encryptedField`, which is answered
+     * by its delegate. `consent` is the type in the set this release unlocks that answers no
+     * ({@see Model\DataObject\ClassDefinition\Data\Consent::supportsInheritance()}): a consent is
+     * the record of what one data subject agreed to, so a child object reading its parent's grant -
+     * and the id of the audit note behind it - would answer "has this one consented" with somebody
+     * else's answer. An `input` key beside it inherits as it always has.
      *
      * @param array<int, array<int, array<string, mixed>>> $items structure: [groupId][keyId][language]
      *
@@ -302,8 +305,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return true;
         }
 
-        return Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
-            ->supportsInheritance();
+        return Model\DataObject\Classificationstore\Service::supportsInheritance(
+            Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+        );
     }
 
     public function setObject(Concrete $object): static
@@ -726,11 +730,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // `$fieldDefinition->supportsInheritance()` before walking up, and DataObject\Concrete\Dao
         // does for a field of the object itself. The question is the key's, not the field's: a
         // store holds keys of many types, and `consent` is the one in the set this release unlocks
-        // that answers no - see {@see self::inheritableItems()} for why it does.
+        // that answers no - see {@see self::inheritableItems()} for why it does, and
+        // {@see Model\DataObject\Classificationstore\Service::supportsInheritance()} for why an
+        // `encryptedField` is answered by its delegate rather than by the wrapper.
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
         if ($this->isEmptyValue($fieldDefinition, $data)
             && $doGetInheritedValues
-            && $fieldDefinition->supportsInheritance()
+            && Model\DataObject\Classificationstore\Service::supportsInheritance($fieldDefinition)
         ) {
             $object = $this->getObject();
             $class = $object->getClass();
