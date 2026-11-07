@@ -41,6 +41,10 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
 
     private const PLAIN_STORE_CLASS = 'copycontentsplainstore';
 
+    private const KEY_NAME = self::STORE_NAME . 'input';
+
+    private const SIBLING_KEY_NAME = self::STORE_NAME . 'sibling';
+
     /**
      * @var User[]
      */
@@ -49,6 +53,8 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
     private int $groupId;
 
     private int $keyId;
+
+    private int $siblingKeyId;
 
     public function setUp(): void
     {
@@ -138,26 +144,45 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
             $group->setStoreId($store->getId());
             $group->setName(self::STORE_NAME . 'group');
             $group->save();
-
-            $key = new Classificationstore\KeyConfig();
-            $key->setStoreId($store->getId());
-            $key->setName(self::STORE_NAME . 'input');
-            $key->setEnabled(true);
-            $key->setType('input');
-            $key->setDefinition(json_encode(new ClassDefinition\Data\Input()));
-            $key->save();
-
-            $relation = new Classificationstore\KeyGroupRelation();
-            $relation->setKeyId($key->getId());
-            $relation->setGroupId($group->getId());
-            $relation->save();
         }
 
         $group = Classificationstore\GroupConfig::getByName(self::STORE_NAME . 'group', $store->getId());
         $this->groupId = $group->getId();
-        $this->keyId = Classificationstore\KeyConfig::getByName(self::STORE_NAME . 'input', $store->getId())->getId();
+        $this->keyId = $this->resolveStoreKey($store, $group, self::KEY_NAME);
+        $this->siblingKeyId = $this->resolveStoreKey($store, $group, self::SIBLING_KEY_NAME);
 
         return $store;
+    }
+
+    private function resolveStoreKey(
+        Classificationstore\StoreConfig $store,
+        Classificationstore\GroupConfig $group,
+        string $name
+    ): int {
+        $key = Classificationstore\KeyConfig::getByName($name, $store->getId());
+
+        return $key !== null ? $key->getId() : $this->createStoreKey($store, $group, $name);
+    }
+
+    private function createStoreKey(
+        Classificationstore\StoreConfig $store,
+        Classificationstore\GroupConfig $group,
+        string $name
+    ): int {
+        $key = new Classificationstore\KeyConfig();
+        $key->setStoreId($store->getId());
+        $key->setName($name);
+        $key->setEnabled(true);
+        $key->setType('input');
+        $key->setDefinition(json_encode(new ClassDefinition\Data\Input()));
+        $key->save();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId($key->getId());
+        $relation->setGroupId($group->getId());
+        $relation->save();
+
+        return $key->getId();
     }
 
     public function testLocalizedFieldsOfNonEditableLanguagesAreKept(): void
@@ -269,6 +294,64 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
 
         $store = $this->reloadCsstore($target);
         $this->assertSame('source default', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'default'));
+    }
+
+    /**
+     * The same non-localized class, with one key of its store flagged localized: the languages the
+     * user may not edit are kept for that key, because the key and not the field decides now. The
+     * restriction follows the key the gate opened for - the sibling key, which decides nothing in a
+     * field that is not localized, is copied wholesale as the whole field is today.
+     */
+    public function testNonLocalizedClassificationstoreOfALocalizedKeyKeepsNonEditableLanguages(): void
+    {
+        $this->flagKeyAsLocalized();
+
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de'], self::PLAIN_STORE_CLASS);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de'], self::PLAIN_STORE_CLASS);
+        $this->writeSiblingKey($source, 'source sibling');
+        $this->writeSiblingKey($target, 'target sibling');
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame('target de', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'));
+        $this->assertSame(
+            'source sibling',
+            $store->getLocalizedKeyValue($this->groupId, $this->siblingKeyId, 'de'),
+            'the key that decides nothing is not restricted by the flag of another key'
+        );
+    }
+
+    /**
+     * The mirror of the case above, and the other half of "the key decides": a localized class whose
+     * key is flagged not localized. The field flag opens the gate, but the key decides against it and
+     * is copied wholesale, while the sibling that carries no flag still inherits the field and keeps
+     * the language the user may not edit.
+     */
+    public function testLocalizedClassificationstoreOfANonLocalizedKeyIsCopiedWholesale(): void
+    {
+        $this->flagKeyAsNotLocalized();
+
+        $source = $this->createCsstore(['en' => 'source en', 'de' => 'source de']);
+        $target = $this->createCsstore(['en' => 'target en', 'de' => 'target de']);
+        $this->writeSiblingKey($source, 'source sibling');
+        $this->writeSiblingKey($target, 'target sibling');
+
+        $this->copyContents($target, $source, $this->createUserWithEditableLanguages($target, 'en'));
+
+        $store = $this->reloadCsstore($target);
+        $this->assertSame('source en', $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'en'));
+        $this->assertSame(
+            'source de',
+            $store->getLocalizedKeyValue($this->groupId, $this->keyId, 'de'),
+            'the key decides against the field, so it is copied as a non-localized field is'
+        );
+        $this->assertSame(
+            'target sibling',
+            $store->getLocalizedKeyValue($this->groupId, $this->siblingKeyId, 'de'),
+            'the key that carries no flag still inherits the field and keeps the non-editable language'
+        );
     }
 
     public function testClassificationstoreLanguageIndependentValueIsCopiedIfListed(): void
@@ -453,6 +536,29 @@ class CopyContentsLanguagePermissionTest extends ModelTestCase
         $object->save();
 
         return $object;
+    }
+
+    /**
+     * A value of the key that carries no flag, in a language the user may not edit.
+     */
+    private function writeSiblingKey(Concrete $object, string $value): void
+    {
+        $object->getCsstore()->setLocalizedKeyValue($this->groupId, $this->siblingKeyId, $value, 'de');
+        $object->save();
+    }
+
+    private function flagKeyAsLocalized(): void
+    {
+        $key = Classificationstore\KeyConfig::getById($this->keyId, true);
+        $key->setLocalized(true);
+        $key->save();
+    }
+
+    private function flagKeyAsNotLocalized(): void
+    {
+        $key = Classificationstore\KeyConfig::getById($this->keyId, true);
+        $key->setLocalized(false);
+        $key->save();
     }
 
     private function reloadCsstore(Concrete $object): Classificationstore

@@ -108,6 +108,20 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
         public: true
 
+    # turns the stored descriptors of a relation-typed classification store key into its elements.
+    # public, for the same reason the caches further down are: it is consumed from the
+    # classification store model and from the class definition data type, neither of which is
+    # container-managed.
+    Pimcore\Model\DataObject\Classificationstore\RelationResolver:
+        public: true
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
+    # renders the edit mode value of those keys from the same descriptors, without instantiating a
+    # target. public for the same reason as the resolver above.
+    Pimcore\Model\DataObject\Classificationstore\RelationEditModeResolver:
+        public: true
+
     # Classification Store storage engines
     Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine:
         arguments:
@@ -292,6 +306,14 @@ services:
         public: true
         tags:
             - { name: kernel.reset, method: reset }
+
+    # answers which languages a classification store key is kept in, for the paths that enumerate
+    # them. public, for the same reason as the caches above: it is consumed from the classification
+    # store field definition and from the data object service, which are not container-managed.
+    Pimcore\Model\DataObject\Classificationstore\LocalizationResolver:
+        public: true
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
 
     # the supported contract the packages rendering a label bind to, so that none of them has to
     # type-hint the implementation above, which stays internal.

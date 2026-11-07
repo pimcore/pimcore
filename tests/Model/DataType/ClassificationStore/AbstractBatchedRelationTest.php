@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -212,6 +213,10 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
 
     /**
      * Every statement issued since the measurement started, whichever table it addresses.
+     *
+     * This is what a bound stated in statements has to be measured against: a counter that sees the
+     * classification store's own SQL alone would report a bounded cost while the elements of a
+     * relation were being loaded one at a time behind it.
      */
     protected function countStatements(): int
     {
@@ -221,6 +226,69 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
         }
 
         return $count;
+    }
+
+    /**
+     * What one more element load costs, measured on two elements of the class the relation targets
+     * have.
+     *
+     * Resolving a relation hands back the elements themselves, and instantiating one costs this
+     * many statements however it is reached: Pimcore has no bulk element loader, and a plain
+     * relation field of a class pays the same per target. A bound on resolving a key is therefore
+     * stated against this number rather than as if it were zero.
+     *
+     * It is the second load that is measured. The first load of a class also reads its class
+     * definition - {@see \Pimcore\Model\DataObject\ClassDefinition::getById()} holds it in the
+     * runtime cache that every measurement here clears - and that is a cost per class, not per
+     * element, so counting it in would overstate what one more target costs.
+     */
+    protected function measureElementLoad(int $warmUpId, int $elementId): int
+    {
+        RuntimeCache::clear();
+        $this->startMeasurement();
+
+        DataObject::getById($warmUpId, ['force' => true]);
+
+        $this->startMeasurement();
+
+        DataObject::getById($elementId, ['force' => true]);
+
+        return $this->countStatements();
+    }
+
+    /**
+     * Asserts that none of the given elements was instantiated since the runtime cache was cleared,
+     * which is the precise form of "no target was read": the owning object's own load reads the
+     * `objects` table as well, so counting statements against it would not tell the two apart.
+     *
+     * @param int[] $elementIds
+     */
+    protected function assertNoElementInstantiated(array $elementIds, string $message = ''): void
+    {
+        foreach ($elementIds as $elementId) {
+            $this->assertFalse(
+                RuntimeCache::isRegistered('object_' . $elementId),
+                $message === '' ? 'object ' . $elementId . ' must not be instantiated' : $message
+            );
+        }
+    }
+
+    /**
+     * The statements issued since the measurement started whose SQL matches the given pattern,
+     * whichever table they address.
+     *
+     * For a bound on one kind of lookup rather than on the total: a round of target lookups is one
+     * statement with a recognisable shape, so counting the statements of that shape says how many
+     * rounds a path took.
+     *
+     * @return string[]
+     */
+    protected function grabStatementsMatching(string $pattern): array
+    {
+        return array_values(array_filter(
+            $this->grabStatements(),
+            static fn (string $sql): bool => (bool) preg_match($pattern, $sql)
+        ));
     }
 
     /**
@@ -236,17 +304,30 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
     private function grabStoreStatements(array $kinds): array
     {
         $statements = [];
+        foreach ($this->grabStatements() as $sql) {
+            if (!preg_match(self::STORE_TABLE_PATTERN, $sql)) {
+                continue;
+            }
+
+            if (preg_match('/^(' . implode('|', $kinds) . ')\b/i', $sql)) {
+                $statements[] = $sql;
+            }
+        }
+
+        return $statements;
+    }
+
+    /**
+     * Every statement issued since the measurement started, its whitespace normalised.
+     *
+     * @return string[]
+     */
+    private function grabStatements(): array
+    {
+        $statements = [];
         foreach ($this->debugDataHolder->getData() as $queries) {
             foreach ($queries as $query) {
-                $sql = trim(preg_replace('/\s+/', ' ', (string) $query['sql']));
-
-                if (!preg_match(self::STORE_TABLE_PATTERN, $sql)) {
-                    continue;
-                }
-
-                if (preg_match('/^(' . implode('|', $kinds) . ')\b/i', $sql)) {
-                    $statements[] = $sql;
-                }
+                $statements[] = trim(preg_replace('/\s+/', ' ', (string) $query['sql']));
             }
         }
 

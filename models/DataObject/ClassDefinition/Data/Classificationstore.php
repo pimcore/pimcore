@@ -76,6 +76,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
+     *
+     * @deprecated use the per key flag Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()
+     *             instead; this stays the default for the keys that carry none
      */
     public bool $localized = false;
 
@@ -160,6 +163,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         foreach ($result['data'] as $language => &$groups) {
             foreach ($groups as $groupId => &$keys) {
                 foreach ($keys as $keyId => &$keyValue) {
+                    if ($keyValue instanceof DataObject\Classificationstore\RenderedRelation) {
+                        // a relation key the store rendered from its descriptors, so that the
+                        // payload costs no element load per target
+                        $keyValue = $keyValue->getData();
+
+                        continue;
+                    }
+
                     $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                     if ($keyConfig->getEnabled()) {
                         $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
@@ -171,24 +182,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
-        $validLanguages = $this->getValidLanguages();
-
         $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load(array_keys($activeGroupIds, true, true));
 
-        foreach ($validLanguages as $language) {
-            foreach ($activeGroupIds as $groupId => $enabled) {
-                if (!$enabled) {
+        foreach ($activeGroupIds as $groupId => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+
+            foreach ($relationCache->getRelations($groupId) as $keyId => $key) {
+                if ($key->getType() !== 'calculatedValue') {
                     continue;
                 }
 
-                foreach ($relationCache->getRelations($groupId) as $keyId => $key) {
-                    if ($key->getType() !== 'calculatedValue') {
-                        continue;
-                    }
+                $childDef = $relationCache->getFieldDefinition($groupId, $keyId);
 
-                    $childDef = $relationCache->getFieldDefinition($groupId, $keyId);
-
+                foreach ($this->getValidLanguages($keyId) as $language) {
                     $childData = new DataObject\Data\CalculatedValue($this->getName());
                     $childData->setContextualData('classificationstore', $this->getName(), null, $language, $groupId, $keyId, $childDef);
                     $childData = $childDef->getDataForEditmode($childData, $object, $params);
@@ -206,14 +215,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param array $fieldData structure: [language][groupId][keyId] = field data
      * @param array $metaData structure: [language][groupId][keyId] = array with meta info
+     * @param array|null $renderedRelations the rendered relation values of every store on the
+     *                                      inheritance chain, as
+     *                                      {@see DataObject\Classificationstore::renderRelationsForEditMode()}
+     *                                      answers them: objectId => groupId => keyId => language.
+     *                                      Read once, at the level the payload was asked for, and
+     *                                      handed down from there - so that a chain of H levels
+     *                                      costs one round of lookups rather than H(H+1)/2.
      */
-    private function doGetDataForEditMode(DataObject\Classificationstore $data, Concrete $object, array &$fieldData, array &$metaData, int $level = 1): array
-    {
+    private function doGetDataForEditMode(
+        DataObject\Classificationstore $data,
+        Concrete $object,
+        array &$fieldData,
+        array &$metaData,
+        int $level = 1,
+        ?array $renderedRelations = null
+    ): array {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
-
-        $items = $data->getItems();
 
         $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load(array_keys($data->getActiveGroups(), true, true));
@@ -221,7 +241,27 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         // the relations above bring the key configs of the keys that are still in their group with
         // them; the ones of values whose key was removed from the group are read here, in one go,
         // so that the loop below does not resolve them a statement at a time
-        DataObject\Classificationstore\DefinitionCache::load($this->getItemKeyIds($items, $data->getActiveGroups()));
+        DataObject\Classificationstore\DefinitionCache::load(
+            $this->getItemKeyIds($data->getItems(), $data->getActiveGroups())
+        );
+
+        // this reader takes the items as they are, so the relation descriptors are rendered here -
+        // from their stored descriptors, without instantiating a target. The whole inheritance
+        // chain is rendered in one round of lookups and the rendering of every store on it comes
+        // back from that one call, so the walk below reuses it rather than rendering the ancestors
+        // of each level again at that level
+        $renderedRelations ??= $data->renderRelationsForEditMode();
+
+        if (!isset($renderedRelations[(int) $object->getId()])) {
+            // a store the walk above did not reach from the object the payload was asked for: it
+            // renders itself, at a round of lookups of its own, rather than letting a descriptor
+            // reach the payload unrendered
+            $renderedRelations += $data->renderRelationsForEditMode();
+        }
+
+        $renderedHere = $renderedRelations[(int) $object->getId()] ?? [];
+
+        $items = $data->getItems();
 
         foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
@@ -232,12 +272,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 if ($keyConfig->getEnabled()) {
                     $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                    foreach ($languages as $language => $value) {
-                        $fdata = $value;
-                        if (!isset($fieldData[$language][$groupId][$keyId]) || $fd->isEmpty($fieldData[$language][$groupId][$keyId])) {
+                    // a stored value is answered only for the languages the key is kept in
+                    $keyLanguages = array_flip($this->getValidLanguages($keyId));
+
+                    foreach (array_intersect_key($languages, $keyLanguages) as $language => $value) {
+                        $fdata = $renderedHere[$groupId][$keyId][$language] ?? $value;
+                        if (!isset($fieldData[$language][$groupId][$keyId]) || $this->isValueEmpty($fd, $fieldData[$language][$groupId][$keyId])) {
                             // never override existing data
                             $fieldData[$language][$groupId][$keyId] = $fdata;
-                            if (!$fd->isEmpty($fdata)) {
+                            if (!$this->isValueEmpty($fd, $fdata)) {
                                 $metaData[$language][$groupId][$keyId] = ['inherited' => $level > 1, 'objectid' => $object->getId()];
                             }
                         }
@@ -252,29 +295,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
                 // same type, iterate over all language and all fields and check if there is something missing
-                if ($this->localized) {
-                    $validLanguages = Tool::getValidLanguages();
-                } else {
-                    $validLanguages = [];
-                }
-                array_unshift($validLanguages, 'default');
-
                 $foundEmptyValue = false;
 
                 $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
                 $relationCache->load(array_keys($activeGroupIds, true, true));
 
-                foreach ($validLanguages as $language) {
-                    foreach ($activeGroupIds as $groupId => $enabled) {
-                        if (!$enabled) {
-                            continue;
-                        }
+                foreach ($activeGroupIds as $groupId => $enabled) {
+                    if (!$enabled) {
+                        continue;
+                    }
 
-                        foreach (array_keys($relationCache->getRelations($groupId)) as $keyId) {
-                            $fd = $relationCache->getFieldDefinition($groupId, $keyId);
+                    foreach (array_keys($relationCache->getRelations($groupId)) as $keyId) {
+                        $fd = $relationCache->getFieldDefinition($groupId, $keyId);
 
-                            if ($fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
+                        foreach ($this->getValidLanguages($keyId) as $language) {
+                            if ($this->isValueEmpty($fd, $fieldData[$language][$groupId][$keyId] ?? null)) {
                                 $foundEmptyValue = true;
                                 $inherited = true;
                                 $metaData[$language][$groupId][$keyId] = ['inherited' => true, 'objectid' => $parent->getId()];
@@ -287,7 +323,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     // still some values are missing, ask the parent
                     $getter = 'get' . ucfirst($this->getName());
                     $parentData = $parent->$getter();
-                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                    $parentResult = $this->doGetDataForEditMode(
+                        $parentData,
+                        $parent,
+                        $fieldData,
+                        $metaData,
+                        $level + 1,
+                        $renderedRelations
+                    );
                 }
             }
         }
@@ -299,6 +342,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         ];
 
         return $result;
+    }
+
+    /**
+     * Whether the edit mode value of one key counts as empty, which decides whether the payload
+     * asks the inheritable parent for it.
+     *
+     * A relation key the store rendered answers for itself, {@see DataObject\Classificationstore\RenderedRelation::isEmpty()}:
+     * it carries one entry per target that was rendered, so the answer is the one the elements
+     * would have given.
+     */
+    private function isValueEmpty(Data $fd, mixed $value): bool
+    {
+        if ($value instanceof DataObject\Classificationstore\RenderedRelation) {
+            return $value->isEmpty();
+        }
+
+        return $fd->isEmpty($value);
     }
 
     /**
@@ -335,6 +395,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             foreach ($data as $language => $groups) {
                 foreach ($groups as $groupId => $keys) {
                     foreach ($keys as $keyId => $value) {
+                        // the save writes the languages the key is kept in, which the payload answered
+                        if (!in_array($language, $this->getValidLanguages($keyId), true)) {
+                            continue;
+                        }
+
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
                         $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
@@ -433,7 +498,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         foreach ($this->getOwnStoredValues($data) as [$fieldDefinition, $value]) {
-            $tags = $fieldDefinition->getCacheTags($value, $tags);
+            $tags = $fieldDefinition->getCacheTags(
+                $this->resolveForProjectType($data, $fieldDefinition, $value),
+                $tags
+            );
         }
 
         return $tags;
@@ -448,10 +516,85 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $dependencies = [];
 
         foreach ($this->getOwnStoredValues($data) as [$fieldDefinition, $value]) {
-            $dependencies = array_merge($dependencies, $fieldDefinition->resolveDependencies($value));
+            $dependencies = array_merge(
+                $dependencies,
+                $this->resolveValueDependencies($data, $fieldDefinition, $value)
+            );
         }
 
         return $dependencies;
+    }
+
+    /**
+     * A relation-typed key the object never read still holds the descriptors the document was
+     * loaded from. They name the elements the dependency rows need, so the rows are written without
+     * a target having to be instantiated - and without an ordinary save wiping the rows of a key
+     * nobody looked at.
+     *
+     * Only for the five relation types core ships, whose `resolveDependencies()` the descriptors
+     * reproduce exactly. A type a project adds is asked its own, {@see self::resolveForProjectType()}.
+     *
+     * @return array<string, array{id: int, type: string}>
+     *
+     * @throws Exception
+     */
+    private function resolveValueDependencies(
+        DataObject\Classificationstore $data,
+        Data $fieldDefinition,
+        mixed $value
+    ): array {
+        if (
+            $value instanceof DataObject\Classificationstore\RelationDescriptor
+            && $this->getRelationResolver()->isCoreRelation($fieldDefinition)
+        ) {
+            return $this->getRelationResolver()->describeDependencies($value->getValue());
+        }
+
+        return $fieldDefinition->resolveDependencies(
+            $this->resolveForProjectType($data, $fieldDefinition, $value)
+        );
+    }
+
+    /**
+     * The elements of an unread relation whose type core does not ship, and every other value as it
+     * stands.
+     *
+     * What this field answers from stored descriptors rather than from the key - the dependency
+     * rows, the four validity constraints, the edit mode payload - it answers for the five relation
+     * types core ships, which declare exactly that. A relation type a project adds may answer any
+     * of it differently from an overridden method, so its descriptors are resolved into the
+     * elements that method expects, at one element load per target: what an object saves must not
+     * depend on whether its keys had been read.
+     *
+     * A descriptor of one of the five is handed over as it stands. Nothing their own methods are
+     * asked here can turn on it - `getCacheTags()` answers with the tags it was given whatever the
+     * value, {@see Data::getCacheTags()}, and the dependency rows are read off the descriptors
+     * themselves - so resolving would buy an unchanged answer at an element load per target.
+     *
+     * @throws Exception
+     */
+    private function resolveForProjectType(
+        DataObject\Classificationstore $data,
+        Data $fieldDefinition,
+        mixed $value
+    ): mixed {
+        if (!$value instanceof DataObject\Classificationstore\RelationDescriptor) {
+            return $value;
+        }
+
+        $resolver = $this->getRelationResolver();
+
+        if (!$resolver->isRelation($fieldDefinition)) {
+            // the key is not a relation any more: the stored descriptor is not a value this
+            // definition can be asked about, and resolving it against one would be a guess
+            return null;
+        }
+
+        if ($resolver->isCoreRelation($fieldDefinition)) {
+            return $value;
+        }
+
+        return $resolver->resolve($fieldDefinition, $value->getValue(), $data->getObject(), $data)->getData();
     }
 
     /**
@@ -686,13 +829,36 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
+        // One walk, over this store and the ancestors it selects values from. Whether a stored
+        // descriptor still has a target is asked once per key and per language by every store in
+        // the chain and answered in one round of lookups per store, and the answer is dropped when
+        // this returns: deleting a target changes nothing about a store, so an answer that outlived
+        // the walk would have a second validation of the same instance select a dead descriptor
+        // over the live value a parent or the default language holds - and be refused by the
+        // summaries of that same validation, which are read fresh,
+        // {@see DataObject\Classificationstore\RelationResolver::inTargetExistenceWalk()}.
+        $this->getRelationResolver()->inTargetExistenceWalk(
+            function () use ($data, $omitMandatoryCheck, $params): void {
+                $this->checkStoreValidity($data, $omitMandatoryCheck, $params);
+            }
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @throws Model\Element\ValidationException
+     * @throws Exception
+     */
+    private function checkStoreValidity(mixed $data, bool $omitMandatoryCheck, array $params): void
+    {
         $activeGroups = $data->getActiveGroups();
         if (!$activeGroups) {
             return;
         }
         $items = $data->getItems();
-        $validLanguages = $this->getValidLanguages();
         $subItems = [];
+        $storedRelations = [];
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
@@ -713,15 +879,58 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         $keyDef->setMandatory(true);
                     }
 
-                    foreach ($validLanguages as $validLanguage) {
+                    // only a relation-typed key is selected without being resolved; every other key
+                    // is read the way it always was, through getLocalizedKeyValue(). The two reads
+                    // differ in that alone, and a key that is not stored as descriptors has to keep
+                    // the read the store offers for it: a store overriding that read answers for
+                    // every key it holds, and the inherited-values mode it leaves behind when it
+                    // throws is what Inheritance\ValidationTest guards.
+                    $isRelationKey = $this->getRelationResolver()->isRelation($keyDef);
+
+                    foreach ($this->getValidLanguages($keyId) as $validLanguage) {
                         $object = $data->getObject();
                         if ($object->getClass()->getAllowInherit()) {
+                            // the inherited value of a relation key is selected without being
+                            // resolved, so that a reload-and-save of an inheritable class reads no
+                            // target of a key nobody looked at
                             $value = DataObject\Service::useInheritedValues(
                                 true,
-                                fn () => $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                fn () => $isRelationKey
+                                    ? $data->getStoredKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                    : $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
                             );
                         } else {
                             $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
+                        }
+
+                        if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
+                            if (!$keyDef instanceof Relations\AbstractRelations) {
+                                // the key is not a relation any more: the descriptor the document
+                                // holds is not a value this definition can be asked about
+                                continue;
+                            }
+
+                            $resolver = $this->getRelationResolver();
+
+                            if ($resolver->isCoreRelation($keyDef)) {
+                                // an unread descriptor names its targets without holding them, and
+                                // the key's own check reads the element of every entry. It is
+                                // checked against the definition in force now - this one, the
+                                // group's - once the walk is done, so that the whole store costs
+                                // one round of lookups and no element load
+                                $storedRelations[] = [$keyDef, $value->getValue(), $validLanguage];
+
+                                continue;
+                            }
+
+                            // a relation type core does not ship may refuse what the four core
+                            // constraints allow, and the bulk check implements those four alone. So
+                            // its own validator is asked, over the elements and the $params it
+                            // expects, at the cost of an element load per target - the same trade
+                            // {@see DataObject\Classificationstore\RelationEditModeResolver} makes
+                            // for such a type. Validation must not depend on whether the key had
+                            // been read.
+                            $value = $resolver->resolve($keyDef, $value->getValue(), $object, $data)->getData();
                         }
 
                         try {
@@ -736,6 +945,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     }
                 }
             }
+
+            $subItems = array_merge($subItems, $this->checkStoredRelations($storedRelations));
         }
 
         if ($subItems) {
@@ -750,6 +961,55 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
             throw $validationException;
         }
+    }
+
+    /**
+     * The stored descriptors of the relation-typed keys nobody read, checked against the definition
+     * each of them is assigned to the group under.
+     *
+     * The targets of every one of them are described in one round of lookups,
+     * {@see DataObject\Classificationstore\RelationResolver::summarize()}, so a store holding fifty
+     * relation keys in seventeen languages costs one statement per element type rather than one
+     * element load per target. What is checked and why the key's own `checkValidity()` cannot be:
+     * {@see DataObject\Classificationstore\RelationResolver::checkStoredValidity()}.
+     *
+     * @param list<array{0: Relations\AbstractRelations, 1: mixed, 2: string}> $storedRelations
+     *
+     * @return list<Model\Element\ValidationException>
+     *
+     * @throws Exception
+     */
+    private function checkStoredRelations(array $storedRelations): array
+    {
+        if ($storedRelations === []) {
+            return [];
+        }
+
+        $resolver = $this->getRelationResolver();
+        $descriptors = [];
+
+        foreach ($storedRelations as [, $normalizedValue, ]) {
+            foreach ($resolver->describe($normalizedValue) as $descriptor) {
+                $descriptors[] = $descriptor;
+            }
+        }
+
+        $summaries = $resolver->summarize($descriptors);
+        $exceptions = [];
+
+        foreach ($storedRelations as [$keyDef, $normalizedValue, $language]) {
+            try {
+                $resolver->checkStoredValidity($keyDef, $normalizedValue, $summaries);
+            } catch (Model\Element\ValidationException $exception) {
+                $exceptions[] = new Model\Element\ValidationException(
+                    $exception->getMessage() . ' (' . $language . ')',
+                    $exception->getCode(),
+                    $exception->getPrevious()
+                );
+            }
+        }
+
+        return $exceptions;
     }
 
     /**
@@ -825,11 +1085,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->maxItems;
     }
 
+    /**
+     * @deprecated use the per key flag Pimcore\Model\DataObject\Classificationstore\KeyConfig::getLocalized()
+     *             instead; this stays the default for the keys that carry none
+     */
     public function isLocalized(): bool
     {
         return $this->localized;
     }
 
+    /**
+     * @deprecated use the per key flag Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()
+     *             instead; this stays the default for the keys that carry none
+     */
     public function setLocalized(bool $localized): void
     {
         $this->localized = $localized;
@@ -932,6 +1200,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load($filteredGroupIds);
 
+        // the relations bring the key configs with them, so the per key flag below costs no statement
+        $localizationResolver = $this->getLocalizationResolver();
+
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
         $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($filteredGroupIds), '?')) . ')', $filteredGroupIds);
 
@@ -972,10 +1243,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $definition = $definition->enrichLayoutDefinition($object, $context);
                 }
 
+                // the languages the key is kept in are decided by the key and only inherited from
+                // this field, so the editor cannot read them off the field's own localized flag:
+                // a key is answered here, filled or empty, and carries its effective flag with it
                 $keyList[] = [
                     'name' => $keyGroupRelation->getName(),
                     'id' => $keyGroupRelation->getKeyId(),
                     'description' => $keyGroupRelation->getDescription(),
+                    'localized' => $localizationResolver->isKeyLocalized($keyGroupRelation->getKeyId(), $this),
                     'definition' => $definition,
                 ];
             }
@@ -1045,11 +1320,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
+     * The languages one key of this field is kept in: `default` and, for a localized key, every
+     * valid language. A key that carries no flag of its own inherits this field's.
+     *
      * @return string[]
      */
-    private function getValidLanguages(): array
+    private function getValidLanguages(int $keyId): array
     {
-        if ($this->localized) {
+        if ($this->getLocalizationResolver()->isKeyLocalized($keyId, $this)) {
             $validLanguages = Tool::getValidLanguages();
         } else {
             $validLanguages = [];
@@ -1062,6 +1340,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     private function getKeyGroupRelationCache(): DataObject\Classificationstore\KeyGroupRelationCache
     {
         return Pimcore::getContainer()->get(DataObject\Classificationstore\KeyGroupRelationCache::class);
+    }
+
+    private function getRelationResolver(): DataObject\Classificationstore\RelationResolver
+    {
+        return Pimcore::getContainer()->get(DataObject\Classificationstore\RelationResolver::class);
+    }
+
+    private function getLocalizationResolver(): DataObject\Classificationstore\LocalizationResolver
+    {
+        return Pimcore::getContainer()->get(DataObject\Classificationstore\LocalizationResolver::class);
     }
 
     /**

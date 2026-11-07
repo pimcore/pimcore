@@ -16,9 +16,9 @@ key can only be added once to that object.
 * There can be multiple store with completely isolated feature sets.
 * Inheritance is supported.
 * An object can have more than one classification store.
-* Localization is supported (optionally, can be configured in the class definition).
+* Localization is supported and chosen per key; the class definition setting is the default for the keys that do not decide.
 * The classification store introduces the concept of a fallback language.
-* All simple data types, plus the structured types that ship a Classification Store marshaller, are supported - see [Available Data Types](#available-data-types). The store can be extended with custom data types.
+* Which data types a key may use depends on the storage engine of its store - every simple data type on both, the structured types that ship a Classification Store marshaller on the EAV engine, and whatever `normalize()` returns, relations included, on the document engine. See [Available Data Types](#available-data-types). The store can be extended with custom data types.
 * Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc).
 * Keys can be organized in groups.
 * A key can belong to several groups.
@@ -28,8 +28,11 @@ key can only be added once to that object.
 
 ## Available Data Types
 
-A key can use any data type whose value fits the two value columns of the store's row, `value` and
-`value2` (both `LONGTEXT`):
+What a key may store depends on the storage engine of its store.
+
+On the **EAV engine** - the default, and what every store uses until it is flipped - a key can use
+any data type whose value fits the two value columns of the store's row, `value` and `value2`
+(both `LONGTEXT`):
 
 * **Every simple data type**, whose value the column takes as it is: input, textarea, wysiwyg,
   numeric, slider, checkbox, date, datetime, time, select, country, language, user, etc.
@@ -44,12 +47,28 @@ A custom data type is added the same way: register the data type, and - unless i
 scalar the column already holds - register a marshaller for it under the key
 `classificationstore_<fieldtype>`.
 
-Relations are not supported, and that is a structural limit rather than a missing feature: a
-relation is not stored in a value column at all, but as rows of `object_relations_*`, which address
-their owner by field name and owner type (`object`, `localizedfield`, `fieldcollection`,
-`objectbrick`). A Classification Store key is none of those - its values live in the store's own
-table, keyed by group, key and language - so there is no row a relation could be written to. Use an
-[Object Brick](./60_Object_Bricks.md) when the attributes include relations.
+On the **document engine** a group's values are one JSON document, so a value is whatever the data
+type's `normalize()` returns and no marshaller is required. That is what makes relations possible
+there: `manyToOneRelation`, `manyToManyRelation`, `manyToManyObjectRelation`,
+`advancedManyToManyRelation` and `advancedManyToManyObjectRelation` store their element descriptors
+in the document and resolve them when the key is read; the per-relation column values of the
+advanced pair are held in the per-class table `object_classificationstore_meta_<CLASS>`. The
+elements are not loaded with the object - a key is resolved on first read, and a descriptor whose
+target has been deleted is left out of the value and taken out of the document on the next save of
+the object. The opt-in command `bin/console pimcore:classificationstore:purge-relations` reports
+such descriptors across an installation and, with `--force`, removes them.
+
+Relations are **not** supported on the EAV engine: a relation is not stored in a value column at
+all, but as rows of `object_relations_*`, which address their owner by field name and owner type
+(`object`, `localizedfield`, `fieldcollection`, `objectbrick`). A Classification Store key is none
+of those - its values live in the store's own table, keyed by group, key and language - so there is
+no row a relation could be written to, and saving such a value is refused with
+`Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException`. Flip the store to the
+document engine, or use an [Object Brick](./60_Object_Bricks.md), when the attributes include
+relations.
+
+A `reverseObjectRelation` key is refused on both engines: its value is computed from the objects
+pointing at the owner rather than stored on it, so there is nothing for a store to hold.
 
 ## Configuration of Classification Stores
 
@@ -97,7 +116,14 @@ defined.
 
 ## Class definition
 
-* Localization can be enabled, by default only the `default` language is available
+* Localization is chosen per key: a key's own `localized` flag decides
+  (`Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()`), and the class definition setting
+  here is only the default for the keys that carry none (it is deprecated for that reason). By default no key
+  decides and the setting is off, so only the `default` language is available. Because the languages belong to
+  the key, the layout the object editor is handed carries each key's effective flag with it: every entry of
+  `activeGroupDefinitions[<groupId>]['keys']` has a `localized` boolean beside its `name`, `id`, `description`
+  and `definition`. It is answered for every enabled key of an active group, filled or empty, which is what
+  lets a client tell a localized key inside a non-localized field from its non-localized siblings
 * Allowed groups can be restricted by providing a comma-separated list of group ids
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first
@@ -526,9 +552,10 @@ whose tables are gone holds all of its values.
   before switching it.
 * A group that is active but holds no value is stored as the document `{}`. The presence of the row is what makes
   the group active; there is no second table.
-* It offers no capability the EAV engine does not. `supports()` answers `false` for every
-  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature`, and nothing in the object editor or Studio
-  selects the engine yet.
+* It offers no capability the EAV engine does not. `supports()` answers `true` for
+  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature::PerKeyLocalization` - which both engines
+  serve, as it is a property of the key configuration rather than of the storage - and `false` for the other
+  three, and nothing in the object editor or Studio selects the engine yet.
 * Values are stored as the field definition's `normalize()` output. An `encryptedField` key is the one exception:
   it keeps its classification store marshaller, which encrypts the value, so the cleartext is never in the
   document. That encryption draws a fresh salt per call, so a value whose cleartext did not change keeps the
