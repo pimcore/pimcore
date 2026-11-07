@@ -31,6 +31,7 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
+use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Concrete;
@@ -604,7 +605,7 @@ class EngineTest extends ModelTestCase
     {
         $storeId = $this->createStore();
         $groupId = $this->createGroup($storeId);
-        $keyId = $this->createRelationKey($storeId, new ManyToManyObjectRelation());
+        $keyId = $this->createRelationKeyWrittenBeforeTheDefinitionGate($storeId, new ManyToManyObjectRelation());
 
         $classificationStore = $this->buildStoreModelFor($storeId, self::ROUTED_CLASS_ID);
         $classificationStore->setLocalizedKeyValue($groupId, $keyId, [$this->anyObject()]);
@@ -639,7 +640,7 @@ class EngineTest extends ModelTestCase
     {
         $storeId = $this->createStore();
         $groupId = $this->createGroup($storeId);
-        $keyId = $this->createRelationKey($storeId, new ManyToManyObjectRelation());
+        $keyId = $this->createRelationKeyWrittenBeforeTheDefinitionGate($storeId, new ManyToManyObjectRelation());
 
         $classificationStore = $this->buildStoreModelFor($storeId, self::ROUTED_CLASS_ID);
         $objectId = $classificationStore->getObject()->getId();
@@ -664,6 +665,7 @@ class EngineTest extends ModelTestCase
 
         (new EavEngine(
             $logger,
+            Pimcore::getContainer()->get(KeyTypeSupport::class),
             Pimcore::getContainer()->get(RelationResolver::class),
             $db
         ))->load($classificationStore);
@@ -739,6 +741,40 @@ class EngineTest extends ModelTestCase
         $this->relationKeyIds[] = (int) $keyConfig->getId();
 
         return (int) $keyConfig->getId();
+    }
+
+    /**
+     * A relation-typed key row on a store whose engine cannot hold one.
+     *
+     * {@see Classificationstore\KeyConfig::save()} refuses such a key when it is defined, so this
+     * row is the one an installation holds from before that gate existed, or from a direct SQL
+     * edit - which is what the two EAV cases above are about. The store is put on the document
+     * engine for the key's own save alone and put straight back, so the row is written by the
+     * model rather than by a statement of its own.
+     */
+    private function createRelationKeyWrittenBeforeTheDefinitionGate(
+        int $storeId,
+        ClassDefinition\Data $definition
+    ): int {
+        $this->setStoreEngine($storeId, self::DOCUMENT_ENGINE);
+
+        try {
+            return $this->createRelationKey($storeId, $definition);
+        } finally {
+            $this->setStoreEngine($storeId, null);
+        }
+    }
+
+    private function setStoreEngine(int $storeId, ?string $engine): void
+    {
+        $store = StoreConfig::getById($storeId);
+        $this->assertInstanceOf(StoreConfig::class, $store);
+
+        $store->setEngine($engine);
+        $store->save();
+
+        // the resolver memoizes the engine per store, and the key gate asks it for this one
+        Pimcore::getContainer()->get(EngineResolver::class)->reset();
     }
 
     /**

@@ -18,7 +18,7 @@ key can only be added once to that object.
 * An object can have more than one classification store.
 * Localization is supported and chosen per key; the class definition setting is the default for the keys that do not decide.
 * The classification store introduces the concept of a fallback language.
-* Which data types a key may use depends on the storage engine of its store - every simple data type on both, the structured types that ship a Classification Store marshaller on the EAV engine, and whatever `normalize()` returns, relations included, on the document engine. See [Available Data Types](#available-data-types). The store can be extended with custom data types.
+* Which data types a key can use depends on the store's [storage engine](#storage-engines) - every simple data type on both, the structured types that ship a Classification Store marshaller on the EAV engine, and whatever `normalize()` returns, relations included, on the document engine. See [Available Data Types](#available-data-types). The store can be extended with custom data types.
 * Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc).
 * Keys can be organized in groups.
 * A key can belong to several groups.
@@ -28,44 +28,79 @@ key can only be added once to that object.
 
 ## Available Data Types
 
-What a key may store depends on the storage engine of its store.
+A key can use **any registered data type** except eight, and which of the accepted ones a given key
+can actually be defined with depends on the [storage engine](#storage-engines) of its store. The
+accepted set is not a list anywhere in core: it is every type the object data implementation loader
+resolves, minus the eight exclusions, so a type added by a later release or by a bundle is accepted
+without core being changed.
 
-On the **EAV engine** - the default, and what every store uses until it is flipped - a key can use
-any data type whose value fits the two value columns of the store's row, `value` and `value2`
-(both `LONGTEXT`):
+### The eight exclusions
 
-* **Every simple data type**, whose value the column takes as it is: input, textarea, wysiwyg,
-  numeric, slider, checkbox, date, datetime, time, select, country, language, user, etc.
-* **The structured types that ship a Classification Store marshaller**, which encodes the value into
-  the two columns and decodes it again when the object is loaded: `booleanSelect`,
-  `countrymultiselect`, `encryptedField`, `image`, `inputQuantityValue`, `inputQuantityValueRange`,
-  `languagemultiselect`, `multiselect`, `quantityValue`, `quantityValueRange`, `rgbaColor` and
-  `table`. The authoritative list is the `# classification store` section of
-  `bundles/CoreBundle/config/marshaller.yaml`.
+Never accepted, on any engine - and, for the seven that are out because of what their value is, not
+as the delegate of an `encryptedField` either: encryption decides how a value is stored, not what the
+value is. `calculatedValue` is the one that refuses nothing, as a delegate no more than on its own.
 
-A custom data type is added the same way: register the data type, and - unless its value is a plain
-scalar the column already holds - register a marshaller for it under the key
-`classificationstore_<fieldtype>`.
+| type | why |
+|---|---|
+| `block`, `objectbricks`, `fieldcollections`, `localizedfields`, `classificationstore` | the five container types. Their value is the values of other field definitions, and a key is one leaf of such a tree rather than a place to hang one. |
+| `reverseObjectRelation` | computed from the owning side of a relation rather than stored, so a key has nothing to write. |
+| `urlSlug` | its value is a row of the route table `object_url_slugs`, keyed by (object, fieldname), which a key cannot occupy - storing the slug and site id alone registers no route. |
+| `calculatedValue` | not part of the set the `document` engine unlocks. Core's existing support for a `calculatedValue` key is untouched: such a key still computes on read and still appears in the object editor, and it is refused neither when it is defined nor when the object is saved. |
 
-On the **document engine** a group's values are one JSON document, so a value is whatever the data
-type's `normalize()` returns and no marshaller is required. That is what makes relations possible
-there: `manyToOneRelation`, `manyToManyRelation`, `manyToManyObjectRelation`,
-`advancedManyToManyRelation` and `advancedManyToManyObjectRelation` store their element descriptors
-in the document and resolve them when the key is read; the per-relation column values of the
-advanced pair are held in the per-class table `object_classificationstore_meta_<CLASS>`. The
-elements are not loaded with the object - a key is resolved on first read, and a descriptor whose
-target has been deleted is left out of the value and taken out of the document on the next save of
-the object. The opt-in command `bin/console pimcore:classificationstore:purge-relations` reports
-such descriptors across an installation and, with `--force`, removes them.
+### What each engine can hold
 
-Relations are **not** supported on the EAV engine: a relation is not stored in a value column at
-all, but as rows of `object_relations_*`, which address their owner by field name and owner type
-(`object`, `localizedfield`, `fieldcollection`, `objectbrick`). A Classification Store key is none
-of those - its values live in the store's own table, keyed by group, key and language - so there is
-no row a relation could be written to, and saving such a value is refused with
+| engine | what a key may be |
+|---|---|
+| `eav` (default, also `NULL`, and what every store uses until it is flipped) | a type whose value fits the two value columns `value` and `value2` (both `LONGTEXT`): every type that normalizes to a scalar - input, textarea, wysiwyg, numeric, slider, checkbox, date, datetime, time, select, country, language, user and so on - plus the types that ship a Classification Store marshaller packing the value into the two columns: `booleanSelect`, `countrymultiselect`, `encryptedField`, `image`, `inputQuantityValue`, `inputQuantityValueRange`, `languagemultiselect`, `multiselect`, `quantityValue`, `quantityValueRange`, `rgbaColor` and `table`. The authoritative list of those marshallers is the `# classification store` section of `bundles/CoreBundle/config/marshaller.yaml`. |
+| `document` | every accepted type. A document holds whatever the field definition's `normalize()` returns, so no marshaller is needed and there is no column to pack into - `consent`, `dateRange`, `externalImage`, `geobounds`, `geopoint`, `geopolygon`, `geopolyline`, `hotspotimage`, `imageGallery`, `link`, `numericRange`, `structuredTable` and `video` are storable there and are refused on an `eav` store. |
+
+Defining a key of a type the engine of its store cannot hold is refused with
+`Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException`, and nothing is written. The
+same exception is raised, instead of a value written into a column that cannot hold it, if such a
+value reaches the EAV engine anyway - through a key row an upgrade or a direct SQL edit wrote. An
+`encryptedField` key is judged by its delegate: its own marshaller encrypts what the delegate's
+marshaller packed, so on an `eav` store a delegate with no marshaller leaves it nothing to encrypt
+and such a key is refused. On a `document` store the same key works - the value reaches the
+encryption as the JSON of what it normalizes to, so the cleartext is never in the document - and a
+delegate that normalizes to a scalar, or has a marshaller of its own, is stored exactly as before.
+
+Whether the delegate may be a key type at all is a separate question, and is asked first: a delegate
+that is one of the seven exclusions above is refused with
+`Pimcore\Model\Exception\InvalidConfigException` when the key is defined, on either engine. A
+`document` store holds the slug and the site id of a `urlSlug` perfectly well, and holding them
+registers no route - so the storage answer is "yes" about a key that does not work.
+
+A custom data type is added by registering the data type. On a `document` store that is all; on an
+`eav` store it also needs a marshaller under the key `classificationstore_<fieldtype>`, unless its
+value is a plain scalar the column already holds.
+
+Each data type also declares how a key of that type can be filtered, through
+`Pimcore\Model\DataObject\ClassDefinition\Data::getClassificationStoreKeyFilter()`, which answers a
+`Pimcore\Model\DataObject\Classificationstore\KeyFilter`. The declaration is additive - a type that
+does not override it declares `KeyFilter::None` - and core ships the declaration alone: it ships no
+grid filter and no index mapping for a Classification Store key, because such a value never reaches
+`object_query_<CLASS>`. Consuming the declaration is the index side's part.
+
+Relations are **not** supported on an `eav` store, and that is a structural limit rather than a
+missing feature: a relation is not stored in a value column at all, but as rows of
+`object_relations_*`, which address their owner by field name and owner type (`object`,
+`localizedfield`, `fieldcollection`, `objectbrick`). A Classification Store key is none of those -
+its values live in the store's own table, keyed by group, key and language - so there is no row a
+relation could be written to, and saving such a value is refused with
 `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException`. Flip the store to the
-document engine, or use an [Object Brick](./60_Object_Bricks.md), when the attributes include
+`document` engine, or use an [Object Brick](./60_Object_Bricks.md), when the attributes include
 relations.
+
+The `document` engine removes that structural limit, because a group's values are one JSON document
+and a value is whatever the data type's `normalize()` returns: `manyToOneRelation`,
+`manyToManyRelation`, `manyToManyObjectRelation`, `advancedManyToManyRelation` and
+`advancedManyToManyObjectRelation` store their element descriptors in the document and resolve them
+when the key is read; the per-relation column values of the advanced pair are held in the per-class
+table `object_classificationstore_meta_<CLASS>`. The elements are not loaded with the object - a key
+is resolved on first read, and a descriptor whose target has been deleted is left out of the value
+and taken out of the document on the next save of the object. The opt-in command
+`bin/console pimcore:classificationstore:purge-relations` reports such descriptors across an
+installation and, with `--force`, removes them.
 
 A `reverseObjectRelation` key is refused on both engines: its value is computed from the objects
 pointing at the owner rather than stored on it, so there is nothing for a store to hold.
@@ -413,10 +448,13 @@ A store that already holds values is moved over with the four commands of the ne
 setter: the setter writes the `engine` column alone, and the tables of the selected engine are created only the next
 time a class carrying a classification store field on that store is saved.
 
-The two engines behave the same way through the model API: `getLocalizedKeyValue()`, the language fallback, the
-default-language fallback and inheritance are resolved in PHP at read time and do not depend on the storage.
-Deleting a group configuration destroys the stored values of that group on either engine, and deleting an object
-removes its values on either engine.
+The two engines behave the same way through the model API for the values they both hold: `getLocalizedKeyValue()`, the
+language fallback, the default-language fallback and inheritance are resolved in PHP at read time and do not depend on
+the storage. Deleting a group configuration destroys the stored values of that group on either engine, and deleting an
+object removes its values on either engine.
+
+What they do not share is **which key types a store can hold**: that is a property of the engine, and a structured key
+that a `document` store takes is refused on an `eav` one - see [Available Data Types](#available-data-types).
 
 There is one deliberate exception. `getGroupCollectionMappings()` lists, on an EAV store, every group holding a
 stored value - mapped to `null` when it has no collection - while on a document store it lists only the groups that
@@ -552,10 +590,12 @@ whose tables are gone holds all of its values.
   before switching it.
 * A group that is active but holds no value is stored as the document `{}`. The presence of the row is what makes
   the group active; there is no second table.
-* It offers no capability the EAV engine does not. `supports()` answers `true` for
-  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature::PerKeyLocalization` - which both engines
-  serve, as it is a property of the key configuration rather than of the storage - and `false` for the other
-  three, and nothing in the object editor or Studio selects the engine yet.
+* It offers exactly one capability the EAV engine does not: `supports()` answers `true` for
+  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature::StructuredValues` and `false` for
+  `MultiValue`, `Variants` and `Relations`. That capability is what widens the key types a store can hold - see
+  [Available Data Types](#available-data-types). It also answers `true` for `PerKeyLocalization`, but that one
+  both engines serve, as it is a property of the key configuration rather than of the storage. Nothing in the
+  object editor or Studio selects the engine yet.
 * Values are stored as the field definition's `normalize()` output. An `encryptedField` key is the one exception:
   it keeps its classification store marshaller, which encrypts the value, so the cleartext is never in the
   document. That encryption draws a fresh salt per call, so a value whose cleartext did not change keeps the

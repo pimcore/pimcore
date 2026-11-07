@@ -108,6 +108,49 @@ class Service
     }
 
     /**
+     * Whether a value of a key defined with this field type may be inherited from an ancestor's
+     * store.
+     *
+     * The question is the key's and not the classification store field's, because one store holds
+     * keys of many types at once - so every path that reaches an ancestor's store asks this, and
+     * they have to agree: the per-key read ({@see DataObject\Classificationstore::getLocalizedKeyValue()}),
+     * the whole-store merge ({@see DataObject\Classificationstore::getItems()}) and both halves of
+     * the editmode payload's parent walk
+     * ({@see DataObject\ClassDefinition\Data\Classificationstore::doGetDataForEditMode()}). One
+     * answer in one place is what keeps them from coming apart.
+     *
+     * An `encryptedField` is answered by its DELEGATE. The wrapper stores, reads, validates and
+     * renders whatever the delegate says - {@see DataObject\ClassDefinition\Data\EncryptedField}
+     * hands `getDataForEditmode()`, `checkValidity()`, `isEmpty()` and `normalize()` straight on -
+     * and it does not override `supportsInheritance()`, so it answers the base class's `true` for
+     * every delegate. A `consent` delegate says no for a reason that the encryption does not touch:
+     * a consent is the record of what one data subject agreed to, so a child reading its parent's
+     * grant - and the id of the audit note behind it - answers "has this one consented" with
+     * somebody else's answer, encrypted or not. The same holds for the other types that decline
+     * inheritance, `calculatedValue` and `urlSlug` among them.
+     *
+     * A key whose config has gone - deleted while values of it are still stored - and an
+     * `encryptedField` with no delegate configured are both answered the way they were answered
+     * before this check existed, because nothing is known about them to answer otherwise.
+     */
+    public static function supportsInheritance(?DataObject\ClassDefinition\Data $fieldDefinition): bool
+    {
+        if (!$fieldDefinition) {
+            return true;
+        }
+
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+            $delegate = $fieldDefinition->getDelegate();
+
+            if ($delegate instanceof DataObject\ClassDefinition\Data) {
+                return self::supportsInheritance($delegate);
+            }
+        }
+
+        return $fieldDefinition->supportsInheritance();
+    }
+
+    /**
      * Collects every classification store field reachable from the given field definitions,
      * including the ones nested in localized fields, object bricks and field collections -
      * classSaved() reaches those as well.

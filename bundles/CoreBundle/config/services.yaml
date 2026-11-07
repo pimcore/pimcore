@@ -108,6 +108,15 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
         public: true
 
+    # public: it is consumed from KeyConfig, which is not container-managed, and it is what the
+    # Studio key picker asks which types a store can offer.
+    # the loader is wired explicitly: it has no autowiring alias, and the asset metadata loader
+    # implements an interface of the same short name.
+    Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport:
+        public: true
+        arguments:
+            $dataLoader: '@pimcore.implementation_loader.object.data'
+
     # turns the stored descriptors of a relation-typed classification store key into its elements.
     # public, for the same reason the caches further down are: it is consumed from the
     # classification store model and from the class definition data type, neither of which is

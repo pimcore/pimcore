@@ -18,6 +18,7 @@ use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -282,6 +283,11 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         }
 
         return $unitId;
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Numeric;
     }
 
     public function normalize(mixed $value, array $params = []): ?array

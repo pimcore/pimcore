@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -292,5 +293,10 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public function getFieldType(): string
     {
         return 'slider';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Numeric;
     }
 }

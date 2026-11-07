@@ -18,10 +18,11 @@ namespace Pimcore\Model\DataObject\Classificationstore\Engine;
  *
  * They exist so that a caller can ask an engine what it is able to do instead of testing for a
  * concrete engine class. Both shipped engines offer PerKeyLocalization; the document engine also
- * offers Relations, because a document holds whatever normalize() returns and a relation's element
- * descriptors need no addressing of their own. The EAV engine offers neither Relations nor the
- * remaining two. Both engines' write paths consume supports() to refuse a value the engine cannot
- * store, {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::assertStorable()}.
+ * offers Relations and StructuredValues, because a document holds whatever normalize() returns and
+ * a relation's element descriptors need no addressing of their own. The EAV engine offers neither
+ * of those two nor the remaining two. Both engines' write paths consume supports() to refuse a
+ * value the engine cannot store,
+ * {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::assertStorable()}.
  *
  * PerKeyLocalization is the one the existing value table always served - its primary key already
  * carries the language - so both engines answer it, as it is a property of the key configuration
@@ -35,4 +36,14 @@ enum EngineFeature
     case Variants;
     case PerKeyLocalization;
     case Relations;
+
+    /**
+     * The engine holds a value that is not a scalar, which is what decides the field types a key of
+     * one of its stores may be defined with.
+     *
+     * The one capability that is consumed: it is read by
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyConfig::save()}, together with
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport}.
+     */
+    case StructuredValues;
 }

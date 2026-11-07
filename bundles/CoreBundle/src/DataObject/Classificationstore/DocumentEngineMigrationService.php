@@ -31,6 +31,7 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Classificationstore\Service as ClassificationstoreService;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service as ElementService;
@@ -1040,7 +1041,8 @@ final class DocumentEngineMigrationService
      * properties a Carbon carries beside it. An element is referenced rather than held, so its
      * identity is the value and its loaded state is nothing the two engines could differ about.
      * Anything else - a quantity value, an rgba colour, an encrypted field - is compared property
-     * by property, which is where its text is.
+     * by property, which is where its text is, and {@see self::getComparableMembers()} says which
+     * properties those are.
      */
     private function holdTheSameObject(object $stored, object $read, int $depth): bool
     {
@@ -1056,7 +1058,42 @@ final class DocumentEngineMigrationService
             return $stored->getId() === $read->getId();
         }
 
-        return $this->holdTheSameValues((array) $stored, (array) $read, $depth);
+        return $this->holdTheSameValues(
+            $this->getComparableMembers($stored),
+            $this->getComparableMembers($read),
+            $depth
+        );
+    }
+
+    /**
+     * The properties of a value that are the value, without the bookkeeping about where it sits.
+     *
+     * An owner-aware value carries a back-reference to the container holding it - the store, since
+     * {@see \Pimcore\Model\DataObject\Classificationstore::setLocalizedKeyValue()} attaches it -
+     * which is how the value reports a change made through its own setters,
+     * {@see \Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait::markMeDirty()}. It says where
+     * the value lives, not what it holds, and the two sides of this comparison are by construction
+     * two different stores on two different engines: comparing it would make every owner-aware
+     * value diverge - a quantity value, an rgba colour, a geopoint and an encrypted field all carry
+     * one - and halt the drain of a value that came back perfectly.
+     *
+     * @return array<array-key, mixed>
+     */
+    private function getComparableMembers(object $value): array
+    {
+        $members = (array) $value;
+
+        if (!$value instanceof OwnerAwareFieldInterface) {
+            return $members;
+        }
+
+        foreach (['_owner', '_fieldname', '_language'] as $property) {
+            // the cast keys a protected property as "\0*\0<name>", which is how the trait declares
+            // all three; the plain name is unset as well for a value that redeclares one as public
+            unset($members[$property], $members["\0*\0" . $property]);
+        }
+
+        return $members;
     }
 
     /**
