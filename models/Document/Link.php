@@ -322,11 +322,11 @@ class Link extends Model\Document
             $key = is_numeric($key) ? $name : $key;
             $value = $this->getProperty('navigation_' . $name);
             if ($value) {
-                $attribs[] = $key . '="' . $value . '"';
+                $attribs[] = $key . '="' . htmlspecialchars((string) $value) . '"';
             }
         }
 
-        return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+        return '<a href="' . htmlspecialchars($link) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
 
     protected function update(array $params = []): void
