@@ -241,8 +241,8 @@ class BenchmarkTest extends AbstractClassificationStoreTest
     /**
      * Starts counting from here, with every cache that would answer a key, group, relation or
      * field definition lookup without work dropped, so that the figures are those of a cold
-     * request. Service::$definitionsCache is dropped too: it lives for the whole process and is
-     * never invalidated, so leaving it would make the second run of a scenario - and therefore
+     * request. Service::$definitionsCache is dropped too: within one message it is never
+     * invalidated, so leaving it would make the second run of a scenario - and therefore
      * a checkout that has only that cache - look cheaper than a request actually is.
      */
     private function startMeasurement(): void

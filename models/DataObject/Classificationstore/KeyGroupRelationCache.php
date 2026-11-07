@@ -34,8 +34,10 @@ use Symfony\Contracts\Service\ResetInterface;
  * {@see KeyGroupRelation\Dao::update()} / {@see KeyGroupRelation\Dao::delete()}, which dispatch no
  * event of their own.
  *
- * This is deliberately separate from {@see Service::$definitionsCache}, which keys the definition
- * by key id only and is left untouched.
+ * This is deliberately separate from {@see Service::$definitionsCache}, which memoizes one shared
+ * definition instance per entry and is only dropped at the messenger-message boundary, while this
+ * cache hands out a per-call mutable definition and is cleared on a key, group or relation change
+ * as well.
  *
  * @internal
  */

@@ -19,6 +19,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
+use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
+use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 use Pimcore\Model\DataObject\Classificationstore\Service;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
@@ -36,8 +38,31 @@ class ServiceTest extends TestCase
      */
     private const SHARED_KEY = 'csEngineShared';
 
+    private const KEY_ID = 7;
+
+    private const GROUP_A = 11;
+
+    private const GROUP_B = 12;
+
+    private const TITLE_IN_GROUP_A = 'In group A';
+
+    /**
+     * A second title, carried by a relation that no group is asking for.
+     */
+    private const OTHER_TITLE = 'Another title';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // the definitions cache outlives a single test, so it is emptied before every one of them
+        Service::clearDefinitionsCache();
+    }
+
     protected function tearDown(): void
     {
+        Service::clearDefinitionsCache();
+
         foreach ([self::BRICK_KEY, self::OTHER_BRICK_KEY, self::SHARED_KEY] as $brickKey) {
             RuntimeCache::getInstance()->offsetUnset('objectbrick_' . $brickKey);
         }
@@ -220,6 +245,180 @@ class ServiceTest extends TestCase
     public function testTheConfiguredStoreIdIsTheStoreOfTheField(): void
     {
         $this->assertSame(4, Service::getConfiguredStoreId($this->classificationStoreField('cs', 4)));
+    }
+
+    /**
+     * The same key assigned to two groups carries its own assignment in each of them, so the
+     * definition of one group must not be served from the entry of another.
+     */
+    public function testTwoGroupsOfOneKeyEachGetTheDefinitionOfTheirOwnRelation(): void
+    {
+        $first = Service::getFieldDefinitionFromKeyConfig($this->relation(self::GROUP_A, self::TITLE_IN_GROUP_A));
+        $second = Service::getFieldDefinitionFromKeyConfig($this->relation(self::GROUP_B, 'In group B'));
+
+        $this->assertNotSame($first, $second);
+        $this->assertSame(self::TITLE_IN_GROUP_A, $first->getTitle());
+        $this->assertSame('In group B', $second->getTitle());
+    }
+
+    /**
+     * What distinguishes the per group entry from dropping the memoization for relations: one
+     * definition is still built per (groupId, keyId), not one per call.
+     */
+    public function testTwoRelationsOfTheSameGroupAndKeyShareOneDefinition(): void
+    {
+        $this->assertSame(
+            Service::getFieldDefinitionFromKeyConfig($this->relation(self::GROUP_A, self::TITLE_IN_GROUP_A)),
+            Service::getFieldDefinitionFromKeyConfig($this->relation(self::GROUP_A, self::TITLE_IN_GROUP_A))
+        );
+    }
+
+    public function testAKeyConfigIsStillKeyedByItsIdAlone(): void
+    {
+        $keyConfig = $this->keyConfig('The key');
+
+        $this->assertSame(
+            Service::getFieldDefinitionFromKeyConfig($keyConfig),
+            Service::getFieldDefinitionFromKeyConfig($keyConfig)
+        );
+    }
+
+    /**
+     * The per group entry is deliberately not numeric: a numeric string array key is coerced to an
+     * int, which would make it the entry of the key id itself.
+     */
+    public function testAKeyConfigAndARelationOfTheSameKeyIdDoNotShareAnEntry(): void
+    {
+        $keyConfig = $this->keyConfig('The key');
+        $fromKeyConfig = Service::getFieldDefinitionFromKeyConfig($keyConfig);
+
+        $relation = $this->relation(self::GROUP_A, self::TITLE_IN_GROUP_A);
+        $fromRelation = Service::getFieldDefinitionFromKeyConfig($relation);
+
+        $this->assertNotSame($fromKeyConfig, $fromRelation);
+        $this->assertSame(self::TITLE_IN_GROUP_A, $fromRelation->getTitle());
+        $this->assertSame($fromKeyConfig, Service::getFieldDefinitionFromKeyConfig($keyConfig));
+        $this->assertSame('The key', $fromKeyConfig->getTitle());
+    }
+
+    /**
+     * KeyConfig::getId() is nullable and PHP turns a null array key into '', so memoizing a key
+     * config that was never saved handed every other unsaved one the first one's definition.
+     */
+    public function testTwoUnsavedKeyConfigsEachGetTheirOwnDefinition(): void
+    {
+        $first = Service::getFieldDefinitionFromKeyConfig($this->unsavedKeyConfig('The first key'));
+        $second = Service::getFieldDefinitionFromKeyConfig($this->unsavedKeyConfig('The second key'));
+
+        $this->assertNotSame($first, $second);
+        $this->assertSame('The first key', $first->getTitle());
+        $this->assertSame('The second key', $second->getTitle());
+    }
+
+    /**
+     * An unsaved key config is identified by nothing, so it is not memoized at all - and leaves no
+     * entry behind that the key it is saved as would then be served from.
+     */
+    public function testAnUnsavedKeyConfigIsNotMemoized(): void
+    {
+        $keyConfig = $this->unsavedKeyConfig('The key');
+
+        $this->assertNotSame(
+            Service::getFieldDefinitionFromKeyConfig($keyConfig),
+            Service::getFieldDefinitionFromKeyConfig($keyConfig)
+        );
+    }
+
+    /**
+     * The per group entry is built from two typed properties that have no default, so a relation
+     * carrying neither has to leave it unresolved - reading them raised an Error on the path every
+     * definition resolution goes through, and nothing identifies such a relation to memoize it under.
+     */
+    public function testARelationCarryingNeitherIdResolvesItsDefinitionAndIsNotMemoized(): void
+    {
+        $first = Service::getFieldDefinitionFromKeyConfig($this->relationWithoutIds(self::TITLE_IN_GROUP_A));
+        $second = Service::getFieldDefinitionFromKeyConfig($this->relationWithoutIds(self::OTHER_TITLE));
+
+        $this->assertNotSame($first, $second);
+        $this->assertSame(self::TITLE_IN_GROUP_A, $first->getTitle());
+        $this->assertSame(self::OTHER_TITLE, $second->getTitle());
+    }
+
+    /**
+     * Half the entry is no entry: one of the two ids identifies a relation no better than neither
+     * does, and reading the one that is missing raises the same Error.
+     */
+    public function testARelationCarryingOnlyOneOfTheTwoIdsIsNotMemoized(): void
+    {
+        $withoutGroupId = $this->relationWithoutIds(self::TITLE_IN_GROUP_A);
+        $withoutGroupId->setKeyId(self::KEY_ID);
+
+        $withoutKeyId = $this->relationWithoutIds(self::OTHER_TITLE);
+        $withoutKeyId->setGroupId(self::GROUP_A);
+
+        $this->assertNotSame(
+            Service::getFieldDefinitionFromKeyConfig($withoutGroupId),
+            Service::getFieldDefinitionFromKeyConfig($withoutGroupId)
+        );
+        $this->assertNotSame(
+            Service::getFieldDefinitionFromKeyConfig($withoutKeyId),
+            Service::getFieldDefinitionFromKeyConfig($withoutKeyId)
+        );
+    }
+
+    public function testClearingTheDefinitionsCacheEmptiesThePerGroupEntriesAsWell(): void
+    {
+        $first = Service::getFieldDefinitionFromKeyConfig($this->relation(self::GROUP_A, self::TITLE_IN_GROUP_A));
+
+        Service::clearDefinitionsCache();
+
+        $this->assertNotSame(
+            $first,
+            Service::getFieldDefinitionFromKeyConfig($this->relation(self::GROUP_A, self::TITLE_IN_GROUP_A))
+        );
+    }
+
+    /**
+     * A relation's definition is the key's own joined column, so every group of a key answers the
+     * same JSON today - the differing title is set explicitly to make a leaked entry observable.
+     */
+    private function relation(int $groupId, string $title): KeyGroupRelation
+    {
+        $relation = $this->relationWithoutIds($title);
+        $relation->setGroupId($groupId);
+        $relation->setKeyId(self::KEY_ID);
+
+        return $relation;
+    }
+
+    /**
+     * A relation as it is built with `new`: keyId and groupId are typed properties without a default,
+     * so neither answers anything until it is set.
+     */
+    private function relationWithoutIds(string $title): KeyGroupRelation
+    {
+        $relation = new KeyGroupRelation();
+        $relation->setType('input');
+        $relation->setDefinition(json_encode(['name' => 'csKey', 'title' => $title]));
+
+        return $relation;
+    }
+
+    private function keyConfig(string $title): KeyConfig
+    {
+        return $this->unsavedKeyConfig($title)->setId(self::KEY_ID);
+    }
+
+    /**
+     * A key config as it is before its first save: {@see KeyConfig::getId()} answers null for it.
+     */
+    private function unsavedKeyConfig(string $title): KeyConfig
+    {
+        $keyConfig = new KeyConfig();
+        $keyConfig->setType('input');
+        $keyConfig->setDefinition(json_encode(['name' => 'csKey', 'title' => $title]));
+
+        return $keyConfig;
     }
 
     private function classificationStoreField(string $name, ?int $storeId = null): ClassificationstoreField
