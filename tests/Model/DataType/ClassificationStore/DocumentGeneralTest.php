@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable as StructuredT
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\Consent;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\EncryptedField;
 use Pimcore\Model\DataObject\Data\ExternalImage;
 use Pimcore\Model\DataObject\Data\Geobounds;
@@ -34,8 +35,10 @@ use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\ImageGallery;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Data\NumericRange;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Data\Video;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
 use Pimcore\Tests\Support\Helper\DataType\MixedNormalizingField;
@@ -50,6 +53,8 @@ use Pimcore\Tool\Serialize;
  */
 class DocumentGeneralTest extends GeneralTest
 {
+    use RelationFixtureTrait;
+
     private const STORE_NAME = 'teststore';
 
     private const FIELDNAME = 'csstore';
@@ -80,6 +85,8 @@ class DocumentGeneralTest extends GeneralTest
 
     private const DEFAULT_LANGUAGE = 'default';
 
+    private const RELATION_KEY_PREFIX = 'cs-relation-';
+
     protected function getStoreEngine(): ?string
     {
         return 'document';
@@ -98,7 +105,133 @@ class DocumentGeneralTest extends GeneralTest
         $key?->delete();
         $group?->delete();
 
+        $this->deleteRelationFixture();
+
         parent::tearDown();
+    }
+
+    public function testAManyToOneRelationKeyRoundTrips(): void
+    {
+        $target = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'one');
+
+        $read = $this->roundTrip('csManyToOne', $target);
+
+        $this->assertInstanceOf(ElementInterface::class, $read);
+        $this->assertSame($target->getId(), $read->getId());
+    }
+
+    public function testAManyToManyRelationKeyRoundTripsInOrder(): void
+    {
+        $targets = $this->createTargets(3);
+
+        $read = $this->roundTrip('csManyToMany', $targets);
+
+        $this->assertSame($this->idsOf($targets), $this->idsOf($read));
+    }
+
+    public function testAManyToManyObjectRelationKeyRoundTripsInOrder(): void
+    {
+        $targets = $this->createTargets(3);
+
+        $read = $this->roundTrip('csManyToManyObject', $targets);
+
+        $this->assertSame($this->idsOf($targets), $this->idsOf($read));
+    }
+
+    public function testAnAdvancedManyToManyRelationKeyRoundTripsWithItsColumnValues(): void
+    {
+        $targets = $this->createTargets(2);
+        $items = [];
+
+        foreach ($targets as $index => $target) {
+            $item = new ElementMetadata('csAdvancedManyToMany', [self::RELATION_COLUMN], $target);
+            $item->setData([self::RELATION_COLUMN => 'value-' . $index]);
+            $items[] = $item;
+        }
+
+        $read = $this->roundTrip('csAdvancedManyToMany', $items);
+
+        $this->assertCount(2, $read);
+        $this->assertSame($this->idsOf($targets), $this->idsOf(array_map(
+            static fn (ElementMetadata $item): ElementInterface => $item->getElement(),
+            $read
+        )));
+
+        foreach ($read as $index => $item) {
+            $this->assertSame('value-' . $index, $item->getData()[self::RELATION_COLUMN]);
+        }
+    }
+
+    public function testAnAdvancedManyToManyObjectRelationKeyRoundTripsWithItsColumnValues(): void
+    {
+        $targets = $this->createTargets(2);
+        $items = [];
+
+        foreach ($targets as $index => $target) {
+            $item = new ObjectMetadata('csAdvancedManyToManyObject', [self::RELATION_COLUMN], $target);
+            $item->setData([self::RELATION_COLUMN => 'value-' . $index]);
+            $items[] = $item;
+        }
+
+        $read = $this->roundTrip('csAdvancedManyToManyObject', $items);
+
+        $this->assertCount(2, $read);
+        $this->assertSame($this->idsOf($targets), $this->idsOf(array_map(
+            static fn (ObjectMetadata $item): ElementInterface => $item->getElement(),
+            $read
+        )));
+
+        foreach ($read as $index => $item) {
+            $this->assertSame('value-' . $index, $item->getData()[self::RELATION_COLUMN]);
+        }
+    }
+
+    /**
+     * Stores one value and reads it back from a freshly loaded object, which is the round trip
+     * through the stored document.
+     */
+    private function roundTrip(string $keyName, mixed $value): mixed
+    {
+        $group = $this->createRelationFixture();
+        $object = $this->createCsObject();
+
+        $object->getCsstore()->setLocalizedKeyValue(
+            (int) $group->getId(),
+            $this->getRelationKeyId($keyName),
+            $value
+        );
+        $object->save();
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+
+        return $reloaded->getCsstore()->getLocalizedKeyValue(
+            (int) $group->getId(),
+            $this->getRelationKeyId($keyName)
+        );
+    }
+
+    /**
+     * @return ElementInterface[]
+     */
+    private function createTargets(int $count): array
+    {
+        $targets = [];
+
+        for ($index = 0; $index < $count; $index++) {
+            $targets[] = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . $index . '-');
+        }
+
+        return $targets;
+    }
+
+    /**
+     * @param ElementInterface[] $elements
+     *
+     * @return int[]
+     */
+    private function idsOf(array $elements): array
+    {
+        return array_map(static fn (ElementInterface $element): int => $element->getId(), $elements);
     }
 
     /**

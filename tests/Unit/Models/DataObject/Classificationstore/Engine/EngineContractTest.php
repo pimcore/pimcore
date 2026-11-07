@@ -95,22 +95,29 @@ class EngineContractTest extends TestCase
     }
 
     /**
-     * StructuredValues is the one capability the document engine offers that the EAV engine does
-     * not: a document holds what `normalize()` returns, with no column to pack it into. Per key
-     * localization it answers as the EAV engine does, as a property of the key configuration rather
-     * than of the storage, and no model API for a qualified value lands with it, so the other three
-     * stay false for both.
+     * The document engine offers the one capability the EAV engine offers - per key localization is
+     * a property of the key configuration, not of the storage - and StructuredValues and Relations
+     * on top of it: a document holds whatever `normalize()` returns, with no column to pack it
+     * into, so a structured value needs no marshaller and a relation's element descriptors need no
+     * addressing of their own. Neither MultiValue nor Variants has a model API for a qualified
+     * value yet, so those two stay false for both engines.
      */
-    public function testDocumentEngineSupportsStructuredValuesAndPerKeyLocalization(): void
+    public function testDocumentEngineSupportsStructuredValuesPerKeyLocalizationAndRelations(): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
         $instance = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
 
         $this->assertInstanceOf(EngineInterface::class, $instance);
 
+        $supported = [
+            EngineFeature::StructuredValues,
+            EngineFeature::PerKeyLocalization,
+            EngineFeature::Relations,
+        ];
+
         foreach (EngineFeature::cases() as $feature) {
             $this->assertSame(
-                $feature === EngineFeature::StructuredValues || $feature === EngineFeature::PerKeyLocalization,
+                in_array($feature, $supported, true),
                 $instance->supports($feature),
                 $feature->name . ' is answered wrongly'
             );
@@ -187,10 +194,11 @@ class EngineContractTest extends TestCase
     /**
      * An unsupported feature is still answered with `false` by `supports()`. The one place that
      * throws instead is a key definition, and a value write, that the store's engine cannot hold:
-     * the alternative there is a value the storage silently drops, so the exception exists and
-     * lives beside the other two engine exceptions.
+     * a write of such a value is refused rather than skipped or written into whatever column its
+     * normalized form happens to fit, so the exception exists and lives beside the other two
+     * engine exceptions.
      */
-    public function testTheUnsupportedEngineFeatureExceptionLivesBesideTheOtherEngineExceptions(): void
+    public function testAnUnsupportedFeatureIsRefusedWithItsOwnExceptionBesideTheOthers(): void
     {
         $exceptionDirectory = dirname(
             (string) (new ReflectionClass(UnknownClassificationStoreEngineException::class))->getFileName()
@@ -201,6 +209,14 @@ class EngineContractTest extends TestCase
             $exceptionDirectory,
             dirname((string) (new ReflectionClass(UnsupportedEngineFeatureException::class))->getFileName())
         );
+
+        foreach ([EavEngine::class, DocumentEngine::class] as $engine) {
+            $this->assertStringContainsString(
+                'assertStorable',
+                $this->engineSource($engine),
+                $engine . ' has to refuse a value its storage cannot address'
+            );
+        }
     }
 
     /**

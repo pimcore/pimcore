@@ -18,7 +18,7 @@ key can only be added once to that object.
 * An object can have more than one classification store.
 * Localization is supported and chosen per key; the class definition setting is the default for the keys that do not decide.
 * The classification store introduces the concept of a fallback language.
-* Which data types a key can use depends on the store's [storage engine](#storage-engines) - see [Available Data Types](#available-data-types). The store can be extended with custom data types.
+* Which data types a key can use depends on the store's [storage engine](#storage-engines) - every simple data type on both, the structured types that ship a Classification Store marshaller on the EAV engine, and whatever `normalize()` returns, relations included, on the document engine. See [Available Data Types](#available-data-types). The store can be extended with custom data types.
 * Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc).
 * Keys can be organized in groups.
 * A key can belong to several groups.
@@ -49,7 +49,7 @@ Never accepted, on any engine:
 
 | engine | what a key may be |
 |---|---|
-| `eav` (default, also `NULL`) | a type whose value fits the two value columns `value` and `value2` (both `LONGTEXT`): every type that normalizes to a scalar - input, textarea, wysiwyg, numeric, slider, checkbox, date, datetime, time, select, country, language, user and so on - plus the types that ship a Classification Store marshaller packing the value into the two columns: `booleanSelect`, `countrymultiselect`, `encryptedField`, `image`, `inputQuantityValue`, `inputQuantityValueRange`, `languagemultiselect`, `multiselect`, `quantityValue`, `quantityValueRange`, `rgbaColor` and `table`. The authoritative list of those marshallers is the `# classification store` section of `bundles/CoreBundle/config/marshaller.yaml`. |
+| `eav` (default, also `NULL`, and what every store uses until it is flipped) | a type whose value fits the two value columns `value` and `value2` (both `LONGTEXT`): every type that normalizes to a scalar - input, textarea, wysiwyg, numeric, slider, checkbox, date, datetime, time, select, country, language, user and so on - plus the types that ship a Classification Store marshaller packing the value into the two columns: `booleanSelect`, `countrymultiselect`, `encryptedField`, `image`, `inputQuantityValue`, `inputQuantityValueRange`, `languagemultiselect`, `multiselect`, `quantityValue`, `quantityValueRange`, `rgbaColor` and `table`. The authoritative list of those marshallers is the `# classification store` section of `bundles/CoreBundle/config/marshaller.yaml`. |
 | `document` | every accepted type. A document holds whatever the field definition's `normalize()` returns, so no marshaller is needed and there is no column to pack into - `consent`, `dateRange`, `externalImage`, `geobounds`, `geopoint`, `geopolygon`, `geopolyline`, `hotspotimage`, `imageGallery`, `link`, `numericRange`, `structuredTable` and `video` are storable there and are refused on an `eav` store. |
 
 Defining a key of a type the engine of its store cannot hold is refused with
@@ -73,15 +73,29 @@ does not override it declares `KeyFilter::None` - and core ships the declaration
 grid filter and no index mapping for a Classification Store key, because such a value never reaches
 `object_query_<CLASS>`. Consuming the declaration is the index side's part.
 
-Relations are not supported on an `eav` store, and that is a structural limit rather than a missing
-feature: a relation is not stored in a value column at all, but as rows of `object_relations_*`,
-which address their owner by field name and owner type (`object`, `localizedfield`,
-`fieldcollection`, `objectbrick`). A Classification Store key is none of those - its values live in
-the store's own table, keyed by group, key and language - so there is no row a relation could be
-written to. Use an [Object Brick](./60_Object_Bricks.md) when the attributes include relations. The
-relation types are part of the accepted set and the `document` engine removes that structural limit,
-but the model API around them - lazy loading, the relation metadata of an advanced relation - is not
-part of this release; treat a relation key on a document store as not yet supported.
+Relations are **not** supported on an `eav` store, and that is a structural limit rather than a
+missing feature: a relation is not stored in a value column at all, but as rows of
+`object_relations_*`, which address their owner by field name and owner type (`object`,
+`localizedfield`, `fieldcollection`, `objectbrick`). A Classification Store key is none of those -
+its values live in the store's own table, keyed by group, key and language - so there is no row a
+relation could be written to, and saving such a value is refused with
+`Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException`. Flip the store to the
+`document` engine, or use an [Object Brick](./60_Object_Bricks.md), when the attributes include
+relations.
+
+The `document` engine removes that structural limit, because a group's values are one JSON document
+and a value is whatever the data type's `normalize()` returns: `manyToOneRelation`,
+`manyToManyRelation`, `manyToManyObjectRelation`, `advancedManyToManyRelation` and
+`advancedManyToManyObjectRelation` store their element descriptors in the document and resolve them
+when the key is read; the per-relation column values of the advanced pair are held in the per-class
+table `object_classificationstore_meta_<CLASS>`. The elements are not loaded with the object - a key
+is resolved on first read, and a descriptor whose target has been deleted is left out of the value
+and taken out of the document on the next save of the object. The opt-in command
+`bin/console pimcore:classificationstore:purge-relations` reports such descriptors across an
+installation and, with `--force`, removes them.
+
+A `reverseObjectRelation` key is refused on both engines: its value is computed from the objects
+pointing at the owner rather than stored on it, so there is nothing for a store to hold.
 
 ## Configuration of Classification Stores
 

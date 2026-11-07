@@ -335,7 +335,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
+        } elseif ($container instanceof DataObject\Localizedfield
+            || $container instanceof DataObject\Data\BlockElement
+            || $container instanceof DataObject\Classificationstore
+        ) {
+            // the container holds the value itself; there is no lazy load to trigger here
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);
