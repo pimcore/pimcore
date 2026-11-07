@@ -126,10 +126,19 @@ class Service
             $dataDefinition->name = $name;
         }
 
-        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+        // __set_state() rebuilds the definition from its own properties, which leaves a wrapper's
+        // delegate as the raw array it was decoded from - it is rebuilt here, as the inner type,
+        // from exactly that array, so the inner definition keeps its own properties
+        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField
+            || $dataDefinition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
             $delegateDataType = $dataDefinition->getDelegateDatatype();
-            $delegateDefinition = self::getFieldDefinitionFromJson((array) $delegateDefinitionRaw, $delegateDataType);
+            // a blob naming no inner type leaves a delegate-less wrapper rather than the raw decoded
+            // array, which no reader of the delegate would recognise as a definition
+            $delegateDefinition = $delegateDataType === null
+                ? null
+                : self::getFieldDefinitionFromJson((array) $delegateDefinitionRaw, $delegateDataType);
             $dataDefinition->setDelegate($delegateDefinition);
         }
 

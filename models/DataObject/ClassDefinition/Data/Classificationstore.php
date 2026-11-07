@@ -33,6 +33,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     use DataObject\Traits\DataWidthTrait;
 
     /**
+     * The variant a value with no variant qualifier of its own belongs to, which every key holds
+     * whatever it declares. {@see DataObject\Classificationstore::getKeyValues()}
+     */
+    private const DEFAULT_VARIANT = 'default';
+
+    /**
      * @internal
      *
      */
@@ -913,6 +919,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relationCache = $this->getKeyGroupRelationCache();
             $existingGroupIds = $this->getExistingGroupIds(array_keys($activeGroups, true, true));
             $relationCache->load($existingGroupIds);
+            $qualifiedItems = $data->getQualifiedItems();
 
             foreach ($existingGroupIds as $activeGroupId) {
                 foreach ($relationCache->getRelations($activeGroupId) as $keyId => $keyGroupRelation) {
@@ -920,6 +927,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     if ($keyGroupRelation->isMandatory()) {
                         $keyDef->setMandatory(true);
+                    }
+
+                    foreach (
+                        $this->collectMaximumViolations(
+                            $keyDef,
+                            $qualifiedItems[$activeGroupId][$keyId] ?? []
+                        ) as $violation
+                    ) {
+                        $subItems[] = $violation;
                     }
 
                     // only a relation-typed key is selected without being resolved; every other key
@@ -976,14 +992,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $value = $resolver->resolve($keyDef, $value->getValue(), $object, $data)->getData();
                         }
 
-                        try {
-                            $keyDef->checkValidity($value, false, $params);
-                        } catch (Exception $exception) {
-                            $subItems[] = new Model\Element\ValidationException(
-                                $exception->getMessage() . ' (' . $validLanguage . ')',
-                                $exception->getCode(),
-                                $exception->getPrevious()
-                            );
+                        foreach (
+                            $this->collectKeyViolations(
+                                $keyDef,
+                                $value,
+                                (string) $validLanguage,
+                                $qualifiedItems[$activeGroupId][$keyId][$validLanguage] ?? [],
+                                $params
+                            ) as $violation
+                        ) {
+                            $subItems[] = $violation;
                         }
                     }
                 }
@@ -1633,5 +1651,175 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         // Compare items
         return serialize($oldValue->getItems()) === serialize($newValue->getItems());
+    }
+
+    /**
+     * The validation failures of one key in one language: the value of the default variant at
+     * position 0, as every caller saw it before a value could carry qualifiers, and every other slot
+     * the current declaration of the key permits. A check driven by that one value alone would leave
+     * every further slot of a qualified key unvalidated by the inner type.
+     *
+     * The mandatory flag is a statement about the key in that language rather than about one slot of
+     * it, so the first slot holding a value answers it and the rest are checked with the mandatory
+     * check omitted - a key whose list starts above position 0 holds a value and is not empty.
+     *
+     * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
+     * @param array<string, mixed> $params
+     *
+     * @return Model\Element\ValidationException[]
+     */
+    private function collectKeyViolations(
+        Data $keyDef,
+        mixed $value,
+        string $language,
+        array $slotValues,
+        array $params
+    ): array {
+        $slots = $this->collectDeclaredSlots($keyDef, $value, $language, $slotValues);
+        $mandatorySlot = $this->slotAnsweringTheMandatoryCheck($keyDef, $slots);
+        $violations = [];
+
+        foreach ($slots as $index => $slot) {
+            $omitMandatoryCheck = $index !== $mandatorySlot;
+
+            // an empty slot holds nothing for the inner type to validate; the one slot that answers
+            // the mandatory check is checked whether it holds a value or not
+            if ($omitMandatoryCheck && $keyDef->isEmpty($slot['value'])) {
+                continue;
+            }
+
+            try {
+                $keyDef->checkValidity($slot['value'], $omitMandatoryCheck, $params);
+            } catch (Exception $exception) {
+                $violations[] = new Model\Element\ValidationException(
+                    $exception->getMessage() . ' (' . $slot['context'] . ')',
+                    $exception->getCode(),
+                    $exception->getPrevious()
+                );
+            }
+        }
+
+        return $violations;
+    }
+
+    /**
+     * The slots of one key in one language that its declaration permits, the default variant at
+     * position 0 first - that one carries the value the caller resolved rather than the stored one,
+     * because the language fallback and the inherited value it may come from are resolved there.
+     *
+     * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
+     *
+     * @return array<int, array{value: mixed, context: string}>
+     */
+    private function collectDeclaredSlots(Data $keyDef, mixed $value, string $language, array $slotValues): array
+    {
+        $slots = [['value' => $value, 'context' => $language]];
+        $holdsAList = $keyDef instanceof MultiValue && $keyDef->isMultiValue();
+
+        foreach ($slotValues as $variant => $positions) {
+            if (!$this->declaresVariant($keyDef, (string) $variant)) {
+                continue;
+            }
+
+            foreach ($positions as $position => $slotValue) {
+                if ((string) $variant === self::DEFAULT_VARIANT && (int) $position === 0) {
+                    continue;
+                }
+
+                if ((int) $position !== 0 && !$holdsAList) {
+                    continue;
+                }
+
+                $slots[] = [
+                    'value' => $slotValue,
+                    'context' => $language . '/' . $variant . '/' . $position,
+                ];
+            }
+        }
+
+        return $slots;
+    }
+
+    /**
+     * The index of the slot the mandatory check is put to: the first one that holds a value, and the
+     * default-variant one when the key holds none at all - which is the slot the failure of an empty
+     * mandatory key has always been reported against.
+     *
+     * @param array<int, array{value: mixed, context: string}> $slots
+     */
+    private function slotAnsweringTheMandatoryCheck(Data $keyDef, array $slots): int
+    {
+        foreach ($slots as $index => $slot) {
+            if (!$keyDef->isEmpty($slot['value'])) {
+                return $index;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * The slots of one key that hold more values than its declaration permits, as the per-key
+     * failures the caller collects - a field-level message in the editor rather than one generic
+     * error for the whole store, which is why the declared maximum is reported here and not refused
+     * by {@see DataObject\Classificationstore::setKeyValues()}.
+     *
+     * A slot whose variant the key no longer declares is hidden rather than reported: narrowing a
+     * declaration keeps the values it stops showing, so they must not make the object unsavable.
+     *
+     * @param array<string, array<string, array<int, mixed>>> $keyItems
+     *        structure: [language][variant][position] = value
+     *
+     * @return Model\Element\ValidationException[]
+     */
+    private function collectMaximumViolations(Data $keyDef, array $keyItems): array
+    {
+        if (!$keyDef instanceof MultiValue || !$keyDef->isMultiValue()) {
+            return [];
+        }
+
+        $maximum = $keyDef->getMaximum();
+        if ($maximum === null) {
+            return [];
+        }
+
+        $violations = [];
+
+        foreach ($keyItems as $language => $variants) {
+            foreach ($variants as $variant => $values) {
+                if (!$this->declaresVariant($keyDef, (string) $variant)) {
+                    continue;
+                }
+
+                if (count($values) <= $maximum) {
+                    continue;
+                }
+
+                $violations[] = new Model\Element\ValidationException(sprintf(
+                    'Key [ %s ] holds %d values where at most %d are allowed (%s/%s)',
+                    $keyDef->getName(),
+                    count($values),
+                    $maximum,
+                    $language,
+                    $variant
+                ));
+            }
+        }
+
+        return $violations;
+    }
+
+    /**
+     * Whether the current declaration of a key still permits the given variant: the default variant
+     * always, a declared one, and nothing else. It is the one rule the maximum check and the
+     * per-slot validation both read, so the two cannot disagree about which slots are visible.
+     */
+    private function declaresVariant(Data $keyDef, string $variant): bool
+    {
+        if ($variant === self::DEFAULT_VARIANT) {
+            return true;
+        }
+
+        return $keyDef instanceof MultiValue && in_array($variant, $keyDef->getVariantNames(), true);
     }
 }

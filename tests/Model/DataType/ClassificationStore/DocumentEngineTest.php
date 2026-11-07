@@ -20,11 +20,13 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\EncryptedField;
+use Pimcore\Model\DataObject\Data\MultiValue as MultiValueEntry;
 use ReflectionClass;
 
 /**
@@ -655,6 +657,40 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
     }
 
     /**
+     * A key of a wrapper type reports its own field type, so the check that decides whether a value
+     * is marshalled has to look through it: a secret stored through a `multiValue` key reaches the
+     * document through the inner type's marshaller as well, rather than as normalized data.
+     */
+    public function testASecretStoredThroughAMultiValueKeyIsNotReadableInTheDocument(): void
+    {
+        [$multiValueKey, $delegate] = $this->createEncryptedMultiValueKey('doc_mv_secret');
+        $groupId = $this->groupA->getId();
+
+        $this->saveStore(function (Classificationstore $store) use ($groupId, $multiValueKey, $delegate): void {
+            $store->setKeyValues($groupId, $multiValueKey->getId(), [
+                new MultiValueEntry(new EncryptedField($delegate, self::SECRET), null, null, 0),
+                new MultiValueEntry(new EncryptedField($delegate, self::OTHER_SECRET), null, null, 1),
+            ]);
+        });
+
+        $document = (string) $this->storedDocument($groupId);
+
+        $this->assertStringNotContainsString(
+            self::SECRET,
+            $document,
+            'the cleartext of a wrapped secret must not be readable in the stored document'
+        );
+        $this->assertStringNotContainsString(self::OTHER_SECRET, $document);
+
+        $values = $this->reloadStore()->getKeyValues($groupId, $multiValueKey->getId());
+
+        $this->assertCount(2, $values);
+        $this->assertInstanceOf(EncryptedField::class, $values[0]);
+        $this->assertSame(self::SECRET, $values[0]->getPlain());
+        $this->assertSame(self::OTHER_SECRET, $values[1]->getPlain());
+    }
+
+    /**
      * An `encryptedField` key on group A, with the delegate a value of it has to be built against.
      *
      * @return array{Classificationstore\KeyConfig, Input}
@@ -672,6 +708,33 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
         $this->assignKey($this->groupA, $encryptedKey, 2);
 
         return [$encryptedKey, $delegate];
+    }
+
+    /**
+     * A `multiValue` key on group A whose inner type is an `encryptedField`, with the delegate of
+     * that inner type a value has to be built against.
+     *
+     * @return array{Classificationstore\KeyConfig, Input}
+     */
+    private function createEncryptedMultiValueKey(string $name): array
+    {
+        $delegate = new Input();
+        $delegate->setName($name);
+
+        $inner = new EncryptedFieldDefinition();
+        $inner->setName($name);
+        $inner->setDelegateDatatype('input');
+        $inner->setDelegate($delegate);
+
+        $definition = new MultiValueDefinition();
+        $definition->setMultiValue(true);
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        $multiValueKey = $this->createKey($name, true, $definition);
+        $this->assignKey($this->groupA, $multiValueKey, 3);
+
+        return [$multiValueKey, $delegate];
     }
 
     private function storeSecret(Classificationstore\KeyConfig $key, Input $delegate, string $secret): void

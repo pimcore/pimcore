@@ -75,6 +75,10 @@ services:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_countrymultiselect, key: 'classificationstore_countrymultiselect' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_languagesmultiselect, key: 'classificationstore_languagemultiselect' }
 
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue:
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_multiValue, key: 'classificationstore_multiValue' }
+
     Pimcore\DataObject\ClassificationstoreDataMarshaller\RgbaColor:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_rgbaColor, key: 'classificationstore_rgbaColor' }

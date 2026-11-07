@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Pimcore;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueKey;
+use Pimcore\Model\DataObject\Data\MultiValue;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Pimcore\Db;
@@ -58,6 +62,16 @@ use Pimcore\Tool\Serialize;
 class DocumentGeneralTest extends GeneralTest
 {
     use RelationFixtureTrait;
+
+    private const IMPERIAL = 'imperial';
+
+    private const METRIC = 'metric';
+
+    private const MULTI_VALUE_KEY = 'mvHeight';
+
+    private const MULTI_VALUE_GROUP = 'testgroupMultiValue';
+
+    private const DOCUMENT_TABLE_PREFIX = 'object_classificationstore_doc_';
 
     private const STORE_NAME = 'teststore';
 
@@ -107,6 +121,7 @@ class DocumentGeneralTest extends GeneralTest
     /**
      * The store is shared across the suite and testClassificationStoreQuantityValue adds a key to it;
      * left there, it would change the key count GeneralTest::testBasics expects of the store.
+     * The qualified-value fixture of this class is its own for the same reason.
      */
     public function tearDown(): void
     {
@@ -118,6 +133,13 @@ class DocumentGeneralTest extends GeneralTest
         $group?->delete();
 
         $this->deleteRelationFixture();
+
+        if ($store) {
+            Classificationstore\KeyConfig::getByName(self::MULTI_VALUE_KEY, $store->getId())?->delete();
+            Classificationstore\GroupConfig::getByName(self::MULTI_VALUE_GROUP, $store->getId())?->delete();
+        }
+
+        $this->clearDefinitionCaches();
 
         parent::tearDown();
     }
@@ -1916,4 +1938,423 @@ class DocumentGeneralTest extends GeneralTest
 
         return $fieldDefinition;
     }
+    /**
+     * A document written before the qualifiers existed carries only the language and the value, and
+     * reads back as the default variant at position 0 - so the envelope version does not move and
+     * nothing has to be migrated. A save that changes nothing about that group does not rewrite it.
+     */
+    public function testADocumentWrittenBeforeTheQualifiersExistedReadsBackUnchanged(): void
+    {
+        $groupId = Classificationstore\GroupConfig::getByName('testgroup1')->getId();
+        $otherGroupId = Classificationstore\GroupConfig::getByName('testgroup2')->getId();
+        $keyId = $this->inputKeyId();
+        $otherKeyId = $this->textareaKeyId();
+
+        $object = $this->createObject('legacy');
+        $object->save();
+
+        $legacyDocument = '{"v":1,"k":{"' . $keyId . '":[{"d":"legacy"},{"l":"en","d":"legacy-en"}]}}';
+
+        // `values` is a reserved word, so the columns are named with their quoting here
+        Db::get()->executeStatement(
+            'INSERT INTO ' . $this->documentTable()
+            . ' (`id`, `fieldname`, `groupId`, `collectionId`, `values`, `checksum`)'
+            . ' VALUES (?, ?, ?, NULL, ?, NULL)',
+            [$object->getId(), self::FIELDNAME, $groupId, $legacyDocument]
+        );
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame('legacy', $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId));
+        $this->assertSame('legacy-en', $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId, 'en'));
+        $this->assertSame(['legacy'], $object->getCsstore()->getKeyValues($groupId, $keyId));
+        $this->assertSame(['legacy-en'], $object->getCsstore()->getKeyValues($groupId, $keyId, 'en'));
+
+        // a save that writes another group, so that the diff really does serialize this group's
+        // legacy document and compare it - a save that wrote nothing at all would prove nothing
+        $object->getCsstore()->setActiveGroups(
+            $object->getCsstore()->getActiveGroups() + [$otherGroupId => true]
+        );
+        $object->getCsstore()->setLocalizedKeyValue($otherGroupId, $otherKeyId, 'elsewhere');
+        $object->save();
+
+        $row = $this->storedRow($object->getId(), $groupId);
+
+        $this->assertSame($legacyDocument, $row['values'], 'the legacy document was not rewritten');
+        $this->assertNull($row['checksum'], 'and no writer stamped it');
+    }
+
+    /**
+     * A list keeps its order through a save and a load, including after a value in the middle is
+     * replaced - the document holds one entry per position, and the positions it holds are the ones
+     * the list is read back in.
+     */
+    public function testAListKeepsItsOrderThroughASaveAndALoad(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([], true);
+
+        $object = $this->createObject('list');
+        $object->getCsstore()->setKeyValues($groupId, $keyId, $this->listEntries(['red', 'blue', 'green']));
+        $object->save();
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertSame(['red', 'blue', 'green'], $object->getCsstore()->getKeyValues($groupId, $keyId));
+
+        $object->getCsstore()->setKeyValues($groupId, $keyId, $this->listEntries(['red', 'teal', 'green']));
+        $object->save();
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertSame(['red', 'teal', 'green'], $object->getCsstore()->getKeyValues($groupId, $keyId));
+        $this->assertSame(
+            'red',
+            $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId),
+            'the documented getter answers position 0 and not the whole list'
+        );
+
+        $positions = array_map(
+            static fn (array $entry): int => (int) ($entry['p'] ?? 0),
+            $this->storedEntries($object->getId(), $groupId, $keyId)
+        );
+
+        sort($positions);
+        $this->assertSame([0, 1, 2], $positions);
+    }
+
+    /**
+     * A list whose first value is cleared keeps the positions of the values behind it, through the
+     * save and through the load: the document holds the positions it was given rather than closing
+     * the gap, so the second value is still read as the second.
+     */
+    public function testAListWhoseFirstValueIsClearedKeepsThePositionsOfTheOthers(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([], true);
+
+        $object = $this->createObject('cleared');
+        $object->getCsstore()->setKeyValues($groupId, $keyId, $this->listEntries(['red', 'blue', 'green']));
+        $object->save();
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [
+            new MultiValue('blue', null, null, 1),
+            new MultiValue('green', null, null, 2),
+        ]);
+        $object->save();
+
+        $positions = array_map(
+            static fn (array $entry): int => (int) ($entry['p'] ?? 0),
+            $this->storedEntries($object->getId(), $groupId, $keyId)
+        );
+
+        sort($positions);
+        $this->assertSame([1, 2], $positions, 'the cleared position is gone and the others stayed where they were');
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame([1 => 'blue', 2 => 'green'], $object->getCsstore()->getKeyValues($groupId, $keyId));
+        $this->assertNull(
+            $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId),
+            'the documented getter answers position 0, which the list no longer holds'
+        );
+    }
+
+    /**
+     * Each variant of a key is written and read on its own: a save that changes one leaves the
+     * stored value of the other byte for byte as it was, and leaves the documents of the other
+     * groups alone - which is what one document per group buys.
+     */
+    public function testEachVariantOfAKeyIsWritableOnItsOwn(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], false);
+        $otherGroupId = Classificationstore\GroupConfig::getByName('testgroup1')->getId();
+        $otherKeyId = $this->inputKeyId();
+
+        $object = $this->createObject('variants');
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [
+            new MultiValue('1.80 m', null, self::METRIC),
+            new MultiValue('5 ft 11 in', null, self::IMPERIAL),
+        ]);
+        $object->getCsstore()->setLocalizedKeyValue($otherGroupId, $otherKeyId, 'untouched');
+        $object->save();
+
+        $entries = $this->storedEntries($object->getId(), $groupId, $keyId);
+        $this->assertCount(2, $entries, 'the key carries one entry per variant in its group document');
+
+        $storedMetric = $this->entryOf($entries, self::METRIC);
+        $otherGroupRow = $this->storedRow($object->getId(), $otherGroupId);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [new MultiValue('6 ft 0 in', null, self::IMPERIAL)]);
+        $object->save();
+
+        $entries = $this->storedEntries($object->getId(), $groupId, $keyId);
+
+        $this->assertSame(
+            $storedMetric,
+            $this->entryOf($entries, self::METRIC),
+            'the metric entry is byte-identical after a save that changed only the imperial one'
+        );
+        $this->assertSame('6 ft 0 in', $this->entryOf($entries, self::IMPERIAL)['d']);
+        $this->assertSame(
+            $otherGroupRow,
+            $this->storedRow($object->getId(), $otherGroupId),
+            'the document of the other group this object holds was not rewritten'
+        );
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame(['1.80 m'], $object->getCsstore()->getKeyValues($groupId, $keyId, null, self::METRIC));
+        $this->assertSame(['6 ft 0 in'], $object->getCsstore()->getKeyValues($groupId, $keyId, null, self::IMPERIAL));
+    }
+
+    /**
+     * Narrowing a declaration hides the values it stops permitting and deletes none of them: an
+     * ordinary save afterwards still writes them, so widening the declaration again brings them
+     * back.
+     */
+    public function testNarrowingADeclarationKeepsTheValuesItHides(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], false);
+
+        $object = $this->createObject('narrowing');
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [
+            new MultiValue('1.80 m', null, self::METRIC),
+            new MultiValue('5 ft 11 in', null, self::IMPERIAL),
+        ]);
+        $object->save();
+
+        $this->narrowMultiValueKey([self::METRIC], false);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertSame(
+            [],
+            $object->getCsstore()->getKeyValues($groupId, $keyId, null, self::IMPERIAL),
+            'a variant the key no longer declares reads as nothing'
+        );
+
+        // a save that does rewrite the group's document, so that the hidden value is not merely
+        // surviving a save that wrote nothing at all
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [new MultiValue('1.81 m', null, self::METRIC)]);
+        $object->save();
+
+        $entries = $this->storedEntries($object->getId(), $groupId, $keyId);
+        $this->assertSame('5 ft 11 in', $this->entryOf($entries, self::IMPERIAL)['d']);
+        $this->assertSame('1.81 m', $this->entryOf($entries, self::METRIC)['d']);
+
+        $this->narrowMultiValueKey([self::METRIC, self::IMPERIAL], false);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertSame(
+            ['5 ft 11 in'],
+            $object->getCsstore()->getKeyValues($groupId, $keyId, null, self::IMPERIAL),
+            'widening the declaration again makes the value readable'
+        );
+    }
+
+    /**
+     * The two readers of position 0 of the default variant, on one fixture. getLocalizedKeyValue()
+     * resolves the language - the fallback languages, then the language-independent default - while
+     * getKeyValues() and getKeyValue() address the slot they are given and nothing else.
+     *
+     * The difference is deliberate and is pinned here because it is what a caller moving from one
+     * reader to the other has to know: what the slot readers answer is what a save stores for that
+     * slot, so a read that resolved a fallback would write another language's value into it.
+     */
+    public function testTheDocumentedGetterResolvesTheLanguageWhileTheSlotReadersDoNot(): void
+    {
+        $groupId = Classificationstore\GroupConfig::getByName('testgroup1')->getId();
+        $keyId = $this->inputKeyId();
+
+        $object = $this->createObject('one-slot');
+        $object->getCsstore()->setActiveGroups([$groupId => true]);
+        $object->getCsstore()->setLocalizedKeyValue($groupId, $keyId, 'language independent');
+        $object->save();
+
+        $store = Csstore::getById($object->getId(), ['force' => true])->getCsstore();
+
+        $this->assertSame(
+            'language independent',
+            $store->getLocalizedKeyValue($groupId, $keyId, 'de'),
+            'the documented getter falls back to the language-independent default'
+        );
+        $this->assertSame(
+            [],
+            $store->getKeyValues($groupId, $keyId, 'de'),
+            'the slot reader answers the slot it was given, which holds nothing'
+        );
+        $this->assertNull($store->getKeyValue($groupId, $keyId, 'de'));
+
+        // and the two agree about the slot that does hold the value
+        $this->assertSame('language independent', $store->getLocalizedKeyValue($groupId, $keyId));
+        $this->assertSame(['language independent'], $store->getKeyValues($groupId, $keyId));
+        $this->assertSame('language independent', $store->getKeyValue($groupId, $keyId));
+    }
+
+    /**
+     * Everything that answers a key definition without a statement, so that a rewritten definition
+     * is the one the next read resolves.
+     */
+    private function clearDefinitionCaches(): void
+    {
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+    }
+
+    /**
+     * A group of its own carrying one multi-value key, so that the key count the other tests of
+     * this store assert stays what their own fixture made it.
+     *
+     * @param string[] $variants
+     *
+     * @return array{int, int} the group id and the key id
+     */
+    private function createMultiValueKey(array $variants, bool $list): array
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::MULTI_VALUE_GROUP);
+        $group->save();
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName(self::MULTI_VALUE_KEY);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType('multiValue');
+        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants, $list)));
+        $keyConfig->save();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId($keyConfig->getId());
+        $relation->setGroupId($group->getId());
+        $relation->setSorter(1);
+        $relation->save();
+
+        $this->clearDefinitionCaches();
+
+        return [(int) $group->getId(), (int) $keyConfig->getId()];
+    }
+
+    private function createObject(string $key): Csstore
+    {
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey('multivalue-' . $key);
+        $object->setPublished(true);
+        $object->save();
+
+        return $object;
+    }
+
+    private function documentTable(): string
+    {
+        return self::DOCUMENT_TABLE_PREFIX . ClassDefinition::getByName('csstore')->getId();
+    }
+
+    /**
+     * @param array<array<string, mixed>> $entries
+     *
+     * @return array<string, mixed>
+     */
+    private function entryOf(array $entries, string $variant): array
+    {
+        foreach ($entries as $entry) {
+            if (($entry['var'] ?? 'default') === $variant) {
+                return $entry;
+            }
+        }
+
+        $this->fail('the document carries no entry for variant ' . $variant);
+    }
+
+    private function inputKeyId(): int
+    {
+        return $this->keyIdOf('input');
+    }
+
+    private function keyIdOf(string $name): int
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+
+        return (int) Classificationstore\KeyConfig::getByName($name, $store->getId())->getId();
+    }
+
+    /**
+     * @param string[] $values
+     *
+     * @return MultiValue[]
+     */
+    private function listEntries(array $values): array
+    {
+        $entries = [];
+        foreach ($values as $position => $value) {
+            $entries[] = new MultiValue($value, null, null, $position);
+        }
+
+        return $entries;
+    }
+
+    /**
+     * @param string[] $variants
+     */
+    private function multiValueDefinition(array $variants, bool $list): MultiValueKey
+    {
+        $inner = new Input();
+        $inner->setName(self::MULTI_VALUE_KEY);
+
+        $definition = new MultiValueKey();
+        $definition->setName(self::MULTI_VALUE_KEY);
+        $definition->setVariants(array_map(static fn (string $name): array => ['name' => $name], $variants));
+        $definition->setMultiValue($list);
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        return $definition;
+    }
+
+    /**
+     * Rewrites the declaration of the fixture key, which is what narrowing and widening it is.
+     *
+     * @param string[] $variants
+     */
+    private function narrowMultiValueKey(array $variants, bool $list): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $keyConfig = Classificationstore\KeyConfig::getByName(self::MULTI_VALUE_KEY, $store->getId());
+        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants, $list)));
+        $keyConfig->save();
+
+        $this->clearDefinitionCaches();
+    }
+
+    /**
+     * The stored entries of one key, as the group's document carries them.
+     *
+     * @return array<array<string, mixed>>
+     */
+    private function storedEntries(?int $objectId, int $groupId, int $keyId): array
+    {
+        $document = json_decode((string) $this->storedRow($objectId, $groupId)['values'], true);
+
+        return $document['k'][$keyId] ?? [];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function storedRow(?int $objectId, int $groupId): array
+    {
+        return (array) Db::get()->fetchAssociative(
+            'SELECT `values`, `checksum`, `collectionId` FROM ' . $this->documentTable()
+            . ' WHERE `id` = ? AND `fieldname` = ? AND `groupId` = ?',
+            [$objectId, self::FIELDNAME, $groupId]
+        );
+    }
+
+    private function textareaKeyId(): int
+    {
+        return $this->keyIdOf('textarea');
+    }
+
 }

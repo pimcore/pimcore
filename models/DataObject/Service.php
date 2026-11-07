@@ -320,6 +320,12 @@ class Service extends Model\Element\Service
      * follows the key: a key the field keeps per language is limited to the editable ones, while a key that
      * holds the one language-independent value is copied as a non-localized field is.
      *
+     * The qualified slots of a key - the variants and the positions beyond the one value the items
+     * carry - are keyed by language the same way and are restored the same way, because
+     * {@see DataObject\Classificationstore::setItems()} drops them along with the values they
+     * belong to: left to it, a save by a user whose languages are limited would delete every
+     * variant of every key, in the languages they may edit and in the ones they may not.
+     *
      * @param array<string, int> $editableLanguages
      */
     private function restoreClassificationstoreLanguages(
@@ -330,45 +336,93 @@ class Service extends Model\Element\Service
     ): void {
         // the object is saved with inheritance off, so own values must not be mixed with the parent's
         [$items, $activeGroups] = self::useInheritedValues(false, static fn (): array => [$new->getItems(), $new->getActiveGroups()]);
+        $variantItems = $new->getVariantItems();
         $targetItems = $target instanceof DataObject\Classificationstore
             ? self::useInheritedValues(false, static fn (): array => $target->getItems())
             : [];
+        $targetVariantItems = $target instanceof DataObject\Classificationstore ? $target->getVariantItems() : [];
 
         $localizedKeys = self::getLocalizedClassificationstoreKeys($definition, $items, $targetItems);
 
-        foreach ($items as $groupId => $group) {
-            foreach ($group as $keyId => $values) {
-                if (!isset($localizedKeys[$keyId])) {
-                    continue;
-                }
+        [$items, $keptItemGroups] = $this->restoreClassificationstoreValues(
+            $items,
+            $targetItems,
+            $editableLanguages,
+            $localizedKeys
+        );
+        [$variantItems, $keptVariantGroups] = $this->restoreClassificationstoreValues(
+            $variantItems,
+            $targetVariantItems,
+            $editableLanguages,
+            $localizedKeys
+        );
 
-                $items[$groupId][$keyId] = array_intersect_key($values, $editableLanguages);
+        foreach (array_keys($keptItemGroups + $keptVariantGroups) as $groupId) {
+            $activeGroups[$groupId] = true;
+            if (!$new->getGroupCollectionMapping($groupId)) {
+                $new->setGroupCollectionMapping($groupId, $target->getGroupCollectionMapping($groupId));
             }
         }
 
-        foreach ($targetItems as $groupId => $group) {
-            foreach ($group as $keyId => $values) {
-                if (!isset($localizedKeys[$keyId])) {
-                    continue;
-                }
-
-                $kept = array_diff_key($values, $editableLanguages);
-                if ($kept) {
-                    $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
-                    $activeGroups[$groupId] = true;
-                    if (!$new->getGroupCollectionMapping($groupId)) {
-                        $new->setGroupCollectionMapping($groupId, $target->getGroupCollectionMapping($groupId));
-                    }
-                }
-            }
-        }
-
-        foreach ($items as $groupId => $group) {
-            $items[$groupId] = array_filter($group);
-        }
-
-        $new->setItems(array_filter($items));
+        // the items go first: setting them drops the qualified slots of the values they replace
+        $new->setItems($items);
+        $new->setVariantItems($variantItems);
         $new->setActiveGroups($activeGroups);
+    }
+
+    /**
+     * One group/key/language structure of a classification store with the languages the user may
+     * not edit taken from the object as it is stored, and the ones they may edit as they left them.
+     *
+     * Only a key the field keeps per language is limited this way: a key holding the one
+     * language-independent value is left exactly as it arrived, which is why $localizedKeys gates
+     * both walks rather than only the first.
+     *
+     * @param array<int, array<int, array<string, mixed>>> $values group => key => language => value
+     * @param array<int, array<int, array<string, mixed>>> $targetValues the same, as stored
+     * @param array<string, int> $editableLanguages
+     * @param array<int, bool> $localizedKeys the keys this field keeps per language
+     *
+     * @return array{array<int, array<int, array<string, mixed>>>, array<int, bool>} the restored
+     *         structure and the groups a value was kept for
+     */
+    private function restoreClassificationstoreValues(
+        array $values,
+        array $targetValues,
+        array $editableLanguages,
+        array $localizedKeys
+    ): array {
+        foreach ($values as $groupId => $group) {
+            foreach ($group as $keyId => $languages) {
+                if (!isset($localizedKeys[$keyId])) {
+                    continue;
+                }
+
+                $values[$groupId][$keyId] = array_intersect_key($languages, $editableLanguages);
+            }
+        }
+
+        $keptGroups = [];
+
+        foreach ($targetValues as $groupId => $group) {
+            foreach ($group as $keyId => $languages) {
+                if (!isset($localizedKeys[$keyId])) {
+                    continue;
+                }
+
+                $kept = array_diff_key($languages, $editableLanguages);
+                if ($kept !== []) {
+                    $values[$groupId][$keyId] = ($values[$groupId][$keyId] ?? []) + $kept;
+                    $keptGroups[$groupId] = true;
+                }
+            }
+        }
+
+        foreach ($values as $groupId => $group) {
+            $values[$groupId] = array_filter($group);
+        }
+
+        return [array_filter($values), $keptGroups];
     }
 
     private static function getClassificationstoreLocalizationResolver(): DataObject\Classificationstore\LocalizationResolver

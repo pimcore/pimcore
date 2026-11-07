@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Pimcore\Model\DataObject\Data\MultiValue as MultiValueEntry;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
@@ -39,6 +43,12 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     private const RELATION_KEY_PREFIX = 'cs-validity-relation-';
 
     private const FIELDNAME = 'csstore';
+
+    private const MAXIMUM = 3;
+
+    private const INNER_MAX_LENGTH = 5;
+
+    private const VARIANT = 'metric';
 
     protected function setUp(): void
     {
@@ -613,6 +623,327 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $groupId = (int) array_key_first($items);
 
         return [$groupId, (int) array_key_first($items[$groupId])];
+    }
+
+    /**
+     * A list at the declared maximum validates, so the check is a maximum rather than a limit one
+     * value below it.
+     */
+    public function testAListAtTheDeclaredMaximumValidates(): void
+    {
+        $group = $this->createGroup('validity_at_maximum');
+        $listKey = $this->createKey('validity_at_maximum', true, $this->multiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-at-maximum');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('one', null, null, 0),
+            new MultiValueEntry('two', null, null, 1),
+            new MultiValueEntry('three', null, null, 2),
+        ]);
+
+        $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * A list longer than the key's declared maximum is one of the per-key failures the field
+     * collects, so it is reported beside the mandatory failures of the same save rather than
+     * instead of them.
+     */
+    public function testAListLongerThanTheDeclaredMaximumIsReportedBesideTheMandatoryFailures(): void
+    {
+        $group = $this->createGroup('validity_maximum');
+        $listKey = $this->createKey('validity_maximum', true, $this->multiValueDefinition());
+        $mandatoryKey = $this->createKey('validity_mandatory');
+
+        $this->assignKey($group, $listKey, 0);
+        $this->assignKey($group, $mandatoryKey, 1, true);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-maximum');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('one', null, null, 0),
+            new MultiValueEntry('two', null, null, 1),
+            new MultiValueEntry('three', null, null, 2),
+            new MultiValueEntry('four', null, null, 3),
+        ]);
+
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+
+        try {
+            $fieldDefinition->checkValidity($object->getCsstore());
+            $this->fail('a list longer than the declared maximum must not validate');
+        } catch (ValidationException $validationException) {
+            $messages = array_map(
+                static fn (ValidationException $subItem): string => $subItem->getMessage(),
+                $validationException->getSubItems()
+            );
+
+            $maximumMessages = array_values(array_filter(
+                $messages,
+                static fn (string $message): bool => str_contains($message, 'at most')
+            ));
+
+            $this->assertCount(1, $maximumMessages, 'the one over-long slot is reported once');
+            $this->assertStringContainsString($listKey->getName(), $maximumMessages[0]);
+            $this->assertStringContainsString((string) self::MAXIMUM, $maximumMessages[0]);
+
+            $this->assertNotEmpty(
+                array_filter(
+                    $messages,
+                    static fn (string $message): bool => str_contains($message, $mandatoryKey->getName())
+                ),
+                'the mandatory failure of the other key is reported alongside it'
+            );
+        }
+    }
+
+    /**
+     * And a mandatory multi-value key that does hold a value validates, so the check is about the
+     * value rather than about the type of the key.
+     */
+    public function testAMandatoryMultiValueKeyHoldingAValueValidates(): void
+    {
+        $group = $this->createGroup('validity_mandatory_mv_filled');
+        $listKey = $this->createKey('validity_mandatory_mv_filled', true, $this->multiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0, true);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-mandatory-mv-filled');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        foreach ($this->getValidLanguages() as $language) {
+            $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('held', $language, null, 0),
+            ]);
+        }
+
+        $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * A mandatory key holds a value when any slot of it does: a list whose first value was cleared
+     * still holds the two behind it, and the positions of a list are what it is read back by - so a
+     * check that only ever saw position 0 would refuse to save a key that is not empty.
+     */
+    public function testAMandatoryMultiValueKeyWhoseListStartsAboveTheFirstPositionValidates(): void
+    {
+        $group = $this->createGroup('validity_mandatory_mv_tail');
+        $listKey = $this->createKey('validity_mandatory_mv_tail', true, $this->multiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0, true);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-mandatory-mv-tail');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        foreach ($this->getValidLanguages() as $language) {
+            $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('two', $language, null, 1),
+                new MultiValueEntry('three', $language, null, 2),
+            ]);
+        }
+
+        $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * The mandatory flag of the key itself - the one its assignment to a group carries - is
+     * consulted on a multi-value key as well. The wrapper hides the inner type from the check, and
+     * the inner type carries a mandatory flag of its own, so delegating alone would report nothing
+     * for a key that holds no value at all.
+     */
+    public function testAMandatoryMultiValueKeyWithoutAValueIsReported(): void
+    {
+        $group = $this->createGroup('validity_mandatory_mv');
+        $listKey = $this->createKey('validity_mandatory_mv', true, $this->multiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0, true);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-mandatory-mv');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+
+        try {
+            $fieldDefinition->checkValidity($object->getCsstore());
+            $this->fail('an empty mandatory multi-value key must not validate');
+        } catch (ValidationException $validationException) {
+            $messages = array_map(
+                static fn (ValidationException $subItem): string => $subItem->getMessage(),
+                $validationException->getSubItems()
+            );
+
+            $this->assertNotEmpty(
+                array_filter(
+                    $messages,
+                    static fn (string $message): bool => str_contains($message, $listKey->getName())
+                ),
+                'the mandatory failure of the multi-value key is reported'
+            );
+        }
+    }
+
+    /**
+     * A value the inner type refuses in a slot the declaration no longer permits is hidden rather
+     * than reported: narrowing a declaration keeps the values it stops showing, so they must not
+     * make the object unsavable.
+     */
+    public function testASlotTheDeclarationNoLongerPermitsIsNotValidated(): void
+    {
+        $group = $this->createGroup('validity_hidden_slots');
+        $listKey = $this->createKey('validity_hidden_slots', true, $this->constrainedMultiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-hidden-slots');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('ok', null, null, 0),
+            new MultiValueEntry('far too long', null, null, 1),
+            new MultiValueEntry('also too long', null, self::VARIANT),
+        ]);
+
+        $listKey->setDefinition((string) json_encode($this->plainMultiValueDefinition()));
+        $listKey->save();
+        $this->clearDefinitionCaches();
+
+        $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * The inner type validates every slot the declaration permits and not only the first value of
+     * the default variant: a value it refuses at a higher position, or under a variant, is a per-key
+     * failure of the save rather than something that stores clean.
+     */
+    public function testTheInnerTypeValidatesEveryDeclaredSlotAndNotOnlyTheFirst(): void
+    {
+        $group = $this->createGroup('validity_inner_slots');
+        $listKey = $this->createKey('validity_inner_slots', true, $this->constrainedMultiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-inner-slots');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('ok', null, null, 0),
+            new MultiValueEntry('far too long', null, null, 1),
+            new MultiValueEntry('also too long', null, self::VARIANT),
+        ]);
+
+        try {
+            $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
+            $this->fail('a value the inner type refuses must not validate wherever it sits');
+        } catch (ValidationException $validationException) {
+            $messages = array_map(
+                static fn (ValidationException $subItem): string => $subItem->getMessage(),
+                $validationException->getSubItems()
+            );
+
+            $tooLong = array_values(array_filter(
+                $messages,
+                static fn (string $message): bool => str_contains($message, 'is longer than')
+            ));
+
+            $this->assertCount(2, $tooLong, 'the higher position and the variant are both reported');
+            $this->assertNotEmpty(
+                array_filter($tooLong, static fn (string $message): bool => str_contains($message, '/1')),
+                'the failure names the position it was found at'
+            );
+            $this->assertNotEmpty(
+                array_filter($tooLong, static fn (string $message): bool => str_contains($message, self::VARIANT)),
+                'and the variant it was found in'
+            );
+        }
+    }
+
+    private function multiValueDefinition(): MultiValue
+    {
+        $definition = $this->wrapperOf($this->innerType());
+        $definition->setMultiValue(self::MAXIMUM);
+
+        return $definition;
+    }
+
+    /**
+     * The same key with an inner type that refuses a value of its own, and with a variant to put one
+     * in, so that the slot a failure is found in is what the test is about.
+     */
+    private function constrainedMultiValueDefinition(): MultiValue
+    {
+        $definition = $this->wrapperOf($this->innerType(self::INNER_MAX_LENGTH));
+        $definition->setVariants([['name' => self::VARIANT]]);
+        $definition->setMultiValue(self::MAXIMUM);
+
+        return $definition;
+    }
+
+    /**
+     * The narrowed declaration of that key: no variants and no list, so every slot but the first is
+     * one it no longer permits.
+     */
+    private function plainMultiValueDefinition(): MultiValue
+    {
+        return $this->wrapperOf($this->innerType(self::INNER_MAX_LENGTH));
+    }
+
+    private function wrapperOf(Input $inner): MultiValue
+    {
+        $definition = new MultiValue();
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        return $definition;
+    }
+
+    private function innerType(?int $maxLength = null): Input
+    {
+        $inner = new Input();
+        $inner->setName('mvInner');
+        $inner->setColumnLength($maxLength);
+
+        return $inner;
+    }
+
+    /**
+     * Everything that answers a key definition without a statement, so that a rewritten declaration
+     * is the one the next read resolves.
+     */
+    private function clearDefinitionCaches(): void
+    {
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
     }
 }
 

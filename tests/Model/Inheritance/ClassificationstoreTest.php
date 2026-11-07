@@ -17,6 +17,7 @@ use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Data\MultiValue;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -30,11 +31,47 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class ClassificationstoreTest extends ModelTestCase
 {
+    private const DOCUMENT_ENGINE = 'document';
+
+    private const MULTI_VALUE_GROUP = 'groupMultiValue';
+
+    private const MULTI_VALUE_KEY = 'mvHeight';
+
+    private const METRIC = 'metric';
+
+    private const IMPERIAL = 'imperial';
+
+    private bool $storeWasPutOnTheDocumentEngine = false;
+
+    private ?string $storeEngineBeforeTheTest = null;
+
     public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
         Pimcore::setAdminMode();
+    }
+
+    public function tearDown(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+
+        if ($store) {
+            Classificationstore\KeyConfig::getByName(self::MULTI_VALUE_KEY, $store->getId())?->delete();
+            Classificationstore\GroupConfig::getByName(self::MULTI_VALUE_GROUP, $store->getId())?->delete();
+        }
+
+        if ($this->storeWasPutOnTheDocumentEngine && $store) {
+            $store->setEngine($this->storeEngineBeforeTheTest);
+            $store->save();
+            $this->storeWasPutOnTheDocumentEngine = false;
+        }
+
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+
+        parent::tearDown();
     }
 
     protected function setUpTestClasses(): void
@@ -349,5 +386,186 @@ class ClassificationstoreTest extends ModelTestCase
                 'child mapping for a different group to the same collection must not be stripped'
             );
         });
+    }
+
+    /**
+     * Inheritance resolves per (language, variant): a child that holds no value for one variant
+     * takes the parent's value of that variant and never of another.
+     */
+    public function testAVariantIsInheritedOnItsOwn(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], false);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('variant-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.80 m', null, self::METRIC),
+                new MultiValue('5 ft 11 in', null, self::IMPERIAL),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('variant-child', (int) $parent->getId());
+            $child->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.90 m', null, self::METRIC),
+            ]);
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(
+                ['1.90 m'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::METRIC),
+                'the child answers its own metric value'
+            );
+            $this->assertSame(
+                ['5 ft 11 in'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL),
+                'and inherits the imperial one it holds nothing for'
+            );
+        });
+    }
+
+    /**
+     * Within one (language, variant) slot a list is inherited whole: a child that holds its own
+     * list answers exactly that list, and the parent's positions are never merged into it.
+     */
+    public function testAListIsInheritedWholeRatherThanMergedPerPosition(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([], true);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('list-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('a', null, null, 0),
+                new MultiValue('b', null, null, 1),
+                new MultiValue('c', null, null, 2),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('list-child', (int) $parent->getId());
+            $child->getTeststore()->setKeyValues($groupId, $keyId, [new MultiValue('x', null, null, 0)]);
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(['x'], $childStore->getKeyValues($groupId, $keyId));
+
+            $parentStore = Inheritance::getById($parent->getId(), ['force' => true])->getTeststore();
+            $this->assertSame(['a', 'b', 'c'], $parentStore->getKeyValues($groupId, $keyId));
+        });
+    }
+
+    /**
+     * A (language, variant) slot the child owns is the child's whole answer, even where the list it
+     * holds starts above position 0: the value the documented items answer at position 0 is the
+     * parent's there, and writing it into the child's list would give the child a value it never
+     * wrote.
+     */
+    public function testAChildsListIsNotMergedWithTheParentsFirstValue(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([], true);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('offset-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('a', null, null, 0),
+                new MultiValue('b', null, null, 1),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('offset-child', (int) $parent->getId());
+            $child->getTeststore()->setKeyValues($groupId, $keyId, [new MultiValue('x', null, null, 1)]);
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(
+                [1 => 'x'],
+                $childStore->getKeyValues($groupId, $keyId),
+                'the slot the child owns answers the child alone'
+            );
+            $this->assertNull(
+                $childStore->getKeyValue($groupId, $keyId),
+                'and the position the child holds nothing at is not the parent\'s to fill'
+            );
+        });
+    }
+
+    private function createObject(string $key, int $parentId): Inheritance
+    {
+        $object = new Inheritance();
+        $object->setKey($key);
+        $object->setParentId($parentId);
+        $object->setPublished(true);
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * The qualifiers are a capability of the document engine, so the shared test store is put on it
+     * for the duration of the test and put back in tearDown - the other test classes of the suite
+     * assert against the engine their own fixture asked for.
+     */
+    private function putTheStoreOnTheDocumentEngine(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $this->storeEngineBeforeTheTest = $store->getEngine();
+        $this->storeWasPutOnTheDocumentEngine = true;
+
+        $store->setEngine(self::DOCUMENT_ENGINE);
+        $store->save();
+
+        Pimcore::getContainer()->get(Classificationstore\Engine\EngineResolver::class)
+            ->resolveForStore($store->getId())
+            ->createUpdateTables(ClassDefinition::getByName('inheritance'), $store->getId());
+    }
+
+    /**
+     * @param string[] $variants
+     *
+     * @return array{int, int} the group id and the key id
+     */
+    private function createMultiValueKey(array $variants, bool $list): array
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::MULTI_VALUE_GROUP);
+        $group->save();
+
+        $inner = new ClassDefinition\Data\Input();
+        $inner->setName(self::MULTI_VALUE_KEY);
+
+        $definition = new ClassDefinition\Data\MultiValue();
+        $definition->setName(self::MULTI_VALUE_KEY);
+        $definition->setVariants(array_map(static fn (string $name): array => ['name' => $name], $variants));
+        $definition->setMultiValue($list);
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName(self::MULTI_VALUE_KEY);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType($definition->getFieldType());
+        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->save();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId($keyConfig->getId());
+        $relation->setGroupId($group->getId());
+        $relation->setSorter(1);
+        $relation->save();
+
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+
+        return [(int) $group->getId(), (int) $keyConfig->getId()];
     }
 }
