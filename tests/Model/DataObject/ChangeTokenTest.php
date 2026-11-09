@@ -22,9 +22,9 @@ use Pimcore\Model\DataObject\HydrationLock;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Exception\StaleDataException;
 use Pimcore\Model\Version;
-use Pimcore\Tool;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool;
 
 /**
  * Covers the database-maintained change token on the objects row and the save-time stale check.
