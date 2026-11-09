@@ -40,6 +40,7 @@ class Dao extends Model\Element\Dao
 
         if ($data) {
             $data['published'] = (bool)$data['published'];
+            $this->assignChangeToken($data);
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
@@ -211,6 +212,19 @@ class Dao extends Model\Element\Dao
         }
 
         return null;
+    }
+
+    /**
+     * Moves the change token of a loaded objects row to the model. Assigned explicitly and removed from the row data,
+     * because a data object field may be named changeToken as well.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function assignChangeToken(array &$data): void
+    {
+        $token = $data['changeToken'] ?? null;
+        unset($data['changeToken']);
+        $this->model->__setChangeToken(is_string($token) ? $token : null);
     }
 
     /**

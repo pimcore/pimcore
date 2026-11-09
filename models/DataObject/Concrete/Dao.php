@@ -61,6 +61,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         if ($data) {
             $data['published'] = (bool)$data['published'];
+            $this->assignChangeToken($data);
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {

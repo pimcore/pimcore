@@ -49,8 +49,8 @@ final class ChangeTokenTest extends ModelTestCase
     {
         Version::disable();
         $object = TestHelper::createEmptyObject();
-        $this->assertNotNull($object->getChangeToken(), 'A created object must carry the token of its row.');
-        $this->assertSame($this->dbToken($object->getId()), $object->getChangeToken());
+        $this->assertNotNull($object->__getChangeToken(), 'A created object must carry the token of its row.');
+        $this->assertSame($this->dbToken($object->getId()), $object->__getChangeToken());
 
         // a store-only change in the same second leaves every other objects column unchanged,
         // so only the explicit renewal of the save can change the token
@@ -59,7 +59,7 @@ final class ChangeTokenTest extends ModelTestCase
             $object->save();
             $second = time();
             $rowBefore = $this->dbRowWithoutToken($object->getId());
-            $tokenBefore = $object->getChangeToken();
+            $tokenBefore = $object->__getChangeToken();
 
             $object->setInput('changed-' . $attempt);
             $object->save();
@@ -70,8 +70,8 @@ final class ChangeTokenTest extends ModelTestCase
         }
 
         $this->assertSame($rowBefore, $this->dbRowWithoutToken($object->getId()), 'Precondition: objects row unchanged.');
-        $this->assertNotSame($tokenBefore, $object->getChangeToken());
-        $this->assertSame($this->dbToken($object->getId()), $object->getChangeToken());
+        $this->assertNotSame($tokenBefore, $object->__getChangeToken());
+        $this->assertSame($this->dbToken($object->getId()), $object->__getChangeToken());
     }
 
     public function testStaleSaveThrowsForOptedInClass(): void
@@ -176,7 +176,7 @@ final class ChangeTokenTest extends ModelTestCase
         $current->save();
 
         // e.g. an object cached before the column existed
-        $withoutToken->setChangeToken(null);
+        $withoutToken->__setChangeToken(null);
         $withoutToken->setInput('unchecked');
         $withoutToken->save();
 
@@ -201,11 +201,79 @@ final class ChangeTokenTest extends ModelTestCase
         }
 
         $this->assertInstanceOf(Unittest::class, $restored);
-        $this->assertNull($restored->getChangeToken());
+        $this->assertNull($restored->__getChangeToken());
 
         // publishing an older version must not be treated as a stale save
         $restored->save();
         $this->assertSame('v1', $this->load($object->getId())->getInput());
+    }
+
+    public function testDeletedRowIsNotRecreatedForOptedInClass(): void
+    {
+        HydrationLock::disable(Unittest::class);
+        $id = TestHelper::createEmptyObject()->getId();
+        $stale = $this->load($id);
+        $this->load($id)->delete();
+
+        try {
+            $stale->save();
+            $this->fail('Saving a copy of an object deleted in the meantime must throw for an opted-in class.');
+        } catch (StaleDataException) {
+        }
+
+        $this->assertFalse(Db::get()->fetchOne('SELECT id FROM objects WHERE id = ?', [$id]));
+    }
+
+    public function testCopyContentsIsNotAStaleSave(): void
+    {
+        HydrationLock::disable(Unittest::class);
+        $source = $this->load(TestHelper::createEmptyObject()->getId());
+        $source->setInput('copied');
+        $source->save();
+        $target = $this->load(TestHelper::createEmptyObject()->getId());
+
+        // the copy is a clone of the source saved under the id of the target
+        (new DataObject\Service())->copyContents($target, $source);
+
+        $this->assertSame('copied', $this->load($target->getId())->getInput());
+    }
+
+    public function testFieldNamedChangeTokenDoesNotCollide(): void
+    {
+        $class = $this->createClassWithChangeTokenField();
+
+        try {
+            $fqcn = 'Pimcore\\Model\\DataObject\\' . $class->getName();
+            $object = new $fqcn();
+            $object->setKey(uniqid('change-token-field-'));
+            $object->setParentId(1);
+            $object->setChangeToken('field value');
+            $object->save();
+
+            $loaded = DataObject::getById($object->getId(), ['force' => true]);
+            $this->assertSame('field value', $loaded->getChangeToken());
+            $this->assertSame($this->dbToken($object->getId()), $loaded->__getChangeToken());
+        } finally {
+            $class->delete();
+        }
+    }
+
+    private function createClassWithChangeTokenField(): DataObject\ClassDefinition
+    {
+        $field = new DataObject\ClassDefinition\Data\Input();
+        $field->setName('changeToken');
+        $field->setTitle('Change token field');
+        $panel = new DataObject\ClassDefinition\Layout\Panel();
+        $panel->setName('pimcore_root');
+        $panel->addChild($field);
+
+        $class = new DataObject\ClassDefinition();
+        $class->setName('ChangeTokenFieldTest');
+        $class->setId('ctft');
+        $class->setLayoutDefinitions($panel);
+        $class->save();
+
+        return $class;
     }
 
     private function load(int $id): Unittest

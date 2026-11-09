@@ -134,11 +134,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Change token of the objects row (DATETIME(6), maintained by the database) this object was loaded from or last
-     * saved to. Null when unknown, e.g. for an object restored from a version.
+     * saved to. Null when unknown, e.g. for an object restored from a version. Prefixed like the other internal
+     * properties, so it cannot collide with a data object field named changeToken.
      *
      * @internal
      */
-    protected ?string $changeToken = null;
+    protected ?string $__changeToken = null;
 
     protected function getBlockedVars(): array
     {
@@ -147,7 +148,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             // the change token belongs to the live row, a version or recycle bin dump must not carry it
-            $blockedVars = array_merge($blockedVars, ['dirtyFields', 'changeToken']);
+            $blockedVars = array_merge($blockedVars, ['dirtyFields', '__changeToken']);
         } else {
             // this is if we want to cache the object
             // the calculated value snapshot belongs to the version dump of an object restored
@@ -633,7 +634,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     &$isDirtyDetectionDisabled
                 ) {
                     // only after the commit: a retried transaction must still compare against the token it loaded
-                    $this->changeToken = $newChangeToken;
+                    $this->__changeToken = $newChangeToken;
 
                     $additionalTags = [];
 
@@ -1029,50 +1030,50 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    public function getChangeToken(): ?string
+    public function __getChangeToken(): ?string
     {
-        return $this->changeToken;
+        return $this->__changeToken;
     }
 
     /**
      * @internal
      */
-    public function setChangeToken(?string $changeToken): static
+    public function __setChangeToken(?string $changeToken): void
     {
-        $this->changeToken = $changeToken;
-
-        return $this;
+        $this->__changeToken = $changeToken;
     }
 
     /**
      * Compares the change token this object was loaded with against the locked objects row. A mismatch means another
-     * process wrote the row in the meantime: classes with a disabled hydration lock throw, all others keep the
-     * previous behavior (the concurrent change is overwritten) and log a warning.
+     * process wrote or deleted the row in the meantime: classes with a disabled hydration lock throw, all others keep
+     * the previous behavior (the concurrent change is overwritten, a deleted row is recreated) and log a warning.
      *
      * @throws StaleDataException
      */
     private function assertBasedOnCurrentData(): void
     {
-        if ($this->changeToken === null) {
+        if ($this->__changeToken === null) {
             return;
         }
 
         $currentToken = $this->getDao()->getChangeTokenForUpdate();
-        if ($currentToken === null || $currentToken === $this->changeToken) {
+        if ($currentToken === $this->__changeToken) {
             return;
         }
 
+        $deleted = $currentToken === null;
         if (HydrationLock::isDisabledFor($this)) {
             throw new StaleDataException(sprintf(
-                'Object %d was changed by another process since it was loaded, reload it and apply the changes again',
-                $this->getId()
+                'Object %d was %s by another process since it was loaded, reload it and apply the changes again',
+                $this->getId(),
+                $deleted ? 'deleted' : 'changed'
             ));
         }
 
         Logger::warning(
-            'Saving object {id} based on outdated data: a concurrent change is overwritten. Disable the hydration lock '
-            . 'for its class (Pimcore\Model\DataObject\HydrationLock) to get a StaleDataException instead.',
-            ['id' => $this->getId()]
+            'Saving object {id} based on outdated data: a concurrent {change} is overwritten. Disable the hydration '
+            . 'lock for its class (Pimcore\\Model\\DataObject\\HydrationLock) to get a StaleDataException instead.',
+            ['id' => $this->getId(), 'change' => $deleted ? 'deletion' : 'change']
         );
     }
 
