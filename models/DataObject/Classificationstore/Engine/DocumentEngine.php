@@ -1590,9 +1590,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
         ksort($byLanguage);
 
+        $storedBySlot = $this->indexEntriesBySlot($storedEntries);
         $entries = [];
 
-        foreach ($byLanguage as [$language, $variants]) {
+        // keyed by the alias already, so the language is normalized once per language rather than
+        // once per value
+        foreach ($byLanguage as $languageAlias => [$language, $variants]) {
             ksort($variants);
 
             foreach ($variants as $variant => $values) {
@@ -1607,12 +1610,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                             $fd,
                             $value,
                             $object,
-                            $this->getStoredEntry(
-                                $storedEntries,
-                                $this->getLanguageAlias($language),
+                            $storedBySlot[$this->slotKey(
+                                (string) $languageAlias,
                                 (string) $variant,
                                 (int) $position
-                            )
+                            )] ?? null
                         )
                     );
                 }
@@ -1775,39 +1777,51 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * The entry the stored entries of one key hold in one slot, or null when they carry no entry
-     * with those qualifiers. The whole entry rather than its value: whether the value is an
-     * envelope is a qualifier of the entry and is compared with it. An absent qualifier in a stored
-     * entry is the default, which is how an entry written before the qualifiers existed is
+     * The stored entries of one key by the slot each one holds, so that the save looks a slot up
+     * once instead of scanning every entry of the key for it.
+     *
+     * The whole entry is kept rather than its value: whether the value is an envelope is a qualifier
+     * OF the entry and {@see self::encodeValue()} compares it along with the value. An absent
+     * qualifier is the default, which is how an entry written before the qualifiers existed is
      * addressed.
+     *
+     * The FIRST entry of a slot wins, which is the entry the scan this replaces returned. A document
+     * this engine wrote carries one entry per slot, so the case only arises for one edited by hand.
+     *
+     * Built once per key because the lookup it serves is per VALUE, and a key may now hold an
+     * unbounded list: a scan made the work of writing one key quadratic in the number of values it
+     * holds - about 50 million entry comparisons for 10,000 existing positions, each one normalizing
+     * a language again.
      *
      * @param array<array<string, mixed>> $entries
      *
-     * @return array<string, mixed>|null
+     * @return array<string, array<string, mixed>>
      */
-    private function getStoredEntry(array $entries, string $languageAlias, string $variant, int $position): ?array
+    private function indexEntriesBySlot(array $entries): array
     {
+        $bySlot = [];
+
         foreach ($entries as $entry) {
-            $language = (string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE);
+            $key = $this->slotKey(
+                $this->getLanguageAlias((string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE)),
+                (string) ($entry[self::VARIANT_QUALIFIER] ?? self::DEFAULT_VARIANT),
+                (int) ($entry[self::POSITION_QUALIFIER] ?? 0)
+            );
 
-            if ($this->getLanguageAlias($language) !== $languageAlias) {
-                continue;
-            }
-
-            if ((string) ($entry[self::VARIANT_QUALIFIER] ?? self::DEFAULT_VARIANT) !== $variant) {
-                continue;
-            }
-
-            if ((int) ($entry[self::POSITION_QUALIFIER] ?? 0) !== $position) {
-                continue;
-            }
-
-            // the whole entry: whether its value is an envelope is a qualifier OF the entry, and
-            // encodeValue() compares it along with the value
-            return $entry;
+            $bySlot[$key] ??= $entry;
         }
 
-        return null;
+        return $bySlot;
+    }
+
+    /**
+     * One slot of one key as a single array key: the language as the document addresses it, the
+     * variant and the position. Separated by NUL, which neither a language code nor a variant name
+     * carries, so that no two slots can collide in one key.
+     */
+    private function slotKey(string $languageAlias, string $variant, int $position): string
+    {
+        return $languageAlias . "\0" . $variant . "\0" . $position;
     }
 
     /**
