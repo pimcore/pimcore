@@ -562,6 +562,62 @@ final class IdentifierTest extends ModelTestCase
         }
     }
 
+    /**
+     * The same move, with the moved row's own identifier assigned after the snapshot too: the failed write
+     * saw the identifier the other request left behind, so the read that has to explain the failure must see
+     * the same row rather than the NULL the snapshot still holds for it.
+     *
+     * @dataProvider storeScopedTableProvider
+     */
+    public function testAStoreMoveRefusesTheSaveWhenTheIdentifierIsAssignedAfterTheSnapshot(string $table): void
+    {
+        $db = Db::get();
+        $source = $this->createStore();
+        $destination = $this->createStore();
+
+        $id = $this->insertRowWithoutIdentifier($table, $source->getId(), 'mover');
+
+        // loaded while the row still carries no identifier, so the save has none to write and the
+        // uniqueness pre-flight has nothing to check: the index is the only guard left
+        $config = $this->loadConfig($table, $id);
+        $this->assertNull($config->getIdentifier());
+        $config->setStoreId($destination->getId());
+        $config->setDescription('after');
+
+        $otherConnection = $this->openSecondConnection();
+        $db->beginTransaction();
+
+        try {
+            // establishes the snapshot of this transaction, which holds the identifier as NULL from here on
+            $this->assertNull($this->fetchIdentifier($table, $id));
+
+            $claim = ['storeId' => $destination->getId(), 'name' => 'claiming', self::COLUMN_IDENTIFIER => 'contested'];
+            if ($table === self::TABLE_KEYS) {
+                $claim['type'] = 'input';
+            }
+            $otherConnection->insert($table, $claim);
+            $otherConnection->update($table, [self::COLUMN_IDENTIFIER => 'contested'], ['id' => $id]);
+
+            try {
+                $config->save();
+                $this->fail('A store move whose identifier was claimed meanwhile must be refused');
+            } catch (InvalidConfigException $e) {
+                $this->assertSame('The identifier "contested" is already in use.', $e->getMessage());
+                $this->assertInstanceOf(UniqueConstraintViolationException::class, $e->getPrevious());
+            }
+        } finally {
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
+            $otherConnection->close();
+        }
+
+        $this->assertSame(
+            $source->getId(),
+            (int) $db->fetchOne('SELECT storeId FROM ' . $table . ' WHERE id = ?', [$id])
+        );
+    }
+
     public function testAConstraintFailureOfTheRowWriteThatIsNoIdentifierConflictPropagatesUnchanged(): void
     {
         $db = Db::get();
