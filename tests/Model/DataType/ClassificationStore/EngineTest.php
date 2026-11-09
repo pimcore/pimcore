@@ -18,6 +18,8 @@ use Pimcore\Model\DataObject\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Exception;
 use Pimcore;
@@ -1091,6 +1093,50 @@ class EngineTest extends ModelTestCase
      * `classificationstore_multiValue` marshaller: a secret stored through a multi-value key is
      * encrypted in the value column rather than written there as the normalized value.
      */
+    /**
+     * What the two value columns cannot hold is refused before it is marshalled, for the inverse
+     * wrapper order too: `encryptedField<multiValue<geopoint>>`.
+     *
+     * The guard asked whether the delegate has a classification store marshaller, and a `multiValue`
+     * has one - so the coordinates were accepted, handed back by that marshaller as an array-valued
+     * column because a `geopoint` has no marshaller of its own, and cast to the string `'Array'` by
+     * the encryption. The column check that runs after marshalling cannot catch that: `'Array'` is a
+     * scalar. So the question is put to the whole delegate chain,
+     * {@see Classificationstore\Service::marshallerPacksIntoValueColumns()}, before anything is
+     * encrypted - and this engine's rule is that it refuses rather than loses a value.
+     */
+    public function testAnEavStoreRefusesAStructuredSecretBehindAMultiValueDelegate(): void
+    {
+        [$classificationStore, $groupId] = $this->eavStoreWithAMultiValueKey();
+        [$keyId, $innerWrapper] = $this->createMultiValueDelegatedEncryptedKey(
+            (int) $classificationStore->getClass()->getFieldDefinition('cs')->getStoreId(),
+            $groupId
+        );
+        $objectId = $classificationStore->getObject()->getId();
+
+        $classificationStore->setLocalizedKeyValue(
+            $groupId,
+            $keyId,
+            new EncryptedField($innerWrapper, new GeoCoordinates(48.208174, 16.373819))
+        );
+
+        $this->expectException(UnsupportedEngineFeatureException::class);
+
+        try {
+            $classificationStore->save();
+        } finally {
+            $this->assertSame(
+                0,
+                (int) Db::get()->fetchOne(
+                    'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                    . ' WHERE `id` = ? AND `keyId` = ?',
+                    [$objectId, $keyId]
+                ),
+                'the refused save wrote no row, rather than two null columns or the string "Array"'
+            );
+        }
+    }
+
     public function testASecretWrappedInAMultiValueKeyIsEncryptedOnAnEavStore(): void
     {
         [$classificationStore, $groupId] = $this->eavStoreWithAMultiValueKey();
@@ -1329,6 +1375,37 @@ class EngineTest extends ModelTestCase
         $definition->setDelegate($inner);
 
         return [$this->storeKeyConfig($storeId, $groupId, $definition), $delegate];
+    }
+
+    /**
+     * The inverse wrapper order: an `encryptedField` whose delegate is a `multiValue` wrapping a
+     * `geopoint`. Its own type is `encryptedField`, so it holds one unqualified value and the
+     * qualifier features are not what decides its fate here.
+     *
+     * The definition-time check accepts it, and cannot do otherwise: it is answered from the
+     * `delegateDatatype` of the key, a type NAME, which for a nested wrapper cannot carry the type
+     * at the end of the chain ({@see Classificationstore\KeyTypeSupport::isHeldInValueColumns()}
+     * reads `encryptedField<multiValue>` and stops). The engine is the designed backstop for that.
+     *
+     * @return array{int, MultiValueField}
+     */
+    private function createMultiValueDelegatedEncryptedKey(int $storeId, int $groupId): array
+    {
+        $coordinates = new Geopoint();
+        $coordinates->setName('mvGeoSecret');
+
+        $innerWrapper = new MultiValueField();
+        $innerWrapper->setName('mvGeoSecret');
+        $innerWrapper->setMultiValue(true);
+        $innerWrapper->setDelegateDatatype($coordinates->getFieldType());
+        $innerWrapper->setDelegate($coordinates);
+
+        $definition = new EncryptedFieldDefinition();
+        $definition->setName('mvGeoSecretKey');
+        $definition->setDelegateDatatype($innerWrapper->getFieldType());
+        $definition->setDelegate($innerWrapper);
+
+        return [$this->storeKeyConfig($storeId, $groupId, $definition), $innerWrapper];
     }
 
     /**
