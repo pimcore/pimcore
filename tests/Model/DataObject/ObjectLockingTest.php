@@ -21,8 +21,10 @@ use InvalidArgumentException;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\HydrationLock;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -37,28 +39,42 @@ final class ObjectLockingTest extends ModelTestCase
 {
     protected function tearDown(): void
     {
-        AbstractObject::enableLocking();
+        HydrationLock::reset();
         parent::tearDown();
     }
 
     public function testLockingIsEnabledByDefault(): void
     {
-        $this->assertFalse(AbstractObject::isLockingDisabled(), 'Hydration locking must be enabled by default.');
+        $this->assertFalse(HydrationLock::isDisabledFor(Unittest::class), 'Hydration locking must be enabled by default.');
+        $this->assertFalse(HydrationLock::isLockSkippedFor(Unittest::class));
     }
 
-    public function testDisableLockingAccessors(): void
+    public function testDisableAndEnablePerClass(): void
     {
-        AbstractObject::disableLocking();
-        $this->assertTrue(AbstractObject::isLockingDisabled());
+        HydrationLock::disable(Unittest::class);
+        $this->assertTrue(HydrationLock::isDisabledFor(Unittest::class));
+        $this->assertTrue(HydrationLock::isDisabledFor(new Unittest()));
+        $this->assertFalse(HydrationLock::isDisabledFor(Folder::class));
 
-        AbstractObject::enableLocking();
-        $this->assertFalse(AbstractObject::isLockingDisabled());
+        HydrationLock::enable(Unittest::class);
+        $this->assertFalse(HydrationLock::isDisabledFor(Unittest::class));
+    }
 
-        AbstractObject::setDisableLocking(true);
-        $this->assertTrue(AbstractObject::isLockingDisabled());
+    public function testDisableForParentClassCoversSubclasses(): void
+    {
+        HydrationLock::disable(Concrete::class);
+        $this->assertTrue(HydrationLock::isDisabledFor(Unittest::class));
+        $this->assertFalse(HydrationLock::isDisabledFor(Folder::class));
+    }
 
-        AbstractObject::setDisableLocking(false);
-        $this->assertFalse(AbstractObject::isLockingDisabled());
+    public function testDisableAndEnableGlobally(): void
+    {
+        HydrationLock::disable();
+        $this->assertTrue(HydrationLock::isDisabledFor(Unittest::class));
+        $this->assertTrue(HydrationLock::isDisabledFor(Folder::class));
+
+        HydrationLock::enable();
+        $this->assertFalse(HydrationLock::isDisabledFor(Unittest::class));
     }
 
     public function testGetByIdWithLockParamRestoresLockingState(): void
@@ -69,15 +85,15 @@ final class ObjectLockingTest extends ModelTestCase
         $this->assertInstanceOf(Concrete::class, $loaded);
         $this->assertSame($object->getId(), $loaded->getId());
         $this->assertFalse(
-            AbstractObject::isLockingDisabled(),
+            HydrationLock::isLockSkippedFor($object),
             'Locking state must be restored after getById() with lock param.'
         );
 
-        AbstractObject::disableLocking();
+        HydrationLock::disable();
         $loaded = Concrete::getById($object->getId(), ['force' => true, 'lock' => false]);
         $this->assertInstanceOf(Concrete::class, $loaded);
         $this->assertTrue(
-            AbstractObject::isLockingDisabled(),
+            HydrationLock::isLockSkippedFor($object),
             'Previously disabled locking must stay disabled after getById() with lock param.'
         );
     }
@@ -90,7 +106,7 @@ final class ObjectLockingTest extends ModelTestCase
         $this->assertInstanceOf(Concrete::class, $loaded);
         $this->assertSame($object->getId(), $loaded->getId());
         $this->assertFalse(
-            AbstractObject::isLockingDisabled(),
+            HydrationLock::isLockSkippedFor($object),
             'Locking state must be restored after getByPath() with lock param.'
         );
     }
@@ -145,11 +161,11 @@ final class ObjectLockingTest extends ModelTestCase
 
         try {
             $dao->getData();
-            AbstractObject::disableLocking();
+            HydrationLock::disable(Unittest::class);
             $dao->getData();
         } finally {
             $dao->db = $originalDb;
-            AbstractObject::enableLocking();
+            HydrationLock::reset();
         }
 
         $this->assertCount(2, $capturedSql);
@@ -226,7 +242,7 @@ final class ObjectLockingTest extends ModelTestCase
 
         $this->assertTrue($hydrationFailed, 'Hydration was expected to fail with a broken class id.');
         $this->assertFalse(
-            AbstractObject::isLockingDisabled(),
+            HydrationLock::isLockSkippedFor($object),
             'Locking state must be restored when hydration fails.'
         );
     }

@@ -98,6 +98,9 @@ class Dao extends Model\Element\Dao
             }
         }
 
+        // maintained by the database, see renewChangeToken()
+        unset($data['changeToken']);
+
         // check the type before updating, changing the type or class of an object is not possible
         $checkColumns = ['type', 'classId', 'className'];
         $existingData = $this->db->fetchAssociative('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE id = ?', [$this->model->getId()]);
@@ -208,6 +211,34 @@ class Dao extends Model\Element\Dao
         }
 
         return null;
+    }
+
+    /**
+     * Reads the change token of the object's row and locks the row until the current transaction ends.
+     *
+     * @internal
+     */
+    public function getChangeTokenForUpdate(): ?string
+    {
+        $token = $this->db->fetchOne('SELECT changeToken FROM objects WHERE id = ? FOR UPDATE', [$this->model->getId()]);
+
+        return is_string($token) ? $token : null;
+    }
+
+    /**
+     * Sets a new change token on the object's row and returns it. The column renews itself on every UPDATE that
+     * changes the row (ON UPDATE CURRENT_TIMESTAMP(6)), a save renews it explicitly because its UPDATE may not change
+     * any column of the row.
+     *
+     * @internal
+     */
+    public function renewChangeToken(): ?string
+    {
+        $this->db->executeStatement('UPDATE objects SET changeToken = CURRENT_TIMESTAMP(6) WHERE id = ?', [$this->model->getId()]);
+
+        $token = $this->db->fetchOne('SELECT changeToken FROM objects WHERE id = ?', [$this->model->getId()]);
+
+        return is_string($token) ? $token : null;
     }
 
     public function getVersionCountForUpdate(): int

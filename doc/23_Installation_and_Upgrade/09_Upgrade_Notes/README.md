@@ -2,6 +2,23 @@
 
 ## Pimcore 2026.4.0
 
+### [DataObjects] Change token and opting out of the hydration row lock
+
+The `objects` table has a new column `changeToken` (`DATETIME(6)`, migration `Version20261109120000`). The database
+sets a new value on every `UPDATE` that changes the row, and every save of a data object renews it. On save, the token
+an object was loaded with is compared against the row:
+
+- By default nothing changes: data objects are still loaded with `FOR UPDATE`, and a save based on outdated data
+  still overwrites the concurrent change. Pimcore now logs a warning when this happens.
+- For classes opted out of the row lock with `Pimcore\Model\DataObject\HydrationLock::disable()` or the config
+  `pimcore.objects.hydration_lock.disabled_for`, objects are loaded without `FOR UPDATE`, and a save based on
+  outdated data throws `Pimcore\Model\Exception\StaleDataException` instead of overwriting the concurrent change.
+- `getById()` and `getByPath()` accept `['lock' => false]` to load a single object without the row lock.
+
+Objects that were cached before the migration, or restored from a version, carry no token and are not checked.
+Plain SQL writes to `object_store_*`, relation, localized field, brick or field collection tables do not change the
+token. See [Working with Objects via PHP API](../../03_Objects/02_Working_with_Objects_via_PHP_API.md#disable-row-locking-on-load).
+
 ### [DataObjects] Structured, translatable validation errors
 
 The new `Pimcore\Model\Element\StructuredValidationException` extends `Pimcore\Model\Element\ValidationException`

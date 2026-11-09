@@ -838,6 +838,20 @@ final class Configuration implements ConfigurationInterface
                             .'setting. Defaults to false to preserve existing behavior; the permissive default is deprecated '
                             .'since 2026.3 and will be removed in 2027.1. See Pimcore\\Model\\DataObject\\Data\\Link\\SanitizerPolicy.'
                         ))
+                        ->arrayNode('hydration_lock')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('disabled_for')
+                                    ->info('Data object classes (FQCN, subclasses included) loaded without the FOR UPDATE row '
+                                        .'lock. Their saves are checked against the change token of the object and throw a '
+                                        .'Pimcore\\Model\\Exception\\StaleDataException on outdated data. Use '
+                                        .'Pimcore\\Model\\DataObject\\Concrete for all classes. See '
+                                        .'Pimcore\\Model\\DataObject\\HydrationLock.')
+                                    ->scalarPrototype()->cannotBeEmpty()->end()
+                                    ->defaultValue([])
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('block')
                             ->addDefaultsIfNotSet()
                             ->children()

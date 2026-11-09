@@ -30,6 +30,7 @@ use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Exception\StaleDataException;
 use Throwable;
 
 /**
@@ -69,11 +70,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @internal
      */
     protected static bool $disableDirtyDetection = false;
-
-    /**
-     * @internal
-     */
-    private static bool $disableLocking = false;
 
     /**
      * @internal
@@ -136,13 +132,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected ?array $__rawRelationData = null;
 
+    /**
+     * Change token of the objects row (DATETIME(6), maintained by the database) this object was loaded from or last
+     * saved to. Null when unknown, e.g. for an object restored from a version.
+     *
+     * @internal
+     */
+    protected ?string $changeToken = null;
+
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $blockedVars = array_merge($blockedVars, ['dirtyFields']);
+            // the change token belongs to the live row, a version or recycle bin dump must not carry it
+            $blockedVars = array_merge($blockedVars, ['dirtyFields', 'changeToken']);
         } else {
             // this is if we want to cache the object
             // the calculated value snapshot belongs to the version dump of an object restored
@@ -237,15 +242,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
 
-                    $wasLockingDisabled = self::isLockingDisabled();
-                    if (!$lock) {
-                        self::disableLocking();
-                    }
-
-                    try {
+                    if ($lock) {
                         $object->getDao()->getById($id);
-                    } finally {
-                        self::setDisableLocking($wasLockingDisabled);
+                    } else {
+                        HydrationLock::withoutLock(fn () => $object->getDao()->getById($id));
                     }
 
                     if ($object->getModificationDate() !== null) {
@@ -516,6 +516,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $isUpdate = false;
         $isDirtyDetectionDisabled = false;
+        $newChangeToken = null;
         $updatedChildren = [];
         $differentOldPath = '';
         $hideUnpublishedBackup = false;
@@ -554,6 +555,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 retryableFunc: function () use (
                     &$isUpdate,
                     &$parameters,
+                    &$newChangeToken,
                     &$updatedChildren,
                     &$differentOldPath,
                     &$hideUnpublishedBackup,
@@ -588,6 +590,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                         $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
 
+                        // the row is locked by now, so the token cannot change until this transaction ends
+                        $this->assertBasedOnCurrentData();
+
                         // relations are saved as a delta against the raw relation data, which might be outdated (read
                         // before a concurrent save, or copied from another object by cloning). Reset it before update()
                         // lazy loads any relation field, so the delta is calculated against the current database state.
@@ -606,6 +611,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                     $this->update($isUpdate, $parameters);
 
+                    // renewed explicitly: a store-only change in the same second leaves the objects row unchanged
+                    $newChangeToken = $this->getDao()->renewChangeToken();
+
                     self::setHideUnpublished($hideUnpublishedBackup);
                 },
                 onBeforeRetry: function ($e) use (&$hideUnpublishedBackup) {
@@ -619,10 +627,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 onCommit: function () use (
                     &$isUpdate,
                     &$parameters,
+                    &$newChangeToken,
                     &$differentOldPath,
                     &$updatedChildren,
                     &$isDirtyDetectionDisabled
                 ) {
+                    // only after the commit: a retried transaction must still compare against the token it loaded
+                    $this->changeToken = $newChangeToken;
+
                     $additionalTags = [];
 
                     foreach ($updatedChildren as $objectId) {
@@ -1015,35 +1027,53 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Returns whether the FOR UPDATE row lock during object hydration is currently disabled.
+     * @internal
      */
-    public static function isLockingDisabled(): bool
+    public function getChangeToken(): ?string
     {
-        return self::$disableLocking;
+        return $this->changeToken;
     }
 
     /**
-     * Enables or disables the FOR UPDATE row lock during object hydration.
+     * @internal
      */
-    public static function setDisableLocking(bool $disableLocking): void
+    public function setChangeToken(?string $changeToken): static
     {
-        self::$disableLocking = $disableLocking;
+        $this->changeToken = $changeToken;
+
+        return $this;
     }
 
     /**
-     * Disables the FOR UPDATE row lock during object hydration, e.g. for read-only batch processing.
+     * Compares the change token this object was loaded with against the locked objects row. A mismatch means another
+     * process wrote the row in the meantime: classes with a disabled hydration lock throw, all others keep the
+     * previous behavior (the concurrent change is overwritten) and log a warning.
+     *
+     * @throws StaleDataException
      */
-    public static function disableLocking(): void
+    private function assertBasedOnCurrentData(): void
     {
-        self::setDisableLocking(true);
-    }
+        if ($this->changeToken === null) {
+            return;
+        }
 
-    /**
-     * Re-enables the FOR UPDATE row lock during object hydration.
-     */
-    public static function enableLocking(): void
-    {
-        self::setDisableLocking(false);
+        $currentToken = $this->getDao()->getChangeTokenForUpdate();
+        if ($currentToken === null || $currentToken === $this->changeToken) {
+            return;
+        }
+
+        if (HydrationLock::isDisabledFor($this)) {
+            throw new StaleDataException(sprintf(
+                'Object %d was changed by another process since it was loaded, reload it and apply the changes again',
+                $this->getId()
+            ));
+        }
+
+        Logger::warning(
+            'Saving object {id} based on outdated data: a concurrent change is overwritten. Disable the hydration lock '
+            . 'for its class (Pimcore\Model\DataObject\HydrationLock) to get a StaleDataException instead.',
+            ['id' => $this->getId()]
+        );
     }
 
     /**

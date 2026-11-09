@@ -130,7 +130,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function getData(): void
     {
         $sql = 'SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?';
-        if (!DataObject\AbstractObject::isLockingDisabled()) {
+        if (!DataObject\HydrationLock::isLockSkippedFor($this->model)) {
             $sql .= ' FOR UPDATE';
         }
 
