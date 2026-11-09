@@ -15,6 +15,8 @@ namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Image;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
@@ -28,6 +30,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\Consent as ConsentValue;
 use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -293,6 +296,101 @@ class MultiValueTest extends TestCase
                 $this->addToAssertionCount(1);
             }
         }
+    }
+
+    /**
+     * `true` declares an UNBOUNDED list, so re-declaring the list that way clears the maximum the
+     * declaration itself had set. It stayed behind, and a key documented as unbounded still refused
+     * a fourth value.
+     */
+    public function testReDeclaringTheListAsUnboundedClearsTheMaximumItDeclared(): void
+    {
+        $wrapper = new MultiValue();
+
+        $wrapper->setMultiValue(3);
+        $this->assertTrue($wrapper->isMultiValue());
+        $this->assertSame(3, $wrapper->getMaximum());
+
+        $wrapper->setMultiValue(true);
+        $this->assertTrue($wrapper->isMultiValue(), 'it still declares a list');
+        $this->assertNull($wrapper->getMaximum(), 'and the list it declares is unbounded');
+
+        // and `false` still clears both, which is the other half of the documented rule
+        $wrapper->setMultiValue(3);
+        $wrapper->setMultiValue(false);
+        $this->assertFalse($wrapper->isMultiValue());
+        $this->assertNull($wrapper->getMaximum());
+    }
+
+    /**
+     * A maximum the list declaration did NOT set survives it, because that is the shape a definition
+     * is hydrated from: {@see Data::setValues()} walks a blob in the order the blob carries its
+     * members, so a declaration that cleared unconditionally would destroy the limit of any blob
+     * holding `maximum` before `multiValue`.
+     *
+     * Both orders are asserted, and so is the round trip through `__set_state()`, which
+     * {@see Service::getFieldDefinitionFromJson()} runs over the instance's own properties after the
+     * blob - a definition surviving one of the two walks and not the other would still lose it.
+     */
+    public function testAMaximumCarriedBesideTheListDeclarationSurvivesHydration(): void
+    {
+        foreach ([['maximum' => 3, 'multiValue' => true], ['multiValue' => true, 'maximum' => 3]] as $blob) {
+            $wrapper = new MultiValue();
+            $wrapper->setValues($blob);
+
+            $this->assertTrue($wrapper->isMultiValue());
+            $this->assertSame(
+                3,
+                $wrapper->getMaximum(),
+                'a separately carried maximum survives whichever order the blob lists the two in'
+            );
+        }
+
+        $declared = new MultiValue();
+        $declared->setMultiValue(3);
+
+        $rebuilt = MultiValue::__set_state((array) $declared);
+
+        $this->assertTrue($rebuilt->isMultiValue());
+        $this->assertSame(3, $rebuilt->getMaximum(), 'and the definition round trip keeps it');
+    }
+
+    /**
+     * A mandatory key whose answer is "no" is answered. `false` is a value a `checkbox` and a
+     * `booleanSelect` both hold ({@see Checkbox::isEmpty()}, {@see BooleanSelect::isEmpty()}), while
+     * the emptiness {@see Data::checkValidity()} computes for itself reads it through `empty()` and
+     * calls it absent - so the wrapper refused a negative answer as an empty mandatory field, where
+     * the unwrapped type accepts it.
+     */
+    public function testANegativeBooleanAnswerSatisfiesAMandatoryWrappedKey(): void
+    {
+        foreach ([new Checkbox(), new BooleanSelect()] as $inner) {
+            $inner->setName('wrapped');
+
+            $wrapper = $this->wrapping($inner);
+            $wrapper->setMandatory(true);
+
+            $wrapper->checkValidity(false);
+
+            $this->addToAssertionCount(1);
+        }
+    }
+
+    /**
+     * And a mandatory key holding nothing at all is still refused, so the fix is "ask the inner type
+     * what empty means" rather than "stop checking".
+     */
+    public function testAMandatoryWrappedKeyHoldingNothingIsStillRefused(): void
+    {
+        $inner = new Checkbox();
+        $inner->setName('wrapped');
+
+        $wrapper = $this->wrapping($inner);
+        $wrapper->setMandatory(true);
+
+        $this->expectException(ValidationException::class);
+
+        $wrapper->checkValidity(null);
     }
 
     /**

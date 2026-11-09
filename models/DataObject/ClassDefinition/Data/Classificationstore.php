@@ -1751,8 +1751,18 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * every further slot of a qualified key unvalidated by the inner type.
      *
      * The mandatory flag is a statement about the key in that language rather than about one slot of
-     * it, so the first slot holding a value answers it and the rest are checked with the mandatory
-     * check omitted - a key whose list starts above position 0 holds a value and is not empty.
+     * it, so the first slot holding a value answers it - a key whose list starts above position 0
+     * holds a value and is not empty - and the slots that do not answer it are skipped while they
+     * hold nothing.
+     *
+     * Every slot that IS checked is checked in full, `$omitMandatoryCheck` false. That flag is not
+     * the switch its name suggests: core's types gate their own constraints on it as well, an
+     * `input` its regex ({@see Input::checkValidity()}) and a `numeric` its range, its integer and
+     * its unsigned checks ({@see Numeric::checkValidity()}). Passing `true` for the slots after the
+     * first populated one therefore saved an invalid value at a higher position or under a named
+     * variant - the regex and the range were never applied to it. Nothing is lost by checking them
+     * in full: a slot reaching the check either answers the mandatory flag or is not empty, and a
+     * value that is not empty is not what a mandatory check refuses.
      *
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      * @param array<string, mixed> $params
@@ -1771,16 +1781,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $violations = [];
 
         foreach ($slots as $index => $slot) {
-            $omitMandatoryCheck = $index !== $mandatorySlot;
-
             // an empty slot holds nothing for the inner type to validate; the one slot that answers
             // the mandatory check is checked whether it holds a value or not
-            if ($omitMandatoryCheck && $keyDef->isEmpty($slot['value'])) {
+            if ($index !== $mandatorySlot && $keyDef->isEmpty($slot['value'])) {
                 continue;
             }
 
             try {
-                $keyDef->checkValidity($slot['value'], $omitMandatoryCheck, $params);
+                $keyDef->checkValidity($slot['value'], false, $params);
             } catch (Exception $exception) {
                 $violations[] = new Model\Element\ValidationException(
                     $exception->getMessage() . ' (' . $slot['context'] . ')',
@@ -1798,14 +1806,32 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * position 0 first - that one carries the value the caller resolved rather than the stored one,
      * because the language fallback and the inherited value it may come from are resolved there.
      *
+     * It is left out in the one case the tree it is measured against leaves it out too: a selected
+     * list that starts above position 0. {@see DataObject\Classificationstore::getQualifiedItems()}
+     * writes no position 0 for such a slot, because the resolved value there belongs to a further
+     * ancestor than the list came from, and merging the two would put two objects' values into one
+     * list. Validation has to measure the same list the object answers: with a parent holding
+     * position 0 = `too long` and a child holding `[1 => 'ok']`, the resolved value was added back
+     * in and tightening the length constraint refused the child's own valid list over a value the
+     * child does not inherit.
+     *
+     * Only while the declaration still permits the list. A narrowed one addresses position 0 alone -
+     * {@see DataObject\Classificationstore::resolveSlots()} refuses anything above it - so the
+     * resolved value is then what the key answers, and the legacy resolution stands.
+     *
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      *
      * @return array<int, array{value: mixed, context: string}>
      */
     private function collectDeclaredSlots(Data $keyDef, mixed $value, string $language, array $slotValues): array
     {
-        $slots = [['value' => $value, 'context' => $language]];
         $holdsAList = $keyDef instanceof MultiValue && $keyDef->isMultiValue();
+        $selectedListStartsAboveZero = isset($slotValues[self::DEFAULT_VARIANT])
+            && !array_key_exists(0, $slotValues[self::DEFAULT_VARIANT]);
+
+        $slots = $holdsAList && $selectedListStartsAboveZero
+            ? []
+            : [['value' => $value, 'context' => $language]];
 
         foreach ($slotValues as $variant => $positions) {
             if (!$this->declaresVariant($keyDef, (string) $variant)) {

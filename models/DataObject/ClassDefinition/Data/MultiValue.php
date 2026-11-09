@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
 /**
@@ -46,7 +47,9 @@ use Pimcore\Normalizer\NormalizerInterface;
  *    `getDataFromEditmode()`, `getVersionPreview()`, `isEmpty()`, `getPhpdocInputType()`,
  *    `getPhpdocReturnType()`
  *  - validation: `checkValidity()`, after the wrapper's own mandatory check - the key's assignment to
- *    a group sets that flag on THIS definition, so delegating alone would never consult it
+ *    a group sets that flag on THIS definition, so delegating alone would never consult it. That
+ *    check asks the inner type whether the value is empty, so the wrapper refuses as mandatory
+ *    exactly what the inner type would refuse
  *  - the pre-read hook: `preGetData()`, which is what filters the unpublished targets of a relation
  *    out of a read ({@see ManyToManyObjectRelation::preGetData()})
  *  - the element graph: `resolveDependencies()` and `getCacheTags()`, so a wrapped relation's
@@ -103,6 +106,21 @@ class MultiValue extends Data implements
      * @internal
      */
     public ?int $maximum = null;
+
+    /**
+     * Whether the maximum in force was declared BY the list declaration, {@see self::setMultiValue()}
+     * with an integer, rather than set on its own. Only such a maximum is the list declaration's to
+     * clear when the list is re-declared as unbounded; a maximum that arrived separately is not.
+     *
+     * Private so that it stays out of the key's definition blob and out of the state the definition
+     * is rebuilt from: it is a record of HOW this instance was configured, not part of the
+     * declaration. A rebuilt definition therefore starts with "set on its own", which is what the
+     * two values it is rebuilt from are - a blob carries `multiValue` and `maximum` as two members
+     * and says nothing about which call produced them.
+     *
+     * @internal
+     */
+    private bool $maximumDeclaredWithTheList = false;
 
     /**
      * The inner type of the key, or null for a definition blob that names none - a stored key config
@@ -180,6 +198,19 @@ class MultiValue extends Data implements
      * `true` declares an unbounded list, an integer declares the list and its maximum in one, and
      * `false` clears both - the shape the key's definition blob carries either way.
      *
+     * Re-declaring the list as unbounded clears the maximum the list declaration itself had set, so
+     * that `true` means what it says: `setMultiValue(3)` followed by `setMultiValue(true)` left the
+     * maximum at 3 and a fourth value was still refused by
+     * {@see Classificationstore::checkValidity()} on a key documented as unbounded.
+     *
+     * A maximum that did NOT come from the list declaration is left alone, because that is the one
+     * the definition is hydrated with: {@see Data::setValues()} walks the blob in the order the blob
+     * carries its members, so a blob holding `maximum` before `multiValue` would otherwise have its
+     * limit destroyed by the declaration that follows it. The two paths that rebuild a key
+     * definition both run that walk - {@see \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson()}
+     * runs it over the decoded blob and then again over the instance's own properties, through
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Helper\VarExport::__set_state()}.
+     *
      * @return $this
      */
     public function setMultiValue(bool|int $multiValue): static
@@ -187,14 +218,18 @@ class MultiValue extends Data implements
         if (is_int($multiValue)) {
             $this->multiValue = $multiValue > 0;
             $this->maximum = $multiValue > 0 ? $multiValue : null;
+            $this->maximumDeclaredWithTheList = $multiValue > 0;
 
             return $this;
         }
 
         $this->multiValue = $multiValue;
 
-        if (!$multiValue) {
+        // `false` clears the maximum whatever declared it: the key holds no list, so there is no
+        // list for a limit to bound
+        if (!$multiValue || $this->maximumDeclaredWithTheList) {
             $this->maximum = null;
+            $this->maximumDeclaredWithTheList = false;
         }
 
         return $this;
@@ -211,6 +246,8 @@ class MultiValue extends Data implements
     public function setMaximum(?int $maximum): static
     {
         $this->maximum = $maximum;
+        // set on its own, so re-declaring the list as unbounded is not what removes it
+        $this->maximumDeclaredWithTheList = false;
 
         return $this;
     }
@@ -259,10 +296,25 @@ class MultiValue extends Data implements
      * The mandatory flag of the key itself is checked first: it is set on this definition - by the
      * key's assignment to a group among others - and the inner type carries one of its own, so
      * delegating alone would never consult it.
+     *
+     * It is answered with the INNER TYPE's idea of emptiness, {@see self::isEmpty()}, rather than
+     * with the one {@see Data::checkValidity()} computes for itself. The base check reads a value
+     * through `empty()`, under which `false` is an absent answer; a `checkbox` and a `booleanSelect`
+     * both hold `false` as an answer of its own ({@see Checkbox::isEmpty()},
+     * {@see BooleanSelect::isEmpty()}), so a mandatory `multiValue<checkbox>` or
+     * `multiValue<booleanSelect>` whose answer was "no" was refused as empty before its own
+     * validator ever ran - and refused by the wrapper, where the unwrapped type accepts it.
+     *
+     * Emptiness has to be the one question here, because it is also what decides which slot of a
+     * qualified key answers the mandatory check at all
+     * ({@see Classificationstore::collectKeyViolations()}): a wrapper answering it one way and
+     * `isEmpty()` the other would skip a slot as empty and then refuse it as mandatory.
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        parent::checkValidity($data, $omitMandatoryCheck, $params);
+        if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
+            throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+        }
 
         $fd = $this->getDelegate();
         if ($fd instanceof Data) {

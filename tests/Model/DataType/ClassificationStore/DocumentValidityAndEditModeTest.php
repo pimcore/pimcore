@@ -17,6 +17,7 @@ use Pimcore\Model\DataObject\Data\MultiValue as MultiValueEntry;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
 use Pimcore;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
@@ -47,6 +48,12 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     private const MAXIMUM = 3;
 
     private const INNER_MAX_LENGTH = 5;
+
+    /**
+     * Loose enough for a value the tightened constraint refuses to be stored under it in the first
+     * place, {@see self::createParentHoldingAFirstValueThatIsAboutToBeRefused()}.
+     */
+    private const LOOSE_MAX_LENGTH = 50;
 
     private const VARIANT = 'metric';
 
@@ -980,6 +987,229 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $this->addToAssertionCount(1);
     }
 
+    /**
+     * The delegated constraints core's types gate on `$omitMandatoryCheck` reach every slot that is
+     * validated, and not only the first populated one. An `input`'s REGEX is one of them.
+     *
+     * `$omitMandatoryCheck` is not the switch its name suggests: `Input::checkValidity()` gates its
+     * regex on it and `Numeric::checkValidity()` its range, its integer and its unsigned checks. The
+     * slots after the first populated one were checked with it true - because the mandatory flag is
+     * answered once per key and per language - so a value the key's own regex refuses stored clean
+     * at a higher position or under a named variant. Its length constraint is NOT gated on the flag,
+     * which is why {@see self::testTheInnerTypeValidatesEveryDeclaredSlotAndNotOnlyTheFirst()} passed
+     * over this.
+     */
+    public function testTheDelegatedRegexRefusesAValueBeyondTheFirstPosition(): void
+    {
+        $group = $this->createGroup('validity_delegated_regex');
+        $listKey = $this->createKey('validity_delegated_regex', true, $this->regexMultiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-delegated-regex');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('AB-1', null, null, 0),
+            new MultiValueEntry('nope', null, null, 1),
+            new MultiValueEntry('also-nope', null, self::VARIANT),
+        ]);
+
+        $failures = $this->validationFailuresContaining($object, "doesn't match input validation");
+
+        $this->assertCount(2, $failures, 'the higher position and the variant are both refused');
+        $this->assertNotEmpty(
+            array_filter($failures, static fn (string $message): bool => str_contains($message, '/1')),
+            'the failure names the position it was found at'
+        );
+        $this->assertNotEmpty(
+            array_filter($failures, static fn (string $message): bool => str_contains($message, self::VARIANT)),
+            'and the variant it was found in'
+        );
+    }
+
+    /**
+     * And a `numeric`'s range, which is gated on the same flag together with its integer and its
+     * unsigned checks - so a second delegated type is pinned rather than one type's one constraint.
+     */
+    public function testTheDelegatedNumericRangeRefusesAValueBeyondTheFirstPosition(): void
+    {
+        $group = $this->createGroup('validity_delegated_range');
+        $listKey = $this->createKey('validity_delegated_range', true, $this->numericMultiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-delegated-range');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry(5, null, null, 0),
+            new MultiValueEntry(50, null, null, 1),
+            new MultiValueEntry(99, null, self::VARIANT),
+        ]);
+
+        $failures = $this->validationFailuresContaining($object, 'is bigger than');
+
+        $this->assertCount(2, $failures, 'the higher position and the variant are both out of range');
+    }
+
+    /**
+     * A child whose list starts above position 0 is not validated against the value position 0 would
+     * have resolved to, because that value is an ancestor's and the child does not hold it.
+     *
+     * The resolved value is prepended as the default variant's position 0, which is how every caller
+     * read the key before a value could carry qualifiers. But
+     * {@see \Pimcore\Model\DataObject\Classificationstore::getQualifiedItems()} deliberately writes
+     * no position 0 for a selected list that starts above it - the list came from a nearer store
+     * than the resolved value did, and merging the two would put two objects' values into one list.
+     * Validation added it back, so tightening the inner type's constraint refused the CHILD's own
+     * valid list over a value the child does not inherit.
+     */
+    public function testAChildsSparseListIsNotValidatedAgainstThePositionItDoesNotInherit(): void
+    {
+        [$group, $listKey, $parent, $child] = $this->createParentHoldingAFirstValueThatIsAboutToBeRefused(
+            'validity_sparse_list'
+        );
+
+        // the child holds position 1 alone, and it is a value the inner type accepts
+        foreach ($this->getValidLanguages() as $language) {
+            $child->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('ok', $language, null, 1),
+            ]);
+        }
+
+        $this->tightenTheInnerConstraint($listKey, $this->constrainedMultiValueDefinition());
+
+        $child->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($child->getCsstore());
+
+        // the parent itself does hold position 0, so the legacy resolution stands there: this must
+        // not pass by validating nothing at all
+        $this->assertNotEmpty(
+            $this->validationFailuresContaining($parent, 'is longer than'),
+            'the parent holds position 0 itself and is refused for it'
+        );
+
+        // and the child's OWN list is still validated
+        foreach ($this->getValidLanguages() as $language) {
+            $child->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('far too long', $language, null, 1),
+            ]);
+        }
+
+        $this->assertNotEmpty(
+            $this->validationFailuresContaining($child, 'is longer than'),
+            "suppressing the inherited position 0 must not stop the child's own value being checked"
+        );
+    }
+
+    /**
+     * And the legacy resolution is retained once the declaration no longer permits the list: a
+     * narrowed key addresses position 0 alone, so the value resolved there is the one it answers -
+     * an inherited one included - and it is validated as the value in force.
+     */
+    public function testANarrowedKeyIsStillValidatedAgainstTheValueItResolvesAtPositionZero(): void
+    {
+        [$group, $listKey, , $child] = $this->createParentHoldingAFirstValueThatIsAboutToBeRefused(
+            'validity_sparse_narrowed'
+        );
+
+        foreach ($this->getValidLanguages() as $language) {
+            $child->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('ok', $language, null, 1),
+            ]);
+        }
+
+        // narrowed as well as tightened: no variants and no list, so position 1 is hidden and
+        // position 0 - the parent's value - is all the key addresses
+        $this->tightenTheInnerConstraint($listKey, $this->plainMultiValueDefinition());
+
+        $this->assertNotEmpty(
+            $this->validationFailuresContaining($child, 'is longer than'),
+            'the inherited position 0 is the value in force once the list is no longer declared'
+        );
+    }
+
+    /**
+     * A parent holding a position 0 of its own, declared loosely enough for its own save to pass,
+     * and an empty child under it - the shape both sparse-list cases are measured in. The constraint
+     * is tightened afterwards by {@see self::tightenTheInnerConstraint()}, which is the finding's own
+     * scenario: the value was legal when it was stored and the child is the one that pays for it.
+     *
+     * @return array{0: Classificationstore\GroupConfig, 1: Classificationstore\KeyConfig, 2: Csstorelocalized, 3: Csstorelocalized}
+     */
+    private function createParentHoldingAFirstValueThatIsAboutToBeRefused(string $label): array
+    {
+        $group = $this->createGroup($label);
+        $listKey = $this->createKey($label, true, $this->constrainedMultiValueDefinition(self::LOOSE_MAX_LENGTH));
+
+        $this->assignKey($group, $listKey, 0);
+
+        $parent = new Csstorelocalized();
+        $parent->setParentId(1);
+        $parent->setKey(str_replace('_', '-', $label) . '-parent');
+        $parent->setPublished(true);
+        $parent->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        foreach ($this->getValidLanguages() as $language) {
+            $parent->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('far too long', $language, null, 0),
+            ]);
+        }
+
+        $parent->save();
+
+        $child = new Csstorelocalized();
+        $child->setParentId((int) $parent->getId());
+        $child->setKey(str_replace('_', '-', $label) . '-child');
+        $child->setPublished(true);
+        $child->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        return [$group, $listKey, $parent, $child];
+    }
+
+    /**
+     * Rewrites the key's declaration to one whose inner type refuses the value the parent already
+     * holds, and drops every cache that would answer the old one.
+     */
+    private function tightenTheInnerConstraint(
+        Classificationstore\KeyConfig $listKey,
+        MultiValue $declaration
+    ): void {
+        $listKey->setDefinition(json_encode($declaration));
+        $listKey->save();
+
+        $this->clearDefinitionCaches();
+    }
+
+    /**
+     * The per-key validation failures of one object whose message carries the given text, as the
+     * plain strings a test asserts over.
+     *
+     * @return string[]
+     */
+    private function validationFailuresContaining(Concrete $object, string $text): array
+    {
+        try {
+            $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
+
+            return [];
+        } catch (ValidationException $validationException) {
+            $messages = array_map(
+                static fn (ValidationException $subItem): string => $subItem->getMessage(),
+                $validationException->getSubItems()
+            );
+
+            return array_values(array_filter(
+                $messages,
+                static fn (string $message): bool => str_contains($message, $text)
+            ));
+        }
+    }
+
     private function multiValueDefinition(): MultiValue
     {
         $definition = $this->wrapperOf($this->innerType());
@@ -989,12 +1219,47 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
+     * The same key with an inner type whose REGEX refuses a value, rather than its length: the regex
+     * is one of the constraints core gates on `$omitMandatoryCheck`, and the length is not.
+     */
+    private function regexMultiValueDefinition(): MultiValue
+    {
+        $inner = new Input();
+        $inner->setName('mvInner');
+        $inner->setRegex('^[A-Z]{2}-[0-9]$');
+
+        $definition = $this->wrapperOf($inner);
+        $definition->setVariants([['name' => self::VARIANT]]);
+        $definition->setMultiValue(self::MAXIMUM);
+
+        return $definition;
+    }
+
+    /**
+     * And with a `numeric` inner type bounded above, whose range check is gated on the same flag.
+     */
+    private function numericMultiValueDefinition(): MultiValue
+    {
+        $inner = new Numeric();
+        $inner->setName('mvInner');
+        $inner->setMaxValue(10);
+
+        $definition = new MultiValue();
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+        $definition->setVariants([['name' => self::VARIANT]]);
+        $definition->setMultiValue(self::MAXIMUM);
+
+        return $definition;
+    }
+
+    /**
      * The same key with an inner type that refuses a value of its own, and with a variant to put one
      * in, so that the slot a failure is found in is what the test is about.
      */
-    private function constrainedMultiValueDefinition(): MultiValue
+    private function constrainedMultiValueDefinition(int $maxLength = self::INNER_MAX_LENGTH): MultiValue
     {
-        $definition = $this->wrapperOf($this->innerType(self::INNER_MAX_LENGTH));
+        $definition = $this->wrapperOf($this->innerType($maxLength));
         $definition->setVariants([['name' => self::VARIANT]]);
         $definition->setMultiValue(self::MAXIMUM);
 
