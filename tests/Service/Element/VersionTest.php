@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Service as DataObjectService;
@@ -851,6 +852,47 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($id2, 'id must not be empty');
         $this->assertNotEmpty($metaData2, 'metaData must not be empty');
         $this->assertEmpty($binaryData2, 'binaryData must be empty');
+    }
+
+    public static function binaryStorageAdapterProvider(): array
+    {
+        return [
+            'fs' => ['fs'],
+            'db' => ['db'],
+        ];
+    }
+
+    /**
+     * An asset version that owns its binary data (binaryFileId empty) is found by the binary deduplication itself,
+     * publishing it in place (`existingVersion` save parameter) must keep its binary data restorable
+     *
+     * @dataProvider binaryStorageAdapterProvider
+     */
+    public function testPublishingAnAssetVersionInPlaceKeepsItsBinaryData(string $storageType): void
+    {
+        $adapter = $storageType === 'db' ? $this->mockDbStorageAdapter() : $this->mockFileSystemStorageAdapter();
+        $this->setStorageAdapter($adapter);
+        $originalData = TestHelper::generateRandomString(100);
+        $asset = TestHelper::createImageAsset('test_publish_in_place', $originalData);
+        $versionId = (int) $this->getVersionDataFromDb($asset->getId(), 'asset', 1)['id'];
+        $asset->setData(TestHelper::generateRandomString(100));
+        $asset->save();
+
+        $version = Version::getById($versionId);
+        $this->assertNotNull($version);
+        $this->assertEmpty($version->getBinaryFileId(), 'the version must own its binary data');
+        $restored = $version->getData();
+        $this->assertInstanceOf(Asset::class, $restored);
+        $restored->save(['existingVersion' => $version]);
+
+        $publishedVersion = Version::getById($versionId);
+        $this->assertNotNull($publishedVersion);
+        $this->assertSame($storageType, $publishedVersion->getStorageType());
+        $this->assertEmpty($publishedVersion->getBinaryFileId(), 'the version must still own its binary data');
+        $binaryStream = $adapter->loadBinaryData($publishedVersion);
+        $this->assertIsResource($binaryStream, 'the binary data of the version must still be stored');
+        rewind($binaryStream); // the database adapter returns the stream at its end
+        $this->assertSame($originalData, stream_get_contents($binaryStream), 'the binary data of the version must be unchanged');
     }
 
     // Size of binary file exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
