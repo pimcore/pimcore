@@ -331,7 +331,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $keyConfig
                         );
 
-                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
+                        $editmodeParams = [];
+                        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\Password) {
+                            // a password field has to know the stored value to be able to keep it
+                            $getInheritedValues = DataObject::getGetInheritedValues();
+                            DataObject::setGetInheritedValues(false);
+
+                            try {
+                                $editmodeParams['injectedData'] = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
+                            } finally {
+                                DataObject::setGetInheritedValues($getInheritedValues);
+                            }
+                        }
+                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value, null, $editmodeParams);
                         $activeGroups[$groupId] = true;
 
                         $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);
