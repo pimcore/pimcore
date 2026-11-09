@@ -19,6 +19,7 @@ use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
+use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionClass;
 use ReflectionException;
@@ -80,10 +81,10 @@ class EngineContractTest extends TestCase
         );
     }
 
-    public function testEngineFeatureHasExactlyTheFourCases(): void
+    public function testEngineFeatureHasExactlyTheFiveCases(): void
     {
         $this->assertSame(
-            ['MultiValue', 'Variants', 'PerKeyLocalization', 'Relations'],
+            ['MultiValue', 'Variants', 'PerKeyLocalization', 'Relations', 'StructuredValues'],
             array_map(static fn (EngineFeature $feature): string => $feature->name, EngineFeature::cases())
         );
     }
@@ -95,24 +96,31 @@ class EngineContractTest extends TestCase
 
     /**
      * The document engine offers the one capability the EAV engine offers - per key localization is
-     * a property of the key configuration, not of the storage - and Relations on top of it: a
-     * document holds whatever normalize() returns, so a relation's element descriptors need no
+     * a property of the key configuration, not of the storage - and StructuredValues and Relations
+     * on top of it: a document holds whatever `normalize()` returns, with no column to pack it
+     * into, so a structured value needs no marshaller and a relation's element descriptors need no
      * addressing of their own. Neither MultiValue nor Variants has a model API for a qualified
      * value yet, so those two stay false for both engines.
      */
-    public function testDocumentEngineSupportsPerKeyLocalizationAndRelations(): void
+    public function testDocumentEngineSupportsStructuredValuesPerKeyLocalizationAndRelations(): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
         $instance = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
 
         $this->assertInstanceOf(EngineInterface::class, $instance);
 
-        foreach ([EngineFeature::PerKeyLocalization, EngineFeature::Relations] as $feature) {
-            $this->assertTrue($instance->supports($feature), $feature->name . ' must be supported');
-        }
+        $supported = [
+            EngineFeature::StructuredValues,
+            EngineFeature::PerKeyLocalization,
+            EngineFeature::Relations,
+        ];
 
-        foreach ([EngineFeature::MultiValue, EngineFeature::Variants] as $feature) {
-            $this->assertFalse($instance->supports($feature), $feature->name . ' must not be supported');
+        foreach (EngineFeature::cases() as $feature) {
+            $this->assertSame(
+                in_array($feature, $supported, true),
+                $instance->supports($feature),
+                $feature->name . ' is answered wrongly'
+            );
         }
     }
 
@@ -131,7 +139,12 @@ class EngineContractTest extends TestCase
             'PerKeyLocalization must be supported'
         );
 
-        foreach ([EngineFeature::MultiValue, EngineFeature::Variants, EngineFeature::Relations] as $feature) {
+        foreach ([
+            EngineFeature::MultiValue,
+            EngineFeature::Variants,
+            EngineFeature::Relations,
+            EngineFeature::StructuredValues,
+        ] as $feature) {
             $this->assertFalse($instance->supports($feature), $feature->name . ' must not be supported');
         }
     }
@@ -179,16 +192,23 @@ class EngineContractTest extends TestCase
     }
 
     /**
-     * A write of a value the engine cannot store is refused rather than skipped or written into
-     * whatever column its normalized form happens to fit - which is what the exception exists for.
+     * An unsupported feature is still answered with `false` by `supports()`. The one place that
+     * throws instead is a key definition, and a value write, that the store's engine cannot hold:
+     * a write of such a value is refused rather than skipped or written into whatever column its
+     * normalized form happens to fit, so the exception exists and lives beside the other two
+     * engine exceptions.
      */
-    public function testAnUnsupportedFeatureIsRefusedWithItsOwnException(): void
+    public function testAnUnsupportedFeatureIsRefusedWithItsOwnExceptionBesideTheOthers(): void
     {
         $exceptionDirectory = dirname(
             (string) (new ReflectionClass(UnknownClassificationStoreEngineException::class))->getFileName()
         );
 
         $this->assertFileExists($exceptionDirectory . '/UnsupportedEngineFeatureException.php');
+        $this->assertSame(
+            $exceptionDirectory,
+            dirname((string) (new ReflectionClass(UnsupportedEngineFeatureException::class))->getFileName())
+        );
 
         foreach ([EavEngine::class, DocumentEngine::class] as $engine) {
             $this->assertStringContainsString(
@@ -197,6 +217,33 @@ class EngineContractTest extends TestCase
                 $engine . ' has to refuse a value its storage cannot address'
             );
         }
+    }
+
+    /**
+     * The exception carries no `@internal`, so the names of its constructor parameters are part of
+     * the API: a caller anywhere may be passing them as named arguments, and a release that renames
+     * them turns such a call into an unknown-named-parameter error. The second call shape was added
+     * beside those names rather than over them, and is written at a call site as the named
+     * constructor rather than by reading a store id out of a parameter called `$groupId`.
+     */
+    public function testTheFeatureExceptionKeepsTheNamedArgumentsItShippedWith(): void
+    {
+        $missingFeature = new UnsupportedEngineFeatureException(
+            feature: EngineFeature::Relations,
+            groupId: 7,
+            keyId: 11,
+            type: 'manyToOneRelation'
+        );
+
+        $this->assertStringContainsString('Relations', $missingFeature->getMessage());
+        $this->assertStringContainsString('key 11 of group 7', $missingFeature->getMessage());
+        $this->assertStringContainsString('"manyToOneRelation"', $missingFeature->getMessage());
+
+        $unholdableType = UnsupportedEngineFeatureException::forUnholdableType('geopoint', 3, 'eav');
+
+        $this->assertStringContainsString('"geopoint"', $unholdableType->getMessage());
+        $this->assertStringContainsString('"eav"', $unholdableType->getMessage());
+        $this->assertStringContainsString('store 3', $unholdableType->getMessage());
     }
 
     /**

@@ -363,7 +363,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
 
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
-        $this->assertEquals($originalValue, $newValue);
+        $this->assertSameStoredValue($originalValue, $newValue);
     }
 
     /**
@@ -581,7 +581,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
 
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
-        $this->assertEquals($originalValue, $newValue);
+        $this->assertSameStoredValue($originalValue, $newValue);
     }
 
     public function testLanguage(): void
@@ -683,7 +683,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
 
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
-        $this->assertEquals($originalValue, $newValue);
+        $this->assertSameStoredValue($originalValue, $newValue);
     }
 
     public function testRgbaColor(): void
@@ -702,7 +702,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
 
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
-        $this->assertEquals($originalValue, $newValue);
+        $this->assertSameStoredValue($originalValue, $newValue);
     }
 
     public function testSelect(): void

@@ -20,6 +20,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -1349,6 +1350,19 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function isFilterable(): bool
     {
         return false;
+    }
+
+    /**
+     * How a classification store key of this type can be filtered on the index side.
+     *
+     * Additive on purpose, and never abstract: a type that does not override it declares no filter,
+     * so a third-party type keeps working without knowing the declaration exists. This is distinct
+     * from {@see self::isFilterable()}, which answers for a DataObject listing over a column of
+     * `object_query_<CLASS>` - a classification store value never reaches one.
+     */
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::None;
     }
 
     /**

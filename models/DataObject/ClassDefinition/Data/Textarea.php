@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -212,5 +213,10 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getFieldType(): string
     {
         return 'textarea';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::FullText;
     }
 }

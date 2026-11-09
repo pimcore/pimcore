@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\Dao as ClassDefinitionDaoHelper;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DanglingRelation;
@@ -137,6 +138,32 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
 
     private const MARSHALLER_FORMAT = 'classificationstore';
+
+    /**
+     * The one member of the JSON envelope an `encryptedField` value is wrapped in when what it
+     * normalizes to is not a scalar. {@see self::needsAJsonEnvelope()} says when that is.
+     */
+    private const ENVELOPE_MEMBER = '_csJson';
+
+    /**
+     * Whether the value of this entry is a JSON envelope of {@see self::ENVELOPE_MEMBER} rather than
+     * the value itself.
+     *
+     * It is a qualifier of the entry and so sits *outside* the encrypted bytes, which is the whole
+     * point: a delegate with no marshaller of its own stores a scalar for one value and an envelope
+     * for the next, so the read side has to be told which it is holding and cannot be left to
+     * recognise it. Naming the envelope member is not enough to recognise it by - the plain string
+     * `{"_csJson":[1,2]}` is a perfectly good scalar value, is stored unchanged because it is one,
+     * and would come back as the array `[1,2]`. It is also the one case
+     * {@see self::encodesTheSameValue()} could not have told apart: that string and the array
+     * `[1,2]` reach the encryption as the same bytes, so an unchanged save would have kept the
+     * stored string of whichever of the two was there before. The qualifier is compared with the
+     * value for exactly that reason.
+     *
+     * An entry carrying no qualifier holds its value as it stands, which is how every entry written
+     * before this qualifier existed is read: none of them was ever enveloped.
+     */
+    private const ENVELOPE_QUALIFIER = 'j';
 
     private const DOCUMENT_COLUMNS = ['id', 'fieldname', 'groupId', 'collectionId', 'values', 'checksum'];
 
@@ -753,15 +780,21 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * A document holds whatever {@see NormalizerInterface::normalize()} returns, so a relation's
-     * element descriptors need no row of their own and no addressing the two value columns of the
-     * EAV engine cannot give them. PerKeyLocalization is answered by both engines, as it is a
-     * property of the key configuration rather than of the storage. The other two features are
-     * still nobody's.
+     * A document holds whatever {@see NormalizerInterface::normalize()} returns, so a structured
+     * value needs no marshaller here and no column to be packed into, and a relation's element
+     * descriptors need no row of their own and no addressing the two value columns of the EAV
+     * engine cannot give them. StructuredValues and Relations are the two capabilities this engine
+     * offers that the EAV engine does not; PerKeyLocalization is answered by both engines, as it is
+     * a property of the key configuration rather than of the storage. The remaining two features
+     * are still nobody's.
      */
     public function supports(EngineFeature $feature): bool
     {
-        return in_array($feature, [EngineFeature::Relations, EngineFeature::PerKeyLocalization], true);
+        return in_array(
+            $feature,
+            [EngineFeature::StructuredValues, EngineFeature::Relations, EngineFeature::PerKeyLocalization],
+            true
+        );
     }
 
     /**
@@ -965,7 +998,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
                 $entries[$languageAlias] = $this->buildEntry(
                     (string) $language,
-                    $this->encodeValue($fd, $value, $object, $this->getStoredValue($storedEntries, $languageAlias))
+                    $this->encodeValue($fd, $value, $object, $this->getStoredEntry($storedEntries, $languageAlias))
                 );
             }
 
@@ -1441,7 +1474,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         $value = $entry[self::VALUE_QUALIFIER] ?? null;
 
         if (!$this->relationResolver->isRelation($fd)) {
-            return $this->decodeValue($fd, $value, $object);
+            return $this->decodeValue($fd, $value, ($entry[self::ENVELOPE_QUALIFIER] ?? false) === true, $object);
         }
 
         return new RelationDescriptor($this->applyStoredMetadata($fd, $value, $metadata));
@@ -1506,9 +1539,15 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
+     * The members are written in one order whatever the entry holds, so that the same value always
+     * serializes to the same string - which is what lets the save compare documents instead of
+     * rewriting them.
+     *
+     * @param array{value: mixed, enveloped: bool} $encoded
+     *
      * @return array<string, mixed>
      */
-    private function buildEntry(string $language, mixed $value): array
+    private function buildEntry(string $language, array $encoded): array
     {
         $entry = [];
 
@@ -1516,7 +1555,13 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $entry[self::LANGUAGE_QUALIFIER] = $language;
         }
 
-        $entry[self::VALUE_QUALIFIER] = $value;
+        $entry[self::VALUE_QUALIFIER] = $encoded['value'];
+
+        // written only when it is true, so an entry that carries no envelope serializes to the
+        // string it did before the qualifier existed
+        if ($encoded['enveloped']) {
+            $entry[self::ENVELOPE_QUALIFIER] = true;
+        }
 
         return $entry;
     }
@@ -1532,24 +1577,39 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * @param mixed $storedValue what the stored document holds for this key and language, against
-     *                           which a randomized encoding is compared
+     * The value as the document holds it, and whether what it holds is a JSON envelope.
+     *
+     * @param array<string, mixed>|null $storedEntry what the stored document holds for this key and
+     *                                              language, against which a randomized encoding is
+     *                                              compared
+     *
+     * @return array{value: mixed, enveloped: bool}
      */
-    private function encodeValue(?Data $fd, mixed $value, ?Concrete $object, mixed $storedValue): mixed
+    private function encodeValue(?Data $fd, mixed $value, ?Concrete $object, ?array $storedEntry): array
     {
         if (!$fd instanceof NormalizerInterface) {
-            return null;
+            return ['value' => null, 'enveloped' => false];
         }
 
-        // an unread descriptor is written back as it is, so the diff finds the document unchanged
+        // an unread descriptor is written back as it is, so the diff finds the document unchanged.
+        // It never claims an envelope: that qualifier belongs to an `encryptedField`, and a
+        // relation type is not one, so the entry serializes to the string it already holds
         if ($value instanceof RelationDescriptor) {
-            return $value->getValue();
+            return ['value' => $value->getValue(), 'enveloped' => false];
         }
 
         $normalizedData = $fd->normalize($value, ['object' => $object, 'fieldDefinition' => $fd]);
 
         if (!$this->encodesThroughItsMarshaller($fd)) {
-            return $normalizedData;
+            return ['value' => $normalizedData, 'enveloped' => false];
+        }
+
+        $enveloped = $this->needsAJsonEnvelope($fd, $normalizedData);
+
+        if ($enveloped) {
+            // throwing, so that a value JSON cannot carry is not encrypted as the `false` of a
+            // failed encode and read back as nothing
+            $normalizedData = json_encode([self::ENVELOPE_MEMBER => $normalizedData], JSON_THROW_ON_ERROR);
         }
 
         $marshaller = $this->marshallerService
@@ -1557,14 +1617,21 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         $parameters = $this->getMarshallerParameters($fd, $object);
         $encodedValue = $marshaller->marshal($normalizedData, $parameters);
 
+        $storedValue = $storedEntry[self::VALUE_QUALIFIER] ?? null;
+
+        // the stored string is kept only when the entry it sits in says the same thing about its
+        // shape: the plaintext alone cannot tell the scalar `{"_csJson":[1,2]}` from an envelope
+        // carrying `[1,2]`, so keeping it on the strength of the plaintext would answer a read of
+        // one with the other
         if ($storedValue !== null
             && $encodedValue !== null
+            && ($storedEntry[self::ENVELOPE_QUALIFIER] ?? false) === $enveloped
             && $this->encodesTheSameValue($marshaller, $parameters, $storedValue, $encodedValue)
         ) {
-            return $storedValue;
+            return ['value' => $storedValue, 'enveloped' => $enveloped];
         }
 
-        return $encodedValue;
+        return ['value' => $encodedValue, 'enveloped' => $enveloped];
     }
 
     /**
@@ -1609,25 +1676,31 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * The value the stored entries of one key hold in one language, or null when they do not carry
-     * that language.
+     * The entry the stored entries of one key hold for one language, or null when they do not carry
+     * that language. The whole entry rather than its value: whether the value is an envelope is a
+     * qualifier of the entry, and is compared with it.
      *
      * @param array<array<string, mixed>> $entries
+     *
+     * @return array<string, mixed>|null
      */
-    private function getStoredValue(array $entries, string $languageAlias): mixed
+    private function getStoredEntry(array $entries, string $languageAlias): ?array
     {
         foreach ($entries as $entry) {
             $language = (string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE);
 
             if ($this->getLanguageAlias($language) === $languageAlias) {
-                return $entry[self::VALUE_QUALIFIER] ?? null;
+                return $entry;
             }
         }
 
         return null;
     }
 
-    private function decodeValue(Data $fd, mixed $value, ?Concrete $object): mixed
+    /**
+     * @param bool $enveloped what the entry's {@see self::ENVELOPE_QUALIFIER} said about its value
+     */
+    private function decodeValue(Data $fd, mixed $value, bool $enveloped, ?Concrete $object): mixed
     {
         if (!$fd instanceof NormalizerInterface) {
             return null;
@@ -1637,6 +1710,10 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $value = $this->marshallerService
                 ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype())
                 ->unmarshal($value, $this->getMarshallerParameters($fd, $object));
+
+            if ($enveloped) {
+                $value = $this->openAJsonEnvelope($value);
+            }
         }
 
         return $fd->denormalize($value, ['object' => $object, 'fieldDefinition' => $fd]);
@@ -1655,6 +1732,63 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     {
         return $fd->getFieldtype() === self::ENCRYPTED_FIELD_TYPE
             && $this->marshallerService->supportsFielddefinition(self::MARSHALLER_FORMAT, self::ENCRYPTED_FIELD_TYPE);
+    }
+
+    /**
+     * Whether this value of an `encryptedField` reaches the encryption as the JSON of what it
+     * normalizes to, rather than as the value itself.
+     *
+     * The classificationstore `encryptedField` marshaller encrypts a scalar, and hands anything
+     * else to the marshaller of its delegate to be packed into the two value columns first - of
+     * which there are none here. A delegate with no marshaller of its own therefore has nothing
+     * that marshaller would encrypt, and is stored as two `null` columns: the value is lost without
+     * an error. One JSON envelope makes it a scalar again, and nothing about the encryption changes.
+     *
+     * It is decided from the value in hand and the registered marshallers, never from the
+     * delegate's declared `normalize()` return type. A type is free to declare `mixed` - which
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport} reads as
+     * scalar-compatible, correctly, because the declaration is all a key definition has to go on -
+     * and return a structure for some of its values. Reading the declaration here would send
+     * exactly those values into the marshaller's array branch and lose them, which is what asking
+     * the payload cannot do.
+     */
+    private function needsAJsonEnvelope(?Data $fd, mixed $normalizedData): bool
+    {
+        if (!$fd instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
+            return false;
+        }
+
+        $delegate = $fd->getDelegate();
+
+        // a delegate with a classificationstore marshaller is packed into the two value columns by
+        // it and encrypted column by column, which is the shape such a key has always been stored in
+        return !($delegate instanceof Data
+            && $this->marshallerService->supportsFielddefinition(
+                self::MARSHALLER_FORMAT,
+                $delegate->getFieldtype()
+            ));
+    }
+
+    /**
+     * The value an envelope carries. Called only for an entry whose
+     * {@see self::ENVELOPE_QUALIFIER} says it holds one, so this unpacks rather than guesses - the
+     * named member is checked all the same, because a value that does not hold the envelope this
+     * engine writes is not one it may take apart, and handing the string back unchanged is what a
+     * reader of an entry written by something else should do with it.
+     */
+    private function openAJsonEnvelope(mixed $value): mixed
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        $decoded = json_decode($value, true);
+
+        if (is_array($decoded) && count($decoded) === 1 && array_key_exists(self::ENVELOPE_MEMBER, $decoded)) {
+            return $decoded[self::ENVELOPE_MEMBER];
+        }
+
+        return $value;
     }
 
     /**

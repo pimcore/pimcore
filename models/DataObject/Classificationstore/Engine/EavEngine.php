@@ -24,13 +24,17 @@ use Pimcore\Logger;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\Dao as ClassDefinitionDaoHelper;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache;
+use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\DataObject\Classificationstore\Service;
+use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Normalizer\NormalizerInterface;
 use Psr\Log\LoggerInterface;
@@ -44,6 +48,11 @@ use Throwable;
 final class EavEngine extends AbstractDao implements EngineInterface
 {
     use ClassDefinitionDaoHelper;
+
+    /**
+     * The name this engine is registered under, for the message of a value it cannot hold.
+     */
+    private const ENGINE_NAME = 'eav';
 
     private const DATA_TABLE_PREFIX = 'object_classificationstore_data_';
 
@@ -83,6 +92,7 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly KeyTypeSupport $keyTypeSupport,
         private readonly RelationResolver $relationResolver,
         Connection $db
     ) {
@@ -177,6 +187,14 @@ final class EavEngine extends AbstractDao implements EngineInterface
                         /** @var MarshallerService $marshallerService */
                         $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
 
+                        $this->assertTheMarshallerCanPackTheValue(
+                            $fd,
+                            $marshallerService,
+                            $normalizedData,
+                            (string) $data['type'],
+                            $keyConfig->getStoreId()
+                        );
+
                         if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                             $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
                             // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
@@ -188,6 +206,8 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
                     $data['value'] = $encodedData['value'] ?? null;
                     $data['value2'] = $encodedData['value2'] ?? null;
+
+                    $this->assertValueFitsTheValueColumns($data, $keyConfig->getStoreId());
 
                     $dataRows[$this->getDataRowKey($data)] = $data;
                     $alreadySavedGroups[] = $groupId;
@@ -417,6 +437,89 @@ final class EavEngine extends AbstractDao implements EngineInterface
     public function supports(EngineFeature $feature): bool
     {
         return $feature === EngineFeature::PerKeyLocalization;
+    }
+
+    /**
+     * Refuses a value that this engine's two `LONGTEXT` columns cannot hold, before any row of the
+     * save is written.
+     *
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyConfig::save()} already refuses such a
+     * key when it is defined, from the declared
+     * return type of `normalize()` and the registered marshallers. That is a declaration: a type
+     * that declares `mixed` and returns a structure passes it, as does a key row an upgraded
+     * installation or a direct SQL edit wrote before the gate existed. This is what keeps it
+     * honest - an array or an object reaching the column names the key and the engine here, rather
+     * than failing as a type conversion inside the database layer several frames down.
+     *
+     * Only a type the gate governs is checked, so a type outside the accepted set keeps writing
+     * exactly what it wrote before.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @throws UnsupportedEngineFeatureException
+     */
+    private function assertValueFitsTheValueColumns(array $data, int $storeId): void
+    {
+        $type = (string) $data['type'];
+
+        if (!$this->keyTypeSupport->isAcceptedType($type)) {
+            return;
+        }
+
+        foreach (['value', 'value2'] as $column) {
+            $value = $data[$column];
+            if ($value === null || is_scalar($value)) {
+                continue;
+            }
+
+            throw UnsupportedEngineFeatureException::forUnholdableType($type, $storeId, self::ENGINE_NAME);
+        }
+    }
+
+    /**
+     * Refuses a value whose marshaller would answer with two empty columns, before it is marshalled.
+     *
+     * {@see self::assertValueFitsTheValueColumns()} is the check on what is about to be written, and
+     * it cannot see this one: a marshaller that has nothing to pack returns `null` columns rather
+     * than the structure it was handed, so by the time that check runs the value is already gone and
+     * the two nulls it inspects look like an empty value. The save then succeeds and the value is
+     * lost without an error - which is the one outcome this engine is not allowed to have.
+     *
+     * The case that produces it is `encryptedField`: its marshaller encrypts a scalar as it stands
+     * and hands anything else to the marshaller of its delegate, so a delegate with no
+     * classification store marshaller of its own leaves both columns null
+     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::marshal()}).
+     * Such a key is refused when it is defined, but a key row that predates that gate, or one an
+     * upgrade or a direct SQL edit wrote, reaches here - and the delegate is read off the hydrated
+     * field definition rather than off the declared return type of anything, so a delegate that
+     * declares `mixed` and returns a structure is refused on the value it actually produced.
+     *
+     * @throws UnsupportedEngineFeatureException
+     */
+    private function assertTheMarshallerCanPackTheValue(
+        Data $fd,
+        MarshallerService $marshallerService,
+        mixed $normalizedData,
+        string $type,
+        int $storeId
+    ): void {
+        if (!$this->keyTypeSupport->isAcceptedType($type)) {
+            return;
+        }
+
+        if (!$fd instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
+            return;
+        }
+
+        $delegate = $fd->getDelegate();
+
+        if ($delegate instanceof Data
+            && $marshallerService->supportsFielddefinition('classificationstore', $delegate->getFieldtype())
+        ) {
+            return;
+        }
+
+        throw UnsupportedEngineFeatureException::forUnholdableType($type, $storeId, self::ENGINE_NAME);
     }
 
     /**

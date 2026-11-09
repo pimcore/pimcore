@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -394,5 +395,10 @@ class BooleanSelect extends Data implements
     public function getFieldType(): string
     {
         return 'booleanSelect';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Boolean;
     }
 }

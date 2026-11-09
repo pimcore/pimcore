@@ -180,6 +180,17 @@ final class EngineResolver implements ResetInterface
     }
 
     /**
+     * The name an engine is registered under, for a message that has to name it. Falls back to the
+     * class name of an engine that is not registered at all.
+     */
+    public function nameEngine(EngineInterface $engine): string
+    {
+        $name = array_search($engine, $this->getEngines(), true);
+
+        return $name === false ? $engine::class : $name;
+    }
+
+    /**
      * @param array<string, EngineInterface> $engines
      *
      * @return array<string, string> field identity => engine name
@@ -188,8 +199,7 @@ final class EngineResolver implements ResetInterface
     {
         $names = [];
         foreach ($engines as $identity => $engine) {
-            $name = array_search($engine, $this->getEngines(), true);
-            $names[$identity] = $name === false ? $engine::class : $name;
+            $names[$identity] = $this->nameEngine($engine);
         }
 
         return $names;
