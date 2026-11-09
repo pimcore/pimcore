@@ -50,7 +50,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByName(string $name): void
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
+        // folder names are only unique per parent folder, so there may be multiple matches
+        // for folder types - return the oldest one for deterministic results
+        $data = $this->db->fetchAssociative(
+            'SELECT * FROM users WHERE `type` = ? AND `name` = ? ORDER BY `id` ASC LIMIT 1',
+            [$this->model->getType(), $name]
+        );
 
         if ($data) {
             $data = $this->castUserDataToBoolean($data);
@@ -90,9 +95,12 @@ class Dao extends Model\Dao\AbstractDao
 
     public function create(): void
     {
+        // parentId must be part of the insert: folder name uniqueness is enforced per parent
+        // by the generated `uniqueName` column, which is evaluated already on insert
         $this->db->insert('users', [
             'name' => $this->model->getName(),
             'type' => $this->model->getType(),
+            'parentId' => $this->model->getParentId(),
         ]);
 
         $this->model->setId((int) $this->db->lastInsertId());

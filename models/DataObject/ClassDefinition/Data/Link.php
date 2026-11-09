@@ -19,6 +19,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -100,7 +102,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
-        $link = Serialize::unserialize($data);
+        // Restrict to DataObject\Data\Link to prevent PHP Object Injection via the DB.
+        $link = Serialize::unserialize($data, [DataObject\Data\Link::class]);
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
@@ -206,7 +209,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                             $data->setInternalType(null);
                             $data->setInternal(null);
                         } else {
-                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                            throw (new StructuredValidationException(
+                                'invalid internal link, referenced document with id [' . $data->getInternal()
+                                    . '] does not exist'
+                            ))
+                                ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                         }
                     }
                 } elseif ($data->getInternalType() == 'asset') {
@@ -216,7 +223,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                             $data->setInternalType(null);
                             $data->setInternal(null);
                         } else {
-                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                            throw (new StructuredValidationException(
+                                'invalid internal link, referenced document with id [' . $data->getInternal()
+                                    . '] does not exist'
+                            ))
+                                ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                         }
                     }
                 }
@@ -348,6 +359,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             unset($oldValue['_owner']);
             unset($oldValue['_fieldname']);
             unset($oldValue['_language']);
+        } elseif ($this->isEmpty($oldValue)) {
+            // e.g. version-diff templates fall back to an empty string for an unset
+            // localized value, which is not a valid `?array` for isEqualArray()
+            $oldValue = null;
         }
 
         if ($newValue instanceof DataObject\Data\Link) {
@@ -356,6 +371,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             unset($newValue['_owner']);
             unset($newValue['_fieldname']);
             unset($newValue['_language']);
+        } elseif ($this->isEmpty($newValue)) {
+            $newValue = null;
         }
 
         return $this->isEqualArray($oldValue, $newValue);

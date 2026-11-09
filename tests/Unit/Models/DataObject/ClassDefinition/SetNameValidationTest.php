@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 
 /**
@@ -75,6 +76,40 @@ class SetNameValidationTest extends TestCase
             'contains space' => ['my field'],
             'contains dash' => ['my-field'],
             'too long (64)' => [str_repeat('a', 64)],
+            // PCRE `$` also matches before a final newline; only `\z` is an absolute end anchor.
+            'trailing newline' => ["myField\n"],
         ];
+    }
+
+    /**
+     * Classificationstore overrides setName()/getName() and, unlike every other field type, did not
+     * delegate to Data::setName(), so it bypassed the identifier validation entirely (GHSA-mfxm-7h2h-p8xw).
+     *
+     * @dataProvider validNameProvider
+     */
+    public function testValidNamesAreAcceptedForClassificationstore(string $name): void
+    {
+        $field = new Classificationstore();
+        $field->setName($name);
+
+        $this->assertSame($name, $field->getName());
+    }
+
+    public function testEmptyNameIsAcceptedForClassificationstore(): void
+    {
+        $field = new Classificationstore();
+        $field->setName('');
+
+        $this->assertSame('', $field->getName());
+    }
+
+    /**
+     * @dataProvider invalidNameProvider
+     */
+    public function testInvalidNamesAreRejectedForClassificationstore(string $name): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        (new Classificationstore())->setName($name);
     }
 }

@@ -14,13 +14,18 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
@@ -554,9 +559,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->layout;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function setName(string $name): static
     {
-        $this->name = $name;
+        parent::setName($name);
 
         return $this;
     }
@@ -602,13 +610,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
         $subItems = [];
-        $getInheritedValues = DataObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
-                throw new Model\Element\ValidationException(
+                throw (new StructuredValidationException(
                     'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
-                );
+                ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->getMaxItems()]);
             }
 
             foreach ($activeGroups as $activeGroupId => $enabled) {
@@ -626,9 +633,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                             $object = $data->getObject();
                             if ($object->getClass()->getAllowInherit()) {
-                                DataObject::setGetInheritedValues(true);
-                                $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
-                                DataObject::setGetInheritedValues($getInheritedValues);
+                                $value = DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                );
                             } else {
                                 $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
@@ -642,10 +650,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             try {
                                 $keyDef->checkValidity($value, false, $params);
                             } catch (Exception $exception) {
-                                $subItems[] = new Model\Element\ValidationException(
-                                    $exception->getMessage() . ' (' . $validLanguage . ')',
-                                    $exception->getCode(),
-                                    $exception->getPrevious()
+                                $subItems[] = $this->createKeyViolation(
+                                    $exception,
+                                    $keyDef,
+                                    $keyGroupRelation->getName(),
+                                    $groupDefinition,
+                                    $validLanguage
                                 );
                             }
                         }
@@ -661,11 +671,39 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $validationException->getMessage();
             }, $subItems);
 
-            $validationException = new Model\Element\ValidationException(implode(', ', $messages));
+            $validationException = new StructuredValidationException(implode(', ', $messages));
             $validationException->setSubItems($subItems);
+            $validationException->addViolations(...$subItems);
 
             throw $validationException;
         }
+    }
+
+    private function createKeyViolation(
+        Exception $exception,
+        Data $keyDefinition,
+        string $keyName,
+        DataObject\Classificationstore\GroupConfig $group,
+        string $language
+    ): StructuredValidationException {
+        $message = $exception->getMessage() . ' (' . $language . ')';
+        $violation = $exception instanceof StructuredValidationException
+            ? $exception->withMessage($message)
+            : new StructuredValidationException($message, $exception->getCode(), $exception->getPrevious());
+        $title = $this->getTitle();
+
+        return $violation
+            // the stored definition may carry no name of its own
+            ->setField($keyDefinition->getName() ?? $keyName, $keyDefinition->getTitle())
+            ->addPathSegment(new ValidationPathSegment(
+                field: $group->getName(),
+                title: $group->getDescription() !== '' ? $group->getDescription() : null
+            ))
+            ->addPathSegment(new ValidationPathSegment(
+                field: $this->getName(),
+                title: $title !== '' ? $title : null,
+                language: $language !== 'default' ? $language : null
+            ));
     }
 
     /**
@@ -1121,7 +1159,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";

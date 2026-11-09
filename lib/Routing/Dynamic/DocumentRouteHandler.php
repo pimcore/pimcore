@@ -21,8 +21,8 @@ use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Routing\DocumentRoute;
-use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -104,12 +104,20 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $site = $this->siteResolver->getSite($context->getRequest());
 
         // If the request is not from a site and the document is part of a site
-        // or the ID of the requested site does not match the site where the document is located.
-        // Then we have to throw a NotFoundHttpException
-        if (!$site && $document && !Tool::isFrontendRequestByAdmin()) {
+        // (or the ID of the requested site does not match the site where the document is located),
+        // it must not be served. The pretty url lookup is not scoped to a site though, so the document
+        // of a site may have shadowed a main site document or a hardlink child with the same pretty url:
+        // fall back to those and throw a NotFoundHttpException only without a match
+        if (!$site && $document && !$this->requestHelper->isAuthenticatedFrontendRequestByAdmin($context->getRequest())) {
             $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
             if ($siteIdOfDocument) {
-                throw new NotFoundHttpException('The page does not exist on this configured site.');
+                $mainSiteDocId = $this->documentService->getDao()->getDocumentIdByPrettyUrlOutsideSites($context->getPath());
+                $document = $mainSiteDocId ? Document::getById($mainSiteDocId) : null;
+                $document ??= $this->getHardlinkChildOutsideSites($context->getPath());
+
+                if (!$document) {
+                    throw new NotFoundHttpException('The page does not exist on this configured site.');
+                }
             }
         }
 
@@ -147,6 +155,51 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
+     * Resolves the child of a hardlink outside of all sites, for a path whose own lookup returned a site document.
+     * Only real paths count: the nearest physical ancestor decides (as in the nearest document lookup), and
+     * the source child must exist at its real path in the same site (or none) as the hardlink source.
+     */
+    private function getHardlinkChildOutsideSites(string $path): ?Document
+    {
+        for ($parentPath = dirname($path); $parentPath !== '/' && $parentPath !== '.'; $parentPath = dirname($parentPath)) {
+            $parent = $this->getDocumentByExactPath($parentPath);
+            if (!$parent) {
+                continue;
+            }
+
+            $source = $parent instanceof Document\Hardlink ? $parent->getSourceDocument() : null;
+            if (!$source || !$parent->getChildrenFromSource() || Frontend::getSiteIdForDocument($parent)) {
+                return null;
+            }
+
+            $sourcePath = preg_replace('@^' . preg_quote($parent->getRealFullPath(), '@') . '@', $source->getRealFullPath(), $path);
+            $sourceChild = $this->getDocumentByExactPath($sourcePath);
+            if (!$sourceChild || Frontend::getSiteIdForDocument($sourceChild) !== Frontend::getSiteIdForDocument($source)) {
+                return null;
+            }
+
+            $child = Document\Hardlink\Service::getChildByPath($parent, $path);
+
+            return $child instanceof Document ? $child : null;
+        }
+
+        return null;
+    }
+
+    private function getDocumentByExactPath(string $path): ?Document
+    {
+        $helperDocument = new Document();
+
+        try {
+            $helperDocument->getDao()->getByExactPath($path);
+        } catch (NotFoundException) {
+            return null;
+        }
+
+        return Document::getById($helperDocument->getId());
+    }
+
+    /**
      * Build a route for a document. Context is only set from match mode, not when generating URLs.
      *
      *
@@ -162,7 +215,17 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
         }
 
-        $route = new DocumentRoute($document->getFullPath());
+        $fullPath = $document->getFullPath();
+        $absoluteUrl = null !== $context ? false : parse_url($fullPath);
+
+        // a document of a site, linked from outside of it, has an absolute full path: the route only takes the path
+        if (is_array($absoluteUrl) && isset($absoluteUrl['scheme'], $absoluteUrl['host'])) {
+            $route = new DocumentRoute($absoluteUrl['path'] ?? '/');
+            $route->setHost($absoluteUrl['host'] . (isset($absoluteUrl['port']) ? ':' . $absoluteUrl['port'] : ''));
+            $route->setSchemes([$absoluteUrl['scheme']]);
+        } else {
+            $route = new DocumentRoute($fullPath);
+        }
         $route->setOption('utf8', true);
 
         // coming from matching -> set route path the currently matched one
@@ -302,6 +365,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route): DocumentRoute
     {
         $route->setDefault('_controller', $document->getController());
+        // the controller is document data, not application code - let Symfony's controller resolver
+        // accept only registered controllers
+        $route->setDefault('_check_controller_is_allowed', true);
 
         if ($document->getTemplate()) {
             $route->setDefault('_template', $document->getTemplate());

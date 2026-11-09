@@ -190,7 +190,7 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` varchar(70) NOT NULL DEFAULT '0',
             `index` int(11) unsigned NOT NULL DEFAULT '0',
             `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
-            `ownername` varchar(70) NOT NULL DEFAULT '',
+            `ownername` varchar(190) NOT NULL DEFAULT '',
             `position` varchar(70) NOT NULL DEFAULT '0',
             INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
             INDEX `reverse_lookup` (`dest_id`, `type`),
@@ -220,12 +220,12 @@ class Dao extends Model\Dao\AbstractDao
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                             $protectedDatastoreColumns[] = $key . '__' . $fkey;
                             $this->ensureForeignKeys($objectDatastoreTable, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
-                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
+                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL', $value);
                         $protectedDatastoreColumns[] = $key;
                     }
                 }
@@ -237,12 +237,12 @@ class Dao extends Model\Dao\AbstractDao
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                         $protectedColumns[] = $key . '__' . $fkey;
                         $this->ensureForeignKeys($objectTable, $key, $fkey, $value);
                     }
                 } elseif ($value->getQueryColumnType()) {
-                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL', $value);
                     $protectedColumns[] = $key;
                 }
 

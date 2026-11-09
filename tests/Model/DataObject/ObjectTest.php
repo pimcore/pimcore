@@ -13,10 +13,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Error;
 use Exception;
+use Normalizer;
+use Pimcore;
 use Pimcore\Db;
+use Pimcore\Db\Helper as DbHelper;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\Service as DataObjectService;
+use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -43,6 +50,56 @@ class ObjectTest extends ModelTestCase
 
         $savedObject->setParentId($savedObject->getId());
         $savedObject->save();
+    }
+
+    /**
+     * Verifies that an object cannot be moved into one of its own children, which
+     * would create a circular parent/child reference in the tree.
+     */
+    public function testParentCannotBeOwnDescendant(): void
+    {
+        $parent = TestHelper::createEmptyObject();
+        $child = TestHelper::createEmptyObject('', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+
+        $parent->setParentId($child->getId());
+        $parent->save();
+    }
+
+    /**
+     * Verifies that an object cannot be moved into a grandchild several levels down,
+     * which would create a circular parent/child reference in the tree.
+     */
+    public function testParentCannotBeOwnGrandchild(): void
+    {
+        $grandParent = TestHelper::createEmptyObject();
+        $parent = TestHelper::createEmptyObject('', false);
+        $parent->setParentId($grandParent->getId());
+        $parent->save();
+        $child = TestHelper::createEmptyObject('', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+
+        $grandParent->setParentId($child->getId());
+        $grandParent->save();
+    }
+
+    /**
+     * Verifies that the locking variant of getCurrentFullPath() used to re-check for
+     * circular parent references inside the save transaction returns the same path.
+     */
+    public function testGetCurrentFullPathForUpdateMatchesGetCurrentFullPath(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $this->assertSame($object->getDao()->getCurrentFullPath(), $object->getDao()->getCurrentFullPathForUpdate());
     }
 
     /**
@@ -236,6 +293,50 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Regression test for PEES-1279: a mandatory numeric field defaulting to
+     * 0, and a mandatory checkbox field defaulting to false, must not block
+     * publishing a brand-new object, and their default must be persisted.
+     */
+    public function testMandatoryZeroAndFalseDefaultsSavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+        $data = $latestVersion->getData();
+
+        $numericValue = $data->getMandatoryNumericWithZeroDefault();
+        $this->assertNotNull($numericValue, 'Expected numeric default to be applied, not left null');
+        $this->assertEquals(0, $numericValue, 'Expected numeric default of 0 saved to version');
+
+        $this->assertFalse($data->getMandatoryCheckboxWithFalseDefault(), 'Expected checkbox default of false saved to version');
+    }
+
+    /**
+     * A mandatory field whose default is resolved at runtime - the current date
+     * for a date/datetime, the options provider's default for a select/multiselect -
+     * must not block publishing a brand-new object, and the default must be persisted.
+     */
+    public function testMandatoryRuntimeResolvedDefaultsSavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+        $data = $latestVersion->getData();
+
+        $this->assertNotNull($data->getMandatoryDateWithCurrentDate(), 'Expected the current date to be applied to the date field');
+        $this->assertSame(date('Y-m-d'), $data->getMandatoryDateWithCurrentDate()->format('Y-m-d'));
+        $this->assertNotNull($data->getMandatoryDatetimeWithCurrentDate(), 'Expected the current date to be applied to the datetime field');
+        $this->assertSame('a', $data->getMandatorySelectWithProviderDefault());
+        $this->assertSame(['a'], $data->getMandatoryMultiselectWithProviderDefault());
+    }
+
+    /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning(): void
@@ -400,5 +501,195 @@ class ObjectTest extends ModelTestCase
 
         $targetObject->setInput($randomText);
         $targetObject->save();
+    }
+
+    /**
+     * Regression test: DataObject\AbstractObject::getByPath() must resolve an object whose key
+     * is stored precomposed (NFC) when the caller supplies a decomposed (NFD) lookup path -
+     * e.g. a browser's webkitdirectory/File System Access API on macOS - by falling back to
+     * the NFC-normalized path once the exact-path lookup misses. DataObject's getByPath() is
+     * an independently implemented call site of the shared Element\Service fallback, so it
+     * needs its own coverage rather than relying on the Asset regression tests alone.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathFallsBackToNfcForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new DataObject\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $found = DataObject::getByPath($nfdLookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(DataObject::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: DataObject\AbstractObject::getByPath() must still resolve an object
+     * whose key is stored in decomposed (NFD) Unicode form - e.g. created before object keys
+     * were normalized to NFC on write - via an exact-path lookup using that very same NFD
+     * path.
+     *
+     * The model API can no longer persist such a key directly: AbstractObject::save() rejects
+     * it via Service::isValidKey(), which always normalizes to NFC before comparing (#19242).
+     * So the legacy row is created via a valid NFC key first, then rewritten to NFD directly
+     * in the database - bypassing model validation - to simulate a pre-#19242 row.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     */
+    public function testGetByPathResolvesLegacyNfdStoredKeyByExactMatch(): void
+    {
+        $nfcKey = Normalizer::normalize('nfd-café-' . uniqid(), Normalizer::FORM_C);
+        $nfdKey = Normalizer::normalize($nfcKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfcKey,
+            $nfdKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $folder = new DataObject\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $lookupPath = $folder->getRealPath() . $nfdKey;
+
+        $db = Db::get();
+        $db->update('objects', DbHelper::quoteDataIdentifiers($db, ['key' => $nfdKey]), ['id' => $folder->getId()]);
+
+        $found = DataObject::getByPath($lookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(DataObject::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: DataObject\Service::pathExists() must agree with
+     * DataObject\AbstractObject::getByPath() on whether a path resolves. Without routing
+     * pathExists() through the same NFC fallback, a caller could see pathExists() return false
+     * for the very same NFD lookup path that getByPath() successfully resolves, and
+     * incorrectly treat an existing object as absent.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testPathExistsAgreesWithGetByPathForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new DataObject\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $this->assertTrue(
+            DataObjectService::pathExists($nfdLookupPath),
+            'pathExists() must return true for the same NFD path that getByPath() resolves.'
+        );
+    }
+
+    /**
+     * Regression test: AbstractObject::save() disables the dirty detection while a new element is added. A failed
+     * add must restore it, otherwise every later save in the same process (CLI imports, workers) runs without it.
+     * Concrete::save() restores the flag on its own, folders rely on AbstractObject::save().
+     */
+    public function testFailedFolderAddRestoresDirtyDetection(): void
+    {
+        $existing = TestHelper::createObjectFolder();
+
+        $duplicate = TestHelper::createObjectFolder('', false);
+        $duplicate->setParentId($existing->getParentId());
+        $duplicate->setKey($existing->getKey());
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            $duplicate->save();
+            $this->fail('Saving a folder with a duplicate path must fail.');
+        } catch (DuplicateFullPathException) {
+            // expected
+        } finally {
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
+    }
+
+    /**
+     * Regression test: like POST_ADD listeners, POST_ADD_FAILURE listeners run with the dirty detection restored,
+     * so objects they save are not saved with the dirty detection of the failed add.
+     */
+    public function testPostAddFailureListenersRunWithDirtyDetectionRestored(): void
+    {
+        $existing = TestHelper::createObjectFolder();
+
+        $duplicate = TestHelper::createObjectFolder('', false);
+        $duplicate->setParentId($existing->getParentId());
+        $duplicate->setKey($existing->getKey());
+
+        $dirtyDetectionDisabledInListener = null;
+        $listener = static function () use (&$dirtyDetectionDisabledInListener): void {
+            $dirtyDetectionDisabledInListener = DataObject::isDirtyDetectionDisabled();
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::POST_ADD_FAILURE, $listener);
+
+        try {
+            $duplicate->save();
+            $this->fail('Saving a folder with a duplicate path must fail.');
+        } catch (DuplicateFullPathException) {
+            // expected
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::POST_ADD_FAILURE, $listener);
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabledInListener);
+    }
+
+    /**
+     * Regression test: retryableFunction() passes only exceptions to onFailure. A failed add that ends with a PHP
+     * Error must restore the dirty detection as well.
+     */
+    public function testFolderAddFailingWithErrorRestoresDirtyDetection(): void
+    {
+        $folder = TestHelper::createObjectFolder('', false);
+
+        $listener = static function (): void {
+            throw new Error('listener failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::PRE_ADD, $listener);
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            $folder->save();
+            $this->fail('Saving the folder must fail.');
+        } catch (Error $e) {
+            $this->assertSame('listener failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::PRE_ADD, $listener);
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
     }
 }

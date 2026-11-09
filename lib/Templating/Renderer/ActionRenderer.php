@@ -57,6 +57,10 @@ class ActionRenderer
     {
         $attributes = $this->addDocumentAttributes($document, $attributes);
 
+        // the controller is document data, not application code - let Symfony's controller resolver
+        // accept only registered controllers (set last, so that the passed attributes can't switch it off)
+        $attributes['_check_controller_is_allowed'] = true;
+
         return new ControllerReference($document->getController(), $attributes, $query);
     }
 

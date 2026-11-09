@@ -148,7 +148,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                                 $metaData = get_object_vars($metaData);
                             }
 
-                            if (in_array($metaData['type'], ['object', 'asset', 'document'])
+                            if (in_array($metaData['type'], ['object', 'asset', 'document']) && $metaData['value']
                             && $el = Element\Service::getElementById($metaData['type'], $metaData['value'])) {
                                 $metaData['value'] = $el;
                             }
@@ -304,8 +304,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as &$metaData) {
                         $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                        if (in_array($metaData['type'], ['object', 'asset', 'document'])) {
-                            $el = Element\Service::getElementByPath($metaData['type'], $metaData->getValue());
+                        if (in_array($metaData['type'], ['object', 'asset', 'document']) && $metaData->getValue()) {
+                            if (is_numeric($metaData->getValue())) {
+                                $el = Element\Service::getElementById($metaData['type'], (int)$metaData->getValue());
+                            } else {
+                                $el = Element\Service::getElementByPath($metaData['type'], (string)$metaData->getValue());
+                            }
                             $metaData['value'] = $el;
                         }
                     }

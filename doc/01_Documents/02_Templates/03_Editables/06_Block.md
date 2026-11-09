@@ -105,6 +105,31 @@ And in the frontend of the application:
 > **IMPORTANT**
 > If you want to change content structure dynamically for each index in editmode, then it is required to use `reload=true` config.
 
+### Using the Block Index in Editable Names
+
+Editables inside a block are prefixed with the block name and the key of the item automatically
+(e.g. `items:2.details`), so in most cases the name of a nested editable does not need to contain the index.
+
+If you build an editable name from the block index, for example to give each item its own areablock,
+the block **must** use `reload(true)`:
+
+```twig
+{% pimcoreblock "items" default(1) reload(true) %}
+    {{ pimcore_input("term") }}
+    {{ pimcore_areablock("details" ~ _block.getCurrentIndex()) }}
+{% endpimcoreblock %}
+```
+
+Without `reload(true)`, the editor creates a newly added item from a template that is rendered with a
+placeholder index instead of the real key. The name built from that placeholder (e.g. `details0`) is not
+replaced by the real key, so the content of the new item is saved under a name that is no longer
+found after the page has been reloaded. With `reload(true)` the editmode is reloaded when an
+item is added, so the item is rendered with its real key from the start.
+
+> **WARNING**
+> Do not remove the index from the name of an editable afterwards. This renames the editable, and content that
+> was saved under the old names is no longer displayed.
+
 ### Using Manual Mode
 
 The manual block offers you the possibility to deal with block the way you like, this is for example useful with tables: 

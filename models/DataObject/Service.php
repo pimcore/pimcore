@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Closure;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Exception;
@@ -26,6 +27,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -160,22 +162,24 @@ class Service extends Model\Element\Service
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
         DataObject::setDisableDirtyDetection(true);
 
-        //load properties
-        $source->getProperties();
+        try {
+            //load properties
+            $source->getProperties();
 
-        //load all in case of lazy loading fields
-        self::loadAllObjectFields($source);
+            //load all in case of lazy loading fields
+            self::loadAllObjectFields($source);
 
-        // triggers actions before object cloning
-        $event = new DataObjectEvent($source, [
-            'target_element' => $target,
-        ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
-        $target = $event->getArgument('target_element');
+            // triggers actions before object cloning
+            $event = new DataObjectEvent($source, [
+                'target_element' => $target,
+            ]);
+            Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+            $target = $event->getArgument('target_element');
 
-        $new = $this->copy($source, $target);
-
-        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            $new = $this->copy($source, $target);
+        } finally {
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
 
         $this->updateChildren($target, $new);
 
@@ -255,11 +259,254 @@ class Service extends Model\Element\Service
         $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
+        // reading block fields outside admin mode would write the frontend-rendered Wysiwyg text back into the copy
+        WysiwygPersistingScope::run(fn () => $this->keepNonEditableLanguages($new, $target));
+
         $new->save();
 
         $target = Concrete::getById($new->getId());
 
         return $target;
+    }
+
+    /**
+     * Restores the localized values of the languages the user is not allowed to edit (lEdit workspace permission)
+     * from the target, in the object itself as well as in its object bricks, field collections and blocks.
+     */
+    private function keepNonEditableLanguages(Concrete $new, Concrete $target): void
+    {
+        if (!$this->_user || $this->_user->isAdmin()) {
+            return;
+        }
+
+        $editableLanguages = self::getLanguagePermissions($target, $this->_user, 'lEdit');
+        if ($editableLanguages === null) {
+            return;
+        }
+
+        // like the editors: for localized fields a list with only the language-independent 'default' means
+        // "no restriction", while the classification store still limits itself to that one value
+        $restrictLocalizedfields = array_keys($editableLanguages) !== ['default'];
+
+        self::loadAllObjectFields($target);
+
+        foreach ($new->getClass()->getFieldDefinitions() as $name => $definition) {
+            $newValue = $new->get($name);
+            $targetValue = $target->get($name);
+
+            if ($newValue instanceof DataObject\Classificationstore) {
+                // like the editors, only localized stores are limited; a store without languages only holds 'default'
+                if ($definition instanceof ClassDefinition\Data\Classificationstore && $definition->isLocalized()) {
+                    $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
+                }
+            } elseif (!$restrictLocalizedfields) {
+                continue;
+            } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
+                $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
+            } elseif ($definition instanceof ClassDefinition\Data\Block) {
+                $this->applyBlockLanguages($new, $name, $definition, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Objectbrick) {
+                $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Fieldcollection) {
+                $this->restoreFieldcollectionLanguages($newValue, $targetValue, $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * The values of a localized classification store are keyed by group, key and language ('default' is the
+     * language-independent value, which is only editable if the user's list contains it).
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreClassificationstoreLanguages(
+        DataObject\Classificationstore $new,
+        mixed $target,
+        array $editableLanguages
+    ): void {
+        // the object is saved with inheritance off, so own values must not be mixed with the parent's
+        [$items, $activeGroups] = self::useInheritedValues(false, static fn (): array => [$new->getItems(), $new->getActiveGroups()]);
+        $targetItems = $target instanceof DataObject\Classificationstore
+            ? self::useInheritedValues(false, static fn (): array => $target->getItems())
+            : [];
+
+        foreach ($items as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $items[$groupId][$keyId] = array_intersect_key($values, $editableLanguages);
+            }
+        }
+
+        foreach ($targetItems as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $kept = array_diff_key($values, $editableLanguages);
+                if ($kept) {
+                    $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
+                    $activeGroups[$groupId] = true;
+                    if (!$new->getGroupCollectionMapping($groupId)) {
+                        $new->setGroupCollectionMapping($groupId, $target->getGroupCollectionMapping($groupId));
+                    }
+                }
+            }
+        }
+
+        foreach ($items as $groupId => $group) {
+            $items[$groupId] = array_filter($group);
+        }
+
+        $new->setItems(array_filter($items));
+        $new->setActiveGroups($activeGroups);
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBrickLanguages(DataObject\Objectbrick $new, mixed $target, array $editableLanguages): void
+    {
+        foreach ($new->getItems() as $brick) {
+            $targetBrick = $target instanceof DataObject\Objectbrick ? $target->get($brick->getType()) : null;
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($brick),
+                $targetBrick ? $this->getLocalizedfieldsOf($targetBrick) : null,
+                $editableLanguages
+            );
+            $this->restoreContainerBlockLanguages($brick, $targetBrick, $editableLanguages);
+        }
+    }
+
+    /**
+     * Blocks inside an object brick or field collection item.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreContainerBlockLanguages(
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new,
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData|null $target,
+        array $editableLanguages
+    ): void {
+        foreach ($new->getDefinition()->getFieldDefinitions() as $name => $definition) {
+            if ($definition instanceof ClassDefinition\Data\Block) {
+                $this->applyBlockLanguages($new, $name, $definition, $target?->get($name), $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * Writes the block back only if a row got a new localizedfields element, so that an inherited block
+     * (read through the getter) is not turned into an own value.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function applyBlockLanguages(
+        Concrete|Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new,
+        string $name,
+        ClassDefinition\Data\Block $definition,
+        mixed $target,
+        array $editableLanguages
+    ): void {
+        $value = $new->get($name);
+        $restored = $this->restoreBlockLanguages($definition, $value, $target, $editableLanguages);
+        if ($restored !== $value) {
+            $new->set($name, $restored);
+        }
+    }
+
+    /**
+     * Only blocks with a localizedfields child hold languages. Block items are matched by index. A matched item
+     * without a localizedfields element gets one holding only the target's protected languages.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBlockLanguages(ClassDefinition\Data\Block $definition, mixed $new, mixed $target, array $editableLanguages): mixed
+    {
+        if (!$definition->getFieldDefinition('localizedfields') || !is_array($new)) {
+            return $new;
+        }
+
+        foreach ($new as $index => $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $element = $item['localizedfields'] ?? null;
+            $targetElement = is_array($target) ? ($target[$index]['localizedfields'] ?? null) : null;
+            $targetLocalizedfield = $targetElement instanceof DataObject\Data\BlockElement ? $targetElement->getData() : null;
+
+            if ($element instanceof DataObject\Data\BlockElement && $element->getData() instanceof DataObject\Localizedfield) {
+                $this->restoreLocalizedfields($element->getData(), $targetLocalizedfield, $editableLanguages);
+            } elseif ($targetLocalizedfield instanceof DataObject\Localizedfield) {
+                $localizedfield = new DataObject\Localizedfield();
+                $localizedfield->setObject($targetLocalizedfield->getObject());
+                $localizedfield->setContext($targetLocalizedfield->getContext());
+                $this->restoreLocalizedfields($localizedfield, $targetLocalizedfield, $editableLanguages);
+                if ($localizedfield->getItems()) {
+                    if ($element instanceof DataObject\Data\BlockElement) {
+                        $element->setData($localizedfield);
+                    } else {
+                        $new[$index]['localizedfields'] = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', $localizedfield);
+                    }
+                }
+            }
+        }
+
+        return $new;
+    }
+
+    /**
+     * Items are matched by index and type.
+     *
+     * @param DataObject\Fieldcollection<DataObject\Fieldcollection\Data\AbstractData> $new
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreFieldcollectionLanguages(DataObject\Fieldcollection $new, mixed $target, array $editableLanguages): void
+    {
+        $targetItems = $target instanceof DataObject\Fieldcollection ? $target->getItems() : [];
+        foreach ($new->getItems() as $index => $item) {
+            $targetItem = $targetItems[$index] ?? null;
+            if ($targetItem?->getType() !== $item->getType()) {
+                $targetItem = null;
+            }
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($item),
+                $targetItem ? $this->getLocalizedfieldsOf($targetItem) : null,
+                $editableLanguages
+            );
+            $this->restoreContainerBlockLanguages($item, $targetItem, $editableLanguages);
+        }
+    }
+
+    /**
+     * The getter only exists on generated brick and field collection classes that define localized fields.
+     */
+    private function getLocalizedfieldsOf(Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $container): ?DataObject\Localizedfield
+    {
+        return method_exists($container, 'getLocalizedfields') ? $container->getLocalizedfields() : null;
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreLocalizedfields(mixed $new, mixed $target, array $editableLanguages): void
+    {
+        if (!$new instanceof DataObject\Localizedfield) {
+            return;
+        }
+
+        $items = $new->getItems();
+        $targetItems = $target instanceof DataObject\Localizedfield ? $target->getItems() : [];
+
+        foreach (array_unique(array_merge(array_keys($items), array_keys($targetItems))) as $language) {
+            if (isset($editableLanguages[$language])) {
+                continue;
+            }
+
+            if (isset($targetItems[$language])) {
+                $items[$language] = $targetItems[$language];
+            } else {
+                unset($items[$language]);
+            }
+        }
+
+        $new->setItems($items);
     }
 
     /**
@@ -470,28 +717,37 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * call the getters of each object field, in case some of the are lazy loading and we need the data to be loaded
+     * call the getters of each object field (except derived values), in case some of them are lazy loading and we need the data to be loaded
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
         $object->getProperties();
 
         if ($object instanceof Concrete) {
-            //load all in case of lazy loading fields
-            $fd = $object->getClass()->getFieldDefinitions();
-            foreach ($fd as $def) {
-                $getter = 'get' . ucfirst($def->getName());
-                if (method_exists($object, $getter)) {
-                    $value = $object->$getter();
-                    if ($value instanceof Localizedfield) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Objectbrick) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Fieldcollection) {
-                        $value->loadLazyData();
+            // the values read here are copied and stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object): void {
+                //load all in case of lazy loading fields
+                $fd = $object->getClass()->getFieldDefinitions();
+                foreach ($fd as $def) {
+                    if ($def instanceof ClassDefinition\Data\DerivedValueInterface && $def->isValueDerived()) {
+                        // a derived value (e.g. the owning objects of a reverse relation) is not kept on the object,
+                        // so there is nothing to lazy load; the getter would load it only to discard it
+                        continue;
+                    }
+
+                    $getter = 'get' . ucfirst($def->getName());
+                    if (method_exists($object, $getter)) {
+                        $value = $object->$getter();
+                        if ($value instanceof Localizedfield) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Objectbrick) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Fieldcollection) {
+                            $value->loadLazyData();
+                        }
                     }
                 }
-            }
+            });
         }
     }
 
@@ -550,16 +806,11 @@ class Service extends Model\Element\Service
         try {
             $object = new DataObject();
 
-            $pathElements = explode('/', $path);
-            $keyIdx = count($pathElements) - 1;
-            $key = $pathElements[$keyIdx];
-            $validKey = Element\Service::getValidKey($key, 'object');
-
-            unset($pathElements[$keyIdx]);
-            $pathOnly = implode('/', $pathElements);
-
-            if ($validKey == $key && self::isValidPath($pathOnly, 'object')) {
-                $object->getDao()->getByPath($path);
+            if (self::isValidPath($path, 'object')) {
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
@@ -586,14 +837,17 @@ class Service extends Model\Element\Service
         if ($object instanceof Concrete) {
             $fields = $object->getClass()->getFieldDefinitions();
 
-            foreach ($fields as $field) {
-                if ($field instanceof IdRewriterInterface) {
-                    $setter = 'set' . ucfirst($field->getName());
-                    if (method_exists($object, $setter)) { // check for non-owner-objects
-                        $object->$setter($field->rewriteIds($object, $rewriteConfig));
+            // the rewritten values are stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object, $fields, $rewriteConfig): void {
+                foreach ($fields as $field) {
+                    if ($field instanceof IdRewriterInterface) {
+                        $setter = 'set' . ucfirst($field->getName());
+                        if (method_exists($object, $setter)) { // check for non-owner-objects
+                            $object->$setter($field->rewriteIds($object, $rewriteConfig));
+                        }
                     }
                 }
-            }
+            });
         }
 
         // rewriting properties
@@ -822,6 +1076,13 @@ class Service extends Model\Element\Service
         foreach ($permissionList as $permissionSet) {
             $allowedLayoutIds = self::getLayoutPermissions($classId, $permissionSet);
             if (is_array($allowedLayoutIds)) {
+                // layout id 0 is the class' main layout, i.e. the user is not restricted to custom
+                // layouts - same as in getValidLayouts(). The grid must not be reduced to the
+                // intersection of the remaining custom layouts then.
+                if (isset($allowedLayoutIds[0])) {
+                    continue;
+                }
+
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
                     if ($allowedLayoutId) {
                         if (!isset($layoutDefinitions[$allowedLayoutId])) {
@@ -846,11 +1107,13 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locValue) {
                         $locValue->setInvisible(false);
                         $locValue->setNotEditable(false);
+                        self::resetContainerFieldDefinitions($locValue);
                     }
                     $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $def->setInvisible(false);
                     $def->setNotEditable(false);
+                    self::resetContainerFieldDefinitions($def);
                 }
             }
         }
@@ -877,15 +1140,59 @@ class Service extends Model\Element\Service
 
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
+                        self::mergeContainerFieldDefinitions($mergedLocalizedFieldDefinitions[$locKey] ?? null, $customLocalizedFieldDefinitions[$locKey] ?? null);
                     }
                     $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
+                    self::mergeContainerFieldDefinitions($mergedFieldDefinition[$key] ?? null, $def);
                 }
             }
         }
 
         return $mergedFieldDefinition;
+    }
+
+    /**
+     * The children of a Block (or a Localizedfields inside it) start out as visible and editable,
+     * the custom layouts restrict them afterwards
+     */
+    private static function resetContainerFieldDefinitions(ClassDefinition\Data $def): void
+    {
+        if (!$def instanceof ClassDefinition\Data\Block && !$def instanceof ClassDefinition\Data\Localizedfields) {
+            return;
+        }
+
+        foreach ($def->getFieldDefinitions(['suppressEnrichment' => true]) as $child) {
+            $child->setInvisible(false);
+            $child->setNotEditable(false);
+            self::resetContainerFieldDefinitions($child);
+        }
+    }
+
+    /**
+     * Applies the children of a Block (or a Localizedfields inside it) in a custom layout to the children of the merged one
+     */
+    private static function mergeContainerFieldDefinitions(?ClassDefinition\Data $mergedDef, ?ClassDefinition\Data $customDef): void
+    {
+        if (
+            !($mergedDef instanceof ClassDefinition\Data\Block && $customDef instanceof ClassDefinition\Data\Block)
+            && !($mergedDef instanceof ClassDefinition\Data\Localizedfields && $customDef instanceof ClassDefinition\Data\Localizedfields)
+        ) {
+            return;
+        }
+
+        $customFieldDefinitions = $customDef->getFieldDefinitions(['suppressEnrichment' => true]);
+        $mergedFieldDefinitions = $mergedDef->getFieldDefinitions(['suppressEnrichment' => true]);
+
+        foreach (array_keys($mergedFieldDefinitions) as $key) {
+            self::mergeFieldDefinition($mergedFieldDefinitions, $customFieldDefinitions, (string) $key);
+            self::mergeContainerFieldDefinitions($mergedFieldDefinitions[$key] ?? null, $customFieldDefinitions[$key] ?? null);
+        }
+
+        // the children already hold the fields of all aggregated sections, a retained reference would add the unfiltered ones again
+        $mergedDef->setReferencedFields([]);
+        $mergedDef->setChildren(array_values($mergedFieldDefinitions));
     }
 
     /**
@@ -938,6 +1245,15 @@ class Service extends Model\Element\Service
             }
 
             $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
+
+            if (
+                ($layout instanceof ClassDefinition\Data\Block && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Block)
+                || ($layout instanceof ClassDefinition\Data\Localizedfields && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Localizedfields)
+            ) {
+                // the children of a Block or a Localizedfields inside it are no top-level fields,
+                // they are checked against the container's own definitions
+                $fieldDefinitions = $fieldDefinitions[$name]->getFieldDefinitions(['suppressEnrichment' => true]);
+            }
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -969,7 +1285,8 @@ class Service extends Model\Element\Service
         int $objectId,
         ?User $user = null
     ): array {
-        $layoutDefinitions = $class->getLayoutDefinitions();
+        // work on a copy, the class definition is shared and callers modify the returned layout
+        $layoutDefinitions = self::cloneDefinition($class->getLayoutDefinitions());
 
         $result = [
             'layoutDefinition' => $layoutDefinitions,
@@ -1054,6 +1371,12 @@ class Service extends Model\Element\Service
             return;
         }
 
+        // Some callers (e.g. grid column configuration) cannot supply a Concrete $object - field
+        // enrichment requires that - but can still provide a permission subject via context['object']
+        // (a Folder or Concrete). Capture it before it gets overwritten below.
+        $contextObject = $context['object'] ?? null;
+        $permissionSubject = $object ?? ($contextObject instanceof AbstractObject ? $contextObject : null);
+
         $context['object'] = $object;
 
         if ($layout instanceof LayoutDefinitionEnrichmentInterface) {
@@ -1062,9 +1385,9 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             $user = self::getUser($user);
-            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
-                $allowedView = self::getLanguagePermissions($object, $user, 'lView');
-                $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
+            if (!$user->isAdmin() && $permissionSubject) {
+                $allowedView = self::getLanguagePermissions($permissionSubject, $user, 'lView');
+                $allowedEdit = self::getLanguagePermissions($permissionSubject, $user, 'lEdit');
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
             }
 
@@ -1197,7 +1520,11 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
+        $data->setCalculatorData($fd->getCalculatorData());
+
+        // the edit view always shows freshly computed values: evaluate without the snapshot of the object, so
+        // calculators and expressions that read other calculated fields of a loaded draft see live values as well
+        return self::computeWithoutCalculatedValueSnapshot($object, static fn () => DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                     $className = $fd->getCalculatorClass();
@@ -1221,7 +1548,7 @@ class Service extends Model\Element\Service
                 default:
                     return null;
             }
-        });
+        }));
     }
 
     public static function getCalculatedFieldValue(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|Concrete $object, ?Data\CalculatedValue $data): mixed
@@ -1247,11 +1574,28 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        // only values requested on the object itself can come from its version snapshot (object level and
+        // localized fields, see Version::marshalData()); a field collection item or object brick asking for
+        // one of its own fields never does, even if a field of the object has the same name
+        $snapshotOwner = $object instanceof Concrete ? $object : null;
+
         if (
             $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
             $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
         ) {
             $object = $object->getObject();
+        }
+
+        $data->setCalculatorData($fd->getCalculatorData());
+
+        if ($snapshotOwner !== null) {
+            $snapshot = $snapshotOwner->__getCalculatedValueSnapshot();
+            if ($snapshot !== null) {
+                $snapshotKey = self::getCalculatedValueSnapshotKey($data);
+                if (array_key_exists($snapshotKey, $snapshot)) {
+                    return $snapshot[$snapshotKey];
+                }
+            }
         }
 
         return DataObject\Service::useInheritedValues(true, static function () use ($object, $fd, $data) {
@@ -1281,6 +1625,45 @@ class Service extends Model\Element\Service
         });
     }
 
+    /**
+     * Builds the key under which the value of a calculated field is stored in the
+     * calculated value snapshot of a version (see Concrete::__getCalculatedValueSnapshot()).
+     *
+     * @internal
+     */
+    public static function getCalculatedValueSnapshotKey(Data\CalculatedValue $data): string
+    {
+        return implode('~', [
+            $data->getOwnerType(),
+            (string) $data->getOwnerName(),
+            (string) $data->getIndex(),
+            (string) $data->getPosition(),
+            $data->getFieldname(),
+        ]);
+    }
+
+    /**
+     * Runs $closure with the calculated value snapshot of $object temporarily disabled, so calculated
+     * fields read inside it are computed freshly, and restores the snapshot afterwards.
+     *
+     * @internal
+     */
+    public static function computeWithoutCalculatedValueSnapshot(Concrete $object, Closure $closure): mixed
+    {
+        $snapshot = $object->__getCalculatedValueSnapshot();
+        if ($snapshot === null) {
+            return $closure();
+        }
+
+        $object->__setCalculatedValueSnapshot(null);
+
+        try {
+            return $closure();
+        } finally {
+            $object->__setCalculatedValueSnapshot($snapshot);
+        }
+    }
+
     public static function getSystemFields(): array
     {
         return self::$systemFields;
@@ -1292,7 +1675,9 @@ class Service extends Model\Element\Service
             return;
         }
 
-        $fieldDefinitions = $fd->getFieldDefinitions();
+        // Resetting dirty flags only needs the field names, so skip the enrichment that would run
+        // dynamic options providers (without an object context) for every field.
+        $fieldDefinitions = $fd->getFieldDefinitions(['suppressEnrichment' => true]);
 
         if (is_array($fieldDefinitions)) {
             foreach ($fieldDefinitions as $fieldDefinition) {

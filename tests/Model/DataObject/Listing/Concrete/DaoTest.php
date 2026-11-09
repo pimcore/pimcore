@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject\Listing\Concrete;
 
+use Exception;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -54,5 +55,28 @@ final class DaoTest extends ModelTestCase
         // "table doesn't exist" error from injected SQL.
         $totalCount = $listing->getTotalCount();
         $this->assertGreaterThanOrEqual(1, $totalCount);
+    }
+
+    public function testAddFieldCollectionRejectsUnknownType(): void
+    {
+        // Previously accepted verbatim: getByKey()'s return value was discarded,
+        // so any string reached applyJoins() and was concatenated raw into the
+        // JOIN's table name (object_collection_<type>_<classId>), which Doctrine
+        // never quotes. Only a type matching a real, existing field-collection
+        // definition may be used now.
+        $maliciousType = 'nonexistent" ON 1=1 LEFT JOIN users-- -';
+
+        $listing = new Unittest\Listing();
+
+        $this->expectException(Exception::class);
+        $listing->addFieldCollection($maliciousType, 'irrelevant');
+    }
+
+    public function testAddFieldCollectionStillAcceptsARealType(): void
+    {
+        $listing = new Unittest\Listing();
+        $listing->addFieldCollection('unittestfieldcollection', 'fieldinput1');
+
+        $this->assertCount(1, $listing->getFieldCollections());
     }
 }
