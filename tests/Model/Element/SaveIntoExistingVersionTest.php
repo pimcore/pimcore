@@ -37,6 +37,7 @@ use Pimcore\Tests\Support\Helper\Pimcore as PimcoreHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Psr\Log\NullLogger;
+use TypeError;
 
 /**
  * Publishing a prepared version writes the published state into that very version (`existingVersion` save
@@ -181,6 +182,39 @@ class SaveIntoExistingVersionTest extends ModelTestCase
         $this->assertNotNull($publishedVersion, 'the published version must still exist');
         $this->assertSame($published->getVersionCount(), $publishedVersion->getVersionCount(), 'the version must carry the element\'s version count');
         $this->assertSame($published->getModificationDate(), $publishedVersion->getDate(), 'the version must carry the element\'s modification date');
+    }
+
+    /**
+     * saveVersion() accepts the `existingVersion` parameter as well (Asset: 4th argument, Document\PageSnippet:
+     * 5th argument read via func_get_arg(), Concrete: `$parameters`)
+     *
+     * @dataProvider elementTypeProvider
+     */
+    public function testSaveVersionWritesIntoTheGivenVersion(string $type): void
+    {
+        $element = $this->createFreshElement($type);
+        $draft = $element->saveVersion();
+        $this->assertNotNull($draft, 'expected a draft version to be saved');
+        $versionCountBefore = $this->countVersions($element);
+
+        $parameters = ['existingVersion' => $draft];
+        $version = $element instanceof Asset
+            ? $element->saveVersion(true, true, 'updated draft', $parameters)
+            : $element->saveVersion(true, true, 'updated draft', false, $parameters);
+
+        $this->assertSame($draft->getId(), $version?->getId(), 'the given version must be written into');
+        $this->assertSame($versionCountBefore, $this->countVersions($element), 'writing into a version must not add a version');
+        $updatedVersion = Version::getById($draft->getId());
+        $this->assertNotNull($updatedVersion, 'the version must still exist');
+        $this->assertSame('updated draft', $updatedVersion->getNote(), 'the version must be written into');
+    }
+
+    public function testSaveVersionOfADocumentRejectsParametersThatAreNotAnArray(): void
+    {
+        $element = $this->createFreshElement('document');
+
+        $this->expectException(TypeError::class);
+        $element->saveVersion(true, true, null, false, 'not an array');
     }
 
     public function testAVersionOfAnotherElementIsRejected(): void

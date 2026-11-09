@@ -646,8 +646,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setCid($this->getId());
         $version->setCtype(Service::getElementType($this));
         $version->setDate($this->getModificationDate());
-        // a version that is written into (e.g. when it is published) keeps its author, the user who published it is
-        // the user modification of the element
+        // a version that is written into (e.g. when it is published) keeps its author
         if (!$existingVersion instanceof Model\Version) {
             $version->setUserId($this->getUserModification());
         }
