@@ -24,6 +24,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
@@ -445,7 +448,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         // the object is what a type needs to do anything beyond converting the
                         // payload - Consent writes a note against it - and the context says where
                         // in the store the value it is converting sits
-                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value, $object, [
+                        $editmodeParams = [
                             'owner' => $classificationStore,
                             'context' => [
                                 'containerType' => 'classificationstore',
@@ -455,7 +458,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 'language' => $language,
                             ],
                             'oldData' => $storedItems[$groupId][$keyId][$language] ?? null,
-                        ]);
+                        ];
+                        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\Password) {
+                            // a password field has to know the stored value to be able to keep it
+                            $getInheritedValues = DataObject::getGetInheritedValues();
+                            DataObject::setGetInheritedValues(false);
+
+                            try {
+                                $editmodeParams['injectedData'] = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
+                            } finally {
+                                DataObject::setGetInheritedValues($getInheritedValues);
+                            }
+                        }
+                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value, $object, $editmodeParams);
                         $activeGroups[$groupId] = true;
 
                         $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);
@@ -976,9 +991,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
-                throw new Model\Element\ValidationException(
+                throw (new StructuredValidationException(
                     'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
-                );
+                ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->getMaxItems()]);
             }
 
             $relationCache = $this->getKeyGroupRelationCache();
@@ -1064,7 +1079,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $value,
                                 (string) $validLanguage,
                                 $qualifiedItems[$activeGroupId][$keyId][$validLanguage] ?? [],
-                                $params
+                                $params,
+                                $keyGroupRelation->getName(),
+                                $activeGroupId
                             ) as $violation
                         ) {
                             $subItems[] = $violation;
@@ -1083,11 +1100,44 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $validationException->getMessage();
             }, $subItems);
 
-            $validationException = new Model\Element\ValidationException(implode(', ', $messages));
+            $validationException = new StructuredValidationException(implode(', ', $messages));
             $validationException->setSubItems($subItems);
+            $validationException->addViolations(...$subItems);
 
             throw $validationException;
         }
+    }
+
+    private function createKeyViolation(
+        Exception $exception,
+        Data $keyDefinition,
+        string $keyName,
+        DataObject\Classificationstore\GroupConfig $group,
+        string $language,
+        // the slot loop addresses a value as language/variant/position, which
+        // already carries the language; everything else names the language
+        // alone. Only the message suffix differs — the path segment below is
+        // always the bare language.
+        ?string $context = null
+    ): StructuredValidationException {
+        $message = $exception->getMessage() . ' (' . ($context ?? $language) . ')';
+        $violation = $exception instanceof StructuredValidationException
+            ? $exception->withMessage($message)
+            : new StructuredValidationException($message, $exception->getCode(), $exception->getPrevious());
+        $title = $this->getTitle();
+
+        return $violation
+            // the stored definition may carry no name of its own
+            ->setField($keyDefinition->getName() ?? $keyName, $keyDefinition->getTitle())
+            ->addPathSegment(new ValidationPathSegment(
+                field: $group->getName(),
+                title: $group->getDescription() !== '' ? $group->getDescription() : null
+            ))
+            ->addPathSegment(new ValidationPathSegment(
+                field: $this->getName(),
+                title: $title !== '' ? $title : null,
+                language: $language !== 'default' ? $language : null
+            ));
     }
 
     /**
@@ -1780,7 +1830,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         mixed $value,
         string $language,
         array $slotValues,
-        array $params
+        array $params,
+        string $keyName,
+        int $groupId
     ): array {
         $slots = $this->collectDeclaredSlots($keyDef, $value, $language, $slotValues);
         $mandatorySlot = $this->slotAnsweringTheMandatoryCheck($keyDef, $slots);
@@ -1800,11 +1852,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $params
                 );
             } catch (Exception $exception) {
-                $violations[] = new Model\Element\ValidationException(
-                    $exception->getMessage() . ' (' . $slot['context'] . ')',
-                    $exception->getCode(),
-                    $exception->getPrevious()
-                );
+                // Read HERE and not in the caller's loop. The group is needed only to
+                // name a violation, and a group costs a query: fetched per group,
+                // validating ten clean groups cost ten reads where it must cost one —
+                // which is what DocumentStatementCountTest measures, and what it
+                // caught. A group with no config still yields a violation, just
+                // without the structured path.
+                $group = DataObject\Classificationstore\GroupConfig::getById($groupId);
+                $violations[] = $group !== null
+                    ? $this->createKeyViolation(
+                        $exception, $keyDef, $keyName, $group, $language, $slot['context']
+                    )
+                    : new Model\Element\ValidationException(
+                        $exception->getMessage() . ' (' . $slot['context'] . ')',
+                        $exception->getCode(),
+                        $exception->getPrevious()
+                    );
             }
         }
 

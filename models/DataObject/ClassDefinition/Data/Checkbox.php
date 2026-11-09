@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -117,7 +118,8 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         /* @todo seems to cause problems with old installations
@@ -175,7 +177,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         $value = $db->quote((string)$value);
         $key = $db->quoteIdentifier($this->name);
 
-        $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
+        // brickPrefix arrives ready to concatenate - already quoted where it needs to be and
+        // already carrying its trailing dot - so it must not be quoted again here.
+        $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
 
         return 'IFNULL(' . $brickPrefix . $key . ', 0) = ' . $value . ' ';
     }
@@ -238,6 +242,14 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getFieldType(): string
     {
         return 'checkbox';
+    }
+
+    /**
+     * The classification store keeps the normalized value in a text column, so it reads back "1" or "".
+     */
+    public function denormalize(mixed $value, array $params = []): ?bool
+    {
+        return $value === null ? null : (bool) $value;
     }
 
     public function getClassificationStoreKeyFilter(): KeyFilter

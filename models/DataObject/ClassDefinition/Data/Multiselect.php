@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Throwable;
 
@@ -287,7 +289,8 @@ class Multiselect extends Data implements
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if (!is_array($data) && !empty($data)) {
@@ -307,9 +310,10 @@ class Multiselect extends Data implements
 
             foreach ($data as $value) {
                 if (!$this->isValidOption($value)) {
-                    throw new Model\Element\ValidationException(
+                    throw (new StructuredValidationException(
                         sprintf("Invalid multiselect option '%s' on field [ %s ]", $value, $this->getName())
-                    );
+                    ))
+                        ->setTranslation(ValidationMessageKey::INVALID_OPTION, ['value' => $value]);
                 }
             }
         }
