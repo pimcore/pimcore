@@ -40,6 +40,7 @@ class Dao extends Model\Element\Dao
 
         if ($data) {
             $data['published'] = (bool)$data['published'];
+            $this->assignChangeToken($data);
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
@@ -97,6 +98,9 @@ class Dao extends Model\Element\Dao
                 $data[$key] = $value;
             }
         }
+
+        // maintained by the database, see renewChangeToken()
+        unset($data['changeToken']);
 
         // check the type before updating, changing the type or class of an object is not possible
         $checkColumns = ['type', 'classId', 'className'];
@@ -208,6 +212,47 @@ class Dao extends Model\Element\Dao
         }
 
         return null;
+    }
+
+    /**
+     * Moves the change token of a loaded objects row to the model. Assigned explicitly and removed from the row data,
+     * because a data object field may be named changeToken as well.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function assignChangeToken(array &$data): void
+    {
+        $token = $data['changeToken'] ?? null;
+        unset($data['changeToken']);
+        $this->model->__setChangeToken(is_string($token) ? $token : null);
+    }
+
+    /**
+     * Reads the change token of the object's row and locks the row until the current transaction ends.
+     *
+     * @internal
+     */
+    public function getChangeTokenForUpdate(): ?string
+    {
+        $token = $this->db->fetchOne('SELECT changeToken FROM objects WHERE id = ? FOR UPDATE', [$this->model->getId()]);
+
+        return is_string($token) ? $token : null;
+    }
+
+    /**
+     * Sets a new change token on the object's row and returns it. The column renews itself on every UPDATE that
+     * changes the row (ON UPDATE CURRENT_TIMESTAMP(6)), a save renews it explicitly because its UPDATE may not change
+     * any column of the row.
+     *
+     * @internal
+     */
+    public function renewChangeToken(): ?string
+    {
+        $this->db->executeStatement('UPDATE objects SET changeToken = CURRENT_TIMESTAMP(6) WHERE id = ?', [$this->model->getId()]);
+
+        $token = $this->db->fetchOne('SELECT changeToken FROM objects WHERE id = ?', [$this->model->getId()]);
+
+        return is_string($token) ? $token : null;
     }
 
     public function getVersionCountForUpdate(): int
