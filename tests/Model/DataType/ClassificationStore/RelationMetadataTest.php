@@ -344,37 +344,6 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertNull($relation->getSubGroup());
     }
 
-    /**
-     * MySQL does not preserve the key order of a JSON object, so a value that came out of one of the
-     * two JSON columns is compared by key, with every key and every value still matching exactly.
-     *
-     * @param array<array-key, mixed> $expected
-     */
-    private function assertSameJsonData(array $expected, mixed $actual, string $message = ''): void
-    {
-        $this->assertSame(
-            $this->sortedByKey($expected),
-            is_array($actual) ? $this->sortedByKey($actual) : $actual,
-            $message
-        );
-    }
-
-    /**
-     * @param array<array-key, mixed> $value
-     *
-     * @return array<array-key, mixed>
-     */
-    private function sortedByKey(array $value): array
-    {
-        $sorted = [];
-        foreach ($value as $key => $entry) {
-            $sorted[$key] = is_array($entry) ? $this->sortedByKey($entry) : $entry;
-        }
-        ksort($sorted);
-
-        return $sorted;
-    }
-
     private function loadThroughListing(KeyGroupRelation $relation): KeyGroupRelation
     {
         $list = new KeyGroupRelation\Listing();

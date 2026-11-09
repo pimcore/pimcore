@@ -13,6 +13,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore\Traits;
 
+/**
+ * The free key-value pairs of a configuration entity, held in the `customMetadata` column of all
+ * four of them.
+ *
+ * Why a key has this column although it already carries a JSON blob: the pairs are a customer
+ * namespace, validated for nothing - no key-name rules, no reserved prefixes, no type constraint -
+ * while `definition` is Pimcore's own, whose members (fieldtype, name, title, locked, labelAlign,
+ * indexed) core writes and reads. A pair named after one of them would shadow it and nothing would
+ * refuse it. Keeping them apart also keeps one field name for the feature across all four levels,
+ * where the other three have no `definition` to reuse.
+ */
 trait CustomMetadataTrait
 {
     /**

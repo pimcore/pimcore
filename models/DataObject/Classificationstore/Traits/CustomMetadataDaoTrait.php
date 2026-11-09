@@ -33,6 +33,10 @@ trait CustomMetadataDaoTrait
      * than left to assignVariablesToModel(), which skips a NULL: a row whose column was cleared would
      * otherwise leave the previously loaded pairs in memory, and the next save would write them back.
      *
+     * A row that does not carry the column at all - a load against a schema the migration has not
+     * reached yet - is left alone: setting NULL would mark the field initialized, and a save after a
+     * schema upgrade would then write that NULL over pairs stored in between.
+     *
      * @param array<string, mixed> $row
      *
      * @return array<string, mixed>
@@ -41,7 +45,11 @@ trait CustomMetadataDaoTrait
         CollectionConfig|GroupConfig|SubGroupConfig|KeyConfig $config,
         array $row
     ): array {
-        $config->setCustomMetadata(static::decodeCustomMetadata($row[self::COLUMN_CUSTOM_METADATA] ?? null));
+        if (!array_key_exists(self::COLUMN_CUSTOM_METADATA, $row)) {
+            return $row;
+        }
+
+        $config->setCustomMetadata(static::decodeCustomMetadata($row[self::COLUMN_CUSTOM_METADATA]));
 
         unset($row[self::COLUMN_CUSTOM_METADATA]);
 

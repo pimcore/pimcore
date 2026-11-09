@@ -21,13 +21,19 @@ use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 use Pimcore\Model\DataObject\Classificationstore\SubGroupConfig;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataDaoTrait;
 use Pimcore\Model\DataObject\Csstore;
 use Psr\Log\NullLogger;
 
 /**
  * The customMetadata column of the four classification store configuration entities: that it exists,
  * that it round-trips as JSON text through every load path, that an instance built with `new` does
- * not clear it, and that nothing in core reads it.
+ * not clear it, that a column holding anything but a JSON object reads as absent, and that nothing
+ * in core reads it.
+ *
+ * A value compared here came out of a `json` column, whose member order MySQL normalises, so the
+ * pairs are compared with {@see AbstractBatchedRelationTest::assertSameJsonData()} rather than with
+ * assertSame(), which would also compare key order.
  *
  * @group model.datatype.classificationstore
  */
@@ -173,10 +179,10 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
         $entity->setCustomMetadata(self::PAIRS);
         $entity->save();
 
-        $this->assertSame(self::PAIRS, json_decode($this->readColumn($kind, $entity), true));
+        $this->assertSameJsonData(self::PAIRS, json_decode($this->readColumn($kind, $entity), true));
 
         foreach ($this->loadThroughEveryPath($kind, $entity) as $path => $loaded) {
-            $this->assertSame(self::PAIRS, $loaded->getCustomMetadata(), $path);
+            $this->assertSameJsonData(self::PAIRS, $loaded->getCustomMetadata(), $path);
         }
     }
 
@@ -187,7 +193,7 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
         $key->setCustomMetadata(self::PAIRS);
         $key->save();
 
-        $this->assertSame(self::PAIRS, json_decode($this->readColumn(self::KEY, $key), true));
+        $this->assertSameJsonData(self::PAIRS, json_decode($this->readColumn(self::KEY, $key), true));
     }
 
     public function testAKeyKeepsItsPairsThroughTheDefinitionCache(): void
@@ -196,10 +202,17 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
         $key->setCustomMetadata(self::PAIRS);
         $key->save();
 
+        // load() is the batch hydrator; get() alone would fall back to KeyConfig::getById() and
+        // pass whatever that hydrator does
         DefinitionCache::clear(null);
-        DefinitionCache::get($key->getId());
+        DefinitionCache::load([$key->getId()]);
 
-        $this->assertSame(self::PAIRS, DefinitionCache::get($key->getId())->getCustomMetadata());
+        $this->assertArrayHasKey(
+            'key' . $key->getId(),
+            DefinitionCache::$cache,
+            'load() must hold the key, or the assertion below reads the getById() fallback'
+        );
+        $this->assertSameJsonData(self::PAIRS, DefinitionCache::get($key->getId())->getCustomMetadata());
     }
 
     /**
@@ -220,7 +233,7 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
         }
         $fresh->save();
 
-        $this->assertSame(self::PAIRS, json_decode($this->readColumn($kind, $entity), true));
+        $this->assertSameJsonData(self::PAIRS, json_decode($this->readColumn($kind, $entity), true));
         $this->assertSame('changed', $this->loadThroughEveryPath($kind, $entity)['getById']->getDescription());
     }
 
@@ -275,6 +288,91 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
         $this->assertFalse($key->isCustomMetadataInitialized());
     }
 
+    /**
+     * The decoder answers NULL for everything that is not a JSON object: text that is not JSON at
+     * all, and the JSON scalars a `json` column accepts as valid content.
+     *
+     * @dataProvider notAJsonObject
+     */
+    public function testTheDecoderAnswersNullForAnythingThatIsNotAMap(mixed $stored): void
+    {
+        $this->assertNull($this->hydrationSeam()->decode($stored));
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function notAJsonObject(): array
+    {
+        return [
+            'text that is not json' => ['not json at all'],
+            'truncated json' => ['{"etim-id": "EF000001"'],
+            'json number' => ['123'],
+            'json string' => ['"EF000001"'],
+            'json true' => ['true'],
+            'json null' => ['null'],
+            'empty text' => [''],
+            'sql null' => [null],
+        ];
+    }
+
+    /**
+     * The hydrator distinguishes a column that holds nothing usable - which clears the pairs and is
+     * written back as NULL - from a row that does not carry the column at all, which it leaves alone
+     * so that a save against the upgraded schema does not write NULL over pairs stored meanwhile.
+     */
+    public function testTheHydratorOnlyTouchesTheFieldWhenTheRowCarriesTheColumn(): void
+    {
+        $seam = $this->hydrationSeam();
+
+        $absent = new KeyConfig();
+        $absent->setCustomMetadata(self::PAIRS);
+        $row = $seam->hydrate($absent, ['id' => 1, 'name' => 'nocolumn']);
+        // in memory and never through the column, so compared strictly, key order included
+        $this->assertSame(self::PAIRS, $absent->getCustomMetadata(), 'an absent column must not clear');
+        $this->assertSame(['id' => 1, 'name' => 'nocolumn'], $row);
+
+        $untouched = new KeyConfig();
+        $seam->hydrate($untouched, ['id' => 1]);
+        $this->assertFalse($untouched->isCustomMetadataInitialized(), 'an absent column must not initialise');
+
+        foreach ([null, 'not json at all', '123', '"EF000001"', '{}'] as $stored) {
+            $loaded = new KeyConfig();
+            $loaded->setCustomMetadata(self::PAIRS);
+            $row = $seam->hydrate($loaded, ['id' => 1, self::COLUMN => $stored]);
+
+            $this->assertNull($loaded->getCustomMetadata(), var_export($stored, true));
+            $this->assertTrue($loaded->isCustomMetadataInitialized(), var_export($stored, true));
+            $this->assertArrayNotHasKey(self::COLUMN, $row, var_export($stored, true));
+        }
+    }
+
+    /**
+     * A row whose column holds a JSON scalar rather than an object: valid for the column, nothing
+     * this feature can hand out. It reads as absent, and the next save stores that.
+     *
+     * @dataProvider kinds
+     */
+    public function testAScalarRowReadsAsAbsentAndIsWrittenBackAsNull(string $kind): void
+    {
+        $entity = $this->createEntity($kind);
+        $entity->setCustomMetadata(self::PAIRS);
+        $entity->save();
+
+        Db::get()->update(self::TABLES[$kind], [self::COLUMN => '123'], ['id' => $entity->getId()]);
+        $this->assertSame('123', $this->readColumn($kind, $entity), 'the column accepts a JSON scalar');
+
+        foreach ($this->loadThroughEveryPath($kind, $entity) as $path => $loaded) {
+            $this->assertNull($loaded->getCustomMetadata(), $path);
+        }
+
+        $entity->getDao()->getById();
+        $entity->setDescription('after the scalar');
+        $entity->save();
+
+        $this->assertNull($this->readColumn($kind, $entity), 'a loaded scalar row is written back as SQL NULL');
+    }
+
     public function testThePairsAreOpaqueToCore(): void
     {
         $group = $this->createGroup('opaque');
@@ -301,7 +399,7 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
         $key->setCustomMetadata(self::PAIRS);
         $key->save();
 
-        $this->assertSame(self::PAIRS, KeyConfig::getById($key->getId(), true)->getCustomMetadata());
+        $this->assertSameJsonData(self::PAIRS, KeyConfig::getById($key->getId(), true)->getCustomMetadata());
         $this->assertSame(
             0,
             (int) Db::get()->fetchOne(
@@ -333,10 +431,40 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
         ];
 
         foreach ($loaded as $path => $reloaded) {
-            $this->assertSame($metadata, $reloaded->getMetadata(), $path);
-            $this->assertSame(['defaultUnit' => 'cm'], $reloaded->getDefinitionOverride(), $path);
+            $this->assertSameJsonData($metadata, $reloaded->getMetadata(), $path);
+            $this->assertSameJsonData(['defaultUnit' => 'cm'], $reloaded->getDefinitionOverride(), $path);
             $this->assertNull($reloaded->getSubGroup(), $path);
         }
+    }
+
+    /**
+     * The DAO trait's own hydration seam. Text that is not JSON cannot be put into a `json` column,
+     * so the fallback for it is reachable only by handing the trait a row directly - which is also
+     * the only way to hand it a row that does not carry the column at all.
+     */
+    private function hydrationSeam(): object
+    {
+        return new class() {
+            use CustomMetadataDaoTrait;
+
+            /**
+             * @param array<string, mixed> $row
+             *
+             * @return array<string, mixed>
+             */
+            public function hydrate(KeyConfig $config, array $row): array
+            {
+                return self::hydrateCustomMetadata($config, $row);
+            }
+
+            /**
+             * @return array<string, mixed>|null
+             */
+            public function decode(mixed $stored): ?array
+            {
+                return self::decodeCustomMetadata($stored);
+            }
+        };
     }
 
     private function loadThroughListing(KeyGroupRelation $relation): KeyGroupRelation
@@ -411,6 +539,12 @@ class ConfigMetadataTest extends AbstractBatchedRelationTest
             $loaded['KeyConfig::getById'] = KeyConfig::getById($entity->getId(), true);
 
             DefinitionCache::clear(null);
+            DefinitionCache::load([$entity->getId()]);
+            $this->assertArrayHasKey(
+                'key' . $entity->getId(),
+                DefinitionCache::$cache,
+                'the batch hydrator must hold the key, or get() below reads the getById() fallback'
+            );
             $loaded['DefinitionCache'] = DefinitionCache::get($entity->getId());
         }
 
