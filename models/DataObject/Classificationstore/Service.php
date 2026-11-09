@@ -31,6 +31,12 @@ class Service
     private const FIELDCOLLECTION_CONTAINER = 'fieldcollection';
 
     /**
+     * The marshaller format the classification store packs its values with,
+     * {@see self::marshallerPacksIntoValueColumns()}.
+     */
+    private const MARSHALLER_FORMAT = 'classificationstore';
+
+    /**
      * @var array Used for storing definitions
      */
     protected static array $definitionsCache = [];
@@ -126,14 +132,136 @@ class Service
             $dataDefinition->name = $name;
         }
 
-        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+        // __set_state() rebuilds the definition from its own properties, which leaves a wrapper's
+        // delegate as the raw array it was decoded from - it is rebuilt here, as the inner type,
+        // from exactly that array, so the inner definition keeps its own properties
+        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField
+            || $dataDefinition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
             $delegateDataType = $dataDefinition->getDelegateDatatype();
-            $delegateDefinition = self::getFieldDefinitionFromJson((array) $delegateDefinitionRaw, $delegateDataType);
+            // a blob naming no inner type leaves a delegate-less wrapper rather than the raw decoded
+            // array, which no reader of the delegate would recognise as a definition
+            $delegateDefinition = $delegateDataType === null
+                ? null
+                : self::getFieldDefinitionFromJson((array) $delegateDefinitionRaw, $delegateDataType);
             $dataDefinition->setDelegate($delegateDefinition);
         }
 
         return $dataDefinition;
+    }
+
+    /**
+     * The definition that answers for the VALUE of a key: the inner type of a `multiValue` wrapper,
+     * and the definition itself for every other key.
+     *
+     * The one boundary for that question, so that the paths asking it cannot come apart. A
+     * `multiValue` key declares the qualifiers its values may carry and nothing about the values
+     * themselves - what a slot holds is a value of the inner type, which is what stores it, reads it
+     * back, decides whether it is a relation and names its dependencies. A caller asking the wrapper
+     * instead is told "no" about every one of those, and the value then reaches storage unrefused,
+     * loses its dependency rows or is read without the hook its own type would have run.
+     *
+     * An `encryptedField` is NOT unwrapped here: that wrapper carries the stored form itself - it is
+     * the one that encrypts - so its own definition is the one that answers for the value. The walk
+     * below therefore stops ON one rather than going through it.
+     *
+     * CONSECUTIVE `multiValue` wrappers are unwrapped to the end. Nothing refuses a definition blob
+     * whose `delegateDatatype` is `multiValue` again - the delegate is accepted by
+     * {@see KeyTypeSupport::isAcceptedDelegateType()} and built by
+     * {@see self::getFieldDefinitionFromJson()}, which recurses - and resolving one layer alone
+     * answered this question with a wrapper: `multiValue<multiValue<encryptedField<input>>>`
+     * normalized its way down to the secret while the engine, asked whether the value reaches the
+     * document through its marshaller, was looking at a `multiValue` and stored the plaintext. One
+     * boundary that answers "the value's definition" has to answer it for a chain of any length.
+     *
+     * @see DataObject\ClassDefinition\Data\MultiValue for the behaviours the wrapper forwards itself
+     */
+    public static function getValueDefinition(
+        ?DataObject\ClassDefinition\Data $definition
+    ): ?DataObject\ClassDefinition\Data {
+        $seen = [];
+
+        while ($definition instanceof DataObject\ClassDefinition\Data\MultiValue) {
+            // a delegate that is its own ancestor can only be built by hand, and a walk that met one
+            // would not end: the chain stops at the wrapper it has already answered for
+            if (isset($seen[spl_object_id($definition)])) {
+                break;
+            }
+
+            $seen[spl_object_id($definition)] = true;
+
+            $delegate = $definition->getDelegate();
+            if (!$delegate instanceof DataObject\ClassDefinition\Data) {
+                // a wrapper naming no inner type answers itself: it normalizes the plain value
+                // unchanged, {@see DataObject\ClassDefinition\Data\MultiValue::normalize()}
+                break;
+            }
+
+            $definition = $delegate;
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Whether a value of this definition is packed into the two scalar value columns by a
+     * classification store marshaller, rather than reaching one as the structure it normalizes to.
+     *
+     * The one boundary for that question, like {@see self::getValueDefinition()} is for "which
+     * definition answers for the value", and asked of the DELEGATE of an `encryptedField`: that
+     * marshaller encrypts a scalar and hands anything else to its delegate's marshaller to be packed
+     * first, so a delegate that packs nothing leaves a structured value with no scalar to encrypt.
+     *
+     * It is answered through the COMPLETE chain. A `multiValue` marshaller packs nothing itself -
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue} hands the value to the
+     * marshaller of its own inner type - so its registration says nothing about the shape it
+     * produces, and a wrapper whose inner type has no marshaller returns the value in the `value`
+     * member unchanged. Asked one layer deep, `encryptedField<multiValue<geopoint>>` answered "the
+     * delegate has a marshaller, it packs" about a wrapper that handed the coordinates straight back
+     * as an array-valued column, which
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::encrypt()} casts to
+     * the string `'Array'`. The coordinates were lost with no error, on the document engine for want
+     * of an envelope and on the EAV engine for want of a refusal.
+     *
+     * A chain ending in a wrapper that names no inner type does NOT pack: such a wrapper returns the
+     * value it was handed in the `value` member, which is the structure rather than a column.
+     */
+    public static function marshallerPacksIntoValueColumns(
+        ?DataObject\ClassDefinition\Data $definition,
+        Pimcore\Element\MarshallerService $marshallerService
+    ): bool {
+        $definition = self::getValueDefinition($definition);
+
+        if (!$definition instanceof DataObject\ClassDefinition\Data
+            || $definition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
+            return false;
+        }
+
+        return $marshallerService->supportsFielddefinition(
+            self::MARSHALLER_FORMAT,
+            $definition->getFieldType()
+        );
+    }
+
+    /**
+     * The inner type of a wrapper key, or null for a key that is not one - the two wrappers a
+     * classification store key can be defined with, {@see DataObject\ClassDefinition\Data\EncryptedField}
+     * and {@see DataObject\ClassDefinition\Data\MultiValue}.
+     */
+    private static function getDelegateDefinition(
+        DataObject\ClassDefinition\Data $definition
+    ): ?DataObject\ClassDefinition\Data {
+        if (!$definition instanceof DataObject\ClassDefinition\Data\EncryptedField
+            && !$definition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
+            return null;
+        }
+
+        $delegate = $definition->getDelegate();
+
+        return $delegate instanceof DataObject\ClassDefinition\Data ? $delegate : null;
     }
 
     /**
@@ -147,6 +275,10 @@ class Service
      * the editmode payload's parent walk
      * ({@see DataObject\ClassDefinition\Data\Classificationstore::doGetDataForEditMode()}). One
      * answer in one place is what keeps them from coming apart.
+     *
+     * A WRAPPER is answered by its DELEGATE, both of them: an `encryptedField` and a `multiValue`
+     * key hold a value of the inner type, and whether that value may be read off an ancestor is the
+     * inner type's answer. A `multiValue` key declares qualifiers, which says nothing about it.
      *
      * An `encryptedField` is answered by its DELEGATE. The wrapper stores, reads, validates and
      * renders whatever the delegate says - {@see DataObject\ClassDefinition\Data\EncryptedField}
@@ -168,12 +300,10 @@ class Service
             return true;
         }
 
-        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
-            $delegate = $fieldDefinition->getDelegate();
+        $delegate = self::getDelegateDefinition($fieldDefinition);
 
-            if ($delegate instanceof DataObject\ClassDefinition\Data) {
-                return self::supportsInheritance($delegate);
-            }
+        if ($delegate !== null) {
+            return self::supportsInheritance($delegate);
         }
 
         return $fieldDefinition->supportsInheritance();

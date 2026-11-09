@@ -68,6 +68,8 @@ class KeyTypeSupportTest extends TestCase
 
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
 
+    private const MULTI_VALUE_TYPE = 'multiValue';
+
     public function testEveryShippedFieldTypeIsAcceptedExceptTheEightExclusions(): void
     {
         $support = $this->support();
@@ -176,6 +178,42 @@ class KeyTypeSupportTest extends TestCase
 
         // no delegate configured normalizes the plain value unchanged, which the column takes
         $this->assertTrue($support->isHeldInValueColumns(self::ENCRYPTED_FIELD_TYPE));
+    }
+
+    /**
+     * The same follow-through for the other wrapper, for the same reason: the
+     * `classificationstore_multiValue` marshaller packs what the inner type's marshaller packed, so
+     * a key wrapping a type the two value columns cannot hold cannot be held in them either -
+     * answering it on the strength of the wrapper's own marshaller would accept on an EAV store
+     * exactly the keys that store refuses unwrapped.
+     */
+    public function testAMultiValueKeyIsHeldExactlyWhenItsInnerTypeIs(): void
+    {
+        $support = $this->support();
+
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'input'));
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'image'));
+        $this->assertFalse($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'geopoint'));
+        $this->assertFalse($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'manyToManyObjectRelation'));
+
+        // no inner type configured normalizes the plain value unchanged, which the column takes
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE));
+    }
+
+    /**
+     * An exclusion that is about the VALUE holds through either wrapper: a key is never defined with
+     * one of these, and neither encrypting the value nor letting it carry qualifiers changes that.
+     */
+    public function testAnExclusionAboutTheValueIsRefusedAsTheInnerTypeOfEitherWrapper(): void
+    {
+        $support = $this->support();
+
+        foreach (['reverseObjectRelation', 'urlSlug', 'classificationstore', 'block'] as $type) {
+            $this->assertFalse(
+                $support->isAcceptedDelegateType($type),
+                $type . ' may not be the inner type of a wrapper key'
+            );
+        }
     }
 
     public function testEveryShippedFieldTypeAnswersItsFilterDeclaration(): void

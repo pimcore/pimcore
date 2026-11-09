@@ -13,9 +13,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
+use Pimcore\Element\MarshallerService;
+use Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue as MultiValueMarshaller;
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
@@ -460,4 +467,205 @@ class ServiceTest extends TestCase
 
         RuntimeCache::set('fieldcollection_' . $key, $fieldCollection);
     }
+    /**
+     * A stored key config names its type as a string, so the type is only reachable from one if the
+     * implementation loader maps it - and its values only round-trip through the EAV value columns
+     * if a classification store marshaller is registered for it.
+     */
+    public function testTheMultiValueTypeAndItsMarshallerAreRegistered(): void
+    {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+
+        $this->assertTrue($loader->supports('multiValue'));
+        $this->assertInstanceOf(MultiValue::class, $loader->build('multiValue'));
+
+        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
+
+        $this->assertTrue($marshallerService->supportsFielddefinition('classificationstore', 'multiValue'));
+        $this->assertInstanceOf(
+            MultiValueMarshaller::class,
+            $marshallerService->buildFieldefinitionMarshaller('classificationstore', 'multiValue')
+        );
+    }
+
+    /**
+     * Whether a value is packed into the two scalar value columns is asked of the whole delegate
+     * chain, because a `multiValue` is registered for the format and packs nothing with that
+     * registration: it hands the value to the marshaller of its inner type, and returns the value
+     * unchanged in the `value` member when that type has none.
+     *
+     * The INVERSE WRAPPER ORDER is what the registration alone got wrong. For
+     * `encryptedField<multiValue<geopoint>>` both callers read "the delegate has a marshaller, it
+     * packs" and let the coordinates reach
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::encrypt()} as an
+     * array, which casts them to the string `'Array'`: the document engine wrote no envelope and the
+     * EAV engine refused nothing, and the value was lost with no error. The columns the EAV engine
+     * inspects after marshalling cannot catch it either - `'Array'` is a scalar by then.
+     *
+     * @dataProvider packingProvider
+     */
+    public function testPackingIntoTheValueColumnsIsAnsweredThroughTheWholeDelegateChain(
+        ?callable $build,
+        bool $packs,
+        string $message
+    ): void {
+        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
+
+        $this->assertSame(
+            $packs,
+            Service::marshallerPacksIntoValueColumns($build === null ? null : $build(), $marshallerService),
+            $message
+        );
+    }
+
+    /**
+     * @return array<string, array{0: ?callable, 1: bool, 2: string}>
+     */
+    public static function packingProvider(): array
+    {
+        $wrap = static function (?Data $inner): MultiValue {
+            $wrapper = new MultiValue();
+            $wrapper->setMultiValue(true);
+
+            if ($inner !== null) {
+                $wrapper->setDelegateDatatype($inner->getFieldType());
+                $wrapper->setDelegate($inner);
+            }
+
+            return $wrapper;
+        };
+
+        return [
+            'no delegate at all' => [
+                null,
+                false,
+                'a delegate that was never configured packs nothing',
+            ],
+            'a type with a marshaller of its own' => [
+                static fn (): Data => new QuantityValue(),
+                true,
+                'a quantityValue is packed into the two columns by its own marshaller',
+            ],
+            'a type with no marshaller' => [
+                static fn (): Data => new Geopoint(),
+                false,
+                'a geopoint has no classification store marshaller, so nothing packs its coordinates',
+            ],
+            'a wrapper around a type with a marshaller' => [
+                static fn (): Data => $wrap(new QuantityValue()),
+                true,
+                'the wrapper hands the value to the quantityValue marshaller, which packs it',
+            ],
+            'a wrapper around a type with no marshaller' => [
+                static fn (): Data => $wrap(new Geopoint()),
+                false,
+                'the wrapper returns the coordinates in the `value` member, which is not a column',
+            ],
+            'a wrapper naming no inner type' => [
+                static fn (): Data => $wrap(null),
+                false,
+                'a wrapper with no inner type returns the value it was handed unchanged',
+            ],
+            'consecutive wrappers around a type with no marshaller' => [
+                static fn (): Data => $wrap($wrap(new Geopoint())),
+                false,
+                'a chain of any length is answered by the type at the end of it',
+            ],
+            'consecutive wrappers around a type with a marshaller' => [
+                static fn (): Data => $wrap($wrap(new QuantityValue())),
+                true,
+                'and the same chain ending in a type that packs does pack',
+            ],
+        ];
+    }
+
+    /**
+     * The qualifier declarations of a multi-value key live in its definition blob, so they have to
+     * survive the round trip the definition makes: setValues() puts them on the instance,
+     * __set_state() rebuilds that instance from its own properties, and the delegate - which is a
+     * raw array at that point - is rebuilt as the inner type afterwards, with the inner type's own
+     * properties intact rather than replaced by the defaults of a fresh instance.
+     */
+    public function testAMultiValueKeyDefinitionRoundTripsItsDeclarationsAndItsDelegate(): void
+    {
+        $inner = new QuantityValue();
+        $inner->setName('mvInner');
+        $inner->setDefaultUnit('kg');
+        $inner->setValidUnits(['kg', 'g']);
+
+        $definition = new MultiValue();
+        $definition->setName('mvKey');
+        $definition->setVariants([['name' => 'metric'], ['name' => 'imperial', 'label' => 'Imperial']]);
+        $definition->setMultiValue(3);
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        $rebuilt = Service::getFieldDefinitionFromJson(
+            json_decode((string) json_encode($definition), true),
+            $definition->getFieldType()
+        );
+
+        $this->assertInstanceOf(MultiValue::class, $rebuilt);
+        $this->assertSame('mvKey', $rebuilt->getName());
+        $this->assertSame(
+            [['name' => 'metric'], ['name' => 'imperial', 'label' => 'Imperial']],
+            $rebuilt->getVariants()
+        );
+        $this->assertSame(['metric', 'imperial'], $rebuilt->getVariantNames());
+        $this->assertTrue($rebuilt->isMultiValue());
+        $this->assertSame(3, $rebuilt->getMaximum());
+
+        $delegate = $rebuilt->getDelegate();
+        $this->assertInstanceOf(QuantityValue::class, $delegate);
+        $this->assertSame('kg', $delegate->getDefaultUnit());
+        $this->assertSame(['kg', 'g'], $delegate->getValidUnits());
+    }
+
+    /**
+     * A key declaring no qualifier at all is the ordinary case, and its declarations have to come
+     * back empty rather than uninitialised - the read path tests them on every call.
+     */
+    public function testAMultiValueKeyWithoutDeclarationsRoundTripsAsAKeyWithoutThem(): void
+    {
+        $inner = new Input();
+        $inner->setName('mvInner');
+
+        $definition = new MultiValue();
+        $definition->setName('mvPlainKey');
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        $rebuilt = Service::getFieldDefinitionFromJson(
+            json_decode((string) json_encode($definition), true),
+            $definition->getFieldType()
+        );
+
+        $this->assertInstanceOf(MultiValue::class, $rebuilt);
+        $this->assertSame([], $rebuilt->getVariants());
+        $this->assertFalse($rebuilt->isMultiValue());
+        $this->assertNull($rebuilt->getMaximum());
+        $this->assertInstanceOf(Input::class, $rebuilt->getDelegate());
+    }
+
+    /**
+     * A definition blob that names no inner type at all rebuilds as a delegate-less wrapper. The
+     * rebuild reads the inner type off every instance it is handed, and there is no editor for this
+     * type yet, so the blob arrives from a class or store import or from a hand-edited key row - an
+     * unset property there would make every request that resolves the key fail with
+     * "Typed property ... must not be accessed before initialization" instead.
+     */
+    public function testAMultiValueKeyDefinitionNamingNoInnerTypeRebuildsWithoutADelegate(): void
+    {
+        $rebuilt = Service::getFieldDefinitionFromJson(
+            ['name' => 'mvNoDelegateKey', 'variants' => [['name' => 'metric']], 'multiValue' => true],
+            'multiValue'
+        );
+
+        $this->assertInstanceOf(MultiValue::class, $rebuilt);
+        $this->assertNull($rebuilt->getDelegateDatatype());
+        $this->assertNull($rebuilt->getDelegate(), 'the raw decoded blob is not left behind as a definition');
+        $this->assertSame(['metric'], $rebuilt->getVariantNames());
+        $this->assertTrue($rebuilt->isMultiValue());
+    }
+
 }

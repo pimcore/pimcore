@@ -196,7 +196,7 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
     /**
      * @return string[]
      */
-    private function getValidLanguages(): array
+    protected function getValidLanguages(): array
     {
         $validLanguages = Tool::getValidLanguages();
         array_unshift($validLanguages, 'default');

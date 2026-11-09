@@ -13,6 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Pimcore\Model\DataObject\Data\MultiValue;
+use Pimcore\Model\DataObject\Data\EncryptedField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
@@ -72,6 +80,8 @@ class EngineTest extends ModelTestCase
 
     private const CONFLICT_CLASS_ID = 'CsEngineConflict';
 
+    private const EAV_CLASS_ID = 'CsEngineEav';
+
     private const DOCUMENT_CLASS_ID = 'CsEngineDocument';
 
     private const NESTED_CLASS_ID = 'CsEngineNested';
@@ -98,6 +108,14 @@ class EngineTest extends ModelTestCase
     private const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     /**
+     * The one variant the fixture key declares, so that a refusal is the storage's answer rather
+     * than the declaration's.
+     */
+    private const VARIANT = 'metric';
+
+    private const SECRET = 'an-eav-secret-nobody-may-read';
+
+    /**
      * @var array<string, EngineInterface>|null
      */
     private ?array $registeredEngines = null;
@@ -118,6 +136,16 @@ class EngineTest extends ModelTestCase
     private array $relationKeyIds = [];
 
     private ?Concrete $anyObject = null;
+
+    /**
+     * @var int[]
+     */
+    private array $keyIds = [];
+
+    /**
+     * @var int[]
+     */
+    private array $objectIds = [];
 
     protected function tearDown(): void
     {
@@ -144,6 +172,7 @@ class EngineTest extends ModelTestCase
             self::DOCUMENT_CLASS_ID,
             self::NESTED_CLASS_ID,
             self::COLLECTION_CLASS_ID,
+            self::EAV_CLASS_ID,
         ];
 
         foreach ($classIds as $classId) {
@@ -171,7 +200,21 @@ class EngineTest extends ModelTestCase
             );
         }
 
-        // the groups go before the stores they belong to, which they carry a foreign key on
+        // the objects the value rows point at go first, so that their rows cascade away before the
+        // configuration those rows name is removed
+        foreach ($this->objectIds as $objectId) {
+            Concrete::getById($objectId, ['force' => true])?->delete();
+        }
+        $this->objectIds = [];
+
+        // the keys and the groups go before the stores they belong to, which they carry a foreign
+        // key on
+        foreach ($this->keyIds as $keyId) {
+            $db->delete('classificationstore_relations', ['keyId' => $keyId]);
+            $db->delete('classificationstore_keys', ['id' => $keyId]);
+        }
+        $this->keyIds = [];
+
         foreach ($this->groupIds as $groupId) {
             $db->delete('classificationstore_groups', ['id' => $groupId]);
         }
@@ -1045,4 +1088,371 @@ class EngineTest extends ModelTestCase
 
         return $foreignKeys;
     }
+    /**
+     * The EAV path marshals a wrapped value through the inner type as well, by way of the
+     * `classificationstore_multiValue` marshaller: a secret stored through a multi-value key is
+     * encrypted in the value column rather than written there as the normalized value.
+     */
+    /**
+     * What the two value columns cannot hold is refused before it is marshalled, for the inverse
+     * wrapper order too: `encryptedField<multiValue<geopoint>>`.
+     *
+     * The guard asked whether the delegate has a classification store marshaller, and a `multiValue`
+     * has one - so the coordinates were accepted, handed back by that marshaller as an array-valued
+     * column because a `geopoint` has no marshaller of its own, and cast to the string `'Array'` by
+     * the encryption. The column check that runs after marshalling cannot catch that: `'Array'` is a
+     * scalar. So the question is put to the whole delegate chain,
+     * {@see Classificationstore\Service::marshallerPacksIntoValueColumns()}, before anything is
+     * encrypted - and this engine's rule is that it refuses rather than loses a value.
+     */
+    public function testAnEavStoreRefusesAStructuredSecretBehindAMultiValueDelegate(): void
+    {
+        [$classificationStore, $groupId] = $this->eavStoreWithAMultiValueKey();
+        [$keyId, $innerWrapper] = $this->createMultiValueDelegatedEncryptedKey(
+            (int) $classificationStore->getClass()->getFieldDefinition('cs')->getStoreId(),
+            $groupId
+        );
+        $objectId = $classificationStore->getObject()->getId();
+
+        $classificationStore->setLocalizedKeyValue(
+            $groupId,
+            $keyId,
+            new EncryptedField($innerWrapper, new GeoCoordinates(48.208174, 16.373819))
+        );
+
+        $this->expectException(UnsupportedEngineFeatureException::class);
+
+        try {
+            $classificationStore->save();
+        } finally {
+            $this->assertSame(
+                0,
+                (int) Db::get()->fetchOne(
+                    'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                    . ' WHERE `id` = ? AND `keyId` = ?',
+                    [$objectId, $keyId]
+                ),
+                'the refused save wrote no row, rather than two null columns or the string "Array"'
+            );
+        }
+    }
+
+    public function testASecretWrappedInAMultiValueKeyIsEncryptedOnAnEavStore(): void
+    {
+        [$classificationStore, $groupId] = $this->eavStoreWithAMultiValueKey();
+        [$keyId, $delegate] = $this->createEncryptedMultiValueKey(
+            (int) $classificationStore->getClass()->getFieldDefinition('cs')->getStoreId(),
+            $groupId
+        );
+
+        $classificationStore->setKeyValues($groupId, $keyId, [
+            new MultiValue(new EncryptedField($delegate, self::SECRET)),
+        ]);
+        $classificationStore->save();
+
+        $row = Db::get()->fetchAssociative(
+            'SELECT `value`, `value2` FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+            . ' WHERE `id` = ? AND `keyId` = ?',
+            [$classificationStore->getObject()->getId(), $keyId]
+        );
+
+        $this->assertIsArray($row, 'the value landed in the EAV value table');
+        $this->assertNotNull($row['value']);
+        $this->assertStringNotContainsString(
+            self::SECRET,
+            (string) $row['value'],
+            'the cleartext of a wrapped secret must not be readable in the value column'
+        );
+
+        $reloaded = new Classificationstore();
+        $reloaded->setClass($classificationStore->getClass());
+        $reloaded->setFieldname('cs');
+        $reloaded->setObject($classificationStore->getObject());
+        $reloaded->load();
+
+        $this->assertSame(self::SECRET, $reloaded->getKeyValue($groupId, $keyId)->getPlain());
+    }
+
+    /**
+     * A store that has not learned its class yet has no store configuration to resolve an engine
+     * from, so the capability cannot be asked and the qualified write is accepted. It is asked again
+     * when the store is saved, where the value would otherwise be dropped: the EAV save builds its
+     * rows from the unqualified items alone, so without the second question the variant would
+     * silently never be stored.
+     */
+    public function testAStoreThatLearnedItsClassAfterTheWriteRefusesAtTheSave(): void
+    {
+        [$attached, $groupId, $keyId] = $this->eavStoreWithAMultiValueKey();
+        $objectId = $attached->getObject()->getId();
+
+        $detached = new Classificationstore();
+        $detached->setActiveGroups([$groupId => true]);
+        $detached->setKeyValues($groupId, $keyId, [new MultiValue('metric value', null, self::VARIANT)]);
+
+        $this->assertSame(
+            ['metric value'],
+            $detached->getKeyValues($groupId, $keyId, null, self::VARIANT),
+            'the write was accepted while there was no engine to ask'
+        );
+
+        $detached->setClass($attached->getClass());
+        $detached->setFieldname('cs');
+        $detached->setObject($attached->getObject());
+
+        $this->expectException(UnsupportedEngineFeatureException::class);
+
+        try {
+            $detached->save();
+        } finally {
+            $this->assertSame(
+                0,
+                (int) Db::get()->fetchOne(
+                    'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                    . ' WHERE `id` = ? AND `keyId` = ?',
+                    [$objectId, $keyId]
+                ),
+                'the refused save wrote no row'
+            );
+        }
+    }
+
+    /**
+     * What the EAV value table cannot address it refuses, rather than truncating the list to its
+     * first value or writing a variant into the slot of another: its primary key has room for the
+     * language and for nothing else.
+     *
+     * @dataProvider refusedEavCallProvider
+     */
+    public function testAnEavStoreRefusesWhatItCannotAddressAndWritesNothing(callable $call): void
+    {
+        [$classificationStore, $groupId, $keyId] = $this->eavStoreWithAMultiValueKey();
+        $objectId = $classificationStore->getObject()->getId();
+
+        $this->expectException(UnsupportedEngineFeatureException::class);
+
+        try {
+            $call($classificationStore, $groupId, $keyId);
+        } finally {
+            $classificationStore->save();
+
+            $this->assertSame(
+                0,
+                (int) Db::get()->fetchOne(
+                    'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                    . ' WHERE `id` = ? AND `keyId` = ?',
+                    [$objectId, $keyId]
+                ),
+                'a refused call wrote no row'
+            );
+        }
+    }
+
+    /**
+     * The ordinary path still works on an EAV store: an unqualified value is written and read as a
+     * one-element list, which is what every key held before the qualifiers existed.
+     */
+    public function testAnUnqualifiedValueStillWorksOnAnEavStore(): void
+    {
+        [$classificationStore, $groupId, $keyId] = $this->eavStoreWithAMultiValueKey();
+
+        $classificationStore->setKeyValues($groupId, $keyId, [new MultiValue('plain')]);
+        $classificationStore->save();
+
+        $this->assertSame(
+            1,
+            (int) Db::get()->fetchOne(
+                'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                . ' WHERE `id` = ? AND `keyId` = ?',
+                [$classificationStore->getObject()->getId(), $keyId]
+            ),
+            'the value landed in the EAV value table'
+        );
+
+        $this->assertSame(['plain'], $classificationStore->getKeyValues($groupId, $keyId));
+        $this->assertSame('plain', $classificationStore->getKeyValue($groupId, $keyId));
+    }
+
+    /**
+     * The value tables carry a foreign key on `objects`, and the capability tests need a real
+     * object row for their rows to point at - {@see TestHelper::createEmptyObject()} builds one of
+     * this class.
+     */
+    protected function setUpTestClasses(): void
+    {
+        $this->tester->setupPimcoreClass_Unittest();
+    }
+
+    /**
+     * @return array<string, array{callable}>
+     */
+    public static function refusedEavCallProvider(): array
+    {
+        return [
+            'a list for one slot' => [
+                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->setKeyValues(
+                    $groupId,
+                    $keyId,
+                    [new MultiValue('first', null, null, 0), new MultiValue('second', null, null, 1)]
+                ),
+            ],
+            'a non-default variant on write' => [
+                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->setKeyValues(
+                    $groupId,
+                    $keyId,
+                    [new MultiValue('metric value', null, self::VARIANT)]
+                ),
+            ],
+            'a non-default variant on read' => [
+                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->getKeyValues(
+                    $groupId,
+                    $keyId,
+                    null,
+                    self::VARIANT
+                ),
+            ],
+            'a position other than 0 on read' => [
+                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->getKeyValue(
+                    $groupId,
+                    $keyId,
+                    null,
+                    null,
+                    1
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * A class on an EAV store carrying one multi-value key, and a store model bound to an object
+     * row the value table can point at - the row stands for a value, never for an object of the
+     * class under test, the way {@see self::anyObjectId()} does.
+     *
+     * @return array{Classificationstore, int, int} the model, the group id and the key id
+     */
+    private function eavStoreWithAMultiValueKey(): array
+    {
+        $storeId = $this->createStore();
+        $this->buildClass(self::EAV_CLASS_ID, ['cs' => $this->storeField('cs', $storeId)])->save();
+
+        // a saved class is rebuilt from its layout, so the field definitions the engine routing
+        // reads are the ones of the reloaded definition
+        $class = ClassDefinition::getById(self::EAV_CLASS_ID, true);
+
+        $groupId = $this->createGroup($storeId);
+        $keyId = $this->createMultiValueKey($storeId, $groupId);
+
+        $object = TestHelper::createEmptyObject('cs-engine-eav-');
+        $this->objectIds[] = (int) $object->getId();
+
+        $classificationStore = new Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->setFieldname('cs');
+        $classificationStore->setObject($object);
+        $classificationStore->setActiveGroups([$groupId => true]);
+
+        return [$classificationStore, $groupId, $keyId];
+    }
+
+    /**
+     * A multi-value key whose inner type is an `encryptedField`, with the delegate of that inner
+     * type a value has to be built against.
+     *
+     * @return array{int, Input} the key id and the delegate of the inner type
+     */
+    private function createEncryptedMultiValueKey(int $storeId, int $groupId): array
+    {
+        $delegate = new Input();
+        $delegate->setName('mvSecret');
+
+        $inner = new EncryptedFieldDefinition();
+        $inner->setName('mvSecret');
+        $inner->setDelegateDatatype($delegate->getFieldType());
+        $inner->setDelegate($delegate);
+
+        $definition = new MultiValueField();
+        $definition->setName('mvSecretKey');
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        return [$this->storeKeyConfig($storeId, $groupId, $definition), $delegate];
+    }
+
+    /**
+     * The inverse wrapper order: an `encryptedField` whose delegate is a `multiValue` wrapping a
+     * `geopoint`. Its own type is `encryptedField`, so it holds one unqualified value and the
+     * qualifier features are not what decides its fate here.
+     *
+     * The definition-time check accepts it, and cannot do otherwise: it is answered from the
+     * `delegateDatatype` of the key, a type NAME, which for a nested wrapper cannot carry the type
+     * at the end of the chain ({@see Classificationstore\KeyTypeSupport::isHeldInValueColumns()}
+     * reads `encryptedField<multiValue>` and stops). The engine is the designed backstop for that.
+     *
+     * @return array{int, MultiValueField}
+     */
+    private function createMultiValueDelegatedEncryptedKey(int $storeId, int $groupId): array
+    {
+        $coordinates = new Geopoint();
+        $coordinates->setName('mvGeoSecret');
+
+        $innerWrapper = new MultiValueField();
+        $innerWrapper->setName('mvGeoSecret');
+        $innerWrapper->setMultiValue(true);
+        $innerWrapper->setDelegateDatatype($coordinates->getFieldType());
+        $innerWrapper->setDelegate($coordinates);
+
+        $definition = new EncryptedFieldDefinition();
+        $definition->setName('mvGeoSecretKey');
+        $definition->setDelegateDatatype($innerWrapper->getFieldType());
+        $definition->setDelegate($innerWrapper);
+
+        return [$this->storeKeyConfig($storeId, $groupId, $definition), $innerWrapper];
+    }
+
+    /**
+     * A key declaring both qualifiers, so that what the EAV store refuses is the storage's answer
+     * and not the declaration's.
+     */
+    private function createMultiValueKey(int $storeId, int $groupId): int
+    {
+        $inner = new Input();
+        $inner->setName('mvInner');
+
+        $definition = new MultiValueField();
+        $definition->setName('mvKey');
+        $definition->setVariants([['name' => self::VARIANT]]);
+        $definition->setMultiValue(true);
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        return $this->storeKeyConfig($storeId, $groupId, $definition);
+    }
+
+    /**
+     * The key configuration of one definition, assigned to the given group.
+     */
+    private function storeKeyConfig(int $storeId, int $groupId, Data $definition): int
+    {
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($storeId);
+        $keyConfig->setName(uniqid('csEngineKey', false));
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType($definition->getFieldType());
+        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->save();
+
+        $this->keyIds[] = (int) $keyConfig->getId();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId($keyConfig->getId());
+        $relation->setGroupId($groupId);
+        $relation->setSorter(1);
+        $relation->save();
+
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+
+        return (int) $keyConfig->getId();
+    }
+
 }

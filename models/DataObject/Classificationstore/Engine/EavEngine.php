@@ -324,16 +324,24 @@ final class EavEngine extends AbstractDao implements EngineInterface
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             }
 
-            // a row this storage cannot address yields no value rather than failing the load
-            if ($fd !== null
-                && ($this->relationResolver->isRelation($fd) || $this->relationResolver->isDerived($fd))
+            // a row this storage cannot address yields no value rather than failing the load. The
+            // question is put to the definition that answers for the VALUE, the same one
+            // assertStorable() refuses on: a `multiValue` key wrapping a relation is a relation of
+            // no kind itself, so asked as it stands such a row was read as an ordinary value
+            // instead of being skipped - the write path cannot produce one, but redefining a key's
+            // inner type over existing rows can
+            $valueDefinition = Service::getValueDefinition($fd);
+
+            if ($valueDefinition !== null
+                && ($this->relationResolver->isRelation($valueDefinition)
+                    || $this->relationResolver->isDerived($valueDefinition))
             ) {
                 $this->logger->warning(sprintf(
                     'Skipping the stored value of classification store key %d of group %d: its type "%s" needs a'
                     . ' storage engine this store does not use.',
                     (int) $keyId,
                     (int) $groupId,
-                    $fd->getFieldtype()
+                    $valueDefinition->getFieldtype()
                 ));
 
                 continue;
@@ -486,13 +494,25 @@ final class EavEngine extends AbstractDao implements EngineInterface
      * lost without an error - which is the one outcome this engine is not allowed to have.
      *
      * The case that produces it is `encryptedField`: its marshaller encrypts a scalar as it stands
-     * and hands anything else to the marshaller of its delegate, so a delegate with no
-     * classification store marshaller of its own leaves both columns null
-     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::marshal()}).
+     * and hands anything else to the marshaller of its delegate, so a delegate that packs nothing
+     * into the two columns leaves both of them null
+     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::marshal()}) - or,
+     * where it hands the structure back as a column, has it cast to the string `'Array'`.
      * Such a key is refused when it is defined, but a key row that predates that gate, or one an
      * upgrade or a direct SQL edit wrote, reaches here - and the delegate is read off the hydrated
      * field definition rather than off the declared return type of anything, so a delegate that
      * declares `mixed` and returns a structure is refused on the value it actually produced.
+     *
+     * The question is put to the definition that answers for the VALUE, through the same boundary
+     * the load path and both engines resolve it at ({@see Service::getValueDefinition()}): an
+     * `encryptedField` wrapped in a `multiValue` still encrypts, and asked as the wrapper it sits in
+     * this check answered "nothing to refuse" about a value that was then packed to two nulls and
+     * lost. The key's own type still names the refusal, which is the type the key is defined with.
+     *
+     * Whether the delegate packs is asked of its WHOLE chain, {@see Service::marshallerPacksIntoValueColumns()},
+     * for the inverse wrapper order: a `multiValue` delegate is registered for the format and packs
+     * nothing of its own, so `encryptedField<multiValue<geopoint>>` was accepted here and the
+     * coordinates were cast to the string `'Array'` and encrypted as that.
      *
      * @throws UnsupportedEngineFeatureException
      */
@@ -507,15 +527,13 @@ final class EavEngine extends AbstractDao implements EngineInterface
             return;
         }
 
-        if (!$fd instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
+        $valueDefinition = Service::getValueDefinition($fd);
+
+        if (!$valueDefinition instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
             return;
         }
 
-        $delegate = $fd->getDelegate();
-
-        if ($delegate instanceof Data
-            && $marshallerService->supportsFielddefinition('classificationstore', $delegate->getFieldtype())
-        ) {
+        if (Service::marshallerPacksIntoValueColumns($valueDefinition->getDelegate(), $marshallerService)) {
             return;
         }
 

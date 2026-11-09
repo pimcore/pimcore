@@ -17,12 +17,20 @@ namespace Pimcore\Model\DataObject\Classificationstore\Engine;
  * Capabilities a classification store engine may offer on top of the storage every engine provides.
  *
  * They exist so that a caller can ask an engine what it is able to do instead of testing for a
- * concrete engine class. Both shipped engines offer PerKeyLocalization; the document engine also
- * offers Relations and StructuredValues, because a document holds whatever normalize() returns and
- * a relation's element descriptors need no addressing of their own. The EAV engine offers neither
- * of those two nor the remaining two. Both engines' write paths consume supports() to refuse a
- * value the engine cannot store,
- * {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::assertStorable()}.
+ * concrete engine class. Two write paths consume supports() and both refuse a value rather than
+ * storing something other than what was asked for: the relation check in
+ * {@see \Pimcore\Model\DataObject\Classificationstore\RelationResolver::assertStorable()}, and the
+ * qualified-value API of {@see \Pimcore\Model\DataObject\Classificationstore}.
+ *
+ * The document engine offers every capability there is. MultiValue and Variants because a value
+ * carries the qualifiers that place it as members of its own entry; Relations and StructuredValues
+ * because a document holds whatever normalize() returns, so a relation's element descriptors and a
+ * structured value's members need no addressing of their own. The EAV engine offers none of the
+ * four: the primary key of its value table has room for the language and for nothing else.
+ *
+ * PerKeyLocalization is the one the existing value table always served - its primary key already
+ * carries the language - so both engines answer it, as it is a property of the key configuration
+ * rather than of the storage.
  *
  * PerKeyLocalization is the one the existing value table always served - its primary key already
  * carries the language - so both engines answer it, as it is a property of the key configuration

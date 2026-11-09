@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 use Exception;
 use Pimcore;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 
@@ -58,6 +59,11 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save(): void
     {
+        // the model accepts a qualified value while it has no class to resolve an engine from, so
+        // the capability is asked again here - an engine that cannot address it must refuse the save
+        // rather than write the rest and drop it
+        $this->model->assertTheEngineCanHoldItsValues();
+
         $this->getEngine()->save($this->model);
     }
 
@@ -95,6 +101,19 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->getEngineResolver()->resolveForStores($storeIds)
             ->createUpdateTables($this->model->getClass(), $storeId);
+    }
+
+    /**
+     * Whether the engine behind the model's store offers the given capability, for the model API
+     * that has to refuse a value it could not store rather than truncate it.
+     *
+     * @internal
+     *
+     * @throws Exception
+     */
+    public function supports(EngineFeature $feature): bool
+    {
+        return $this->getEngine()->supports($feature);
     }
 
     /**
