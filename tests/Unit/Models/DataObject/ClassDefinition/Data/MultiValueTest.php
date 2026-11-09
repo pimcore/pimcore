@@ -323,10 +323,10 @@ class MultiValueTest extends TestCase
     }
 
     /**
-     * A maximum the list declaration did NOT set survives it, because that is the shape a definition
-     * is hydrated from: {@see Data::setValues()} walks a blob in the order the blob carries its
-     * members, so a declaration that cleared unconditionally would destroy the limit of any blob
-     * holding `maximum` before `multiValue`.
+     * A maximum carried beside the list declaration survives hydration, in whichever order the blob
+     * lists the two. A boolean declaration clears the maximum, and {@see Data::setValues()} walks a
+     * blob in the order the blob carries its members, so the declaration has to be applied first:
+     * {@see MultiValue::setValues()} is where that order is decided.
      *
      * Both orders are asserted, and so is the round trip through `__set_state()`, which
      * {@see Service::getFieldDefinitionFromJson()} runs over the instance's own properties after the
@@ -353,6 +353,62 @@ class MultiValueTest extends TestCase
 
         $this->assertTrue($rebuilt->isMultiValue());
         $this->assertSame(3, $rebuilt->getMaximum(), 'and the definition round trip keeps it');
+    }
+
+    /**
+     * Re-declaring the list as unbounded means the same thing before and after a round trip, which
+     * is what makes `setMultiValue(true)` a statement about the key rather than about the instance
+     * in hand.
+     *
+     * It did not. Which call had set the maximum was tracked on a private flag, and `setMaximum()`
+     * reset that flag - so a definition rebuilt from a blob, where the limit arrives through
+     * `setMaximum()` by necessity, was hydrated as "set on its own" and `setMultiValue(true)` then
+     * cleared nothing. The same setter cleared the limit before persistence and left it in place
+     * after a reload: a key documented as unbounded went on refusing a fourth value.
+     *
+     * Both rebuild paths are asserted, because both run {@see Data::setValues()}:
+     * {@see Service::getFieldDefinitionFromJson()} over the decoded blob, and `__set_state()` over
+     * the instance's own properties.
+     *
+     * @dataProvider rebuildProvider
+     */
+    public function testRedeclaringAListAsUnboundedAfterARoundTripClearsTheMaximum(callable $rebuild): void
+    {
+        $declared = new MultiValue();
+        $declared->setName('mvKey');
+        $declared->setMultiValue(3);
+
+        $rebuilt = $rebuild($declared);
+
+        $this->assertInstanceOf(MultiValue::class, $rebuilt);
+        $this->assertTrue($rebuilt->isMultiValue());
+        $this->assertSame(3, $rebuilt->getMaximum(), 'the round trip keeps the limit it was declared with');
+
+        $rebuilt->setMultiValue(true);
+
+        $this->assertTrue($rebuilt->isMultiValue(), 'it still declares a list');
+        $this->assertNull(
+            $rebuilt->getMaximum(),
+            'and re-declaring it unbounded means that on a rebuilt definition too'
+        );
+    }
+
+    /**
+     * @return array<string, array{0: callable}>
+     */
+    public static function rebuildProvider(): array
+    {
+        return [
+            '__set_state over the instance properties' => [
+                static fn (MultiValue $declared): MultiValue => MultiValue::__set_state((array) $declared),
+            ],
+            'getFieldDefinitionFromJson over the decoded blob' => [
+                static fn (MultiValue $declared): ?Data => Service::getFieldDefinitionFromJson(
+                    json_decode((string) json_encode($declared), true),
+                    $declared->getFieldType()
+                ),
+            ],
+        ];
     }
 
     /**

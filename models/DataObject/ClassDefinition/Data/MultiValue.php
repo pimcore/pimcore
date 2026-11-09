@@ -108,21 +108,6 @@ class MultiValue extends Data implements
     public ?int $maximum = null;
 
     /**
-     * Whether the maximum in force was declared BY the list declaration, {@see self::setMultiValue()}
-     * with an integer, rather than set on its own. Only such a maximum is the list declaration's to
-     * clear when the list is re-declared as unbounded; a maximum that arrived separately is not.
-     *
-     * Private so that it stays out of the key's definition blob and out of the state the definition
-     * is rebuilt from: it is a record of HOW this instance was configured, not part of the
-     * declaration. A rebuilt definition therefore starts with "set on its own", which is what the
-     * two values it is rebuilt from are - a blob carries `multiValue` and `maximum` as two members
-     * and says nothing about which call produced them.
-     *
-     * @internal
-     */
-    private bool $maximumDeclaredWithTheList = false;
-
-    /**
      * The inner type of the key, or null for a definition blob that names none - a stored key config
      * written before the member existed, or an import that left it out, reaches every reader of this
      * property, so it answers "no inner type" rather than nothing at all.
@@ -198,18 +183,20 @@ class MultiValue extends Data implements
      * `true` declares an unbounded list, an integer declares the list and its maximum in one, and
      * `false` clears both - the shape the key's definition blob carries either way.
      *
-     * Re-declaring the list as unbounded clears the maximum the list declaration itself had set, so
-     * that `true` means what it says: `setMultiValue(3)` followed by `setMultiValue(true)` left the
-     * maximum at 3 and a fourth value was still refused by
-     * {@see Classificationstore::checkValidity()} on a key documented as unbounded.
+     * A BOOLEAN therefore carries no maximum and clears the one in force, whichever of the two it
+     * is: `true` declares an unbounded list and `false` declares no list at all, and neither has a
+     * limit to bound. `setMultiValue(3)` followed by `setMultiValue(true)` left the maximum at 3,
+     * and a fourth value was still refused by {@see Classificationstore::checkValidity()} on a key
+     * documented as unbounded.
      *
-     * A maximum that did NOT come from the list declaration is left alone, because that is the one
-     * the definition is hydrated with: {@see Data::setValues()} walks the blob in the order the blob
-     * carries its members, so a blob holding `maximum` before `multiValue` would otherwise have its
-     * limit destroyed by the declaration that follows it. The two paths that rebuild a key
-     * definition both run that walk - {@see \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson()}
-     * runs it over the decoded blob and then again over the instance's own properties, through
-     * {@see \Pimcore\Model\DataObject\ClassDefinition\Helper\VarExport::__set_state()}.
+     * That is what an explicit call means, and it is all this setter answers for. The ORDER a blob
+     * carries the two members in is not its problem: {@see self::setValues()} applies the
+     * declaration before the maximum whatever order it reads them in, so hydration cannot have its
+     * limit destroyed by a declaration that happens to follow it. The two were entangled before -
+     * the setter kept a flag for which call had set the maximum, and {@see self::setMaximum()} reset
+     * that flag - so a definition that had round-tripped was hydrated as "set on its own" and
+     * `setMultiValue(true)` no longer cleared anything: the same call cleared the limit before
+     * persistence and left it in place after a reload.
      *
      * @return $this
      */
@@ -218,21 +205,44 @@ class MultiValue extends Data implements
         if (is_int($multiValue)) {
             $this->multiValue = $multiValue > 0;
             $this->maximum = $multiValue > 0 ? $multiValue : null;
-            $this->maximumDeclaredWithTheList = $multiValue > 0;
 
             return $this;
         }
 
         $this->multiValue = $multiValue;
-
-        // `false` clears the maximum whatever declared it: the key holds no list, so there is no
-        // list for a limit to bound
-        if (!$multiValue || $this->maximumDeclaredWithTheList) {
-            $this->maximum = null;
-            $this->maximumDeclaredWithTheList = false;
-        }
+        $this->maximum = null;
 
         return $this;
+    }
+
+    /**
+     * The list declaration is applied BEFORE the maximum, whatever order the members are read in.
+     *
+     * Hydration order is handled here rather than in {@see self::setMultiValue()}, which answers for
+     * what an explicit call means and nothing else. A boolean declaration clears the maximum, so a
+     * blob holding `maximum` before `multiValue` would have its limit destroyed by the declaration
+     * that follows it - and `maximum` is a member of its own in the blob, carried for the bounded
+     * list the key declares.
+     *
+     * Both paths that rebuild a key definition run this walk:
+     * {@see \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson()}
+     * runs it over the decoded blob and then again over the instance's own properties, through
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Helper\VarExport::__set_state()}.
+     *
+     * @param array<string, mixed> $data
+     * @param string[] $blockedKeys
+     *
+     * @return $this
+     */
+    public function setValues(array $data = [], array $blockedKeys = []): static
+    {
+        if (array_key_exists('maximum', $data)) {
+            $maximum = $data['maximum'];
+            unset($data['maximum']);
+            $data['maximum'] = $maximum;
+        }
+
+        return parent::setValues($data, $blockedKeys);
     }
 
     public function getMaximum(): ?int
@@ -241,13 +251,15 @@ class MultiValue extends Data implements
     }
 
     /**
+     * The limit on its own, which is how the bounded list a key declares is hydrated -
+     * {@see self::setValues()} applies it after the declaration, so the two cannot fight over the
+     * order a blob happens to carry them in.
+     *
      * @return $this
      */
     public function setMaximum(?int $maximum): static
     {
         $this->maximum = $maximum;
-        // set on its own, so re-declaring the list as unbounded is not what removes it
-        $this->maximumDeclaredWithTheList = false;
 
         return $this;
     }
