@@ -28,7 +28,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\SystemSettingsConfig;
+use SplObjectStorage;
 
 /**
  * @method Model\DataObject\Concrete\Dao getDao()
@@ -124,6 +126,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
+        /** @var SplObjectStorage<Model\Element\ValidationException, ClassDefinition\Data> $failedFields */
+        $failedFields = new SplObjectStorage();
 
         foreach ($fieldDefinitions as $fd) {
             try {
@@ -186,8 +190,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
-                                $exceptionClass = get_class($e);
-                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException = StructuredValidationException::copyWithMessage(
+                                    $e,
+                                    $e->getMessage() . ' fieldname=' . $fd->getName()
+                                );
                                 $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;
@@ -198,6 +204,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     }
                 }
             } catch (Model\Element\ValidationException $ve) {
+                $failedFields[$ve] = $fd;
                 $validationExceptions[] = $ve;
             }
         }
@@ -220,7 +227,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
             $message .= implode($preUpdateEvent->getArgument('separator'), $errors);
 
-            throw new Model\Element\ValidationException($message);
+            throw $this->createAggregatedValidationException($message, $validationExceptions, $failedFields);
         }
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
@@ -240,11 +247,39 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, $params['versionNote'] ?? null);
+            // only `existingVersion` is passed on, the versioning events keep their arguments
+            $this->saveVersion(false, false, $params['versionNote'] ?? null, false, array_intersect_key($params, ['existingVersion' => true]));
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
+    }
+
+    /**
+     * Builds the exception thrown by update() from the (possibly listener-modified) list of validation exceptions.
+     * Each one becomes a violation, named after the field it was caught for. An exception a listener added or
+     * replaced was not caught for a field, so its violation has none.
+     *
+     * @param Model\Element\ValidationException[] $validationExceptions
+     * @param SplObjectStorage<Model\Element\ValidationException, ClassDefinition\Data> $failedFields
+     */
+    private function createAggregatedValidationException(
+        string $message,
+        array $validationExceptions,
+        SplObjectStorage $failedFields
+    ): StructuredValidationException {
+        $aggregatedException = new StructuredValidationException($message);
+
+        foreach ($validationExceptions as $validationException) {
+            $violation = StructuredValidationException::from($validationException);
+            if ($failedFields->contains($validationException)) {
+                $fieldDefinition = $failedFields[$validationException];
+                $violation->setField($fieldDefinition->getName(), $fieldDefinition->getTitle());
+            }
+            $aggregatedException->addViolations($violation);
+        }
+
+        return $aggregatedException;
     }
 
     private function saveChildData(): void
@@ -275,6 +310,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * it is false when the method is called by $this->update()
      *
      * @param string|null $versionNote version note
+     * @param array $parameters custom arguments passed on to the versioning events; `existingVersion` (Model\Version, internal)
+     *                          writes the version data into that version instead of creating a new one
      *
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false, array $parameters = []): ?Model\Version
@@ -284,6 +321,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             'isAutoSave' => $isAutoSave,
         ];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             if ($setModificationDate) {
@@ -304,13 +342,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
+            // with an existing version that version is written into, no version is added
             $objectsConfig = SystemSettingsConfig::get()['objects'];
             if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
                 || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
-                || $setModificationDate) {
+                || $setModificationDate
+                || $existingVersion !== null) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected

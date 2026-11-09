@@ -18,6 +18,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 
 /**
  * TODO: Refactor - this class is very similar to the parent one so probably we can try to refactor parent and have better results here also
@@ -87,7 +89,8 @@ class InputQuantityValue extends AbstractQuantityValue
 
         if ($this->getMandatory() &&
             ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
     }
 

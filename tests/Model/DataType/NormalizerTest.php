@@ -68,7 +68,13 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
-        $this->assertEquals($originalValue, $denormalizedValue);
+        $this->assertSame($originalValue, $denormalizedValue);
+
+        // As read back from the classification store's text column
+        $this->assertTrue($fd->denormalize('1'));
+        $this->assertFalse($fd->denormalize(''));
+        $this->assertFalse($fd->denormalize('0'));
+        $this->assertNull($fd->denormalize(null));
     }
 
     public function testConsent(): void
