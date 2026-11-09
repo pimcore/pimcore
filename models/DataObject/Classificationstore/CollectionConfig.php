@@ -20,6 +20,7 @@ use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataTrait;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
 
 /**
@@ -27,6 +28,7 @@ use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
  */
 final class CollectionConfig extends Model\AbstractModel
 {
+    use CustomMetadataTrait;
     use IdentifierTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 

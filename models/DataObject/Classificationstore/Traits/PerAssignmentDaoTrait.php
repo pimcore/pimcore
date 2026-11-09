@@ -36,6 +36,10 @@ trait PerAssignmentDaoTrait
      * column was cleared would otherwise leave the previously loaded value in memory, and the next
      * save would write it back.
      *
+     * A column the row does not carry at all - a load against a schema the migration has not reached
+     * yet - is left alone: setting NULL would mark the field initialized, and a save after a schema
+     * upgrade would then write that NULL over a value stored in between.
+     *
      * @param array<string, mixed> $row
      *
      * @return array<string, mixed>
@@ -44,11 +48,18 @@ trait PerAssignmentDaoTrait
      */
     protected function hydratePerAssignmentColumns(KeyGroupRelation $relation, array $row): array
     {
-        $subGroup = $row[self::COLUMN_SUB_GROUP] ?? null;
+        if (array_key_exists(self::COLUMN_METADATA, $row)) {
+            $relation->setMetadata($this->decodeJsonColumn($row[self::COLUMN_METADATA]));
+        }
 
-        $relation->setMetadata($this->decodeJsonColumn($row[self::COLUMN_METADATA] ?? null));
-        $relation->setDefinitionOverride($this->decodeJsonColumn($row[self::COLUMN_DEFINITION_OVERRIDE] ?? null));
-        $relation->setSubGroup(is_string($subGroup) ? $subGroup : null);
+        if (array_key_exists(self::COLUMN_DEFINITION_OVERRIDE, $row)) {
+            $relation->setDefinitionOverride($this->decodeJsonColumn($row[self::COLUMN_DEFINITION_OVERRIDE]));
+        }
+
+        if (array_key_exists(self::COLUMN_SUB_GROUP, $row)) {
+            $subGroup = $row[self::COLUMN_SUB_GROUP];
+            $relation->setSubGroup(is_string($subGroup) ? $subGroup : null);
+        }
 
         unset(
             $row[self::COLUMN_METADATA],

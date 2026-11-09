@@ -292,6 +292,37 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
     }
 
     /**
+     * MySQL does not preserve the member order of a JSON object, so a value that came out of a JSON
+     * column is compared by key, with every key and every value still matching exactly.
+     *
+     * @param array<array-key, mixed> $expected
+     */
+    protected function assertSameJsonData(array $expected, mixed $actual, string $message = ''): void
+    {
+        $this->assertSame(
+            $this->sortedByKey($expected),
+            is_array($actual) ? $this->sortedByKey($actual) : $actual,
+            $message
+        );
+    }
+
+    /**
+     * @param array<array-key, mixed> $value
+     *
+     * @return array<array-key, mixed>
+     */
+    protected function sortedByKey(array $value): array
+    {
+        $sorted = [];
+        foreach ($value as $key => $entry) {
+            $sorted[$key] = is_array($entry) ? $this->sortedByKey($entry) : $entry;
+        }
+        ksort($sorted);
+
+        return $sorted;
+    }
+
+    /**
      * The statements of the given kinds that address a classification store table. What a load or
      * a save touches besides them - the object row, its versions, the system settings - is not
      * what this field batches, and reading the system settings is uncached here anyway because

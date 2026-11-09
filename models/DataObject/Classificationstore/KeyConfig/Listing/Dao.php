@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\KeyConfig\Listing;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataDaoTrait;
 
 /**
  * @internal
@@ -23,6 +24,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use CustomMetadataDaoTrait;
+
     private const COLUMN_LOCALIZED = 'localized';
 
     /**
@@ -42,7 +45,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $keyConfigData[self::COLUMN_LOCALIZED] = isset($keyConfigData[self::COLUMN_LOCALIZED])
                 ? (bool)$keyConfigData[self::COLUMN_LOCALIZED]
                 : null;
-            $keyConfig->setValues($keyConfigData, true);
+            $keyConfig->setValues(static::hydrateCustomMetadata($keyConfig, $keyConfigData), true);
             $configList[] = $keyConfig;
         }
 
