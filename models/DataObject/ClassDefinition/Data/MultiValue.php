@@ -30,8 +30,49 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  * Whether those declarations can actually be stored is a property of the engine behind the store,
  * {@see \Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature}.
+ *
+ * WHAT THIS WRAPPER FORWARDS. The declarations are its own; everything about the value is the inner
+ * type's, and a caller that asks the wrapper has to be answered as the inner type would answer. So
+ * it hands on, in each case returning the inner type's answer and the base class's where there is no
+ * inner type:
+ *
+ *  - the value itself: `normalize()`, `denormalize()`, `getDataForEditmode()`,
+ *    `getDataFromEditmode()`, `getVersionPreview()`, `isEmpty()`, `getPhpdocInputType()`,
+ *    `getPhpdocReturnType()`
+ *  - validation: `checkValidity()`, after the wrapper's own mandatory check - the key's assignment to
+ *    a group sets that flag on THIS definition, so delegating alone would never consult it
+ *  - the pre-read hook: `preGetData()`, which is what filters the unpublished targets of a relation
+ *    out of a read ({@see ManyToManyObjectRelation::preGetData()})
+ *  - the element graph: `resolveDependencies()` and `getCacheTags()`, so a wrapped relation's
+ *    targets reach the dependency rows and the cache tags of the object that holds them
+ *  - `supportsInheritance()`, so a wrapped `consent` declines inheritance as an unwrapped one does
+ *
+ * What it deliberately does NOT forward:
+ *
+ *  - `getFieldType()`, which is `multiValue`: it is the type the key is DEFINED with, and it is what
+ *    resolves this definition from a key config in the first place
+ *  - `getParameterTypeDeclaration()` / `getReturnTypeDeclaration()`, which answer null: a slot can
+ *    hold a list, so the inner type's single-value declaration is not the shape of what is held
+ *  - `ResourcePersistenceAwareInterface`, `CustomResourcePersistingInterface` and the marshaller:
+ *    where the value goes is the engine's question, and both engines resolve the inner definition
+ *    at their own boundary ({@see \Pimcore\Model\DataObject\Classificationstore\Service::getValueDefinition()}).
+ *    A wrapper implementing them would offer a second answer to it. So every OTHER caller that
+ *    wants the stored form of a value has to resolve the inner definition through that same
+ *    boundary rather than asking this one - the search index does
+ *    ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::getDataForSearchIndex()}),
+ *    and read off the wrapper it indexed nothing at all for a `multiValue` key
+ *  - `AbstractRelations`: a wrapped relation is stored as its normalized value rather than as a
+ *    {@see \Pimcore\Model\DataObject\Classificationstore\RelationDescriptor}, so the lazy-resolution
+ *    path, the per-relation metadata table and the validity check that reads descriptors are not
+ *    entered for one. Its value round-trips through the document, its columns included, and the
+ *    engine refuses it where it cannot hold a relation at all
+ *  - `LayoutDefinitionEnrichmentInterface`: the editor surface of a `multiValue` key is the Studio
+ *    sibling's, and core renders no layout for the wrapper to enrich
  */
-class MultiValue extends Data implements TypeDeclarationSupportInterface, NormalizerInterface
+class MultiValue extends Data implements
+    PreGetDataInterface,
+    TypeDeclarationSupportInterface,
+    NormalizerInterface
 {
     /**
      * The declared variants, each an entry carrying a `name` and an optional `label`. Empty by
@@ -228,6 +269,63 @@ class MultiValue extends Data implements TypeDeclarationSupportInterface, Normal
         $fd = $this->getDelegate();
 
         return $fd instanceof Data ? $fd->isEmpty($data) : true;
+    }
+
+    /**
+     * The pre-read hook of the inner type, which is what a read of a relation-typed value runs to
+     * leave the unpublished targets out of it ({@see ManyToManyObjectRelation::preGetData()}) and
+     * what a `wysiwyg` runs to rewrite its markup. A wrapper that did not implement the interface
+     * would not be asked at all, and a wrapped `manyToManyObjectRelation` would hand out the
+     * unpublished objects an unwrapped one hides.
+     *
+     * An inner type that carries no hook - and a key with no inner type at all - answers with the
+     * value it was given, the way the container would have read it with no hook to run.
+     */
+    public function preGetData(mixed $container, array $params = []): mixed
+    {
+        $fd = $this->getDelegate();
+
+        if (!$fd instanceof PreGetDataInterface) {
+            return $params['data'] ?? null;
+        }
+
+        return $fd->preGetData($container, $params);
+    }
+
+    /**
+     * The elements a value of the inner type refers to, as the dependency rows of the object holding
+     * it. Without this the wrapper answers the base class's empty list, and a wrapped relation's
+     * targets would carry no dependency at all - deleting one would not warn, and the rows of a key
+     * nobody read would be wiped by an ordinary save.
+     */
+    public function resolveDependencies(mixed $data): array
+    {
+        $fd = $this->getDelegate();
+
+        return $fd instanceof Data ? $fd->resolveDependencies($data) : [];
+    }
+
+    /**
+     * The cache tags of a value of the inner type, for the same reason: a wrapped `image` tags the
+     * asset it holds exactly as an unwrapped one does.
+     */
+    public function getCacheTags(mixed $data, array $tags = []): array
+    {
+        $fd = $this->getDelegate();
+
+        return $fd instanceof Data ? $fd->getCacheTags($data, $tags) : $tags;
+    }
+
+    /**
+     * Whether a value of this key may be read off an ancestor, which is the inner type's answer: the
+     * qualifiers this definition declares say nothing about it, and a wrapped `consent` declines
+     * inheritance for the reason an unwrapped one does.
+     */
+    public function supportsInheritance(): bool
+    {
+        $fd = $this->getDelegate();
+
+        return $fd instanceof Data ? $fd->supportsInheritance() : parent::supportsInheritance();
     }
 
     public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string

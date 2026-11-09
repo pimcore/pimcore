@@ -494,6 +494,52 @@ class ClassificationstoreTest extends ModelTestCase
         });
     }
 
+    /**
+     * Three generations, and the list the child answers is the one it took whole.
+     *
+     * The grandparent holds [0 => 'a', 1 => 'b'] and the parent a list of its own that starts above
+     * position 0, [1 => 'x']. The child holds nothing, so it takes the nearest ancestor's whole
+     * slot - the parent's - and the grandparent's position 0 is not part of it: the question "does
+     * the selected list start above position 0" is about the object the list came from, and asking it
+     * of the child alone answered [0 => 'a', 1 => 'x'], which is two objects' values in one list.
+     */
+    public function testAGrandparentsFirstValueIsNotMergedIntoTheParentsInheritedList(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([], true);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $grandparent = $this->createObject('three-grandparent', 1);
+            $grandparent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('a', null, null, 0),
+                new MultiValue('b', null, null, 1),
+            ]);
+            $grandparent->save();
+
+            $parent = $this->createObject('three-parent', (int) $grandparent->getId());
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [new MultiValue('x', null, null, 1)]);
+            $parent->save();
+
+            $child = $this->createObject('three-child', (int) $parent->getId());
+            $child->save();
+
+            $this->assertSame(
+                [1 => 'x'],
+                Inheritance::getById($parent->getId(), ['force' => true])
+                    ->getTeststore()
+                    ->getKeyValues($groupId, $keyId),
+                'the parent answers the list it owns'
+            );
+            $this->assertSame(
+                [1 => 'x'],
+                Inheritance::getById($child->getId(), ['force' => true])
+                    ->getTeststore()
+                    ->getKeyValues($groupId, $keyId),
+                'and the child answers the same list, without the grandparent\'s first value in it'
+            );
+        });
+    }
+
     private function createObject(string $key, int $parentId): Inheritance
     {
         $object = new Inheritance();

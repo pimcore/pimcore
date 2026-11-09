@@ -1908,12 +1908,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * The definition whose marshaller a value reaches the document through: the inner type's for a
      * key of a wrapper type, as what is stored is the inner value and the marshaller of the inner
      * type is what the parameters of such a call have to name.
+     *
+     * Resolved through {@see Service::getValueDefinition()}, the one boundary that answers which
+     * definition answers for a value, so that this engine, the EAV engine and the store itself
+     * cannot come apart about it.
      */
     private function getMarshalledDefinition(Data $fd): Data
     {
-        $delegate = $fd instanceof MultiValue ? $fd->getDelegate() : null;
-
-        return $delegate instanceof Data ? $delegate : $fd;
+        return Service::getValueDefinition($fd) ?? $fd;
     }
 
     /**

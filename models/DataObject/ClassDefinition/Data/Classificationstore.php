@@ -506,12 +506,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return 'not supported';
     }
 
+    /**
+     * Every stored value of an active group as one searchable string, the qualified slots included.
+     *
+     * The same walk the dependency rows and the cache tags are built from,
+     * {@see self::collectStoredValues()}: a named variant and a position above zero are values this
+     * object holds, and a walk over the items alone left them out of the index - the one place a
+     * classification store value is filterable from at all, as its values never reach
+     * `object_query_<CLASS>`.
+     *
+     * The definition asked for the stored form is the one that answers for the VALUE, which for a
+     * `multiValue` key is its inner type: the wrapper deliberately implements no persistence
+     * interface, so a key defined with it contributed nothing here - not even its first value.
+     */
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
         $getter = 'get' . ucfirst($this->getName());
         $classificationStore = $object->$getter();
-        $items = $classificationStore->getItems();
+        $items = $classificationStore->getQualifiedItems();
         $activeGroups = $classificationStore->getActiveGroups();
         $params['owner'] = $classificationStore;
 
@@ -520,17 +533,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 if (!isset($activeGroups[$groupId])) {
                     continue;
                 }
-                foreach ($keys as $keyId => $values) {
+                foreach ($keys as $keyId => $languages) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                    $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition(
+                        DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+                    );
 
                     if ($fieldDefinition instanceof ResourcePersistenceAwareInterface) {
-                        foreach ($values as $value) {
-                            $value = $fieldDefinition->getDataForResource($value, $object, $params);
-                            if (is_array($value)) {
-                                $value = implode(',', $value);
+                        foreach ($languages as $variants) {
+                            foreach ($variants as $values) {
+                                foreach ($values as $value) {
+                                    $value = $fieldDefinition->getDataForResource($value, $object, $params);
+                                    if (is_array($value)) {
+                                        $value = implode(',', $value);
+                                    }
+                                    $dataString .= $value . ' ';
+                                }
                             }
-                            $dataString .= $value . ' ';
                         }
                     }
                 }
@@ -655,31 +674,49 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * Returns a [field definition, value] pair for every stored value of an active group
+     * Returns a [field definition, value] pair for every stored value of an active group.
+     *
+     * EVERY stored value: the qualified tree is what the store holds, so a named variant and a
+     * position above zero are walked here beside the one value the items carry. Read off
+     * {@see DataObject\Classificationstore::getQualifiedItems()}, which answers position 0 of the
+     * default variant from the items themselves, so the value that was walked before is the same
+     * value now - with the slots that were invisible to this walk added. Left as it was, the targets
+     * of a relation held in a variant carried no dependency row and no cache tag.
+     *
+     * The definition paired with a value is the one that answers for the VALUE, which for a
+     * `multiValue` key is its inner type: the wrapper names neither the elements a value refers to
+     * nor its cache tags, and a wrapped relation would answer with the base class's empty list,
+     * {@see DataObject\Classificationstore\Service::getValueDefinition()}.
      */
     private function collectStoredValues(DataObject\Classificationstore $data): array
     {
         $storedValues = [];
         $activeGroups = $data->getActiveGroups();
 
-        foreach ($data->getItems() as $groupId => $keys) {
+        foreach ($data->getQualifiedItems() as $groupId => $keys) {
             if (!isset($activeGroups[$groupId])) {
                 continue;
             }
 
-            foreach ($keys as $keyId => $values) {
+            foreach ($keys as $keyId => $languages) {
                 $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                 if ($keyConfig === null) {
                     continue;
                 }
 
-                $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition(
+                    DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+                );
                 if ($fieldDefinition === null) {
                     continue;
                 }
 
-                foreach ($values as $value) {
-                    $storedValues[] = [$fieldDefinition, $value];
+                foreach ($languages as $variants) {
+                    foreach ($variants as $values) {
+                        foreach ($values as $value) {
+                            $storedValues[] = [$fieldDefinition, $value];
+                        }
+                    }
                 }
             }
         }
@@ -687,10 +724,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $storedValues;
     }
 
+    /**
+     * A store holding only qualified slots is not empty: a key whose value sits in a named variant,
+     * or at a position above zero, is a value the field holds. Asked of the items alone, such a
+     * field answered "empty" - which is what a mandatory check on the field reads.
+     */
     public function isEmpty(mixed $data): bool
     {
         if ($data instanceof DataObject\Classificationstore) {
-            return empty($data->getItems());
+            return empty($data->getItems()) && empty($data->getVariantItems());
         }
 
         return is_null($data);
@@ -919,7 +961,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relationCache = $this->getKeyGroupRelationCache();
             $existingGroupIds = $this->getExistingGroupIds(array_keys($activeGroups, true, true));
             $relationCache->load($existingGroupIds);
-            $qualifiedItems = $data->getQualifiedItems();
+            $qualifiedItems = $this->collectQualifiedItemsForValidation($data);
 
             foreach ($existingGroupIds as $activeGroupId) {
                 foreach ($relationCache->getRelations($activeGroupId) as $keyId => $keyGroupRelation) {
@@ -932,7 +974,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     foreach (
                         $this->collectMaximumViolations(
                             $keyDef,
-                            $qualifiedItems[$activeGroupId][$keyId] ?? []
+                            $qualifiedItems[$activeGroupId][$keyId] ?? [],
+                            $this->getValidLanguages($keyId)
                         ) as $violation
                     ) {
                         $subItems[] = $violation;
@@ -1022,6 +1065,28 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
             throw $validationException;
         }
+    }
+
+    /**
+     * The qualified tree validation measures the declared slots against, read under the same
+     * inheritance scope as the one value beside it.
+     *
+     * The per-language read below turns inherited values ON for a class that allows inheritance -
+     * the default value of a child may be its parent's and has to be validated as the value in force
+     * - and reads the object's own items for a class that does not. The qualified tree was read
+     * under whatever mode the caller happened to leave behind instead, so a child inheriting only a
+     * named variant was validated as holding nothing - failing a mandatory check it passes - while
+     * an inherited variant or a higher position carrying an invalid value was never checked at all.
+     *
+     * @return array structure: [groupId][keyId][language][variant][position] = value
+     *
+     * @throws Exception
+     */
+    private function collectQualifiedItemsForValidation(DataObject\Classificationstore $data): array
+    {
+        $inherit = (bool) $data->getObject()?->getClass()?->getAllowInherit();
+
+        return DataObject\Service::useInheritedValues($inherit, static fn (): array => $data->getQualifiedItems());
     }
 
     /**
@@ -1649,8 +1714,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             return false;
         }
 
-        // Compare items
-        return serialize($oldValue->getItems()) === serialize($newValue->getItems());
+        // Compare items - both trees, because a change confined to a named variant or to a position
+        // above zero is a change to the field. Compared on the items alone, two stores differing in
+        // nothing else answered "equal", and the version comparison that reads this saw no change.
+        return serialize($oldValue->getItems()) === serialize($newValue->getItems())
+            && serialize($oldValue->getVariantItems()) === serialize($newValue->getVariantItems());
     }
 
     /**
@@ -1767,12 +1835,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * A slot whose variant the key no longer declares is hidden rather than reported: narrowing a
      * declaration keeps the values it stops showing, so they must not make the object unsavable.
      *
+     * A language the key is no longer kept in is hidden for the same reason, and the languages are
+     * the effective ones this check shares with every other per-key check,
+     * {@see self::getValidLanguages()}: once a key stops being localized it holds the one
+     * language-independent value, and the list retained in a language nobody can now reach must not
+     * be what refuses the save.
+     *
      * @param array<string, array<string, array<int, mixed>>> $keyItems
      *        structure: [language][variant][position] = value
+     * @param string[] $validLanguages the languages this key is kept in
      *
      * @return Model\Element\ValidationException[]
      */
-    private function collectMaximumViolations(Data $keyDef, array $keyItems): array
+    private function collectMaximumViolations(Data $keyDef, array $keyItems, array $validLanguages): array
     {
         if (!$keyDef instanceof MultiValue || !$keyDef->isMultiValue()) {
             return [];
@@ -1786,6 +1861,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $violations = [];
 
         foreach ($keyItems as $language => $variants) {
+            if (!in_array((string) $language, $validLanguages, true)) {
+                // a language the key is no longer kept in: its list is retained and hidden, exactly
+                // as a slot of an undeclared variant is, so it must not refuse the save
+                continue;
+            }
+
             foreach ($variants as $variant => $values) {
                 if (!$this->declaresVariant($keyDef, (string) $variant)) {
                     continue;

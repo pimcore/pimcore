@@ -324,16 +324,24 @@ final class EavEngine extends AbstractDao implements EngineInterface
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             }
 
-            // a row this storage cannot address yields no value rather than failing the load
-            if ($fd !== null
-                && ($this->relationResolver->isRelation($fd) || $this->relationResolver->isDerived($fd))
+            // a row this storage cannot address yields no value rather than failing the load. The
+            // question is put to the definition that answers for the VALUE, the same one
+            // assertStorable() refuses on: a `multiValue` key wrapping a relation is a relation of
+            // no kind itself, so asked as it stands such a row was read as an ordinary value
+            // instead of being skipped - the write path cannot produce one, but redefining a key's
+            // inner type over existing rows can
+            $valueDefinition = Service::getValueDefinition($fd);
+
+            if ($valueDefinition !== null
+                && ($this->relationResolver->isRelation($valueDefinition)
+                    || $this->relationResolver->isDerived($valueDefinition))
             ) {
                 $this->logger->warning(sprintf(
                     'Skipping the stored value of classification store key %d of group %d: its type "%s" needs a'
                     . ' storage engine this store does not use.',
                     (int) $keyId,
                     (int) $groupId,
-                    $fd->getFieldtype()
+                    $valueDefinition->getFieldtype()
                 ));
 
                 continue;

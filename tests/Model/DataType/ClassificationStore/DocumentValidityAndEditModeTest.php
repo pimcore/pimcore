@@ -887,6 +887,99 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         }
     }
 
+    /**
+     * A child that inherits only a named variant of a mandatory key holds a value, and the check has
+     * to see it.
+     *
+     * The per-language read turns inherited values on for a class that allows inheritance, so the
+     * default value of a child is validated as the value in force. The qualified tree was read under
+     * whatever mode the caller happened to leave behind, so the parent's variant was invisible to
+     * the check: the child held a value and was refused for holding none.
+     *
+     * The mode the check is put under here is inherited values OFF, which is admin mode - the mode a
+     * save from the editor runs in, {@see \Pimcore\Tests\Support\Helper\Pimcore::setAdminMode()}.
+     */
+    public function testAChildInheritingOnlyAVariantSatisfiesTheMandatoryCheck(): void
+    {
+        $group = $this->createGroup('validity_inherited_variant');
+        $listKey = $this->createKey('validity_inherited_variant', true, $this->constrainedMultiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0, true);
+
+        $parent = new Csstorelocalized();
+        $parent->setParentId(1);
+        $parent->setKey('validity-inherited-variant-parent');
+        $parent->setPublished(true);
+        $parent->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        // the variant alone: the slot the one unqualified value would sit in stays empty
+        foreach ($this->getValidLanguages() as $language) {
+            $parent->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('ok', $language, self::VARIANT),
+            ]);
+        }
+
+        $parent->save();
+
+        $child = new Csstorelocalized();
+        $child->setParentId((int) $parent->getId());
+        $child->setKey('validity-inherited-variant-child');
+        $child->setPublished(true);
+        $child->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        $child->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($child->getCsstore());
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * A key that has stopped being localized keeps the lists it holds in the languages it is no
+     * longer kept in, and they must not refuse the save.
+     *
+     * The maximum check was handed every stored language, where every other per-key check is put to
+     * the effective ones, {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::getValidLanguages()}.
+     * So a list nobody can now reach - or shorten - made the object unsavable.
+     */
+    public function testAListRetainedInALanguageTheKeyIsNoLongerKeptInDoesNotRefuseTheSave(): void
+    {
+        $group = $this->createGroup('validity_delocalized_maximum');
+        $listKey = $this->createKey('validity_delocalized_maximum', true, $this->multiValueDefinition());
+        $listKey->setLocalized(true);
+        $listKey->save();
+
+        $this->assignKey($group, $listKey, 0);
+        $this->clearDefinitionCaches();
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-delocalized-maximum');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('one', 'de', null, 0),
+            new MultiValueEntry('two', 'de', null, 1),
+            new MultiValueEntry('three', 'de', null, 2),
+            new MultiValueEntry('four', 'de', null, 3),
+        ]);
+
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+
+        try {
+            $fieldDefinition->checkValidity($object->getCsstore());
+            $this->fail('while the key is kept per language, the over-long German list is reported');
+        } catch (ValidationException) {
+            $this->addToAssertionCount(1);
+        }
+
+        $listKey->setLocalized(false);
+        $listKey->save();
+        $this->clearDefinitionCaches();
+
+        $fieldDefinition->checkValidity($object->getCsstore());
+
+        $this->addToAssertionCount(1);
+    }
+
     private function multiValueDefinition(): MultiValue
     {
         $definition = $this->wrapperOf($this->innerType());

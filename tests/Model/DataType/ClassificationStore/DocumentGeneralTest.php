@@ -2151,6 +2151,58 @@ class DocumentGeneralTest extends GeneralTest
     }
 
     /**
+     * The same rule on the WRITE path, which is where it was broken: a key that no longer declares a
+     * list permits a write to position 0 and to nothing else, so the positions the narrowed
+     * declaration hides are not that write's to remove.
+     *
+     * Store positions 0 and 1, take the list declaration away, edit position 0 through
+     * setKeyValues() and save: the write replaced the whole slot, the save wrote it without position
+     * 1, and widening the declaration again could never bring that value back. Narrowing HIDES
+     * values and deletes none of them, on both paths.
+     */
+    public function testNarrowingAListAndThenEditingItsFirstValueKeepsTheHiddenPositions(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([], true);
+
+        $object = $this->createObject('narrowing-write');
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [
+            new MultiValue('1.80 m', null, null, 0),
+            new MultiValue('1.90 m', null, null, 1),
+        ]);
+        $object->save();
+
+        $this->narrowMultiValueKey([], false);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertSame(
+            ['1.80 m'],
+            $object->getCsstore()->getKeyValues($groupId, $keyId),
+            'a key that no longer declares a list reads its first value alone'
+        );
+
+        // the write the editor of a narrowed key makes, followed by the save that rewrites the group
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [new MultiValue('1.81 m')]);
+        $object->save();
+
+        $entries = $this->storedEntries($object->getId(), $groupId, $keyId);
+
+        $this->assertSame(
+            ['1.81 m', '1.90 m'],
+            array_map(static fn (array $entry): mixed => $entry['d'], $entries),
+            'the hidden position is still in the document the save wrote'
+        );
+
+        $this->narrowMultiValueKey([], true);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $this->assertSame(
+            [0 => '1.81 m', 1 => '1.90 m'],
+            $object->getCsstore()->getKeyValues($groupId, $keyId),
+            'widening the declaration again shows the position the narrowed one hid'
+        );
+    }
+
+    /**
      * The two readers of position 0 of the default variant, on one fixture. getLocalizedKeyValue()
      * resolves the language - the fallback languages, then the language-independent default - while
      * getKeyValues() and getKeyValue() address the slot they are given and nothing else.

@@ -342,7 +342,16 @@ class Service extends Model\Element\Service
             : [];
         $targetVariantItems = $target instanceof DataObject\Classificationstore ? $target->getVariantItems() : [];
 
-        $localizedKeys = self::getLocalizedClassificationstoreKeys($definition, $items, $targetItems);
+        // every tree the restore walks, so that a key reached through one of them alone is still
+        // recognised as a localized key: a key holding only named variants, or only positions above
+        // zero, appears in no items tree at all
+        $localizedKeys = self::getLocalizedClassificationstoreKeys(
+            $definition,
+            $items,
+            $targetItems,
+            $variantItems,
+            $targetVariantItems
+        );
 
         [$items, $keptItemGroups] = $this->restoreClassificationstoreValues(
             $items,
@@ -431,23 +440,29 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * The keys held by either value set that the field keeps per language, as a set to test against. The
-     * key configs are read in one go, so that the loops above cost no statement per key.
+     * The keys held by any of the given value sets that the field keeps per language, as a set to
+     * test against. The key configs are read in one go, so that the loops above cost no statement
+     * per key.
      *
-     * @param array<int, array<int, array<string, mixed>>> $items
-     * @param array<int, array<int, array<string, mixed>>> $targetItems
+     * Every tree the restore walks is passed in, the qualified slots included. Only the group and
+     * key levels are read, which both shapes share - a key is a key wherever it was found - and a
+     * key missing from this set is one the restore leaves exactly as it arrived: the languages the
+     * user may not edit would then be overwritten, or deleted, by what they submitted.
+     *
+     * @param array<int, array<int, array<array-key, mixed>>> ...$trees group => key => anything
      *
      * @return array<int, true>
      */
     private static function getLocalizedClassificationstoreKeys(
         ClassDefinition\Data\Classificationstore $definition,
-        array $items,
-        array $targetItems
+        array ...$trees
     ): array {
         $keyIds = [];
-        foreach ([...array_values($items), ...array_values($targetItems)] as $keys) {
-            foreach (array_keys($keys) as $keyId) {
-                $keyIds[] = (int) $keyId;
+        foreach ($trees as $tree) {
+            foreach ($tree as $keys) {
+                foreach (array_keys($keys) as $keyId) {
+                    $keyIds[] = (int) $keyId;
+                }
             }
         }
 

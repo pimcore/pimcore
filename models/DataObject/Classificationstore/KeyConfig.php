@@ -391,8 +391,9 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * Refuses a key whose `encryptedField` delegate is a field type a key is never defined with,
-     * before anything is written and before an identifier is generated for it.
+     * Refuses a key whose wrapper delegate - the inner type of an `encryptedField` or of a
+     * `multiValue` - is a field type a key is never defined with, before anything is written and
+     * before an identifier is generated for it.
      *
      * Eligibility is asked separately from storage capability, and before it. What an engine can
      * hold is what {@see self::assertTypeFitsTheStoreEngine()} asks, and a store whose engine holds
@@ -403,17 +404,16 @@ final class KeyConfig extends Model\AbstractModel
      * ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug}), so what the document stored
      * was a slug that resolves to nothing.
      *
-     * Encryption decides how a value is stored and not what the value is, which is why the delegate
-     * is asked the question the key's own type would be asked. The exclusions that are not about
-     * the value do not refuse here any more than they refuse on their own - `calculatedValue` keeps
-     * the support core ships for it, {@see KeyTypeSupport::isAcceptedDelegateType()}.
+     * Neither wrapper decides what the value is - encryption decides how it is stored, the
+     * qualifiers decide how it is addressed - which is why the delegate is asked the question the
+     * key's own type would be asked. The exclusions that are not about the value do not refuse here
+     * any more than they refuse on their own - `calculatedValue` keeps the support core ships for
+     * it, {@see KeyTypeSupport::isAcceptedDelegateType()}.
      *
      * @throws Model\Exception\InvalidConfigException
      */
     private function assertTheDelegateMayBeAKeyType(): void
     {
-        // `delegateDatatype` is a property of the `encryptedField` definition and of no other, so a
-        // definition carrying one is an encrypted key whatever else it says
         $delegateType = $this->getDelegateType();
         if ($delegateType === null) {
             return;
@@ -425,10 +425,10 @@ final class KeyConfig extends Model\AbstractModel
         }
 
         throw new Model\Exception\InvalidConfigException(sprintf(
-            'A classification store key encrypting a "%s" cannot be defined: a key is never defined'
-            . ' with that field type, and encrypting its value does not make it work - whatever the'
-            . ' storage engine of store %d can hold. Give the key a delegate of a field type a key'
-            . ' may be defined with.',
+            'A classification store key wrapping a "%s" cannot be defined: a key is never defined'
+            . ' with that field type, and neither encrypting its value nor qualifying it makes it'
+            . ' work - whatever the storage engine of store %d can hold. Give the key a delegate of'
+            . ' a field type a key may be defined with.',
             $delegateType,
             $this->storeId
         ));
@@ -474,8 +474,10 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * The delegate type an `encryptedField` key carries in its definition, which is what decides
-     * what such a key stores. Absent for every other type, and for a delegate that is not set.
+     * The delegate type a wrapper key carries in its definition, which is what decides what such a
+     * key stores. Both wrappers carry it under that name - an `encryptedField` and a `multiValue` -
+     * so a definition carrying one is a wrapper key whatever else it says. Absent for every other
+     * type, and for a delegate that is not set.
      */
     private function getDelegateType(): ?string
     {

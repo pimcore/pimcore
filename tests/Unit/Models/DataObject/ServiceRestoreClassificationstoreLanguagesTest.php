@@ -104,6 +104,57 @@ class ServiceRestoreClassificationstoreLanguagesTest extends TestCase
     }
 
     /**
+     * A key that holds ONLY qualified slots - a named variant, or a position above zero, and no
+     * value in the items at all - is still a localized key, and the languages the user may not edit
+     * are still theirs.
+     *
+     * The set of localized keys was built from the items trees alone, so such a key was in none of
+     * them: the restore then left it exactly as the user submitted it, which deletes the German
+     * variant of a user who may edit English only. Nothing warns, and the value is gone on the next
+     * save.
+     */
+    public function testAKeyHoldingOnlyQualifiedSlotsIsRestoredLanguageByLanguage(): void
+    {
+        $new = $this->buildVariantOnlyStore('new');
+        $target = $this->buildVariantOnlyStore('target');
+
+        $this->restore($new, $target, ['en' => 1]);
+
+        $variantItems = $new->getVariantItems();
+
+        $this->assertSame(
+            'new en imperial',
+            $variantItems[self::GROUP_ID][self::KEY_ID]['en'][self::IMPERIAL][0] ?? null,
+            'the language the user may edit is the one they left'
+        );
+        $this->assertSame(
+            'target de imperial',
+            $variantItems[self::GROUP_ID][self::KEY_ID]['de'][self::IMPERIAL][0] ?? null,
+            'the language they may not edit is kept from the stored object'
+        );
+    }
+
+    /**
+     * One key with a variant per language and no value in the items: the shape a key holding only
+     * named variants has.
+     */
+    private function buildVariantOnlyStore(string $label): Classificationstore
+    {
+        $store = new Classificationstore();
+        $store->setActiveGroups([self::GROUP_ID => true]);
+        $store->setVariantItems([
+            self::GROUP_ID => [
+                self::KEY_ID => [
+                    'en' => [self::IMPERIAL => [0 => $label . ' en imperial']],
+                    'de' => [self::IMPERIAL => [0 => $label . ' de imperial']],
+                ],
+            ],
+        ]);
+
+        return $store;
+    }
+
+    /**
      * @param array<string, int> $editableLanguages
      */
     private function restore(

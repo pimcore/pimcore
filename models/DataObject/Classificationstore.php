@@ -152,8 +152,25 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->itemsRevision++;
         $this->bindAssignedItems();
         $this->markFieldDirty('_self');
+        $this->attachOwnersInTree($items);
 
-        foreach ($items as $group) {
+        return $this;
+    }
+
+    /**
+     * Makes every value of an assigned tree report a change back to this store,
+     * {@see self::attachOwner()}.
+     *
+     * The language is the third level of both trees the store holds - group, key, language - and
+     * what sits under it is the value itself in the items and the variant map in the qualified
+     * slots. Either is handed over as it stands, because the walk descends into arrays anyway.
+     *
+     * @param array<array-key, mixed> $tree as the setter was given it, so every level is checked
+     *                                      rather than assumed
+     */
+    private function attachOwnersInTree(array $tree): void
+    {
+        foreach ($tree as $group) {
             if (!is_array($group)) {
                 continue;
             }
@@ -166,8 +183,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 }
             }
         }
-
-        return $this;
     }
 
     /**
@@ -241,10 +256,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * {@see Model\DataObject\Service::restoreClassificationstoreLanguages()} moves over has them
      * bound to the store they came from. Both would discard a column edit with no error,
      * {@see Classificationstore\RelationResolver::bindItemsToOwner()}.
+     *
+     * Both trees are bound, the unqualified items and the qualified slots: the two are assigned by
+     * the same callers and an item of either is as readily edited in place, so binding one of them
+     * would make what an in-place edit reaches depend on which slot its value sits in.
      */
     private function bindAssignedItems(): void
     {
         $this->getRelationResolver()->bindItemsToOwner($this->items, $this);
+        $this->getRelationResolver()->bindItemsToOwner($this->variantItems, $this);
     }
 
     public function getItems(): array
@@ -357,7 +377,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function setVariantItems(array $variantItems): static
     {
         $this->variantItems = $variantItems;
+        $this->itemsRevision++;
+        // the same binding the unqualified items get: the tree may carry advanced relation items
+        // bound to the store they came from, whose in-place column edit would otherwise mark that
+        // store and be skipped by the save of this one
+        $this->bindAssignedItems();
         $this->markFieldDirty('_self');
+        $this->attachOwnersInTree($variantItems);
 
         return $this;
     }
@@ -430,6 +456,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // nothing and never mark the store dirty - a save would then write none of it
         $valueDefinition = $this->getValueDefinition($dataDefinition);
 
+        // before anything decides whether the value changed, because a supplied password that
+        // reaches storage as it was typed is a cleartext password whatever the comparison said
+        $value = $this->convertPassword($value, $valueDefinition);
+
         // set the given group to active groups
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
@@ -469,7 +499,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                     && ($value !== null || $oldValue !== null);
 
                 if ($valueDefinition instanceof Model\DataObject\ClassDefinition\Data\Password) {
-                    $value = $newData;
+                    // the value is already the hash, converted above, and asking for its resource
+                    // form again hands the same string back: two hashes that differ are two
+                    // passwords
                     $differ = $newData != $oldData;
                 } else {
                     $differ = serialize($newData) != serialize($oldData);
@@ -583,6 +615,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * answers what the slot itself holds, which is what a save stores for it - a read that resolved
      * a fallback would write an ancestor's value into the slot it was read for.
      *
+     * The LANGUAGE is what the two differ in, and nothing else: a relation-typed value is answered
+     * as its elements here as it is there, and the pre-read hook of the key's type is run on it -
+     * the unpublished targets of a relation are left out of this read the way they are left out of
+     * that one. A reader handed the {@see RelationDescriptor} the document was loaded from instead
+     * would get a different kind of answer depending on whether the key had been read through the
+     * other getter first, which memoizes the elements it resolves.
+     *
      * @return array<int, mixed>
      *
      * @throws UnsupportedEngineFeatureException when the engine behind the store cannot address
@@ -611,10 +650,106 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             // the one position such a key permits, addressed by its position key rather than by
             // being first in the list: a slot a narrowed declaration left holding only a higher
             // position holds nothing here, instead of that value moving up into position 0
-            return array_key_exists(0, $values) ? [0 => $values[0]] : [];
+            $values = array_key_exists(0, $values) ? [0 => $values[0]] : [];
+        }
+
+        foreach ($values as $position => $value) {
+            $values[$position] = $this->readQualifiedValue(
+                $groupId,
+                $keyId,
+                $language,
+                $variant,
+                (int) $position,
+                $value
+            );
         }
 
         return $values;
+    }
+
+    /**
+     * One value of a qualified slot as a reader gets it: a stored descriptor resolved into its
+     * elements, and the pre-read hook of the key's type run on whatever comes out.
+     *
+     * The elements take the descriptor's place where the slot is this object's own, so that reading
+     * the same slot twice resolves once and a target that has gone marks the store for the rewrite -
+     * the two things {@see self::readItem()} does for position 0 of the default variant, which is
+     * where that value lives. A slot selected from an ancestor is resolved for the read alone: the
+     * stored value is the ancestor's, and memoizing an answer about it here - or marking this store
+     * dirty for it - would put a value this object does not hold into its next save.
+     *
+     * @throws Exception
+     */
+    private function readQualifiedValue(
+        int $groupId,
+        int $keyId,
+        string $language,
+        string $variant,
+        int $position,
+        mixed $value
+    ): mixed {
+        $fieldDefinition = $this->getKeyValueDefinition($keyId);
+
+        if ($fieldDefinition === null) {
+            return $value;
+        }
+
+        if ($variant === self::DEFAULT_VARIANT
+            && $position === 0
+            && array_key_exists($language, $this->items[$groupId][$keyId] ?? [])
+        ) {
+            // the value of that one slot is held in the items, so it is read the way the resolving
+            // getter reads it - resolved once and memoized there
+            $value = $this->readItem($groupId, $keyId, $language, $fieldDefinition);
+        } elseif ($value instanceof RelationDescriptor
+            && $this->getRelationResolver()->isRelation($fieldDefinition)
+        ) {
+            $resolved = $this->getRelationResolver()->resolve(
+                $fieldDefinition,
+                $value->getValue(),
+                $this->getObject(),
+                $this
+            );
+
+            $value = $resolved->getData();
+
+            if ($this->ownsQualifiedSlotValue($groupId, $keyId, $language, $variant, $position)) {
+                $this->variantItems[$groupId][$keyId][$language][$variant][$position] = $value;
+
+                if ($resolved->hasDroppedTargets()) {
+                    $this->markFieldDirty('_self');
+                }
+            }
+        }
+
+        if ($fieldDefinition instanceof PreGetDataInterface && !$value instanceof RelationDescriptor) {
+            $value = $fieldDefinition->preGetData($this, [
+                'data' => $value,
+                'language' => $language,
+                'name' => $groupId . '-' . $keyId,
+            ]);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Whether the value of this exact qualified slot is this object's own rather than an ancestor's.
+     *
+     * Position 0 of the default variant is left out: that value lives in the items and is resolved
+     * and memoized by {@see self::readItem()}, which the resolving getter reaches.
+     */
+    private function ownsQualifiedSlotValue(
+        int $groupId,
+        int $keyId,
+        string $language,
+        string $variant,
+        int $position
+    ): bool {
+        return array_key_exists(
+            $position,
+            $this->variantItems[$groupId][$keyId][$language][$variant] ?? []
+        );
     }
 
     /**
@@ -670,10 +805,18 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             throw new Exception('keyId not valid');
         }
 
-        $slots = $this->resolveSlots($groupId, $keyId, $entries);
+        $declaration = $this->getQualifierDeclaration($keyId);
+        $slots = $this->resolveSlots($groupId, $keyId, $entries, $declaration);
 
         foreach ($slots as $slot) {
-            $this->storeSlot($groupId, $keyId, $slot['language'], $slot['variant'], $slot['values']);
+            $this->storeSlot(
+                $groupId,
+                $keyId,
+                $slot['language'],
+                $slot['variant'],
+                $slot['values'],
+                $declaration !== null && $declaration->isMultiValue()
+            );
         }
 
         return $this;
@@ -707,19 +850,61 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return $this->setLocalizedKeyValue($groupId, $keyId, $value, $language);
         }
 
+        $valueDefinition = $this->getKeyValueDefinition($keyId);
+
+        // every write converts the password it is given, whichever slot it addresses: the branch of
+        // setLocalizedKeyValue() that used to be the only one doing it sits inside its change
+        // detection, so a store already marked dirty - which setKeyValues() marks it before it gets
+        // there - stored what the caller typed
+        $value = $this->convertPassword($value, $valueDefinition);
+
+        // the owner binding the unqualified slot gets, for the same reason: an advanced relation
+        // item of a qualified slot is as readily edited in place, and an item left bound to the
+        // object - or to the store it came from - marks a dirty flag no save of this store reads,
+        // {@see Classificationstore\RelationResolver::bindToOwner()}
+        if ($this->getRelationResolver()->isRelation($valueDefinition)) {
+            $this->getRelationResolver()->bindToOwner($value, $this);
+        }
+
         // the one emptiness rule, so that the same write means the same thing in every slot: a value
         // the key's own type does not count as one empties the slot here as it does on the path
         // above, rather than being stored as a value of its own
-        if ($this->holdsAValue($value, $this->getKeyValueDefinition($keyId))) {
+        if ($this->holdsAValue($value, $valueDefinition)) {
             $this->variantItems[$groupId][$keyId][$language][$variant][$position] = $value;
+            $this->attachOwner($value, $language);
         } else {
             $this->forgetQualifiedSlotValue($groupId, $keyId, $language, $variant, $position);
         }
 
+        $this->itemsRevision++;
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
         $this->markFieldDirty('_self');
 
         return $this;
+    }
+
+    /**
+     * The hash of a supplied password, and every other value as it stands.
+     *
+     * {@see ClassDefinition\Data\Password::getDataForResource()} is what hashes one, and it is
+     * idempotent: a value that already carries a hash is handed straight back, which is what lets
+     * every write path run it - the hydration of a stored value included - without rehashing what is
+     * stored. It is given this store as the `owner`, so that it does not call a setter of the object
+     * for a field the object does not have.
+     *
+     * Applied independently of whether anything thinks the value changed. The conversion used to sit
+     * inside the change detection of {@see self::setLocalizedKeyValue()}, which a dirty store skips
+     * altogether, and a qualified slot never reached that branch at all: a supplied password then
+     * reached storage as the caller typed it, because `Password::normalize()` leaves a value
+     * unchanged and the document holds what `normalize()` returns.
+     */
+    private function convertPassword(mixed $value, ?Model\DataObject\ClassDefinition\Data $valueDefinition): mixed
+    {
+        if (!$valueDefinition instanceof Model\DataObject\ClassDefinition\Data\Password) {
+            return $value;
+        }
+
+        return $valueDefinition->getDataForResource($value, $this->object, ['owner' => $this]);
     }
 
     /**
@@ -838,9 +1023,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * wrote before a value could carry qualifiers, so changing it here would change what a save
      * stores for a key that declares none.
      *
-     * A slot this object owns without owning its first value is left out of that exception: the
-     * value {@see self::getItems()} answers there is an ancestor's, and writing it into the list
-     * the child holds would merge two objects' lists into one.
+     * A slot whose SELECTED list starts above position 0 is left out of that exception: the value
+     * {@see self::getItems()} answers there belongs to a further ancestor than the one the list came
+     * from, and writing it in would merge two objects' lists into one. The question is asked of the
+     * store the merge actually selected the slot from rather than of this one - with a grandparent
+     * holding [0 => 'a', 1 => 'b'], a parent holding [1 => 'x'] and nothing of its own, a child
+     * takes the parent's whole list and must answer [1 => 'x']; asked only whether IT owns the slot,
+     * it would answer [0 => 'a', 1 => 'x'], which is two objects' values in one list.
      *
      * @internal
      *
@@ -852,17 +1041,39 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             return $this->getOwnQualifiedItems();
         }
 
+        /** @var array<int|string, array<int|string, array<string, bool>>> $startsAboveZero */
+        $startsAboveZero = [];
+
         $qualified = $this->getAllDataFromField(
-            fn ($classificationStore, $fieldsArray) => $this->mergeQualifiedSlots(
-                $fieldsArray,
-                $classificationStore->getOwnQualifiedItems()
-            )
+            function ($classificationStore, $fieldsArray) use (&$startsAboveZero) {
+                $own = $classificationStore->getOwnQualifiedItems();
+
+                foreach ($own as $groupId => $keys) {
+                    foreach ($keys as $keyId => $languages) {
+                        foreach ($languages as $language => $variants) {
+                            // the merge keeps the nearest store's list for a slot, so the nearest
+                            // store that holds the slot at all is the one whose answer counts: the
+                            // walk runs nearest first, and a verdict already recorded stands
+                            if (!isset($variants[self::DEFAULT_VARIANT])
+                                || isset($startsAboveZero[$groupId][$keyId][$language])
+                            ) {
+                                continue;
+                            }
+
+                            $startsAboveZero[$groupId][$keyId][$language] = $classificationStore
+                                ->ownsSlotWithoutItsFirstValue((int) $groupId, (int) $keyId, (string) $language);
+                        }
+                    }
+                }
+
+                return $this->mergeQualifiedSlots($fieldsArray, $own);
+            }
         );
 
         foreach ($this->getItems() as $groupId => $keys) {
             foreach ($keys as $keyId => $languages) {
                 foreach ($languages as $language => $value) {
-                    if ($this->ownsSlotWithoutItsFirstValue($groupId, (int) $keyId, (string) $language)) {
+                    if ($startsAboveZero[$groupId][$keyId][$language] ?? false) {
                         continue;
                     }
 
@@ -904,6 +1115,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * of them is stored.
      *
      * @param MultiValue[] $entries
+     * @param MultiValueKey|null $declaration the qualifier declaration of the key, resolved once by
+     *                                        the caller because what the write may replace is read
+     *                                        off the same declaration
      *
      * @return array<string, array{language: string, variant: string, values: array<int, mixed>}>
      *
@@ -911,9 +1125,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * @throws UnsupportedEngineFeatureException
      * @throws Exception
      */
-    private function resolveSlots(int $groupId, int $keyId, array $entries): array
-    {
-        $declaration = $this->getQualifierDeclaration($keyId);
+    private function resolveSlots(
+        int $groupId,
+        int $keyId,
+        array $entries,
+        ?MultiValueKey $declaration
+    ): array {
         $slots = [];
 
         foreach ($entries as $entry) {
@@ -966,12 +1183,30 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
+     * One (language, variant) slot, replaced by the values the write gives it.
+     *
+     * What the write may replace is what the declaration lets it address. While the key declares a
+     * list, the entries ARE the list and the whole slot is replaced, so a write that drops a value
+     * drops it. While it declares none, the write can address position 0 alone -
+     * {@see self::resolveSlots()} refuses anything above it - and the positions a narrowed
+     * declaration hides are not the write's to remove: narrowing HIDES values and deletes none, so
+     * widening the declaration again has to bring them back. Clearing the slot here would delete
+     * them on the next save instead, and nothing about the write said so.
+     *
      * @param array<int, mixed> $values
+     * @param bool $replaceWholeSlot whether the declaration permits a list, which is what makes the
+     *                               entries the whole list rather than its first value
      *
      * @throws Exception
      */
-    private function storeSlot(int $groupId, int $keyId, string $language, string $variant, array $values): void
-    {
+    private function storeSlot(
+        int $groupId,
+        int $keyId,
+        string $language,
+        string $variant,
+        array $values,
+        bool $replaceWholeSlot
+    ): void {
         ksort($values);
 
         // the slot is replaced rather than added to, so a write that drops a value changes the
@@ -979,7 +1214,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // write that changed nothing still writes no row
         $this->markFieldDirty('_self');
 
-        unset($this->variantItems[$groupId][$keyId][$language][$variant]);
+        if ($replaceWholeSlot) {
+            unset($this->variantItems[$groupId][$keyId][$language][$variant]);
+        } else {
+            $this->forgetQualifiedSlotValue($groupId, $keyId, $language, $variant, 0);
+        }
 
         foreach ($values as $position => $value) {
             $this->setQualifiedKeyValue($groupId, $keyId, $value, $language, $variant, (int) $position);
@@ -1028,13 +1267,16 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * The definition of the value a key holds: the inner type's for a key of a wrapper type, as it
      * is the inner value that is stored and read back.
+     *
+     * Resolved through {@see Model\DataObject\Classificationstore\Service::getValueDefinition()},
+     * the one boundary that answers this - the engines and this store would otherwise each have
+     * their own answer, and a key whose inner type one of them did not see is a value that reaches
+     * storage unrefused.
      */
     private function getValueDefinition(
         ?Model\DataObject\ClassDefinition\Data $definition
     ): ?Model\DataObject\ClassDefinition\Data {
-        $delegate = $definition instanceof MultiValueKey ? $definition->getDelegate() : null;
-
-        return $delegate instanceof Model\DataObject\ClassDefinition\Data ? $delegate : $definition;
+        return Model\DataObject\Classificationstore\Service::getValueDefinition($definition);
     }
 
     private function declaresVariant(?MultiValueKey $declaration, string $variant): bool
@@ -1158,11 +1400,18 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->itemsRevision++;
     }
 
-    /** Returns an array of
+    /**
+     * The groups this object holds a value for, in either tree: a group whose values sit only in a
+     * named variant, or only above position 0, holds data as surely as one whose value is in the
+     * items. Its only caller is the cleanup of the editmode save, which destroys the data of a
+     * group the payload no longer declares active - read off the items alone, such a group was
+     * never offered to it, and its values outlived the deactivation.
+     *
+     * @return array<int, int|string>
      */
     public function getGroupIdsWithData(): array
     {
-        return array_keys($this->items);
+        return array_keys($this->items + $this->variantItems);
     }
 
     public function getFieldname(): string

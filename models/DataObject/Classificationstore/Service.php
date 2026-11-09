@@ -146,6 +146,51 @@ class Service
     }
 
     /**
+     * The definition that answers for the VALUE of a key: the inner type of a `multiValue` wrapper,
+     * and the definition itself for every other key.
+     *
+     * The one boundary for that question, so that the paths asking it cannot come apart. A
+     * `multiValue` key declares the qualifiers its values may carry and nothing about the values
+     * themselves - what a slot holds is a value of the inner type, which is what stores it, reads it
+     * back, decides whether it is a relation and names its dependencies. A caller asking the wrapper
+     * instead is told "no" about every one of those, and the value then reaches storage unrefused,
+     * loses its dependency rows or is read without the hook its own type would have run.
+     *
+     * An `encryptedField` is NOT unwrapped here: that wrapper carries the stored form itself - it is
+     * the one that encrypts - so its own definition is the one that answers for the value.
+     *
+     * @see DataObject\ClassDefinition\Data\MultiValue for the behaviours the wrapper forwards itself
+     */
+    public static function getValueDefinition(
+        ?DataObject\ClassDefinition\Data $definition
+    ): ?DataObject\ClassDefinition\Data {
+        $delegate = $definition instanceof DataObject\ClassDefinition\Data\MultiValue
+            ? $definition->getDelegate()
+            : null;
+
+        return $delegate instanceof DataObject\ClassDefinition\Data ? $delegate : $definition;
+    }
+
+    /**
+     * The inner type of a wrapper key, or null for a key that is not one - the two wrappers a
+     * classification store key can be defined with, {@see DataObject\ClassDefinition\Data\EncryptedField}
+     * and {@see DataObject\ClassDefinition\Data\MultiValue}.
+     */
+    private static function getDelegateDefinition(
+        DataObject\ClassDefinition\Data $definition
+    ): ?DataObject\ClassDefinition\Data {
+        if (!$definition instanceof DataObject\ClassDefinition\Data\EncryptedField
+            && !$definition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
+            return null;
+        }
+
+        $delegate = $definition->getDelegate();
+
+        return $delegate instanceof DataObject\ClassDefinition\Data ? $delegate : null;
+    }
+
+    /**
      * Whether a value of a key defined with this field type may be inherited from an ancestor's
      * store.
      *
@@ -156,6 +201,10 @@ class Service
      * the editmode payload's parent walk
      * ({@see DataObject\ClassDefinition\Data\Classificationstore::doGetDataForEditMode()}). One
      * answer in one place is what keeps them from coming apart.
+     *
+     * A WRAPPER is answered by its DELEGATE, both of them: an `encryptedField` and a `multiValue`
+     * key hold a value of the inner type, and whether that value may be read off an ancestor is the
+     * inner type's answer. A `multiValue` key declares qualifiers, which says nothing about it.
      *
      * An `encryptedField` is answered by its DELEGATE. The wrapper stores, reads, validates and
      * renders whatever the delegate says - {@see DataObject\ClassDefinition\Data\EncryptedField}
@@ -177,12 +226,10 @@ class Service
             return true;
         }
 
-        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
-            $delegate = $fieldDefinition->getDelegate();
+        $delegate = self::getDelegateDefinition($fieldDefinition);
 
-            if ($delegate instanceof DataObject\ClassDefinition\Data) {
-                return self::supportsInheritance($delegate);
-            }
+        if ($delegate !== null) {
+            return self::supportsInheritance($delegate);
         }
 
         return $fieldDefinition->supportsInheritance();

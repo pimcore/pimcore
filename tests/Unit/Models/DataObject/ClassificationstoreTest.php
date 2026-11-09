@@ -487,6 +487,87 @@ class ClassificationstoreTest extends TestCase
     }
 
     /**
+     * Narrowing hides values on the WRITE path too. A key that no longer declares a list permits a
+     * write to position 0 and nothing else, so what the write replaces is position 0 - the positions
+     * the narrowed declaration hides are not its to remove. Clearing the slot instead deleted them,
+     * the next save wrote the slot without them, and widening the declaration again could never
+     * bring them back: the documented retention behaviour held for the read alone.
+     */
+    public function testNarrowingAListAndThenWritingItsFirstValueKeepsTheHiddenPositions(): void
+    {
+        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
+
+        $store = new Classificationstore();
+        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, $this->positionalEntries(['first', 'second']));
+
+        $this->seedKey(self::LIST_KEY_ID, $this->multiValueKeyWithoutAList());
+
+        // the write the editor of a key that declares no list makes: one value, position 0
+        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [new MultiValue('edited')]);
+
+        $this->assertSame(
+            ['edited'],
+            $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID),
+            'the one position the declaration permits holds what was just written'
+        );
+
+        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
+
+        $this->assertSame(
+            [0 => 'edited', 1 => 'second'],
+            $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID),
+            'widening the declaration again shows the position the narrowed one hid'
+        );
+    }
+
+    /**
+     * The same on a named variant, whose whole list lives in the qualified slots rather than having
+     * its first value in the items.
+     */
+    public function testNarrowingAListKeepsTheHiddenPositionsOfANamedVariant(): void
+    {
+        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey());
+
+        $store = new Classificationstore();
+        $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
+            new MultiValue('1.80 m', null, self::METRIC, 0),
+            new MultiValue('1.81 m', null, self::METRIC, 1),
+        ]);
+
+        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey([self::METRIC, self::IMPERIAL], false));
+
+        $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [new MultiValue('1.82 m', null, self::METRIC)]);
+
+        $this->assertSame(
+            ['1.82 m'],
+            $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::METRIC)
+        );
+
+        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey());
+
+        $this->assertSame(
+            [0 => '1.82 m', 1 => '1.81 m'],
+            $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::METRIC),
+            'the hidden position of the variant survived the write to its first value'
+        );
+    }
+
+    /**
+     * While the declaration permits a list, the entries ARE the list: a write that drops a value
+     * drops it, and this is the behaviour the narrowing rule above must not be confused with.
+     */
+    public function testAWriteWhileTheListIsDeclaredReplacesTheWholeSlot(): void
+    {
+        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
+
+        $store = new Classificationstore();
+        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, $this->positionalEntries(['first', 'second']));
+        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [new MultiValue('only')]);
+
+        $this->assertSame(['only'], $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID));
+    }
+
+    /**
      * The documented items and the qualified items are two readers of one store, and they have to
      * agree about the one value both describe: position 0 of the default variant. getItems() is
      * what every engine wrote before a value could carry qualifiers, so a disagreement here is a
@@ -550,6 +631,15 @@ class ClassificationstoreTest extends TestCase
     private function listKey(): MultiValueKey
     {
         return $this->multiValueKey([], true);
+    }
+
+    /**
+     * The same key with its list declaration taken away: a narrowed declaration, which still
+     * declares the key and permits position 0 alone.
+     */
+    private function multiValueKeyWithoutAList(): MultiValueKey
+    {
+        return $this->multiValueKey([], false);
     }
 
     /**
