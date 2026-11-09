@@ -17,6 +17,7 @@ use Pimcore\Bundle\CoreBundle\Migrations\Version20261029100000;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 use Pimcore\Model\DataObject\Classificationstore\SubGroupConfig;
+use Pimcore\Model\DataObject\Classificationstore\Traits\PerAssignmentDaoTrait;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Psr\Log\NullLogger;
@@ -24,7 +25,8 @@ use Psr\Log\NullLogger;
 /**
  * The per assignment columns of a key/group relation: that they exist, that they round-trip as
  * JSON text rather than as a serialization payload, that a relation built with `new` does not
- * clear them, and that nothing in core reads them.
+ * clear them, that a row which does not carry one of them leaves its field alone, and that nothing
+ * in core reads them.
  *
  * @group model.datatype.classificationstore
  */
@@ -57,6 +59,18 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
     private const METADATA = ['indexed' => false, 'externalCode' => 'EF000001', 'custom' => ['x' => 1]];
 
     private const OVERRIDE = ['defaultUnit' => 'cm'];
+
+    private const SEEDED_SUB_GROUP = 'seeded_sub_group';
+
+    /**
+     * What the field of each column holds before the hydration seam is handed a row, so that a
+     * preserved value can be told apart from a cleared one.
+     */
+    private const SEEDED = [
+        self::COLUMN_METADATA => self::METADATA,
+        self::COLUMN_DEFINITION_OVERRIDE => self::OVERRIDE,
+        self::COLUMN_SUB_GROUP => self::SEEDED_SUB_GROUP,
+    ];
 
     /**
      * @var SubGroupConfig[]
@@ -207,6 +221,95 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
         $this->assertNoPerAssignmentData($this->loadThroughListing($relation));
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function perAssignmentColumns(): array
+    {
+        return [
+            self::COLUMN_METADATA => [self::COLUMN_METADATA],
+            self::COLUMN_DEFINITION_OVERRIDE => [self::COLUMN_DEFINITION_OVERRIDE],
+            self::COLUMN_SUB_GROUP => [self::COLUMN_SUB_GROUP],
+        ];
+    }
+
+    /**
+     * A row that does not carry the column at all - what a load against a schema the migration has
+     * not reached yet returns - leaves the field alone: neither the value nor the initialization
+     * flag is touched, so a save after the schema upgrade does not write NULL over a value stored
+     * in between. Each of the three columns is guarded on its own, so the two the row does carry
+     * are still hydrated.
+     *
+     * @dataProvider perAssignmentColumns
+     */
+    public function testTheHydratorLeavesAColumnTheRowDoesNotCarryAlone(string $column): void
+    {
+        $seam = $this->hydrationSeam();
+        $row = $this->rowCarryingEveryColumn();
+        unset($row[$column]);
+
+        $seeded = new KeyGroupRelation();
+        $this->seed($seeded, $column);
+        $returned = $seam->hydrate($seeded, $row);
+
+        // set in memory and never through the column, so compared strictly, key order included
+        $this->assertSame(
+            self::SEEDED[$column],
+            $this->perAssignmentValue($seeded, $column),
+            'an absent ' . $column . ' must not clear the value'
+        );
+        $this->assertSame(
+            ['groupId' => 1, 'keyId' => 2],
+            $returned,
+            'the row comes back without the per assignment columns'
+        );
+
+        $untouched = new KeyGroupRelation();
+        $seam->hydrate($untouched, $row);
+        $this->assertFalse(
+            $this->isPerAssignmentInitialized($untouched, $column),
+            'an absent ' . $column . ' must not mark the field initialized'
+        );
+
+        foreach (self::PER_ASSIGNMENT_COLUMNS as $carried) {
+            if ($carried === $column) {
+                continue;
+            }
+
+            $this->assertTrue(
+                $this->isPerAssignmentInitialized($untouched, $carried),
+                $carried . ' is carried by the row and must still be hydrated'
+            );
+            $this->assertNotNull($this->perAssignmentValue($untouched, $carried), $carried);
+        }
+    }
+
+    /**
+     * The opposite case, and what the guard must not swallow: a column the row does carry as NULL
+     * clears the field and marks it initialized, so that the next save writes the NULL.
+     *
+     * @dataProvider perAssignmentColumns
+     */
+    public function testTheHydratorClearsAColumnTheRowCarriesAsNull(string $column): void
+    {
+        $row = $this->rowCarryingEveryColumn();
+        $row[$column] = null;
+
+        $relation = new KeyGroupRelation();
+        $this->seed($relation, $column);
+        $returned = $this->hydrationSeam()->hydrate($relation, $row);
+
+        $this->assertNull(
+            $this->perAssignmentValue($relation, $column),
+            'a NULL ' . $column . ' must clear the value'
+        );
+        $this->assertTrue(
+            $this->isPerAssignmentInitialized($relation, $column),
+            'a NULL ' . $column . ' must mark the field initialized, or the save would not write it'
+        );
+        $this->assertArrayNotHasKey($column, $returned);
+    }
+
     public function testTheJsonColumnsHoldJsonText(): void
     {
         $relation = $this->createRelationWithPerAssignmentData();
@@ -286,6 +389,75 @@ class RelationMetadataTest extends AbstractBatchedRelationTest
             'the metadata is stored and returned verbatim'
         );
         $this->assertSame($without, $this->enrich($object), 'the enriched layout is unaffected by metadata');
+    }
+
+    /**
+     * The DAO trait's own hydration seam. A row that does not carry one of the three columns is what
+     * a load against a schema the migration has not reached yet returns, and handing the trait a row
+     * directly is the only way to produce one - the live schema always selects all three.
+     */
+    private function hydrationSeam(): object
+    {
+        return new class() {
+            use PerAssignmentDaoTrait;
+
+            /**
+             * @param array<string, mixed> $row
+             *
+             * @return array<string, mixed>
+             */
+            public function hydrate(KeyGroupRelation $relation, array $row): array
+            {
+                return $this->hydratePerAssignmentColumns($relation, $row);
+            }
+        };
+    }
+
+    /**
+     * A row with every per assignment column present and holding a value, so that the column under
+     * test is the only thing a test takes away or sets to NULL.
+     *
+     * @return array<string, mixed>
+     */
+    private function rowCarryingEveryColumn(): array
+    {
+        return [
+            'groupId' => 1,
+            'keyId' => 2,
+            self::COLUMN_METADATA => json_encode(self::METADATA),
+            self::COLUMN_DEFINITION_OVERRIDE => json_encode(self::OVERRIDE),
+            self::COLUMN_SUB_GROUP => 'stored_sub_group',
+        ];
+    }
+
+    private function seed(KeyGroupRelation $relation, string $column): void
+    {
+        match ($column) {
+            self::COLUMN_METADATA => $relation->setMetadata(self::METADATA),
+            self::COLUMN_DEFINITION_OVERRIDE => $relation->setDefinitionOverride(self::OVERRIDE),
+            self::COLUMN_SUB_GROUP => $relation->setSubGroup(self::SEEDED_SUB_GROUP),
+        };
+    }
+
+    /**
+     * @return array<string, mixed>|string|null
+     */
+    private function perAssignmentValue(KeyGroupRelation $relation, string $column): array|string|null
+    {
+        return match ($column) {
+            self::COLUMN_METADATA => $relation->getMetadata(),
+            self::COLUMN_DEFINITION_OVERRIDE => $relation->getDefinitionOverride(),
+            self::COLUMN_SUB_GROUP => $relation->getSubGroup(),
+        };
+    }
+
+    private function isPerAssignmentInitialized(KeyGroupRelation $relation, string $column): bool
+    {
+        return match ($column) {
+            self::COLUMN_METADATA => $relation->isMetadataInitialized(),
+            self::COLUMN_DEFINITION_OVERRIDE => $relation->isDefinitionOverrideInitialized(),
+            self::COLUMN_SUB_GROUP => $relation->isSubGroupInitialized(),
+        };
     }
 
     /**
