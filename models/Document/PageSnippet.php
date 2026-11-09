@@ -24,6 +24,8 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\SystemSettingsConfig;
 
 /**
@@ -127,7 +129,9 @@ abstract class PageSnippet extends Model\Document
         // before the database transaction, see also https://github.com/pimcore/pimcore/issues/8992
         $this->checkMissingRequiredEditable();
         if ($this->getMissingRequiredEditable() && $this->getPublished()) {
-            throw new Model\Element\ValidationException('Prevented publishing document - missing values for required editables');
+            throw (new StructuredValidationException(
+                'Prevented publishing document - missing values for required editables'
+            ))->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLES);
         }
 
         return parent::save($parameters);

@@ -161,6 +161,12 @@ parameters:
 			path: lib/Bootstrap.php
 
 		-
+			message: '#^Trait Pimcore\\Console\\Traits\\ParallelizationFallback is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Console/Traits/ParallelizationFallback.php
+
+		-
 			message: '#^Trait Pimcore\\Console\\Traits\\Timeout is used zero times and is not analysed\.$#'
 			identifier: trait.unused
 			count: 1
