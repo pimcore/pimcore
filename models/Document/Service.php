@@ -27,7 +27,7 @@ use Pimcore\Model\Document\Editable\LazyLoadingInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
-use Pimcore\Tool;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
@@ -536,7 +536,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function generatePagePreview(int $id, ?Request $request = null, ?string $hostUrl = null): bool
+    public static function generatePagePreview(int $id, ?string $hostUrl = null): bool
     {
         $filesystem = new Filesystem();
         $doc = Document\Page::getById($id);
@@ -544,10 +544,10 @@ class Service extends Model\Element\Service
             return false;
         }
         if (!$hostUrl) {
-            $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'];
-            if (empty($hostUrl)) {
-                $hostUrl = Tool::getHostUrl(null, $request);
-            }
+            $hostUrl = self::resolveTrustedPreviewOrigin();
+        }
+        if (!$hostUrl) {
+            return false;
         }
 
         $url = $hostUrl . $doc->getRealFullPath();
@@ -572,5 +572,26 @@ class Service extends Model\Element\Service
         }
 
         return false;
+    }
+
+    /**
+     * Resolves the trusted origin used to build the page-preview URL that is dispatched to the
+     * server-side renderer: the configured `documents.preview_url_prefix` takes precedence,
+     * otherwise the system's main domain setting is used. This intentionally never derives the
+     * origin from an inbound request, since an attacker-controlled Host header would otherwise
+     * select the network destination the renderer navigates to.
+     *
+     * @internal
+     */
+    public static function resolveTrustedPreviewOrigin(): ?string
+    {
+        $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'] ?? '';
+        if ($hostUrl !== '') {
+            return $hostUrl;
+        }
+
+        $domain = SystemSettingsConfig::get()['general']['domain'] ?? '';
+
+        return $domain !== '' ? 'http://' . $domain : null;
     }
 }

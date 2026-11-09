@@ -115,7 +115,7 @@ class GeneratePagePreviews extends AbstractCommand
              * @var Document\Page $doc
              */
             try {
-                $success = Document\Service::generatePagePreview($doc->getId(), null, $hostUrl);
+                $success = Document\Service::generatePagePreview($doc->getId(), $hostUrl);
             } catch (Exception $e) {
                 $this->io->error($e->getMessage());
             }
