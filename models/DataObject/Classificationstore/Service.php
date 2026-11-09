@@ -31,6 +31,12 @@ class Service
     private const FIELDCOLLECTION_CONTAINER = 'fieldcollection';
 
     /**
+     * The marshaller format the classification store packs its values with,
+     * {@see self::marshallerPacksIntoValueColumns()}.
+     */
+    private const MARSHALLER_FORMAT = 'classificationstore';
+
+    /**
      * @var array Used for storing definitions
      */
     protected static array $definitionsCache = [];
@@ -196,6 +202,47 @@ class Service
         }
 
         return $definition;
+    }
+
+    /**
+     * Whether a value of this definition is packed into the two scalar value columns by a
+     * classification store marshaller, rather than reaching one as the structure it normalizes to.
+     *
+     * The one boundary for that question, like {@see self::getValueDefinition()} is for "which
+     * definition answers for the value", and asked of the DELEGATE of an `encryptedField`: that
+     * marshaller encrypts a scalar and hands anything else to its delegate's marshaller to be packed
+     * first, so a delegate that packs nothing leaves a structured value with no scalar to encrypt.
+     *
+     * It is answered through the COMPLETE chain. A `multiValue` marshaller packs nothing itself -
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue} hands the value to the
+     * marshaller of its own inner type - so its registration says nothing about the shape it
+     * produces, and a wrapper whose inner type has no marshaller returns the value in the `value`
+     * member unchanged. Asked one layer deep, `encryptedField<multiValue<geopoint>>` answered "the
+     * delegate has a marshaller, it packs" about a wrapper that handed the coordinates straight back
+     * as an array-valued column, which
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::encrypt()} casts to
+     * the string `'Array'`. The coordinates were lost with no error, on the document engine for want
+     * of an envelope and on the EAV engine for want of a refusal.
+     *
+     * A chain ending in a wrapper that names no inner type does NOT pack: such a wrapper returns the
+     * value it was handed in the `value` member, which is the structure rather than a column.
+     */
+    public static function marshallerPacksIntoValueColumns(
+        ?DataObject\ClassDefinition\Data $definition,
+        Pimcore\Element\MarshallerService $marshallerService
+    ): bool {
+        $definition = self::getValueDefinition($definition);
+
+        if (!$definition instanceof DataObject\ClassDefinition\Data
+            || $definition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
+            return false;
+        }
+
+        return $marshallerService->supportsFielddefinition(
+            self::MARSHALLER_FORMAT,
+            $definition->getFieldType()
+        );
     }
 
     /**

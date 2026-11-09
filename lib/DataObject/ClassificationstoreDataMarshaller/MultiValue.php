@@ -24,6 +24,15 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueField;
  * An inner type without a marshaller of its own goes into `value` as plain normalized data, which
  * is what the engine does for an unwrapped key of that type.
  *
+ * So this marshaller packs NOTHING of its own, and its registration for the format says nothing
+ * about the shape it produces: handed a structure for an inner type that has no marshaller, it
+ * returns that structure in the `value` member. Whoever has to know whether a value ends up in the
+ * two scalar columns asks the whole delegate chain rather than this registration,
+ * {@see \Pimcore\Model\DataObject\Classificationstore\Service::marshallerPacksIntoValueColumns()} -
+ * {@see \Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine} refuses such a shape and
+ * {@see \Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine} envelopes it, so the
+ * structure below never reaches an encryption that would cast it to the string `'Array'`.
+ *
  * @internal
  */
 class MultiValue implements MarshallerInterface

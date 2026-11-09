@@ -19,8 +19,10 @@ use Pimcore\Element\MarshallerService;
 use Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue as MultiValueMarshaller;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
@@ -484,6 +486,97 @@ class ServiceTest extends TestCase
             MultiValueMarshaller::class,
             $marshallerService->buildFieldefinitionMarshaller('classificationstore', 'multiValue')
         );
+    }
+
+    /**
+     * Whether a value is packed into the two scalar value columns is asked of the whole delegate
+     * chain, because a `multiValue` is registered for the format and packs nothing with that
+     * registration: it hands the value to the marshaller of its inner type, and returns the value
+     * unchanged in the `value` member when that type has none.
+     *
+     * The INVERSE WRAPPER ORDER is what the registration alone got wrong. For
+     * `encryptedField<multiValue<geopoint>>` both callers read "the delegate has a marshaller, it
+     * packs" and let the coordinates reach
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::encrypt()} as an
+     * array, which casts them to the string `'Array'`: the document engine wrote no envelope and the
+     * EAV engine refused nothing, and the value was lost with no error. The columns the EAV engine
+     * inspects after marshalling cannot catch it either - `'Array'` is a scalar by then.
+     *
+     * @dataProvider packingProvider
+     */
+    public function testPackingIntoTheValueColumnsIsAnsweredThroughTheWholeDelegateChain(
+        ?callable $build,
+        bool $packs,
+        string $message
+    ): void {
+        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
+
+        $this->assertSame(
+            $packs,
+            Service::marshallerPacksIntoValueColumns($build === null ? null : $build(), $marshallerService),
+            $message
+        );
+    }
+
+    /**
+     * @return array<string, array{0: ?callable, 1: bool, 2: string}>
+     */
+    public static function packingProvider(): array
+    {
+        $wrap = static function (?Data $inner): MultiValue {
+            $wrapper = new MultiValue();
+            $wrapper->setMultiValue(true);
+
+            if ($inner !== null) {
+                $wrapper->setDelegateDatatype($inner->getFieldType());
+                $wrapper->setDelegate($inner);
+            }
+
+            return $wrapper;
+        };
+
+        return [
+            'no delegate at all' => [
+                null,
+                false,
+                'a delegate that was never configured packs nothing',
+            ],
+            'a type with a marshaller of its own' => [
+                static fn (): Data => new QuantityValue(),
+                true,
+                'a quantityValue is packed into the two columns by its own marshaller',
+            ],
+            'a type with no marshaller' => [
+                static fn (): Data => new Geopoint(),
+                false,
+                'a geopoint has no classification store marshaller, so nothing packs its coordinates',
+            ],
+            'a wrapper around a type with a marshaller' => [
+                static fn (): Data => $wrap(new QuantityValue()),
+                true,
+                'the wrapper hands the value to the quantityValue marshaller, which packs it',
+            ],
+            'a wrapper around a type with no marshaller' => [
+                static fn (): Data => $wrap(new Geopoint()),
+                false,
+                'the wrapper returns the coordinates in the `value` member, which is not a column',
+            ],
+            'a wrapper naming no inner type' => [
+                static fn (): Data => $wrap(null),
+                false,
+                'a wrapper with no inner type returns the value it was handed unchanged',
+            ],
+            'consecutive wrappers around a type with no marshaller' => [
+                static fn (): Data => $wrap($wrap(new Geopoint())),
+                false,
+                'a chain of any length is answered by the type at the end of it',
+            ],
+            'consecutive wrappers around a type with a marshaller' => [
+                static fn (): Data => $wrap($wrap(new QuantityValue())),
+                true,
+                'and the same chain ending in a type that packs does pack',
+            ],
+        ];
     }
 
     /**

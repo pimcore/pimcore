@@ -1858,9 +1858,15 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * The classificationstore `encryptedField` marshaller encrypts a scalar, and hands anything
      * else to the marshaller of its delegate to be packed into the two value columns first - of
-     * which there are none here. A delegate with no marshaller of its own therefore has nothing
-     * that marshaller would encrypt, and is stored as two `null` columns: the value is lost without
-     * an error. One JSON envelope makes it a scalar again, and nothing about the encryption changes.
+     * which there are none here. A delegate that packs nothing therefore leaves that marshaller
+     * nothing to encrypt, and is stored as two `null` columns, or as the string `'Array'` a column
+     * holding the structure is cast to: the value is lost without an error. One JSON envelope makes
+     * it a scalar again, and nothing about the encryption changes.
+     *
+     * Whether the delegate packs is asked of its WHOLE chain, {@see Service::marshallerPacksIntoValueColumns()}.
+     * A `multiValue` delegate has a marshaller of its own and packs nothing with it - it hands the
+     * value to the marshaller of its inner type - so for `encryptedField<multiValue<geopoint>>` the
+     * registration alone answered "packed, no envelope" and the coordinates were lost.
      *
      * It is decided from the value in hand and the registered marshallers, never from the
      * delegate's declared `normalize()` return type. A type is free to declare `mixed` - which
@@ -1882,15 +1888,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return false;
         }
 
-        $delegate = $fd->getDelegate();
-
-        // a delegate with a classificationstore marshaller is packed into the two value columns by
-        // it and encrypted column by column, which is the shape such a key has always been stored in
-        return !($delegate instanceof Data
-            && $this->marshallerService->supportsFielddefinition(
-                self::MARSHALLER_FORMAT,
-                $delegate->getFieldtype()
-            ));
+        // a delegate that packs into the two value columns is encrypted column by column, which is
+        // the shape such a key has always been stored in. Asked through the whole delegate chain,
+        // {@see Service::marshallerPacksIntoValueColumns()}: a `multiValue` delegate is registered
+        // for the format and packs nothing of its own, so its registration alone answered "packed"
+        // about a wrapper that handed a structure straight back as an array-valued column
+        return !Service::marshallerPacksIntoValueColumns($fd->getDelegate(), $this->marshallerService);
     }
 
     /**
