@@ -182,7 +182,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, ['id' => $this->model->getId()]);
+            $this->updateRow(self::TABLE_NAME_COLLECTIONS, $data, (int) $this->model->getId());
 
             if ($identifierPending) {
                 $this->writeIdentifier(self::TABLE_NAME_COLLECTIONS, (int) $id, (string) $identifier);

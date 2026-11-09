@@ -95,6 +95,42 @@ trait IdentifierDaoTrait
     }
 
     /**
+     * The ordinary row write never touches the identifier column, but the unique index spans (storeId,
+     * identifier), so a move into a store that claimed the stored identifier after this request's snapshot
+     * violates it from here. Only a current read that finds the colliding row proves an identifier conflict;
+     * any other constraint failure is rethrown untouched. Both reads are current for the same reason: the
+     * write that just failed saw the row as it is now, so a snapshot that still reports the column as NULL
+     * would deny a collision the index has already refused.
+     *
+     * @throws InvalidConfigException
+     * @throws UniqueConstraintViolationException
+     */
+    private function updateRow(string $table, array $data, int $id): void
+    {
+        try {
+            $this->db->update($table, $data, ['id' => $id]);
+        } catch (UniqueConstraintViolationException $e) {
+            $stored = $this->readIdentifierForUpdate($table, $id);
+            if ($stored === null || !isset($data['storeId'])) {
+                throw $e;
+            }
+
+            $claimed = $this->db->fetchOne(
+                'SELECT `id` FROM `' . $table . '` WHERE `identifier` = ? AND `storeId` = ? AND `id` != ? FOR UPDATE',
+                [$stored, $data['storeId'], $id]
+            );
+            if ($claimed === false) {
+                throw $e;
+            }
+
+            throw new InvalidConfigException(
+                sprintf('The identifier "%s" is already in use.', $stored),
+                previous: $e
+            );
+        }
+    }
+
+    /**
      * Creation inserts a placeholder row and fills it with the following update, so a rejected identifier has
      * to take the placeholder with it instead of leaving an unreachable row behind. The instance is not
      * reusable afterwards - its id points at a row that no longer exists.
@@ -120,6 +156,10 @@ trait IdentifierDaoTrait
 
     /**
      * A row that is gone and a row whose identifier is still NULL are the same answer here: nothing to reject.
+     *
+     * The snapshot is enough for its one caller, which runs before anything has been written and whose
+     * verdict writeIdentifier() re-checks against current data; a read that has to explain a write that
+     * already failed uses readIdentifierForUpdate() instead.
      */
     private function readIdentifier(string $table, int $id): ?string
     {
@@ -130,9 +170,10 @@ trait IdentifierDaoTrait
 
     /**
      * Read as of now rather than from the transaction's snapshot: the guarded UPDATE of writeIdentifier()
-     * is a current read, so under REPEATABLE READ a plain read here could report the column as still NULL
-     * and turn a refusal into a silent success. The row is held for the rest of the transaction, which
-     * ends either way as soon as the refusal is raised.
+     * and the row write of updateRow() are both current reads, so under REPEATABLE READ a plain read here
+     * could report the column as still NULL and turn a refusal into a silent success or into a leaked
+     * driver exception. The row is held for the rest of the transaction, which ends either way as soon as
+     * the refusal is raised.
      */
     private function readIdentifierForUpdate(string $table, int $id): ?string
     {

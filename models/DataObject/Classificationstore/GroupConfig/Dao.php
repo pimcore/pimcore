@@ -193,7 +193,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_GROUPS, $data, ['id' => $this->model->getId()]);
+            $this->updateRow(self::TABLE_NAME_GROUPS, $data, (int) $this->model->getId());
 
             if ($identifierPending) {
                 $this->writeIdentifier(self::TABLE_NAME_GROUPS, (int) $id, (string) $identifier);
