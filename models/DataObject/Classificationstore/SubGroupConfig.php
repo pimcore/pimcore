@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataTrait;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
 
 /**
@@ -24,6 +25,7 @@ use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
  */
 final class SubGroupConfig extends Model\AbstractModel
 {
+    use CustomMetadataTrait;
     use IdentifierTrait;
 
     protected ?int $id = null;

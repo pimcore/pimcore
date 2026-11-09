@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\SubGroupConfig\Listing;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataDaoTrait;
 
 /**
  * @internal
@@ -24,6 +25,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use CustomMetadataDaoTrait;
+
     /**
      * Loads a list of Classificationstore sub group configs for the specified parameters, returns an array of config elements
      *
@@ -36,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $configList = [];
         foreach ($configsData as $configData) {
             $subGroupConfig = new DataObject\Classificationstore\SubGroupConfig();
-            $subGroupConfig->setValues($configData, true);
+            $subGroupConfig->setValues(static::hydrateCustomMetadata($subGroupConfig, $configData), true);
             $configList[] = $subGroupConfig;
         }
 

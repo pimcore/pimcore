@@ -13,11 +13,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataDaoTrait;
+
 /**
  * @internal
  */
 class DefinitionCache
 {
+    use CustomMetadataDaoTrait;
+
     public static array $cache = [];
 
     public static function get(int $id, string $type = 'key'): ?KeyConfig
@@ -112,7 +116,7 @@ class DefinitionCache
             $row['localized'] = isset($row['localized']) ? (bool) $row['localized'] : null;
 
             $config = new KeyConfig();
-            $config->setValues($row, true);
+            $config->setValues(self::hydrateCustomMetadata($config, $row), true);
 
             self::put($config);
         }

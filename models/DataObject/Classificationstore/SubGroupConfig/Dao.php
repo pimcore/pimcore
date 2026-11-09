@@ -19,6 +19,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig\Dao as GroupConfigDao;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao as KeyGroupRelationDao;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataDaoTrait;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
 use Pimcore\Tool\Serialize;
 
@@ -29,6 +30,7 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use CustomMetadataDaoTrait;
     use IdentifierDaoTrait;
 
     const TABLE_NAME_SUBGROUPS = 'classificationstore_subgroups';
@@ -48,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_SUBGROUPS . ' WHERE id = ?', [$this->model->getId()]);
 
         if ($data) {
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel(static::hydrateCustomMetadata($this->model, $data));
         } else {
             throw new Model\Exception\NotFoundException('SubGroupConfig with id: ' . $this->model->getId() . ' does not exist');
         }
@@ -70,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_SUBGROUPS . ' WHERE name = ? and storeId = ?', [$name, $storeId]);
 
         if ($data) {
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel(static::hydrateCustomMetadata($this->model, $data));
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Classification store sub group config with name "%s" does not exist.', $name));
         }
@@ -88,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
         );
 
         if ($data) {
-            $this->assignVariablesToModel($data);
+            $this->assignVariablesToModel(static::hydrateCustomMetadata($this->model, $data));
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Classification store sub group config with identifier "%s" does not exist.', $identifier));
         }
@@ -201,6 +203,15 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_SUBGROUPS))) {
+                    if ($key === self::COLUMN_CUSTOM_METADATA) {
+                        // JSON text, not a serialized payload; written only once loaded or explicitly set
+                        if ($this->model->isCustomMetadataInitialized()) {
+                            $data[$key] = static::encodeCustomMetadata($value);
+                        }
+
+                        continue;
+                    }
+
                     if (is_bool($value)) {
                         $value = (int) $value;
                     }

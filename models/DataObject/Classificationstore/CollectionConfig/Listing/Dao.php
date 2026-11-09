@@ -16,6 +16,7 @@ use Exception;
 use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataDaoTrait;
 
 /**
  * @internal
@@ -24,6 +25,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use CustomMetadataDaoTrait;
+
     /**
      * Loads a list of Classificationstore collection configs for the specified parameters, returns an array of config elements
      *
@@ -44,7 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         foreach ($collectionsData as $collectionData) {
             /** @var DataObject\Classificationstore\CollectionConfig $collection */
             $collection = $modelFactory->build(DataObject\Classificationstore\CollectionConfig::class);
-            $collection->getDao()->assignVariablesToModel($collectionData);
+            $collection->getDao()->assignVariablesToModel(static::hydrateCustomMetadata($collection, $collectionData));
 
             $configData[] = $collection;
         }

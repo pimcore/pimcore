@@ -23,6 +23,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
+use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataTrait;
 use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
 
 /**
@@ -30,6 +31,7 @@ use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierTrait;
  */
 final class KeyConfig extends Model\AbstractModel
 {
+    use CustomMetadataTrait;
     use IdentifierTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 
