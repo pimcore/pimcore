@@ -18,13 +18,18 @@ use Doctrine\DBAL\DriverManager;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\EncryptedField;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
+use Pimcore\Model\DataObject\Data\MultiValue as MultiValueEntry;
 use ReflectionClass;
 
 /**
@@ -62,6 +67,10 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
     private const SECRET = 'a-secret-nobody-may-read';
 
     private const OTHER_SECRET = 'another-secret-nobody-may-read';
+
+    private const LATITUDE = 48.208174;
+
+    private const LONGITUDE = 16.373819;
 
     private Classificationstore\GroupConfig $groupA;
 
@@ -655,6 +664,230 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
     }
 
     /**
+     * A key of a wrapper type reports its own field type, so the check that decides whether a value
+     * is marshalled has to look through it: a secret stored through a `multiValue` key reaches the
+     * document through the inner type's marshaller as well, rather than as normalized data.
+     */
+    public function testASecretStoredThroughAMultiValueKeyIsNotReadableInTheDocument(): void
+    {
+        [$multiValueKey, $delegate] = $this->createEncryptedMultiValueKey('doc_mv_secret');
+        $groupId = $this->groupA->getId();
+
+        $this->saveStore(function (Classificationstore $store) use ($groupId, $multiValueKey, $delegate): void {
+            $store->setKeyValues($groupId, $multiValueKey->getId(), [
+                new MultiValueEntry(new EncryptedField($delegate, self::SECRET), null, null, 0),
+                new MultiValueEntry(new EncryptedField($delegate, self::OTHER_SECRET), null, null, 1),
+            ]);
+        });
+
+        $document = (string) $this->storedDocument($groupId);
+
+        $this->assertStringNotContainsString(
+            self::SECRET,
+            $document,
+            'the cleartext of a wrapped secret must not be readable in the stored document'
+        );
+        $this->assertStringNotContainsString(self::OTHER_SECRET, $document);
+
+        $values = $this->reloadStore()->getKeyValues($groupId, $multiValueKey->getId());
+
+        $this->assertCount(2, $values);
+        $this->assertInstanceOf(EncryptedField::class, $values[0]);
+        $this->assertSame(self::SECRET, $values[0]->getPlain());
+        $this->assertSame(self::OTHER_SECRET, $values[1]->getPlain());
+    }
+
+    /**
+     * A STRUCTURED secret stored through a `multiValue` key, which is the case the test above cannot
+     * reach: it stores strings, and a string is a scalar the encryption takes as it stands.
+     *
+     * The `encryptedField` marshaller encrypts a scalar and hands anything else to the marshaller of
+     * its delegate, of which a `geopoint` has none - so such a value is wrapped in the engine's
+     * `{"_csJson":...}` envelope to make it a scalar first. That decision is about the VALUE, so it
+     * has to be put to the definition that answers for the value: asked of the `multiValue` wrapper
+     * the value sits in, it answered "not an encryptedField, no envelope", the coordinates reached
+     * the encryption as an array and were stored as two null columns - the value lost with no error.
+     */
+    public function testAStructuredSecretStoredThroughAMultiValueKeyKeepsTheEnvelopeItNeeds(): void
+    {
+        [$multiValueKey, $delegate] = $this->createEncryptedMultiValueKey('doc_mv_geo_secret', new Geopoint());
+        $groupId = $this->groupA->getId();
+
+        $this->saveStore(function (Classificationstore $store) use ($groupId, $multiValueKey, $delegate): void {
+            $store->setKeyValues($groupId, $multiValueKey->getId(), [
+                new MultiValueEntry(
+                    new EncryptedField($delegate, new GeoCoordinates(self::LATITUDE, self::LONGITUDE)),
+                    null,
+                    null,
+                    0
+                ),
+            ]);
+        });
+
+        $document = (string) $this->storedDocument($groupId);
+
+        $this->assertStringNotContainsString(
+            (string) self::LATITUDE,
+            $document,
+            'the coordinates of a wrapped secret must not be readable in the stored document'
+        );
+        $this->assertTrue(
+            $this->entryClaimsAnEnvelope($groupId, (int) $multiValueKey->getId()),
+            'the entry says that what it holds is an envelope, which is how the read knows to open it'
+        );
+
+        $values = $this->reloadStore()->getKeyValues($groupId, $multiValueKey->getId());
+
+        $this->assertCount(1, $values);
+        $this->assertInstanceOf(EncryptedField::class, $values[0]);
+
+        $plain = $values[0]->getPlain();
+
+        $this->assertInstanceOf(GeoCoordinates::class, $plain, 'the structured secret came back as a value');
+        $this->assertSame(self::LATITUDE, $plain->getLatitude());
+        $this->assertSame(self::LONGITUDE, $plain->getLongitude());
+    }
+
+    /**
+     * The INVERSE WRAPPER ORDER of the test above: an `encryptedField` whose delegate is a
+     * `multiValue` wrapping a `geopoint`. Nothing refuses it either - `multiValue` is an accepted
+     * delegate type - and the envelope decision has to come out the same way, because what reaches
+     * the encryption is just as structured.
+     *
+     * It did not. The decision asked whether the delegate has a classification store marshaller,
+     * and a `multiValue` has one: the engine concluded the coordinates would be packed into the two
+     * value columns and wrote no envelope. The `multiValue` marshaller packs nothing of its own
+     * though - it hands the value to the marshaller of its inner type, of which a `geopoint` has
+     * none - so it handed the coordinates back as an array-valued column and
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::encrypt()} cast
+     * them to the string `'Array'`. The question is now put to the whole delegate chain,
+     * {@see Classificationstore\Service::marshallerPacksIntoValueColumns()}.
+     */
+    public function testAStructuredSecretWrappedTheOtherWayAroundKeepsTheEnvelopeItNeeds(): void
+    {
+        [$encryptedKey, $innerWrapper] = $this->createMultiValueDelegatedEncryptedKey('doc_geo_secret_mv');
+        $groupId = $this->groupA->getId();
+
+        $this->saveStore(function (Classificationstore $store) use ($groupId, $encryptedKey, $innerWrapper): void {
+            $store->setLocalizedKeyValue(
+                $groupId,
+                $encryptedKey->getId(),
+                new EncryptedField($innerWrapper, new GeoCoordinates(self::LATITUDE, self::LONGITUDE))
+            );
+        });
+
+        $document = (string) $this->storedDocument($groupId);
+
+        $this->assertStringNotContainsString(
+            (string) self::LATITUDE,
+            $document,
+            'the coordinates of a wrapped secret must not be readable in the stored document'
+        );
+        $this->assertStringNotContainsString(
+            'Array',
+            $document,
+            'and must not have been cast to the string an array becomes on its way into the encryption'
+        );
+        $this->assertTrue(
+            $this->entryClaimsAnEnvelope($groupId, (int) $encryptedKey->getId()),
+            'the entry says that what it holds is an envelope, which is how the read knows to open it'
+        );
+
+        $value = $this->reloadStore()->getLocalizedKeyValue($groupId, $encryptedKey->getId());
+
+        $this->assertInstanceOf(EncryptedField::class, $value);
+
+        $plain = $value->getPlain();
+
+        $this->assertInstanceOf(GeoCoordinates::class, $plain, 'the structured secret came back as a value');
+        $this->assertSame(self::LATITUDE, $plain->getLatitude());
+        $this->assertSame(self::LONGITUDE, $plain->getLongitude());
+    }
+
+    /**
+     * A `multiValue` wrapping a `multiValue` wrapping an `encryptedField`: nothing refuses such a
+     * definition, so the boundary that answers "which definition answers for the value" has to
+     * unwrap the whole chain. Resolving one layer alone answered it with a `multiValue`, the engine
+     * concluded the value does not reach the document through a marshaller, and the SECRET WAS
+     * STORED IN CLEARTEXT.
+     */
+    public function testASecretStoredThroughNestedMultiValueWrappersIsStillEncrypted(): void
+    {
+        [$nestedKey, $delegate] = $this->createNestedEncryptedMultiValueKey('doc_nested_secret');
+        $groupId = $this->groupA->getId();
+
+        $this->saveStore(function (Classificationstore $store) use ($groupId, $nestedKey, $delegate): void {
+            $store->setKeyValues($groupId, $nestedKey->getId(), [
+                new MultiValueEntry(new EncryptedField($delegate, self::SECRET), null, null, 0),
+            ]);
+        });
+
+        $this->assertStringNotContainsString(
+            self::SECRET,
+            (string) $this->storedDocument($groupId),
+            'the cleartext of a secret behind two wrappers must not be readable in the stored document'
+        );
+
+        $values = $this->reloadStore()->getKeyValues($groupId, $nestedKey->getId());
+
+        $this->assertCount(1, $values);
+        $this->assertInstanceOf(EncryptedField::class, $values[0]);
+        $this->assertSame(self::SECRET, $values[0]->getPlain());
+    }
+
+    /**
+     * A `multiValue` key whose definition blob names NO inner type. The loader builds a delegate-less
+     * wrapper for it rather than refusing the blob, and the capability check accepts it on either
+     * engine on the strength of its normalizing the plain value unchanged - so the wrapper has to
+     * normalize it unchanged. Answering null instead stored nothing and read nothing back, losing
+     * every value of such a key with no error anywhere.
+     */
+    public function testAKeyWithNoInnerTypeStoresAndReadsBackThePlainValuesItWasGiven(): void
+    {
+        $definition = new MultiValueDefinition();
+        $definition->setMultiValue(true);
+
+        $keyConfig = $this->createKey('doc_mv_no_inner', true, $definition);
+        $this->assignKey($this->groupA, $keyConfig, 4);
+        $groupId = $this->groupA->getId();
+
+        $storedDefinition = (array) json_decode((string) $keyConfig->getDefinition(), true);
+
+        $this->assertNull(
+            $storedDefinition['delegateDatatype'] ?? null,
+            'the key is stored with no inner type, which is the definition this test is about'
+        );
+
+        $this->saveStore(function (Classificationstore $store) use ($groupId, $keyConfig): void {
+            $store->setKeyValues($groupId, $keyConfig->getId(), [
+                new MultiValueEntry('plain', null, null, 0),
+                new MultiValueEntry('another', null, null, 1),
+            ]);
+        });
+
+        $this->assertStringContainsString(
+            'plain',
+            (string) $this->storedDocument($groupId),
+            'the value reached the document rather than being normalized away to null'
+        );
+
+        $this->assertSame(
+            [0 => 'plain', 1 => 'another'],
+            $this->reloadStore()->getKeyValues($groupId, $keyConfig->getId())
+        );
+    }
+
+    /**
+     * Whether the stored entry of one key says that its value is a JSON envelope.
+     */
+    private function entryClaimsAnEnvelope(int $groupId, int $keyId): bool
+    {
+        $document = json_decode((string) $this->storedDocument($groupId), true);
+
+        return (bool) ($document['k'][$keyId][0]['j'] ?? false);
+    }
+
+    /**
      * An `encryptedField` key on group A, with the delegate a value of it has to be built against.
      *
      * @return array{Classificationstore\KeyConfig, Input}
@@ -672,6 +905,103 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
         $this->assignKey($this->groupA, $encryptedKey, 2);
 
         return [$encryptedKey, $delegate];
+    }
+
+    /**
+     * A `multiValue` key on group A whose inner type is an `encryptedField`, with the delegate of
+     * that inner type a value has to be built against.
+     *
+     * $innerDelegate is the type the encryption wraps, an `input` by default: a scalar type and a
+     * structured one take different routes into the document, so both are exercised through this
+     * one fixture.
+     *
+     * @return array{Classificationstore\KeyConfig, Data}
+     */
+    private function createEncryptedMultiValueKey(string $name, ?Data $innerDelegate = null): array
+    {
+        $delegate = $innerDelegate ?? new Input();
+        $delegate->setName($name);
+
+        $inner = new EncryptedFieldDefinition();
+        $inner->setName($name);
+        $inner->setDelegateDatatype($delegate->getFieldType());
+        $inner->setDelegate($delegate);
+
+        $definition = new MultiValueDefinition();
+        $definition->setMultiValue(true);
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        $multiValueKey = $this->createKey($name, true, $definition);
+        $this->assignKey($this->groupA, $multiValueKey, 3);
+
+        return [$multiValueKey, $delegate];
+    }
+
+    /**
+     * A `multiValue` key on group A whose inner type is another `multiValue`, which in turn wraps an
+     * `encryptedField`. Nothing refuses the nesting - `multiValue` is an accepted delegate type and
+     * the loader rebuilds the chain layer by layer - so the storage paths have to hold for it.
+     *
+     * @return array{Classificationstore\KeyConfig, Input}
+     */
+    private function createNestedEncryptedMultiValueKey(string $name): array
+    {
+        $delegate = new Input();
+        $delegate->setName($name);
+
+        $encrypted = new EncryptedFieldDefinition();
+        $encrypted->setName($name);
+        $encrypted->setDelegateDatatype('input');
+        $encrypted->setDelegate($delegate);
+
+        $innerWrapper = new MultiValueDefinition();
+        $innerWrapper->setName($name);
+        $innerWrapper->setMultiValue(true);
+        $innerWrapper->setDelegateDatatype($encrypted->getFieldType());
+        $innerWrapper->setDelegate($encrypted);
+
+        $definition = new MultiValueDefinition();
+        $definition->setMultiValue(true);
+        $definition->setDelegateDatatype($innerWrapper->getFieldType());
+        $definition->setDelegate($innerWrapper);
+
+        $nestedKey = $this->createKey($name, true, $definition);
+        $this->assignKey($this->groupA, $nestedKey, 5);
+
+        return [$nestedKey, $delegate];
+    }
+
+    /**
+     * An `encryptedField` key on group A whose delegate is a `multiValue` wrapping a `geopoint` -
+     * the wrapper order of {@see self::createEncryptedMultiValueKey()} turned around. The key's own
+     * type is `encryptedField`, so it holds one value rather than a list; the `multiValue` sits
+     * between the encryption and the coordinates purely as the inner type it is.
+     *
+     * The inner wrapper is returned, because it is the definition the stored
+     * {@see \Pimcore\Model\DataObject\Data\EncryptedField} carries.
+     *
+     * @return array{Classificationstore\KeyConfig, MultiValueDefinition}
+     */
+    private function createMultiValueDelegatedEncryptedKey(string $name): array
+    {
+        $coordinates = new Geopoint();
+        $coordinates->setName($name);
+
+        $innerWrapper = new MultiValueDefinition();
+        $innerWrapper->setName($name);
+        $innerWrapper->setMultiValue(true);
+        $innerWrapper->setDelegateDatatype($coordinates->getFieldType());
+        $innerWrapper->setDelegate($coordinates);
+
+        $definition = new EncryptedFieldDefinition();
+        $definition->setDelegateDatatype($innerWrapper->getFieldType());
+        $definition->setDelegate($innerWrapper);
+
+        $encryptedKey = $this->createKey($name, true, $definition);
+        $this->assignKey($this->groupA, $encryptedKey, 6);
+
+        return [$encryptedKey, $innerWrapper];
     }
 
     private function storeSecret(Classificationstore\KeyConfig $key, Input $delegate, string $secret): void

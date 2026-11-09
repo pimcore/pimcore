@@ -162,6 +162,14 @@ final class RelationResolver
     /**
      * Refuses a key whose value the store cannot hold, before anything is written.
      *
+     * The question is put to the definition that answers for the VALUE, which for a `multiValue` key
+     * is its inner type: both engines reach this with the key's own definition, and a wrapper is
+     * neither a relation nor a derived value whatever it wraps. Asked as it stands, a wrapped
+     * forward relation would reach EAV persistence instead of being refused and a wrapped reverse
+     * relation would be refused on neither engine. This is the one boundary both engines share, so
+     * unwrapping here is what makes the two answer alike,
+     * {@see \Pimcore\Model\DataObject\Classificationstore\Service::getValueDefinition()}.
+     *
      * @param bool $relationsSupported what the engine answers for {@see EngineFeature::Relations}
      *
      * @throws DerivedValueNotStorableException for a key whose value is computed from other elements
@@ -169,6 +177,8 @@ final class RelationResolver
      */
     public function assertStorable(?Data $fieldDefinition, int $groupId, int $keyId, bool $relationsSupported): void
     {
+        $fieldDefinition = Service::getValueDefinition($fieldDefinition);
+
         if ($fieldDefinition === null) {
             return;
         }
@@ -260,9 +270,18 @@ final class RelationResolver
      * and the other `$params['owner']` readers, and rebinding those here would change a field this
      * ticket does not touch.
      *
-     * @param array<array-key, mixed> $items group => key => language => value, as the setter was
-     *                                       given it: it takes any array, so every level is checked
-     *                                       rather than assumed
+     * The walk is depth-agnostic rather than counted: the items tree is group => key => language =>
+     * value and the qualified one group => key => language => variant => position => value, and both
+     * are handed over whole ({@see Classificationstore::setItems()},
+     * {@see Classificationstore::setVariantItems()}). A counted descent would reach the metadata
+     * items of one of them and walk past the other's, so the qualified slots of an advanced relation
+     * would be the ones whose in-place column edit is discarded.
+     *
+     * Only arrays are descended into, which stops the walk at the metadata item itself rather than
+     * walking the element graph behind it.
+     *
+     * @param array<array-key, mixed> $items the tree as the setter was given it: it takes any array,
+     *                                       so every level is checked rather than assumed
      */
     public function bindItemsToOwner(array $items, ?Classificationstore $owner): void
     {
@@ -270,28 +289,16 @@ final class RelationResolver
             return;
         }
 
-        foreach ($items as $keys) {
-            if (!is_array($keys)) {
+        foreach ($items as $member) {
+            if ($member instanceof ElementMetadata || $member instanceof ObjectMetadata) {
+                $member->_setOwner($owner);
+                $member->_setOwnerFieldname('_self');
+
                 continue;
             }
 
-            foreach ($keys as $languages) {
-                if (!is_array($languages)) {
-                    continue;
-                }
-
-                foreach ($languages as $value) {
-                    if (!is_array($value)) {
-                        continue;
-                    }
-
-                    foreach ($value as $item) {
-                        if ($item instanceof ElementMetadata || $item instanceof ObjectMetadata) {
-                            $item->_setOwner($owner);
-                            $item->_setOwnerFieldname('_self');
-                        }
-                    }
-                }
+            if (is_array($member)) {
+                $this->bindItemsToOwner($member, $owner);
             }
         }
     }

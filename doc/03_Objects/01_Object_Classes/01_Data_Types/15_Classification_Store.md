@@ -221,6 +221,77 @@ $allValues = $store->getItems();
    
 ```
 
+### Keys holding several values
+
+A key of type `multiValue` wraps an inner type and declares which qualifiers it permits: the
+*variants* a value may be written under — `metric` and `imperial`, say — and whether the key holds
+an ordered *list* of values per slot, optionally with a maximum. A slot is one (language, variant)
+pair, and it holds the values of the inner type.
+
+```php
+use Pimcore\Model\DataObject\Data\MultiValue;
+
+$store = $object->getClassificationStore2();
+
+// write two variants of one key at once; an entry with no language is the default language
+$store->setKeyValues(1, 2, [
+    new MultiValue('1.80 m', null, 'metric'),
+    new MultiValue('5 ft 11 in', null, 'imperial'),
+]);
+
+// writing one variant leaves the other as it is
+$store->setKeyValues(1, 2, [new MultiValue('6 ft 0 in', null, 'imperial')]);
+
+// an ordered list for one slot - the positions are where the values go
+$store->setKeyValues(1, 3, [
+    new MultiValue('red', null, null, 0),
+    new MultiValue('blue', null, null, 1),
+]);
+
+// read one slot's list - keyed by the position of each value - or one value of it;
+// a position the list does not hold is null
+$values = $store->getKeyValues(1, 3);            // [0 => 'red', 1 => 'blue']
+$value  = $store->getKeyValue(1, 3, null, null, 1);  // 'blue'
+```
+
+A `null` language means the default language and a `null` variant the default variant, which every
+key is addressable under whatever it declares — the declared variants are additional slots beside
+it. `getLocalizedKeyValue()` and `Key::getValue()` are unchanged: they answer position 0 of the
+default variant, so a key that declares no qualifier behaves exactly as it always has, on every
+path.
+
+`getKeyValues()` and `getKeyValue()` address one slot exactly and apply **no language fallback**:
+they answer what that slot holds, which is what a save stores for it. `getLocalizedKeyValue()` is
+the resolving reader — it falls back through the fallback languages, then to the language-independent
+`default`, and takes an inherited value — so it is still the one to call for a resolved value, and
+replacing a call to it with `getKeyValue()` changes what a key answers for a language it holds no
+value of.
+
+An entry carrying no value — `null` or the empty string — clears the position it addresses instead
+of storing an empty value there, and that is the rule in every slot alike, the default one included.
+A slot the write does not mention keeps what it holds, so clearing one variant is a write of that
+variant with no value.
+
+Two entries of one write whose qualifiers resolve to the same (language, variant, position) are
+refused, as is a variant the key does not declare and a position above 0 on a key that declares no
+list; nothing is stored in that case. A list longer than the declared maximum is not refused on
+write but reported by the field's validation when the object is saved, beside the other per-key
+failures.
+
+Narrowing a declaration hides values rather than deleting them. Removing a variant from a key, or
+clearing its list, makes those values unreadable while an ordinary save keeps them stored — so
+widening the declaration again brings them back.
+
+> **Holding several values is a capability of the storage engine.** The `document` engine supports
+> both variants and lists, because a value there carries its qualifiers as part of its own stored
+> entry. The default `eav` engine supports neither: the primary key of its value table has room for
+> the language and for nothing else, so a write or a read it cannot address raises
+> `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException` rather than truncating the
+> list or writing a variant into the slot of another. An unqualified value works on both engines.
+> A store that is not attached to an object yet cannot resolve its engine, so a write to one is
+> accepted and the same exception is raised when it is saved — the save fails rather than storing
+> part of the value.
+
 ### Retrieving group and key data
 
 The `ClassificationStore::getGroups()` method returns an array of `Group` objects. In turn, the `Group::getKeys()` method returns an array of `Key` objects for that group.

@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\Dao as ClassDefinitionDaoHelper;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\DanglingRelation;
@@ -56,6 +57,13 @@ use Throwable;
  * can compare the serialized document against the stored one and write only the groups that differ.
  * A changed value does rewrite its own group's document, which is what one document per group means;
  * the documents of the other groups are not touched.
+ *
+ * A value carries the qualifiers that place it - its language, its variant and its position in the
+ * list of its slot - as members of its own entry, which is why this engine offers
+ * {@see EngineFeature::MultiValue} and {@see EngineFeature::Variants} where the EAV value table,
+ * whose primary key has room for the language alone, does not. An absent qualifier means the
+ * default, so a document written before they existed reads back unchanged and the envelope version
+ * does not move.
  *
  * Values are stored as what {@see NormalizerInterface::normalize()} returns, with one named
  * exception: the `encryptedField` marshaller does not pack a value into two columns, it encrypts it,
@@ -120,6 +128,19 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      */
     private const LANGUAGE_QUALIFIER = 'l';
 
+    /**
+     * The variant a value belongs to. Absent for the default variant, which is the one every value
+     * of a key declaring no variant carries - so a document written before variants existed reads
+     * back unchanged, and a key that declares none still serializes to the string it used to.
+     */
+    private const VARIANT_QUALIFIER = 'var';
+
+    /**
+     * The place a value takes in the list of its slot. Absent for position 0, under the same rule
+     * as {@see self::VARIANT_QUALIFIER}.
+     */
+    private const POSITION_QUALIFIER = 'p';
+
     private const VALUE_QUALIFIER = 'd';
 
     /**
@@ -130,6 +151,8 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     private const EMPTY_DOCUMENT = '{}';
 
     private const DEFAULT_LANGUAGE = 'default';
+
+    private const DEFAULT_VARIANT = 'default';
 
     /**
      * The one field type whose classificationstore marshaller is applied before the value reaches
@@ -229,13 +252,17 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     /**
      * The collection and the items of every active group, which is what a document is written from.
      *
+     * The items are the qualified ones, {@see Classificationstore::getQualifiedItems()}: the
+     * documented `[groupId][keyId][language]` shape carries position 0 of the default variant at
+     * its leaf, so a save built from it would drop every other slot of a key.
+     *
      * @return array<int, array<string, mixed>> groupId => the collection and items of a group
      *
      * @throws Exception
      */
     private function collectGroups(Classificationstore $classificationStore): array
     {
-        $items = $classificationStore->getItems();
+        $items = $classificationStore->getQualifiedItems();
         $activeGroups = $classificationStore->getActiveGroups();
         $collectionMapping = $this->getCollectionMappingToStore($classificationStore);
 
@@ -780,21 +807,26 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * A document holds whatever {@see NormalizerInterface::normalize()} returns, so a structured
-     * value needs no marshaller here and no column to be packed into, and a relation's element
-     * descriptors need no row of their own and no addressing the two value columns of the EAV
-     * engine cannot give them. StructuredValues and Relations are the two capabilities this engine
-     * offers that the EAV engine does not; PerKeyLocalization is answered by both engines, as it is
-     * a property of the key configuration rather than of the storage. The remaining two features
-     * are still nobody's.
+     * The document holds a value under the qualifiers that place it, so several values of one key
+     * and several variants of one value are a matter of members in the entry rather than of rows
+     * the primary key of a table has no room for. A structured value and a relation are the same
+     * story told again: a document holds whatever {@see NormalizerInterface::normalize()} returns,
+     * so a structured value needs no column to be packed into and a relation's element descriptors
+     * need no row of their own.
+     *
+     * PerKeyLocalization is answered the same way the EAV engine answers it, as it is a property of
+     * the key configuration rather than of the storage. This engine therefore offers every feature
+     * there is, and the EAV engine only that one.
      */
     public function supports(EngineFeature $feature): bool
     {
-        return in_array(
-            $feature,
-            [EngineFeature::StructuredValues, EngineFeature::Relations, EngineFeature::PerKeyLocalization],
-            true
-        );
+        return in_array($feature, [
+            EngineFeature::MultiValue,
+            EngineFeature::Variants,
+            EngineFeature::StructuredValues,
+            EngineFeature::Relations,
+            EngineFeature::PerKeyLocalization,
+        ], true);
     }
 
     /**
@@ -957,18 +989,21 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * The document of one group, in the one shape its items can produce.
      *
      * The keys are written in the order of their id and the values of a key in the order of their
-     * language, so that the same items always serialize to the same string - which is what lets the
-     * save compare documents instead of rewriting them.
+     * language, then of their variant, then of their position, so that the same items always
+     * serialize to the same string - which is what lets the save compare documents instead of
+     * rewriting them. A value of the default variant at position 0 carries neither qualifier, so a
+     * key that declares none serializes to exactly the string it did before they existed.
      *
      * Two spellings of one language that differ only in case are one and the same value, as they are
      * under the primary key of the EAV value table: the last of them is kept, with its own spelling.
      *
      * A value that encodes through a randomized marshaller is compared against what the stored
-     * document holds for that key and language, so that it serializes to the string it already had
-     * when it is still the same value. The stored document is read back only for a key of that kind,
-     * as an ordinary value encodes to the same string whatever is stored.
+     * document holds for that key, language, variant and position, so that it serializes to the
+     * string it already had when it is still the same value. The stored document is read back only
+     * for a key of that kind, as an ordinary value encodes to the same string whatever is stored.
      *
-     * @param array<int, array<string, mixed>> $keys structure: [keyId][language] = value
+     * @param array<int, array<string, array<string, array<int, mixed>>>> $keys
+     *        structure: [keyId][language][variant][position] = value
      *
      * @throws Exception
      */
@@ -985,7 +1020,6 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                 (int) $keyId,
                 $this->supports(EngineFeature::Relations)
             );
-            $entries = [];
             $storedEntries = [];
 
             if ($fd instanceof Data && $this->encodesThroughItsMarshaller($fd)) {
@@ -993,14 +1027,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                 $storedEntries = $storedKeys[(int) $keyId] ?? [];
             }
 
-            foreach ($keyData as $language => $value) {
-                $languageAlias = $this->getLanguageAlias((string) $language);
-
-                $entries[$languageAlias] = $this->buildEntry(
-                    (string) $language,
-                    $this->encodeValue($fd, $value, $object, $this->getStoredEntry($storedEntries, $languageAlias))
-                );
-            }
+            $entries = $this->buildEntries($fd, $object, $keyData, $storedEntries);
 
             // a key that carries no value at all is not a member of the document, so that it
             // serializes to the same string as items that never mentioned the key
@@ -1008,8 +1035,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                 continue;
             }
 
-            ksort($entries);
-            $document[(int) $keyId] = array_values($entries);
+            $document[(int) $keyId] = $entries;
         }
 
         return $this->encodeDocument($document);
@@ -1448,11 +1474,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                 $language = (string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE);
                 $languageAlias = $this->getLanguageAlias($language);
 
-                $classificationStore->setLocalizedKeyValue(
+                // the relation-aware read, written to the slot the qualifiers address
+                $classificationStore->setQualifiedKeyValue(
                     $groupId,
                     (int) $keyId,
                     $this->readStoredValue($fd, $entry, $object, $metadata[(int) $keyId][$languageAlias] ?? []),
-                    $language
+                    $language,
+                    (string) ($entry[self::VARIANT_QUALIFIER] ?? self::DEFAULT_VARIANT),
+                    (int) ($entry[self::POSITION_QUALIFIER] ?? 0)
                 );
             }
         }
@@ -1539,6 +1568,63 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
+     * The entries of one key, in the canonical order of their qualifiers.
+     *
+     * @param array<string, array<string, array<int, mixed>>> $keyData
+     *        structure: [language][variant][position] = value
+     * @param array<array<string, mixed>> $storedEntries
+     *
+     * @return array<array<string, mixed>>
+     *
+     * @throws Exception
+     */
+    private function buildEntries(?Data $fd, ?Concrete $object, array $keyData, array $storedEntries): array
+    {
+        $byLanguage = [];
+
+        foreach ($keyData as $language => $variants) {
+            // two spellings of one language are one and the same value; the last of them wins,
+            // which is the rule the EAV primary key applies as well
+            $byLanguage[$this->getLanguageAlias((string) $language)] = [(string) $language, $variants];
+        }
+
+        ksort($byLanguage);
+
+        $storedBySlot = $this->indexEntriesBySlot($storedEntries);
+        $entries = [];
+
+        // keyed by the alias already, so the language is normalized once per language rather than
+        // once per value
+        foreach ($byLanguage as $languageAlias => [$language, $variants]) {
+            ksort($variants);
+
+            foreach ($variants as $variant => $values) {
+                ksort($values);
+
+                foreach ($values as $position => $value) {
+                    $entries[] = $this->buildEntry(
+                        $language,
+                        (string) $variant,
+                        (int) $position,
+                        $this->encodeValue(
+                            $fd,
+                            $value,
+                            $object,
+                            $storedBySlot[$this->slotKey(
+                                (string) $languageAlias,
+                                (string) $variant,
+                                (int) $position
+                            )] ?? null
+                        )
+                    );
+                }
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
      * The members are written in one order whatever the entry holds, so that the same value always
      * serializes to the same string - which is what lets the save compare documents instead of
      * rewriting them.
@@ -1547,12 +1633,20 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * @return array<string, mixed>
      */
-    private function buildEntry(string $language, array $encoded): array
+    private function buildEntry(string $language, string $variant, int $position, array $encoded): array
     {
         $entry = [];
 
         if ($language !== self::DEFAULT_LANGUAGE) {
             $entry[self::LANGUAGE_QUALIFIER] = $language;
+        }
+
+        if ($variant !== self::DEFAULT_VARIANT) {
+            $entry[self::VARIANT_QUALIFIER] = $variant;
+        }
+
+        if ($position !== 0) {
+            $entry[self::POSITION_QUALIFIER] = $position;
         }
 
         $entry[self::VALUE_QUALIFIER] = $encoded['value'];
@@ -1562,6 +1656,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         if ($encoded['enveloped']) {
             $entry[self::ENVELOPE_QUALIFIER] = true;
         }
+
 
         return $entry;
     }
@@ -1604,7 +1699,13 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return ['value' => $normalizedData, 'enveloped' => false];
         }
 
-        $enveloped = $this->needsAJsonEnvelope($fd, $normalizedData);
+        // the definition that answers for the VALUE, which is what every decision about the stored
+        // form is put to - the envelope included: a wrapped `encryptedField` asked as the wrapper it
+        // sits in is not one, so a structured value reached the encryption unenveloped and was
+        // stored as two null columns
+        $marshalledFd = $this->getMarshalledDefinition($fd);
+
+        $enveloped = $this->needsAJsonEnvelope($marshalledFd, $normalizedData);
 
         if ($enveloped) {
             // throwing, so that a value JSON cannot carry is not encrypted as the `false` of a
@@ -1613,8 +1714,8 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         }
 
         $marshaller = $this->marshallerService
-            ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype());
-        $parameters = $this->getMarshallerParameters($fd, $object);
+            ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $marshalledFd->getFieldtype());
+        $parameters = $this->getMarshallerParameters($marshalledFd, $object);
         $encodedValue = $marshaller->marshal($normalizedData, $parameters);
 
         $storedValue = $storedEntry[self::VALUE_QUALIFIER] ?? null;
@@ -1676,25 +1777,51 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
-     * The entry the stored entries of one key hold for one language, or null when they do not carry
-     * that language. The whole entry rather than its value: whether the value is an envelope is a
-     * qualifier of the entry, and is compared with it.
+     * The stored entries of one key by the slot each one holds, so that the save looks a slot up
+     * once instead of scanning every entry of the key for it.
+     *
+     * The whole entry is kept rather than its value: whether the value is an envelope is a qualifier
+     * OF the entry and {@see self::encodeValue()} compares it along with the value. An absent
+     * qualifier is the default, which is how an entry written before the qualifiers existed is
+     * addressed.
+     *
+     * The FIRST entry of a slot wins, which is the entry the scan this replaces returned. A document
+     * this engine wrote carries one entry per slot, so the case only arises for one edited by hand.
+     *
+     * Built once per key because the lookup it serves is per VALUE, and a key may now hold an
+     * unbounded list: a scan made the work of writing one key quadratic in the number of values it
+     * holds - about 50 million entry comparisons for 10,000 existing positions, each one normalizing
+     * a language again.
      *
      * @param array<array<string, mixed>> $entries
      *
-     * @return array<string, mixed>|null
+     * @return array<string, array<string, mixed>>
      */
-    private function getStoredEntry(array $entries, string $languageAlias): ?array
+    private function indexEntriesBySlot(array $entries): array
     {
-        foreach ($entries as $entry) {
-            $language = (string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE);
+        $bySlot = [];
 
-            if ($this->getLanguageAlias($language) === $languageAlias) {
-                return $entry;
-            }
+        foreach ($entries as $entry) {
+            $key = $this->slotKey(
+                $this->getLanguageAlias((string) ($entry[self::LANGUAGE_QUALIFIER] ?? self::DEFAULT_LANGUAGE)),
+                (string) ($entry[self::VARIANT_QUALIFIER] ?? self::DEFAULT_VARIANT),
+                (int) ($entry[self::POSITION_QUALIFIER] ?? 0)
+            );
+
+            $bySlot[$key] ??= $entry;
         }
 
-        return null;
+        return $bySlot;
+    }
+
+    /**
+     * One slot of one key as a single array key: the language as the document addresses it, the
+     * variant and the position. Separated by NUL, which neither a language code nor a variant name
+     * carries, so that no two slots can collide in one key.
+     */
+    private function slotKey(string $languageAlias, string $variant, int $position): string
+    {
+        return $languageAlias . "\0" . $variant . "\0" . $position;
     }
 
     /**
@@ -1707,9 +1834,10 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         }
 
         if ($this->encodesThroughItsMarshaller($fd)) {
+            $marshalledFd = $this->getMarshalledDefinition($fd);
             $value = $this->marshallerService
-                ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $fd->getFieldtype())
-                ->unmarshal($value, $this->getMarshallerParameters($fd, $object));
+                ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $marshalledFd->getFieldtype())
+                ->unmarshal($value, $this->getMarshallerParameters($marshalledFd, $object));
 
             if ($enveloped) {
                 $value = $this->openAJsonEnvelope($value);
@@ -1727,10 +1855,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * document does not have and does not need. `encryptedField` is the exception that matters: its
      * marshaller encrypts with Defuse Crypto, so storing the normalized value instead would write
      * the secret into the document in cleartext.
+     *
+     * A key of a wrapper type is asked of its inner type, {@see self::getMarshalledDefinition()}:
+     * the wrapper reports its own field type, so a secret wrapped in one would be answered "no"
+     * here and written in cleartext.
      */
     private function encodesThroughItsMarshaller(Data $fd): bool
     {
-        return $fd->getFieldtype() === self::ENCRYPTED_FIELD_TYPE
+        return $this->getMarshalledDefinition($fd)->getFieldtype() === self::ENCRYPTED_FIELD_TYPE
             && $this->marshallerService->supportsFielddefinition(self::MARSHALLER_FORMAT, self::ENCRYPTED_FIELD_TYPE);
     }
 
@@ -1740,9 +1872,15 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      *
      * The classificationstore `encryptedField` marshaller encrypts a scalar, and hands anything
      * else to the marshaller of its delegate to be packed into the two value columns first - of
-     * which there are none here. A delegate with no marshaller of its own therefore has nothing
-     * that marshaller would encrypt, and is stored as two `null` columns: the value is lost without
-     * an error. One JSON envelope makes it a scalar again, and nothing about the encryption changes.
+     * which there are none here. A delegate that packs nothing therefore leaves that marshaller
+     * nothing to encrypt, and is stored as two `null` columns, or as the string `'Array'` a column
+     * holding the structure is cast to: the value is lost without an error. One JSON envelope makes
+     * it a scalar again, and nothing about the encryption changes.
+     *
+     * Whether the delegate packs is asked of its WHOLE chain, {@see Service::marshallerPacksIntoValueColumns()}.
+     * A `multiValue` delegate has a marshaller of its own and packs nothing with it - it hands the
+     * value to the marshaller of its inner type - so for `encryptedField<multiValue<geopoint>>` the
+     * registration alone answered "packed, no envelope" and the coordinates were lost.
      *
      * It is decided from the value in hand and the registered marshallers, never from the
      * delegate's declared `normalize()` return type. A type is free to declare `mixed` - which
@@ -1751,6 +1889,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * and return a structure for some of its values. Reading the declaration here would send
      * exactly those values into the marshaller's array branch and lose them, which is what asking
      * the payload cannot do.
+     *
+     * $fd is the definition that answers for the VALUE and not the key's own: the caller resolves it
+     * through {@see self::getMarshalledDefinition()}, the same boundary
+     * {@see self::encodesThroughItsMarshaller()} is answered from, so that the two cannot disagree
+     * about one value. Handed a `multiValue` wrapping an `encryptedField` this answers "no envelope"
+     * about a value that is about to be encrypted, and a structured one is lost.
      */
     private function needsAJsonEnvelope(?Data $fd, mixed $normalizedData): bool
     {
@@ -1758,15 +1902,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return false;
         }
 
-        $delegate = $fd->getDelegate();
-
-        // a delegate with a classificationstore marshaller is packed into the two value columns by
-        // it and encrypted column by column, which is the shape such a key has always been stored in
-        return !($delegate instanceof Data
-            && $this->marshallerService->supportsFielddefinition(
-                self::MARSHALLER_FORMAT,
-                $delegate->getFieldtype()
-            ));
+        // a delegate that packs into the two value columns is encrypted column by column, which is
+        // the shape such a key has always been stored in. Asked through the whole delegate chain,
+        // {@see Service::marshallerPacksIntoValueColumns()}: a `multiValue` delegate is registered
+        // for the format and packs nothing of its own, so its registration alone answered "packed"
+        // about a wrapper that handed a structure straight back as an array-valued column
+        return !Service::marshallerPacksIntoValueColumns($fd->getDelegate(), $this->marshallerService);
     }
 
     /**
@@ -1789,6 +1930,20 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         }
 
         return $value;
+    }
+
+    /**
+     * The definition whose marshaller a value reaches the document through: the inner type's for a
+     * key of a wrapper type, as what is stored is the inner value and the marshaller of the inner
+     * type is what the parameters of such a call have to name.
+     *
+     * Resolved through {@see Service::getValueDefinition()}, the one boundary that answers which
+     * definition answers for a value, so that this engine, the EAV engine and the store itself
+     * cannot come apart about it.
+     */
+    private function getMarshalledDefinition(Data $fd): Data
+    {
+        return Service::getValueDefinition($fd) ?? $fd;
     }
 
     /**
@@ -2046,8 +2201,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
         foreach ($groups as $groupId => $group) {
             foreach ($group['keys'] as $keyId => $keyData) {
-                foreach ($keyData as $language => $value) {
-                    if (!$value instanceof RelationDescriptor) {
+                foreach ($keyData as $language => $slots) {
+                    // the same leaf collectMetadataRows() reads, so the two agree on what a
+                    // coordinate is - one of them walking the qualified shape and the other the
+                    // value would make them disagree about which rows a save keeps
+                    if (!(($slots[self::DEFAULT_VARIANT][0] ?? null) instanceof RelationDescriptor)) {
                         continue;
                     }
 
@@ -2188,7 +2346,17 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
                     continue;
                 }
 
-                foreach ($keyData as $language => $value) {
+                foreach ($keyData as $language => $slots) {
+                    // the column values belong to the relation itself, and a relation is held in
+                    // the slot a key declaring no qualifier has: the default variant at position 0.
+                    // The leaf is the qualified shape since #1716, so reading $keyData[$language]
+                    // directly would hand normalize() the variant map instead of the value
+                    if (!array_key_exists(0, $slots[self::DEFAULT_VARIANT] ?? [])) {
+                        continue;
+                    }
+
+                    $value = $slots[self::DEFAULT_VARIANT][0];
+
                     if ($value instanceof RelationDescriptor) {
                         continue;
                     }
@@ -2498,7 +2666,7 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * The key ids held by the items of an active group, which is the set the save resolves a key
      * config for.
      *
-     * @param array $items structure: [groupId][keyId][language] = value
+     * @param array $items structure: [groupId][keyId][language][variant][position] = value
      * @param array<int, bool> $activeGroups
      *
      * @return int[]

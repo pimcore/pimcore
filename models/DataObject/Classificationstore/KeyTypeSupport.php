@@ -46,6 +46,20 @@ final class KeyTypeSupport
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
 
     /**
+     * The types whose value is the value of another type: a wrapper declares how the value is stored
+     * ({@see self::ENCRYPTED_FIELD_TYPE}) or which qualifiers it may carry (`multiValue`), and the
+     * value itself is the inner type's. So what a wrapper can be held in is what its delegate can be
+     * held in, and the marshaller of either wrapper packs what the delegate's marshaller packed.
+     *
+     * Both of them, because each one carries its inner type as `delegateDatatype` and each one would
+     * otherwise be answered on the strength of having a marshaller of its own - which is to say on
+     * the strength of forwarding to the delegate that is not being asked.
+     *
+     * @var string[]
+     */
+    private const WRAPPER_TYPES = [self::ENCRYPTED_FIELD_TYPE, 'multiValue'];
+
+    /**
      * The field types a classification store key is never defined with because of what their value
      * is, and the reason each one is out. They are names rather than a derived property on purpose:
      * every property that would make this list look self-deriving takes types with it that belong
@@ -130,12 +144,13 @@ final class KeyTypeSupport
     }
 
     /**
-     * Whether the `delegateDatatype` of an `encryptedField` key is a field type a key may be
-     * defined with - which is a different question from what the engine behind the store can hold
-     * of it, {@see self::isHeldInValueColumns()}, and is asked before it.
+     * Whether the `delegateDatatype` of a wrapper key - an `encryptedField` or a `multiValue` - is a
+     * field type a key may be defined with, which is a different question from what the engine
+     * behind the store can hold of it, {@see self::isHeldInValueColumns()}, and is asked before it.
      *
-     * Encryption decides how a value is stored and not what the value is, so an exclusion that is
-     * about the value holds through the wrapper exactly as it holds on its own. `urlSlug` is the
+     * Neither wrapper decides what the value IS: encryption decides how it is stored and the
+     * qualifiers decide how many of them there are and how they are addressed. So an exclusion that
+     * is about the value holds through either wrapper exactly as it holds on its own. `urlSlug` is the
      * case that shows why the two questions cannot be one: its value needs a row of the route table
      * keyed by (object, fieldname), a store whose engine holds structured values can hold the
      * slug and the site id perfectly well, and holding them registers no route - so the capability
@@ -160,9 +175,10 @@ final class KeyTypeSupport
      * packed into the two columns by it. `table` and `multiselect` declare `mixed` and return an
      * array, and are held by their marshaller; `geopoint` declares `?array` and has none.
      *
-     * $delegateType is the `delegateDatatype` of an `encryptedField` key and is ignored for every
-     * other type. `null` on an `encryptedField` means no delegate was configured, which normalizes
-     * the plain value unchanged and is therefore held exactly when a scalar is.
+     * $delegateType is the `delegateDatatype` of a wrapper key - an `encryptedField` or a
+     * `multiValue` - and is ignored for every other type. `null` on a wrapper means no delegate was
+     * configured, which normalizes the plain value unchanged and is therefore held exactly when a
+     * scalar is.
      *
      * The declared return type is a declaration, not a measurement: a type could declare `mixed`
      * and return a structure. {@see Engine\EavEngine} re-checks the value it is about to write, so
@@ -170,7 +186,7 @@ final class KeyTypeSupport
      */
     public function isHeldInValueColumns(string $type, ?string $delegateType = null): bool
     {
-        if ($type === self::ENCRYPTED_FIELD_TYPE) {
+        if (in_array($type, self::WRAPPER_TYPES, true)) {
             return $delegateType === null || $this->isHeldInValueColumns($delegateType);
         }
 

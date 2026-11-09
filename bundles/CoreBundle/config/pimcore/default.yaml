@@ -283,6 +283,7 @@ pimcore:
                     manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
+                    multiValue: \Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric

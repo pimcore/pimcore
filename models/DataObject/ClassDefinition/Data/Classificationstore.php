@@ -33,6 +33,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     use DataObject\Traits\DataWidthTrait;
 
     /**
+     * The variant a value with no variant qualifier of its own belongs to, which every key holds
+     * whatever it declares. {@see DataObject\Classificationstore::getKeyValues()}
+     */
+    private const DEFAULT_VARIANT = 'default';
+
+    /**
      * @internal
      *
      */
@@ -500,12 +506,35 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return 'not supported';
     }
 
+    /**
+     * Every stored value of an active group as one searchable string, the qualified slots included.
+     *
+     * The same walk the dependency rows and the cache tags are built from,
+     * {@see self::collectStoredValues()}: a named variant and a position above zero are values this
+     * object holds, and a walk over the items alone left them out of the index - the one place a
+     * classification store value is filterable from at all, as its values never reach
+     * `object_query_<CLASS>`.
+     *
+     * The definition asked for the stored form is the one that answers for the VALUE, which for a
+     * `multiValue` key is its inner type: the wrapper deliberately implements no persistence
+     * interface, so a key defined with it contributed nothing here - not even its first value.
+     *
+     * The slots are measured against the key's own DECLARATION first, the way
+     * {@see DataObject\Classificationstore::getKeyValues()} measures a read: narrowing a declaration
+     * hides the values it stops showing rather than deleting them, so a variant that has been
+     * removed - or the positions of a list that has been switched off - is still stored and still
+     * traversed for dependencies and cache tags, and must not be the one place it stays FINDABLE.
+     * The index is the only surface a classification store value is filterable from at all, so a
+     * value hidden everywhere else and left here answers a search with something the object does not
+     * show. Narrowing is a declaration change alone and writes nothing, so this is read off the
+     * declaration in force at indexing time rather than from a stored marker of any kind.
+     */
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
         $getter = 'get' . ucfirst($this->getName());
         $classificationStore = $object->$getter();
-        $items = $classificationStore->getItems();
+        $items = $classificationStore->getQualifiedItems();
         $activeGroups = $classificationStore->getActiveGroups();
         $params['owner'] = $classificationStore;
 
@@ -514,17 +543,36 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 if (!isset($activeGroups[$groupId])) {
                     continue;
                 }
-                foreach ($keys as $keyId => $values) {
+                foreach ($keys as $keyId => $languages) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                    $keyDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
+                        $keyConfig
+                    );
+                    $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition($keyDefinition);
 
-                    if ($fieldDefinition instanceof ResourcePersistenceAwareInterface) {
-                        foreach ($values as $value) {
-                            $value = $fieldDefinition->getDataForResource($value, $object, $params);
-                            if (is_array($value)) {
-                                $value = implode(',', $value);
+                    if ($keyDefinition === null || !$fieldDefinition instanceof ResourcePersistenceAwareInterface) {
+                        continue;
+                    }
+
+                    $holdsAList = $keyDefinition instanceof MultiValue && $keyDefinition->isMultiValue();
+
+                    foreach ($languages as $variants) {
+                        foreach ($variants as $variant => $values) {
+                            if (!$this->declaresVariant($keyDefinition, (string) $variant)) {
+                                continue;
                             }
-                            $dataString .= $value . ' ';
+
+                            foreach ($values as $position => $value) {
+                                if ((int) $position !== 0 && !$holdsAList) {
+                                    continue;
+                                }
+
+                                $value = $fieldDefinition->getDataForResource($value, $object, $params);
+                                if (is_array($value)) {
+                                    $value = implode(',', $value);
+                                }
+                                $dataString .= $value . ' ';
+                            }
                         }
                     }
                 }
@@ -649,31 +697,49 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * Returns a [field definition, value] pair for every stored value of an active group
+     * Returns a [field definition, value] pair for every stored value of an active group.
+     *
+     * EVERY stored value: the qualified tree is what the store holds, so a named variant and a
+     * position above zero are walked here beside the one value the items carry. Read off
+     * {@see DataObject\Classificationstore::getQualifiedItems()}, which answers position 0 of the
+     * default variant from the items themselves, so the value that was walked before is the same
+     * value now - with the slots that were invisible to this walk added. Left as it was, the targets
+     * of a relation held in a variant carried no dependency row and no cache tag.
+     *
+     * The definition paired with a value is the one that answers for the VALUE, which for a
+     * `multiValue` key is its inner type: the wrapper names neither the elements a value refers to
+     * nor its cache tags, and a wrapped relation would answer with the base class's empty list,
+     * {@see DataObject\Classificationstore\Service::getValueDefinition()}.
      */
     private function collectStoredValues(DataObject\Classificationstore $data): array
     {
         $storedValues = [];
         $activeGroups = $data->getActiveGroups();
 
-        foreach ($data->getItems() as $groupId => $keys) {
+        foreach ($data->getQualifiedItems() as $groupId => $keys) {
             if (!isset($activeGroups[$groupId])) {
                 continue;
             }
 
-            foreach ($keys as $keyId => $values) {
+            foreach ($keys as $keyId => $languages) {
                 $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                 if ($keyConfig === null) {
                     continue;
                 }
 
-                $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition(
+                    DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+                );
                 if ($fieldDefinition === null) {
                     continue;
                 }
 
-                foreach ($values as $value) {
-                    $storedValues[] = [$fieldDefinition, $value];
+                foreach ($languages as $variants) {
+                    foreach ($variants as $values) {
+                        foreach ($values as $value) {
+                            $storedValues[] = [$fieldDefinition, $value];
+                        }
+                    }
                 }
             }
         }
@@ -681,10 +747,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $storedValues;
     }
 
+    /**
+     * A store holding only qualified slots is not empty: a key whose value sits in a named variant,
+     * or at a position above zero, is a value the field holds. Asked of the items alone, such a
+     * field answered "empty" - which is what a mandatory check on the field reads.
+     */
     public function isEmpty(mixed $data): bool
     {
         if ($data instanceof DataObject\Classificationstore) {
-            return empty($data->getItems());
+            return empty($data->getItems()) && empty($data->getVariantItems());
         }
 
         return is_null($data);
@@ -913,6 +984,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relationCache = $this->getKeyGroupRelationCache();
             $existingGroupIds = $this->getExistingGroupIds(array_keys($activeGroups, true, true));
             $relationCache->load($existingGroupIds);
+            $qualifiedItems = $this->collectQualifiedItemsForValidation($data);
 
             foreach ($existingGroupIds as $activeGroupId) {
                 foreach ($relationCache->getRelations($activeGroupId) as $keyId => $keyGroupRelation) {
@@ -920,6 +992,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     if ($keyGroupRelation->isMandatory()) {
                         $keyDef->setMandatory(true);
+                    }
+
+                    foreach (
+                        $this->collectMaximumViolations(
+                            $keyDef,
+                            $qualifiedItems[$activeGroupId][$keyId] ?? [],
+                            $this->getValidLanguages($keyId)
+                        ) as $violation
+                    ) {
+                        $subItems[] = $violation;
                     }
 
                     // only a relation-typed key is selected without being resolved; every other key
@@ -976,14 +1058,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $value = $resolver->resolve($keyDef, $value->getValue(), $object, $data)->getData();
                         }
 
-                        try {
-                            $keyDef->checkValidity($value, false, $params);
-                        } catch (Exception $exception) {
-                            $subItems[] = new Model\Element\ValidationException(
-                                $exception->getMessage() . ' (' . $validLanguage . ')',
-                                $exception->getCode(),
-                                $exception->getPrevious()
-                            );
+                        foreach (
+                            $this->collectKeyViolations(
+                                $keyDef,
+                                $value,
+                                (string) $validLanguage,
+                                $qualifiedItems[$activeGroupId][$keyId][$validLanguage] ?? [],
+                                $params
+                            ) as $violation
+                        ) {
+                            $subItems[] = $violation;
                         }
                     }
                 }
@@ -1004,6 +1088,28 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
             throw $validationException;
         }
+    }
+
+    /**
+     * The qualified tree validation measures the declared slots against, read under the same
+     * inheritance scope as the one value beside it.
+     *
+     * The per-language read below turns inherited values ON for a class that allows inheritance -
+     * the default value of a child may be its parent's and has to be validated as the value in force
+     * - and reads the object's own items for a class that does not. The qualified tree was read
+     * under whatever mode the caller happened to leave behind instead, so a child inheriting only a
+     * named variant was validated as holding nothing - failing a mandatory check it passes - while
+     * an inherited variant or a higher position carrying an invalid value was never checked at all.
+     *
+     * @return array structure: [groupId][keyId][language][variant][position] = value
+     *
+     * @throws Exception
+     */
+    private function collectQualifiedItemsForValidation(DataObject\Classificationstore $data): array
+    {
+        $inherit = (bool) $data->getObject()?->getClass()?->getAllowInherit();
+
+        return DataObject\Service::useInheritedValues($inherit, static fn (): array => $data->getQualifiedItems());
     }
 
     /**
@@ -1631,7 +1737,258 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             return false;
         }
 
-        // Compare items
-        return serialize($oldValue->getItems()) === serialize($newValue->getItems());
+        // Compare items - both trees, because a change confined to a named variant or to a position
+        // above zero is a change to the field. Compared on the items alone, two stores differing in
+        // nothing else answered "equal", and the version comparison that reads this saw no change.
+        return serialize($oldValue->getItems()) === serialize($newValue->getItems())
+            && serialize($oldValue->getVariantItems()) === serialize($newValue->getVariantItems());
+    }
+
+    /**
+     * The validation failures of one key in one language: the value of the default variant at
+     * position 0, as every caller saw it before a value could carry qualifiers, and every other slot
+     * the current declaration of the key permits. A check driven by that one value alone would leave
+     * every further slot of a qualified key unvalidated by the inner type.
+     *
+     * The mandatory flag is a statement about the key in that language rather than about one slot of
+     * it, so the first slot holding a value answers it - a key whose list starts above position 0
+     * holds a value and is not empty - and the slots that do not answer it are not asked it.
+     *
+     * A slot is skipped only when NO VALUE WAS SUPPLIED for it, never because the inner type calls
+     * the value it holds empty. The two are not the same question, and `isEmpty()` answers the
+     * second: {@see Time::isEmpty()} is a format check, so it calls `'25:99'` empty, and skipping on
+     * that answer left every malformed value in a list unvalidated after the first valid one -
+     * `[0 => '06:49', 1 => '25:99']` saved. {@see Numeric::isEmpty()} and {@see Slider::isEmpty()}
+     * are `!is_numeric()` and {@see StructuredTable::isEmpty()} is true for anything that is not a
+     * table, so each of those answers about the shape of the value the same way. An absent slot is
+     * one the declaration permits and nothing was written to, which is what `null` means here.
+     *
+     * Every slot that IS checked is checked in full, so that the constraints core's types gate on
+     * `$omitMandatoryCheck` run on it as well - an `input`'s regex ({@see Input::checkValidity()}),
+     * a `numeric`'s range, integer and unsigned checks ({@see Numeric::checkValidity()}). The one
+     * thing that flag turns off is turned off exactly where the slot does not own it,
+     * {@see self::omitsTheMandatoryCheck()}: the mandatory refusal is raised once per key, against
+     * the slot that answers for it, rather than once per slot holding a value the type calls empty.
+     *
+     * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
+     * @param array<string, mixed> $params
+     *
+     * @return Model\Element\ValidationException[]
+     */
+    private function collectKeyViolations(
+        Data $keyDef,
+        mixed $value,
+        string $language,
+        array $slotValues,
+        array $params
+    ): array {
+        $slots = $this->collectDeclaredSlots($keyDef, $value, $language, $slotValues);
+        $mandatorySlot = $this->slotAnsweringTheMandatoryCheck($keyDef, $slots);
+        $violations = [];
+
+        foreach ($slots as $index => $slot) {
+            // a slot no value was supplied for holds nothing for the inner type to validate; the one
+            // slot that answers the mandatory check is checked whether it was supplied or not
+            if ($index !== $mandatorySlot && !$slot['supplied']) {
+                continue;
+            }
+
+            try {
+                $keyDef->checkValidity(
+                    $slot['value'],
+                    $this->omitsTheMandatoryCheck($keyDef, $slot['value'], $index === $mandatorySlot),
+                    $params
+                );
+            } catch (Exception $exception) {
+                $violations[] = new Model\Element\ValidationException(
+                    $exception->getMessage() . ' (' . $slot['context'] . ')',
+                    $exception->getCode(),
+                    $exception->getPrevious()
+                );
+            }
+        }
+
+        return $violations;
+    }
+
+    /**
+     * Whether this slot's check leaves the mandatory flag to another slot.
+     *
+     * {@see Data::checkValidity()} refuses a mandatory key whose value the type calls empty, and
+     * that refusal belongs to the key rather than to one of its slots: raised against a slot that
+     * does not answer for it, "Empty mandatory field" is a false statement about a key that holds a
+     * value at another position, and it masks the failure the slot really has - a malformed `time`
+     * reported as an empty one. So it is omitted exactly there, and only where it could fire at all.
+     *
+     * Nothing else is omitted with it. Every constraint a type does not gate on the flag still runs
+     * on such a slot, which is what catches the malformed value: {@see Time::checkValidity()} gates
+     * its min and max on the flag and its format check on nothing.
+     */
+    private function omitsTheMandatoryCheck(Data $keyDef, mixed $value, bool $answersIt): bool
+    {
+        if ($answersIt) {
+            return false;
+        }
+
+        return $keyDef->getMandatory() && $keyDef->isEmpty($value);
+    }
+
+    /**
+     * The slots of one key in one language that its declaration permits, the default variant at
+     * position 0 first - that one carries the value the caller resolved rather than the stored one,
+     * because the language fallback and the inherited value it may come from are resolved there.
+     *
+     * It is left out in the one case the tree it is measured against leaves it out too: a selected
+     * list that starts above position 0. {@see DataObject\Classificationstore::getQualifiedItems()}
+     * writes no position 0 for such a slot, because the resolved value there belongs to a further
+     * ancestor than the list came from, and merging the two would put two objects' values into one
+     * list. Validation has to measure the same list the object answers: with a parent holding
+     * position 0 = `too long` and a child holding `[1 => 'ok']`, the resolved value was added back
+     * in and tightening the length constraint refused the child's own valid list over a value the
+     * child does not inherit.
+     *
+     * Only while the declaration still permits the list. A narrowed one addresses position 0 alone -
+     * {@see DataObject\Classificationstore::resolveSlots()} refuses anything above it - so the
+     * resolved value is then what the key answers, and the legacy resolution stands.
+     *
+     * `supplied` is whether a value was written to the slot at all, which is the only ground a slot
+     * is skipped on, {@see self::collectKeyViolations()}. It is NOT whether the inner type calls the
+     * value empty: a type is free to answer that about the shape of a value rather than about its
+     * absence, and `null` is what an absent slot holds on both paths - the resolved value of a key
+     * nothing was written to, and a position the tree carries no entry for.
+     *
+     * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
+     *
+     * @return array<int, array{value: mixed, context: string, supplied: bool}>
+     */
+    private function collectDeclaredSlots(Data $keyDef, mixed $value, string $language, array $slotValues): array
+    {
+        $holdsAList = $keyDef instanceof MultiValue && $keyDef->isMultiValue();
+        $selectedListStartsAboveZero = isset($slotValues[self::DEFAULT_VARIANT])
+            && !array_key_exists(0, $slotValues[self::DEFAULT_VARIANT]);
+
+        $slots = $holdsAList && $selectedListStartsAboveZero
+            ? []
+            : [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
+
+        foreach ($slotValues as $variant => $positions) {
+            if (!$this->declaresVariant($keyDef, (string) $variant)) {
+                continue;
+            }
+
+            foreach ($positions as $position => $slotValue) {
+                if ((string) $variant === self::DEFAULT_VARIANT && (int) $position === 0) {
+                    continue;
+                }
+
+                if ((int) $position !== 0 && !$holdsAList) {
+                    continue;
+                }
+
+                $slots[] = [
+                    'value' => $slotValue,
+                    'context' => $language . '/' . $variant . '/' . $position,
+                    'supplied' => $slotValue !== null,
+                ];
+            }
+        }
+
+        return $slots;
+    }
+
+    /**
+     * The index of the slot the mandatory check is put to: the first one that holds a value, and the
+     * default-variant one when the key holds none at all - which is the slot the failure of an empty
+     * mandatory key has always been reported against.
+     *
+     * @param array<int, array{value: mixed, context: string, supplied: bool}> $slots
+     */
+    private function slotAnsweringTheMandatoryCheck(Data $keyDef, array $slots): int
+    {
+        foreach ($slots as $index => $slot) {
+            if (!$keyDef->isEmpty($slot['value'])) {
+                return $index;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * The slots of one key that hold more values than its declaration permits, as the per-key
+     * failures the caller collects - a field-level message in the editor rather than one generic
+     * error for the whole store, which is why the declared maximum is reported here and not refused
+     * by {@see DataObject\Classificationstore::setKeyValues()}.
+     *
+     * A slot whose variant the key no longer declares is hidden rather than reported: narrowing a
+     * declaration keeps the values it stops showing, so they must not make the object unsavable.
+     *
+     * A language the key is no longer kept in is hidden for the same reason, and the languages are
+     * the effective ones this check shares with every other per-key check,
+     * {@see self::getValidLanguages()}: once a key stops being localized it holds the one
+     * language-independent value, and the list retained in a language nobody can now reach must not
+     * be what refuses the save.
+     *
+     * @param array<string, array<string, array<int, mixed>>> $keyItems
+     *        structure: [language][variant][position] = value
+     * @param string[] $validLanguages the languages this key is kept in
+     *
+     * @return Model\Element\ValidationException[]
+     */
+    private function collectMaximumViolations(Data $keyDef, array $keyItems, array $validLanguages): array
+    {
+        if (!$keyDef instanceof MultiValue || !$keyDef->isMultiValue()) {
+            return [];
+        }
+
+        $maximum = $keyDef->getMaximum();
+        if ($maximum === null) {
+            return [];
+        }
+
+        $violations = [];
+
+        foreach ($keyItems as $language => $variants) {
+            if (!in_array((string) $language, $validLanguages, true)) {
+                // a language the key is no longer kept in: its list is retained and hidden, exactly
+                // as a slot of an undeclared variant is, so it must not refuse the save
+                continue;
+            }
+
+            foreach ($variants as $variant => $values) {
+                if (!$this->declaresVariant($keyDef, (string) $variant)) {
+                    continue;
+                }
+
+                if (count($values) <= $maximum) {
+                    continue;
+                }
+
+                $violations[] = new Model\Element\ValidationException(sprintf(
+                    'Key [ %s ] holds %d values where at most %d are allowed (%s/%s)',
+                    $keyDef->getName(),
+                    count($values),
+                    $maximum,
+                    $language,
+                    $variant
+                ));
+            }
+        }
+
+        return $violations;
+    }
+
+    /**
+     * Whether the current declaration of a key still permits the given variant: the default variant
+     * always, a declared one, and nothing else. It is the one rule the maximum check and the
+     * per-slot validation both read, so the two cannot disagree about which slots are visible.
+     */
+    private function declaresVariant(Data $keyDef, string $variant): bool
+    {
+        if ($variant === self::DEFAULT_VARIANT) {
+            return true;
+        }
+
+        return $keyDef instanceof MultiValue && in_array($variant, $keyDef->getVariantNames(), true);
     }
 }

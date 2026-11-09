@@ -95,32 +95,26 @@ class EngineContractTest extends TestCase
     }
 
     /**
-     * The document engine offers the one capability the EAV engine offers - per key localization is
-     * a property of the key configuration, not of the storage - and StructuredValues and Relations
-     * on top of it: a document holds whatever `normalize()` returns, with no column to pack it
-     * into, so a structured value needs no marshaller and a relation's element descriptors need no
-     * addressing of their own. Neither MultiValue nor Variants has a model API for a qualified
-     * value yet, so those two stay false for both engines.
+     * The document engine offers every capability there is, and the EAV engine only the one that
+     * is not about storage at all. A document holds whatever `normalize()` returns, with no column
+     * to pack it into, so a structured value needs no marshaller and a relation's element
+     * descriptors need no addressing of their own; a value carries its variant and its position as
+     * members of its own entry, which buys MultiValue and Variants; and per key localization is a
+     * property of the key configuration rather than of the storage, which is why both engines
+     * answer it.
+     *
+     * Every case is asserted, so a capability added to the enum without an answer here fails
+     * {@see self::testEngineFeatureHasExactlyTheFiveCases()} rather than passing unnoticed.
      */
-    public function testDocumentEngineSupportsStructuredValuesPerKeyLocalizationAndRelations(): void
+    public function testDocumentEngineSupportsEveryFeature(): void
     {
         // the engine needs no collaborator to answer supports(), and must not open a connection for it
         $instance = (new ReflectionClass(DocumentEngine::class))->newInstanceWithoutConstructor();
 
         $this->assertInstanceOf(EngineInterface::class, $instance);
 
-        $supported = [
-            EngineFeature::StructuredValues,
-            EngineFeature::PerKeyLocalization,
-            EngineFeature::Relations,
-        ];
-
         foreach (EngineFeature::cases() as $feature) {
-            $this->assertSame(
-                in_array($feature, $supported, true),
-                $instance->supports($feature),
-                $feature->name . ' is answered wrongly'
-            );
+            $this->assertTrue($instance->supports($feature), $feature->name . ' must be supported');
         }
     }
 
@@ -333,4 +327,7 @@ class EngineContractTest extends TestCase
 
         return $method->getReturnType() . ' ' . $method->getName() . '(' . implode(', ', $parameters) . ')';
     }
+
+
+
 }
