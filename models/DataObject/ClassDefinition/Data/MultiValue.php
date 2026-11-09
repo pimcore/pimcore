@@ -33,8 +33,14 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  * WHAT THIS WRAPPER FORWARDS. The declarations are its own; everything about the value is the inner
  * type's, and a caller that asks the wrapper has to be answered as the inner type would answer. So
- * it hands on, in each case returning the inner type's answer and the base class's where there is no
- * inner type:
+ * it hands on, in each case returning the inner type's answer and, where there is no inner type,
+ * the answer the question has WITHOUT one - which for a question about the value is the value
+ * itself, never null. A key whose definition blob names no inner type is accepted by the loader
+ * ({@see \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson()}) and
+ * by the capability check, which documents it as the key that "normalizes the plain value
+ * unchanged" ({@see \Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport::isHeldInValueColumns()});
+ * answering null instead would store nothing for it and read nothing back, losing the value without
+ * an error. What is forwarded:
  *
  *  - the value itself: `normalize()`, `denormalize()`, `getDataForEditmode()`,
  *    `getDataFromEditmode()`, `getVersionPreview()`, `isEmpty()`, `getPhpdocInputType()`,
@@ -236,7 +242,7 @@ class MultiValue extends Data implements
     {
         $fd = $this->getDelegate();
 
-        return $fd instanceof Data ? $fd->getDataForEditmode($data, $object, $params) : null;
+        return $fd instanceof Data ? $fd->getDataForEditmode($data, $object, $params) : $data;
     }
 
     /**
@@ -246,7 +252,7 @@ class MultiValue extends Data implements
     {
         $fd = $this->getDelegate();
 
-        return $fd instanceof Data ? $fd->getDataFromEditmode($data, $object, $params) : null;
+        return $fd instanceof Data ? $fd->getDataFromEditmode($data, $object, $params) : $data;
     }
 
     /**
@@ -268,7 +274,7 @@ class MultiValue extends Data implements
     {
         $fd = $this->getDelegate();
 
-        return $fd instanceof Data ? $fd->isEmpty($data) : true;
+        return $fd instanceof Data ? $fd->isEmpty($data) : parent::isEmpty($data);
     }
 
     /**
@@ -332,21 +338,37 @@ class MultiValue extends Data implements
     {
         $fd = $this->getDelegate();
 
-        return $fd instanceof Data ? $fd->getVersionPreview($data, $object, $params) : '';
+        return $fd instanceof Data
+            ? $fd->getVersionPreview($data, $object, $params)
+            : parent::getVersionPreview($data, $object, $params);
     }
 
+    /**
+     * The stored form of the value, which is the inner type's.
+     *
+     * A key with no inner type - or one whose inner type normalizes nothing - stores the value as it
+     * stands, the way a type that is not a {@see NormalizerInterface} is stored by both engines.
+     * Answering null here instead wrote nothing for such a key and read nothing back, which lost the
+     * value with no error anywhere: the loader builds a delegate-less wrapper rather than refusing
+     * the definition blob, and the capability check accepts it on either engine on the strength of
+     * its normalizing the plain value unchanged.
+     */
     public function normalize(mixed $value, array $params = []): mixed
     {
         $fd = $this->getDelegate();
 
-        return $fd instanceof NormalizerInterface ? $fd->normalize($value, $params) : null;
+        return $fd instanceof NormalizerInterface ? $fd->normalize($value, $params) : $value;
     }
 
+    /**
+     * The value read back out of its stored form, the other half of {@see self::normalize()} and
+     * delegate-less for the same reason.
+     */
     public function denormalize(mixed $value, array $params = []): mixed
     {
         $fd = $this->getDelegate();
 
-        return $fd instanceof NormalizerInterface ? $fd->denormalize($value, $params) : null;
+        return $fd instanceof NormalizerInterface ? $fd->denormalize($value, $params) : $value;
     }
 
     public function getParameterTypeDeclaration(): ?string

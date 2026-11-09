@@ -518,6 +518,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * The definition asked for the stored form is the one that answers for the VALUE, which for a
      * `multiValue` key is its inner type: the wrapper deliberately implements no persistence
      * interface, so a key defined with it contributed nothing here - not even its first value.
+     *
+     * The slots are measured against the key's own DECLARATION first, the way
+     * {@see DataObject\Classificationstore::getKeyValues()} measures a read: narrowing a declaration
+     * hides the values it stops showing rather than deleting them, so a variant that has been
+     * removed - or the positions of a list that has been switched off - is still stored and still
+     * traversed for dependencies and cache tags, and must not be the one place it stays FINDABLE.
+     * The index is the only surface a classification store value is filterable from at all, so a
+     * value hidden everywhere else and left here answers a search with something the object does not
+     * show. Narrowing is a declaration change alone and writes nothing, so this is read off the
+     * declaration in force at indexing time rather than from a stored marker of any kind.
      */
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
@@ -535,20 +545,33 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 foreach ($keys as $keyId => $languages) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition(
-                        DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+                    $keyDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
+                        $keyConfig
                     );
+                    $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition($keyDefinition);
 
-                    if ($fieldDefinition instanceof ResourcePersistenceAwareInterface) {
-                        foreach ($languages as $variants) {
-                            foreach ($variants as $values) {
-                                foreach ($values as $value) {
-                                    $value = $fieldDefinition->getDataForResource($value, $object, $params);
-                                    if (is_array($value)) {
-                                        $value = implode(',', $value);
-                                    }
-                                    $dataString .= $value . ' ';
+                    if ($keyDefinition === null || !$fieldDefinition instanceof ResourcePersistenceAwareInterface) {
+                        continue;
+                    }
+
+                    $holdsAList = $keyDefinition instanceof MultiValue && $keyDefinition->isMultiValue();
+
+                    foreach ($languages as $variants) {
+                        foreach ($variants as $variant => $values) {
+                            if (!$this->declaresVariant($keyDefinition, (string) $variant)) {
+                                continue;
+                            }
+
+                            foreach ($values as $position => $value) {
+                                if ((int) $position !== 0 && !$holdsAList) {
+                                    continue;
                                 }
+
+                                $value = $fieldDefinition->getDataForResource($value, $object, $params);
+                                if (is_array($value)) {
+                                    $value = implode(',', $value);
+                                }
+                                $dataString .= $value . ' ';
                             }
                         }
                     }

@@ -2203,6 +2203,64 @@ class DocumentGeneralTest extends GeneralTest
     }
 
     /**
+     * And the same rule on the SEARCH INDEX, which is the one surface a classification store value
+     * is filterable from at all - its values never reach `object_query_<CLASS>`.
+     *
+     * A value hidden by a narrowed declaration is still stored, and still carries its dependency
+     * rows and cache tags, because narrowing deletes nothing. The index is a different question: a
+     * value the object does not show must not be what a search finds it by. Read off the raw
+     * qualified tree, the index kept every hidden variant and position after the next indexing pass.
+     */
+    public function testNarrowingADeclarationKeepsTheValuesItHidesOutOfTheSearchIndex(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], true);
+
+        $object = $this->createObject('narrowing-index');
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [
+            new MultiValue('1.80 m', null, self::METRIC, 0),
+            new MultiValue('1.90 m', null, self::METRIC, 1),
+            new MultiValue('5 ft 11 in', null, self::IMPERIAL, 0),
+        ]);
+        $object->save();
+
+        $indexed = $this->searchIndexData($object);
+
+        $this->assertStringContainsString('1.80 m', $indexed);
+        $this->assertStringContainsString('1.90 m', $indexed, 'a declared position above zero is indexed');
+        $this->assertStringContainsString('5 ft 11 in', $indexed, 'a declared variant is indexed');
+
+        // the variant goes and the list is switched off, which hides both of the others
+        $this->narrowMultiValueKey([self::METRIC], false);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $indexed = $this->searchIndexData($object);
+
+        $this->assertStringContainsString('1.80 m', $indexed, 'the one value the narrowed key shows is indexed');
+        $this->assertStringNotContainsString(
+            '5 ft 11 in',
+            $indexed,
+            'a variant the key no longer declares reads as nothing, so it is findable as nothing'
+        );
+        $this->assertStringNotContainsString(
+            '1.90 m',
+            $indexed,
+            'a position of a list the key no longer declares is hidden from the index the same way'
+        );
+
+        // and none of it was deleted: the document still carries all three, which is what makes
+        // widening the declaration again bring them back
+        $this->assertCount(3, $this->storedEntries($object->getId(), $groupId, $keyId));
+
+        $this->narrowMultiValueKey([self::METRIC, self::IMPERIAL], true);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $indexed = $this->searchIndexData($object);
+
+        $this->assertStringContainsString('5 ft 11 in', $indexed, 'widening makes the value findable again');
+        $this->assertStringContainsString('1.90 m', $indexed);
+    }
+
+    /**
      * The two readers of position 0 of the default variant, on one fixture. getLocalizedKeyValue()
      * resolves the language - the fallback languages, then the language-independent default - while
      * getKeyValues() and getKeyValue() address the slot they are given and nothing else.
@@ -2378,6 +2436,19 @@ class DocumentGeneralTest extends GeneralTest
         $keyConfig->save();
 
         $this->clearDefinitionCaches();
+    }
+
+    /**
+     * What the classification store field contributes to the object's search index, which is what an
+     * indexing pass writes.
+     */
+    private function searchIndexData(Csstore $object): string
+    {
+        $fieldDefinition = ClassDefinition::getByName(self::CLASS_NAME)->getFieldDefinition(self::FIELDNAME);
+
+        $this->assertInstanceOf(ClassificationstoreField::class, $fieldDefinition);
+
+        return $fieldDefinition->getDataForSearchIndex($object);
     }
 
     /**

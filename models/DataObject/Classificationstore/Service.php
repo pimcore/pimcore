@@ -157,18 +157,45 @@ class Service
      * loses its dependency rows or is read without the hook its own type would have run.
      *
      * An `encryptedField` is NOT unwrapped here: that wrapper carries the stored form itself - it is
-     * the one that encrypts - so its own definition is the one that answers for the value.
+     * the one that encrypts - so its own definition is the one that answers for the value. The walk
+     * below therefore stops ON one rather than going through it.
+     *
+     * CONSECUTIVE `multiValue` wrappers are unwrapped to the end. Nothing refuses a definition blob
+     * whose `delegateDatatype` is `multiValue` again - the delegate is accepted by
+     * {@see KeyTypeSupport::isAcceptedDelegateType()} and built by
+     * {@see self::getFieldDefinitionFromJson()}, which recurses - and resolving one layer alone
+     * answered this question with a wrapper: `multiValue<multiValue<encryptedField<input>>>`
+     * normalized its way down to the secret while the engine, asked whether the value reaches the
+     * document through its marshaller, was looking at a `multiValue` and stored the plaintext. One
+     * boundary that answers "the value's definition" has to answer it for a chain of any length.
      *
      * @see DataObject\ClassDefinition\Data\MultiValue for the behaviours the wrapper forwards itself
      */
     public static function getValueDefinition(
         ?DataObject\ClassDefinition\Data $definition
     ): ?DataObject\ClassDefinition\Data {
-        $delegate = $definition instanceof DataObject\ClassDefinition\Data\MultiValue
-            ? $definition->getDelegate()
-            : null;
+        $seen = [];
 
-        return $delegate instanceof DataObject\ClassDefinition\Data ? $delegate : $definition;
+        while ($definition instanceof DataObject\ClassDefinition\Data\MultiValue) {
+            // a delegate that is its own ancestor can only be built by hand, and a walk that met one
+            // would not end: the chain stops at the wrapper it has already answered for
+            if (isset($seen[spl_object_id($definition)])) {
+                break;
+            }
+
+            $seen[spl_object_id($definition)] = true;
+
+            $delegate = $definition->getDelegate();
+            if (!$delegate instanceof DataObject\ClassDefinition\Data) {
+                // a wrapper naming no inner type answers itself: it normalizes the plain value
+                // unchanged, {@see DataObject\ClassDefinition\Data\MultiValue::normalize()}
+                break;
+            }
+
+            $definition = $delegate;
+        }
+
+        return $definition;
     }
 
     /**

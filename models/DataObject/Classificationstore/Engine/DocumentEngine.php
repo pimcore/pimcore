@@ -1697,7 +1697,13 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             return ['value' => $normalizedData, 'enveloped' => false];
         }
 
-        $enveloped = $this->needsAJsonEnvelope($fd, $normalizedData);
+        // the definition that answers for the VALUE, which is what every decision about the stored
+        // form is put to - the envelope included: a wrapped `encryptedField` asked as the wrapper it
+        // sits in is not one, so a structured value reached the encryption unenveloped and was
+        // stored as two null columns
+        $marshalledFd = $this->getMarshalledDefinition($fd);
+
+        $enveloped = $this->needsAJsonEnvelope($marshalledFd, $normalizedData);
 
         if ($enveloped) {
             // throwing, so that a value JSON cannot carry is not encrypted as the `false` of a
@@ -1705,7 +1711,6 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $normalizedData = json_encode([self::ENVELOPE_MEMBER => $normalizedData], JSON_THROW_ON_ERROR);
         }
 
-        $marshalledFd = $this->getMarshalledDefinition($fd);
         $marshaller = $this->marshallerService
             ->buildFieldefinitionMarshaller(self::MARSHALLER_FORMAT, $marshalledFd->getFieldtype());
         $parameters = $this->getMarshallerParameters($marshalledFd, $object);
@@ -1864,6 +1869,12 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
      * and return a structure for some of its values. Reading the declaration here would send
      * exactly those values into the marshaller's array branch and lose them, which is what asking
      * the payload cannot do.
+     *
+     * $fd is the definition that answers for the VALUE and not the key's own: the caller resolves it
+     * through {@see self::getMarshalledDefinition()}, the same boundary
+     * {@see self::encodesThroughItsMarshaller()} is answered from, so that the two cannot disagree
+     * about one value. Handed a `multiValue` wrapping an `encryptedField` this answers "no envelope"
+     * about a value that is about to be encrypted, and a structured one is lost.
      */
     private function needsAJsonEnvelope(?Data $fd, mixed $normalizedData): bool
     {

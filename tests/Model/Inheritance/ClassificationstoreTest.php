@@ -17,6 +17,7 @@ use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Data\Consent;
 use Pimcore\Model\DataObject\Data\MultiValue;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -540,6 +541,102 @@ class ClassificationstoreTest extends ModelTestCase
         });
     }
 
+    /**
+     * A key whose field type refuses inheritance refuses it for its QUALIFIED slots as well.
+     *
+     * `consent` is the type in the unlocked set that answers no: a consent is the record of what one
+     * data subject agreed to, so a child reading its parent's grant - and the id of the audit note
+     * behind it - answers "has this one consented" with somebody else's answer. The per-key read and
+     * the whole-store read both ask
+     * {@see Classificationstore\Service::supportsInheritance()} about it, and the merge of an
+     * ancestor's qualified slots did not: a parent's named variant and its higher positions arrived
+     * in the child regardless, which also made them satisfy the child's mandatory check and reach
+     * the child's search index.
+     */
+    public function testAParentsQualifiedSlotsAreNotInheritedByAKeyThatRefusesInheritance(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey(
+            [self::METRIC, self::IMPERIAL],
+            true,
+            new ClassDefinition\Data\Consent()
+        );
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('consent-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue(new Consent(true, 11), null, null, 0),
+                new MultiValue(new Consent(true, 12), null, null, 1),
+                new MultiValue(new Consent(true, 13), null, self::IMPERIAL, 0),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('consent-child', (int) $parent->getId());
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(
+                [],
+                $childStore->getKeyValues($groupId, $keyId),
+                'the parent\'s list in the default variant is not the child\'s consent'
+            );
+            $this->assertSame(
+                [],
+                $childStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL),
+                'and neither is the parent\'s named variant'
+            );
+            $this->assertSame(
+                [],
+                $childStore->getQualifiedItems()[$groupId][$keyId] ?? [],
+                'nothing of the parent reached the qualified tree the validation snapshot, the save'
+                . ' and the search index are all read from'
+            );
+
+            // and the parent still answers all three of its own, so the filter is about the
+            // ancestor's values rather than about the key
+            $parentStore = Inheritance::getById($parent->getId(), ['force' => true])->getTeststore();
+
+            $this->assertCount(2, $parentStore->getKeyValues($groupId, $keyId));
+            $this->assertCount(1, $parentStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL));
+        });
+    }
+
+    /**
+     * An inheritable key beside it, on the same fixture: the filter is per KEY, so a `multiValue`
+     * key of an inheriting type still hands its variants and positions down. Without this the fix
+     * above would pass by inheriting nothing at all.
+     */
+    public function testAnInheritableKeysQualifiedSlotsAreStillInherited(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], true);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('inheritable-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.80 m', null, self::METRIC, 0),
+                new MultiValue('1.90 m', null, self::METRIC, 1),
+                new MultiValue('5 ft 11 in', null, self::IMPERIAL, 0),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('inheritable-child', (int) $parent->getId());
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(
+                ['1.80 m', '1.90 m'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::METRIC)
+            );
+            $this->assertSame(
+                ['5 ft 11 in'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL)
+            );
+        });
+    }
+
     private function createObject(string $key, int $parentId): Inheritance
     {
         $object = new Inheritance();
@@ -571,11 +668,14 @@ class ClassificationstoreTest extends ModelTestCase
     }
 
     /**
+     * $innerType is the type the key wraps, an `input` by default: whether a value may be read off
+     * an ancestor is the inner type's answer, so a test about that has to be able to choose it.
+     *
      * @param string[] $variants
      *
      * @return array{int, int} the group id and the key id
      */
-    private function createMultiValueKey(array $variants, bool $list): array
+    private function createMultiValueKey(array $variants, bool $list, ?ClassDefinition\Data $innerType = null): array
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
 
@@ -584,7 +684,7 @@ class ClassificationstoreTest extends ModelTestCase
         $group->setName(self::MULTI_VALUE_GROUP);
         $group->save();
 
-        $inner = new ClassDefinition\Data\Input();
+        $inner = $innerType ?? new ClassDefinition\Data\Input();
         $inner->setName(self::MULTI_VALUE_KEY);
 
         $definition = new ClassDefinition\Data\MultiValue();

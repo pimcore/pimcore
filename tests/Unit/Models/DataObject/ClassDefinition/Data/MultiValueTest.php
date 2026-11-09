@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Classificationstore\Service;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\Consent as ConsentValue;
 use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -157,6 +158,88 @@ class MultiValueTest extends TestCase
         $encrypted = new Data\EncryptedField();
         $encrypted->setDelegate($input);
         $this->assertSame($encrypted, Service::getValueDefinition($encrypted));
+    }
+
+    /**
+     * And it answers a CHAIN of wrappers, because nothing refuses one: `multiValue` is an accepted
+     * delegate type and the loader rebuilds a nested definition layer by layer. Resolving one layer
+     * alone answered this question with a wrapper, and a `multiValue<multiValue<encryptedField>>`
+     * key then stored its secret in cleartext - the engine, asked whether the value reaches the
+     * document through its marshaller, was looking at a `multiValue`.
+     *
+     * It still stops ON an `encryptedField`: that wrapper carries the stored form itself.
+     */
+    public function testTheBoundaryUnwrapsEveryConsecutiveWrapperAndStopsAtAnEncryptedField(): void
+    {
+        $input = $this->input();
+
+        $this->assertSame(
+            $input,
+            Service::getValueDefinition($this->wrapping($this->wrapping($this->wrapping($input)))),
+            'three wrappers deep is still the inner type'
+        );
+
+        $encrypted = new Data\EncryptedField();
+        $encrypted->setDelegateDatatype('input');
+        $encrypted->setDelegate($input);
+
+        $this->assertSame(
+            $encrypted,
+            Service::getValueDefinition($this->wrapping($this->wrapping($encrypted))),
+            'the walk stops on the wrapper that carries the stored form itself'
+        );
+
+        $cycle = new MultiValue();
+        $cycle->setDelegate($cycle);
+
+        $this->assertSame(
+            $cycle,
+            Service::getValueDefinition($cycle),
+            'a delegate that is its own ancestor ends the walk rather than running forever'
+        );
+    }
+
+    /**
+     * A key whose definition blob names NO inner type. The loader builds a delegate-less wrapper for
+     * it rather than refusing the blob, and the capability check accepts it as the key that
+     * "normalizes the plain value unchanged" - so every question about the value has to be answered
+     * as it is answered with no wrapper at all, which is with the value. Answering null stored
+     * nothing for such a key and read nothing back, losing the value with no error.
+     */
+    public function testAWrapperWithNoInnerTypeAnswersAboutTheValueWithTheValue(): void
+    {
+        $wrapper = new MultiValue();
+
+        $this->assertSame('plain', $wrapper->normalize('plain'));
+        $this->assertSame('plain', $wrapper->denormalize('plain'));
+        $this->assertSame(['a', 'b'], $wrapper->normalize(['a', 'b']));
+        $this->assertSame('plain', $wrapper->getDataForEditmode('plain'));
+        $this->assertSame('plain', $wrapper->getDataFromEditmode('plain'));
+
+        $this->assertFalse($wrapper->isEmpty('plain'), 'a value it was given is not nothing');
+        $this->assertTrue($wrapper->isEmpty(null));
+    }
+
+    /**
+     * And forwards the same questions to the inner type when there is one, which is what the
+     * delegate-less answers above must not quietly replace: an inner type whose stored form differs
+     * from its value is the case that tells the two apart.
+     */
+    public function testTheValueQuestionsAreForwardedToTheInnerType(): void
+    {
+        $value = new ConsentValue(true, 11);
+        $normalized = ['consent' => true, 'noteId' => 11];
+
+        $inner = $this->createMock(Consent::class);
+        $inner->expects($this->once())->method('normalize')->with($value)->willReturn($normalized);
+        $inner->expects($this->once())->method('denormalize')->with($normalized)->willReturn($value);
+        $inner->expects($this->once())->method('isEmpty')->with($value)->willReturn(false);
+
+        $wrapper = $this->wrapping($inner);
+
+        $this->assertSame($normalized, $wrapper->normalize($value));
+        $this->assertSame($value, $wrapper->denormalize($normalized));
+        $this->assertFalse($wrapper->isEmpty($value));
     }
 
     /**

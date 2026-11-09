@@ -307,7 +307,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * and the id of the audit note behind it - would answer "has this one consented" with somebody
      * else's answer. An `input` key beside it inherits as it always has.
      *
-     * @param array<int, array<int, array<string, mixed>>> $items structure: [groupId][keyId][language]
+     * The filter is on the KEY, so it is the same filter for either tree an ancestor contributes:
+     * the unqualified items {@see self::getItems()} merges and the qualified slots
+     * {@see self::getQualifiedItems()} merges, whose leaves sit two levels deeper and are carried
+     * across untouched. One filter in one place is what keeps the two from giving different answers
+     * about the same key.
+     *
+     * @param array<int, array<int, array<string, mixed>>> $items structure: [groupId][keyId] and
+     *        whatever the tree holds below it - [language] for the items, [language][variant][position]
+     *        for the qualified slots
      *
      * @return array<int, array<int, array<string, mixed>>>
      */
@@ -1044,9 +1052,21 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         /** @var array<int|string, array<int|string, array<string, bool>>> $startsAboveZero */
         $startsAboveZero = [];
 
+        // The walk starts at this store itself, whose own slots are not inherited values: they are
+        // taken whatever their key's definition says about inheritance. Every store after it is an
+        // ancestor's and contributes only the keys that may be inherited at all - the same filter
+        // {@see self::getItems()} applies to the unqualified items, and for the same reason: a value
+        // a per-key read refuses to inherit must not arrive through the qualified tree instead. Left
+        // out, a parent's named variant of a `consent` key answered the child's mandatory check with
+        // somebody else's consent, and its search index with somebody else's value.
+        $ownStore = true;
+
         $qualified = $this->getAllDataFromField(
-            function ($classificationStore, $fieldsArray) use (&$startsAboveZero) {
-                $own = $classificationStore->getOwnQualifiedItems();
+            function ($classificationStore, $fieldsArray) use (&$startsAboveZero, &$ownStore) {
+                $own = $ownStore
+                    ? $classificationStore->getOwnQualifiedItems()
+                    : $this->inheritableItems($classificationStore->getOwnQualifiedItems());
+                $ownStore = false;
 
                 foreach ($own as $groupId => $keys) {
                     foreach ($keys as $keyId => $languages) {

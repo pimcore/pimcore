@@ -502,6 +502,12 @@ final class EavEngine extends AbstractDao implements EngineInterface
      * field definition rather than off the declared return type of anything, so a delegate that
      * declares `mixed` and returns a structure is refused on the value it actually produced.
      *
+     * The question is put to the definition that answers for the VALUE, through the same boundary
+     * the load path and both engines resolve it at ({@see Service::getValueDefinition()}): an
+     * `encryptedField` wrapped in a `multiValue` still encrypts, and asked as the wrapper it sits in
+     * this check answered "nothing to refuse" about a value that was then packed to two nulls and
+     * lost. The key's own type still names the refusal, which is the type the key is defined with.
+     *
      * @throws UnsupportedEngineFeatureException
      */
     private function assertTheMarshallerCanPackTheValue(
@@ -515,11 +521,13 @@ final class EavEngine extends AbstractDao implements EngineInterface
             return;
         }
 
-        if (!$fd instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
+        $valueDefinition = Service::getValueDefinition($fd);
+
+        if (!$valueDefinition instanceof EncryptedField || $normalizedData === null || is_scalar($normalizedData)) {
             return;
         }
 
-        $delegate = $fd->getDelegate();
+        $delegate = $valueDefinition->getDelegate();
 
         if ($delegate instanceof Data
             && $marshallerService->supportsFielddefinition('classificationstore', $delegate->getFieldtype())
