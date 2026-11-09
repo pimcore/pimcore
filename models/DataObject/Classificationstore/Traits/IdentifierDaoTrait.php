@@ -95,6 +95,40 @@ trait IdentifierDaoTrait
     }
 
     /**
+     * The ordinary row write never touches the identifier column, but the unique index spans (storeId,
+     * identifier), so a move into a store that claimed the stored identifier after this request's snapshot
+     * violates it from here. Only a current read that finds the colliding row proves an identifier conflict;
+     * any other constraint failure is rethrown untouched.
+     *
+     * @throws InvalidConfigException
+     * @throws UniqueConstraintViolationException
+     */
+    private function updateRow(string $table, array $data, int $id): void
+    {
+        try {
+            $this->db->update($table, $data, ['id' => $id]);
+        } catch (UniqueConstraintViolationException $e) {
+            $stored = $this->readIdentifier($table, $id);
+            if ($stored === null || !isset($data['storeId'])) {
+                throw $e;
+            }
+
+            $claimed = $this->db->fetchOne(
+                'SELECT `id` FROM `' . $table . '` WHERE `identifier` = ? AND `storeId` = ? AND `id` != ? FOR UPDATE',
+                [$stored, $data['storeId'], $id]
+            );
+            if ($claimed === false) {
+                throw $e;
+            }
+
+            throw new InvalidConfigException(
+                sprintf('The identifier "%s" is already in use.', $stored),
+                previous: $e
+            );
+        }
+    }
+
+    /**
      * Creation inserts a placeholder row and fills it with the following update, so a rejected identifier has
      * to take the placeholder with it instead of leaving an unreachable row behind. The instance is not
      * reusable afterwards - its id points at a row that no longer exists.
