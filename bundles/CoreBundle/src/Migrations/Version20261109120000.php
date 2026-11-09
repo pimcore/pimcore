@@ -25,6 +25,7 @@ use Pimcore\Cache\RuntimeCache;
  * see \Pimcore\Model\DataObject\HydrationLock.
  *
  * Existing rows get the time of the migration. Objects cached before the migration carry no token and are not checked.
+ * The listing views of the classes never include the column, so rolling back does not invalidate them.
  */
 final class Version20261109120000 extends AbstractMigration
 {

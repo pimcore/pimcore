@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\HydrationLock;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Exception\StaleDataException;
 use Pimcore\Model\Version;
+use Pimcore\Tool;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -57,14 +58,14 @@ final class ChangeTokenTest extends ModelTestCase
         for ($attempt = 0; $attempt < 5; $attempt++) {
             $object->setInput('settle-' . $attempt);
             $object->save();
-            $second = time();
             $rowBefore = $this->dbRowWithoutToken($object->getId());
             $tokenBefore = $object->__getChangeToken();
 
             $object->setInput('changed-' . $attempt);
             $object->save();
 
-            if ($second === time()) {
+            // retry when a second boundary changed the modification date in between
+            if ($rowBefore === $this->dbRowWithoutToken($object->getId())) {
                 break;
             }
         }
@@ -247,12 +248,53 @@ final class ChangeTokenTest extends ModelTestCase
             $object = new $fqcn();
             $object->setKey(uniqid('change-token-field-'));
             $object->setParentId(1);
+            $object->setPublished(true);
             $object->setChangeToken('field value');
+            $object->setTitle('title', Tool::getDefaultLanguage());
             $object->save();
 
             $loaded = DataObject::getById($object->getId(), ['force' => true]);
             $this->assertSame('field value', $loaded->getChangeToken());
             $this->assertSame($this->dbToken($object->getId()), $loaded->__getChangeToken());
+
+            // listings query the object view, localized listings the localized view: both need the field, not the token
+            $listingClass = $fqcn . '\\Listing';
+            $listing = new $listingClass();
+            $listing->setCondition('changeToken = ?', ['field value']);
+            $this->assertSame([$object->getId()], $listing->loadIdList());
+
+            $localizedListing = new $listingClass();
+            $localizedListing->setLocale(Tool::getDefaultLanguage());
+            $localizedListing->setCondition('changeToken = ?', ['field value']);
+            $this->assertSame([$object->getId()], $localizedListing->loadIdList());
+        } finally {
+            $class->delete();
+        }
+    }
+
+    public function testListingViewsDoNotReferenceTheToken(): void
+    {
+        $class = $this->createClassWithChangeTokenField();
+
+        try {
+            // the localized views are created with the first localized data
+            $fqcn = 'Pimcore\\Model\\DataObject\\' . $class->getName();
+            $object = new $fqcn();
+            $object->setKey(uniqid('change-token-view-'));
+            $object->setParentId(1);
+            $object->setTitle('title', Tool::getDefaultLanguage());
+            $object->save();
+
+            // a view referencing the column would break once the migration is rolled back and the column is dropped
+            $definitions = Db::get()->fetchFirstColumn(
+                'SELECT VIEW_DEFINITION FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN (?, ?)',
+                ['object_' . $class->getId(), 'object_localized_' . $class->getId() . '_' . Tool::getDefaultLanguage()]
+            );
+
+            $this->assertCount(2, $definitions);
+            foreach ($definitions as $definition) {
+                $this->assertStringNotContainsString('`objects`.`changeToken`', $definition);
+            }
         } finally {
             $class->delete();
         }
@@ -263,9 +305,16 @@ final class ChangeTokenTest extends ModelTestCase
         $field = new DataObject\ClassDefinition\Data\Input();
         $field->setName('changeToken');
         $field->setTitle('Change token field');
+        $title = new DataObject\ClassDefinition\Data\Input();
+        $title->setName('title');
+        $title->setTitle('Title');
+        $localizedFields = new DataObject\ClassDefinition\Data\Localizedfields();
+        $localizedFields->setName('localizedfields');
+        $localizedFields->addChild($title);
         $panel = new DataObject\ClassDefinition\Layout\Panel();
         $panel->setName('pimcore_root');
         $panel->addChild($field);
+        $panel->addChild($localizedFields);
 
         $class = new DataObject\ClassDefinition();
         $class->setName('ChangeTokenFieldTest');
