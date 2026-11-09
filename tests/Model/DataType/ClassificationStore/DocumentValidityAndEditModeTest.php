@@ -18,6 +18,7 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Time;
 use Pimcore;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
@@ -850,6 +851,88 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
      * the default variant: a value it refuses at a higher position, or under a variant, is a per-key
      * failure of the save rather than something that stores clean.
      */
+    /**
+     * A slot is skipped only when no value was supplied for it, never because the inner type calls
+     * the value it holds empty - those are two different questions, and some types answer the second
+     * about the SHAPE of a value: `Time::isEmpty()` is a format check, so it calls `'25:99'` empty.
+     *
+     * Skipping on that answer left every malformed value after the first valid one unvalidated, at a
+     * higher position and under a named variant alike, and the object saved with them.
+     *
+     * @dataProvider malformedTimeProvider
+     */
+    public function testAMalformedValueAfterAValidOneIsStillValidated(
+        bool $mandatory,
+        string $expectedMessage
+    ): void {
+        $group = $this->createGroup('validity_time_slots');
+        $listKey = $this->createKey('validity_time_slots', true, $this->timeMultiValueDefinition($mandatory));
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-time-slots-' . ($mandatory ? 'mandatory' : 'optional'));
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('06:49', null, null, 0),
+            new MultiValueEntry('25:99', null, null, 1),
+            new MultiValueEntry('31:00', null, self::VARIANT),
+        ]);
+
+        try {
+            $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
+            $this->fail('a malformed value must not validate because the type calls it empty');
+        } catch (ValidationException $validationException) {
+            $messages = array_map(
+                static fn (ValidationException $subItem): string => $subItem->getMessage(),
+                $validationException->getSubItems()
+            );
+
+            $malformed = array_values(array_filter(
+                $messages,
+                static fn (string $message): bool => str_contains($message, $expectedMessage)
+            ));
+
+            $this->assertCount(2, $malformed, 'the higher position and the variant are both reported');
+            $this->assertNotEmpty(
+                array_filter($malformed, static fn (string $message): bool => str_contains($message, '/1')),
+                'the failure names the position it was found at'
+            );
+            $this->assertNotEmpty(
+                array_filter($malformed, static fn (string $message): bool => str_contains($message, self::VARIANT)),
+                'and the variant it was found in'
+            );
+            $this->assertSame(
+                [],
+                array_values(array_filter(
+                    $messages,
+                    static fn (string $message): bool => str_contains($message, 'Empty mandatory field')
+                )),
+                'the mandatory flag is answered once per key, by the slot holding a value, and the '
+                . 'slots that do not answer it are not refused for being empty'
+            );
+        }
+    }
+
+    /**
+     * The mandatory flag is a statement about the key rather than about one of its slots, so a key
+     * holding a valid value at position 0 is never refused for being empty. Checked in full,
+     * `$omitMandatoryCheck` false, the malformed slots answered `isEmpty()` with `true` and a
+     * mandatory key reported "Empty mandatory field" against each of them - a false statement, and
+     * one that masks the format failure the slot really has.
+     *
+     * @return array<string, array{0: bool, 1: string}>
+     */
+    public static function malformedTimeProvider(): array
+    {
+        return [
+            'an optional key' => [false, 'Wrong time format'],
+            'a mandatory key' => [true, 'Wrong time format'],
+        ];
+    }
+
     public function testTheInnerTypeValidatesEveryDeclaredSlotAndNotOnlyTheFirst(): void
     {
         $group = $this->createGroup('validity_inner_slots');
@@ -1257,6 +1340,26 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
      * The same key with an inner type that refuses a value of its own, and with a variant to put one
      * in, so that the slot a failure is found in is what the test is about.
      */
+    /**
+     * A `multiValue<time>` list, for the types whose `isEmpty()` answers about the SHAPE of a value
+     * rather than about its absence: {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Time::isEmpty()}
+     * is a format check, so it calls `'25:99'` empty.
+     */
+    private function timeMultiValueDefinition(bool $mandatory = false): MultiValue
+    {
+        $inner = new Time();
+        $inner->setName('mvInner');
+
+        $definition = new MultiValue();
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+        $definition->setVariants([['name' => self::VARIANT]]);
+        $definition->setMultiValue(self::MAXIMUM);
+        $definition->setMandatory($mandatory);
+
+        return $definition;
+    }
+
     private function constrainedMultiValueDefinition(int $maxLength = self::INNER_MAX_LENGTH): MultiValue
     {
         $definition = $this->wrapperOf($this->innerType($maxLength));

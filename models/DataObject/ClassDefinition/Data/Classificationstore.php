@@ -1752,17 +1752,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * The mandatory flag is a statement about the key in that language rather than about one slot of
      * it, so the first slot holding a value answers it - a key whose list starts above position 0
-     * holds a value and is not empty - and the slots that do not answer it are skipped while they
-     * hold nothing.
+     * holds a value and is not empty - and the slots that do not answer it are not asked it.
      *
-     * Every slot that IS checked is checked in full, `$omitMandatoryCheck` false. That flag is not
-     * the switch its name suggests: core's types gate their own constraints on it as well, an
-     * `input` its regex ({@see Input::checkValidity()}) and a `numeric` its range, its integer and
-     * its unsigned checks ({@see Numeric::checkValidity()}). Passing `true` for the slots after the
-     * first populated one therefore saved an invalid value at a higher position or under a named
-     * variant - the regex and the range were never applied to it. Nothing is lost by checking them
-     * in full: a slot reaching the check either answers the mandatory flag or is not empty, and a
-     * value that is not empty is not what a mandatory check refuses.
+     * A slot is skipped only when NO VALUE WAS SUPPLIED for it, never because the inner type calls
+     * the value it holds empty. The two are not the same question, and `isEmpty()` answers the
+     * second: {@see Time::isEmpty()} is a format check, so it calls `'25:99'` empty, and skipping on
+     * that answer left every malformed value in a list unvalidated after the first valid one -
+     * `[0 => '06:49', 1 => '25:99']` saved. {@see Numeric::isEmpty()} and {@see Slider::isEmpty()}
+     * are `!is_numeric()` and {@see StructuredTable::isEmpty()} is true for anything that is not a
+     * table, so each of those answers about the shape of the value the same way. An absent slot is
+     * one the declaration permits and nothing was written to, which is what `null` means here.
+     *
+     * Every slot that IS checked is checked in full, so that the constraints core's types gate on
+     * `$omitMandatoryCheck` run on it as well - an `input`'s regex ({@see Input::checkValidity()}),
+     * a `numeric`'s range, integer and unsigned checks ({@see Numeric::checkValidity()}). The one
+     * thing that flag turns off is turned off exactly where the slot does not own it,
+     * {@see self::omitsTheMandatoryCheck()}: the mandatory refusal is raised once per key, against
+     * the slot that answers for it, rather than once per slot holding a value the type calls empty.
      *
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      * @param array<string, mixed> $params
@@ -1781,14 +1787,18 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $violations = [];
 
         foreach ($slots as $index => $slot) {
-            // an empty slot holds nothing for the inner type to validate; the one slot that answers
-            // the mandatory check is checked whether it holds a value or not
-            if ($index !== $mandatorySlot && $keyDef->isEmpty($slot['value'])) {
+            // a slot no value was supplied for holds nothing for the inner type to validate; the one
+            // slot that answers the mandatory check is checked whether it was supplied or not
+            if ($index !== $mandatorySlot && !$slot['supplied']) {
                 continue;
             }
 
             try {
-                $keyDef->checkValidity($slot['value'], false, $params);
+                $keyDef->checkValidity(
+                    $slot['value'],
+                    $this->omitsTheMandatoryCheck($keyDef, $slot['value'], $index === $mandatorySlot),
+                    $params
+                );
             } catch (Exception $exception) {
                 $violations[] = new Model\Element\ValidationException(
                     $exception->getMessage() . ' (' . $slot['context'] . ')',
@@ -1799,6 +1809,28 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         return $violations;
+    }
+
+    /**
+     * Whether this slot's check leaves the mandatory flag to another slot.
+     *
+     * {@see Data::checkValidity()} refuses a mandatory key whose value the type calls empty, and
+     * that refusal belongs to the key rather than to one of its slots: raised against a slot that
+     * does not answer for it, "Empty mandatory field" is a false statement about a key that holds a
+     * value at another position, and it masks the failure the slot really has - a malformed `time`
+     * reported as an empty one. So it is omitted exactly there, and only where it could fire at all.
+     *
+     * Nothing else is omitted with it. Every constraint a type does not gate on the flag still runs
+     * on such a slot, which is what catches the malformed value: {@see Time::checkValidity()} gates
+     * its min and max on the flag and its format check on nothing.
+     */
+    private function omitsTheMandatoryCheck(Data $keyDef, mixed $value, bool $answersIt): bool
+    {
+        if ($answersIt) {
+            return false;
+        }
+
+        return $keyDef->getMandatory() && $keyDef->isEmpty($value);
     }
 
     /**
@@ -1819,9 +1851,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * {@see DataObject\Classificationstore::resolveSlots()} refuses anything above it - so the
      * resolved value is then what the key answers, and the legacy resolution stands.
      *
+     * `supplied` is whether a value was written to the slot at all, which is the only ground a slot
+     * is skipped on, {@see self::collectKeyViolations()}. It is NOT whether the inner type calls the
+     * value empty: a type is free to answer that about the shape of a value rather than about its
+     * absence, and `null` is what an absent slot holds on both paths - the resolved value of a key
+     * nothing was written to, and a position the tree carries no entry for.
+     *
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      *
-     * @return array<int, array{value: mixed, context: string}>
+     * @return array<int, array{value: mixed, context: string, supplied: bool}>
      */
     private function collectDeclaredSlots(Data $keyDef, mixed $value, string $language, array $slotValues): array
     {
@@ -1831,7 +1869,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $slots = $holdsAList && $selectedListStartsAboveZero
             ? []
-            : [['value' => $value, 'context' => $language]];
+            : [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
 
         foreach ($slotValues as $variant => $positions) {
             if (!$this->declaresVariant($keyDef, (string) $variant)) {
@@ -1850,6 +1888,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 $slots[] = [
                     'value' => $slotValue,
                     'context' => $language . '/' . $variant . '/' . $position,
+                    'supplied' => $slotValue !== null,
                 ];
             }
         }
@@ -1862,7 +1901,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * default-variant one when the key holds none at all - which is the slot the failure of an empty
      * mandatory key has always been reported against.
      *
-     * @param array<int, array{value: mixed, context: string}> $slots
+     * @param array<int, array{value: mixed, context: string, supplied: bool}> $slots
      */
     private function slotAnsweringTheMandatoryCheck(Data $keyDef, array $slots): int
     {
