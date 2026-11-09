@@ -36,8 +36,13 @@ class Service
     protected static array $definitionsCache = [];
 
     /**
-     * Clears the definitions this class caches by key id - not the ones
-     * {@see KeyGroupRelationCache} holds per (groupId, keyId), which are cleared with that service.
+     * Clears every definition this class memoizes - the ones held by key id for a {@see KeyConfig} as
+     * well as the ones held per (groupId, keyId) for a {@see KeyGroupRelation}. The definitions
+     * {@see KeyGroupRelationCache} holds of its own are cleared with that service.
+     *
+     * Called at the messenger message boundary by
+     * {@see \Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener}, so that a
+     * definition edited after the first read is not answered from the memo for the life of a worker.
      */
     public static function clearDefinitionsCache(): void
     {
@@ -46,13 +51,9 @@ class Service
 
     public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): ?DataObject\ClassDefinition\Data
     {
-        if ($keyConfig instanceof KeyConfig) {
-            $cacheId = $keyConfig->getId();
-        } else {
-            $cacheId = $keyConfig->getKeyId();
-        }
+        $cacheId = self::getDefinitionsCacheId($keyConfig);
 
-        if (array_key_exists($cacheId, self::$definitionsCache)) {
+        if ($cacheId !== null && array_key_exists($cacheId, self::$definitionsCache)) {
             return self::$definitionsCache[$cacheId];
         }
 
@@ -60,9 +61,37 @@ class Service
         $definition = json_decode($definition, true);
         $type = $keyConfig->getType();
         $fd = self::getFieldDefinitionFromJson($definition, $type);
-        self::$definitionsCache[$cacheId] = $fd;
+
+        if ($cacheId !== null) {
+            self::$definitionsCache[$cacheId] = $fd;
+        }
 
         return $fd;
+    }
+
+    /**
+     * The entry a definition is memoized under, or null when nothing identifies what it was built
+     * from: a key config that is not saved yet, whose {@see KeyConfig::getId()} is nullable and whose
+     * null id would become the '' entry every other unsaved key config shares, and a relation that
+     * does not answer both of the ids its own entry is made of.
+     *
+     * Those two ids are typed properties without a default, so a relation built with `new` carries
+     * neither until it is set and reading one raises an Error. They are read through getObjectVars()
+     * for that reason, the way {@see Dao} reads an uninitialised `fieldname`.
+     */
+    private static function getDefinitionsCacheId(KeyConfig|KeyGroupRelation $keyConfig): int|string|null
+    {
+        if ($keyConfig instanceof KeyConfig) {
+            return $keyConfig->getId();
+        }
+
+        $relationVars = $keyConfig->getObjectVars();
+        if (!isset($relationVars['groupId'], $relationVars['keyId'])) {
+            return null;
+        }
+
+        // non numeric on purpose: a numeric string entry would be coerced to an int key id
+        return 'group:' . $keyConfig->getGroupId() . ':key:' . $keyConfig->getKeyId();
     }
 
     public static function getFieldDefinitionFromJson(array $definition, string $type): ?DataObject\ClassDefinition\Data
