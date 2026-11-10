@@ -22,6 +22,19 @@ parameters:
             identifier: missingType.generics
         -
             identifier: missingType.iterableValue
+        -
+            identifier: instanceof.alwaysTrue
+            paths:
+                - lib/Contracts/Diagnostics/CheckResult.php
+                - lib/Contracts/Diagnostics/DataContract.php
+        -
+            identifier: function.alreadyNarrowedType
+            paths:
+                - lib/Contracts/Diagnostics/CheckResult.php
+                - lib/Contracts/Diagnostics/DataContract.php
+        -
+            identifier: booleanAnd.alwaysFalse
+            path: lib/Contracts/Diagnostics/CheckResult.php
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:

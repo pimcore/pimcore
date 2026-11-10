@@ -18,6 +18,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -330,7 +332,10 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             $this->getMandatory() && !$omitMandatoryCheck &&
             ($data === null || empty($data->getItems()) || $data->hasValidImages() === false)
         ) {
-            throw new Model\Element\ValidationException('[ ' . $this->getName() . ' ] At least 1 image should be uploaded!');
+            throw (new StructuredValidationException(
+                '[ ' . $this->getName() . ' ] At least 1 image should be uploaded!'
+            ))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         parent::checkValidity($data, $omitMandatoryCheck);
