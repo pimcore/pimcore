@@ -435,6 +435,36 @@ runs the command again.
 Each write is guarded by `identifier IS NULL`, so a row that was given an identifier between the pre-flight and the
 write keeps it; the command reports that row as unresolved rather than counting it as backfilled.
 
+#### Translating stored references to identifiers
+
+Saved Pimcore Studio grid configurations name a classification store column as
+`~classificationstore~<field>~<groupId>-<keyId>`. The console command
+
+```bash
+bin/console pimcore:classificationstore:translate-identifiers [--dry-run]
+```
+
+rewrites every such token, anywhere in the `config` of a `gridconfigs` row - a column as well as the saved sort - to the
+five segment form `~classificationstore~<field>~<groupIdentifier>~<keyIdentifier>`. The number of segments tells the two
+forms apart, because an identifier may itself contain a hyphen. Core reads and accepts both forms.
+
+The command reports and never guesses. A token whose group or key does not exist, has no identifier, or whose halves
+are not both numeric ids is left as it is and listed with the row id and the token; the command still exits with `0`.
+It writes the `config` column of the rows it translated and nothing else, a token already in the identifier form is not
+touched, so it is safe to re-run, and `--dry-run` reports exactly what a real run would do and writes nothing.
+
+Run it only once the products that read these tokens - Pimcore Studio and any bundle storing its own references - can
+read identifiers. It does not check that.
+
+Core ships one translator, for grid configurations. A service implementing
+`Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\ReferenceTranslatorInterface` is tagged
+`pimcore.classificationstore.reference_translator` by autoconfiguration and executed by the same command, one report
+section per translator. No translator is registered yet for Data Hub Simple REST endpoint configurations or Data
+Importer mappings.
+
+GraphQL keeps addressing groups and keys by their integer ids. That is a published contract, this command deliberately
+does not touch it, and it decides no deprecation schedule for it.
+
 ### Per assignment fields
 
 Assigning a key to a group is a row of its own, and that row can carry more than the sorter and the mandatory flag.

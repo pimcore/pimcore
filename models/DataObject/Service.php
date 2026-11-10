@@ -792,10 +792,6 @@ class Service extends Model\Element\Service
             $type = $keyParts[1];
             if ($type === 'classificationstore') {
                 $field = $keyParts[2];
-                $groupKeyId = explode('-', $keyParts[3]);
-
-                $groupId = (int) $groupKeyId[0];
-                $keyid = (int) $groupKeyId[1];
                 $getter = 'get' . ucfirst($field);
 
                 if (method_exists($object, $getter)) {
@@ -804,6 +800,30 @@ class Service extends Model\Element\Service
 
                     /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                     $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+
+                    if (isset($keyParts[4])) {
+                        // five segments: group and key by identifier, scoped to the store of the field
+                        $storeId = Model\DataObject\Classificationstore\Service::getConfiguredStoreId($csFieldDefinition);
+                        if ($storeId === null) {
+                            return null;
+                        }
+
+                        $groupConfig = Model\DataObject\Classificationstore\GroupConfig::getByIdentifier($keyParts[3], $storeId);
+                        $identifiedKeyConfig = Model\DataObject\Classificationstore\KeyConfig::getByIdentifier($keyParts[4], $storeId);
+
+                        if ($groupConfig === null || $identifiedKeyConfig === null) {
+                            return null;
+                        }
+
+                        $groupId = $groupConfig->getId();
+                        $keyid = $identifiedKeyConfig->getId();
+                    } else {
+                        $groupKeyId = explode('-', $keyParts[3]);
+
+                        $groupId = (int) $groupKeyId[0];
+                        $keyid = (int) $groupKeyId[1];
+                    }
+
                     $csLanguage = $requestedLanguage;
 
                     if (!self::getClassificationstoreLocalizationResolver()->isKeyLocalized($keyid, $csFieldDefinition)) {

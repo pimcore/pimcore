@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use InvalidArgumentException;
 use Monolog\Level;
 use Pimcore;
+use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\ReferenceTranslatorInterface;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cdn\AssetWebPath;
@@ -134,6 +135,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             ->addTag('pimcore.telemetry.snapshot_collector');
         $container->registerForAutoconfiguration(BundleUsageProviderInterface::class)
             ->addTag('pimcore.telemetry.bundle_usage_provider');
+
+        $container->registerForAutoconfiguration(ReferenceTranslatorInterface::class)
+            ->addTag('pimcore.classificationstore.reference_translator');
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts

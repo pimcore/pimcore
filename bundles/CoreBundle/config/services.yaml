@@ -152,6 +152,10 @@ services:
         arguments:
             $db: '@doctrine.dbal.default_connection'
 
+    Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\GridConfigReferenceTranslator:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
     # public: it is consumed from the classification store DAO and the class definition DAO,
     # which are not container-managed.
     # kernel.reset: the resolver memoizes which engine each store resolves to, and that memo has to

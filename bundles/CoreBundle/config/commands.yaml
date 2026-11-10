@@ -19,6 +19,12 @@ services:
             $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
         tags: ['console.command']
 
+    # the translators are every service implementing ReferenceTranslatorInterface, in any bundle
+    Pimcore\Bundle\CoreBundle\Command\TranslateClassificationStoreIdentifiersCommand:
+        arguments:
+            $translators: !tagged_iterator pimcore.classificationstore.reference_translator
+        tags: ['console.command']
+
     Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange:
         arguments:
             - '@Pimcore\Cache\Symfony\CacheClearer'
