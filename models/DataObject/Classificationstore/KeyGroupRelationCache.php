@@ -263,7 +263,17 @@ final class KeyGroupRelationCache implements ResetInterface
             return null;
         }
 
-        $context = ['fieldname' => $definition->getName()];
+        // the context the editor's enrichment hands the provider, as far as a lookup without an
+        // object can: only a provider reporting static options is asked, so the list does not vary
+        // with the object, and the purpose is the one the layout is enriched for
+        $context = [
+            'fieldname' => $definition->getName(),
+            'purpose' => 'layout',
+            'ownerType' => 'classificationstore',
+            'keyId' => $relation->getKeyId(),
+            'groupId' => $relation->getGroupId(),
+            'keyDefinition' => $definition,
+        ];
 
         try {
             if (!$provider->hasStaticOptions($context, $definition)) {

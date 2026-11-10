@@ -221,5 +221,8 @@ class Dao extends AbstractDao
         Pimcore::getContainer()
             ->get(Classificationstore\KeyGroupRelationCache::class)
             ->clearGroup($this->model->getGroupId());
+
+        // the definitions Service memoizes per (groupId, keyId) are built from the override
+        Classificationstore\Service::clearDefinitionsCache();
     }
 }

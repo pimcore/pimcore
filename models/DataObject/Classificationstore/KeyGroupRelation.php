@@ -300,13 +300,34 @@ final class KeyGroupRelation extends Model\AbstractModel
 
         $definition = json_decode($this->getDefinition(), true);
 
+        return json_encode(self::mergeOverride($definition, $override));
+    }
+
+    /**
+     * Merges the override into the definition that answers for the VALUE: a wrapper (`multiValue`,
+     * `encryptedField`) carries its inner type under `delegate`, and that is where the options and
+     * the units live, so the merge goes down to it rather than into the wrapper.
+     *
+     * @param array<string, mixed> $definition
+     * @param array<string, mixed> $override
+     *
+     * @return array<string, mixed>
+     */
+    private static function mergeOverride(array $definition, array $override): array
+    {
+        if (isset($definition['delegateDatatype']) && is_array($definition['delegate'] ?? null)) {
+            $definition['delegate'] = self::mergeOverride($definition['delegate'], $override);
+
+            return $definition;
+        }
+
         foreach ($override as $property => $value) {
             $definition[$property] = $property === self::OPTIONS
                 ? self::filterOptions($definition[self::OPTIONS] ?? null, $value)
                 : $value;
         }
 
-        return json_encode($definition);
+        return $definition;
     }
 
     /**
