@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
+use Pimcore\Helper\SymfonyExpression\ReadOnlyWorkflowExpressionLanguage;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Transition;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -45,6 +47,16 @@ final class WorkflowPass implements CompilerPassInterface
         if (!$container->hasDefinition('workflow.registry')) {
             $loader->load('services_symfony_workflow.yaml');
         }
+
+        // read-only stand-ins for workflow expressions (GHSA-93jv-p24f-gcpp) - also when the application
+        // enables framework workflows, in which case FrameworkBundle defines this service instead of core
+        // a bundle may provide the registry without it
+        if (!$container->hasDefinition('workflow.security.expression_language')) {
+            $container->register('workflow.security.expression_language');
+        }
+        $container->getDefinition('workflow.security.expression_language')
+            ->setClass(ReadOnlyWorkflowExpressionLanguage::class)
+            ->setArgument('$valueAdapters', new TaggedIteratorArgument('pimcore.expression.read_only_value_adapter'));
 
         $workflowsConfig = $container->getParameter('pimcore.workflow');
         foreach ($workflowsConfig as $workflowName => $workflowConfig) {

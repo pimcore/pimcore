@@ -152,6 +152,10 @@ services:
         arguments:
             $db: '@doctrine.dbal.default_connection'
 
+    Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\GridConfigReferenceTranslator:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
     # public: it is consumed from the classification store DAO and the class definition DAO,
     # which are not container-managed.
     # kernel.reset: the resolver memoizes which engine each store resolves to, and that memo has to
@@ -500,3 +504,9 @@ services:
         public: true
         arguments:
             - !tagged_iterator pimcore.calculated_value.expression_language_provider
+            - !tagged_iterator pimcore.expression.read_only_value_adapter
+
+    Pimcore\Helper\SymfonyExpression\ReadOnlyExpressionLanguage:
+        public: true
+        arguments:
+            $valueAdapters: !tagged_iterator pimcore.expression.read_only_value_adapter
