@@ -89,6 +89,9 @@ class CalculatedValueExpressionSandboxTest extends ModelTestCase
         yield 'url slug action' => ['object.getUrlSlug()[0].getAction()'];
         yield 'data key definition' => ['data.getKeyDefinition()'];
         yield 'property access' => ['object.o_dao'];
+        yield 'direct __call to delete' => ['object.__call("delete", [])'];
+        yield 'direct __call to dao' => ['object.__call("getDao", [])'];
+        yield 'direct __call on a value view' => ['object.getHotspotimage().__call("getThumbnail", ["x"])'];
     }
 
     /**
