@@ -147,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update(): void
     {
-        // the group relations deleted below, the row itself and the identifier change as one unit
+        // the group relations deleted on the transition to disabled, the row itself and the identifier change as one unit
         $this->writeAtomically(function (): void {
             $id = $this->model->getId();
             $identifier = $this->model->getIdentifier();
@@ -171,6 +171,12 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
+                // a key built with `new` has not decided about the flag either: it must neither disable
+                // a stored key nor, by that, delete its group assignments
+                if ($key === 'enabled' && !$this->model->isEnabledInitialized()) {
+                    continue;
+                }
+
                 // written by writeIdentifier(), which is the only place allowed to touch the column
                 if ($key === 'identifier') {
                     continue;
@@ -189,7 +195,7 @@ class Dao extends Model\Dao\AbstractDao
                     if (is_bool($value)) {
                         $value = (int) $value;
 
-                        if (!$value && $key === 'enabled') {
+                        if (!$value && $key === 'enabled' && $this->isStoredEnabledForUpdate((int) $this->model->getId())) {
                             $this->db->delete(
                                 Model\DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS,
                                 ['keyId' => $this->model->getId()]);
@@ -213,6 +219,29 @@ class Dao extends Model\Dao\AbstractDao
                 $this->writeIdentifier(self::TABLE_NAME_KEYS, (int) $id, (string) $identifier);
             }
         });
+    }
+
+    /**
+     * A current read, so a transition another request has just committed is not missed; NULL counts as disabled.
+     *
+     * Lock order: the key's relation rows first, then the key row - the order a writer of a single
+     * assignment (KeyGroupRelation\Dao::update()) takes them in, since it holds its relation row
+     * and only then a shared foreign-key lock on the key row. Both sides acquire in the same order, so
+     * a concurrent disable and assignment wait for each other instead of deadlocking. Not exercised
+     * against a running server.
+     */
+    private function isStoredEnabledForUpdate(int $id): bool
+    {
+        $this->db->fetchAllAssociative(
+            'SELECT `keyId` FROM `' . Model\DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . '` WHERE `keyId` = ? FOR UPDATE',
+            [$id]
+        );
+
+        return (bool) $this->db->fetchOne(
+            'SELECT `enabled` FROM `' . self::TABLE_NAME_KEYS . '` WHERE `id` = ? FOR UPDATE',
+            [$id]
+        );
     }
 
     public function create(): void

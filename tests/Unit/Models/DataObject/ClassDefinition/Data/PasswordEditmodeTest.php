@@ -116,7 +116,7 @@ class PasswordEditmodeTest extends TestCase
 
             public function getSecret(): ?string
             {
-                return self::HASH_FOR_ITEM;
+                return PasswordEditmodeTest::HASH_FOR_ITEM;
             }
         };
         $object = new class($item) extends Concrete {
@@ -154,7 +154,7 @@ class PasswordEditmodeTest extends TestCase
         $brick = new class() {
             public function getSecret(): string
             {
-                return self::HASH_FOR_ITEM;
+                return PasswordEditmodeTest::HASH_FOR_ITEM;
             }
         };
         $container = new class($brick) {
@@ -192,7 +192,7 @@ class PasswordEditmodeTest extends TestCase
             {
                 return [
                     ['secret' => new BlockElement('secret', 'password', 'first')],
-                    ['secret' => new BlockElement('secret', 'password', self::HASH_FOR_ITEM)],
+                    ['secret' => new BlockElement('secret', 'password', PasswordEditmodeTest::HASH_FOR_ITEM)],
                 ];
             }
         };
@@ -221,7 +221,7 @@ class PasswordEditmodeTest extends TestCase
         $object = new class extends Concrete {
             public function getSecret(?string $language = null): ?string
             {
-                return $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
+                return $language === 'de' ? PasswordEditmodeTest::HASH_FOR_ITEM : PasswordEditmodeTest::HASH;
             }
         };
         $field = $this->buildField();
@@ -244,7 +244,7 @@ class PasswordEditmodeTest extends TestCase
         $object = new class extends Concrete {
             public function getSecret(): string
             {
-                return self::HASH_FOR_ITEM;
+                return PasswordEditmodeTest::HASH_FOR_ITEM;
             }
         };
 
@@ -287,7 +287,7 @@ class PasswordEditmodeTest extends TestCase
             public function getSecret(?string $language = null): ?string
             {
                 // the active locale is English, the submitted language is German
-                return $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
+                return $language === 'de' ? PasswordEditmodeTest::HASH_FOR_ITEM : PasswordEditmodeTest::HASH;
             }
         };
         $object = new class($item) extends Concrete {
@@ -314,7 +314,7 @@ class PasswordEditmodeTest extends TestCase
         $brick = new class() {
             public function getSecret(?string $language = null): string
             {
-                return $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
+                return $language === 'de' ? PasswordEditmodeTest::HASH_FOR_ITEM : PasswordEditmodeTest::HASH;
             }
         };
         $container = new class($brick) {
@@ -392,7 +392,7 @@ class PasswordEditmodeTest extends TestCase
         $object = new class extends Concrete {
             public function getBlocks(?string $language = null): array
             {
-                $hash = $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
+                $hash = $language === 'de' ? PasswordEditmodeTest::HASH_FOR_ITEM : PasswordEditmodeTest::HASH;
 
                 return [['secret' => new BlockElement('secret', 'password', $hash)]];
             }

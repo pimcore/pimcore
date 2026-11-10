@@ -262,6 +262,9 @@ class Service extends Model\Element\Service
         // reading block fields outside admin mode would write the frontend-rendered Wysiwyg text back into the copy
         WysiwygPersistingScope::run(fn () => $this->keepNonEditableLanguages($new, $target));
 
+        // the copy is saved as the target, so it is based on the target's row, not on the source's
+        $new->__setChangeToken($target->__getChangeToken());
+
         $new->save();
 
         $target = Concrete::getById($new->getId());
@@ -792,10 +795,6 @@ class Service extends Model\Element\Service
             $type = $keyParts[1];
             if ($type === 'classificationstore') {
                 $field = $keyParts[2];
-                $groupKeyId = explode('-', $keyParts[3]);
-
-                $groupId = (int) $groupKeyId[0];
-                $keyid = (int) $groupKeyId[1];
                 $getter = 'get' . ucfirst($field);
 
                 if (method_exists($object, $getter)) {
@@ -804,6 +803,38 @@ class Service extends Model\Element\Service
 
                     /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                     $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+
+                    // identifiers cannot contain '~', so only four (legacy) or five (identifier) segments are valid
+                    if (!in_array(count($keyParts), [4, 5], true)) {
+                        return null;
+                    }
+
+                    if (count($keyParts) === 5) {
+                        // five segments: group and key by identifier, scoped to the store of the field
+                        $storeId = Model\DataObject\Classificationstore\Service::getConfiguredStoreId($csFieldDefinition);
+                        if ($storeId === null) {
+                            return null;
+                        }
+
+                        $groupConfig = Model\DataObject\Classificationstore\GroupConfig::getByIdentifier($keyParts[3], $storeId);
+                        $identifiedKeyConfig = Model\DataObject\Classificationstore\KeyConfig::getByIdentifier($keyParts[4], $storeId);
+
+                        if ($groupConfig === null || $identifiedKeyConfig === null) {
+                            return null;
+                        }
+
+                        $groupId = $groupConfig->getId();
+                        $keyid = $identifiedKeyConfig->getId();
+                    } else {
+                        // legacy form: exactly two numeric halves, anything else never reaches the store
+                        if (preg_match('/^(\d+)-(\d+)$/', $keyParts[3], $legacyIds) !== 1) {
+                            return null;
+                        }
+
+                        $groupId = (int) $legacyIds[1];
+                        $keyid = (int) $legacyIds[2];
+                    }
+
                     $csLanguage = $requestedLanguage;
 
                     if (!self::getClassificationstoreLocalizationResolver()->isKeyLocalized($keyid, $csFieldDefinition)) {
@@ -813,6 +844,10 @@ class Service extends Model\Element\Service
                     $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $csLanguage, true, true);
 
                     $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
+                    if ($keyConfig === null) {
+                        return null;
+                    }
+
                     $type = $keyConfig->getType();
                     $definition = json_decode($keyConfig->getDefinition(), true);
                     $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);

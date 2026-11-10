@@ -810,17 +810,19 @@ class Dao extends Model\Dao\AbstractDao
             try {
                 $tablename = $this->getQueryTableName().'_'.$language;
 
-                // get available columns
-                $viewColumns = array_merge(
-                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$defaultTable.'`'),
-                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `objects`')
-                );
                 $localizedColumns = $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$tablename.'`');
 
-                // get view fields
+                // get view fields, qualified by their table, without the internal change token of the objects table:
+                // a field named changeToken would collide with it, and a view referencing it would break when the
+                // column is dropped again
                 $viewFields = [];
-                foreach ($viewColumns as $row) {
-                    $viewFields[] = $this->db->quoteIdentifier($row['Field']);
+                foreach ($this->db->fetchFirstColumn('SHOW COLUMNS FROM `'.$defaultTable.'`') as $column) {
+                    $viewFields[] = $this->db->quoteIdentifier($defaultTable).'.'.$this->db->quoteIdentifier($column);
+                }
+                foreach ($this->db->fetchFirstColumn('SHOW COLUMNS FROM `objects`') as $column) {
+                    if ($column !== 'changeToken') {
+                        $viewFields[] = '`objects`.'.$this->db->quoteIdentifier($column);
+                    }
                 }
 
                 // create fallback select
