@@ -103,6 +103,22 @@ final class SortingSettingsTest extends ModelTestCase
         );
     }
 
+    /**
+     * A legacy token is a feature sort only when its pair is exactly two numeric halves.
+     */
+    public function testAMalformedLegacyPairIsNotAFeatureSort(): void
+    {
+        foreach (['abc-def', '1-2-extra', '1-', '-2'] as $pair) {
+            $token = '~classificationstore~csstore~' . $pair;
+
+            $this->assertSame(
+                ['orderKey' => $token, 'order' => 'ASC'],
+                QueryParams::extractSortingSettings($this->params($token, 'ASC')),
+                'legacy pair "' . $pair . '" must not be a feature sort'
+            );
+        }
+    }
+
     public function testTheIdentifierTokenResolvesWithAStoreScope(): void
     {
         $storeId = $this->seedIdentifiedStore();

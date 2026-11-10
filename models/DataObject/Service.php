@@ -826,10 +826,13 @@ class Service extends Model\Element\Service
                         $groupId = $groupConfig->getId();
                         $keyid = $identifiedKeyConfig->getId();
                     } else {
-                        $groupKeyId = explode('-', $keyParts[3]);
+                        // legacy form: exactly two numeric halves, anything else never reaches the store
+                        if (preg_match('/^(\d+)-(\d+)$/', $keyParts[3], $legacyIds) !== 1) {
+                            return null;
+                        }
 
-                        $groupId = (int) $groupKeyId[0];
-                        $keyid = (int) $groupKeyId[1];
+                        $groupId = (int) $legacyIds[1];
+                        $keyid = (int) $legacyIds[2];
                     }
 
                     $csLanguage = $requestedLanguage;
@@ -841,6 +844,10 @@ class Service extends Model\Element\Service
                     $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $csLanguage, true, true);
 
                     $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
+                    if ($keyConfig === null) {
+                        return null;
+                    }
+
                     $type = $keyConfig->getType();
                     $definition = json_decode($keyConfig->getDefinition(), true);
                     $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);

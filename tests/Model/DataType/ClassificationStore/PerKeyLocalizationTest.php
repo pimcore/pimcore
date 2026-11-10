@@ -367,6 +367,22 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
         }
     }
 
+    /**
+     * A four segment token is the legacy form only when its last segment is exactly two numeric
+     * halves; anything else is answered with null before any store is read.
+     */
+    public function testAMalformedLegacyTokenIsNotRead(): void
+    {
+        $object = $this->createObject(Csstore::class, 'malformed', []);
+
+        foreach (['abc-def', '1-2-extra', '1-', '-2', '1-b', 'nopair', ''] as $pair) {
+            $this->assertNull(
+                $this->readGridToken($object, '~classificationstore~' . self::FIELDNAME . '~' . $pair),
+                'legacy pair "' . $pair . '" must not be read'
+            );
+        }
+    }
+
     public function testTheGridReadFollowsTheKey(): void
     {
         $group = $this->createGroup('grid');

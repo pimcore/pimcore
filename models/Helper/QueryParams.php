@@ -78,14 +78,13 @@ class QueryParams
                         );
                     }
 
-                    $groupKeyId = $parts[3];
-                    $groupKeyIdParts = explode('-', $groupKeyId);
-                    if (count($groupKeyIdParts) < 2) {
+                    // legacy form: exactly two numeric halves, anything else is a plain order key
+                    if (preg_match('/^(\d+)-(\d+)$/', $parts[3], $legacyIds) !== 1) {
                         return ['orderKey' => $orderKey, 'order' => $order];
                     }
 
-                    $groupId = (int) $groupKeyIdParts[0];
-                    $keyid = (int) $groupKeyIdParts[1];
+                    $groupId = (int) $legacyIds[1];
+                    $keyid = (int) $legacyIds[2];
 
                     return [
                         'orderKey' => $sortParam['property'],
