@@ -22,6 +22,7 @@ use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Controller\Config\Template\BundleTemplateProvider;
 use Pimcore\Controller\Config\Template\ProjectTemplateProvider;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
+use Pimcore\Helper\SymfonyExpression\ReadOnlyValueAdapterInterface;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
@@ -89,9 +90,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.documents.editables.unserialize_allowed_classes', $config['documents']['editables']['unserialize_allowed_classes']);
         $container->setParameter('pimcore.objects.link_sanitizer.strict', $config['objects']['link_sanitizer']['strict']);
         $container->setParameter('pimcore.objects.link_sanitizer.blocked_url_schemes', $config['objects']['link_sanitizer']['blocked_url_schemes']);
         $container->setParameter('pimcore.objects.link_sanitizer.block_unsafe_data_urls', $config['objects']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.objects.hydration_lock.disabled_for', $config['objects']['hydration_lock']['disabled_for']);
         $container->setParameter('pimcore.objects.block.unserialize_allowed_classes', $config['objects']['block']['unserialize_allowed_classes']);
 
         // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
@@ -135,6 +138,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             ->addTag('pimcore.telemetry.snapshot_collector');
         $container->registerForAutoconfiguration(BundleUsageProviderInterface::class)
             ->addTag('pimcore.telemetry.bundle_usage_provider');
+        $container->registerForAutoconfiguration(ReadOnlyValueAdapterInterface::class)
+            ->addTag('pimcore.expression.read_only_value_adapter');
 
         $container->registerForAutoconfiguration(ReferenceTranslatorInterface::class)
             ->addTag('pimcore.classificationstore.reference_translator');

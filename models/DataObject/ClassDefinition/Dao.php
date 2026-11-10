@@ -266,10 +266,20 @@ class Dao extends Model\Dao\AbstractDao
 
         // create view
         try {
+            // the internal change token stays out of the view: it could collide with a field named changeToken,
+            // and a view referencing it would break when the column is dropped again
+            $objectsColumns = [];
+            foreach ($this->db->fetchFirstColumn('SHOW COLUMNS FROM objects') as $column) {
+                if ($column !== 'changeToken') {
+                    $objectsColumns[] = $qObjectsTable . '.' . $this->db->quoteIdentifier($column);
+                }
+            }
+            $objectsColumns = implode(', ', $objectsColumns);
+
             $this->db->executeStatement(
                 "
             CREATE OR REPLACE VIEW {$qObjectView} AS
-            SELECT *
+            SELECT {$qObjectTable}.*, {$objectsColumns}
             FROM {$qObjectTable}
             JOIN {$qObjectsTable}
                 ON {$qObjectsTable}.{$qId} = {$qObjectTable}.{$qOoId}
