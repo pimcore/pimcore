@@ -262,6 +262,9 @@ class Service extends Model\Element\Service
         // reading block fields outside admin mode would write the frontend-rendered Wysiwyg text back into the copy
         WysiwygPersistingScope::run(fn () => $this->keepNonEditableLanguages($new, $target));
 
+        // the copy is saved as the target, so it is based on the target's row, not on the source's
+        $new->__setChangeToken($target->__getChangeToken());
+
         $new->save();
 
         $target = Concrete::getById($new->getId());
