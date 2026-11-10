@@ -382,13 +382,17 @@ final class KeyGroupRelation extends Model\AbstractModel
             return $definition;
         }
 
+        // a key without a list of its own is provider-backed: there is nothing here to reconcile its default
+        // against, and the list the provider fills in is reconciled where it is known
+        $hasOwnOptions = ($definition[self::OPTIONS] ?? null) !== null;
+
         foreach ($override as $property => $value) {
             $definition[$property] = $property === self::OPTIONS
                 ? self::filterOptions($definition[self::OPTIONS] ?? null, $value)
                 : $value;
         }
 
-        if (array_key_exists(self::OPTIONS, $override) && array_key_exists('defaultValue', $definition)) {
+        if ($hasOwnOptions && array_key_exists(self::OPTIONS, $override) && array_key_exists('defaultValue', $definition)) {
             $definition['defaultValue'] = self::reconcileDefaultValue(
                 $definition['defaultValue'],
                 $definition[self::OPTIONS]

@@ -186,6 +186,26 @@ class KeyGroupRelationTest extends TestCase
         $this->assertNull(KeyGroupRelation::reconcileDefaultValue([['value' => 'blue']], $options));
     }
 
+    public function testAProviderBackedKeysDefaultSurvivesAnOverrideThatExcludesNothing(): void
+    {
+        $provided = new Select();
+        $provided->setOptionsProviderType('class');
+        $provided->setOptionsProviderClass('Some\\Provider');
+        $provided->setDefaultValue('red');
+
+        $relation = $this->relation($provided);
+
+        foreach ([['options' => null], ['options' => ['red']]] as $override) {
+            $relation->setDefinitionOverride($override);
+
+            $this->assertSame(
+                'red',
+                json_decode($relation->getEffectiveDefinition(), true)['defaultValue'],
+                'the key has no list of its own to reconcile the default against'
+            );
+        }
+    }
+
     private function relation(Data $definition): KeyGroupRelation
     {
         $definition->setName(self::KEY_NAME);

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
@@ -20,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\OptionsProviderResolver;
 use Symfony\Contracts\Service\ResetInterface;
-use Throwable;
 
 /**
  * Process-scoped cache of the key/group relations of a classification store, keyed by
@@ -290,7 +290,7 @@ final class KeyGroupRelationCache implements ResetInterface
             }
 
             return $relation->applyOptionSubset($provider->getOptions($context, $definition));
-        } catch (Throwable $throwable) {
+        } catch (Exception $throwable) {
             // a provider that cannot answer narrows nothing and is not validated against. A definition is built on the load, the
             // save, the dependency walk and the search index walk, none of which has an editor in
             // front of it, and the configuration a provider reads can be gone - the core providers
