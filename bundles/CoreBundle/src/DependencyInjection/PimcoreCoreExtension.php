@@ -87,6 +87,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.documents.editables.unserialize_allowed_classes', $config['documents']['editables']['unserialize_allowed_classes']);
         $container->setParameter('pimcore.objects.link_sanitizer.strict', $config['objects']['link_sanitizer']['strict']);
         $container->setParameter('pimcore.objects.link_sanitizer.blocked_url_schemes', $config['objects']['link_sanitizer']['blocked_url_schemes']);
         $container->setParameter('pimcore.objects.link_sanitizer.block_unsafe_data_urls', $config['objects']['link_sanitizer']['block_unsafe_data_urls']);
