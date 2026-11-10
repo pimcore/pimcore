@@ -117,7 +117,6 @@ class QueryParams
             return [
                 'orderKey' => $orderKey,
                 'order' => $order,
-                'fieldname' => $fieldname,
                 'groupIdentifier' => $groupIdentifier,
                 'keyIdentifier' => $keyIdentifier,
             ];

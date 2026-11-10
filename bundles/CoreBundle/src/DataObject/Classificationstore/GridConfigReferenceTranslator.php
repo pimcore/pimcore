@@ -79,6 +79,10 @@ final class GridConfigReferenceTranslator implements ReferenceTranslatorInterfac
         $translated = 0;
         $unresolved = [];
 
+        // the memo holds database state and this service outlives a run: one run must not answer from another's rows
+        $this->rows = [];
+        $this->fieldStores = [];
+
         foreach ($this->db->iterateAssociative('SELECT `id`, `classId`, `config` FROM `gridconfigs`') as $row) {
             $location = 'gridconfigs row ' . $row['id'];
             $readConfig = $row['config'] === null ? null : (string) $row['config'];
@@ -262,7 +266,7 @@ final class GridConfigReferenceTranslator implements ReferenceTranslatorInterfac
             return self::REASON_NOT_FOUND;
         }
 
-        if ($group['identifier'] === null || $key['identifier'] === null) {
+        if (($group['identifier'] ?? '') === '' || ($key['identifier'] ?? '') === '') {
             return self::REASON_NO_IDENTIFIER;
         }
 

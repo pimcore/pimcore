@@ -115,12 +115,12 @@ final class SortingSettingsTest extends ModelTestCase
             [
                 'orderKey' => $token,
                 'order' => 'ASC',
-                'fieldname' => self::FIELD,
                 'groupIdentifier' => 'the-group',
                 'keyIdentifier' => 'the-key',
             ],
             $result
         );
+        $this->assertArrayNotHasKey('fieldname', $result);
         $this->assertArrayNotHasKey('isFeature', $result);
         $this->assertArrayNotHasKey('groupId', $result);
     }

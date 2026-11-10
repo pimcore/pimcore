@@ -236,8 +236,11 @@ final class TranslateIdentifiersCommandTest extends ModelTestCase
         $storeId = $this->seedIdentifiedStore();
         $group = $this->seedIdentifiedRow(self::TABLE_GROUPS, $storeId, 'G', 'g-one');
         $noIdentifierKey = $this->seedIdentifiedRow(self::TABLE_KEYS, $storeId, 'K', null);
+        // written by SQL or an import: the models layer would refuse it
+        $emptyIdentifierKey = $this->seedIdentifiedRow(self::TABLE_KEYS, $storeId, 'K2', '');
 
         $tokens = [
+            '~classificationstore~csstore~' . $group . '-' . $emptyIdentifierKey,
             '~classificationstore~csstore~' . $group . '-' . $noIdentifierKey,
             '~classificationstore~csstore~' . ($group + 100000) . '-' . $noIdentifierKey,
             '~classificationstore~csstore~abc-def',
@@ -255,7 +258,7 @@ final class TranslateIdentifiersCommandTest extends ModelTestCase
         $this->assertStringContainsString('the group or the key has no identifier', $tester->getDisplay());
         $this->assertStringContainsString('the group or the key does not exist', $tester->getDisplay());
         $this->assertStringContainsString('the group and key are not both numeric ids', $tester->getDisplay());
-        $this->assertStringContainsString('3 reference(s) unresolved.', $tester->getDisplay());
+        $this->assertStringContainsString('4 reference(s) unresolved.', $tester->getDisplay());
     }
 
     /**
