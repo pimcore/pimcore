@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Helper\ClassificationStore;
 
-use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\ReferenceTranslatorInterface;
-use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\TranslationReport;
+use Pimcore\Model\DataObject\Classificationstore\ReferenceTranslatorInterface;
+use Pimcore\Model\DataObject\Classificationstore\TranslationReport;
 
 /**
  * A reference translator of another bundle, as far as the container is concerned: it is registered as a

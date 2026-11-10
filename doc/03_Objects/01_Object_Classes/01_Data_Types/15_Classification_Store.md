@@ -448,13 +448,21 @@ rewrites every such token, anywhere in the `config` of a `gridconfigs` row - a c
 five segment form `~classificationstore~<field>~<groupIdentifier>~<keyIdentifier>`. The number of segments tells the two
 forms apart, because an identifier may itself contain a hyphen. Core reads and accepts both forms.
 
+A token is rewritten both where it is a value and where it is the name of a JSON object property, because the classic
+admin keys its saved column map by the column key itself - `columns[<column key>] = {name: <column key>, …}` - and reads
+that configuration back by the key alone. Rewriting only the values would leave the one string that identifies the
+column in the integer form.
+
 Pimcore Studio keeps its grid configurations in a table of its own and names a classification store column by a
 separate group id and key id rather than by this token, so it carries nothing for this command to translate.
 
 The command reports and never guesses. A token whose group or key does not exist, has no identifier, or whose halves
 are not both numeric ids is left as it is and listed with the row id and the token; the command still exits with `0`.
 It writes the `config` column of the rows it translated and nothing else, a token already in the identifier form is not
-touched, so it is safe to re-run, and `--dry-run` reports exactly what a real run would do and writes nothing.
+touched, so it is safe to re-run, and `--dry-run` reports exactly what a real run would do and writes nothing. A token
+whose identifier form is already a key of the same JSON object is left as well, because rewriting it would drop one of
+the two entries, and a row whose `config` does not decode at all is reported as unresolved under the name `config` with
+the decoder's message rather than silently counted as a row carrying no token.
 
 An identifier is unique within its store only, and both readers resolve the two identifiers inside the store of the
 classification store field the token names. So the command resolves that store too - from the `classId` of the row and
@@ -462,14 +470,21 @@ the field segment of the token - and refuses a token whose group or key belongs 
 whose field store does not resolve at all because the row names no class, the class is gone, or that field is not a
 classification store field. Both are listed with the row id, the token and the reason.
 
-Each write is guarded by the `config` the row was read with, so a configuration saved between the read and the write
-is kept; the command then reports every token of that row as unresolved rather than counting it as translated.
+Each write is guarded by the `config` the row was read with: the row is re-read under a `FOR UPDATE` lock in the same
+transaction as the write and compared in PHP, so a configuration saved between the read and the write is kept and the
+command then reports every token of that row as unresolved rather than counting it as translated. The comparison cannot
+be made in SQL, because `config` is a real JSON column on MySQL and text on MariaDB, and neither compares a bound
+string to the stored document the way a guard needs.
+
+The `importconfigs` table has the same shape and once held the same token - the classic admin's CSV import built its
+column mapping with the same dialog until that feature was removed in Pimcore 10 - but nothing has read or written
+those rows since, so they are deliberately not translated.
 
 Run it only once everything that reads these tokens - the classic admin grid that writes them, and any bundle storing
 its own references - can read identifiers. It does not check that.
 
 Core ships one translator, for grid configurations. A service implementing
-`Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\ReferenceTranslatorInterface` is tagged
+`Pimcore\Model\DataObject\Classificationstore\ReferenceTranslatorInterface` is tagged
 `pimcore.classificationstore.reference_translator` by autoconfiguration and executed by the same command, one report
 section per translator. No translator is registered yet for Data Hub Simple REST endpoint configurations or Data
 Importer mappings.

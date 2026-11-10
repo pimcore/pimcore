@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Bundle\CoreBundle\DataObject\Classificationstore;
+namespace Pimcore\Model\DataObject\Classificationstore;
 
 /**
  * Extension point for `pimcore:classificationstore:translate-identifiers`. A service implementing this interface
@@ -21,7 +21,11 @@ namespace Pimcore\Bundle\CoreBundle\DataObject\Classificationstore;
  * An implementation must leave a reference it cannot translate untouched and report it, and must write nothing
  * when `$dryRun` is true while reporting what it would have written.
  *
- * This is a public extension point and therefore intentionally not `@internal`.
+ * This is a public extension point and therefore intentionally not `@internal`, and it lives here rather than
+ * next to core's own translator for that reason: a bundle implementing it must not have to depend on a
+ * bundle-internal namespace. Core's implementation
+ * ({@see \Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\GridConfigReferenceTranslator}) stays
+ * internal, exactly as {@see LabelResolverInterface} and its implementation do.
  */
 interface ReferenceTranslatorInterface
 {

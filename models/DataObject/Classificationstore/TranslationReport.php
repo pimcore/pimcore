@@ -11,19 +11,21 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Bundle\CoreBundle\DataObject\Classificationstore;
+namespace Pimcore\Model\DataObject\Classificationstore;
 
 /**
- * One reference a translator could not rewrite, with where it was found and why.
+ * What one reference translator rewrote and what it could not.
  *
  * This is a public extension point and therefore intentionally not `@internal`.
  */
-final readonly class UnresolvedReference
+final readonly class TranslationReport
 {
+    /**
+     * @param list<UnresolvedReference> $unresolved
+     */
     public function __construct(
-        public string $location,
-        public string $reference,
-        public string $reason
+        public int $translated,
+        public array $unresolved = []
     ) {
     }
 }

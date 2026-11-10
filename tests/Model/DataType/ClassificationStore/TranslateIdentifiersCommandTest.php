@@ -13,16 +13,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Closure;
 use Doctrine\DBAL\Connection;
+use LogicException;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Command\TranslateClassificationStoreIdentifiersCommand;
 use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\GridConfigReferenceTranslator;
-use Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\ReferenceTranslatorInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
 use Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel;
+use Pimcore\Model\DataObject\Classificationstore\ReferenceTranslatorInterface;
 use Pimcore\Tests\Support\Helper\ClassificationStore\StubReferenceTranslator;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionProperty;
@@ -134,6 +136,99 @@ final class TranslateIdentifiersCommandTest extends ModelTestCase
         $this->assertSame('id', $config['columns'][0]['key']);
         $this->assertSame('ASC', $config['sort']['direction']);
         $this->assertStringContainsString('2 reference(s) translated.', $tester->getDisplay());
+    }
+
+    /**
+     * The shape the classic admin actually saves: its `getGridConfig()` writes the column map keyed by the
+     * column key - `columns[<key>] = {name: <key>, position: …}` - and reads the configuration back by that
+     * key alone. A key left in the integer form while the entry under it is rewritten would split the
+     * configuration and leave untranslated the one string that identifies the column.
+     */
+    public function testATokenUsedAsAnObjectKeyIsRewrittenToo(): void
+    {
+        $storeId = $this->seedIdentifiedStore();
+        $group = $this->seedIdentifiedRow(self::TABLE_GROUPS, $storeId, 'Group', 'hyphen-group');
+        $key = $this->seedIdentifiedRow(self::TABLE_KEYS, $storeId, 'Key', 'hyphen-key');
+
+        $token = '~classificationstore~csstore~' . $group . '-' . $key;
+        $identifier = '~classificationstore~csstore~hyphen-group~hyphen-key';
+
+        $config = json_encode([
+            'columns' => [
+                'id' => ['name' => 'id', 'position' => 0],
+                $token => ['name' => $token, 'position' => 1, 'width' => 120],
+            ],
+            'sortinfo' => ['field' => $token, 'direction' => 'ASC'],
+        ]);
+        $gridId = $this->seedGrid($config, $this->seedClass($storeId));
+
+        $tester = $this->runCommand();
+
+        $after = json_decode($this->readConfig($gridId), true);
+        $this->assertSame(['id', $identifier], array_keys($after['columns']), 'the column map is rekeyed');
+        $this->assertSame($identifier, $after['columns'][$identifier]['name']);
+        $this->assertSame(1, $after['columns'][$identifier]['position'], 'the entry under the key is kept');
+        $this->assertSame(120, $after['columns'][$identifier]['width']);
+        $this->assertSame($identifier, $after['sortinfo']['field']);
+        $this->assertSame(['name' => 'id', 'position' => 0], $after['columns']['id']);
+        $this->assertStringContainsString('3 reference(s) translated.', $tester->getDisplay());
+        $this->assertStringContainsString('0 reference(s) unresolved.', $tester->getDisplay());
+    }
+
+    /**
+     * A configuration that already carries the identifier form as a key of the same object: rewriting the
+     * integer one would drop one of the two entries, so it is kept and reported instead.
+     */
+    public function testAKeyIsKeptWhenTheIdentifierFormIsAlreadyAKeyOfTheSameObject(): void
+    {
+        $storeId = $this->seedIdentifiedStore();
+        $group = $this->seedIdentifiedRow(self::TABLE_GROUPS, $storeId, 'Group', 'hyphen-group');
+        $key = $this->seedIdentifiedRow(self::TABLE_KEYS, $storeId, 'Key', 'hyphen-key');
+
+        $token = '~classificationstore~csstore~' . $group . '-' . $key;
+        $config = json_encode([
+            'columns' => [
+                $token => ['position' => 0],
+                '~classificationstore~csstore~hyphen-group~hyphen-key' => ['position' => 1],
+            ],
+        ]);
+        $gridId = $this->seedGrid($config, $this->seedClass($storeId));
+
+        $tester = $this->runCommand();
+
+        $this->assertSame($config, json_encode(json_decode($this->readConfig($gridId))));
+        $this->assertStringContainsString('0 reference(s) translated.', $tester->getDisplay());
+        $this->assertStringContainsString(
+            'gridconfigs row ' . $gridId . ' "' . $token . '": the identifier form is already a key of the same object',
+            $tester->getDisplay()
+        );
+    }
+
+    /**
+     * A row whose config does not decode is reported, not skipped: otherwise it is indistinguishable from a
+     * row carrying no token, and "0 reference(s) unresolved." would claim coverage the run did not have.
+     * The rows are handed out by a stub connection because the column carries a `json_valid()` check
+     * constraint wherever the conversion in Version20230124120641 ran - what this covers is the
+     * installation where it did not, and the column is still LONGTEXT.
+     */
+    public function testAConfigThatDoesNotDecodeIsReportedRatherThanSkipped(): void
+    {
+        $rows = [
+            ['id' => 4711, 'classId' => 'AnyClass', 'config' => '{"columns":'],
+            ['id' => 4712, 'classId' => 'AnyClass', 'config' => str_repeat('[', 600) . str_repeat(']', 600)],
+        ];
+
+        $tester = new CommandTester(new TranslateClassificationStoreIdentifiersCommand([
+            new GridConfigReferenceTranslator($this->connectionYielding($rows)),
+        ]));
+        $tester->execute([]);
+
+        $display = $tester->getDisplay();
+        $this->assertSame(0, $tester->getStatusCode());
+        $this->assertStringContainsString('0 reference(s) translated.', $display);
+        $this->assertStringContainsString('2 reference(s) unresolved.', $display);
+        $this->assertStringContainsString('gridconfigs row 4711 "config": the config column does not decode: Syntax error', $display);
+        $this->assertStringContainsString('gridconfigs row 4712 "config": the config column does not decode: Maximum stack depth exceeded', $display);
     }
 
     public function testUntranslatableTokensAreLeftAndReported(): void
@@ -403,9 +498,52 @@ final class TranslateIdentifiersCommandTest extends ModelTestCase
                 return $this->inner->fetchAssociative($query, $params, $types);
             }
 
+            public function fetchOne(string $query, array $params = [], array $types = []): mixed
+            {
+                return $this->inner->fetchOne($query, $params, $types);
+            }
+
+            public function transactional(Closure $func): mixed
+            {
+                return $this->inner->transactional($func);
+            }
+
             public function executeStatement(string $sql, array $params = [], array $types = []): int|string
             {
                 return $this->inner->executeStatement($sql, $params, $types);
+            }
+        };
+    }
+
+    /**
+     * A connection that hands out the given rows as the command's read and refuses to write: the rows a
+     * `json` column would not accept, so that the path they take can be asserted at all.
+     *
+     * @param list<array{id: int, classId: ?string, config: ?string}> $rows
+     */
+    private function connectionYielding(array $rows): Connection
+    {
+        return new class($rows) extends Connection {
+            /**
+             * @param list<array{id: int, classId: ?string, config: ?string}> $rows
+             */
+            public function __construct(private readonly array $rows)
+            {
+            }
+
+            public function iterateAssociative(string $query, array $params = [], array $types = []): Traversable
+            {
+                yield from $this->rows;
+            }
+
+            public function transactional(Closure $func): mixed
+            {
+                throw new LogicException('a row whose config does not decode must not be written');
+            }
+
+            public function executeStatement(string $sql, array $params = [], array $types = []): int|string
+            {
+                throw new LogicException('a row whose config does not decode must not be written');
             }
         };
     }
