@@ -327,12 +327,23 @@ final class KeyGroupRelation extends Model\AbstractModel
             $definition = $definition['delegate'];
         }
 
+        return self::fillsOptionsFromProvider($definition);
+    }
+
+    /**
+     * Whether a (unwrapped) definition has no option list of its own and leaves it to a provider. Select
+     * and the like serialize an absent list as `[]`, so an empty list is told apart by the provider
+     * configuration: an empty list of its own, configured on purpose, is a list and not a gap for a
+     * provider to fill - the same reading as OptionsProviderInterface::useConfiguredOptions().
+     *
+     * @param array<string, mixed> $definition
+     */
+    private static function fillsOptionsFromProvider(array $definition): bool
+    {
         if (($definition[self::OPTIONS] ?? []) !== []) {
             return false;
         }
 
-        // an empty list of its own, configured on purpose, is a list and not a gap for a provider to
-        // fill: the same reading as OptionsProviderInterface::useConfiguredOptions()
         $type = $definition['optionsProviderType'] ?? null;
 
         return $type !== OptionsProviderInterface::TYPE_CONFIGURE
@@ -384,7 +395,7 @@ final class KeyGroupRelation extends Model\AbstractModel
 
         // a key without a list of its own is provider-backed: there is nothing here to reconcile its default
         // against, and the list the provider fills in is reconciled where it is known
-        $hasOwnOptions = ($definition[self::OPTIONS] ?? null) !== null;
+        $hasOwnOptions = !self::fillsOptionsFromProvider($definition);
 
         foreach ($override as $property => $value) {
             $definition[$property] = $property === self::OPTIONS
