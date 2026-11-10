@@ -52,6 +52,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 use Stringable;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use WeakMap;
+use WeakReference;
 
 /**
  * Turns the values an expression works with into read-only stand-ins, so the
@@ -119,6 +120,14 @@ final class ReadOnlyValueWrapper
     private WeakMap $originals;
 
     /**
+     * The stand-in of every original value, so that an original a function returns (e.g. `max()`)
+     * goes back to the expression as its stand-in. Weak references, as the stand-in holds the original.
+     *
+     * @var WeakMap<object, WeakReference<object>>
+     */
+    private WeakMap $standIns;
+
+    /**
      * Field getters per class / brick / fieldcollection definition, keyed by lower-case getter name.
      *
      * @var WeakMap<object, array<string, Data>>
@@ -136,6 +145,7 @@ final class ReadOnlyValueWrapper
     public function __construct(iterable $valueAdapters = [])
     {
         $this->originals = new WeakMap();
+        $this->standIns = new WeakMap();
         $this->fieldGetters = new WeakMap();
         $this->valueAdapters = [...$valueAdapters, new SecurityValueAdapter()];
     }
@@ -153,12 +163,18 @@ final class ReadOnlyValueWrapper
     /**
      * Expression functions are registered by the application and may return anything; elements and
      * objects a value adapter supports are wrapped like any other value the expression can reach,
-     * also inside returned arrays.
+     * also inside returned arrays. An original the function got through a stand-in goes back as that
+     * stand-in.
      */
     public function wrapFunctionResult(mixed $value): mixed
     {
         if (is_array($value)) {
             return array_map(fn (mixed $item): mixed => $this->wrapFunctionResult($item), $value);
+        }
+
+        $standIn = is_object($value) && isset($this->standIns[$value]) ? $this->standIns[$value]->get() : null;
+        if ($standIn !== null) {
+            return $standIn;
         }
 
         if ($value instanceof ElementInterface || $this->isSupportedByValueAdapter($value)) {
@@ -205,7 +221,7 @@ final class ReadOnlyValueWrapper
         if (is_object($value)) {
             $proxy = $this->createProxy($value);
             if ($proxy !== null) {
-                $this->originals[$proxy] = $value;
+                $this->registerStandIn($proxy, $value);
 
                 return $proxy;
             }
@@ -575,7 +591,7 @@ final class ReadOnlyValueWrapper
         );
 
         if ($original !== null) {
-            $this->originals[$view] = $original;
+            $this->registerStandIn($view, $original);
         }
 
         return $view;
@@ -725,6 +741,12 @@ final class ReadOnlyValueWrapper
         }
 
         return $arguments;
+    }
+
+    private function registerStandIn(object $standIn, object $original): void
+    {
+        $this->originals[$standIn] = $original;
+        $this->standIns[$original] = WeakReference::create($standIn);
     }
 
     private function isSupportedByValueAdapter(mixed $value): bool
