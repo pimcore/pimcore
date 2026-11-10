@@ -1011,9 +1011,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 foreach ($relationCache->getRelations($activeGroupId) as $keyId => $keyGroupRelation) {
                     $keyDef = $relationCache->getMutableFieldDefinition($activeGroupId, $keyId);
 
-                    // a disabled key is rendered with no input (see enrichLayoutDefinition()), so an
-                    // assignment that outlived its disabling must not demand a value nobody can supply
-                    if ($keyGroupRelation->isMandatory() && $keyGroupRelation->isEnabled()) {
+                    if ($keyGroupRelation->isMandatory()) {
                         $keyDef->setMandatory(true);
                     }
 

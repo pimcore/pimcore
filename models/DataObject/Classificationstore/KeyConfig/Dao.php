@@ -224,14 +224,20 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * A current read, so a transition another request has just committed is not missed; NULL counts as disabled.
      *
-     * Lock order: the key row is taken here, before the relation rows the caller then deletes. A
-     * writer of a single assignment (KeyGroupRelation\Dao::update()) holds its relation row and
-     * only a shared foreign-key lock on the key row, so the two can meet in opposite order; InnoDB
-     * resolves that by rolling one of them back, and the loser's writeAtomically() retries or
-     * fails as a whole, never half-applied. Not exercised against a running server.
+     * Lock order: the key's relation rows first, then the key row - the order a writer of a single
+     * assignment (KeyGroupRelation\Dao::update()) takes them in, since it holds its relation row
+     * and only then a shared foreign-key lock on the key row. Both sides acquire in the same order, so
+     * a concurrent disable and assignment wait for each other instead of deadlocking. Not exercised
+     * against a running server.
      */
     private function isStoredEnabledForUpdate(int $id): bool
     {
+        $this->db->fetchAllAssociative(
+            'SELECT `keyId` FROM `' . Model\DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . '` WHERE `keyId` = ? FOR UPDATE',
+            [$id]
+        );
+
         return (bool) $this->db->fetchOne(
             'SELECT `enabled` FROM `' . self::TABLE_NAME_KEYS . '` WHERE `id` = ? FOR UPDATE',
             [$id]

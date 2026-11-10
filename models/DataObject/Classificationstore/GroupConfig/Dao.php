@@ -14,7 +14,6 @@ namespace Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 
 use Exception;
 use Pimcore\Model;
-use Pimcore\Model\DataObject\Classificationstore\KeyConfig\Dao as KeyConfigDao;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao as KeyGroupRelationDao;
 use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
 use Pimcore\Model\DataObject\Classificationstore\Traits\CustomMetadataDaoTrait;
@@ -250,9 +249,8 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $tag = $this->db->fetchOne(
-            'SELECT r.`subGroup` FROM `' . KeyGroupRelationDao::TABLE_NAME_RELATIONS . '` r'
-            . ' INNER JOIN `' . KeyConfigDao::TABLE_NAME_KEYS . '` k ON k.`id` = r.`keyId`'
-            . ' WHERE r.`groupId` = ? AND r.`subGroup` IS NOT NULL AND k.`enabled` = 1 LIMIT 1 FOR UPDATE',
+            'SELECT `subGroup` FROM `' . KeyGroupRelationDao::TABLE_NAME_RELATIONS . '`'
+            . ' WHERE `groupId` = ? AND `subGroup` IS NOT NULL LIMIT 1 FOR UPDATE',
             [$id]
         );
 
