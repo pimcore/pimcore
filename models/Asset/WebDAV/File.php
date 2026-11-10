@@ -79,16 +79,7 @@ class File extends DAV\File
             // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
             // for details see Asset\WebDAV\Tree::move()
             $log = Asset\WebDAV\Service::getDeleteLog();
-
-            $this->asset->setInDumpState(true);
-            $log[$this->asset->getRealFullPath()] = [
-                'id' => $this->asset->getId(),
-                'timestamp' => time(),
-                'data' => \Pimcore\Tool\Serialize::serialize($this->asset),
-            ];
-
-            $this->asset->setInDumpState(false);
-
+            $log[$this->asset->getRealFullPath()] = Asset\WebDAV\Service::createDeleteLogEntry($this->asset);
             Asset\WebDAV\Service::saveDeleteLog($log);
         } else {
             throw new DAV\Exception\Forbidden();

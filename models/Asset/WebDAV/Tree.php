@@ -90,10 +90,13 @@ class Tree extends DAV\Tree
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
                 if (!$asset && array_key_exists('/' .$destinationPath, $log)) {
-                    // Returns null when the payload does not rebuild into an Asset, so the fallback
-                    // below still resolves the source asset. See restoreDeletedAsset() for why the
-                    // payload needs object deserialization.
-                    $restored = Asset\WebDAV\Service::restoreDeletedAsset($log['/' . $destinationPath]['data']);
+                    // Returns null when the entry is not correctly signed or does not rebuild into an
+                    // Asset, so the fallback below still resolves the source asset. See
+                    // restoreDeletedAsset() for why the payload needs object deserialization.
+                    $restored = Asset\WebDAV\Service::restoreDeletedAsset(
+                        '/' . $destinationPath,
+                        $log['/' . $destinationPath]
+                    );
                     if ($restored !== null) {
                         $asset = $restored;
                         $sourceAsset = Asset::getByPath('/' . $sourcePath);

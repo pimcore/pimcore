@@ -15,13 +15,17 @@ namespace Pimcore\Tests\Model\Asset\WebDAV;
 
 use Pimcore;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\WebDAV\File;
 use Pimcore\Model\Asset\WebDAV\Folder;
+use Pimcore\Model\Asset\WebDAV\Service as WebDavService;
 use Pimcore\Model\Asset\WebDAV\Tree;
 use Pimcore\Model\User;
 use Pimcore\Model\User\Workspace\Asset as AssetWorkspace;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Security\User\User as SecurityUser;
+use Pimcore\Tests\Model\DataType\UnserializeWakeupProbe;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tool\Serialize;
 use ReflectionProperty;
 use Sabre\DAV\Exception\Forbidden;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -58,6 +62,11 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
 
         $this->createdUser?->delete();
         $this->createdRole?->delete();
+
+        $deleteLogFile = WebDavService::getDeleteLogFile();
+        if (file_exists($deleteLogFile)) {
+            unlink($deleteLogFile);
+        }
 
         parent::tearDown();
     }
@@ -134,6 +143,63 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
             Asset::getById($sourceId, ['force' => true]),
             'the source asset must be removed after the overwrite'
         );
+    }
+
+    /**
+     * Delete + move onto the deleted path (how e.g. Photoshop saves) restores the deleted asset from
+     * the signed delete-log entry, so the destination keeps its id.
+     */
+    public function testDeleteThenMoveRestoresTheDeletedAsset(): void
+    {
+        $destination = $this->createAsset('delete-move-target.txt', 'destination content');
+        $destinationId = $destination->getId();
+        $source = $this->createAsset('delete-move-source.txt', 'source content');
+
+        $this->loginAs($this->createUserWithWorkspace(
+            Asset::getByPath('/'),
+            publish: true,
+            rename: true,
+            delete: true
+        ));
+
+        (new File($destination))->delete();
+        $this->createTree()->move($source->getFilename(), 'delete-move-target.txt');
+
+        $reloaded = Asset::getById($destinationId, ['force' => true]);
+        $this->assertNotNull($reloaded, 'the deleted destination must be restored with its id');
+        $this->assertSame('source content', $reloaded->getData());
+    }
+
+    /**
+     * A delete-log entry that was not signed by Pimcore is never unserialized; the move then falls
+     * back to a plain rename of the source asset.
+     */
+    public function testUnsignedDeleteLogEntryFallsBackToPlainMove(): void
+    {
+        UnserializeWakeupProbe::$wokeUp = false;
+        $source = $this->createAsset('unsigned-log-source.txt', 'source content');
+        $sourceId = $source->getId();
+
+        WebDavService::saveDeleteLog([
+            '/unsigned-log-target.txt' => [
+                'id' => $sourceId + 1000,
+                'timestamp' => time(),
+                'data' => Serialize::serialize(new UnserializeWakeupProbe()),
+            ],
+        ]);
+
+        $this->loginAs($this->createUserWithWorkspace(
+            Asset::getByPath('/'),
+            publish: true,
+            rename: true,
+            delete: true
+        ));
+
+        $this->createTree()->move($source->getFilename(), 'unsigned-log-target.txt');
+
+        $this->assertFalse(UnserializeWakeupProbe::$wokeUp);
+        $reloaded = Asset::getById($sourceId, ['force' => true]);
+        $this->assertSame('unsigned-log-target.txt', $reloaded->getFilename());
     }
 
     private function createAsset(string $filename, string $data = 'some content'): Asset
