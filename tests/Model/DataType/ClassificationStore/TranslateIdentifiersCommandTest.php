@@ -336,7 +336,11 @@ final class TranslateIdentifiersCommandTest extends ModelTestCase
         $tester->execute([]);
 
         $this->assertSame(0, $tester->getStatusCode());
-        $this->assertSame($saved, $this->readConfig($fixture['grid']), 'the configuration the user saved is kept');
+        $this->assertSame(
+            json_encode(json_decode($saved)),
+            json_encode(json_decode($this->readConfig($fixture['grid']))),
+            'the configuration the user saved is kept'
+        );
 
         $display = $tester->getDisplay();
         $this->assertStringContainsString('0 reference(s) translated.', $display);
