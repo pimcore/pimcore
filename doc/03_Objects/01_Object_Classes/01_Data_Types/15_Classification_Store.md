@@ -453,6 +453,15 @@ are not both numeric ids is left as it is and listed with the row id and the tok
 It writes the `config` column of the rows it translated and nothing else, a token already in the identifier form is not
 touched, so it is safe to re-run, and `--dry-run` reports exactly what a real run would do and writes nothing.
 
+An identifier is unique within its store only, and both readers resolve the two identifiers inside the store of the
+classification store field the token names. So the command resolves that store too - from the `classId` of the row and
+the field segment of the token - and refuses a token whose group or key belongs to a different store, as well as one
+whose field store does not resolve at all because the row names no class, the class is gone, or that field is not a
+classification store field. Both are listed with the row id, the token and the reason.
+
+Each write is guarded by the `config` the row was read with, so a configuration saved between the read and the write
+is kept; the command then reports every token of that row as unresolved rather than counting it as translated.
+
 Run it only once the products that read these tokens - Pimcore Studio and any bundle storing its own references - can
 read identifiers. It does not check that.
 

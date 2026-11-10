@@ -54,3 +54,7 @@ services:
     Pimcore\Tests\Support\Helper\DataType\CustomValueObjectBlockMarshaller:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_customValueObject, key: 'block_customValueObject' }
+
+    # a reference translator of another bundle, used by TranslateIdentifiersCommandTest. Deliberately
+    # declared with no tag: only the autoconfiguration of PimcoreCoreExtension can put it on the command.
+    Pimcore\Tests\Support\Helper\ClassificationStore\StubReferenceTranslator: ~
