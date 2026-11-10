@@ -60,13 +60,14 @@ class QueryParams
                     $orderKey = $sortParam['property'];
 
                     $parts = explode('~', $orderKey);
-                    if (count($parts) < 4) {
+                    // identifiers cannot contain '~', so only four (legacy) or five (identifier) segments are valid
+                    if (!in_array(count($parts), [4, 5], true)) {
                         return ['orderKey' => $orderKey, 'order' => $order];
                     }
 
                     $fieldname = $parts[2];
 
-                    if (isset($parts[4])) {
+                    if (count($parts) === 5) {
                         return self::extractIdentifierSortingSettings(
                             $orderKey,
                             $order,

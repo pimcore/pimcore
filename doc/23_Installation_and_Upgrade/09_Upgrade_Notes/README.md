@@ -2,8 +2,6 @@
 
 ## Pimcore 2026.4.0
 
-- [Classification Store] Added: `pimcore:classificationstore:translate-identifiers` rewrites the grid configuration column token `~classificationstore~<field>~<groupId>-<keyId>` to the new five segment identifier form `~classificationstore~<field>~<groupIdentifier>~<keyIdentifier>`; both forms are accepted.
-
 ### [DataObjects] Structured, translatable validation errors
 
 The new `Pimcore\Model\Element\StructuredValidationException` extends `Pimcore\Model\Element\ValidationException`

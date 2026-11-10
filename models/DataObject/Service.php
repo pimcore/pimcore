@@ -801,7 +801,12 @@ class Service extends Model\Element\Service
                     /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                     $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
 
-                    if (isset($keyParts[4])) {
+                    // identifiers cannot contain '~', so only four (legacy) or five (identifier) segments are valid
+                    if (!in_array(count($keyParts), [4, 5], true)) {
+                        return null;
+                    }
+
+                    if (count($keyParts) === 5) {
                         // five segments: group and key by identifier, scoped to the store of the field
                         $storeId = Model\DataObject\Classificationstore\Service::getConfiguredStoreId($csFieldDefinition);
                         if ($storeId === null) {

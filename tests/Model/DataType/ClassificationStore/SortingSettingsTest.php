@@ -85,6 +85,24 @@ final class SortingSettingsTest extends ModelTestCase
         );
     }
 
+    /**
+     * Identifiers cannot contain '~', so a token of more than five segments is malformed and is
+     * answered with the order key alone, never read as the identifier form with a trailing segment.
+     */
+    public function testATokenWithMoreThanFiveSegmentsIsNotAFeatureSort(): void
+    {
+        $token = '~classificationstore~csstore~group~key~extra';
+
+        $this->assertSame(
+            ['orderKey' => $token, 'order' => 'ASC'],
+            QueryParams::extractSortingSettings($this->params($token, 'ASC'))
+        );
+        $this->assertSame(
+            ['orderKey' => $token, 'order' => 'ASC'],
+            QueryParams::extractSortingSettings($this->params($token, 'ASC'), 7)
+        );
+    }
+
     public function testTheIdentifierTokenResolvesWithAStoreScope(): void
     {
         $storeId = $this->seedIdentifiedStore();
