@@ -254,6 +254,12 @@ final class KeyGroupRelation extends Model\AbstractModel
             }
         }
 
+        // an emptied unit list would be refilled with every unit wherever the definition is built in an
+        // admin request (AbstractQuantityValue::configureOptions()), so it cannot mean "no unit" here
+        if (array_key_exists('validUnits', $definitionOverride ?? []) && empty($definitionOverride['validUnits'])) {
+            throw new InvalidConfigException('"validUnits" cannot be overridden with an empty list.');
+        }
+
         $this->definitionOverride = $definitionOverride;
         $this->definitionOverrideInitialized = true;
     }
@@ -372,7 +378,37 @@ final class KeyGroupRelation extends Model\AbstractModel
                 : $value;
         }
 
+        if (array_key_exists(self::OPTIONS, $override) && array_key_exists('defaultValue', $definition)) {
+            $definition['defaultValue'] = self::reconcileDefaultValue(
+                $definition['defaultValue'],
+                $definition[self::OPTIONS]
+            );
+        }
+
         return $definition;
+    }
+
+    /**
+     * Drops what a narrowed option list no longer contains from a default value, so a group never
+     * offers a default that its own subset excludes.
+     *
+     * @param array<int, array<string, mixed>>|null $options
+     *
+     * @internal
+     */
+    public static function reconcileDefaultValue(mixed $defaultValue, ?array $options): mixed
+    {
+        if ($defaultValue === null || $defaultValue === '' || $defaultValue === []) {
+            return $defaultValue;
+        }
+
+        $values = array_map(static fn (array $option) => $option['value'] ?? null, $options ?? []);
+
+        if (is_array($defaultValue)) {
+            return array_values(array_filter($defaultValue, static fn (mixed $v) => in_array($v, $values, true))) ?: null;
+        }
+
+        return in_array($defaultValue, $values, true) ? $defaultValue : null;
     }
 
     /**

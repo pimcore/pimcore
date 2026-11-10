@@ -235,6 +235,7 @@ final class KeyGroupRelationCache implements ResetInterface
         $options = $this->providedOptions[$groupId][$keyId];
         if ($options !== null) {
             $definition->setOptions($options);
+            $definition->setDefaultValue(KeyGroupRelation::reconcileDefaultValue($definition->getDefaultValue(), $options));
         }
     }
 

@@ -1457,13 +1457,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $context['keyDefinition'] = $definition;
                     $definition = $definition->enrichLayoutDefinition($object, $context);
 
-                    // the provider has just replaced the options wholesale; a dynamic list carries no subset
-                    if (($definition instanceof Data\Select || $definition instanceof Data\Multiselect)
-                        && !$definition->dynamicOptions
-                        && $definition->getOptions() !== null
+                    // the provider has just replaced the options wholesale; a dynamic list carries no subset.
+                    // A wrapper's delegate is where the provider ran, so narrow the answering definition
+                    $answering = DataObject\Classificationstore\KeyGroupRelationCache::getAnsweringDefinition($definition);
+                    if (($answering instanceof Data\Select || $answering instanceof Data\Multiselect)
+                        && !$answering->dynamicOptions
+                        && $answering->getOptions() !== null
                         && array_key_exists('options', $keyGroupRelation->getDefinitionOverride() ?? [])
                     ) {
-                        $definition->setOptions($keyGroupRelation->applyOptionSubset($definition->getOptions()));
+                        $narrowed = $keyGroupRelation->applyOptionSubset($answering->getOptions());
+                        $answering->setOptions($narrowed);
+                        $answering->setDefaultValue(
+                            DataObject\Classificationstore\KeyGroupRelation::reconcileDefaultValue($answering->getDefaultValue(), $narrowed)
+                        );
                     }
                 }
 
