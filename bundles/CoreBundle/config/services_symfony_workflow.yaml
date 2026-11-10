@@ -32,4 +32,6 @@ services:
         alias: workflow.registry
 
     workflow.security.expression_language:
-        class: Symfony\Component\Workflow\EventListener\ExpressionLanguage
+        class: Pimcore\Helper\SymfonyExpression\ReadOnlyWorkflowExpressionLanguage
+        arguments:
+            $valueAdapters: !tagged_iterator pimcore.expression.read_only_value_adapter
