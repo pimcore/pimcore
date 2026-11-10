@@ -37,6 +37,8 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
 {
     private const GROUP_COUNT = 10;
 
+    private const OPTIONS = 'options';
+
     private const CHANGED_TITLE = 'changed title';
 
     private const STORED_SORTER = 7;
@@ -136,7 +138,7 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $groupB = $this->createGroup('subsetB');
         $keyConfig = $this->createKey('subset', true, $this->selectWithOptions());
 
-        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($groupA, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
         $this->assignKey($groupB, $keyConfig);
 
         $cache = $this->getRelationCache();
@@ -155,8 +157,8 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $select = $this->createKey('layoutSelect', true, $this->selectWithOptions());
         $quantity = $this->createKey('layoutQuantity', true, $this->quantityValue());
 
-        $this->assignKey($groupA, $select, 0, false, ['options' => ['a', 'b']]);
-        $this->assignKey($groupB, $select, 0, false, ['options' => ['c']]);
+        $this->assignKey($groupA, $select, 0, false, [self::OPTIONS => ['a', 'b']]);
+        $this->assignKey($groupB, $select, 0, false, [self::OPTIONS => ['c']]);
         $this->assignKey($groupA, $quantity, 1, false, ['defaultUnit' => 'mm', 'validUnits' => ['mm']]);
         $this->assignKey($groupB, $quantity, 1);
 
@@ -188,8 +190,8 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $groupB = $this->createGroup('providerB');
         $keyConfig = $this->createKey('provider', true, $this->selectWithProvider(StaticListOptionsProvider::class));
 
-        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
-        $this->assignKey($groupB, $keyConfig, 0, false, ['options' => ['b', 'c']]);
+        $this->assignKey($groupA, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, [self::OPTIONS => ['b', 'c']]);
 
         $definitions = $this->enrich($this->createObject('provider', [
             $groupA->getId() => true,
@@ -214,8 +216,8 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $groupB = $this->createGroup('dynamicB');
         $keyConfig = $this->createKey('dynamic', true, $this->selectWithProvider(DynamicListOptionsProvider::class));
 
-        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
-        $this->assignKey($groupB, $keyConfig, 0, false, ['options' => ['b']]);
+        $this->assignKey($groupA, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, [self::OPTIONS => ['b']]);
 
         $definitions = $this->enrich($this->createObject('dynamic', [
             $groupA->getId() => true,
@@ -232,8 +234,8 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $group = $this->createGroup('validation');
         $unmatched = $this->createGroup('unmatched');
         $keyConfig = $this->createKey('validation', true, $this->selectWithProvider(StaticListOptionsProvider::class));
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
-        $this->assignKey($unmatched, $keyConfig, 0, false, ['options' => ['zz']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($unmatched, $keyConfig, 0, false, [self::OPTIONS => ['zz']]);
 
         $cache = $this->getRelationCache();
 
@@ -263,7 +265,7 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $multiselect->setOptionsProviderClass(DeprecatedListOptionsProvider::class);
         $keyConfig = $this->createKey('deprecatedProvider', true, $multiselect);
 
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
 
         $definitions = $this->enrich($this->createObject('deprecated-provider', [$group->getId() => true]));
 
@@ -290,7 +292,7 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $group = $this->createGroup('emptySubset');
         $keyConfig = $this->createKey('emptySubset', true, $this->selectWithOptions());
 
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['gone']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['gone']]);
 
         $definitions = $this->enrich($this->createObject('empty-subset', [$group->getId() => true]));
 
@@ -305,7 +307,7 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
     {
         $group = $this->createGroup('validation');
         $keyConfig = $this->createKey('validation', true, $this->selectWithProvider(DynamicListOptionsProvider::class));
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
 
         // null rather than [], which Select::checkValidity() reads as nothing to validate against
         $this->assertNull($this->getRelationCache()->getMutableFieldDefinition($group->getId(), $keyConfig->getId())->getOptions());

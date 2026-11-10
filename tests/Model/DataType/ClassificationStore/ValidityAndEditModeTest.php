@@ -35,6 +35,8 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
 {
     private const FIELDNAME = 'csstore';
 
+    private const OPTIONS = 'options';
+
     /**
      * The EAV engine maps every group holding a stored value, with a null collection when it has none.
      *
@@ -130,8 +132,8 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         $select->setEnforceValidation(true);
         $keyConfig = $this->createKey('subset', true, $select);
 
-        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
-        $this->assignKey($groupB, $keyConfig, 0, false, ['options' => ['b']]);
+        $this->assignKey($groupA, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, [self::OPTIONS => ['b']]);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);
@@ -160,7 +162,7 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         $select->setEnforceValidation(true);
         $keyConfig = $this->createKey('provider_subset', true, $select);
 
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);
@@ -191,7 +193,7 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         $select->setEnforceValidation(true);
         $keyConfig = $this->createKey('empty_subset', true, $select);
 
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['gone']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['gone']]);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);
@@ -227,7 +229,7 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         $select->setEnforceValidation(true);
         $keyConfig = $this->createKey('empty_provider_subset', true, $select);
 
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['gone']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['gone']]);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);
@@ -256,7 +258,7 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         $select->setOptionsProviderClass(FailingOptionsProvider::class);
         $keyConfig = $this->createKey('failing_provider', true, $select);
 
-        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);
