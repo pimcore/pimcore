@@ -13,19 +13,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore;
 
-use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
-use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
-use Pimcore\Element\MarshallerService;
-use Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue as MultiValueMarshaller;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue as MultiValueMarshaller;
+use Pimcore\Element\MarshallerService;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 use Pimcore\Model\DataObject\Classificationstore\Service;
@@ -501,6 +501,7 @@ class ServiceTest extends TestCase
 
         RuntimeCache::set('fieldcollection_' . $key, $fieldCollection);
     }
+
     /**
      * A stored key config names its type as a string, so the type is only reachable from one if the
      * implementation loader maps it - and its values only round-trip through the EAV value columns
@@ -701,5 +702,4 @@ class ServiceTest extends TestCase
         $this->assertSame(['metric'], $rebuilt->getVariantNames());
         $this->assertTrue($rebuilt->isMultiValue());
     }
-
 }

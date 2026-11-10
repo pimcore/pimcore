@@ -13,9 +13,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Csstorelocalized;
+use Pimcore\Tests\Support\Util\OptionsProvider\CountingOptionsProvider;
+use Pimcore\Tests\Support\Util\OptionsProvider\StaticListOptionsProvider;
 
 /**
  * The key configs, field definitions and key/group relations of a classification store field are
@@ -250,8 +254,71 @@ class StatementCountTest extends AbstractBatchedRelationTest
                     );
                 }
             }
+
+            // one key per group whose assignment carries an option subset over a list its options
+            // provider fills: building its definition resolves that provider, which none of the
+            // other shapes does, so the counts above have to cover it too
+            $providerKey = $this->createKey(
+                'provider' . $groupIndex,
+                true,
+                $this->providerBackedSelect(StaticListOptionsProvider::class)
+            );
+            $this->assignKey($group, $providerKey, $keysPerGroup, false, ['options' => ['a']]);
+
+            foreach ($languages as $language) {
+                $store->setLocalizedKeyValue($group->getId(), $providerKey->getId(), 'a', $language);
+            }
         }
 
         return $activeGroups;
+    }
+
+    /**
+     * Resolving the options provider of a key is what applying a per-group option subset to the list
+     * the provider fills costs, and the core providers read a row for it
+     * ({@see \Pimcore\Bundle\CoreBundle\OptionsProvider\SelectOptionsOptionsProvider::getOptions()}).
+     * So it has to be paid once per assignment and per process, not once per definition built: the
+     * load and the validity walk each build the definition of every key of every active group.
+     */
+    public function testTheOptionsProviderOfAnOverriddenKeyIsResolvedOncePerAssignment(): void
+    {
+        $group = $this->createGroup('provider-memo');
+        $keyConfig = $this->createKey(
+            'provider_memo',
+            true,
+            $this->providerBackedSelect(CountingOptionsProvider::class)
+        );
+        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('provider-memo');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'a', 'en');
+        $object->save();
+
+        $this->clearConfigCaches();
+        CountingOptionsProvider::reset();
+
+        $reloaded = Csstorelocalized::getById($object->getId(), ['force' => true]);
+        $reloaded->getCsstore()->getItems();
+        $reloaded->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($reloaded->getCsstore());
+
+        $this->assertSame(
+            1,
+            CountingOptionsProvider::$calls,
+            'the provider of one assignment must be asked once however many definitions are built'
+            . ', measured ' . CountingOptionsProvider::$calls . ' calls'
+        );
+    }
+
+    private function providerBackedSelect(string $providerClass): Select
+    {
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass($providerClass);
+
+        return $select;
     }
 }

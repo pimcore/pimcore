@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\Csstorelocalized;
 use Pimcore\Model\DataObject\Data\QuantityValue as QuantityValueData;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Tests\Support\Util\OptionsProvider\FailingOptionsProvider;
 use Pimcore\Tests\Support\Util\OptionsProvider\StaticListOptionsProvider;
 use Pimcore\Tool;
 
@@ -175,6 +176,104 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         $this->expectException(ValidationException::class);
 
         $object->save();
+    }
+
+    /**
+     * A subset naming no option the key still offers - what editing the key out from under an
+     * assignment leaves behind - refuses every value rather than switching the option check off.
+     */
+    public function testASubsetThatLeavesNoOptionOfTheKeyRefusesEveryValue(): void
+    {
+        $group = $this->createGroup('empty_subset');
+
+        $select = new Select();
+        $select->setOptions([['key' => 'Option A', 'value' => 'a'], ['key' => 'Option B', 'value' => 'b']]);
+        $select->setEnforceValidation(true);
+        $keyConfig = $this->createKey('empty_subset', true, $select);
+
+        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['gone']]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('empty-subset');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->save();
+
+        $this->assertNotNull(
+            Csstorelocalized::getById($object->getId(), ['force' => true]),
+            'a key holding no value is not refused'
+        );
+
+        // an option of the key, and of no group's subset
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'a', 'en');
+
+        $this->expectException(ValidationException::class);
+
+        $object->save();
+    }
+
+    /**
+     * The same for the list a provider fills: the group's exclusions have to be enforced against it,
+     * where an unset list would have the provider's whole list validated against instead.
+     */
+    public function testASubsetThatMatchesNoProvidedOptionRefusesEveryValue(): void
+    {
+        $group = $this->createGroup('empty_provider_subset');
+
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass(StaticListOptionsProvider::class);
+        $select->setEnforceValidation(true);
+        $keyConfig = $this->createKey('empty_provider_subset', true, $select);
+
+        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['gone']]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('empty-provider-subset');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        // an option the provider offers, and one the group excludes
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'b', 'en');
+
+        $this->expectException(ValidationException::class);
+
+        $object->save();
+    }
+
+    /**
+     * Applying a subset means asking the key's options provider, which the load and the save of an
+     * object did not do before. A provider that cannot answer - its configuration deleted - narrows
+     * nothing, and must not make reading or writing the store fail.
+     */
+    public function testAnOptionsProviderThatCannotAnswerLeavesTheSaveAndTheLoadAlone(): void
+    {
+        $group = $this->createGroup('failing_provider');
+
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass(FailingOptionsProvider::class);
+        $keyConfig = $this->createKey('failing_provider', true, $select);
+
+        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('failing-provider');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'a', 'en');
+        $object->save();
+
+        $this->getRelationCache()->reset();
+
+        $reloaded = Csstorelocalized::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame(
+            'a',
+            $reloaded->getCsstore()->getLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'en')
+        );
     }
 
     public function testValuesOfAKeyInTwoGroupsRoundTripThroughEditModeAndSave(): void

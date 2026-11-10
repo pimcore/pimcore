@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
-use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\OptionsProviderResolver;
 use Symfony\Contracts\Service\ResetInterface;
+use Throwable;
 
 /**
  * Process-scoped cache of the key/group relations of a classification store, keyed by
@@ -61,6 +63,16 @@ final class KeyGroupRelationCache implements ResetInterface
      * @var array<int, array<int, Data|null>> groupId => keyId => shared field definition
      */
     private array $definitions = [];
+
+    /**
+     * The list a provider fills, narrowed to the subset of the assignment, memoized so that
+     * resolving the provider costs the same whether a definition is built once or - as the validity
+     * walk and the layout enrichment do - once per key per call. A null entry is an assignment
+     * nothing narrows, {@see self::narrowProvidedOptions()}.
+     *
+     * @var array<int, array<int, array<int, array<string, mixed>>|null>> groupId => keyId => options
+     */
+    private array $providedOptions = [];
 
     /**
      * Reads the relations of all groups that are not held yet with a single statement.
@@ -165,7 +177,8 @@ final class KeyGroupRelationCache implements ResetInterface
         $definition = json_decode($relation->getEffectiveDefinition(), true);
         $narrowsProvidedOptions = $this->narrowsProvidedOptions($relation);
 
-        // a key without a list of its own takes them from its provider, and [] would switch validation off
+        // a key without a list of its own takes its options from its provider, so the subset is
+        // applied to the list that provider fills rather than to the empty one it merged into
         if ($narrowsProvidedOptions) {
             unset($definition[self::OPTIONS]);
         }
@@ -197,8 +210,14 @@ final class KeyGroupRelationCache implements ResetInterface
      * that what the editor offers is also what {@see Select::checkValidity()} accepts - it resolves
      * the provider itself for a definition whose options are unset, and the unfiltered list would be
      * what a save validates against. A provider whose list depends on the object is left to the
-     * caller that has one, and a subset that matches nothing is left unset as well, because an empty
-     * option list switches option validation off rather than refusing every value.
+     * caller that has one.
+     *
+     * A subset that matches nothing is set as the empty list it is, the same as the layout path sets
+     * it ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::enrichLayoutDefinition()}),
+     * rather than being left unset for the provider's full list to be validated against. That the
+     * two `checkValidity()` implementations read an empty list as nothing to validate rather than as
+     * nothing to accept is answered where the values are,
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::refusesEveryValue()}.
      */
     private function applyProvidedOptionSubset(Data $definition, KeyGroupRelation $relation): void
     {
@@ -206,24 +225,65 @@ final class KeyGroupRelationCache implements ResetInterface
             return;
         }
 
-        // the multiselect mode covers a select provider too, the interface of which extends it
+        $groupId = $relation->getGroupId();
+        $keyId = $relation->getKeyId();
+
+        if (!array_key_exists($keyId, $this->providedOptions[$groupId] ?? [])) {
+            $this->providedOptions[$groupId][$keyId] = $this->narrowProvidedOptions($definition, $relation);
+        }
+
+        $options = $this->providedOptions[$groupId][$keyId];
+        if ($options !== null) {
+            $definition->setOptions($options);
+        }
+    }
+
+    /**
+     * The list of a provider reporting static options, narrowed to the subset of the assignment -
+     * null where nothing narrows it: the key configures its options itself, no provider of the
+     * key's own mode resolves, the list depends on the object, or the provider cannot answer.
+     *
+     * @return array<int, array<string, mixed>>|null
+     */
+    private function narrowProvidedOptions(Select|Multiselect $definition, KeyGroupRelation $relation): ?array
+    {
+        // each type resolves its provider the way its own enrichment does
+        // ({@see \Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait::doEnrichDefinitionDefinition()}),
+        // so the list this narrows is the list the editor is offered: the multiselect mode accepts a
+        // provider implementing only the deprecated MultiSelectOptionsProviderInterface, and the
+        // select mode does not
         $provider = OptionsProviderResolver::resolveProvider(
             $definition->getOptionsProviderClass(),
-            OptionsProviderResolver::MODE_MULTISELECT
+            $definition instanceof Select
+                ? OptionsProviderResolver::MODE_SELECT
+                : OptionsProviderResolver::MODE_MULTISELECT
         );
 
-        if ($definition->useConfiguredOptions() || !$provider instanceof SelectOptionsProviderInterface) {
-            return;
+        if ($definition->useConfiguredOptions() || !$provider instanceof MultiSelectOptionsProviderInterface) {
+            return null;
         }
 
         $context = ['fieldname' => $definition->getName()];
-        if (!$provider->hasStaticOptions($context, $definition)) {
-            return;
-        }
 
-        $options = $relation->applyOptionSubset($provider->getOptions($context, $definition));
-        if ($options !== []) {
-            $definition->setOptions($options);
+        try {
+            if (!$provider->hasStaticOptions($context, $definition)) {
+                return null;
+            }
+
+            return $relation->applyOptionSubset($provider->getOptions($context, $definition));
+        } catch (Throwable $throwable) {
+            // a provider that cannot answer narrows nothing. A definition is built on the load, the
+            // save, the dependency walk and the search index walk, none of which has an editor in
+            // front of it, and the configuration a provider reads can be gone - the core providers
+            // throw on that. Tolerated and logged, the way a key config that no longer resolves
+            // already is, {@see Engine\EavEngine::load()}
+            Logger::error(
+                'Could not narrow the options of key ' . $relation->getKeyId()
+                . ' in group ' . $relation->getGroupId() . ' to the subset of its assignment: '
+                . $throwable->getMessage()
+            );
+
+            return null;
         }
     }
 
@@ -233,7 +293,7 @@ final class KeyGroupRelationCache implements ResetInterface
      */
     public function clearGroup(int $groupId): void
     {
-        unset($this->relations[$groupId], $this->definitions[$groupId]);
+        unset($this->relations[$groupId], $this->definitions[$groupId], $this->providedOptions[$groupId]);
     }
 
     public function clearKey(int $keyId): void
@@ -249,5 +309,6 @@ final class KeyGroupRelationCache implements ResetInterface
     {
         $this->relations = [];
         $this->definitions = [];
+        $this->providedOptions = [];
     }
 }

@@ -1661,7 +1661,6 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $entry[self::ENVELOPE_QUALIFIER] = true;
         }
 
-
         return $entry;
     }
 
