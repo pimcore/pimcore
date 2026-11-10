@@ -278,6 +278,37 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         );
     }
 
+    /**
+     * With enforceValidation on, Select::checkValidity() resolves the provider itself for options left
+     * unset, so the save has to be tolerant of the provider as well, not only the definition build.
+     */
+    public function testAnOptionsProviderThatCannotAnswerDoesNotFailAnEnforcingSave(): void
+    {
+        $group = $this->createGroup('failing_provider_enforced');
+
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass(FailingOptionsProvider::class);
+        $select->setEnforceValidation(true);
+        $keyConfig = $this->createKey('failing_provider_enforced', true, $select);
+
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('failing-provider-enforced');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'a', 'en');
+        $object->save();
+
+        $this->assertSame(
+            'a',
+            Csstorelocalized::getById($object->getId(), ['force' => true])
+                ->getCsstore()->getLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'en')
+        );
+    }
+
     public function testValuesOfAKeyInTwoGroupsRoundTripThroughEditModeAndSave(): void
     {
         $groupA = $this->createGroup('units_a');

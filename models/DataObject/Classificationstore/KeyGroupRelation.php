@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -326,7 +327,16 @@ final class KeyGroupRelation extends Model\AbstractModel
             $definition = $definition['delegate'];
         }
 
-        return ($definition[self::OPTIONS] ?? []) === [];
+        if (($definition[self::OPTIONS] ?? []) !== []) {
+            return false;
+        }
+
+        // an empty list of its own, configured on purpose, is a list and not a gap for a provider to
+        // fill: the same reading as OptionsProviderInterface::useConfiguredOptions()
+        $type = $definition['optionsProviderType'] ?? null;
+
+        return $type !== OptionsProviderInterface::TYPE_CONFIGURE
+            && !($type === null && empty($definition['optionsProviderClass'] ?? null));
     }
 
     /**
@@ -405,7 +415,12 @@ final class KeyGroupRelation extends Model\AbstractModel
         $values = array_map(static fn (array $option) => $option['value'] ?? null, $options ?? []);
 
         if (is_array($defaultValue)) {
-            return array_values(array_filter($defaultValue, static fn (mixed $v) => in_array($v, $values, true))) ?: null;
+            // an entry may be option shaped (SelectOptionsProviderInterface::getDefaultValue()), in which
+            // case it is kept or dropped by its value, and kept in its own shape
+            return array_values(array_filter(
+                $defaultValue,
+                static fn (mixed $v) => in_array(is_array($v) ? ($v['value'] ?? null) : $v, $values, true)
+            )) ?: null;
         }
 
         return in_array($defaultValue, $values, true) ? $defaultValue : null;

@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Support\Test\TestCase;
 
-class PasswordTest extends TestCase
+class PasswordEditmodeTest extends TestCase
 {
     public const HASH_FOR_ITEM = '$2y$12$itemitemitemitemitemitOuxFoo1pNFmo0Q9bZbc6PCkqzcLzXbJe';
 
@@ -116,7 +116,7 @@ class PasswordTest extends TestCase
 
             public function getSecret(): ?string
             {
-                return PasswordTest::HASH_FOR_ITEM;
+                return self::HASH_FOR_ITEM;
             }
         };
         $object = new class($item) extends Concrete {
@@ -154,7 +154,7 @@ class PasswordTest extends TestCase
         $brick = new class() {
             public function getSecret(): string
             {
-                return PasswordTest::HASH_FOR_ITEM;
+                return self::HASH_FOR_ITEM;
             }
         };
         $container = new class($brick) {
@@ -192,7 +192,7 @@ class PasswordTest extends TestCase
             {
                 return [
                     ['secret' => new BlockElement('secret', 'password', 'first')],
-                    ['secret' => new BlockElement('secret', 'password', PasswordTest::HASH_FOR_ITEM)],
+                    ['secret' => new BlockElement('secret', 'password', self::HASH_FOR_ITEM)],
                 ];
             }
         };
@@ -221,7 +221,7 @@ class PasswordTest extends TestCase
         $object = new class extends Concrete {
             public function getSecret(?string $language = null): ?string
             {
-                return $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+                return $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
             }
         };
         $field = $this->buildField();
@@ -244,7 +244,7 @@ class PasswordTest extends TestCase
         $object = new class extends Concrete {
             public function getSecret(): string
             {
-                return PasswordTest::HASH_FOR_ITEM;
+                return self::HASH_FOR_ITEM;
             }
         };
 
@@ -287,7 +287,7 @@ class PasswordTest extends TestCase
             public function getSecret(?string $language = null): ?string
             {
                 // the active locale is English, the submitted language is German
-                return $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+                return $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
             }
         };
         $object = new class($item) extends Concrete {
@@ -314,7 +314,7 @@ class PasswordTest extends TestCase
         $brick = new class() {
             public function getSecret(?string $language = null): string
             {
-                return $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+                return $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
             }
         };
         $container = new class($brick) {
@@ -392,7 +392,7 @@ class PasswordTest extends TestCase
         $object = new class extends Concrete {
             public function getBlocks(?string $language = null): array
             {
-                $hash = $language === 'de' ? PasswordTest::HASH_FOR_ITEM : PasswordTest::HASH;
+                $hash = $language === 'de' ? self::HASH_FOR_ITEM : self::HASH;
 
                 return [['secret' => new BlockElement('secret', 'password', $hash)]];
             }

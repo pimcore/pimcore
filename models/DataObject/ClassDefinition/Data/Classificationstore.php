@@ -564,15 +564,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $params['owner'] = $classificationStore;
 
         if ($items) {
+            $this->getKeyGroupRelationCache()->load(array_keys($activeGroups, true, true));
+
             foreach ($items as $groupId => $keys) {
                 if (!isset($activeGroups[$groupId])) {
                     continue;
                 }
                 foreach ($keys as $keyId => $languages) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    $keyDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
-                        $keyConfig
-                    );
+                    $keyDefinition = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
                     $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition($keyDefinition);
 
                     if ($keyDefinition === null || !$fieldDefinition instanceof ResourcePersistenceAwareInterface) {

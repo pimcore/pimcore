@@ -68,7 +68,9 @@ final class KeyGroupRelationCache implements ResetInterface
      * walk and the layout enrichment do - once per key per call. A null entry is an assignment
      * nothing narrows, {@see self::narrowProvidedOptions()}.
      *
-     * @var array<int, array<int, array<int, array<string, mixed>>|null>> groupId => keyId => options
+     * A false entry is a provider that cannot answer, {@see self::applyProvidedOptionSubset()}.
+     *
+     * @var array<int, array<int, array<int, array<string, mixed>>|false|null>> groupId => keyId => options
      */
     private array $providedOptions = [];
 
@@ -233,7 +235,12 @@ final class KeyGroupRelationCache implements ResetInterface
         }
 
         $options = $this->providedOptions[$groupId][$keyId];
-        if ($options !== null) {
+        if ($options === false) {
+            // Select::checkValidity() would resolve the provider again for the options left unset, and
+            // the save would throw where the load and the index walk do not. A list that cannot be
+            // read cannot be validated against, so the definition of this assignment stops enforcing it.
+            $definition->setEnforceValidation(false);
+        } elseif ($options !== null) {
             $definition->setOptions($options);
             $definition->setDefaultValue(KeyGroupRelation::reconcileDefaultValue($definition->getDefaultValue(), $options));
         }
@@ -242,11 +249,12 @@ final class KeyGroupRelationCache implements ResetInterface
     /**
      * The list of a provider reporting static options, narrowed to the subset of the assignment -
      * null where nothing narrows it: the key configures its options itself, no provider of the
-     * key's own mode resolves, the list depends on the object, or the provider cannot answer.
+     * key's own mode resolves or the list depends on the object - and false where the provider
+     * cannot answer.
      *
-     * @return array<int, array<string, mixed>>|null
+     * @return array<int, array<string, mixed>>|false|null
      */
-    private function narrowProvidedOptions(Select|Multiselect $definition, KeyGroupRelation $relation): ?array
+    private function narrowProvidedOptions(Select|Multiselect $definition, KeyGroupRelation $relation): array|false|null
     {
         // each type resolves its provider the way its own enrichment does
         // ({@see \Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait::doEnrichDefinitionDefinition()}),
@@ -283,7 +291,7 @@ final class KeyGroupRelationCache implements ResetInterface
 
             return $relation->applyOptionSubset($provider->getOptions($context, $definition));
         } catch (Throwable $throwable) {
-            // a provider that cannot answer narrows nothing. A definition is built on the load, the
+            // a provider that cannot answer narrows nothing and is not validated against. A definition is built on the load, the
             // save, the dependency walk and the search index walk, none of which has an editor in
             // front of it, and the configuration a provider reads can be gone - the core providers
             // throw on that. Tolerated and logged, the way a key config that no longer resolves
@@ -294,7 +302,7 @@ final class KeyGroupRelationCache implements ResetInterface
                 . $throwable->getMessage()
             );
 
-            return null;
+            return false;
         }
     }
 

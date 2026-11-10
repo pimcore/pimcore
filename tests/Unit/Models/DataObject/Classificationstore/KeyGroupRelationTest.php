@@ -154,6 +154,38 @@ class KeyGroupRelationTest extends TestCase
         $this->assertSame(self::IN_SCOPE, $relation->getDefinitionOverride());
     }
 
+    public function testAKeyWithAnEmptyListOfItsOwnIsNotTakenForOneAProviderFills(): void
+    {
+        $select = new Select();
+        $select->setOptions([]);
+
+        $relation = $this->relation($select);
+        $relation->setDefinitionOverride(['options' => ['red']]);
+
+        $this->assertFalse($relation->narrowsProvidedOptions());
+        $this->assertArrayHasKey('options', $relation->getEffectiveDefinitionData());
+
+        $provided = new Select();
+        $provided->setOptionsProviderType('class');
+        $provided->setOptionsProviderClass('Some\\Provider');
+
+        $relation = $this->relation($provided);
+        $relation->setDefinitionOverride(['options' => ['red']]);
+
+        $this->assertTrue($relation->narrowsProvidedOptions());
+    }
+
+    public function testADefaultOfOptionShapedEntriesIsReconciledByTheirValue(): void
+    {
+        $options = [self::RED, self::GREEN];
+
+        $this->assertSame(
+            [['value' => 'red']],
+            KeyGroupRelation::reconcileDefaultValue([['value' => 'red'], ['value' => 'blue']], $options)
+        );
+        $this->assertNull(KeyGroupRelation::reconcileDefaultValue([['value' => 'blue']], $options));
+    }
+
     private function relation(Data $definition): KeyGroupRelation
     {
         $definition->setName(self::KEY_NAME);
