@@ -200,7 +200,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             }
 
             foreach ($relationCache->getRelations($groupId) as $keyId => $key) {
-                if ($key->getType() !== 'calculatedValue') {
+                // the layout renders no field for a disabled key, so there is nothing to calculate
+                if (!$key->isEnabled() || $key->getType() !== 'calculatedValue') {
                     continue;
                 }
 
@@ -328,7 +329,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         continue;
                     }
 
-                    foreach (array_keys($relationCache->getRelations($groupId)) as $keyId) {
+                    foreach ($relationCache->getRelations($groupId) as $keyId => $relation) {
+                        // the gap scan covers the keys the layout renders, which excludes the disabled ones
+                        if (!$relation->isEnabled()) {
+                            continue;
+                        }
+
                         $fd = $relationCache->getFieldDefinition($groupId, $keyId);
 
                         // an empty value of a key that cannot inherit is not a gap the parent

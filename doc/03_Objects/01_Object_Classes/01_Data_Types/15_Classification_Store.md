@@ -127,6 +127,26 @@ defined.
 ![Classification Store detailed config](../../../img/Objects_ClassificationStore_detailed_config.png)
 
 
+### Disabling a key
+Setting a key's `enabled` flag to `false` is not a soft delete. Note the following:
+
+* Disabling a key deletes every `classificationstore_relations` row for it: its group memberships, sort positions,
+  mandatory flags, per-assignment metadata, per-group definition overrides and the sub-group tag. This happens once,
+  on the transition to disabled; saving a key that is already disabled deletes nothing.
+* An assignment that is created while the key is disabled is kept (it is no longer removed by the next save of the
+  key), and it keeps its `mandatory` flag. Object validation does not skip disabled keys, so a mandatory assignment on
+  a disabled key still raises a mandatory violation when an object using that group is saved with no value for the
+  key, even though the object editor does not render a field for it.
+* Stored values are not deleted. The per-object value tables reference `objects` and `classificationstore_groups` and
+  carry no foreign key to the keys table, so the values are orphaned rather than lost and reappear if the assignments
+  are restored. Deleting a group, in contrast, cascades and destroys them.
+* The restore path is the store configuration export/import (as provided by Studio), which round-trips the flag, and
+  not the ordinary key update endpoint. Assignments return only if the exported artifact carries them.
+* `enabled` is not the `invisible` toggle, which is a property of the field definition inside the key's `definition`.
+* `bin/console pimcore:classificationstore:delete-store --inactive-only` hard-deletes every disabled key in every
+  store, ignoring its store argument.
+
+
 ### Group definition and key assignment
 * Use the group editor to define and organize keys into groups
 * Similar to keys a sort order can be specified

@@ -23,7 +23,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Invalidates the process-scoped classification store relation cache whenever a key or a group
  * config changes within the same request/message: a key config carries the field definition the
- * cache hands out, and saving one with the enabled flag cleared removes its relations altogether.
+ * cache hands out, and the save that takes a key from enabled to disabled removes its relations altogether
+ * (a save of a key that is already disabled leaves them alone).
  *
  * A relation itself dispatches no event, so it is invalidated from
  * {@see \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao} instead.
