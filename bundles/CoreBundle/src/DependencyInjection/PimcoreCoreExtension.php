@@ -22,6 +22,7 @@ use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Controller\Config\Template\BundleTemplateProvider;
 use Pimcore\Controller\Config\Template\ProjectTemplateProvider;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
+use Pimcore\Helper\SymfonyExpression\ReadOnlyValueAdapterInterface;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
@@ -134,6 +135,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             ->addTag('pimcore.telemetry.snapshot_collector');
         $container->registerForAutoconfiguration(BundleUsageProviderInterface::class)
             ->addTag('pimcore.telemetry.bundle_usage_provider');
+        $container->registerForAutoconfiguration(ReadOnlyValueAdapterInterface::class)
+            ->addTag('pimcore.expression.read_only_value_adapter');
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
