@@ -288,8 +288,8 @@ final class KeyGroupRelation extends Model\AbstractModel
     /**
      * The definition this assignment effectively uses: the one {@see self::getDefinition()} returns
      * with `definitionOverride` merged over it, as the same JSON string. Without a stored override
-     * it is that definition unchanged. Nothing in core reads this yet - the editor still renders
-     * {@see self::getDefinition()}.
+     * it is that definition unchanged. The editor, the validation and the stores build the key's
+     * field definition from it, through {@see KeyGroupRelationCache} and {@see Service}.
      */
     public function getEffectiveDefinition(): string
     {
@@ -307,6 +307,21 @@ final class KeyGroupRelation extends Model\AbstractModel
         }
 
         return json_encode($definition);
+    }
+
+    /**
+     * The options a provider filled in, narrowed to this assignment's option subset - unchanged
+     * without one.
+     *
+     * @param array<int, array<string, mixed>> $options
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @internal
+     */
+    public function applyOptionSubset(array $options): array
+    {
+        return self::filterOptions($options, $this->definitionOverride[self::OPTIONS] ?? null) ?? $options;
     }
 
     /**

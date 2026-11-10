@@ -63,7 +63,9 @@ class Service
             return self::$definitionsCache[$cacheId];
         }
 
-        $definition = $keyConfig->getDefinition();
+        $definition = $keyConfig instanceof KeyGroupRelation
+            ? $keyConfig->getEffectiveDefinition()
+            : $keyConfig->getDefinition();
         $definition = json_decode($definition, true);
         $type = $keyConfig->getType();
         $fd = self::getFieldDefinitionFromJson($definition, $type);

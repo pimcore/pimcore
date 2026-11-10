@@ -280,6 +280,40 @@ class ServiceTest extends TestCase
         );
     }
 
+    /**
+     * A relation is built from the definition its assignment effectively uses, a key config from its
+     * own: the same key id answers a different definition per group once an override is stored.
+     */
+    public function testARelationIsBuiltFromItsEffectiveDefinitionAndAKeyConfigFromItsOwn(): void
+    {
+        $options = [['key' => 'One', 'value' => 'one'], ['key' => 'Two', 'value' => 'two']];
+        $definition = json_encode(['name' => 'csKey', 'options' => $options]);
+
+        $inGroupA = $this->relation(self::GROUP_A, 'ignored');
+        $inGroupA->setType('select');
+        $inGroupA->setDefinition($definition);
+        $inGroupA->setDefinitionOverride(['options' => ['one']]);
+
+        $inGroupB = $this->relation(self::GROUP_B, 'ignored');
+        $inGroupB->setType('select');
+        $inGroupB->setDefinition($definition);
+        $inGroupB->setDefinitionOverride(['options' => ['two']]);
+
+        $keyConfig = $this->keyConfig('ignored');
+        $keyConfig->setType('select');
+        $keyConfig->setDefinition($definition);
+
+        $this->assertSame(
+            [['key' => 'One', 'value' => 'one']],
+            Service::getFieldDefinitionFromKeyConfig($inGroupA)->getOptions()
+        );
+        $this->assertSame(
+            [['key' => 'Two', 'value' => 'two']],
+            Service::getFieldDefinitionFromKeyConfig($inGroupB)->getOptions()
+        );
+        $this->assertSame($options, Service::getFieldDefinitionFromKeyConfig($keyConfig)->getOptions());
+    }
+
     public function testAKeyConfigIsStillKeyedByItsIdAlone(): void
     {
         $keyConfig = $this->keyConfig('The key');

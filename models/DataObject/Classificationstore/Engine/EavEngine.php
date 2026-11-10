@@ -147,6 +147,8 @@ final class EavEngine extends AbstractDao implements EngineInterface
         // the loop below resolves a key config per key, which on a cold cache - a save that did
         // not load the store first - would be a statement each
         DefinitionCache::load($this->getItemKeyIds($items, $activeGroups));
+        $relationCache = Pimcore::getContainer()->get(KeyGroupRelationCache::class);
+        $relationCache->load(array_keys($items));
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
@@ -154,7 +156,8 @@ final class EavEngine extends AbstractDao implements EngineInterface
                     continue;
                 }
                 $keyConfig = DefinitionCache::get($keyId);
-                $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                $fd = $relationCache->getFieldDefinition((int) $groupId, (int) $keyId)
+                    ?? Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                 // raised before anything is normalized and before persistRows() is reached at all
                 $this->relationResolver->assertStorable(

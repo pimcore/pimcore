@@ -24,9 +24,10 @@ use Symfony\Contracts\Service\ResetInterface;
  *
  * The entry is keyed by (groupId, keyId) rather than by key id alone because the same key can be
  * assigned to several groups with its own mandatory flag and description in each of them.
- * {@see self::getMutableFieldDefinition()} therefore builds a new field definition on every call:
- * the layout and validity paths set the tooltip and the mandatory flag on the definition they
- * receive, and one group's assignment must not leak into another's.
+ * {@see self::getMutableFieldDefinition()} therefore builds a new field definition on every call,
+ * from the assignment's {@see KeyGroupRelation::getEffectiveDefinition()}, so that the group's option
+ * subset and units apply: the layout and validity paths set the tooltip and the mandatory flag on the
+ * definition they receive, and one group's assignment must not leak into another's.
  *
  * The cache is cleared at the request and messenger-message boundary via the kernel.reset tag
  * (ResetInterface), and on a key, group or relation change by
@@ -153,10 +154,16 @@ final class KeyGroupRelationCache implements ResetInterface
             return null;
         }
 
-        return Service::getFieldDefinitionFromJson(
-            json_decode($relation->getDefinition(), true),
-            $relation->getType()
-        );
+        $definition = json_decode($relation->getEffectiveDefinition(), true);
+
+        // a key without a list of its own takes them from its provider, and [] would switch validation off
+        if (array_key_exists('options', $relation->getDefinitionOverride() ?? [])
+            && (json_decode($relation->getDefinition(), true)['options'] ?? []) === []
+        ) {
+            unset($definition['options']);
+        }
+
+        return Service::getFieldDefinitionFromJson($definition, $relation->getType());
     }
 
     /**

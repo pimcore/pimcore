@@ -16,8 +16,13 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
+use Pimcore\Tests\Support\Util\OptionsProvider\DynamicListOptionsProvider;
+use Pimcore\Tests\Support\Util\OptionsProvider\StaticListOptionsProvider;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
@@ -121,6 +126,135 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         $expectedTooltip = $keyConfig->getName() . ' - ' . $keyConfig->getDescription();
         $this->assertSame($expectedTooltip, $definitionA->getTooltip());
         $this->assertSame($expectedTooltip, $definitionB->getTooltip());
+    }
+
+    public function testTheCacheHandsBackTheOptionSubsetOfEachGroup(): void
+    {
+        $groupA = $this->createGroup('subsetA');
+        $groupB = $this->createGroup('subsetB');
+        $keyConfig = $this->createKey('subset', true, $this->selectWithOptions());
+
+        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($groupB, $keyConfig);
+
+        $cache = $this->getRelationCache();
+
+        $this->assertSame(
+            [['key' => 'Option A', 'value' => 'a']],
+            $cache->getFieldDefinition($groupA->getId(), $keyConfig->getId())->getOptions()
+        );
+        $this->assertCount(3, $cache->getFieldDefinition($groupB->getId(), $keyConfig->getId())->getOptions());
+    }
+
+    public function testTheEnrichedLayoutCarriesTheOptionsAndUnitsOfEachGroup(): void
+    {
+        $groupA = $this->createGroup('layoutA');
+        $groupB = $this->createGroup('layoutB');
+        $select = $this->createKey('layoutSelect', true, $this->selectWithOptions());
+        $quantity = $this->createKey('layoutQuantity', true, $this->quantityValue());
+
+        $this->assignKey($groupA, $select, 0, false, ['options' => ['a', 'b']]);
+        $this->assignKey($groupB, $select, 0, false, ['options' => ['c']]);
+        $this->assignKey($groupA, $quantity, 1, false, ['defaultUnit' => 'mm', 'validUnits' => ['mm']]);
+        $this->assignKey($groupB, $quantity, 1);
+
+        $definitions = $this->enrich($this->createObject('layout', [
+            $groupA->getId() => true,
+            $groupB->getId() => true,
+        ]));
+
+        $this->assertSame(
+            ['a', 'b'],
+            array_column($definitions[$groupA->getId()]['keys'][0]['definition']->getOptions(), 'value')
+        );
+        $this->assertSame(
+            ['c'],
+            array_column($definitions[$groupB->getId()]['keys'][0]['definition']->getOptions(), 'value')
+        );
+
+        $quantityA = $definitions[$groupA->getId()]['keys'][1]['definition'];
+        $quantityB = $definitions[$groupB->getId()]['keys'][1]['definition'];
+        $this->assertSame('mm', $quantityA->getDefaultUnit());
+        $this->assertSame(['mm'], $quantityA->getValidUnits());
+        $this->assertSame('cm', $quantityB->getDefaultUnit());
+        $this->assertSame(['cm', 'mm'], $quantityB->getValidUnits());
+    }
+
+    public function testAProviderListIsNarrowedByTheSubsetOfEachGroupWhenItIsStatic(): void
+    {
+        $groupA = $this->createGroup('providerA');
+        $groupB = $this->createGroup('providerB');
+        $keyConfig = $this->createKey('provider', true, $this->selectWithProvider(StaticListOptionsProvider::class));
+
+        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, ['options' => ['b', 'c']]);
+
+        $definitions = $this->enrich($this->createObject('provider', [
+            $groupA->getId() => true,
+            $groupB->getId() => true,
+        ]));
+
+        $this->assertSame(['a'], array_column($definitions[$groupA->getId()]['keys'][0]['definition']->getOptions(), 'value'));
+        $this->assertSame(['b', 'c'], array_column($definitions[$groupB->getId()]['keys'][0]['definition']->getOptions(), 'value'));
+    }
+
+    public function testADynamicProviderListIsLeftUnfiltered(): void
+    {
+        $groupA = $this->createGroup('dynamicA');
+        $groupB = $this->createGroup('dynamicB');
+        $keyConfig = $this->createKey('dynamic', true, $this->selectWithProvider(DynamicListOptionsProvider::class));
+
+        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, ['options' => ['b']]);
+
+        $definitions = $this->enrich($this->createObject('dynamic', [
+            $groupA->getId() => true,
+            $groupB->getId() => true,
+        ]));
+
+        foreach ([$groupA, $groupB] as $group) {
+            $this->assertCount(3, $definitions[$group->getId()]['keys'][0]['definition']->getOptions());
+        }
+    }
+
+    public function testASubsetOnAProviderKeyLeavesTheOptionsForTheProviderToFill(): void
+    {
+        $group = $this->createGroup('validation');
+        $keyConfig = $this->createKey('validation', true, $this->selectWithProvider(StaticListOptionsProvider::class));
+        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+
+        // null rather than [], which Select::checkValidity() reads as nothing to validate against
+        $this->assertNull($this->getRelationCache()->getMutableFieldDefinition($group->getId(), $keyConfig->getId())->getOptions());
+    }
+
+    private function selectWithOptions(): Select
+    {
+        $select = new Select();
+        $select->setOptions([
+            ['key' => 'Option A', 'value' => 'a'],
+            ['key' => 'Option B', 'value' => 'b'],
+            ['key' => 'Option C', 'value' => 'c'],
+        ]);
+
+        return $select;
+    }
+
+    private function selectWithProvider(string $providerClass): Select
+    {
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass($providerClass);
+
+        return $select;
+    }
+
+    private function quantityValue(): QuantityValue
+    {
+        $quantity = new QuantityValue();
+        $quantity->setDefaultUnit('cm');
+        $quantity->setValidUnits(['cm', 'mm']);
+
+        return $quantity;
     }
 
     /**

@@ -170,13 +170,17 @@ abstract class AbstractBatchedRelationTest extends AbstractClassificationStoreTe
         Classificationstore\GroupConfig $group,
         Classificationstore\KeyConfig $keyConfig,
         int $sorter = 0,
-        bool $mandatory = false
+        bool $mandatory = false,
+        ?array $definitionOverride = null
     ): Classificationstore\KeyGroupRelation {
         $relation = new Classificationstore\KeyGroupRelation();
         $relation->setGroupId($group->getId());
         $relation->setKeyId($keyConfig->getId());
         $relation->setSorter($sorter);
         $relation->setMandatory($mandatory);
+        if ($definitionOverride !== null) {
+            $relation->setDefinitionOverride($definitionOverride);
+        }
         $relation->save();
 
         return $relation;

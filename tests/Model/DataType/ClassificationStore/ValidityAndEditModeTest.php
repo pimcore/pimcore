@@ -14,7 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\Csstorelocalized;
+use Pimcore\Model\DataObject\Data\QuantityValue as QuantityValueData;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool;
 
@@ -111,6 +115,87 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
                 'and only of the group it is assigned to'
             );
         }
+    }
+
+    public function testAValueIsValidatedAgainstTheOptionSubsetOfItsOwnGroup(): void
+    {
+        $groupA = $this->createGroup('subset_a');
+        $groupB = $this->createGroup('subset_b');
+
+        $select = new Select();
+        $select->setOptions([['key' => 'Option A', 'value' => 'a'], ['key' => 'Option B', 'value' => 'b']]);
+        $select->setEnforceValidation(true);
+        $keyConfig = $this->createKey('subset', true, $select);
+
+        $this->assignKey($groupA, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, ['options' => ['b']]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('subset');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$groupA->getId() => true, $groupB->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($groupA->getId(), $keyConfig->getId(), 'a', 'en');
+        $object->getCsstore()->setLocalizedKeyValue($groupB->getId(), $keyConfig->getId(), 'b', 'en');
+        $object->save();
+
+        // 'b' is a valid option of the key, but not of the group A assigns it to
+        $object->getCsstore()->setLocalizedKeyValue($groupA->getId(), $keyConfig->getId(), 'b', 'en');
+
+        $this->expectException(ValidationException::class);
+
+        $object->save();
+    }
+
+    public function testValuesOfAKeyInTwoGroupsRoundTripThroughEditModeAndSave(): void
+    {
+        $groupA = $this->createGroup('units_a');
+        $groupB = $this->createGroup('units_b');
+
+        $millimetre = $this->getUnit('mm')->getId();
+        $centimetre = $this->getUnit('cm')->getId();
+
+        $quantity = new QuantityValue();
+        $quantity->setDefaultUnit($centimetre);
+        $quantity->setValidUnits([$centimetre, $millimetre]);
+        $keyConfig = $this->createKey('units', true, $quantity);
+
+        $this->assignKey($groupA, $keyConfig, 0, false, ['defaultUnit' => $millimetre, 'validUnits' => [$millimetre]]);
+        $this->assignKey($groupB, $keyConfig, 0, false, ['defaultUnit' => $centimetre]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('units');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$groupA->getId() => true, $groupB->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($groupA->getId(), $keyConfig->getId(), new QuantityValueData(5, $millimetre), 'en');
+        $object->getCsstore()->setLocalizedKeyValue($groupB->getId(), $keyConfig->getId(), new QuantityValueData(7, $centimetre), 'en');
+        $object->save();
+
+        $object = Csstorelocalized::getById($object->getId(), ['force' => true]);
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+
+        $payload = $fieldDefinition->getDataForEditmode($object->getCsstore(), $object);
+
+        $this->assertEquals(5, $payload['data']['en'][$groupA->getId()][$keyConfig->getId()]['value']);
+        $this->assertEquals(7, $payload['data']['en'][$groupB->getId()][$keyConfig->getId()]['value']);
+
+        $restored = $fieldDefinition->getDataFromEditmode($payload, $object);
+
+        $this->assertEquals(5, $restored->getLocalizedKeyValue($groupA->getId(), $keyConfig->getId(), 'en')->getValue());
+        $this->assertSame($centimetre, $restored->getLocalizedKeyValue($groupB->getId(), $keyConfig->getId(), 'en')->getUnitId());
+    }
+
+    private function getUnit(string $abbreviation): Unit
+    {
+        $unit = Unit::getByAbbreviation($abbreviation);
+        if (!$unit) {
+            $unit = new Unit();
+            $unit->setAbbreviation($abbreviation);
+            $unit->save();
+        }
+
+        return $unit;
     }
 
     public function testADisabledKeyWithAMandatoryRelationIsStillValidated(): void

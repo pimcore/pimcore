@@ -168,6 +168,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $metaData = [];
         $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
 
+        $relationCache = $this->getKeyGroupRelationCache();
+        $relationCache->load(array_merge([], ...array_map(array_keys(...), array_values($result['data']))));
+
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$groups) {
             foreach ($groups as $groupId => &$keys) {
@@ -182,7 +185,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                     if ($keyConfig->getEnabled()) {
-                        $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $fd = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
                         $keyValue = $fd->getDataForEditmode($keyValue, $object, $params);
                     }
                 }
@@ -191,7 +194,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
-        $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load(array_keys($activeGroupIds, true, true));
 
         foreach ($activeGroupIds as $groupId => $enabled) {
@@ -272,6 +274,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $items = $data->getItems();
 
+        $this->getKeyGroupRelationCache()->load(array_keys($items));
+
         foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
                 continue;
@@ -279,7 +283,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             foreach ($keys as $keyId => $languages) {
                 $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                 if ($keyConfig->getEnabled()) {
-                    $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                    $fd = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
 
                     // A level above the first is an ancestor's store, reached by the recursion at
                     // the end of this method, and its value of a key whose field type does not
@@ -431,6 +435,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 static fn (): array => $classificationStore->getItems()
             );
 
+            $this->getKeyGroupRelationCache()->load(
+                array_merge([], ...array_map(array_keys(...), array_values($data)))
+            );
+
             foreach ($data as $language => $groups) {
                 foreach ($groups as $groupId => $keys) {
                     foreach ($keys as $keyId => $value) {
@@ -441,9 +449,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
-                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
-                            $keyConfig
-                        );
+                        $dataDefinition = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
 
                         // the object is what a type needs to do anything beyond converting the
                         // payload - Consent writes a note against it - and the context says where
@@ -730,8 +736,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         $storedValues = [];
         $activeGroups = $data->getActiveGroups();
+        $qualifiedItems = $data->getQualifiedItems();
 
-        foreach ($data->getQualifiedItems() as $groupId => $keys) {
+        $this->getKeyGroupRelationCache()->load(array_keys($qualifiedItems));
+
+        foreach ($qualifiedItems as $groupId => $keys) {
             if (!isset($activeGroups[$groupId])) {
                 continue;
             }
@@ -743,7 +752,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
 
                 $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition(
-                    DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+                    $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig)
                 );
                 if ($fieldDefinition === null) {
                     continue;
@@ -1440,6 +1449,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $context['groupId'] = $keyGroupRelation->getGroupId();
                     $context['keyDefinition'] = $definition;
                     $definition = $definition->enrichLayoutDefinition($object, $context);
+
+                    // the provider has just replaced the options wholesale; a dynamic list carries no subset
+                    if (($definition instanceof Data\Select || $definition instanceof Data\Multiselect)
+                        && !$definition->dynamicOptions
+                        && $definition->getOptions() !== null
+                        && array_key_exists('options', $keyGroupRelation->getDefinitionOverride() ?? [])
+                    ) {
+                        $definition->setOptions($keyGroupRelation->applyOptionSubset($definition->getOptions()));
+                    }
                 }
 
                 // the languages the key is kept in are decided by the key and only inherited from
@@ -1534,6 +1552,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         array_unshift($validLanguages, 'default');
 
         return $validLanguages;
+    }
+
+    /**
+     * The definition of a key as its assignment to the group sees it - the key config's own for a value
+     * whose key was removed from the group.
+     */
+    private function getAssignedFieldDefinition(
+        int $groupId,
+        int $keyId,
+        DataObject\Classificationstore\KeyConfig $keyConfig
+    ): ?Data {
+        return $this->getKeyGroupRelationCache()->getFieldDefinition($groupId, $keyId)
+            ?? DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
     }
 
     private function getKeyGroupRelationCache(): DataObject\Classificationstore\KeyGroupRelationCache
