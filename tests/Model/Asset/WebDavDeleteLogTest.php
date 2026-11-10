@@ -133,6 +133,21 @@ class WebDavDeleteLogTest extends ModelTestCase
     }
 
     /**
+     * The timestamp limits how long an entry stays in the log, so it is signed as well: a valid entry
+     * cannot be kept alive past its lifetime by moving its timestamp.
+     */
+    public function testSignedEntryIsBoundToItsTimestamp(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $path = $asset->getRealFullPath();
+
+        $entry = WebDavService::createDeleteLogEntry($asset);
+        $entry['timestamp'] += 3600;
+
+        $this->assertNull(WebDavService::restoreDeletedAsset($path, $entry));
+    }
+
+    /**
      * The signature covers the path the entry was logged for, so a valid entry cannot be replayed
      * to overwrite a different destination.
      */

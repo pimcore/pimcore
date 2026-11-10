@@ -61,7 +61,7 @@ class Service
      * third-party "delete then move" back into an overwrite of the existing asset.
      *
      * The payload is the whole asset, serialized in dump state, and it is signed together with the
-     * asset's path (see restoreDeletedAsset() for why).
+     * asset's path and the entry's timestamp (see restoreDeletedAsset() for why).
      *
      * @return array{id: int|null, timestamp: int, data: string, signature: string|null}
      */
@@ -75,11 +75,13 @@ class Service
             $asset->setInDumpState(false);
         }
 
+        $timestamp = time();
+
         return [
             'id' => $asset->getId(),
-            'timestamp' => time(),
+            'timestamp' => $timestamp,
             'data' => $payload,
-            'signature' => self::signDeleteLogPayload($payload, $asset->getRealFullPath()),
+            'signature' => self::signDeleteLogPayload($payload, $asset->getRealFullPath(), $timestamp),
         ];
     }
 
@@ -95,9 +97,10 @@ class Service
      * `customSettings` array that bundles write into.
      *
      * The delete log is a file anyone with write access to the system temp directory can forge, so
-     * the payload is authenticated instead: only a payload whose signature matches the path it was
-     * logged for is unserialized. Unsigned entries (e.g. written by an earlier version), tampered or
-     * moved ones are ignored.
+     * the payload is authenticated instead: only a payload whose signature matches the path and the
+     * timestamp it was logged with is unserialized - the timestamp bounds the entry's lifetime in
+     * getDeleteLog(), so it must not be extendable either. Unsigned entries (e.g. written by an
+     * earlier version), tampered or moved ones are ignored.
      *
      * Returns null in those cases, and when the payload does not rebuild into an Asset, so the
      * caller can fall back instead of operating on an unusable value.
@@ -106,11 +109,12 @@ class Service
     {
         $payload = $entry['data'] ?? null;
         $signature = $entry['signature'] ?? null;
-        if (!is_string($payload) || !is_string($signature)) {
+        $timestamp = $entry['timestamp'] ?? null;
+        if (!is_string($payload) || !is_string($signature) || !is_int($timestamp)) {
             return null;
         }
 
-        $expectedSignature = self::signDeleteLogPayload($payload, $path);
+        $expectedSignature = self::signDeleteLogPayload($payload, $path, $timestamp);
         if ($expectedSignature === null || !hash_equals($expectedSignature, $signature)) {
             return null;
         }
@@ -124,15 +128,16 @@ class Service
      * Returns null when the application secret is not available. The entry is then logged
      * unsigned, so a later move falls back to a plain move instead of restoring the asset.
      */
-    private static function signDeleteLogPayload(string $payload, string $path): ?string
+    private static function signDeleteLogPayload(string $payload, string $path, int $timestamp): ?string
     {
         $secret = Pimcore::getContainer()->getParameter('secret');
         if ($secret === '') {
             return null;
         }
 
-        // length-prefixed path, so path and payload cannot be shifted against each other
-        $message = strlen($path) . ':' . $path . $payload;
+        // length-prefixed path and a ':'-terminated timestamp, so the parts cannot be shifted against
+        // each other
+        $message = strlen($path) . ':' . $path . $timestamp . ':' . $payload;
 
         return hash_hmac('sha256', $message, hash_hmac('sha256', 'pimcore.webdav_delete_log', $secret, true));
     }
