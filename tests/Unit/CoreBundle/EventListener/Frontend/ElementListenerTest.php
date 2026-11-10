@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\CoreBundle\EventListener\Frontend;
 
 use ArrayObject;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -60,6 +61,140 @@ class ElementListenerTest extends TestCase
         );
     }
 
+    /**
+     * Runs a studio preview request for object 2 and returns the object that ended up in the runtime cache.
+     * A denied request must leave the cache untouched (checked before the cleanup, then rethrown).
+     *
+     * @param DataObject\Concrete|null $persisted the element as stored, authorization is evaluated on it
+     * @param DataObject\Concrete|null $draft the latest version, defaults to the persisted element when there is none
+     */
+    private function runObjectStudioPreview(?DataObject\Concrete $persisted, ?DataObject\Concrete $draft = null): ?DataObject\Concrete
+    {
+        $user = new User();
+        $user->setId(42);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn(null);
+
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(true);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn($user);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $persisted, $draft) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private ?DataObject\Concrete $persisted,
+                private ?DataObject\Concrete $draft
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
+
+            protected function getPersistedObject(int $id): ?DataObject\Concrete
+            {
+                return $this->persisted;
+            }
+
+            protected function getLatestVersion(DataObject\Concrete $object, UserInterface $user): DataObject\Concrete
+            {
+                return $this->draft ?? $object;
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        $request = Request::create('/page', 'GET', ['pimcore_studio_preview' => '1', 'pimcore_object_preview' => '2']);
+        $request->setSession(new Session(new MockArraySessionStorage()));
+
+        RuntimeCache::getInstance()->offsetUnset('object_2');
+
+        try {
+            try {
+                $listener->onKernelController($this->makeControllerEvent($request));
+            } catch (AccessDeniedHttpException $exception) {
+                $this->assertFalse(RuntimeCache::isRegistered('object_2'), 'a denied preview must not be cached');
+
+                throw $exception;
+            }
+
+            return RuntimeCache::isRegistered('object_2') ? RuntimeCache::get('object_2') : null;
+        } finally {
+            RuntimeCache::getInstance()->offsetUnset('object_2');
+        }
+    }
+
+    /**
+     * @param string[] $allowedPermissions
+     */
+    private function makeObject(array $allowedPermissions): DataObject\Concrete
+    {
+        $object = $this->createMock(DataObject\Concrete::class);
+        $object->method('isAllowed')->willReturnCallback(
+            static fn (string $type): bool => in_array($type, $allowedPermissions, true)
+        );
+        $object->method('getId')->willReturn(2);
+        $object->method('getFullPath')->willReturn('/objects/preview');
+
+        return $object;
+    }
+
+    public function testObjectStudioPreviewIsDeniedWithoutViewPermission(): void
+    {
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($this->makeObject([]));
+    }
+
+    public function testObjectStudioPreviewIsDeniedWithOnlyVersionsPermission(): void
+    {
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($this->makeObject(['versions']));
+    }
+
+    public function testObjectStudioPreviewIsDeniedWhenTheDraftIsViewableButThePersistedObjectIsNot(): void
+    {
+        // a draft can carry another parent than the stored element and thereby other workspace grants
+        $persisted = $this->makeObject([]);
+        $draft = $this->makeObject(['view', 'versions']);
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->runObjectStudioPreview($persisted, $draft);
+    }
+
+    public function testObjectStudioPreviewWithoutVersionsPermissionServesThePublishedObject(): void
+    {
+        $persisted = $this->makeObject(['view']);
+        $draft = $this->makeObject(['view', 'versions']);
+
+        $this->assertNull($this->runObjectStudioPreview($persisted, $draft), 'no draft may be substituted');
+    }
+
+    public function testObjectStudioPreviewCachesTheDraftWithViewAndVersionsPermission(): void
+    {
+        $persisted = $this->makeObject(['view', 'versions']);
+        $draft = $this->makeObject([]);
+
+        $this->assertSame($draft, $this->runObjectStudioPreview($persisted, $draft));
+    }
+
+    public function testObjectStudioPreviewCachesThePersistedObjectWhenThereIsNoDraft(): void
+    {
+        $persisted = $this->makeObject(['view', 'versions']);
+
+        $this->assertSame($persisted, $this->runObjectStudioPreview($persisted));
+    }
+
+    public function testObjectStudioPreviewWithoutResolvableObjectCachesNothing(): void
+    {
+        $this->assertNull($this->runObjectStudioPreview(null));
+    }
+
     private function makeListener(?Document $document, bool $adminRequest, ?User $user, bool $stubObjectParams = false): ElementListener
     {
         $documentResolver = $this->createMock(DocumentResolver::class);
@@ -81,7 +216,7 @@ class ElementListenerTest extends TestCase
         // handleObjectParams() performs a DB lookup unrelated to the permission gate under test
         $class = $stubObjectParams
             ? new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader) extends ElementListener {
-                protected function handleObjectParams(Request $request, UserInterface $user): void
+                protected function handleObjectParams(Request $request, User $user): void
                 {
                 }
             }
@@ -91,6 +226,129 @@ class ElementListenerTest extends TestCase
         $listener->setPimcoreContextResolver($contextResolver);
 
         return $listener;
+    }
+
+    private function makeAnonymousListenerWithVersion(Version $version, DocumentResolver $documentResolver): ElementListener
+    {
+        $editmodeResolver = $this->createMock(EditmodeResolver::class);
+        $requestHelper = $this->createMock(RequestHelper::class);
+        $requestHelper->method('isFrontendRequestByAdmin')->willReturn(false);
+        $requestHelper->method('getMainRequest')->willReturn(Request::create('/'));
+        $userLoader = $this->createMock(UserLoader::class);
+        $userLoader->method('getUser')->willReturn(null);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(true);
+
+        $listener = new class($documentResolver, $editmodeResolver, $requestHelper, $userLoader, $version) extends ElementListener {
+            public function __construct(
+                DocumentResolver $documentResolver,
+                EditmodeResolver $editmodeResolver,
+                RequestHelper $requestHelper,
+                UserLoader $userLoader,
+                private Version $version
+            ) {
+                parent::__construct($documentResolver, $editmodeResolver, $requestHelper, $userLoader);
+            }
+
+            protected function loadVersion(int $versionId): Version
+            {
+                return $this->version;
+            }
+        };
+        $listener->setLogger(new NullLogger());
+        $listener->setPimcoreContextResolver($contextResolver);
+
+        return $listener;
+    }
+
+    /**
+     * The `?v=` public-version preview must only substitute a version that belongs to the
+     * requested document, even when the version's `public` flag is set.
+     */
+    public function testPublicVersionOfForeignDocumentIsNotRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $foreignDocument = $this->createMock(Document::class);
+        $version = (new Version())->setCtype('document')->setCid(11)->setPublic(true)->setData($foreignDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        // the original, route-resolved document must be kept, never the foreign version's data
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($routeDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testPublicVersionOfNonDocumentElementIsNotRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $foreignData = $this->createMock(Document::class);
+        $version = (new Version())->setCtype('object')->setCid(10)->setPublic(true)->setData($foreignData);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($routeDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testPublicVersionOfSameDocumentIsRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $versionDocument = $this->createMock(Document::class);
+        $versionDocument->method('getFullPath')->willReturn('/page');
+        $version = (new Version())->setCtype('document')->setCid(10)->setPublic(true)->setData($versionDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($versionDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
+    }
+
+    public function testNonPublicVersionOfSameDocumentIsNotRendered(): void
+    {
+        $routeDocument = $this->createMock(Document::class);
+        $routeDocument->method('isPublished')->willReturn(true);
+        $routeDocument->method('getId')->willReturn(10);
+        $routeDocument->method('getFullPath')->willReturn('/page');
+
+        $versionDocument = $this->createMock(Document::class);
+        $version = (new Version())->setCtype('document')->setCid(10)->setPublic(false)->setData($versionDocument);
+
+        $documentResolver = $this->createMock(DocumentResolver::class);
+        $documentResolver->method('getDocument')->willReturn($routeDocument);
+        $documentResolver->expects($this->once())->method('setDocument')
+            ->with($this->anything(), $this->identicalTo($routeDocument));
+
+        $listener = $this->makeAnonymousListenerWithVersion($version, $documentResolver);
+
+        $request = Request::create('/page', 'GET', ['v' => '42']);
+        $listener->onKernelController($this->makeControllerEvent($request));
     }
 
     public function testBackendUserWithoutViewPermissionIsDeniedOnUnpublishedDocument(): void
@@ -229,7 +487,7 @@ class ElementListenerTest extends TestCase
                 return $document;
             }
 
-            protected function handleObjectParams(Request $request, UserInterface $user): void
+            protected function handleObjectParams(Request $request, User $user): void
             {
             }
         };
@@ -280,7 +538,7 @@ class ElementListenerTest extends TestCase
                 return $this->version;
             }
 
-            protected function handleObjectParams(Request $request, UserInterface $user): void
+            protected function handleObjectParams(Request $request, User $user): void
             {
             }
         };

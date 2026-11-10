@@ -26,6 +26,7 @@ use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Tool\HtmlUtils;
 use Pimcore\Tool\Serialize;
 use RuntimeException;
@@ -39,6 +40,18 @@ use Throwable;
  */
 abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface, Stringable
 {
+    /**
+     * Classes an editable's stored data may legitimately contain. The core editables persist arrays
+     * and scalars only; MarkerHotspotItem is found in image hotspot/marker data written before
+     * Image::getDataForResource() stored that metadata as plain arrays. Passed to
+     * Serialize::unserialize() in getUnserializedData(), so these are reconstructed while every other
+     * class name in the input is refused. Projects whose own editables store further classes register
+     * them through `pimcore.documents.editables.unserialize_allowed_classes`.
+     */
+    private const ALLOWED_RESOURCE_CLASSES = [
+        MarkerHotspotItem::class,
+    ];
+
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
      *
@@ -716,21 +729,44 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
+    /**
+     * The built-in allowlist merged with the classes configured in
+     * `pimcore.documents.editables.unserialize_allowed_classes`. Mirrors the block allowlist: the
+     * configuration is trusted server-side input, never request data.
+     *
+     * @return list<class-string>
+     */
+    private function getAllowedResourceClasses(): array
+    {
+        $extraAllowedClasses = [];
+        if (Pimcore::hasContainer()) {
+            try {
+                $extraAllowedClasses = (array) Pimcore::getContainer()->getParameter(
+                    'pimcore.documents.editables.unserialize_allowed_classes'
+                );
+            } catch (InvalidArgumentException) {
+                // parameter not configured
+            }
+        }
+
+        return array_values(array_unique(array_merge(
+            self::ALLOWED_RESOURCE_CLASSES,
+            array_filter($extraAllowedClasses, 'is_string')
+        )));
+    }
+
     protected function getUnserializedData(mixed $data): ?array
     {
         if (is_array($data) || is_null($data)) {
             return $data;
         }
         if (is_string($data)) {
-            // An editable's resource blob legitimately contains PHP objects, so object
-            // deserialization must stay enabled here: Image::getDataForResource() persists its
-            // hotspot/marker metadata as Element\Data\MarkerHotspotItem instances, and bundle
-            // editables may store value objects of their own. Restricting this to `false` left
-            // __PHP_Incomplete_Class instances in the metadata, which made
-            // Image::getCacheTags() fatal - see pimcore/platform-version#298.
-            // Tightening this is tracked in pimcore/internal-improvements#24 and needs the write
-            // side to stop storing live objects first.
-            $unserializedData = Serialize::unserialize($data, true);
+            // Only the value object classes an editable's stored data legitimately contains are
+            // reconstructed (see self::ALLOWED_RESOURCE_CLASSES); every other class comes back as
+            // __PHP_Incomplete_Class. Forbidding objects entirely (`false`) is not an option: older
+            // image data stores MarkerHotspotItem objects, and losing them broke
+            // Image::getCacheTags() - see pimcore/platform-version#298.
+            $unserializedData = Serialize::unserialize($data, $this->getAllowedResourceClasses());
             if (!is_array($unserializedData) && !is_null($unserializedData)) {
                 throw new InvalidArgumentException('Unserialized data must be an array or null.');
             }

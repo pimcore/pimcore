@@ -34,6 +34,10 @@ pimcore:
         block:
             unserialize_allowed_classes:
                 - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
+    documents:
+        editables:
+            unserialize_allowed_classes:
+                - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
 
 
 parameters:
