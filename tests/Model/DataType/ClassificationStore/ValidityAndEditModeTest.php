@@ -14,12 +14,14 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\Csstorelocalized;
 use Pimcore\Model\DataObject\Data\QuantityValue as QuantityValueData;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Tests\Support\Util\OptionsProvider\StaticListOptionsProvider;
 use Pimcore\Tool;
 
 /**
@@ -141,6 +143,34 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
 
         // 'b' is a valid option of the key, but not of the group A assigns it to
         $object->getCsstore()->setLocalizedKeyValue($groupA->getId(), $keyConfig->getId(), 'b', 'en');
+
+        $this->expectException(ValidationException::class);
+
+        $object->save();
+    }
+
+    public function testAValueIsValidatedAgainstTheSubsetOfTheListAProviderFills(): void
+    {
+        $group = $this->createGroup('provider_subset');
+
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass(StaticListOptionsProvider::class);
+        $select->setEnforceValidation(true);
+        $keyConfig = $this->createKey('provider_subset', true, $select);
+
+        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('provider-subset');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'a', 'en');
+        $object->save();
+
+        // 'b' is an option of the list the provider fills, but not of the subset this group narrows it to
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'b', 'en');
 
         $this->expectException(ValidationException::class);
 

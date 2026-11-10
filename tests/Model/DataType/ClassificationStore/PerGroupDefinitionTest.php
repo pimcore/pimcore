@@ -196,6 +196,14 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
 
         $this->assertSame(['a'], array_column($definitions[$groupA->getId()]['keys'][0]['definition']->getOptions(), 'value'));
         $this->assertSame(['b', 'c'], array_column($definitions[$groupB->getId()]['keys'][0]['definition']->getOptions(), 'value'));
+
+        // what the editor offers and what validation accepts are built from the same subset
+        foreach ([$groupA, $groupB] as $group) {
+            $this->assertSame(
+                $definitions[$group->getId()]['keys'][0]['definition']->getOptions(),
+                $this->getRelationCache()->getFieldDefinition($group->getId(), $keyConfig->getId())->getOptions()
+            );
+        }
     }
 
     public function testADynamicProviderListIsLeftUnfiltered(): void
@@ -217,10 +225,31 @@ class PerGroupDefinitionTest extends AbstractBatchedRelationTest
         }
     }
 
-    public function testASubsetOnAProviderKeyLeavesTheOptionsForTheProviderToFill(): void
+    public function testASubsetOnAStaticProviderKeyIsAppliedToTheListTheProviderFills(): void
     {
         $group = $this->createGroup('validation');
+        $unmatched = $this->createGroup('unmatched');
         $keyConfig = $this->createKey('validation', true, $this->selectWithProvider(StaticListOptionsProvider::class));
+        $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
+        $this->assignKey($unmatched, $keyConfig, 0, false, ['options' => ['zz']]);
+
+        $cache = $this->getRelationCache();
+
+        $this->assertSame(
+            [['key' => 'Option A', 'value' => 'a']],
+            $cache->getMutableFieldDefinition($group->getId(), $keyConfig->getId())->getOptions()
+        );
+
+        // a subset matching nothing is left for the provider to fill: [] would switch validation off
+        $this->assertNull(
+            $cache->getMutableFieldDefinition($unmatched->getId(), $keyConfig->getId())->getOptions()
+        );
+    }
+
+    public function testASubsetOnADynamicProviderKeyLeavesTheOptionsForTheProviderToFill(): void
+    {
+        $group = $this->createGroup('validation');
+        $keyConfig = $this->createKey('validation', true, $this->selectWithProvider(DynamicListOptionsProvider::class));
         $this->assignKey($group, $keyConfig, 0, false, ['options' => ['a']]);
 
         // null rather than [], which Select::checkValidity() reads as nothing to validate against

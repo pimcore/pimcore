@@ -14,6 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\OptionsProviderResolver;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
@@ -26,8 +30,10 @@ use Symfony\Contracts\Service\ResetInterface;
  * assigned to several groups with its own mandatory flag and description in each of them.
  * {@see self::getMutableFieldDefinition()} therefore builds a new field definition on every call,
  * from the assignment's {@see KeyGroupRelation::getEffectiveDefinition()}, so that the group's option
- * subset and units apply: the layout and validity paths set the tooltip and the mandatory flag on the
- * definition they receive, and one group's assignment must not leak into another's.
+ * subset and units apply, and the list of a provider reporting static options is narrowed to that
+ * subset as well ({@see self::applyProvidedOptionSubset()}). The layout and validity paths set the
+ * tooltip and the mandatory flag on the definition they receive, and one group's assignment must not
+ * leak into another's.
  *
  * The cache is cleared at the request and messenger-message boundary via the kernel.reset tag
  * (ResetInterface), and on a key, group or relation change by
@@ -44,6 +50,8 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 final class KeyGroupRelationCache implements ResetInterface
 {
+    private const OPTIONS = 'options';
+
     /**
      * @var array<int, array<int, KeyGroupRelation>> groupId => keyId => relation
      */
@@ -155,15 +163,68 @@ final class KeyGroupRelationCache implements ResetInterface
         }
 
         $definition = json_decode($relation->getEffectiveDefinition(), true);
+        $narrowsProvidedOptions = $this->narrowsProvidedOptions($relation);
 
         // a key without a list of its own takes them from its provider, and [] would switch validation off
-        if (array_key_exists('options', $relation->getDefinitionOverride() ?? [])
-            && (json_decode($relation->getDefinition(), true)['options'] ?? []) === []
-        ) {
-            unset($definition['options']);
+        if ($narrowsProvidedOptions) {
+            unset($definition[self::OPTIONS]);
         }
 
-        return Service::getFieldDefinitionFromJson($definition, $relation->getType());
+        $fieldDefinition = Service::getFieldDefinitionFromJson($definition, $relation->getType());
+
+        if ($narrowsProvidedOptions && $fieldDefinition !== null) {
+            $this->applyProvidedOptionSubset($fieldDefinition, $relation);
+        }
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * Whether the subset of an assignment speaks for a list a provider fills: the key carries no
+     * option list of its own, so the list the group narrows is the one the provider hands over.
+     */
+    private function narrowsProvidedOptions(KeyGroupRelation $relation): bool
+    {
+        if (!array_key_exists(self::OPTIONS, $relation->getDefinitionOverride() ?? [])) {
+            return false;
+        }
+
+        return (json_decode($relation->getDefinition(), true)[self::OPTIONS] ?? []) === [];
+    }
+
+    /**
+     * Narrows the list of a provider that reports static options to the subset of the assignment, so
+     * that what the editor offers is also what {@see Select::checkValidity()} accepts - it resolves
+     * the provider itself for a definition whose options are unset, and the unfiltered list would be
+     * what a save validates against. A provider whose list depends on the object is left to the
+     * caller that has one, and a subset that matches nothing is left unset as well, because an empty
+     * option list switches option validation off rather than refusing every value.
+     */
+    private function applyProvidedOptionSubset(Data $definition, KeyGroupRelation $relation): void
+    {
+        if (!$definition instanceof Select && !$definition instanceof Multiselect) {
+            return;
+        }
+
+        // the multiselect mode covers a select provider too, the interface of which extends it
+        $provider = OptionsProviderResolver::resolveProvider(
+            $definition->getOptionsProviderClass(),
+            OptionsProviderResolver::MODE_MULTISELECT
+        );
+
+        if ($definition->useConfiguredOptions() || !$provider instanceof SelectOptionsProviderInterface) {
+            return;
+        }
+
+        $context = ['fieldname' => $definition->getName()];
+        if (!$provider->hasStaticOptions($context, $definition)) {
+            return;
+        }
+
+        $options = $relation->applyOptionSubset($provider->getOptions($context, $definition));
+        if ($options !== []) {
+            $definition->setOptions($options);
+        }
     }
 
     /**

@@ -274,7 +274,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $items = $data->getItems();
 
-        $this->getKeyGroupRelationCache()->load(array_keys($items));
+        // a group holding a value without being active is not covered by the load above
+        $relationCache->load(array_keys($items));
 
         foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
