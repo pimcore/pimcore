@@ -1945,6 +1945,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         Data $keyDef,
         DataObject\Classificationstore\KeyGroupRelation $relation
     ): bool {
+        // the definition that answers for the value, as the wrapper hands the check on to it
+        $keyDef = DataObject\Classificationstore\KeyGroupRelationCache::getAnsweringDefinition($keyDef);
         if (!$keyDef instanceof Data\Select && !$keyDef instanceof Data\Multiselect) {
             return false;
         }

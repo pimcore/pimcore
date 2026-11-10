@@ -314,6 +314,36 @@ class ServiceTest extends TestCase
         $this->assertSame($options, Service::getFieldDefinitionFromKeyConfig($keyConfig)->getOptions());
     }
 
+    /**
+     * A key with no options of its own takes them from its provider, so the subset of the assignment
+     * is applied to the list the provider fills: the definition carries none, not the empty list.
+     */
+    public function testAProviderBackedKeyWithASubsetIsBuiltWithoutOptions(): void
+    {
+        $relation = $this->relation(self::GROUP_A, 'ignored');
+        $relation->setType('select');
+        $relation->setDefinition(json_encode(['name' => 'csKey', 'optionsProviderClass' => 'SomeProvider']));
+        $relation->setDefinitionOverride(['options' => ['one']]);
+
+        $this->assertTrue($relation->narrowsProvidedOptions());
+        $this->assertNull(Service::getFieldDefinitionFromKeyConfig($relation)->getOptions());
+    }
+
+    /**
+     * A key with options of its own whose subset matches nothing keeps the empty list, which is
+     * what refuses every value; null would offer the provider's full list.
+     */
+    public function testAKeyWithOptionsOfItsOwnAndAnEmptySubsetKeepsTheEmptyList(): void
+    {
+        $relation = $this->relation(self::GROUP_A, 'ignored');
+        $relation->setType('select');
+        $relation->setDefinition(json_encode(['name' => 'csKey', 'options' => [['key' => 'One', 'value' => 'one']]]));
+        $relation->setDefinitionOverride(['options' => []]);
+
+        $this->assertFalse($relation->narrowsProvidedOptions());
+        $this->assertSame([], Service::getFieldDefinitionFromKeyConfig($relation)->getOptions());
+    }
+
     public function testAKeyConfigIsStillKeyedByItsIdAlone(): void
     {
         $keyConfig = $this->keyConfig('The key');

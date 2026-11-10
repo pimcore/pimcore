@@ -52,8 +52,6 @@ use Throwable;
  */
 final class KeyGroupRelationCache implements ResetInterface
 {
-    private const OPTIONS = 'options';
-
     /**
      * @var array<int, array<int, KeyGroupRelation>> groupId => keyId => relation
      */
@@ -174,18 +172,9 @@ final class KeyGroupRelationCache implements ResetInterface
             return null;
         }
 
-        $definition = json_decode($relation->getEffectiveDefinition(), true);
-        $narrowsProvidedOptions = $this->narrowsProvidedOptions($relation);
+        $fieldDefinition = Service::getFieldDefinitionFromJson($relation->getEffectiveDefinitionData(), $relation->getType());
 
-        // a key without a list of its own takes its options from its provider, so the subset is
-        // applied to the list that provider fills rather than to the empty one it merged into
-        if ($narrowsProvidedOptions) {
-            unset($definition[self::OPTIONS]);
-        }
-
-        $fieldDefinition = Service::getFieldDefinitionFromJson($definition, $relation->getType());
-
-        if ($narrowsProvidedOptions && $fieldDefinition !== null) {
+        if ($fieldDefinition !== null && $relation->narrowsProvidedOptions()) {
             $this->applyProvidedOptionSubset($fieldDefinition, $relation);
         }
 
@@ -193,16 +182,26 @@ final class KeyGroupRelationCache implements ResetInterface
     }
 
     /**
-     * Whether the subset of an assignment speaks for a list a provider fills: the key carries no
-     * option list of its own, so the list the group narrows is the one the provider hands over.
+     * The definition that answers for the value: the inner type of a `multiValue` or an
+     * `encryptedField`, which is where an override is merged and what validates the value.
      */
-    private function narrowsProvidedOptions(KeyGroupRelation $relation): bool
+    public static function getAnsweringDefinition(?Data $definition): ?Data
     {
-        if (!array_key_exists(self::OPTIONS, $relation->getDefinitionOverride() ?? [])) {
-            return false;
+        $seen = [];
+        while ($definition !== null) {
+            $definition = Service::getValueDefinition($definition);
+            if (!$definition instanceof Data\EncryptedField || isset($seen[spl_object_id($definition)])) {
+                break;
+            }
+            $seen[spl_object_id($definition)] = true;
+            $delegate = $definition->getDelegate();
+            if (!$delegate instanceof Data) {
+                break;
+            }
+            $definition = $delegate;
         }
 
-        return (json_decode($relation->getDefinition(), true)[self::OPTIONS] ?? []) === [];
+        return $definition;
     }
 
     /**
@@ -221,6 +220,7 @@ final class KeyGroupRelationCache implements ResetInterface
      */
     private function applyProvidedOptionSubset(Data $definition, KeyGroupRelation $relation): void
     {
+        $definition = self::getAnsweringDefinition($definition);
         if (!$definition instanceof Select && !$definition instanceof Multiselect) {
             return;
         }

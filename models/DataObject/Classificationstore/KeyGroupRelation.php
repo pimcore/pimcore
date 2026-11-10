@@ -304,6 +304,51 @@ final class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
+     * Whether the subset of this assignment speaks for a list a provider fills: the key carries no
+     * option list of its own, so the list the group narrows is the one the provider hands over.
+     *
+     * @internal
+     */
+    public function narrowsProvidedOptions(): bool
+    {
+        if (!array_key_exists(self::OPTIONS, $this->definitionOverride ?? [])) {
+            return false;
+        }
+
+        $definition = json_decode($this->getDefinition(), true);
+        while (isset($definition['delegateDatatype']) && is_array($definition['delegate'] ?? null)) {
+            $definition = $definition['delegate'];
+        }
+
+        return ($definition[self::OPTIONS] ?? []) === [];
+    }
+
+    /**
+     * The effective definition as an array, carrying no options where the subset is for a list a
+     * provider fills, so the subset is applied to that list rather than to the empty one it merged into.
+     *
+     * @return array<string, mixed>
+     *
+     * @internal
+     */
+    public function getEffectiveDefinitionData(): array
+    {
+        $definition = json_decode($this->getEffectiveDefinition(), true);
+
+        if ($this->narrowsProvidedOptions()) {
+            // the options live on the inner type of a wrapper, where the override was merged
+            $target = &$definition;
+            while (isset($target['delegateDatatype']) && is_array($target['delegate'] ?? null)) {
+                $target = &$target['delegate'];
+            }
+            unset($target[self::OPTIONS]);
+            unset($target);
+        }
+
+        return $definition;
+    }
+
+    /**
      * Merges the override into the definition that answers for the VALUE: a wrapper (`multiValue`,
      * `encryptedField`) carries its inner type under `delegate`, and that is where the options and
      * the units live, so the merge goes down to it rather than into the wrapper.

@@ -64,9 +64,8 @@ class Service
         }
 
         $definition = $keyConfig instanceof KeyGroupRelation
-            ? $keyConfig->getEffectiveDefinition()
-            : $keyConfig->getDefinition();
-        $definition = json_decode($definition, true);
+            ? $keyConfig->getEffectiveDefinitionData()
+            : json_decode($keyConfig->getDefinition(), true);
         $type = $keyConfig->getType();
         $fd = self::getFieldDefinitionFromJson($definition, $type);
 
