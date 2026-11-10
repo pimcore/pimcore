@@ -147,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update(): void
     {
-        // the group relations deleted below, the row itself and the identifier change as one unit
+        // the group relations deleted on the transition to disabled, the row itself and the identifier change as one unit
         $this->writeAtomically(function (): void {
             $id = $this->model->getId();
             $identifier = $this->model->getIdentifier();
@@ -189,7 +189,7 @@ class Dao extends Model\Dao\AbstractDao
                     if (is_bool($value)) {
                         $value = (int) $value;
 
-                        if (!$value && $key === 'enabled') {
+                        if (!$value && $key === 'enabled' && $this->isStoredEnabledForUpdate((int) $this->model->getId())) {
                             $this->db->delete(
                                 Model\DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS,
                                 ['keyId' => $this->model->getId()]);
@@ -213,6 +213,17 @@ class Dao extends Model\Dao\AbstractDao
                 $this->writeIdentifier(self::TABLE_NAME_KEYS, (int) $id, (string) $identifier);
             }
         });
+    }
+
+    /**
+     * A current read, so a transition another request has just committed is not missed; NULL counts as disabled.
+     */
+    private function isStoredEnabledForUpdate(int $id): bool
+    {
+        return (bool) $this->db->fetchOne(
+            'SELECT `enabled` FROM `' . self::TABLE_NAME_KEYS . '` WHERE `id` = ? FOR UPDATE',
+            [$id]
+        );
     }
 
     public function create(): void
