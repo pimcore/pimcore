@@ -26,6 +26,7 @@ use Pimcore\Helper\SymfonyExpression\ReadOnlyValueAdapterInterface;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
+use Pimcore\Model\DataObject\Classificationstore\ReferenceTranslatorInterface;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
@@ -139,6 +140,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             ->addTag('pimcore.telemetry.bundle_usage_provider');
         $container->registerForAutoconfiguration(ReadOnlyValueAdapterInterface::class)
             ->addTag('pimcore.expression.read_only_value_adapter');
+
+        $container->registerForAutoconfiguration(ReferenceTranslatorInterface::class)
+            ->addTag('pimcore.classificationstore.reference_translator');
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts

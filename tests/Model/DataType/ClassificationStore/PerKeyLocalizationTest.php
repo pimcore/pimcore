@@ -17,6 +17,7 @@ use Pimcore\Bundle\CoreBundle\Migrations\Version20261105100000;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\Classificationstore\DefinitionCache;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
@@ -310,6 +311,76 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
 
         $this->assertCount(1, $messages);
         $this->assertStringContainsString('(' . self::DEFAULT_LANGUAGE . ')', $messages[0]);
+    }
+
+    public function testTheGridReadAcceptsTheIdentifierToken(): void
+    {
+        $group = $this->createGroup('gridid');
+        $key = $this->createKeyWithFlag('gridid_key', null);
+        $this->assignKey($group, $key, 0);
+
+        // an identifier carrying a hyphen is what the integer token's separator cannot express
+        $groupIdentifier = 'grid-id-group';
+        $keyIdentifier = 'grid-id-key';
+        Db::get()->update(GroupConfig\Dao::TABLE_NAME_GROUPS, ['identifier' => $groupIdentifier], ['id' => $group->getId()]);
+        Db::get()->update(self::TABLE, ['identifier' => $keyIdentifier], ['id' => $key->getId()]);
+
+        $object = $this->createObject(Csstore::class, 'gridid', [$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $key->getId(), 'identified', self::DEFAULT_LANGUAGE);
+        $object->save();
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame('identified', $this->readGridValue($object, $group, $key));
+        $this->assertSame(
+            'identified',
+            $this->readGridToken($object, '~classificationstore~' . self::FIELDNAME . '~' . $groupIdentifier . '~' . $keyIdentifier)
+        );
+        $this->assertNull(
+            $this->readGridToken($object, '~classificationstore~' . self::FIELDNAME . '~' . $groupIdentifier . '~unknown-key')
+        );
+    }
+
+    /**
+     * A class definition saved before the field carried a store id leaves the typed `storeId`
+     * property uninitialized, and reading it through the getter raises an Error rather than
+     * answering a default. The identifier token therefore scopes itself through
+     * {@see \Pimcore\Model\DataObject\Classificationstore\Service::getConfiguredStoreId()}, as
+     * {@see \Pimcore\Model\DataObject\Classificationstore\LocalizationResolver} does: a field
+     * carrying no store id holds no key, so there is nothing for the identifiers to name.
+     */
+    public function testTheIdentifierTokenIsNotReadWithoutAConfiguredStore(): void
+    {
+        $object = $this->createObject(Csstore::class, 'nostore', []);
+
+        /** @var ClassificationstoreField $fieldDefinition */
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+        $storeId = $fieldDefinition->getStoreId();
+
+        unset($fieldDefinition->storeId);
+
+        try {
+            $this->assertNull(
+                $this->readGridToken($object, '~classificationstore~' . self::FIELDNAME . '~a-group~a-key')
+            );
+        } finally {
+            $fieldDefinition->setStoreId($storeId);
+        }
+    }
+
+    /**
+     * A four segment token is the legacy form only when its last segment is exactly two numeric
+     * halves; anything else is answered with null before any store is read.
+     */
+    public function testAMalformedLegacyTokenIsNotRead(): void
+    {
+        $object = $this->createObject(Csstore::class, 'malformed', []);
+
+        foreach (['abc-def', '1-2-extra', '1-', '-2', '1-b', 'nopair', ''] as $pair) {
+            $this->assertNull(
+                $this->readGridToken($object, '~classificationstore~' . self::FIELDNAME . '~' . $pair),
+                'legacy pair "' . $pair . '" must not be read'
+            );
+        }
     }
 
     public function testTheGridReadFollowsTheKey(): void
@@ -770,6 +841,11 @@ class PerKeyLocalizationTest extends AbstractBatchedRelationTest
             '~classificationstore~' . self::FIELDNAME . '~' . $group->getId() . '-' . $keyConfig->getId(),
             'en'
         );
+    }
+
+    private function readGridToken(Csstore $object, string $token): mixed
+    {
+        return (new ReflectionMethod(Service::class, 'getStoreValueForObject'))->invoke(null, $object, $token, 'en');
     }
 
     private function readFlag(KeyConfig $keyConfig): ?int
