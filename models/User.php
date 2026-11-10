@@ -16,6 +16,7 @@ namespace Pimcore\Model;
 use Exception;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Model\User\AbstractUser;
 use Pimcore\Model\User\Exception\DuplicateUserNameException;
 use Pimcore\Model\User\Exception\InvalidServiceUserException;
 use Pimcore\Model\User\Role;
@@ -100,6 +101,30 @@ class User extends User\UserRole implements UserInterface
      * OIDC Provider from pimcore/openid-connect
      */
     protected ?string $provider = null;
+
+    /**
+     * The user or service user with this id; null for roles, folders and unknown ids.
+     */
+    final public static function getAccountById(int $id): ?User
+    {
+        $account = AbstractUser::getById($id);
+
+        return $account instanceof self ? $account : null;
+    }
+
+    /**
+     * Called on User itself, only a human user matches; a service user id gives null like a role id.
+     *
+     * @internal
+     */
+    protected static function typeMatch(AbstractUser $user): bool
+    {
+        if (static::class === self::class) {
+            return $user::class === self::class;
+        }
+
+        return parent::typeMatch($user);
+    }
 
     /**
      * @return $this

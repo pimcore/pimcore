@@ -47,7 +47,7 @@ final class JobRunGrid implements JobRunGridInterface
             'job_name' => $this->translator->trans($jobRun->getJob()?->getName(), [], $domain),
             'started_at' => $jobRun->getCreationDate(),
             'last_update_at' => $jobRun->getModificationDate(),
-            'owner' => $jobRun->getOwnerId() ? User::getById($jobRun->getOwnerId())?->getName() : null,
+            'owner' => $jobRun->getOwnerId() ? User::getAccountById($jobRun->getOwnerId())?->getName() : null,
             'state' => $jobRun->getState()->value,
             'current_step' => $jobRun->getCurrentStep(),
             'current_message' => $currentMessage->getMessage(),

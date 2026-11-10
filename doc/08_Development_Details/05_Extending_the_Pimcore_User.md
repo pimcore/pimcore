@@ -113,8 +113,9 @@ Lookups keep the two types apart:
 - `User::getByName()` and `Pimcore\Model\User\Listing` return users only. Code that lists people, for example
   notification recipients or a user picker, does not see service users.
 - `ServiceUser::getByName()` and `Pimcore\Model\User\ServiceUser\Listing` (`getServiceUsers()`) return service users only.
-- `User::getById()` returns the matching object for either type. Check `instanceof ServiceUser` or
-  `getType()` when the caller needs to know which one it got.
+- `User::getById()` returns users only, so a service user id gives null exactly as a role id does.
+  `ServiceUser::getById()` returns service users only. `User::getAccountById()` returns the user or the service user
+  with the id (null for roles, folders and unknown ids); use it when either kind is acceptable.
 
 Names are unique across both types: saving a user or service user with a name that the other type already uses throws
 `Pimcore\Model\User\Exception\DuplicateUserNameException`. Service users are not converted from users and users are not

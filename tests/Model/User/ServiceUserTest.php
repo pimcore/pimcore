@@ -62,18 +62,49 @@ class ServiceUserTest extends ModelTestCase
         $this->assertNull($serviceUser->getPassword());
     }
 
-    public function testGetByIdReturnsServiceUserForServiceRow(): void
+    public function testUserGetByIdDoesNotReturnServiceUser(): void
     {
         $serviceUser = $this->createServiceUser('load');
 
         $this->clearUserCache($serviceUser->getId());
-        $this->assertInstanceOf(ServiceUser::class, User::getById($serviceUser->getId()));
+        $this->assertNull(User::getById($serviceUser->getId()));
 
         $this->clearUserCache($serviceUser->getId());
         $this->assertInstanceOf(ServiceUser::class, ServiceUser::getById($serviceUser->getId()));
 
         $this->clearUserCache($serviceUser->getId());
         $this->assertInstanceOf(ServiceUser::class, AbstractUser::getById($serviceUser->getId()));
+    }
+
+    public function testUserGetByIdOfServiceUserDoesNotPoisonTheCache(): void
+    {
+        $serviceUser = $this->createServiceUser('cache');
+
+        $this->clearUserCache($serviceUser->getId());
+        $this->assertNull(User::getById($serviceUser->getId()));
+        $this->assertInstanceOf(ServiceUser::class, ServiceUser::getById($serviceUser->getId()));
+    }
+
+    public function testGetAccountByIdReturnsEitherKindAndNoRole(): void
+    {
+        $human = $this->createHuman('account-human');
+        $serviceUser = $this->createServiceUser('account-service');
+        $role = new Role();
+        $role->setName(self::NAME_PREFIX . 'account-role');
+        $role->save();
+        $this->createdEntities[] = $role;
+
+        $this->clearUserCache($human->getId());
+        $account = User::getAccountById($human->getId());
+        $this->assertInstanceOf(User::class, $account);
+        $this->assertNotInstanceOf(ServiceUser::class, $account);
+        $this->assertSame($account, User::getById($human->getId()));
+
+        $this->clearUserCache($serviceUser->getId());
+        $this->assertInstanceOf(ServiceUser::class, User::getAccountById($serviceUser->getId()));
+
+        $this->clearUserCache($role->getId());
+        $this->assertNull(User::getAccountById($role->getId()));
     }
 
     public function testServiceUserGetByIdDoesNotReturnHuman(): void
