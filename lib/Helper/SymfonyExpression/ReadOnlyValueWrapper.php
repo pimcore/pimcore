@@ -151,12 +151,17 @@ final class ReadOnlyValueWrapper
     }
 
     /**
-     * Expression functions are registered by the application and may return anything; an element
-     * they return is wrapped like any other element the expression can reach.
+     * Expression functions are registered by the application and may return anything; elements and
+     * objects a value adapter supports are wrapped like any other value the expression can reach,
+     * also inside returned arrays.
      */
     public function wrapFunctionResult(mixed $value): mixed
     {
-        if ($value instanceof ElementInterface) {
+        if (is_array($value)) {
+            return array_map(fn (mixed $item): mixed => $this->wrapFunctionResult($item), $value);
+        }
+
+        if ($value instanceof ElementInterface || $this->isSupportedByValueAdapter($value)) {
             return $this->wrap($value);
         }
 
@@ -720,6 +725,21 @@ final class ReadOnlyValueWrapper
         }
 
         return $arguments;
+    }
+
+    private function isSupportedByValueAdapter(mixed $value): bool
+    {
+        if (!is_object($value)) {
+            return false;
+        }
+
+        foreach ($this->valueAdapters as $valueAdapter) {
+            if ($valueAdapter->supports($value)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

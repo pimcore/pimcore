@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\Helper\SymfonyExpression;
 use ArrayObject;
 use Closure;
 use Codeception\Test\Unit;
+use LogicException;
 use Pimcore\Helper\SymfonyExpression\ReadOnlyExpressionLanguage;
 use Pimcore\Helper\SymfonyExpression\ReadOnlyValueAdapterInterface;
 use Pimcore\Helper\SymfonyExpression\ReadOnlyWorkflowExpressionLanguage;
@@ -86,6 +87,45 @@ class ReadOnlyExpressionLanguageTest extends Unit
             2,
             (new ReadOnlyExpressionLanguage([$provider]))->evaluate('countOf(value)', ['value' => $value])
         );
+    }
+
+    public function testCompilingIsNotSupported(): void
+    {
+        $this->expectException(LogicException::class);
+
+        (new ReadOnlyExpressionLanguage())->compile('object.getDao()', ['object']);
+    }
+
+    public function testFunctionResultsAreWrappedAlsoInsideArrays(): void
+    {
+        $user = new User();
+        $user->setAdmin(false);
+        $provider = new class($user) implements ExpressionFunctionProviderInterface {
+            public function __construct(private readonly User $user)
+            {
+            }
+
+            public function getFunctions(): array
+            {
+                return [
+                    new ExpressionFunction('currentUser', static fn (): string => '', fn (): User => $this->user),
+                    new ExpressionFunction('users', static fn (): string => '', fn (): array => ['a' => [$this->user]]),
+                ];
+            }
+        };
+        $expressionLanguage = new ReadOnlyExpressionLanguage([$provider]);
+
+        $this->assertFalse($expressionLanguage->evaluate('users()["a"][0].isAdmin()'));
+
+        foreach (['currentUser().setAdmin(true)', 'users()["a"][0].setAdmin(true)'] as $expression) {
+            try {
+                $expressionLanguage->evaluate($expression);
+                $this->fail(sprintf('`%s` must be rejected', $expression));
+            } catch (SyntaxError) {
+            }
+        }
+
+        $this->assertFalse($user->isAdmin());
     }
 
     public function testValueAdapterExposesItsGettersOnly(): void

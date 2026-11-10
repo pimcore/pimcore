@@ -13,13 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper\SymfonyExpression;
 
+use LogicException;
 use Symfony\Component\ExpressionLanguage\Expression;
 
 /**
  * Makes an ExpressionLanguage evaluate expressions against read-only stand-ins of the variables
  * (GHSA-93jv-p24f-gcpp): an expression can read data, but cannot call arbitrary methods of the
  * objects it gets. Functions are application code and get the original values; the result of an
- * expression is the original value as well.
+ * expression is the original value as well. Expressions cannot be compiled.
  *
  * Call initializeReadOnlyEvaluation() before the parent constructor, which already registers
  * functions.
@@ -35,6 +36,17 @@ trait ReadOnlyEvaluationTrait
         $valueWrapper = $this->getReadOnlyValueWrapper();
 
         return $valueWrapper->unwrap(parent::evaluate($expression, $valueWrapper->wrapVariables($values)));
+    }
+
+    /**
+     * Compiled expressions call methods on whatever objects they get later on, so they would bypass
+     * the read-only stand-ins.
+     *
+     * @throws LogicException
+     */
+    public function compile(Expression|string $expression, array $names = []): string
+    {
+        throw new LogicException('Compiling expressions is not supported, they are evaluated with read-only values');
     }
 
     public function register(string $name, callable $compiler, callable $evaluator): void
