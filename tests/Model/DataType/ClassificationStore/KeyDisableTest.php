@@ -127,7 +127,7 @@ final class KeyDisableTest extends ModelTestCase
         $key->setDescription('changed');
         $key->save();
         $this->assertSame(1, $this->countRelations($key));
-        $this->assertTrue(KeyConfig::getById($key->getId())->getEnabled());
+        $this->assertTrue(KeyConfig::getById($key->getId(), true)->getEnabled());
     }
 
     public function testCreatingADisabledKeyDeletesNothing(): void
@@ -139,7 +139,7 @@ final class KeyDisableTest extends ModelTestCase
         $created = $this->createKey(false);
 
         $this->assertSame(1, $this->countRelations($existing));
-        $this->assertFalse(KeyConfig::getById($created->getId())->getEnabled());
+        $this->assertFalse(KeyConfig::getById($created->getId(), true)->getEnabled());
     }
 
     public function testAStoredNullCountsAsDisabled(): void
@@ -151,7 +151,7 @@ final class KeyDisableTest extends ModelTestCase
         $this->assertNull($db->fetchOne('SELECT enabled FROM ' . self::TABLE_KEYS . ' WHERE id = ?', [$keyId]));
         $db->insert(self::TABLE_RELATIONS, ['groupId' => $group->getId(), 'keyId' => $keyId]);
 
-        $key = KeyConfig::getById($keyId);
+        $key = KeyConfig::getById($keyId, true);
         $key->setEnabled(false);
         $key->setDescription('changed');
         $key->save();
