@@ -437,8 +437,8 @@ write keeps it; the command reports that row as unresolved rather than counting 
 
 #### Translating stored references to identifiers
 
-Saved Pimcore Studio grid configurations name a classification store column as
-`~classificationstore~<field>~<groupId>-<keyId>`. The console command
+Saved grid configurations in the `gridconfigs` table, written by the classic admin grid, name a classification store
+column as `~classificationstore~<field>~<groupId>-<keyId>`. The console command
 
 ```bash
 bin/console pimcore:classificationstore:translate-identifiers [--dry-run]
@@ -447,6 +447,9 @@ bin/console pimcore:classificationstore:translate-identifiers [--dry-run]
 rewrites every such token, anywhere in the `config` of a `gridconfigs` row - a column as well as the saved sort - to the
 five segment form `~classificationstore~<field>~<groupIdentifier>~<keyIdentifier>`. The number of segments tells the two
 forms apart, because an identifier may itself contain a hyphen. Core reads and accepts both forms.
+
+Pimcore Studio keeps its grid configurations in a table of its own and names a classification store column by a
+separate group id and key id rather than by this token, so it carries nothing for this command to translate.
 
 The command reports and never guesses. A token whose group or key does not exist, has no identifier, or whose halves
 are not both numeric ids is left as it is and listed with the row id and the token; the command still exits with `0`.
@@ -462,8 +465,8 @@ classification store field. Both are listed with the row id, the token and the r
 Each write is guarded by the `config` the row was read with, so a configuration saved between the read and the write
 is kept; the command then reports every token of that row as unresolved rather than counting it as translated.
 
-Run it only once the products that read these tokens - Pimcore Studio and any bundle storing its own references - can
-read identifiers. It does not check that.
+Run it only once everything that reads these tokens - the classic admin grid that writes them, and any bundle storing
+its own references - can read identifiers. It does not check that.
 
 Core ships one translator, for grid configurations. A service implementing
 `Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\ReferenceTranslatorInterface` is tagged

@@ -242,7 +242,10 @@ final class GridConfigReferenceTranslator implements ReferenceTranslatorInterfac
 
             $this->rows[$table][$id] = $row === false
                 ? null
-                : ['identifier' => $row['identifier'] === null ? null : (string) $row['identifier'], 'storeId' => (int) $row['storeId']];
+                : [
+                    'identifier' => $row['identifier'] === null ? null : (string) $row['identifier'],
+                    'storeId' => (int) $row['storeId'],
+                ];
         }
 
         return $this->rows[$table][$id];
