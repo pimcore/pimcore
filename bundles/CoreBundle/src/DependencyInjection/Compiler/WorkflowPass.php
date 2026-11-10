@@ -50,6 +50,10 @@ final class WorkflowPass implements CompilerPassInterface
 
         // read-only stand-ins for workflow expressions (GHSA-93jv-p24f-gcpp) - also when the application
         // enables framework workflows, in which case FrameworkBundle defines this service instead of core
+        // a bundle may provide the registry without it
+        if (!$container->hasDefinition('workflow.security.expression_language')) {
+            $container->register('workflow.security.expression_language');
+        }
         $container->getDefinition('workflow.security.expression_language')
             ->setClass(ReadOnlyWorkflowExpressionLanguage::class)
             ->setArgument('$valueAdapters', new TaggedIteratorArgument('pimcore.expression.read_only_value_adapter'));

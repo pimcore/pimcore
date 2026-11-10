@@ -49,6 +49,22 @@ class WorkflowPassExpressionLanguageTest extends Unit
         );
     }
 
+    public function testRegistryWithoutExpressionLanguageGetsTheReadOnlyOne(): void
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('pimcore.workflow', []);
+        $container->setDefinition(Manager::class, new Definition(Manager::class));
+        // a bundle providing the registry without FrameworkBundle's workflow services
+        $container->setDefinition('workflow.registry', new Definition(Registry::class));
+
+        (new WorkflowPass())->process($container);
+
+        $this->assertSame(
+            ReadOnlyWorkflowExpressionLanguage::class,
+            $container->getDefinition('workflow.security.expression_language')->getClass()
+        );
+    }
+
     public function testCoreWorkflowExpressionLanguageIsReadOnly(): void
     {
         $container = new ContainerBuilder();
