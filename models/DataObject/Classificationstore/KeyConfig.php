@@ -85,6 +85,13 @@ final class KeyConfig extends Model\AbstractModel
     protected bool $enabled = false;
 
     /**
+     * Whether `enabled` carries a value that was loaded or explicitly set.
+     *
+     * @internal
+     */
+    protected bool $enabledInitialized = false;
+
+    /**
      * Whether the key holds a value per language, null for the `localized` flag of the class
      * definition field it is rendered in.
      */
@@ -334,6 +341,15 @@ final class KeyConfig extends Model\AbstractModel
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
+        $this->enabledInitialized = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function isEnabledInitialized(): bool
+    {
+        return $this->enabledInitialized;
     }
 
     public function getLocalized(): ?bool

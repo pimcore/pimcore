@@ -171,6 +171,12 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
+                // a key built with `new` has not decided about the flag either: it must neither disable
+                // a stored key nor, by that, delete its group assignments
+                if ($key === 'enabled' && !$this->model->isEnabledInitialized()) {
+                    continue;
+                }
+
                 // written by writeIdentifier(), which is the only place allowed to touch the column
                 if ($key === 'identifier') {
                     continue;
@@ -217,6 +223,12 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * A current read, so a transition another request has just committed is not missed; NULL counts as disabled.
+     *
+     * Lock order: the key row is taken here, before the relation rows the caller then deletes. A
+     * writer of a single assignment (KeyGroupRelation\Dao::update()) holds its relation row and
+     * only a shared foreign-key lock on the key row, so the two can meet in opposite order; InnoDB
+     * resolves that by rolling one of them back, and the loser's writeAtomically() retries or
+     * fails as a whole, never half-applied. Not exercised against a running server.
      */
     private function isStoredEnabledForUpdate(int $id): bool
     {
