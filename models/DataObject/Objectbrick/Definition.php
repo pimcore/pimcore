@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -48,6 +49,35 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     public function setClassDefinitions(array $classDefinitions): static
     {
+        // classname/fieldname are emitted verbatim into generated PHP container classes and
+        // into container-class file paths (dumpContainerClasses(), cleanupOldFiles()), so they
+        // must be valid identifiers. This is the central write path (JSON import/programmatic
+        // set) and, via VarExport::__set_state() -> setValues(), also covers hydration from the
+        // persisted definition file.
+        foreach ($classDefinitions as $cl) {
+            if (!is_array($cl)) {
+                throw new InvalidArgumentException('Invalid classDefinitions entry: expected array');
+            }
+
+            $classname = $cl['classname'] ?? '';
+            $fieldname = $cl['fieldname'] ?? '';
+
+            if (!is_string($classname) || ($classname !== '' && !preg_match('/^[a-zA-Z0-9_]+\z/', $classname))) {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid classname "%s" in Objectbrick classDefinitions',
+                    is_scalar($classname) ? (string) $classname : gettype($classname)
+                ));
+            }
+
+            $fieldnamePattern = '/^[a-zA-Z_][a-zA-Z0-9_]{0,62}\z/';
+            if (!is_string($fieldname) || ($fieldname !== '' && !preg_match($fieldnamePattern, $fieldname))) {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid fieldname "%s" in Objectbrick classDefinitions',
+                    is_scalar($fieldname) ? (string) $fieldname : gettype($fieldname)
+                ));
+            }
+        }
+
         $this->classDefinitions = $classDefinitions;
 
         return $this;
