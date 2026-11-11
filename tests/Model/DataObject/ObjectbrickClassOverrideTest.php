@@ -15,9 +15,9 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
+use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
-use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use ReflectionProperty;
