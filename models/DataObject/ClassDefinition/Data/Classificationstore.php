@@ -168,6 +168,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $metaData = [];
         $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
 
+        $relationCache = $this->getKeyGroupRelationCache();
+        $relationCache->load(array_merge([], ...array_map(array_keys(...), array_values($result['data']))));
+
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$groups) {
             foreach ($groups as $groupId => &$keys) {
@@ -182,7 +185,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                     if ($keyConfig->getEnabled()) {
-                        $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $fd = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
                         $keyValue = $fd->getDataForEditmode($keyValue, $object, $params);
                     }
                 }
@@ -191,7 +194,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
-        $relationCache = $this->getKeyGroupRelationCache();
         $relationCache->load(array_keys($activeGroupIds, true, true));
 
         foreach ($activeGroupIds as $groupId => $enabled) {
@@ -273,6 +275,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $items = $data->getItems();
 
+        // a group holding a value without being active is not covered by the load above
+        $relationCache->load(array_keys($items));
+
         foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
                 continue;
@@ -280,7 +285,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             foreach ($keys as $keyId => $languages) {
                 $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                 if ($keyConfig->getEnabled()) {
-                    $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                    $fd = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
 
                     // A level above the first is an ancestor's store, reached by the recursion at
                     // the end of this method, and its value of a key whose field type does not
@@ -437,6 +442,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 static fn (): array => $classificationStore->getItems()
             );
 
+            // only the buckets that are arrays: the payload comes from the editor, and a language
+            // whose bucket is not one holds no group to look up - it was skipped by the loop below
+            // before it was read here, and must not make the whole save of the field fail
+            $this->getKeyGroupRelationCache()->load(
+                array_merge([], ...array_map(array_keys(...), array_filter(array_values($data), 'is_array')))
+            );
+
             foreach ($data as $language => $groups) {
                 foreach ($groups as $groupId => $keys) {
                     foreach ($keys as $keyId => $value) {
@@ -447,9 +459,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
-                        $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
-                            $keyConfig
-                        );
+                        $dataDefinition = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
 
                         // the object is what a type needs to do anything beyond converting the
                         // payload - Consent writes a note against it - and the context says where
@@ -560,15 +570,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $params['owner'] = $classificationStore;
 
         if ($items) {
+            $this->getKeyGroupRelationCache()->load(array_keys($activeGroups, true, true));
+
             foreach ($items as $groupId => $keys) {
                 if (!isset($activeGroups[$groupId])) {
                     continue;
                 }
                 foreach ($keys as $keyId => $languages) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    $keyDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig(
-                        $keyConfig
-                    );
+                    $keyDefinition = $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig);
                     $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition($keyDefinition);
 
                     if ($keyDefinition === null || !$fieldDefinition instanceof ResourcePersistenceAwareInterface) {
@@ -736,8 +746,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         $storedValues = [];
         $activeGroups = $data->getActiveGroups();
+        $qualifiedItems = $data->getQualifiedItems();
 
-        foreach ($data->getQualifiedItems() as $groupId => $keys) {
+        $this->getKeyGroupRelationCache()->load(array_keys($qualifiedItems));
+
+        foreach ($qualifiedItems as $groupId => $keys) {
             if (!isset($activeGroups[$groupId])) {
                 continue;
             }
@@ -749,7 +762,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
 
                 $fieldDefinition = DataObject\Classificationstore\Service::getValueDefinition(
-                    DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig)
+                    $this->getAssignedFieldDefinition((int) $groupId, (int) $keyId, $keyConfig)
                 );
                 if ($fieldDefinition === null) {
                     continue;
@@ -1015,6 +1028,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         $keyDef->setMandatory(true);
                     }
 
+                    $refusesEveryValue = $this->refusesEveryValue($keyDef, $keyGroupRelation);
+
                     foreach (
                         $this->collectMaximumViolations(
                             $keyDef,
@@ -1087,7 +1102,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $qualifiedItems[$activeGroupId][$keyId][$validLanguage] ?? [],
                                 $params,
                                 $keyGroupRelation->getName(),
-                                $activeGroupId
+                                $activeGroupId,
+                                $refusesEveryValue
                             ) as $violation
                         ) {
                             $subItems[] = $violation;
@@ -1446,6 +1462,21 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $context['groupId'] = $keyGroupRelation->getGroupId();
                     $context['keyDefinition'] = $definition;
                     $definition = $definition->enrichLayoutDefinition($object, $context);
+
+                    // the provider has just replaced the options wholesale; a dynamic list carries no subset.
+                    // A wrapper's delegate is where the provider ran, so narrow the answering definition
+                    $answering = DataObject\Classificationstore\KeyGroupRelationCache::getAnsweringDefinition($definition);
+                    if (($answering instanceof Data\Select || $answering instanceof Data\Multiselect)
+                        && !$answering->dynamicOptions
+                        && $answering->getOptions() !== null
+                        && array_key_exists('options', $keyGroupRelation->getDefinitionOverride() ?? [])
+                    ) {
+                        $narrowed = $keyGroupRelation->applyOptionSubset($answering->getOptions());
+                        $answering->setOptions($narrowed);
+                        $answering->setDefaultValue(
+                            DataObject\Classificationstore\KeyGroupRelation::reconcileDefaultValue($answering->getDefaultValue(), $narrowed)
+                        );
+                    }
                 }
 
                 // the languages the key is kept in are decided by the key and only inherited from
@@ -1540,6 +1571,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         array_unshift($validLanguages, 'default');
 
         return $validLanguages;
+    }
+
+    /**
+     * The definition of a key as its assignment to the group sees it - the key config's own for a value
+     * whose key was removed from the group.
+     */
+    private function getAssignedFieldDefinition(
+        int $groupId,
+        int $keyId,
+        DataObject\Classificationstore\KeyConfig $keyConfig
+    ): ?Data {
+        return $this->getKeyGroupRelationCache()->getFieldDefinition($groupId, $keyId)
+            ?? DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
     }
 
     private function getKeyGroupRelationCache(): DataObject\Classificationstore\KeyGroupRelationCache
@@ -1828,6 +1872,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      * @param array<string, mixed> $params
+     * @param bool $refusesEveryValue {@see self::refusesEveryValue()}
      *
      * @return Model\Element\ValidationException[]
      */
@@ -1838,7 +1883,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         array $slotValues,
         array $params,
         string $keyName,
-        int $groupId
+        int $groupId,
+        bool $refusesEveryValue = false
     ): array {
         $slots = $this->collectDeclaredSlots($keyDef, $value, $language, $slotValues);
         $mandatorySlot = $this->slotAnsweringTheMandatoryCheck($keyDef, $slots);
@@ -1857,6 +1903,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $this->omitsTheMandatoryCheck($keyDef, $slot['value'], $index === $mandatorySlot),
                     $params
                 );
+
+                if ($refusesEveryValue && !$keyDef->isEmpty($slot['value'])) {
+                    $refused = $this->describeRefusedValue($slot['value']);
+
+                    throw (new StructuredValidationException(
+                        sprintf("Invalid option '%s' for field [ %s ]", $refused, $keyDef->getName())
+                    ))->setTranslation(ValidationMessageKey::INVALID_OPTION, ['value' => $refused]);
+                }
             } catch (Exception $exception) {
                 // Read HERE and not in the caller's loop. The group is needed only to
                 // name a violation, and a group costs a query: fetched per group,
@@ -1878,6 +1932,53 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         return $violations;
+    }
+
+    /**
+     * Whether every value this key holds in this group has to be refused: the group's option subset
+     * filtered the list the key offers - its own, or the one its options provider fills - to nothing,
+     * so there is no option left for a value to be valid against.
+     *
+     * {@see Data\Select::checkValidity()} and {@see Data\Multiselect::checkValidity()} read an empty
+     * option list as nothing to validate against and return, which for a subset that filtered it away
+     * would leave the key unchecked - and for a provider-backed key, whose unset list they fill from
+     * the provider, would validate against the provider's full list, the group's exclusions
+     * included. The key's own check still runs and still owns the mandatory flag; this adds the one
+     * refusal it cannot express, and only where the key asks for its options to be enforced - which
+     * is the only place the empty list is read at all.
+     *
+     * The subset is what makes an empty list mean this: a key that simply has no options configured
+     * is not validated against them today either, and only an assignment carrying `options` can have
+     * filtered a list away. That is the same gate the enriched layout narrows on,
+     * {@see self::enrichLayoutDefinition()}, so the editor offers nothing exactly where a save
+     * accepts nothing.
+     */
+    private function refusesEveryValue(
+        Data $keyDef,
+        DataObject\Classificationstore\KeyGroupRelation $relation
+    ): bool {
+        // the definition that answers for the value, as the wrapper hands the check on to it
+        $keyDef = DataObject\Classificationstore\KeyGroupRelationCache::getAnsweringDefinition($keyDef);
+        if (!$keyDef instanceof Data\Select && !$keyDef instanceof Data\Multiselect) {
+            return false;
+        }
+
+        return $keyDef->isEnforceValidation()
+            && $keyDef->getOptions() === []
+            && array_key_exists('options', $relation->getDefinitionOverride() ?? []);
+    }
+
+    /**
+     * The refused value as the message names it: a multiselect holds a list, every other option type
+     * a single value.
+     */
+    private function describeRefusedValue(mixed $value): string
+    {
+        if (is_array($value)) {
+            return implode(', ', array_map(static fn (mixed $entry): string => (string) $entry, $value));
+        }
+
+        return (string) $value;
     }
 
     /**

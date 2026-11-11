@@ -308,7 +308,10 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
         $rows = [];
 
-        foreach ($this->collectGroups($classificationStore) as $groupId => $group) {
+        $groups = $this->collectGroups($classificationStore);
+        $this->relationCache->load(array_keys($groups));
+
+        foreach ($groups as $groupId => $group) {
             $values = $this->serializeDocument($object, $groupId, $group['keys'], null);
 
             $rows[] = [
@@ -1013,7 +1016,8 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
         $storedKeys = null;
 
         foreach ($keys as $keyId => $keyData) {
-            $fd = Service::getFieldDefinitionFromKeyConfig(DefinitionCache::get((int) $keyId));
+            $fd = $this->relationCache->getFieldDefinition($groupId, (int) $keyId)
+                ?? Service::getFieldDefinitionFromKeyConfig(DefinitionCache::get((int) $keyId));
             $this->relationResolver->assertStorable(
                 $fd,
                 $groupId,
@@ -1657,7 +1661,6 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             $entry[self::ENVELOPE_QUALIFIER] = true;
         }
 
-
         return $entry;
     }
 
@@ -2015,6 +2018,8 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
 
         $storedRows = $this->readRowsForUpdate($table, $objectId, $fieldname);
         $rowsToWrite = [];
+
+        $this->relationCache->load(array_keys($groups));
 
         foreach ($groups as $groupId => $group) {
             $storedRow = $storedRows[$groupId] ?? null;

@@ -13,20 +13,25 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
-use Pimcore\Model\DataObject\Data\MultiValue as MultiValueEntry;
-use Pimcore\Model\DataObject\Classificationstore;
-use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Time;
 use Pimcore;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Time;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Csstorelocalized;
+use Pimcore\Model\DataObject\Data\MultiValue as MultiValueEntry;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Util\TestHelper;
+use ReflectionMethod;
 
 /**
  * ValidityAndEditModeTest against a store on the document engine: validation and the edit mode data
@@ -85,6 +90,51 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     protected function expectedMappingOfAGroupWithoutCollection(int $groupId): array
     {
         return [];
+    }
+
+    /**
+     * The document engine resolves the definition of a stored value through the assignment of its
+     * own group, and through the key config for a key that was removed from the group.
+     */
+    public function testTheDocumentEngineResolvesAStoredValueThroughItsOwnGroupsAssignment(): void
+    {
+        $groupA = $this->createGroup('engine_units_a');
+        $groupB = $this->createGroup('engine_units_b');
+        $removedFrom = $this->createGroup('engine_units_removed');
+
+        $millimetre = $this->createUnit('mm');
+        $centimetre = $this->createUnit('cm');
+
+        $quantity = new QuantityValue();
+        $quantity->setDefaultUnit($centimetre);
+        $keyConfig = $this->createKey('engine_units', true, $quantity);
+
+        $this->assignKey($groupA, $keyConfig, 0, false, ['defaultUnit' => $millimetre]);
+        $this->assignKey($groupB, $keyConfig);
+
+        $engine = Pimcore::getContainer()->get(EngineResolver::class)->resolveForStore($this->getStoreId());
+        $this->assertInstanceOf(DocumentEngine::class, $engine);
+
+        $resolve = new ReflectionMethod(DocumentEngine::class, 'resolveFieldDefinition');
+
+        $this->assertSame($millimetre, $resolve->invoke($engine, $groupA->getId(), $keyConfig->getId())->getDefaultUnit());
+        $this->assertSame($centimetre, $resolve->invoke($engine, $groupB->getId(), $keyConfig->getId())->getDefaultUnit());
+        $this->assertSame(
+            $centimetre,
+            $resolve->invoke($engine, $removedFrom->getId(), $keyConfig->getId())->getDefaultUnit()
+        );
+    }
+
+    private function createUnit(string $abbreviation): string
+    {
+        $unit = Unit::getByAbbreviation($abbreviation);
+        if (!$unit) {
+            $unit = new Unit();
+            $unit->setAbbreviation($abbreviation);
+            $unit->save();
+        }
+
+        return $unit->getId();
     }
 
     public function testARelationKeyPassesValidationOnAClassWithoutInheritance(): void

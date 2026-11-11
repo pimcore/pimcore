@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -254,6 +255,12 @@ final class KeyGroupRelation extends Model\AbstractModel
             }
         }
 
+        // an emptied unit list would be refilled with every unit wherever the definition is built in an
+        // admin request (AbstractQuantityValue::configureOptions()), so it cannot mean "no unit" here
+        if (array_key_exists('validUnits', $definitionOverride ?? []) && empty($definitionOverride['validUnits'])) {
+            throw new InvalidConfigException('"validUnits" cannot be overridden with an empty list.');
+        }
+
         $this->definitionOverride = $definitionOverride;
         $this->definitionOverrideInitialized = true;
     }
@@ -288,8 +295,8 @@ final class KeyGroupRelation extends Model\AbstractModel
     /**
      * The definition this assignment effectively uses: the one {@see self::getDefinition()} returns
      * with `definitionOverride` merged over it, as the same JSON string. Without a stored override
-     * it is that definition unchanged. Nothing in core reads this yet - the editor still renders
-     * {@see self::getDefinition()}.
+     * it is that definition unchanged. The editor, the validation and the stores build the key's
+     * field definition from it, through {@see KeyGroupRelationCache} and {@see Service}.
      */
     public function getEffectiveDefinition(): string
     {
@@ -300,13 +307,153 @@ final class KeyGroupRelation extends Model\AbstractModel
 
         $definition = json_decode($this->getDefinition(), true);
 
+        return json_encode(self::mergeOverride($definition, $override));
+    }
+
+    /**
+     * Whether the subset of this assignment speaks for a list a provider fills: the key carries no
+     * option list of its own, so the list the group narrows is the one the provider hands over.
+     *
+     * @internal
+     */
+    public function narrowsProvidedOptions(): bool
+    {
+        if (!array_key_exists(self::OPTIONS, $this->definitionOverride ?? [])) {
+            return false;
+        }
+
+        $definition = json_decode($this->getDefinition(), true);
+        while (isset($definition['delegateDatatype']) && is_array($definition['delegate'] ?? null)) {
+            $definition = $definition['delegate'];
+        }
+
+        return self::fillsOptionsFromProvider($definition);
+    }
+
+    /**
+     * Whether a (unwrapped) definition has no option list of its own and leaves it to a provider. Select
+     * and the like serialize an absent list as `[]`, so an empty list is told apart by the provider
+     * configuration: an empty list of its own, configured on purpose, is a list and not a gap for a
+     * provider to fill - the same reading as OptionsProviderInterface::useConfiguredOptions().
+     *
+     * @param array<string, mixed> $definition
+     */
+    private static function fillsOptionsFromProvider(array $definition): bool
+    {
+        if (($definition[self::OPTIONS] ?? []) !== []) {
+            return false;
+        }
+
+        $type = $definition['optionsProviderType'] ?? null;
+
+        return $type !== OptionsProviderInterface::TYPE_CONFIGURE
+            && !($type === null && empty($definition['optionsProviderClass'] ?? null));
+    }
+
+    /**
+     * The effective definition as an array, carrying no options where the subset is for a list a
+     * provider fills, so the subset is applied to that list rather than to the empty one it merged into.
+     *
+     * @return array<string, mixed>
+     *
+     * @internal
+     */
+    public function getEffectiveDefinitionData(): array
+    {
+        $definition = json_decode($this->getEffectiveDefinition(), true);
+
+        if ($this->narrowsProvidedOptions()) {
+            // the options live on the inner type of a wrapper, where the override was merged
+            $target = &$definition;
+            while (isset($target['delegateDatatype']) && is_array($target['delegate'] ?? null)) {
+                $target = &$target['delegate'];
+            }
+            unset($target[self::OPTIONS]);
+            unset($target);
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Merges the override into the definition that answers for the VALUE: a wrapper (`multiValue`,
+     * `encryptedField`) carries its inner type under `delegate`, and that is where the options and
+     * the units live, so the merge goes down to it rather than into the wrapper.
+     *
+     * @param array<string, mixed> $definition
+     * @param array<string, mixed> $override
+     *
+     * @return array<string, mixed>
+     */
+    private static function mergeOverride(array $definition, array $override): array
+    {
+        if (isset($definition['delegateDatatype']) && is_array($definition['delegate'] ?? null)) {
+            $definition['delegate'] = self::mergeOverride($definition['delegate'], $override);
+
+            return $definition;
+        }
+
+        // a key without a list of its own is provider-backed: there is nothing here to reconcile its default
+        // against, and the list the provider fills in is reconciled where it is known
+        $hasOwnOptions = !self::fillsOptionsFromProvider($definition);
+
         foreach ($override as $property => $value) {
             $definition[$property] = $property === self::OPTIONS
                 ? self::filterOptions($definition[self::OPTIONS] ?? null, $value)
                 : $value;
         }
 
-        return json_encode($definition);
+        if ($hasOwnOptions && array_key_exists(self::OPTIONS, $override) && array_key_exists('defaultValue', $definition)) {
+            $definition['defaultValue'] = self::reconcileDefaultValue(
+                $definition['defaultValue'],
+                $definition[self::OPTIONS]
+            );
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Drops what a narrowed option list no longer contains from a default value, so a group never
+     * offers a default that its own subset excludes.
+     *
+     * @param array<int, array<string, mixed>>|null $options
+     *
+     * @internal
+     */
+    public static function reconcileDefaultValue(mixed $defaultValue, ?array $options): mixed
+    {
+        if ($defaultValue === null || $defaultValue === '' || $defaultValue === []) {
+            return $defaultValue;
+        }
+
+        $values = array_map(static fn (array $option) => $option['value'] ?? null, $options ?? []);
+
+        if (is_array($defaultValue)) {
+            // an entry may be option shaped (SelectOptionsProviderInterface::getDefaultValue()), in which
+            // case it is kept or dropped by its value, and kept in its own shape
+            return array_values(array_filter(
+                $defaultValue,
+                static fn (mixed $v) => in_array(is_array($v) ? ($v['value'] ?? null) : $v, $values, true)
+            )) ?: null;
+        }
+
+        return in_array($defaultValue, $values, true) ? $defaultValue : null;
+    }
+
+    /**
+     * The options a provider filled in, narrowed to this assignment's option subset - unchanged
+     * without one.
+     *
+     * @param array<int, array<string, mixed>> $options
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @internal
+     */
+    public function applyOptionSubset(array $options): array
+    {
+        return self::filterOptions($options, $this->definitionOverride[self::OPTIONS] ?? null) ?? $options;
     }
 
     /**

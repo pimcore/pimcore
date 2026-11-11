@@ -13,19 +13,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore;
 
-use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
-use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
-use Pimcore\Element\MarshallerService;
-use Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue as MultiValueMarshaller;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue as MultiValueMarshaller;
+use Pimcore\Element\MarshallerService;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 use Pimcore\Model\DataObject\Classificationstore\Service;
@@ -280,6 +280,70 @@ class ServiceTest extends TestCase
         );
     }
 
+    /**
+     * A relation is built from the definition its assignment effectively uses, a key config from its
+     * own: the same key id answers a different definition per group once an override is stored.
+     */
+    public function testARelationIsBuiltFromItsEffectiveDefinitionAndAKeyConfigFromItsOwn(): void
+    {
+        $options = [['key' => 'One', 'value' => 'one'], ['key' => 'Two', 'value' => 'two']];
+        $definition = json_encode(['name' => 'csKey', 'options' => $options]);
+
+        $inGroupA = $this->relation(self::GROUP_A, 'ignored');
+        $inGroupA->setType('select');
+        $inGroupA->setDefinition($definition);
+        $inGroupA->setDefinitionOverride(['options' => ['one']]);
+
+        $inGroupB = $this->relation(self::GROUP_B, 'ignored');
+        $inGroupB->setType('select');
+        $inGroupB->setDefinition($definition);
+        $inGroupB->setDefinitionOverride(['options' => ['two']]);
+
+        $keyConfig = $this->keyConfig('ignored');
+        $keyConfig->setType('select');
+        $keyConfig->setDefinition($definition);
+
+        $this->assertSame(
+            [['key' => 'One', 'value' => 'one']],
+            Service::getFieldDefinitionFromKeyConfig($inGroupA)->getOptions()
+        );
+        $this->assertSame(
+            [['key' => 'Two', 'value' => 'two']],
+            Service::getFieldDefinitionFromKeyConfig($inGroupB)->getOptions()
+        );
+        $this->assertSame($options, Service::getFieldDefinitionFromKeyConfig($keyConfig)->getOptions());
+    }
+
+    /**
+     * A key with no options of its own takes them from its provider, so the subset of the assignment
+     * is applied to the list the provider fills: the definition carries none, not the empty list.
+     */
+    public function testAProviderBackedKeyWithASubsetIsBuiltWithoutOptions(): void
+    {
+        $relation = $this->relation(self::GROUP_A, 'ignored');
+        $relation->setType('select');
+        $relation->setDefinition(json_encode(['name' => 'csKey', 'optionsProviderClass' => 'SomeProvider']));
+        $relation->setDefinitionOverride(['options' => ['one']]);
+
+        $this->assertTrue($relation->narrowsProvidedOptions());
+        $this->assertNull(Service::getFieldDefinitionFromKeyConfig($relation)->getOptions());
+    }
+
+    /**
+     * A key with options of its own whose subset matches nothing keeps the empty list, which is
+     * what refuses every value; null would offer the provider's full list.
+     */
+    public function testAKeyWithOptionsOfItsOwnAndAnEmptySubsetKeepsTheEmptyList(): void
+    {
+        $relation = $this->relation(self::GROUP_A, 'ignored');
+        $relation->setType('select');
+        $relation->setDefinition(json_encode(['name' => 'csKey', 'options' => [['key' => 'One', 'value' => 'one']]]));
+        $relation->setDefinitionOverride(['options' => []]);
+
+        $this->assertFalse($relation->narrowsProvidedOptions());
+        $this->assertSame([], Service::getFieldDefinitionFromKeyConfig($relation)->getOptions());
+    }
+
     public function testAKeyConfigIsStillKeyedByItsIdAlone(): void
     {
         $keyConfig = $this->keyConfig('The key');
@@ -467,6 +531,7 @@ class ServiceTest extends TestCase
 
         RuntimeCache::set('fieldcollection_' . $key, $fieldCollection);
     }
+
     /**
      * A stored key config names its type as a string, so the type is only reachable from one if the
      * implementation loader maps it - and its values only round-trip through the EAV value columns
@@ -667,5 +732,4 @@ class ServiceTest extends TestCase
         $this->assertSame(['metric'], $rebuilt->getVariantNames());
         $this->assertTrue($rebuilt->isMultiValue());
     }
-
 }

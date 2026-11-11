@@ -13,7 +13,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Exception;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\OptionsProviderResolver;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
@@ -24,9 +30,12 @@ use Symfony\Contracts\Service\ResetInterface;
  *
  * The entry is keyed by (groupId, keyId) rather than by key id alone because the same key can be
  * assigned to several groups with its own mandatory flag and description in each of them.
- * {@see self::getMutableFieldDefinition()} therefore builds a new field definition on every call:
- * the layout and validity paths set the tooltip and the mandatory flag on the definition they
- * receive, and one group's assignment must not leak into another's.
+ * {@see self::getMutableFieldDefinition()} therefore builds a new field definition on every call,
+ * from the assignment's {@see KeyGroupRelation::getEffectiveDefinition()}, so that the group's option
+ * subset and units apply, and the list of a provider reporting static options is narrowed to that
+ * subset as well ({@see self::applyProvidedOptionSubset()}). The layout and validity paths set the
+ * tooltip and the mandatory flag on the definition they receive, and one group's assignment must not
+ * leak into another's.
  *
  * The cache is cleared at the request and messenger-message boundary via the kernel.reset tag
  * (ResetInterface), and on a key, group or relation change by
@@ -52,6 +61,18 @@ final class KeyGroupRelationCache implements ResetInterface
      * @var array<int, array<int, Data|null>> groupId => keyId => shared field definition
      */
     private array $definitions = [];
+
+    /**
+     * The list a provider fills, narrowed to the subset of the assignment, memoized so that
+     * resolving the provider costs the same whether a definition is built once or - as the validity
+     * walk and the layout enrichment do - once per key per call. A null entry is an assignment
+     * nothing narrows, {@see self::narrowProvidedOptions()}.
+     *
+     * A false entry is a provider that cannot answer, {@see self::applyProvidedOptionSubset()}.
+     *
+     * @var array<int, array<int, array<int, array<string, mixed>>|false|null>> groupId => keyId => options
+     */
+    private array $providedOptions = [];
 
     /**
      * Reads the relations of all groups that are not held yet with a single statement.
@@ -153,10 +174,136 @@ final class KeyGroupRelationCache implements ResetInterface
             return null;
         }
 
-        return Service::getFieldDefinitionFromJson(
-            json_decode($relation->getDefinition(), true),
-            $relation->getType()
+        $fieldDefinition = Service::getFieldDefinitionFromJson($relation->getEffectiveDefinitionData(), $relation->getType());
+
+        if ($fieldDefinition !== null && $relation->narrowsProvidedOptions()) {
+            $this->applyProvidedOptionSubset($fieldDefinition, $relation);
+        }
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * The definition that answers for the value: the inner type of a `multiValue` or an
+     * `encryptedField`, which is where an override is merged and what validates the value.
+     */
+    public static function getAnsweringDefinition(?Data $definition): ?Data
+    {
+        $seen = [];
+        while ($definition !== null) {
+            $definition = Service::getValueDefinition($definition);
+            if (!$definition instanceof Data\EncryptedField || isset($seen[spl_object_id($definition)])) {
+                break;
+            }
+            $seen[spl_object_id($definition)] = true;
+            $delegate = $definition->getDelegate();
+            if (!$delegate instanceof Data) {
+                break;
+            }
+            $definition = $delegate;
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Narrows the list of a provider that reports static options to the subset of the assignment, so
+     * that what the editor offers is also what {@see Select::checkValidity()} accepts - it resolves
+     * the provider itself for a definition whose options are unset, and the unfiltered list would be
+     * what a save validates against. A provider whose list depends on the object is left to the
+     * caller that has one.
+     *
+     * A subset that matches nothing is set as the empty list it is, the same as the layout path sets
+     * it ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::enrichLayoutDefinition()}),
+     * rather than being left unset for the provider's full list to be validated against. That the
+     * two `checkValidity()` implementations read an empty list as nothing to validate rather than as
+     * nothing to accept is answered where the values are,
+     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::refusesEveryValue()}.
+     */
+    private function applyProvidedOptionSubset(Data $definition, KeyGroupRelation $relation): void
+    {
+        $definition = self::getAnsweringDefinition($definition);
+        if (!$definition instanceof Select && !$definition instanceof Multiselect) {
+            return;
+        }
+
+        $groupId = $relation->getGroupId();
+        $keyId = $relation->getKeyId();
+
+        if (!array_key_exists($keyId, $this->providedOptions[$groupId] ?? [])) {
+            $this->providedOptions[$groupId][$keyId] = $this->narrowProvidedOptions($definition, $relation);
+        }
+
+        $options = $this->providedOptions[$groupId][$keyId];
+        if ($options === false) {
+            // Select::checkValidity() would resolve the provider again for the options left unset, and
+            // the save would throw where the load and the index walk do not. A list that cannot be
+            // read cannot be validated against, so the definition of this assignment stops enforcing it.
+            $definition->setEnforceValidation(false);
+        } elseif ($options !== null) {
+            $definition->setOptions($options);
+            $definition->setDefaultValue(KeyGroupRelation::reconcileDefaultValue($definition->getDefaultValue(), $options));
+        }
+    }
+
+    /**
+     * The list of a provider reporting static options, narrowed to the subset of the assignment -
+     * null where nothing narrows it: the key configures its options itself, no provider of the
+     * key's own mode resolves or the list depends on the object - and false where the provider
+     * cannot answer.
+     *
+     * @return array<int, array<string, mixed>>|false|null
+     */
+    private function narrowProvidedOptions(Select|Multiselect $definition, KeyGroupRelation $relation): array|false|null
+    {
+        // each type resolves its provider the way its own enrichment does
+        // ({@see \Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait::doEnrichDefinitionDefinition()}),
+        // so the list this narrows is the list the editor is offered: the multiselect mode accepts a
+        // provider implementing only the deprecated MultiSelectOptionsProviderInterface, and the
+        // select mode does not
+        $provider = OptionsProviderResolver::resolveProvider(
+            $definition->getOptionsProviderClass(),
+            $definition instanceof Select
+                ? OptionsProviderResolver::MODE_SELECT
+                : OptionsProviderResolver::MODE_MULTISELECT
         );
+
+        if ($definition->useConfiguredOptions() || !$provider instanceof MultiSelectOptionsProviderInterface) {
+            return null;
+        }
+
+        // the context the editor's enrichment hands the provider, as far as a lookup without an
+        // object can: only a provider reporting static options is asked, so the list does not vary
+        // with the object, and the purpose is the one the layout is enriched for
+        $context = [
+            'fieldname' => $definition->getName(),
+            'purpose' => 'layout',
+            'ownerType' => 'classificationstore',
+            'keyId' => $relation->getKeyId(),
+            'groupId' => $relation->getGroupId(),
+            'keyDefinition' => $definition,
+        ];
+
+        try {
+            if (!$provider->hasStaticOptions($context, $definition)) {
+                return null;
+            }
+
+            return $relation->applyOptionSubset($provider->getOptions($context, $definition));
+        } catch (Exception $throwable) {
+            // a provider that cannot answer narrows nothing and is not validated against. A definition is built on the load, the
+            // save, the dependency walk and the search index walk, none of which has an editor in
+            // front of it, and the configuration a provider reads can be gone - the core providers
+            // throw on that. Tolerated and logged, the way a key config that no longer resolves
+            // already is, {@see Engine\EavEngine::load()}
+            Logger::error(
+                'Could not narrow the options of key ' . $relation->getKeyId()
+                . ' in group ' . $relation->getGroupId() . ' to the subset of its assignment: '
+                . $throwable->getMessage()
+            );
+
+            return false;
+        }
     }
 
     /**
@@ -165,7 +312,7 @@ final class KeyGroupRelationCache implements ResetInterface
      */
     public function clearGroup(int $groupId): void
     {
-        unset($this->relations[$groupId], $this->definitions[$groupId]);
+        unset($this->relations[$groupId], $this->definitions[$groupId], $this->providedOptions[$groupId]);
     }
 
     public function clearKey(int $keyId): void
@@ -181,5 +328,6 @@ final class KeyGroupRelationCache implements ResetInterface
     {
         $this->relations = [];
         $this->definitions = [];
+        $this->providedOptions = [];
     }
 }
