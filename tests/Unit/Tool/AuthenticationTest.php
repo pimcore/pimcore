@@ -135,7 +135,8 @@ class AuthenticationTest extends TestCase
             'active human without password' => [self::createHuman(true, null), false],
             'inactive human with password' => [self::createHuman(false, 'hash-value'), false],
             'unsaved service user' => [self::createServiceUser(true, null), false],
-            'service user without its stored password' => [self::createServiceUser(true, 7), false],
+            'active service user' => [self::createServiceUser(true, 7), true],
+            'inactive service user' => [self::createServiceUser(false, 7), false],
         ];
     }
 
