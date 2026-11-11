@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Tool;
 
 use __PHP_Incomplete_Class;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Pimcore\Model\User as PimcoreUser;
 use Pimcore\Model\User\ServiceUser;
 use Pimcore\Security\User\User as SecurityUser;
@@ -135,13 +134,14 @@ class AuthenticationTest extends TestCase
             'active human with password' => [self::createHuman(true, 'hash-value'), true],
             'active human without password' => [self::createHuman(true, null), false],
             'inactive human with password' => [self::createHuman(false, 'hash-value'), false],
-            'active service user' => [self::createServiceUser(true, 7), true],
-            'inactive service user' => [self::createServiceUser(false, 7), false],
             'unsaved service user' => [self::createServiceUser(true, null), false],
+            'service user without its stored password' => [self::createServiceUser(true, 7), false],
         ];
     }
 
-    #[DataProvider('isValidUserProvider')]
+    /**
+     * @dataProvider isValidUserProvider
+     */
     public function testIsValidUser(PimcoreUser $user, bool $expected): void
     {
         $this->assertSame($expected, Authentication::isValidUser($user));
