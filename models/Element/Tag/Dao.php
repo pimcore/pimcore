@@ -345,7 +345,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // a single tag looked up by path asks the database itself, it must not keep a listing's children lookup
-        $tag?->setChildrenLookup(null);
+        $tag->setChildrenLookup(null);
 
         return $tag;
     }
