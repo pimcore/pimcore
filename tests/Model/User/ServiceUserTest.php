@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\User;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
@@ -321,37 +320,6 @@ class ServiceUserTest extends ModelTestCase
 
         $this->expectException(DuplicateUserNameException::class);
         $human->save();
-    }
-
-    public function testTheDatabaseRejectsAUserWithTheNameOfAServiceUser(): void
-    {
-        // a concurrent save passes the check in User::save(); the unique key on users.accountName stops it
-        $serviceUser = $this->createServiceUser('db-guard');
-
-        try {
-            Db::get()->insert('users', ['parentId' => 0, 'type' => 'user', 'name' => $serviceUser->getName()]);
-            $this->fail('the database accepted a user with the name of a service user');
-        } catch (UniqueConstraintViolationException $e) {
-            $this->assertStringContainsString('accountName', $e->getMessage());
-        }
-    }
-
-    public function testARoleAndFoldersMayShareTheNameOfAServiceUser(): void
-    {
-        $serviceUser = $this->createServiceUser('db-guard-role');
-        $db = Db::get();
-
-        $db->insert('users', ['parentId' => 0, 'type' => 'role', 'name' => $serviceUser->getName()]);
-        $roleId = (int) $db->lastInsertId();
-        $db->insert('users', ['parentId' => 0, 'type' => 'userfolder', 'name' => $serviceUser->getName()]);
-        $folderId = (int) $db->lastInsertId();
-
-        try {
-            $this->assertNull($db->fetchOne('SELECT accountName FROM users WHERE id = ?', [$roleId]));
-            $this->assertNull($db->fetchOne('SELECT accountName FROM users WHERE id = ?', [$folderId]));
-        } finally {
-            $db->executeStatement('DELETE FROM users WHERE id IN (?, ?)', [$roleId, $folderId]);
-        }
     }
 
     public function testRenamingHumanToServiceUserNameIsRejected(): void

@@ -121,7 +121,6 @@ Lookups keep the two kinds apart:
 - `User::getById()` returns the user for either kind. Call `isServiceUser()` when the caller needs to know which one it got.
 
 Names are unique across both types: saving a user or service user with a name that the other type already uses throws
-`Pimcore\Model\User\Exception\DuplicateUserNameException`, checked in PHP and enforced by the unique key on the generated
-column `users`.`accountName`, so concurrent saves cannot slip through. Service users are not converted from users and users are not
+`Pimcore\Model\User\Exception\DuplicateUserNameException`. Service users are not converted from users and users are not
 converted from service users. To give a service user the access of a person, copy its roles and workspaces to a new
 service user.
