@@ -17,7 +17,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Pimcore\Db;
 
 /**
- * Answers "does this tag have children?" for all tags of one Tag\Listing result with a single query,
+ * Answers "does this tag have children?" for all tags of one Tag\Listing result with one query (per chunk of up to 1,000 ids),
  * instead of one COUNT query per tag. The query only runs when the first answer is asked for.
  *
  * Nothing is stored outside the tags that were loaded together: the lookup lives as long as they do. The answer is
