@@ -13,10 +13,23 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Service\Element;
 
+use ApplicationValueObjectProbe;
+use Normalizer;
+use Pimcore;
+use Pimcore\Document\Adapter;
+use Pimcore\Document\Adapter\Ghostscript;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use ReflectionClass;
+use ReflectionProperty;
+use RuntimeException;
+use UntrustedClassProbe;
 
 class ServiceTest extends TestCase
 {
@@ -100,6 +113,293 @@ class ServiceTest extends TestCase
         );
     }
 
+    /**
+     * Regression test: macOS reports accented filenames in decomposed (NFD) Unicode form.
+     * If that form is stored verbatim, paths built elsewhere from the same characters in
+     * precomposed (NFC) form no longer match, which breaks operations relying on path
+     * comparisons (e.g. relocating thumbnails after a folder move).
+     *
+     * @see \Pimcore\Model\Element\Service::getValidKey()
+     */
+    public function testGetValidKeyNormalizesToNfc(): void
+    {
+        $nfd = Normalizer::normalize('café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('café', Normalizer::FORM_C);
+
+        $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
+        $this->assertSame($nfc, Service::getValidKey($nfd, 'asset'));
+    }
+
+    /**
+     * Regression test: isValidPath() must accept a segment that is in decomposed (NFD) Unicode
+     * form - e.g. created before keys were normalized to NFC on write (#19242) - since
+     * *\Service::pathExists() relies on it and must agree with getByPath(), which resolves the
+     * very same path via the NFC fallback. A segment with genuinely invalid characters (not
+     * just a different Unicode form) must still be rejected.
+     *
+     * @see \Pimcore\Model\Element\Service::isValidPath()
+     */
+    public function testIsValidPathAcceptsDecomposedUnicodeFormButRejectsInvalidCharacters(): void
+    {
+        $nfd = Normalizer::normalize('café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('café', Normalizer::FORM_C);
+        $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
+
+        $this->assertTrue(Service::isValidPath("/Upload Folder/$nfd", 'asset'));
+        $this->assertTrue(Service::isValidPath("/Upload Folder/$nfc", 'asset'));
+        $this->assertFalse(
+            Service::isValidPath('/Upload Folder/invalid<>name', 'asset'),
+            'A segment with genuinely invalid characters must still be rejected, not just a different Unicode form.'
+        );
+    }
+
+    /**
+     * correctPath() must leave the Unicode form of the path untouched. Unconditionally
+     * rewriting it to NFC here (as opposed to as a getByPath() lookup fallback, see
+     * getByPathWithNfcFallback()) would break the exact-path lookup for elements whose
+     * key is still stored in decomposed (NFD) form, e.g. created before keys were normalized
+     * to NFC on write.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testCorrectPathDoesNotChangeUnicodeForm(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+
+        $this->assertSame($nfd, Service::correctPath($nfd));
+    }
+
+    /**
+     * Records every path getByPathWithNfcFallback() attempts, without ever succeeding, so the
+     * full candidate order can be asserted on.
+     *
+     * @return string[]
+     */
+    private function recordAttemptedPaths(string $lookupPath): array
+    {
+        $attempted = [];
+        $attempt = function (string $candidate) use (&$attempted): void {
+            $attempted[] = $candidate;
+
+            throw new NotFoundException('not found: ' . $candidate);
+        };
+
+        try {
+            Service::getByPathWithNfcFallback($attempt, $lookupPath);
+            $this->fail('Expected a NotFoundException.');
+        } catch (NotFoundException) {
+            // expected - $attempt() never succeeds, so every candidate gets tried
+        }
+
+        return $attempted;
+    }
+
+    /**
+     * Regression test: the common case - and the one motivating this fix - is an entire
+     * subtree freshly created in the same operation (e.g. a Studio folder upload), where every
+     * segment is NFC-stored but the lookup path arrives in NFD form. getByPathWithNfcFallback()
+     * must try the fully NFC-normalized path first, so that common case costs one extra query,
+     * not one per path depth. A legacy parent path still stored in decomposed (NFD) form is the
+     * rarer case; its "preserve dirname, normalize only the key" candidate is tried after.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackTriesFullyNormalizedPathBeforePreservingDirname(): void
+    {
+        $nfdParent = Normalizer::normalize('/Legacy café Parent/', Normalizer::FORM_D);
+        $nfcChildKey = Normalizer::normalize('New café Child', Normalizer::FORM_C);
+        $nfdChildKey = Normalizer::normalize($nfcChildKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfcChildKey,
+            $nfdChildKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $lookupPath = $nfdParent . $nfdChildKey;
+        $dirnamePreservedCandidate = $nfdParent . $nfcChildKey;
+        $fullyNormalizedCandidate = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+
+        $attempted = $this->recordAttemptedPaths($lookupPath);
+
+        $this->assertContains($fullyNormalizedCandidate, $attempted);
+        $this->assertContains($dirnamePreservedCandidate, $attempted);
+        $this->assertLessThan(
+            array_search($dirnamePreservedCandidate, $attempted, true),
+            array_search($fullyNormalizedCandidate, $attempted, true),
+            'The fully NFC-normalized path must be tried before the dirname-preserving candidate.'
+        );
+    }
+
+    /**
+     * Regression test: a lookup path may have any number of trailing segments freshly created
+     * (NFC-stored) below an ancestor still stored in legacy decomposed (NFD) form - the caller
+     * (e.g. a browser submitting every accented segment in NFD) has no way to know where that
+     * boundary is, so a mixed hierarchy more than one level deep must still resolve via one of
+     * the candidates getByPathWithNfcFallback() tries.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackHandlesNestedMixedHierarchy(): void
+    {
+        $nfdLegacySegment = Normalizer::normalize('Legacy café', Normalizer::FORM_D);
+        $nfcMiddleSegment = Normalizer::normalize('New café', Normalizer::FORM_C);
+        $nfdMiddleSegment = Normalizer::normalize($nfcMiddleSegment, Normalizer::FORM_D);
+        $nfcLastSegment = Normalizer::normalize('Child café', Normalizer::FORM_C);
+        $nfdLastSegment = Normalizer::normalize($nfcLastSegment, Normalizer::FORM_D);
+
+        // the actual stored path: legacy first segment still NFD, the two freshly created
+        // segments below it NFC
+        $storedPath = "/$nfdLegacySegment/$nfcMiddleSegment/$nfcLastSegment";
+
+        // what a browser submits: every accented segment in NFD, since it cannot tell which
+        // segments are legacy and which are freshly created
+        $lookupPath = "/$nfdLegacySegment/$nfdMiddleSegment/$nfdLastSegment";
+        $this->assertNotSame($storedPath, $lookupPath, 'Test fixture setup issue.');
+
+        $attempted = $this->recordAttemptedPaths($lookupPath);
+        $fullyNormalized = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+
+        $this->assertContains(
+            $storedPath,
+            $attempted,
+            'Normalizing only the trailing 2 segments (leaving the legacy first segment as NFD) must be tried.'
+        );
+        $this->assertLessThan(
+            array_search($storedPath, $attempted, true),
+            array_search($fullyNormalized, $attempted, true),
+            'The fully normalized path is tried before the candidate preserving the legacy segment.'
+        );
+    }
+
+    /**
+     * If the path is already fully NFC-normalized, no fallback candidates are produced -
+     * getByPathWithNfcFallback() must not retry with a path identical to the one that just
+     * missed.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackDoesNotRetryWhenPathAlreadyNfc(): void
+    {
+        $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
+
+        $this->assertSame(
+            [$nfc],
+            $this->recordAttemptedPaths($nfc),
+            'No fallback candidates should be attempted when the path is already fully NFC.'
+        );
+    }
+
+    /**
+     * Regression test: getByPathWithNfcFallback() must not skip fallback based on the raw input
+     * path's length, even when that length is far beyond ElementInterface::MAX_FULL_PATH_LENGTH.
+     * A length-based short-circuit was deliberately not used: composition exclusions in Unicode
+     * (e.g. U+0344, which NFC always decomposes to two code points) mean the fully-normalized
+     * form of a path is not a universally reliable lower bound on how short a legitimate
+     * candidate could be, so treating it as one can incorrectly skip a fallback that would
+     * otherwise have resolved. Candidate volume is instead bounded solely by
+     * MAX_FALLBACK_CANDIDATES (see the cap test below), independent of path length.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackAttemptsFallbackRegardlessOfRawPathLength(): void
+    {
+        $nfcSegment = str_repeat(Normalizer::normalize('é', Normalizer::FORM_C), 260);
+        $nfdSegment = Normalizer::normalize($nfcSegment, Normalizer::FORM_D);
+        $this->assertNotSame($nfcSegment, $nfdSegment, 'Test fixture setup issue.');
+
+        $lookupPath = "/$nfdSegment/$nfdSegment/$nfdSegment";
+        $fullyNormalizedPath = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+        $this->assertGreaterThan(
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            mb_strlen($lookupPath),
+            'Test fixture setup issue: the raw path must exceed the maximum length any real element could have.'
+        );
+
+        $this->assertContains(
+            $fullyNormalizedPath,
+            $this->recordAttemptedPaths($lookupPath),
+            'A fallback candidate must still be attempted even for a path far longer than any real element could have.'
+        );
+    }
+
+    /**
+     * Regression test: a path within the maximum real path length can still be split into far
+     * more segments than any realistic element hierarchy would have (e.g. many short accented
+     * segments). Without a cap independent of total path length, a miss on such a path would
+     * generate and attempt one fallback candidate per segment. getByPathWithNfcFallback() must
+     * bound the number of candidates attempted to a small, fixed number regardless of segment
+     * count.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackCapsNumberOfCandidates(): void
+    {
+        $segment = Normalizer::normalize('é', Normalizer::FORM_D);
+        $segmentCount = 100;
+        $path = str_repeat('/' . $segment, $segmentCount);
+        $this->assertLessThanOrEqual(
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            mb_strlen(Normalizer::normalize($path, Normalizer::FORM_C)),
+            'Test fixture setup issue: the fully normalized path must still fit within the length limit.'
+        );
+
+        $attempted = $this->recordAttemptedPaths($path);
+
+        $this->assertLessThan(
+            $segmentCount,
+            count($attempted),
+            'The number of fallback candidates attempted must be bounded to a small fixed number, not one per path segment.'
+        );
+    }
+
+    /**
+     * Regression test: getByPathWithNfcFallback() must fall through the candidates in order
+     * and succeed as soon as one of them resolves - this is what lets a freshly created
+     * element (NFC-stored) still be found from an NFD-form lookup path, e.g. a browser's
+     * webkitdirectory/File System Access API on macOS.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackTriesCandidatesInOrder(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
+
+        $attempted = [];
+        $attempt = function (string $candidate) use (&$attempted, $nfc): void {
+            $attempted[] = $candidate;
+            if ($candidate !== $nfc) {
+                throw new NotFoundException('not found: ' . $candidate);
+            }
+        };
+
+        Service::getByPathWithNfcFallback($attempt, $nfd);
+
+        $this->assertSame(
+            $nfc,
+            end($attempted),
+            'The lookup must eventually succeed with the fully NFC-normalized path.'
+        );
+    }
+
+    /**
+     * Regression test: if every candidate misses, getByPathWithNfcFallback() must rethrow the
+     * original exact-path NotFoundException rather than swallowing it.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackRethrowsWhenNoCandidateMatches(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+
+        $this->expectException(NotFoundException::class);
+
+        Service::getByPathWithNfcFallback(function (string $candidate): void {
+            throw new NotFoundException('not found: ' . $candidate);
+        }, $nfd);
+    }
+
     public function testCloneMe(): void
     {
         // create object with property
@@ -122,5 +422,220 @@ class ServiceTest extends TestCase
 
         $this->assertEquals($object->getKey() . '_copy', $clonedObject->getKey());
         $this->assertEquals('valueA', $clonedObject->getProperty('propertyA'));
+    }
+
+    /**
+     * Regression test: a legitimate editmode/preview round-trip through saveElementToSession()
+     * and getElementFromSession() must keep working.
+     *
+     * @see \Pimcore\Model\Element\Service::saveElementToSession()
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionReturnsLegitimatelySavedObject(): void
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $object->setProperty('propertyA', 'input', 'valueA');
+        $object->save();
+
+        $sessionId = 'session-roundtrip-' . $object->getId();
+
+        Service::saveElementToSession($object, $sessionId);
+
+        $restored = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertInstanceOf(DataObject\AbstractObject::class, $restored);
+        $this->assertEquals($object->getId(), $restored->getId());
+        $this->assertEquals('valueA', $restored->getProperty('propertyA'));
+
+        TmpStore::delete(Service::getSessionKey('object', $object->getId(), $sessionId));
+    }
+
+    /**
+     * Regression test: the `tmp_store` row read by getElementFromSession() is not necessarily
+     * written by saveElementToSession() - anyone with a raw DB write primitive against that
+     * table can forge one. getElementFromSession() must reject a payload that carries no valid
+     * signature instead of instantiating its classes, and must never run their magic methods
+     * while doing so.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionRejectsUnsignedPayload(): void
+    {
+        require_once __DIR__ . '/UntrustedClassProbe.php';
+        UntrustedClassProbe::$wasInstantiated = false;
+
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+
+        $sessionId = 'session-forged-' . $object->getId();
+        $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
+
+        TmpStore::set($tmpStoreKey, serialize(new UntrustedClassProbe()), 'object-session');
+
+        $result = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertNull($result, 'An unsigned payload must be rejected.');
+        $this->assertFalse(
+            UntrustedClassProbe::$wasInstantiated,
+            'getElementFromSession() must never instantiate the classes of an unsigned payload.'
+        );
+
+        TmpStore::delete($tmpStoreKey);
+    }
+
+    /**
+     * Regression test: date values (`DateRange` fields hold a `CarbonPeriod`) are not in the `Pimcore\` namespace
+     * and must keep surviving the saveElementToSession() -> getElementFromSession() round trip.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionKeepsDateRangeValues(): void
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $object->setDateRange(new \Carbon\CarbonPeriod('2018-04-21', '3 days', '2018-04-27'));
+        $object->save();
+
+        $sessionId = 'session-daterange-' . $object->getId();
+
+        Service::saveElementToSession($object, $sessionId);
+
+        $restored = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertInstanceOf(DataObject\AbstractObject::class, $restored);
+        $this->assertInstanceOf(\Carbon\CarbonPeriod::class, $restored->getDateRange());
+        $this->assertEquals('2018-04-21', $restored->getDateRange()->getStartDate()->format('Y-m-d'));
+        $this->assertEquals('2018-04-27', $restored->getDateRange()->getEndDate()->format('Y-m-d'));
+
+        TmpStore::delete(Service::getSessionKey('object', $object->getId(), $sessionId));
+    }
+
+    /**
+     * Regression test: application value objects inside an element (e.g. returned by a custom
+     * marshalVersion() implementation) must keep surviving the saveElementToSession() ->
+     * getElementFromSession() round trip.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionKeepsApplicationValueObjects(): void
+    {
+        require_once __DIR__ . '/ApplicationValueObjectProbe.php';
+
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+        $object->setProperty('applicationProbe', 'text', new ApplicationValueObjectProbe());
+
+        $sessionId = 'session-application-' . $object->getId();
+
+        Service::saveElementToSession($object, $sessionId);
+
+        $restored = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertInstanceOf(DataObject\AbstractObject::class, $restored);
+        $this->assertInstanceOf(ApplicationValueObjectProbe::class, $restored->getProperty('applicationProbe'));
+
+        TmpStore::delete(Service::getSessionKey('object', $object->getId(), $sessionId));
+    }
+
+    /**
+     * Regression test: element session data that was not written by saveElementToSession() is rejected
+     * even if it only references classes from the Pimcore namespace, and none of its classes is
+     * instantiated while doing so.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionRejectsUnsignedPayloadOfPimcoreClasses(): void
+    {
+        $sentinelFile = tempnam(sys_get_temp_dir(), 'session-sentinel-');
+        $this->assertFileExists($sentinelFile);
+
+        $instance = (new ReflectionClass(Ghostscript::class))->newInstanceWithoutConstructor();
+        $tmpFiles = new ReflectionProperty(Adapter::class, 'tmpFiles');
+        $tmpFiles->setValue($instance, [$sentinelFile]);
+        $payload = serialize($instance);
+        // the local instance must not touch the sentinel file when it is destroyed
+        $tmpFiles->setValue($instance, []);
+        unset($instance);
+
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+
+        $sessionId = 'session-unsigned-pimcore-' . $object->getId();
+        $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
+
+        TmpStore::set($tmpStoreKey, $payload, 'object-session');
+
+        $result = Service::getElementFromSession('object', $object->getId(), $sessionId);
+
+        $this->assertNull($result, 'Unsigned element session data must be rejected.');
+        $this->assertFileExists($sentinelFile, 'Unsigned element session data must not be instantiated.');
+
+        TmpStore::delete($tmpStoreKey);
+        unlink($sentinelFile);
+    }
+
+    /**
+     * Regression test: element session data that is unsigned (e.g. written by an earlier version), was
+     * modified after signing or was moved to another session key is treated as missing.
+     *
+     * @see \Pimcore\Model\Element\Service::getElementFromSession()
+     */
+    public function testGetElementFromSessionRejectsUnsignedModifiedAndMovedElementData(): void
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $object->save();
+
+        $sessionId = 'session-signature-' . $object->getId();
+        $tmpStoreKey = Service::getSessionKey('object', $object->getId(), $sessionId);
+
+        Service::saveElementToSession($object, $sessionId);
+        $signed = TmpStore::get($tmpStoreKey)->getData();
+        $this->assertInstanceOf(DataObject\AbstractObject::class, Service::getElementFromSession('object', $object->getId(), $sessionId));
+
+        // modified after signing
+        TmpStore::set($tmpStoreKey, substr($signed, 0, -1) . 'x', 'object-session');
+        $this->assertNull(Service::getElementFromSession('object', $object->getId(), $sessionId));
+
+        // no signature at all
+        TmpStore::set($tmpStoreKey, serialize($object), 'object-session');
+        $this->assertNull(Service::getElementFromSession('object', $object->getId(), $sessionId));
+
+        // valid signed data under another session key
+        $otherSessionId = $sessionId . '-other';
+        $otherTmpStoreKey = Service::getSessionKey('object', $object->getId(), $otherSessionId);
+        TmpStore::set($otherTmpStoreKey, $signed, 'object-session');
+        $this->assertNull(Service::getElementFromSession('object', $object->getId(), $otherSessionId));
+
+        TmpStore::delete($tmpStoreKey);
+        TmpStore::delete($otherTmpStoreKey);
+    }
+
+    /**
+     * Regression test: copyAsChild() disables the dirty detection while it copies. A failed copy must restore it,
+     * the copy also runs in long-lived messenger workers.
+     */
+    public function testFailedCopyAsChildRestoresDirtyDetection(): void
+    {
+        $folder = TestHelper::createObjectFolder('copy-target-');
+        $source = TestHelper::createEmptyObject('copy-source-');
+
+        $listener = static function (): void {
+            throw new RuntimeException('copy failed');
+        };
+        Pimcore::getEventDispatcher()->addListener(DataObjectEvents::PRE_COPY, $listener);
+
+        $this->assertFalse(DataObject::isDirtyDetectionDisabled());
+
+        try {
+            (new DataObject\Service())->copyAsChild($folder, $source);
+            $this->fail('The copy must fail.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('copy failed', $e->getMessage());
+        } finally {
+            Pimcore::getEventDispatcher()->removeListener(DataObjectEvents::PRE_COPY, $listener);
+            $dirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::enableDirtyDetection();
+        }
+
+        $this->assertFalse($dirtyDetectionDisabled);
     }
 }

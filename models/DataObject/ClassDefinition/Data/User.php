@@ -19,6 +19,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 
 class User extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -113,13 +115,15 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if (!empty($data)) {
             $user = Model\User::getById((int)$data);
             if (!$user instanceof Model\User) {
-                throw new Model\Element\ValidationException('Invalid user reference');
+                throw (new StructuredValidationException('Invalid user reference'))
+                    ->setTranslation(ValidationMessageKey::INVALID_RELATION);
             }
         }
     }

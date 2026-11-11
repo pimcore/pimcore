@@ -16,7 +16,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -60,7 +62,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         }
 
         if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
-            throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
     }
 
@@ -71,7 +74,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        return Serialize::unserialize($data);
+        // Restrict to GeoCoordinates to prevent PHP Object Injection via the DB.
+        return Serialize::unserialize($data, [DataObject\Data\GeoCoordinates::class]);
     }
 
     /**

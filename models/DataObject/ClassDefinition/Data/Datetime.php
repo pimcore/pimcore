@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
 
-class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, UserDefinedColumnTypeInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
 
@@ -310,15 +310,17 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             $db = Db::get();
 
             if ($this->getColumnType() == 'datetime') {
-                $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote((string) $value);
+                // brickPrefix arrives ready to concatenate - already quoted where it needs to be
+                // and already carrying its trailing dot - so it must not be quoted again here.
+                $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
+                $condition = 'DATE(' . $brickPrefix . $db->quoteIdentifier($params['name']) . ') = ' . $db->quote((string) $value);
 
                 return $condition;
             } else {
                 $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
                 $filterField = $params['name'] ?: $this->getName();
 
-                return '`' . $filterField . '` BETWEEN ' .
+                return $db->quoteIdentifier($filterField) . ' BETWEEN ' .
                     $db->quote((string) $value) . ' AND ' . $db->quote((string)$maxTime);
             }
         }
@@ -343,6 +345,13 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         return null;
+    }
+
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        // the default is resolved at runtime (use current date), the configured default value alone does not tell
+        return parent::hasApplicableDefaultValue($object, $context)
+            || !$this->isEmpty($this->doGetDefaultValue($object, $context));
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool

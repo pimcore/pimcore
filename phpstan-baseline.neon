@@ -42,12 +42,6 @@ parameters:
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
-			path: bundles/CoreBundle/src/Controller/WebDavController.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
 			path: bundles/CoreBundle/src/DependencyInjection/Compiler/SerializerPass.php
 
 		-
@@ -167,6 +161,12 @@ parameters:
 			path: lib/Bootstrap.php
 
 		-
+			message: '#^Trait Pimcore\\Console\\Traits\\ParallelizationFallback is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Console/Traits/ParallelizationFallback.php
+
+		-
 			message: '#^Trait Pimcore\\Console\\Traits\\Timeout is used zero times and is not analysed\.$#'
 			identifier: trait.unused
 			count: 1
@@ -177,6 +177,12 @@ parameters:
 			identifier: trait.unused
 			count: 1
 			path: lib/Controller/Traits/ElementEditLockHelperTrait.php
+
+		-
+			message: '#^Trait Pimcore\\Controller\\Traits\\JsonHelperTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Controller/Traits/JsonHelperTrait.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -201,6 +207,15 @@ parameters:
 			identifier: trait.unused
 			count: 1
 			path: lib/Event/Traits/ResponseAwareTrait.php
+
+		# PHPStan 2.3.x reads FILTER_FLAG_GLOBAL_RANGE as FILTER_THROW_ON_FAILURE when analysing on PHP 8.4
+		# (PHP 8.5 moved the constant) and drops `false` from the filter_var() return type, see
+		# https://github.com/phpstan/phpstan/issues/15481. Remove once this is fixed upstream.
+		-
+			message: '#^Strict comparison using !== between non\-falsy\-string and false will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: lib/Http/SsrfProtection.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -1048,3 +1063,92 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: lib/Tool/Admin.php
+
+		# The following entries for models/Asset.php, models/DataObject/AbstractObject.php and
+		# models/Document.php are false positives introduced with PHPStan 2.2.x (2.1.x is clean):
+		# variables captured by reference in the closures passed to retryableFunction() are no
+		# longer invalidated, so PHPStan assumes they keep their initial value. Remove them once
+		# this is fixed upstream.
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/Asset.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Loose comparison using != between \*NEVER\* and string will always evaluate to true\.$#'
+			identifier: notEqual.alwaysTrue
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/Document.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^Strict comparison using !== between \*NEVER\* and string will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/Document.php

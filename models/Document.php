@@ -149,9 +149,31 @@ class Document extends Element\AbstractElement
 
         try {
             $helperDoc = new Document();
-            $helperDoc->getDao()->getByPath($path);
+
+            try {
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $helperDoc->getDao()->getByExactPath($candidate),
+                    $path
+                );
+            } catch (NotFoundException $e) {
+                // none of the exact-path candidates matched - fall back to a pretty URL match
+                // against the original requested path only, same as before this fallback
+                // existed. A pretty URL is a literal string a content editor configured, not
+                // something that should ever be matched against a synthetic, NFC-normalized
+                // candidate path, so this must run once, after the candidates, not per candidate.
+                $helperDoc->getDao()->getByPrettyUrl($path);
+            }
+
             $doc = static::getById($helperDoc->getId(), $params);
-            RuntimeCache::set($cacheKey, $doc);
+
+            // cache under the resolved document's own real path, not the raw lookup path - an
+            // NFC fallback candidate may have matched instead of $path, and caching under an
+            // alias that move/delete never invalidates (they only clear
+            // getPathCacheKey($this->getRealFullPath()), see delete()) would keep returning a
+            // moved or deleted document to a later lookup by that same alias
+            if ($doc) {
+                RuntimeCache::set(self::getPathCacheKey($doc->getRealFullPath()), $doc);
+            }
         } catch (NotFoundException $e) {
             $doc = null;
         }
@@ -583,12 +605,16 @@ class Document extends Element\AbstractElement
             // delete also unpublished children
             $unpublishedStatus = self::doHideUnpublished();
             self::setHideUnpublished(false);
-            foreach ($this->getChildren(true) as $child) {
-                if (!$child instanceof WrapperInterface) {
-                    $child->delete();
+
+            try {
+                foreach ($this->getChildren(true) as $child) {
+                    if (!$child instanceof WrapperInterface) {
+                        $child->delete();
+                    }
                 }
+            } finally {
+                self::setHideUnpublished($unpublishedStatus);
             }
-            self::setHideUnpublished($unpublishedStatus);
         }
 
         // remove all properties
@@ -681,9 +707,13 @@ class Document extends Element\AbstractElement
                 $differentDomain = $site->getMainDomain() != $request->getHost();
             }
 
+            // a request outside of any site (main domain) cannot serve documents of a site below its real path
+            $siteDocumentOutsideSite = !Site::isSiteRequest() && $site instanceof Site && $site->getMainDomain();
+
             if ((Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this))
-                || $differentDomain) {
-                if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
+                || $differentDomain
+                || $siteDocumentOutsideSite) {
+                if ($mainRequest && Site::isSiteRequest() && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
                     if ($mainDocument instanceof WrapperInterface) {
                         $hardlinkPath = '';
                         $hardlink = $mainDocument->getHardLinkSource();
@@ -715,7 +745,7 @@ class Document extends Element\AbstractElement
                                 $link = $scheme . $site->getMainDomain() . '/';
                             } else {
                                 $link = $scheme . $site->getMainDomain() .
-                                    preg_replace('@^' . $site->getRootPath() . '/@', '/', $this->getRealFullPath());
+                                    preg_replace('@^' . preg_quote($site->getRootPath(), '@') . '/@', '/', $this->getRealFullPath());
                             }
                         }
                     }

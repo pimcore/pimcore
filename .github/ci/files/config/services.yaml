@@ -49,3 +49,8 @@ services:
         alias: Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter
 
     Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter: ~
+
+    # custom block marshaller used by BlockTest::testCustomMarshallerValueObjectInsideBlock()
+    Pimcore\Tests\Support\Helper\DataType\CustomValueObjectBlockMarshaller:
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_customValueObject, key: 'block_customValueObject' }

@@ -23,12 +23,15 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Helper\ReservedWordsHelper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
+use Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -223,7 +226,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         $class = (new ClassDefinition\Listing())
-            ->setForce(true)
+            ->setForce($force)
             ->setCondition('id = ?', [$id])
             ->current();
 
@@ -255,11 +258,46 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public function rename(string $name): void
     {
+        $this->validateName($name);
+
         $this->deletePhpClasses();
         $this->getDao()->updateClassNameInObjects($name);
 
         $this->setName($name);
         $this->save();
+    }
+
+    /**
+     * The name is emitted verbatim as the PHP class name in the generated class file (see
+     * PHPClassDumper) and used to build the on-disk class file path, so it must be a valid
+     * identifier that is neither a PHP reserved word nor the name of a class already living in the
+     * `Pimcore\Model\DataObject` namespace the generated class is emitted into (the latter would be
+     * shadowed by the generated file, see ReservedWordsHelper::isReservedDataObjectClassName()).
+     * Called from rename() as well as saveClassInternal(), because
+     * rename() deletes the existing class files and renames persisted objects before ever
+     * calling save() - validating only inside save() would let a rejected rename leave those
+     * side effects applied while the class definition itself keeps its old name.
+     *
+     * `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+     *
+     * @throws Exception
+     */
+    private function validateName(string $name): void
+    {
+        if (!preg_match('/^[a-zA-Z]\w+\z/', $name)) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: %s',
+                $name
+            ));
+        }
+
+        $reservedWordsHelper = new ReservedWordsHelper();
+        if ($reservedWordsHelper->isReservedDataObjectClassName($name)) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: `%s` is a reserved word and cannot be used as a class name',
+                $name
+            ));
+        }
     }
 
     /**
@@ -345,11 +383,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
         if ($title = $this->getTitle()) {
-            $cd .= ' * Title: ' . $title."\n";
+            $cd .= ' * Title: ' . DocBlockSanitizer::sanitize($title)."\n";
         }
 
         if ($description = $this->getDescription()) {
-            $description = str_replace(['/**', '*/', '//'], '', $description);
+            $description = DocBlockSanitizer::sanitize($description);
             $description = str_replace("\n", "\n * ", $description);
 
             $cd .= ' * '.$description."\n";
@@ -439,6 +477,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         @unlink($this->getPhpListingClassFile());
         @rmdir(dirname($this->getPhpListingClassFile()));
         @unlink($this->getDefinitionFile());
+        DefinitionFileCache::clear($this->getDefinitionFile());
     }
 
     /**
@@ -930,8 +969,12 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     public function getLinkGenerator(): ?ClassDefinition\LinkGeneratorInterface
     {
-        /** @var ClassDefinition\LinkGeneratorInterface|null $interface */
-        $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        $interface = null;
+
+        if ($this->getLinkGeneratorReference()) {
+            /** @var ClassDefinition\LinkGeneratorInterface|null $interface */
+            $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        }
 
         return $interface;
     }
@@ -993,7 +1036,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public function setCompositeIndices(array $compositeIndices): static
     {
-        $class = $this->getFieldDefinitions([]);
+        // Only the field types are needed. This runs while a definition is loaded (__set_state),
+        // where enrichment would run the options provider of every select field of the class.
+        $class = $this->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($compositeIndices as $indexInd => $compositeIndex) {
             $this->getDao()->assertValidIdentifier($compositeIndex['index_key'] ?? '');
             foreach ($compositeIndex['index_columns'] as $fieldInd => $fieldName) {
@@ -1100,7 +1145,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
                 throw new Exception('Class definition with ID ' . $id . ' does not exist');
             }
             $definitionFile = $class->getDefinitionFile($name);
-            $class = @include $definitionFile;
+            $class = DefinitionFileCache::load($definitionFile);
 
             if (!$class instanceof self) {
                 throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
@@ -1146,28 +1191,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        if (!preg_match('/^[a-zA-Z]\w+$/', $this->getName())) {
-            throw new Exception(sprintf(
-                'Invalid name for class definition: %s',
-                $this->getName()
-            ));
-        }
-
-        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*$/', $this->getId())) {
-            throw new Exception(sprintf(
-                'Invalid ID `%s` for class definition %s',
-                $this->getId(),
-                $this->getName()
-            ));
-        }
-
-        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
-            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
-            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
-                throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
-                    $this->getParentClass()));
-            }
-        }
+        $this->validateName($this->getName());
+        $this->validateId((string) $this->getId());
+        $this->validateInheritanceProperties();
 
         $isUpdate = $this->exists();
 
@@ -1217,6 +1243,55 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     }
 
     /**
+     * @throws Exception
+     */
+    private function validateId(string $id): void
+    {
+        // `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*\z/', $id)) {
+            throw new Exception(sprintf(
+                'Invalid ID `%s` for class definition %s',
+                $id,
+                $this->getName()
+            ));
+        }
+    }
+
+    /**
+     * Name, ID, field names and inheritance properties are emitted verbatim into the generated
+     * class files, so they are validated here as well and not only in saveClassInternal():
+     * generateClassFiles() can be called directly without going through save().
+     *
+     * @throws Exception
+     */
+    private function validateClassFileGenerationInput(): void
+    {
+        foreach ($this->getFieldDefinitions() as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+        }
+
+        $this->validateName((string) $this->getName());
+        $this->validateId((string) $this->getId());
+        $this->validateInheritanceProperties();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function validateInheritanceProperties(): void
+    {
+        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
+            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
+            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*\z/', $propertyValue)) {
+                throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
+                    $this->getParentClass()));
+            }
+        }
+    }
+
+    /**
      *
      * @throws Exception
      *
@@ -1226,6 +1301,8 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         bool $generateDefinitionFile = true,
         bool $dumpPHPClasses = true
     ): void {
+        $this->validateClassFileGenerationInput();
+
         if ($dumpPHPClasses) {
             Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
         }
@@ -1255,6 +1332,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $data .= 'return '.$exportedClass.";\n";
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
+            DefinitionFileCache::clear($definitionFile);
         }
     }
 }

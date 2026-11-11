@@ -333,6 +333,71 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 \Pimcore\Model\DataObject::setHideUnpublished(false);
 ```
 
+### Disable Row Locking on Load
+
+By default, loading a data object locks its data row (`FOR UPDATE`). The lock only lasts as long as the surrounding
+transaction, so it does not prevent lost updates on its own, but it can cause deadlocks or lock wait timeouts when
+objects are loaded inside transactions, e.g. in parallel imports.
+
+Every data object carries a change token of its `objects` row. The database sets a new value on every `UPDATE` that
+changes the row, and every save renews it. A save compares the token the object was loaded with against the row:
+
+- Classes with the row lock (the default): a save based on outdated data overwrites the concurrent change, as before,
+  and logs a warning.
+- Classes without the row lock: a save based on outdated data throws a
+  `Pimcore\Model\Exception\StaleDataException`. Reload the object, apply the changes again and save it.
+
+Disable the row lock for a class (and its subclasses) in the configuration:
+
+```yaml
+pimcore:
+    objects:
+        hydration_lock:
+            disabled_for:
+                - Pimcore\Model\DataObject\Product
+                # or Pimcore\Model\DataObject\Concrete for all classes
+```
+
+Or at runtime:
+
+```php
+<?php
+
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\HydrationLock;
+use Pimcore\Model\Exception\StaleDataException;
+
+HydrationLock::disable(DataObject\Product::class); // HydrationLock::disable() without a class: all objects
+
+do {
+    $product = DataObject\Product::getById(167, ['force' => true]);
+    $product->setStock($product->getStock() - 1);
+
+    try {
+        $product->save();
+        $saved = true;
+    } catch (StaleDataException) {
+        $saved = false; // changed by another process in the meantime, retry with fresh data
+    }
+} while (!$saved);
+```
+
+To load a single object without the row lock, use the `lock` parameter of `getById()` or `getByPath()`:
+
+```php
+<?php
+
+use Pimcore\Model\DataObject;
+
+$object = DataObject\Myclassname::getById(167, ['lock' => false]);
+$object = DataObject::getByPath("/path/to/object", ['lock' => false]);
+```
+
+> **Note:** The token only covers the `objects` row. Every save writes that row, but plain SQL that only writes data
+> tables (`object_store_*`, relations, localized fields, bricks, field collections) does not change the token.
+> Objects cached before the token column existed, and objects restored from a version, carry no token and are not
+> checked.
+
 ### Filter Objects by attributes from Field Collections
 To filter objects by attributes from field collections, you can use following syntax
 (Both code snippets result in the same object listing).

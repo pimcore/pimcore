@@ -19,6 +19,7 @@ use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
+use Pimcore\Model\User\ServiceUser\Listing as ServiceUserListing;
 use ReflectionClass;
 
 /**
@@ -250,11 +251,15 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
      */
     private function cleanupUserRoleRelations(): void
     {
-        $userRoleListing = new Listing();
-        $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');
-        $userRoleListing = $userRoleListing->load();
-        if (count($userRoleListing)) {
-            foreach ($userRoleListing as $relatedUser) {
+        // users and service users carry roles, both must lose the deleted one
+        $relatedUsers = [];
+        foreach ([new Listing(), new ServiceUserListing()] as $userRoleListing) {
+            $userRoleListing->setCondition('FIND_IN_SET(?, roles)', [$this->getId()]);
+            array_push($relatedUsers, ...$userRoleListing->load());
+        }
+
+        if (count($relatedUsers)) {
+            foreach ($relatedUsers as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
                 $key = array_search($this->getId(), $userRoles);
                 if (false !== $key) {

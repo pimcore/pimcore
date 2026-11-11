@@ -61,6 +61,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         if ($data) {
             $data['published'] = (bool)$data['published'];
+            $this->assignChangeToken($data);
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {
@@ -129,7 +130,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getData(): void
     {
-        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$this->model->getId()])) {
+        $sql = 'SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?';
+        if (!DataObject\HydrationLock::isLockSkippedFor($this->model)) {
+            $sql .= ' FOR UPDATE';
+        }
+
+        if (!$data = $this->db->fetchAssociative($sql, [$this->model->getId()])) {
             return;
         }
 
@@ -247,7 +253,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             $tableName = 'object_store_' . $this->model->getClassId();
             if ($isUpdate) {
-                Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+                // the row exists on an update, so updateOrInsert() is a single UPDATE
+                Helper::updateOrInsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
             } else {
                 $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
             }
@@ -294,7 +301,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         }
 
                         // if the current value is empty and we have data from the parent, we just use it
-                        if ($isEmpty && $parentData) {
+                        if ($isEmpty && $parentData && $fd->supportsInheritance()) {
                             foreach ($columnNames as $columnName) {
                                 if (array_key_exists($columnName, $parentData)) {
                                     $data[$columnName] = $parentData[$columnName];
@@ -367,7 +374,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $data['oo_id'] = $this->model->getId();
 
             $tableName = 'object_query_' . $this->model->getClassId();
-            Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            // on an update the row exists and updateOrInsert() is a single UPDATE; a new object's row
+            // is a plain insert either way
+            if ($isUpdate) {
+                Helper::updateOrInsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            } else {
+                Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            }
         } finally {
             DataObject::setGetInheritedValues($inheritedValues);
         }
