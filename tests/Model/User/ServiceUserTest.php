@@ -39,6 +39,9 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 use ReflectionProperty;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -185,6 +188,58 @@ class ServiceUserTest extends ModelTestCase
         $this->assertTrue($serviceUser->isServiceUser());
         $this->clearUserCache($serviceUser->getId());
         $this->assertTrue(User::getById($serviceUser->getId())?->isServiceUser());
+    }
+
+    /**
+     * Setters are dispatched case-insensitively, so a `Type` key must not turn the new user into a person on the way.
+     *
+     * @dataProvider typeKeyProvider
+     */
+    public function testCreateServiceUserNeverCreatesAnAdministratorThroughATypeKey(string $typeKey): void
+    {
+        $name = self::NAME_PREFIX . 'create-' . strtolower($typeKey);
+
+        try {
+            $created = User::createServiceUser(['name' => $name, $typeKey => 'user', 'admin' => true]);
+            $this->createdEntities[] = $created;
+            $this->fail('a service user with administrator rights was saved');
+        } catch (InvalidServiceUserException) {
+            $this->assertNull(User::getByName($name), 'no person may have been saved');
+            $this->assertNull(User::getServiceUserByName($name));
+        }
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function typeKeyProvider(): array
+    {
+        return ['lower' => ['type'], 'capitalised' => ['Type'], 'upper' => ['TYPE']];
+    }
+
+    public function testCreateServiceUserWithACapitalisedTypeKeyStaysAServiceUser(): void
+    {
+        $serviceUser = User::createServiceUser(['name' => self::NAME_PREFIX . 'create-cap', 'Type' => 'user']);
+        $this->createdEntities[] = $serviceUser;
+
+        $this->clearUserCache($serviceUser->getId());
+        $this->assertTrue(User::getById($serviceUser->getId())?->isServiceUser());
+    }
+
+    public function testASessionCarryingAServiceUserIsNotAuthenticated(): void
+    {
+        $serviceUser = $this->createServiceUser('session-auth');
+
+        $session = new Session(new MockArraySessionStorage());
+        $session->set(
+            '_security_pimcore_admin',
+            serialize(new UsernamePasswordToken(new SecurityUser($serviceUser), 'pimcore_admin', ['ROLE_PIMCORE_USER']))
+        );
+        $request = new Request();
+        $request->setSession($session);
+        $request->cookies->set($session->getName(), 'session-id');
+
+        $this->assertNull(Authentication::authenticateSession($request));
     }
 
     public function testCreateServiceUserRefusesAnId(): void

@@ -23,11 +23,13 @@ use Pimcore\Model\User\Role;
 use Pimcore\Tool;
 
 use function array_key_exists;
+use function array_keys;
 use function bin2hex;
 use function is_array;
 use function is_string;
 use function random_bytes;
 use function sprintf;
+use function strcasecmp;
 
 /**
  * A user of Pimcore: a person (type `user`) or a service user (type `serviceuser`, see isServiceUser()), a
@@ -157,11 +159,13 @@ final class User extends User\UserRole implements UserInterface
      */
     public static function createServiceUser(array $values = []): self
     {
-        unset($values['type']);
+        $values = self::withoutTypeKeys($values);
         self::checkCreateData($values);
 
         $serviceUser = self::newServiceUser();
         $serviceUser->setValues($values);
+        // no value may have changed the kind on the way; save() then refuses administrator rights and two-factor data
+        $serviceUser->setType(self::TYPE_SERVICE_USER);
         $serviceUser->save();
 
         return $serviceUser;
@@ -184,15 +188,36 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
+     * @param array<array-key, mixed> $values
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function withoutTypeKeys(array $values): array
+    {
+        foreach (array_keys($values) as $key) {
+            if (is_string($key) && strcasecmp($key, 'type') === 0) {
+                unset($values[$key]);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
      * Applies the type first, so the other values are validated for the right kind of user, and keeps the
      * stored password of a service user as it is: a loaded service user passes the same validity check
      * (active, saved, with a password) as a person, and save() replaces the value with a new unusable one anyway.
      */
     public function setValues(array $data = [], bool $ignoreEmptyValues = false): static
     {
-        if (isset($data['type']) && is_string($data['type'])) {
-            $this->setType($data['type']);
-            unset($data['type']);
+        // setters are dispatched case-insensitively (setValue()), so `Type` or `TYPE` set the type as well
+        foreach ($data as $key => $value) {
+            if (is_string($key) && strcasecmp($key, 'type') === 0) {
+                if (is_string($value)) {
+                    $this->setType($value);
+                }
+                unset($data[$key]);
+            }
         }
 
         if ($this->isServiceUser() && array_key_exists('password', $data)) {
