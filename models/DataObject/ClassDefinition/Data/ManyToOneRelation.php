@@ -563,7 +563,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $prefix = $params['brickPrefix'] ?? '';
         if (preg_match('/^(asset|object|document)\|(\d+)/', $value, $matches)) {
             $typeField = $params['name'] . '__type';
-            $typeCondition = '`' . $typeField . '` = ' . "'" . $matches[1] . "'";
+            $typeCondition = \Pimcore\Db::get()->quoteIdentifier($typeField) . ' = ' . "'" . $matches[1] . "'";
             $value = $matches[2];
 
             return '(' . $prefix . $typeCondition . ' AND ' . $prefix

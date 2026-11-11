@@ -20,6 +20,7 @@ use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToProvideChecksum;
 use Normalizer;
 use Pimcore;
+use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
@@ -57,6 +58,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Throwable;
+use TypeError;
 
 /**
  * @method Dao getDao()
@@ -71,6 +73,12 @@ class Asset extends Element\AbstractElement
     use TemporaryFileHelperTrait;
 
     public const CUSTOM_SETTING_PROCESSING_FAILED = 'pimcore-asset-processing-failed';
+
+    /**
+     * Marks an asset that was added without a version (see `pimcore.assets.versions.skip_initial_version`), so that
+     * its persisted state is versioned before its first modification even if the option is disabled in the meantime
+     */
+    private const CUSTOM_SETTING_INITIAL_VERSION_SKIPPED = 'pimcore-asset-initial-version-skipped';
 
     /**
      * @internal
@@ -96,6 +104,8 @@ class Asset extends Element\AbstractElement
      * @var resource|null
      */
     protected $stream;
+
+    private bool $streamIsPlaceholder = false;
 
     /**
      * @internal
@@ -170,7 +180,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -361,6 +371,7 @@ class Asset extends Element\AbstractElement
             }
 
             $mimeType ??= 'application/octet-stream';
+            $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
             $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
             Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
             $mimeType = $mimeTypeEvent->getMimeType();
@@ -461,6 +472,30 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      */
+    public static function resolveMimeTypeFromMapping(string $detectedMimeType, string $filename): string
+    {
+        if ($detectedMimeType === 'directory') {
+            return $detectedMimeType;
+        }
+
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($extension === '') {
+            return $detectedMimeType;
+        }
+
+        $mappings = Config::getSystemConfiguration('assets')['mime_mappings'] ?? [];
+        if (isset($mappings[$extension])) {
+            return (string)$mappings[$extension];
+        }
+
+        return $detectedMimeType;
+    }
+
+    /**
+     *
+     *
+     * @internal
+     */
     public static function getTypeFromMimeMapping(string $mimeType, string $filename): string
     {
         if ($mimeType == 'directory') {
@@ -511,10 +546,30 @@ class Asset extends Element\AbstractElement
 
                 $parameters = $preEvent->getArguments();
 
+                $this->assertExistingVersionCanBeWritten($parameters);
+
                 $this->correctPath();
 
                 // need for $this->update() for certain types (image, video, document)
                 $parameters['isUpdate'] = $isUpdate;
+
+                if ($this->getType() != 'folder') {
+                    if (!$isUpdate) {
+                        // remember that no version is created for the upload (see `pimcore.assets.versions.skip_initial_version`)
+                        if (self::isInitialVersionSkipped()) {
+                            $this->setCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED, true);
+                        } else {
+                            $this->removeCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
+                        }
+                    } elseif ($this->isVersionOfPersistedStatePending()) {
+                        // if no version was created when the asset was added, version the persisted state before it
+                        // gets overwritten by the first modification, so that the original state of the asset stays
+                        // restorable. This is committed before the save transaction on purpose: the asset storage isn't
+                        // transactional, so a failing save may already have overwritten the binary data and the
+                        // snapshot must be kept as the only copy of it
+                        $this->saveVersionOfPersistedStateInTransaction();
+                    }
+                }
             },
             retryableFunc: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
                 if (!$isUpdate) {
@@ -546,24 +601,27 @@ class Asset extends Element\AbstractElement
                     // finally move the actual assets themselves
                     // We do this last so that any prior errors don't require a rollback
                     // on potentially a remote service.
-                    try {
-                        $storage->move($oldPath, $this->getRealFullPath());
-                    } catch (UnableToMoveFile $e) {
-                        //update children, if unable to move parent
-                        $this->updateChildPaths($storage, $oldPath);
-                    }
+                    $this->moveDirectoryOnStorage($storage, $oldPath);
                 }
 
                 // lastly create a new version if necessary
                 // this has to be after the registry update and the DB update, otherwise this would cause problem in the
                 // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                 if ($this->getType() != 'folder') {
-                    $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    // optionally no version is created when adding an asset (see `pimcore.assets.versions.skip_initial_version`),
+                    // an asset which is modified already got a version of its persisted state before this transaction
+                    /** @var bool $isUpdate assigned by reference in beforeRetryables */
+                    if ($isUpdate || !self::isInitialVersionSkipped()) {
+                        // only `existingVersion` is passed on, the versioning events keep their arguments
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null, array_intersect_key($parameters, ['existingVersion' => true]));
+                    } else {
+                        // scheduled tasks are saved always, they are not versioned (see saveVersion())
+                        $this->saveScheduledTasks();
+                    }
                     $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
                 }
             },
             onCommit: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
-
                 $additionalTags = [];
 
                 foreach ($updatedChildren as $assetId) {
@@ -662,8 +720,27 @@ class Asset extends Element\AbstractElement
         }
 
         // do not allow PHP and .htaccess files
-        if (preg_match("@\.ph(p[\d+]?|t|tml|ps|ar)$@i", $this->getFilename()) || $this->getFilename() == '.htaccess') {
+        if (preg_match('@\.ph(p(\d+(\.\d+)*)?|t(ml)?|ps|ar)$@i', $this->getFilename()) || $this->getFilename() == '.htaccess') {
             $this->setFilename($this->getFilename() . '.txt');
+        }
+
+        // also block extensions that would be served with an executable/active content-type and
+        // can be used for stored XSS (e.g. via WebDAV uploads), but only when the filename
+        // itself is being set for the first time or changed (create or rename). Moving an asset
+        // to a different folder alone does not change its filename and is therefore not
+        // affected by this check. This is intentionally not applied when an existing asset is
+        // saved without its filename changing, since that would silently rename (and break
+        // every reference to) any already-stored .html/.js asset the next time it is saved for
+        // an unrelated reason (e.g. a metadata edit) - but a rename must still be checked,
+        // otherwise an asset could bypass the denylist by being uploaded under a harmless name
+        // and renamed to a dangerous one afterwards. The DB lookup needed to detect a rename is
+        // only done once the extension itself is already dangerous, so a normal save (.jpg,
+        // .pdf, ...) never pays for it.
+        if (preg_match('@\.(html?|xht(ml)?|shtml|js|mjs)$@i', $this->getFilename())) {
+            $storedFilename = $this->getId() ? basename((string) $this->getCurrentFullPath()) : null;
+            if ($storedFilename !== $this->getFilename()) {
+                $this->setFilename($this->getFilename() . '.txt');
+            }
         }
 
         if (mb_strlen($this->getFilename()) > 255) {
@@ -694,6 +771,7 @@ class Asset extends Element\AbstractElement
     protected function update(array $params = []): void
     {
         $storage = Storage::get('asset');
+
         $this->updateModificationInfos();
 
         $path = $this->getRealFullPath();
@@ -753,6 +831,7 @@ class Asset extends Element\AbstractElement
                     $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 }
 
+                $mimeType = self::resolveMimeTypeFromMapping($mimeType, $this->getFilename());
                 $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this, !($params['isUpdate'] ?? false));
                 $this->dispatchEvent($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
                 $mimeType = $mimeTypeEvent->getMimeType();
@@ -824,19 +903,279 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Whether the configured versioning policy (`assets.versions.steps` / `assets.versions.days`) allows the creation
+     * of versions at all: it does unless a limit is configured and set to 0, meaning that no versions are kept.
+     *
+     * @internal
+     */
+    public static function isVersionCreationEnabledByConfig(): bool
+    {
+        $versionsConfig = SystemSettingsConfig::get()['assets']['versions'] ?? [];
+
+        return (is_null($versionsConfig['days'] ?? null) && is_null($versionsConfig['steps'] ?? null))
+            || !empty($versionsConfig['steps'])
+            || !empty($versionsConfig['days']);
+    }
+
+    /**
+     * Whether the creation of a version is skipped when an asset is added,
+     * see `pimcore.assets.versions.skip_initial_version`
+     *
+     * @internal
+     */
+    public static function isInitialVersionSkipped(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('assets')['versions']['skip_initial_version'] ?? false);
+    }
+
+    /**
+     * Whether the persisted state may still have to be versioned before a modification: the option is enabled, or the
+     * asset was added without a version while it was enabled
+     */
+    private function isVersionOfPersistedStatePending(): bool
+    {
+        return self::isInitialVersionSkipped() || (bool) $this->getCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
+    }
+
+    /**
+     * Runs saveVersionOfPersistedState() in a transaction of its own (retried like a regular save), so that the check for
+     * existing versions and the creation of the version are serialized by the row lock of the asset.
+     *
+     * @throws Exception
+     */
+    private function saveVersionOfPersistedStateInTransaction(): void
+    {
+        /** @var Version|null $version assigned by reference in the closures below */
+        $version = null;
+
+        $this->retryableFunction(
+            retryableFunc: function () use (&$version): void {
+                $version = $this->saveVersionOfPersistedState();
+            },
+            onBeforeRetry: function () use (&$version): void {
+                // the transaction was rolled back after the version was written (e.g. its commit failed), so its row
+                // is gone, but its storage files are not transactional and have to be removed
+                if ($version instanceof Version) {
+                    $this->deleteStorageFilesOfRolledBackVersion($version);
+                }
+                $version = null;
+            }
+        );
+
+        // the persisted state is versioned (or the asset had versions already), so the marker of the skipped initial
+        // version is obsolete; it is removed from the database with the modification that is saved next
+        if ($this->getCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED) && $this->getDao()->hasVersionsForUpdate()) {
+            $this->removeCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
+        }
+    }
+
+    private function deleteStorageFilesOfRolledBackVersion(Version $version): void
+    {
+        try {
+            $version->delete();
+        } catch (Throwable $e) {
+            Logger::error(sprintf(
+                'Unable to clean up the storage files of the rolled back version %d of asset %d: %s',
+                $version->getId(),
+                $this->getId(),
+                $e->getMessage()
+            ));
+        }
+    }
+
+    /**
+     * Creates a version of the state of this asset as it is currently persisted in the database and on the storage,
+     * but only if the asset doesn't have any versions yet. This is used when no version was created on adding the
+     * asset (see `pimcore.assets.versions.skip_initial_version`) and the asset is now modified for the first time.
+     *
+     * If versioning is disabled for the current process (see Version::disable()), the persisted state is still
+     * versioned when the binary data is about to be replaced, because there is no version of the upload which would
+     * keep the original binary data restorable otherwise. Changes without new binary data are not versioned then, so
+     * saves that only enrich an asset with derived data (e.g. AssetUpdateTasksHandler) don't create any version.
+     *
+     * @internal
+     *
+     * @throws Exception
+     */
+    protected function saveVersionOfPersistedState(): ?Version
+    {
+        $versioningDisabled = !Version::isEnabled();
+
+        // the same versioning policy applies as for regular saves, see saveVersion()
+        if (($versioningDisabled && !$this->getDataChanged()) || !$this->getId() || !self::isVersionCreationEnabledByConfig()) {
+            return null;
+        }
+
+        // hasVersionsForUpdate() locks the asset row, so concurrent first modifications of the same asset are
+        // serialized here and exactly one of them creates the version of the persisted state
+        if ($this->getDao()->hasVersionsForUpdate()) {
+            return null;
+        }
+
+        $persisted = new Asset();
+        $persisted->getDao()->getById($this->getId());
+
+        if ($persisted->getType() === 'folder') {
+            return null;
+        }
+
+        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($persisted->getType());
+        if (get_class($persisted) !== $className) {
+            /** @var Asset $persisted */
+            $persisted = self::getModelFactory()->build($className);
+            $persisted->getDao()->getById($this->getId());
+        }
+
+        // open the stream of the persisted binary data before anything else happens, so that the version definitely
+        // contains the binary data as it is currently on the storage (even if this save moves or renames the asset)
+        $persisted->stream = $this->readPersistedBinaryData($persisted->getRealFullPath());
+        $persisted->getStream();
+
+        // the marker of the skipped initial version is not part of the versioned state
+        $persisted->removeCustomSetting(self::CUSTOM_SETTING_INITIAL_VERSION_SKIPPED);
+
+        // Version::save() relies on Asset::getById() (runtime cache) for the path correction in __wakeup(), which
+        // would return the instance currently being saved (possibly already carrying a new path), so the persisted
+        // instance temporarily takes its place in the runtime cache
+        $cacheKey = self::getCacheKey($this->getId());
+        $wasCached = RuntimeCache::isRegistered($cacheKey);
+        $cachedInstance = $wasCached ? RuntimeCache::get($cacheKey) : null;
+        RuntimeCache::set($cacheKey, $persisted);
+
+        if ($versioningDisabled) {
+            Version::enable();
+        }
+
+        try {
+            $assetsConfig = SystemSettingsConfig::get()['assets'];
+            $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
+
+            return $persisted->doSaveVersion(null, false, $saveStackTrace);
+        } catch (Throwable $e) {
+            // Version::save() may fail after its row and storage files were written (e.g. in a POST_SAVE listener)
+            $this->deletePartiallySavedVersionsOfPersistedState();
+
+            throw $e;
+        } finally {
+            if ($versioningDisabled) {
+                Version::disable();
+            }
+            if ($wasCached) {
+                RuntimeCache::set($cacheKey, $cachedInstance);
+            } else {
+                RuntimeCache::getInstance()->offsetUnset($cacheKey);
+            }
+            $persisted->closeStream();
+        }
+    }
+
+    /**
+     * Opens the persisted binary data for the version of the persisted state. Unlike getStream(), a read error is not
+     * replaced by an empty placeholder, since the data would be overwritten right after and be lost for good.
+     *
+     * @return resource|null null if there is no binary data on the storage, so there is nothing to preserve
+     *
+     * @throws Exception
+     */
+    private function readPersistedBinaryData(string $path)
+    {
+        $storage = Storage::get('asset');
+
+        try {
+            return $storage->readStream($path);
+        } catch (FilesystemException $e) {
+            if (!$storage->fileExists($path)) {
+                return null;
+            }
+
+            throw new Exception(sprintf(
+                'Unable to read the binary data of asset %d to version its persisted state before it is modified for the first time, the asset is not saved to keep its original data: %s',
+                $this->getId(),
+                $e->getMessage()
+            ), 0, $e);
+        }
+    }
+
+    /**
+     * Removes the version of the persisted state, including its non-transactional storage files, if saving it failed
+     * after it was (partially) written. The asset had no versions and its row is locked (see
+     * saveVersionOfPersistedStateInTransaction()), so all versions of the asset belong to the failed attempt.
+     */
+    private function deletePartiallySavedVersionsOfPersistedState(): void
+    {
+        try {
+            $listing = new Version\Listing();
+            $listing->setCondition('cid = ? AND ctype = ?', [$this->getId(), 'asset']);
+
+            foreach ($listing->load() as $version) {
+                $version->delete();
+            }
+        } catch (Throwable $e) {
+            Logger::error(sprintf(
+                'Unable to clean up the partially saved version of the persisted state of asset %d: %s',
+                $this->getId(),
+                $e->getMessage()
+            ));
+        }
+    }
+
+    /**
+     * The binary data is written to the storage before the version is saved and the storage isn't transactional,
+     * so the `existingVersion` save parameter is validated before anything is changed: the version must belong to
+     * this asset and keep its binary data (see Version::save())
+     *
+     * @throws InvalidArgumentException
+     */
+    private function assertExistingVersionCanBeWritten(array $parameters): void
+    {
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
+        if ($existingVersion === null || $this->getType() === 'folder') {
+            return;
+        }
+
+        $binaryFileHash = $existingVersion->getBinaryFileHash();
+        if ($binaryFileHash === null) {
+            return;
+        }
+
+        $ctx = hash_init('sha3-512');
+        hash_update_stream($ctx, $this->getStream());
+        if (!hash_equals($binaryFileHash, hash_final($ctx))) {
+            throw new InvalidArgumentException(sprintf(
+                'The binary data of asset %d differs from the one of version %d, it can only be saved as a new version',
+                $this->getId(),
+                $existingVersion->getId()
+            ));
+        }
+    }
+
+    /**
+     * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
+     * with custom arguments that are passed on to the versioning events; `existingVersion` (Version, internal)
+     * writes the version data into that version instead of creating a new one. It will become a regular
+     * method parameter in the next major version.
+     *
      * @param string|null $versionNote version note
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null /* , array $parameters = [] */): ?Version
     {
+        // TODO: promote $parameters to a regular signature parameter in the next major version (2027.1)
+        $parameters = 4 <= func_num_args() ? func_get_arg(3) : [];
+        if (!is_array($parameters)) {
+            throw new TypeError(sprintf('%s(): Argument #4 ($parameters) must be of type array, %s given', __METHOD__, get_debug_type($parameters)));
+        }
+        $coreParameters = ['saveVersionOnly' => true];
+        $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
+
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, $eventParameters);
                 $this->dispatchEvent($event, AssetEvents::PRE_UPDATE);
+                $eventParameters = $event->getArguments();
             }
 
             // set date
@@ -850,31 +1189,30 @@ class Asset extends Element\AbstractElement
             // create version
             $version = null;
 
+            // with `pimcore.assets.versions.skip_initial_version`, an asset without versions has to get a version of
+            // its persisted state first, the version created here would prevent that on the next save() otherwise
+            if ($saveOnlyVersion && Version::isEnabled() && $this->getType() !== 'folder' && $this->isVersionOfPersistedStatePending()) {
+                $this->saveVersionOfPersistedStateInTransaction();
+            }
+
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $assetsConfig = SystemSettingsConfig::get()['assets'];
-            if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
-                || (!empty($assetsConfig['versions']['steps']))
-                || !empty($assetsConfig['versions']['days'])
-                || $setModificationDate) {
+            // with an existing version that version is written into, no version is added
+            if (self::isVersionCreationEnabledByConfig() || $setModificationDate || $existingVersion !== null) {
+                $assetsConfig = SystemSettingsConfig::get()['assets'];
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, false, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters));
                 $this->dispatchEvent($event, AssetEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $event = new AssetEvent($this, [
-                'saveVersionOnly' => true,
-                'exception' => $e,
-            ]);
+            $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters, ['exception' => $e]));
             $this->dispatchEvent($event, AssetEvents::POST_UPDATE_FAILURE);
 
             throw $e;
@@ -893,17 +1231,24 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns the full path of the asset (listener aware)
-     *
-     *
-     * @internal
+     * Returns the frontend URL path of the asset: the full path prefixed with
+     * `pimcore.assets.frontend_prefixes.source` and passed through the FrontendEvents::ASSET_PATH
+     * event, regardless of the current context (frontend request, admin, CLI, workers).
+     * getFullPath() returns the same value in a frontend context only.
      */
     public function getFrontendFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
-        $path = urlencode_ignore_slash($path);
 
         $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
+        if ($prefix !== '' && $prefix !== null) {
+            // a prefix pointing straight at the storage (CDN/bucket) needs the pre-move physical
+            // path while a queued folder move is pending; a prefix served through Pimcore keeps
+            // the logical path (storage_operation_queue.resolve_frontend_paths: false)
+            $path = Pimcore::getContainer()->get(FrontendPathResolver::class)->resolvePhysicalPath($path, $this->getModificationDate());
+        }
+
+        $path = urlencode_ignore_slash($path);
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
@@ -1136,12 +1481,25 @@ class Asset extends Element\AbstractElement
         if (!$this->stream && $this->getType() !== 'folder') {
             try {
                 $this->stream = Storage::get('asset')->readStream($this->getRealFullPath());
+                $this->streamIsPlaceholder = false;
             } catch (Exception $e) {
+                Logger::error('Unable to read the data of asset ' . $this->getRealFullPath() . ' from storage, returning an empty placeholder stream instead: ' . $e);
                 $this->stream = tmpfile();
+                $this->streamIsPlaceholder = true;
             }
         }
 
         return $this->stream;
+    }
+
+    /**
+     * Returns true if the stream returned by getStream() is an empty placeholder that was substituted
+     * because the asset's binary data could not be read from storage (e.g. the file is missing),
+     * false if the stream contains the asset's actual data.
+     */
+    public function isStreamPlaceholder(): bool
+    {
+        return $this->streamIsPlaceholder;
     }
 
     public function getChecksum(): string
@@ -1188,6 +1546,7 @@ class Asset extends Element\AbstractElement
             $this->setDataChanged();
             $this->setDataModificationDate(time());
             $this->stream = $stream;
+            $this->streamIsPlaceholder = false;
 
             $isRewindable = @rewind($this->stream);
 
@@ -1198,6 +1557,7 @@ class Asset extends Element\AbstractElement
             }
         } elseif (is_null($stream)) {
             $this->stream = null;
+            $this->streamIsPlaceholder = false;
         }
 
         return $this;
@@ -1209,6 +1569,7 @@ class Asset extends Element\AbstractElement
             @fclose($this->stream);
             $this->stream = null;
         }
+        $this->streamIsPlaceholder = false;
     }
 
     public function getDataChanged(): bool
@@ -1547,10 +1908,16 @@ class Asset extends Element\AbstractElement
 
         foreach ($this->metadata as $md) {
             if ($md['name'] == $name) {
-                if ($language == $md['language'] || (empty($md['language']) && !$strictMatchLanguage)) {
+                if ($language == $md['language']) {
                     $data = $md;
 
                     break;
+                }
+
+                // Keep scanning for an exact language match before settling for the
+                // language-less fallback, since it may appear earlier in the array.
+                if ($data === null && empty($md['language']) && !$strictMatchLanguage) {
+                    $data = $md;
                 }
             }
         }
@@ -1567,6 +1934,7 @@ class Asset extends Element\AbstractElement
         try {
             $bytes = Storage::get('asset')->fileSize($this->getRealFullPath());
         } catch (Exception $e) {
+            Logger::error('Unable to determine the file size of asset ' . $this->getRealFullPath() . ': ' . $e);
             $bytes = 0;
         }
 
@@ -1676,6 +2044,45 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Moves a directory (a folder's subtree) on the given storage: attempts the native
+     * move first (atomic and cheap where the adapter supports it, e.g. on the local
+     * filesystem) and falls back to relocating the contents file by file.
+     *
+     * Whether the fallback is needed is decided by what is actually left at the old
+     * path, never by the move() outcome alone: on some S3-compatible storages a
+     * directory is exposed as a copyable zero-byte object at its bare key, so move()
+     * reports success after relocating just that object while the entire subtree
+     * stays at the old prefix.
+     *
+     * @throws FilesystemException
+     */
+    private function moveDirectoryOnStorage(FilesystemOperator $storage, string $oldPath): void
+    {
+        try {
+            $storage->move($oldPath, $this->getRealFullPath());
+        } catch (UnableToMoveFile) {
+            // expected on storages without native directory rename - covered by the fallback below
+        }
+
+        if ($this->isStorageOperationQueueEnabled()) {
+            // the queue-aware adapter owns the move: a returned move() is either a real native
+            // rename or a queued operation whose source content must stay in place until the
+            // processor drains it - the fallback must not touch it
+            return;
+        }
+
+        if ($storage->directoryExists($oldPath)) {
+            //update children, if the parent move did not (fully) relocate them
+            $this->updateChildPaths($storage, $oldPath);
+        }
+    }
+
+    private function isStorageOperationQueueEnabled(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('assets')['storage_operation_queue']['enabled'] ?? false);
+    }
+
+    /**
      * @throws FilesystemException
      */
     private function updateChildPaths(
@@ -1764,16 +2171,34 @@ class Asset extends Element\AbstractElement
             $this->clearFolderThumbnails($this);
 
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
-                $storage = Storage::get($storageName);
-
-                try {
-                    $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
-                } catch (UnableToMoveFile $e) {
-                    //update children, if unable to move parent
-                    //if there is an error, we can ignore it
-                    $this->updateChildPaths($storage, $oldPath, null, true);
-                }
+                $this->moveThumbnailDirectoryOnStorage(Storage::get($storageName), $oldThumbnailsPath, $newThumbnailsPath);
             }
+        }
+    }
+
+    /**
+     * Moves one asset's (or folder's) thumbnail directory on the given storage - same
+     * post-condition approach as moveDirectoryOnStorage(): the per-file fallback runs
+     * based on what is left at the old path, not on the move() outcome; with the storage
+     * operation queue enabled the adapter owns the operation instead.
+     *
+     * @throws FilesystemException
+     */
+    private function moveThumbnailDirectoryOnStorage(
+        FilesystemOperator $storage,
+        string $oldThumbnailsPath,
+        string $newThumbnailsPath
+    ): void {
+        try {
+            $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
+        } catch (UnableToMoveFile) {
+            // expected on storages without native directory rename - covered by the fallback below
+        }
+
+        if (!$this->isStorageOperationQueueEnabled() && $storage->directoryExists($oldThumbnailsPath)) {
+            //update children, if the parent move did not (fully) relocate them
+            //if there is an error, we can ignore it
+            $this->updateChildPaths($storage, $oldThumbnailsPath, $newThumbnailsPath, true);
         }
     }
 

@@ -29,6 +29,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 
@@ -53,7 +54,7 @@ class Item extends Model\AbstractModel
 
     protected int $date;
 
-    protected string $deletedby;
+    protected string $deletedby = '';
 
     public static function create(Element\ElementInterface $element, ?Model\User $user = null): void
     {
@@ -82,6 +83,13 @@ class Item extends Model\AbstractModel
         $dummy = null;
         $raw = Storage::get('recycle_bin')->read($this->getStorageFile());
         $element = Serialize::unserialize($raw, true);
+
+        if (Admin::getCurrentUser()) {
+            $parent = $element->getParent();
+            if ($parent && !$parent->isAllowed('publish')) {
+                throw new Exception('Not sufficient permissions');
+            }
+        }
 
         // check for element with the same name
         if ($element instanceof Document) {
@@ -114,13 +122,6 @@ class Item extends Model\AbstractModel
             }
             $dummy->save(['isRecycleBinRestore' => true]);
             Model\Version::enable();
-        }
-
-        if (\Pimcore\Tool\Admin::getCurrentUser()) {
-            $parent = $element->getParent();
-            if ($parent && !$parent->isAllowed('publish')) {
-                throw new Exception('Not sufficient permissions');
-            }
         }
 
         try {

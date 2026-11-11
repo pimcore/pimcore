@@ -104,7 +104,7 @@ trait DefaultValueTrait
             try {
                 // make sure we get the inherited value of the parent
                 $parentValue = DataObject\Service::useInheritedValues(true,
-                    fn () => $owner?->getValueFromParent($this->getName(), []),
+                    fn () => $owner->getValueFromParent($this->getName(), []),
                 );
 
                 if (!$this->isEmpty($parentValue) || $parentValue === null) {

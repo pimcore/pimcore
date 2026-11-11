@@ -20,8 +20,18 @@ use Pimcore\Model\DataObject\Data\CalculatedValue;
 
 class Calculator implements CalculatorClassInterface
 {
+    /**
+     * Number of times compute() has been called since the last reset.
+     *
+     * Tests asserting that a code path does not evaluate calculated values reset
+     * this counter and check it afterwards.
+     */
+    public static int $computeCount = 0;
+
     public function compute(Concrete $object, CalculatedValue $context): string
     {
+        self::$computeCount++;
+
         $value = '';
         if (RuntimeCache::isRegistered('modeltest.testCalculatedValue.value')) {
             $value = RuntimeCache::get('modeltest.testCalculatedValue.value');

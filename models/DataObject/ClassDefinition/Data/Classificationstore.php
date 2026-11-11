@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -329,7 +331,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $keyConfig
                         );
 
-                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
+                        $editmodeParams = [];
+                        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\Password) {
+                            // a password field has to know the stored value to be able to keep it
+                            $getInheritedValues = DataObject::getGetInheritedValues();
+                            DataObject::setGetInheritedValues(false);
+
+                            try {
+                                $editmodeParams['injectedData'] = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
+                            } finally {
+                                DataObject::setGetInheritedValues($getInheritedValues);
+                            }
+                        }
+                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value, null, $editmodeParams);
                         $activeGroups[$groupId] = true;
 
                         $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);
@@ -554,9 +568,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->layout;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function setName(string $name): static
     {
-        $this->name = $name;
+        parent::setName($name);
 
         return $this;
     }
@@ -602,7 +619,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
         $subItems = [];
-        $getInheritedValues = DataObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems && count($activeGroups) > $this->maxItems) {
@@ -626,9 +642,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                             $object = $data->getObject();
                             if ($object->getClass()->getAllowInherit()) {
-                                DataObject::setGetInheritedValues(true);
-                                $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
-                                DataObject::setGetInheritedValues($getInheritedValues);
+                                $value = DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                );
                             } else {
                                 $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
@@ -1121,7 +1138,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";

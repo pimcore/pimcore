@@ -11,4 +11,7 @@ return [
     "Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\GenericExecutionEngineBundle\\PimcoreGenericExecutionEngineBundle" => [
+        "all" => TRUE
+    ],
 ];

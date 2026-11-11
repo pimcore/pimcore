@@ -135,17 +135,21 @@ class Dao extends Model\Dao\AbstractDao
             } else {
                 $countsPerCid = [];
 
+                // ranked by the version count, the order the states were saved in: a version that is published in
+                // place (see AbstractElement::doSaveVersion()) keeps its id but takes the element's new version count,
+                // so it isn't necessarily among the newest ids. The version of the element's current state is always kept
                 $sql = '
                     SELECT sub.cid as cid, sub.id as id, sub.`date`
                     FROM (
-                        SELECT id, cid, versions.`date`,
-                               ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
+                        SELECT id, cid, versions.`date`, versionCount,
+                               ROW_NUMBER() OVER (PARTITION BY cid ORDER BY versionCount DESC, id DESC) AS rownumber
                         FROM versions
                         WHERE ctype = ? AND public = 0 AND autosave = 0
                     ) sub
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
                     WHERE rownumber > ? AND IFNULL(active, 0) = 0 AND element.modificationDate >= sub.`date`
+                    AND NOT (sub.versionCount = element.versionCount AND sub.`date` = element.modificationDate)
                 ';
 
                 $iterator = $this->db->iterateAssociative(

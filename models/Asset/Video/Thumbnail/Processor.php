@@ -111,7 +111,10 @@ class Processor
             $thumbDir = $asset->getRealPath().'/'.$asset->getId().'/video-thumb__'.$asset->getId().'__'.$config->getName();
             $filename = preg_replace("/\." . preg_quote(pathinfo($asset->getFilename(), PATHINFO_EXTENSION), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
-            $tmpPath = File::getLocalTempFilePath($format);
+            // The file is written by the VideoConvertMessage handler in a messenger worker, not by the current
+            // process. Without $keep, the current process (e.g. the web request rendering the video) deletes
+            // the file on shutdown, which can happen while ffmpeg is still writing it. execute() removes it.
+            $tmpPath = File::getLocalTempFilePath($format, true);
 
             if ($converter = \Pimcore\Video::newInstance()) {
                 $converter->setAudioBitrate($config->getAudioBitrate());
@@ -249,7 +252,10 @@ class Processor
                     }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
 
-                    fclose($source);
+                    // some storage adapters close the passed stream themselves inside writeStream()
+                    if (is_resource($source)) {
+                        fclose($source);
+                    }
 
                     unlink($converter->getDestinationFile());
 
@@ -282,6 +288,11 @@ class Processor
                 $converter->destroy();
             } catch (Exception $e) {
                 Logger::error((string) $e);
+            } finally {
+                // the destination file is created with $keep = true, so it has to be cleaned up here in any case
+                if (is_file($converter->getDestinationFile())) {
+                    @unlink($converter->getDestinationFile());
+                }
             }
         }
 

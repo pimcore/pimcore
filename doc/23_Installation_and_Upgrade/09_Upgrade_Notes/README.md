@@ -1,5 +1,185 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.4
+
+### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
+
+A WYSIWYG field (data object field and Document editable) no longer reduces `<a pimcore_id=... pimcore_type=...>` links
+to unpublished elements, or to objects whose class has no link generator, to their text when it is saved. Only the
+frontend rendering still reduces them.
+
+To make this work for every kind of save (Studio editor, batch edit, scheduled publishing, imports, copy and "update
+references"), the field getters keep these anchors in the following contexts:
+
+- while an object is saved, copied or has its references updated: validation, version and dao reads, and save
+  listeners calling the getters (a listener running outside this scope is not affected),
+- in the admin getters, in versions and in exports,
+- in the query columns, through `getDataForQueryResource()`.
+
+If your own code renders the value of such a getter publicly in one of these contexts (for example a listener that
+outputs getter content during a save, or an integration that publishes the query column), apply
+`Pimcore\Tool\Text::wysiwygText()` to it explicitly. Its signature is unchanged; the variant that keeps the anchors is
+the new `Text::wysiwygTextKeepingLinks()`.
+
+Known limit: custom code that reads a block field outside a save and then saves the object itself still writes the
+reduced text back.
+
+## Pimcore 2026.3.3
+
+### [Core] `schedule_tasks` indexes: the migration waits for open transactions
+
+Migration `Version20261015100000` replaces the single-column `cid` and `ctype` indexes on `schedule_tasks` with a
+composite `(cid, ctype)` index. It does this in a single `ALTER TABLE` statement, so the table is never without an
+index for lookups by element while the migration runs, and InnoDB performs the change in place without rebuilding
+the table.
+
+The statement does need a metadata lock on `schedule_tasks`. It **waits for every open transaction that has used
+the table**, and every element save (asset, document, data object) holds such a transaction until it commits.
+While the migration waits, new statements on `schedule_tasks`, and with them new element saves, queue behind it.
+On an installation with continuous saves (imports, API clients, messenger workers) run the migration while those
+are paused, or expect a short stall of element saves until the open transactions have committed. The change itself
+takes well under a second once the lock is granted.
+
+If your own code queries `schedule_tasks` by `ctype` alone, note that this index no longer exists; the composite
+index serves lookups by `cid` and by `cid` and `ctype`.
+
+Saving an element whose scheduled tasks were neither loaded nor set no longer deletes and rewrites its rows in
+`schedule_tasks`. A save that sets the scheduled tasks explicitly, and deleting an element, still remove the
+element's rows, including rows another transaction committed in the meantime.
+
+## Pimcore 2026.3.0
+
+### [Documents] Static page generator: frontend requests only store a static page when it is safe to share
+
+When a frontend request renders a document that has the static page generator enabled, the
+response is only stored as its static page if all of the following apply:
+
+- the response status is `200` and its `Cache-Control` header has no `no-store` directive,
+- the request has neither a query string nor an `Authorization` header,
+- the request carries no session data (the same check the full page cache uses; session keys
+  can be excluded via the `FullPageCacheEvents::IGNORED_SESSION_KEYS` event),
+- the resolved document is the one addressed by the request path. A sub-path that falls back
+  to an ancestor document, or a static route rendered with a document, no longer overwrites
+  that document's static page.
+
+Requests that do not qualify still render normally; the static page is written by the next
+qualifying request, the maintenance job or `pimcore:documents:generate-static-pages`.
+
+If the static page router (`pimcore.documents.static_page_router`) is enabled, requests with
+a query string or an `Authorization` header are no longer answered from the stored static pages
+and are rendered instead.
+Static pages delivered directly by the web server, as configured in the documentation, are not
+affected.
+
+## Pimcore 2026.2.11
+
+### [Assets] Storage operation queue: `pimcore:assets:storage-queue:process` now stops at the first failing row
+
+The draining command of the opt-in asset storage operation queue used to log a failing
+row and carry on with the rest of the queue. It now **ends the run at the first error**:
+it exits non-zero, names the row it stopped on, and leaves every row it had not reached
+queued for the next run. Nothing is retried automatically.
+
+The reason is that rows are not independent. A folder move that could not complete still
+holds the content its later delete would sweep, and a failure in this job is rarely
+row-specific - credentials, a permission the endpoint does not serve, a quota - so the rows
+after it would fail the same way. Stopping turns thousands of identical errors into one
+diagnosable failure, which suits a command that is meant to run unattended overnight.
+
+If you schedule this command, expect a run that used to finish "with failures" to now fail
+early instead; fix the cause and rerun. Existing invocations remain valid as written, but
+if yours relied on the rows *after* a failure still being processed in the same run, add
+the new `--continue-on-error` option to keep that behaviour. It is also the option to use
+for a supervised one-off migration where you want the bulk to proceed and read the errors
+afterwards. No option controlled this before, so nothing else in the command line changes.
+
+## Pimcore 2026.2.10
+
+### [Assets]
+
+Image thumbnails using Pimcore's existing non-rasterized SVG source-output route now expose the original SVG consistently through `exists()`, `getStream()` and `getFileSize()`. These calls no longer generate an unused raster thumbnail or dispatch `AssetEvents::IMAGE_THUMBNAIL`; integrations that relied on those low-level side effects should be adjusted.
+
+### [Notifications]
+
+Notification `creationDate` / `modificationDate` are now written in UTC, which is the convention
+these columns have used since the `Version20230321133700` migration converted the existing rows,
+and which every reader already assumes. Previously they were written in the local timezone, so with
+a non-UTC `general.timezone` the notification date shown in Studio and in the Classic UI was shifted
+by the zone offset (for example two hours ahead for `Europe/Berlin` during DST).
+
+Rows written before this fix remain in local time and will still be displayed with that offset.
+They cannot be corrected automatically, because a local-time row is indistinguishable from a
+correctly stored UTC row. If the skew on historical entries matters for your instance, convert the
+affected rows manually, for example:
+
+```sql
+-- 1. Preflight. This must return a datetime, not NULL. NULL means the named time-zone
+--    tables are not loaded (see mysql_tzinfo_to_sql) and CONVERT_TZ() cannot be used -
+--    load them first, or convert with a fixed INTERVAL instead.
+SELECT CONVERT_TZ('2000-01-01 00:00:00', 'Europe/Berlin', 'UTC');
+
+-- 2. Convert. COALESCE keeps the original value if the conversion yields NULL, so a
+--    missing time-zone table makes this a no-op rather than erasing the dates.
+UPDATE notifications
+SET creationDate = COALESCE(CONVERT_TZ(creationDate, 'Europe/Berlin', 'UTC'), creationDate),
+    modificationDate = COALESCE(CONVERT_TZ(modificationDate, 'Europe/Berlin', 'UTC'), modificationDate)
+WHERE id > <last id created before the upgrade>;
+```
+
+Take a backup first, and note that a single named-zone conversion is only exact if all the rows
+you convert fall on the same side of a DST boundary.
+
+Directly after the upgrade, unread notifications created shortly before it may be re-announced by
+the Classic UI popup for up to the zone-offset duration - their local-time `creationDate` sits
+"in the future" relative to the corrected UTC polling bound. This resolves itself once that
+offset has elapsed (or once the rows are converted / marked as read).
+
+## Pimcore 2026.2.9
+
+### Deprecations
+
+#### [Document Editor]
+
+The `height` option of the `multiselect` document editable is deprecated and no longer has any effect.
+The Studio UI does not interpret it — the field is sized via `width` only.
+
+## Pimcore 2026.2.8
+
+### [Maintenance]
+
+-   The housekeeping maintenance task no longer removes an empty directory as soon as it finds one. A directory is now removed only once it is also older than the configured retention (`pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than` for the profiler directory, 30 minutes by default). Removing empty directories on sight could delete one that another process had just created and was about to write into, which made the write fail. Expect empty directories to linger for up to the retention period before being cleaned up.
+-   Files whose name *begins* with `-low-quality-preview.svg` are now excluded from deletion as intended. The previous check treated a match at position 0 as "no match", so those files were deleted despite the exclusion.
+
+## Pimcore 2026.2.7
+
+### Possible data loss on 11.5.21, 12.3.12, 12.3.13, 2026.2.5 and 2026.2.6
+
+Those releases restricted object deserialization for two stores that legitimately contain PHP
+objects, so affected values were read back empty:
+
+- **`block` fields** — the child types `externalImage`, `consent`, `date`, `datetime`,
+  `structuredTable`, `hotspotimage`, `imageGallery` and `dateRange`, including inside a block
+  nested in `localizedfields`. A `dateRange` child raised
+  `Carbon\Exceptions\InvalidPeriodParameterException` on save.
+- **Document `image` editables** — hotspot and marker metadata, which made rendering a page with
+  such an editable fail with `Cannot use object of type __PHP_Incomplete_Class as array`.
+
+Reading was affected, so **saving an object or document while running one of those versions
+persisted the empty value**. A field marked mandatory blocked the save instead, which left the
+stored value intact.
+
+If you ran any of those versions, check the affected fields after upgrading. Versioning was not
+affected, so earlier values can be recovered from the element's version history.
+
+### WebDAV move failed on 12.3.7 and later
+
+Independently of the above, and over a wider range of releases (**12.3.7** and later, **2026.1.3**
+and later), replacing an asset over WebDAV failed when the client deleted the file and then moved
+the new one into place — the pattern used by several desktop applications, Photoshop among them.
+The move aborted with `The script tried to call a method on an incomplete object`.
+
+No data was lost in this case; the operation simply did not complete.
+
 ## Pimcore 12.3.12
 
 ### Deprecations

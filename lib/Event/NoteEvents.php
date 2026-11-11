@@ -21,4 +21,11 @@ final class NoteEvents
      * @var string
      */
     const POST_ADD = 'pimcore.note.postAdd';
+
+    /**
+     * @Event("Pimcore\Event\Model\ModelEvent")
+     *
+     * @var string
+     */
+    const POST_DELETE = 'pimcore.note.postDelete';
 }
