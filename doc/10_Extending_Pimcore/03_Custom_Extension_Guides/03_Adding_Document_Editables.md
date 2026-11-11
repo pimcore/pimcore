@@ -43,6 +43,30 @@ pimcore:
                 markdown: \App\Model\Document\Editable\Markdown
 ```
 
+### Objects in the Stored Data
+
+An editable whose `getDataForResource()` returns an array is stored as one serialized PHP value. Since Pimcore 2026.3.5
+it is read back (`getUnserializedData()`) with an
+[`allowed_classes`](https://www.php.net/manual/en/function.unserialize.php) list that only covers the classes the core
+editables store; any other class is reduced to `__PHP_Incomplete_Class`, so a forged value can never instantiate
+arbitrary objects.
+
+Prefer storing plain arrays and scalars - for example the id of a referenced element instead of the element itself. If
+your editable has to store objects of its own, register their classes, otherwise those values are lost on the next
+load and save:
+
+```yaml
+# config/pimcore/config.yaml
+
+pimcore:
+    documents:
+        editables:
+            unserialize_allowed_classes:
+                - App\Model\Document\Editable\MarkdownOptions
+```
+
+The classes listed here are merged with the built-in ones.
+
 ## 3) Create the Studio UI Plugin
 
 In Pimcore Studio, custom editables are registered as dynamic types via a Studio plugin. You need to:

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -100,6 +101,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
         foreach ($cols as $c) {
             $c['key'] = strtolower($c['key']);
+            $this->validateKey($c['key']);
             $this->cols[] = $c;
         }
 
@@ -126,10 +128,27 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
         foreach ($rows as $r) {
             $r['key'] = strtolower($r['key']);
+            $this->validateKey($r['key']);
             $this->rows[] = $r;
         }
 
         return $this;
+    }
+
+    /**
+     * Column/row keys become physical database column names (see calculateDbColumns()) and are
+     * emitted into ALTER TABLE DDL. Unlike Data::setName(), these keys are array-key components,
+     * not PHP field identifiers, and every DDL sink that consumes them now quotes via
+     * Connection::quoteSingleIdentifier() - so only the byte that could break out of that quoting
+     * (a backtick) needs to be rejected here; anything else (digits-first, spaces, punctuation)
+     * is a legacy-safe key that must keep loading for already-persisted class definitions, which
+     * pass through this same setter on every hydration via VarExporterInterface::__set_state().
+     */
+    private function validateKey(string $key): void
+    {
+        if (str_contains($key, '`')) {
+            throw new InvalidArgumentException(sprintf('Invalid structured table key "%s": backticks are not allowed', $key));
+        }
     }
 
     /**

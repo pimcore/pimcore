@@ -605,12 +605,16 @@ class Document extends Element\AbstractElement
             // delete also unpublished children
             $unpublishedStatus = self::doHideUnpublished();
             self::setHideUnpublished(false);
-            foreach ($this->getChildren(true) as $child) {
-                if (!$child instanceof WrapperInterface) {
-                    $child->delete();
+
+            try {
+                foreach ($this->getChildren(true) as $child) {
+                    if (!$child instanceof WrapperInterface) {
+                        $child->delete();
+                    }
                 }
+            } finally {
+                self::setHideUnpublished($unpublishedStatus);
             }
-            self::setHideUnpublished($unpublishedStatus);
         }
 
         // remove all properties

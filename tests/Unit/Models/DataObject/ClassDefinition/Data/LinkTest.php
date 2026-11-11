@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
+use Pimcore\Model\DataObject\Data\Link as LinkData;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -56,5 +57,53 @@ class LinkTest extends TestCase
             ObjectInjectionProbe::$wakeupCalled,
             '__wakeup() must not be called when the class is excluded by the deserialization allowlist'
         );
+    }
+
+    private function buildLink(string $direct): LinkData
+    {
+        $link = new LinkData();
+        $link->setLinktype('direct');
+        $link->setDirect($direct);
+
+        return $link;
+    }
+
+    /**
+     * Regression test for https://github.com/pimcore/platform-version/issues/318.
+     *
+     * The version-comparison template (diff_versions.html.twig) falls back to an empty
+     * string for a localized value that is not set in a given language. That empty string
+     * used to be passed straight into isEqualArray(?array $array1, ...), which threw a
+     * TypeError instead of the intended "no diff" / "diff" result.
+     */
+    public function testIsEqualDoesNotThrowForEmptyStringOperands(): void
+    {
+        $definition = new Link();
+
+        $this->assertTrue($definition->isEqual('', null), 'empty string vs null must be treated as equal (both "no link")');
+        $this->assertTrue($definition->isEqual(null, ''), 'null vs empty string must be treated as equal (both "no link")');
+        $this->assertTrue($definition->isEqual('', ''), 'empty string vs empty string must be treated as equal');
+    }
+
+    public function testIsEqualDetectsDiffBetweenEmptyAndRealLink(): void
+    {
+        $definition = new Link();
+        $link = $this->buildLink('https://www.pimcore.com');
+
+        $this->assertFalse($definition->isEqual('', $link), 'empty string vs a real link must be reported as a diff');
+        $this->assertFalse($definition->isEqual($link, ''), 'a real link vs empty string must be reported as a diff');
+        $this->assertFalse($definition->isEqual(null, $link), 'null vs a real link must be reported as a diff');
+    }
+
+    public function testIsEqualStillComparesTwoRealLinksCorrectly(): void
+    {
+        $definition = new Link();
+
+        $linkA = $this->buildLink('https://www.pimcore.com');
+        $linkB = $this->buildLink('https://www.pimcore.com');
+        $linkC = $this->buildLink('https://www.pimcore.org');
+
+        $this->assertTrue($definition->isEqual($linkA, $linkB), 'two links with identical data must be equal');
+        $this->assertFalse($definition->isEqual($linkA, $linkC), 'two links with different data must not be equal');
     }
 }

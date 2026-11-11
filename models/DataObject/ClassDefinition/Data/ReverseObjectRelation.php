@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 
-class ReverseObjectRelation extends ManyToManyObjectRelation
+class ReverseObjectRelation extends ManyToManyObjectRelation implements DerivedValueInterface
 {
     /**
      * @internal
@@ -40,6 +40,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      *
      */
     public string $ownerFieldName;
+
+    public function isValueDerived(): bool
+    {
+        return true;
+    }
 
     /**
      * ReverseObjectRelation must be lazy loading!
@@ -162,20 +167,31 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             return [];
         }
 
-        $db = Db::get();
-        $relations = $db->fetchAllAssociative('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
+        $data = $this->loadData($this->loadRelationRows($object, $params), $object, $params);
+        $object->markFieldDirty($this->getName(), false);
 
-        $relations = array_map(static function ($relation) {
+        return $data['data'];
+    }
+
+    /**
+     * @internal
+     */
+    protected function loadRelationRows(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
+    {
+        if ($this->getOwnerClassId() === null) {
+            return [];
+        }
+
+        $db = Db::get();
+        // the referencing relations are returned in the order in which they were stored
+        $relations = $db->fetchAllAssociative('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY id", [$object->getId(), $this->getOwnerFieldName()]);
+
+        return array_map(static function ($relation) {
             $relation['dest_id'] = $relation['src_id'];
             unset($relation['src_id']);
 
             return $relation;
         }, $relations);
-
-        $data = $this->loadData($relations, $object, $params);
-        $object->markFieldDirty($this->getName(), false);
-
-        return $data['data'];
     }
 
     public function getCacheTags(mixed $data, array $tags = []): array

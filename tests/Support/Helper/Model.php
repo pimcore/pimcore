@@ -17,6 +17,8 @@ use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObjectField;
+use Pimcore\Tests\Support\Util\OptionsProvider\DefaultingOptionsProvider;
 
 class Model extends AbstractDefinitionHelper
 {
@@ -42,6 +44,7 @@ class Model extends AbstractDefinitionHelper
 
             $csField = $this->createDataChild('classificationstore', 'csstore');
             $csField->setStoreId($params['storeId']);
+            $csField->setLocalized((bool) ($params['localized'] ?? false));
             $panel->addChild($csField);
 
             $root->addChild($rootPanel);
@@ -313,11 +316,38 @@ class Model extends AbstractDefinitionHelper
             $block->addChild($this->createDataChild('input', 'blockinput'));
             $block->addChild($this->createDataChild('link', 'blocklink'));
             $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
+            $block->addChild($this->createDataChild('imageGallery', 'blockimagegallery'));
+
+            // Custom field type with a custom block marshaller that stores a project value object;
+            // covered by BlockTest::testCustomMarshallerValueObjectInsideBlock().
+            $customValueObject = new CustomValueObjectField();
+            $customValueObject->setName('blockcustomvalueobject');
+            $customValueObject->setTitle('blockcustomvalueobject');
+            $block->addChild($customValueObject);
 
             $block->addChild($this->createDataChild('geopoint', 'blockgeopoint'));
             $block->addChild($this->createDataChild('geobounds', 'blockgeobounds'));
             $block->addChild($this->createDataChild('geopolygon', 'blockgeopolygon'));
             $block->addChild($this->createDataChild('geopolyline', 'blockgeopolyline'));
+
+            // Child types whose block representation legitimately contains PHP objects, either
+            // because their block marshaller rebuilds a value object or because normalize() keeps
+            // one. Covered by BlockTest::testObjectValueTypesInsideBlock().
+            $block->addChild($this->createDataChild('externalImage', 'blockexternalImage'));
+            $block->addChild($this->createDataChild('consent', 'blockconsent'));
+            $block->addChild($this->createDataChild('date', 'blockdate'));
+            $block->addChild($this->createDataChild('datetime', 'blockdatetime'));
+            $block->addChild($this->createDataChild('dateRange', 'blockdateRange'));
+            $block->addChild($this->createDataChild('structuredTable', 'blockstructuredTable')
+                ->setCols([
+                    ['position' => 1, 'key' => 'col1', 'type' => 'number', 'label' => 'collabel1'],
+                    ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2'],
+                ])
+                ->setRows([
+                    ['position' => 1, 'key' => 'row1', 'label' => 'rowlabel1'],
+                    ['position' => 2, 'key' => 'row2', 'label' => 'rowlabel2'],
+                ])
+            );
 
             $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
@@ -336,6 +366,11 @@ class Model extends AbstractDefinitionHelper
             $lblock->addChild($this->createDataChild('link', 'lblocklink'));
             $lblock->addChild($this->createDataChild('hotspotimage', 'lblockhotspotimage'));
 
+            // Same object-carrying child types, nested one level deeper (block inside
+            // localizedfields), which routes through BlockDataMarshaller\Localizedfields.
+            $lblock->addChild($this->createDataChild('externalImage', 'lblockexternalImage'));
+            $lblock->addChild($this->createDataChild('date', 'lblockdate'));
+
             $lblock->addChild($this->createDataChild('advancedManyToManyRelation', 'lblockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['unittest'])
@@ -349,6 +384,38 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
             $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a class with a block that contains localized fields.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LocalizedBlock(string $name = 'unittestLocalizedBlock', string $filename = 'localized-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('lfblock');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('input', 'blocklinput'));
+            $block->addChild($lFields);
+
+            $panel->addChild($block);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
         }
 
         return $class;
@@ -458,6 +525,39 @@ class Model extends AbstractDefinitionHelper
             $mandatoryInputWithDefault = $this->createDataChild('input', 'mandatoryInputWithDefault', true);
             $mandatoryInputWithDefault->setDefaultValue('default');
             $panel->addChild($mandatoryInputWithDefault);
+
+            /** @var ClassDefinition\Data\Numeric $mandatoryNumericWithZeroDefault */
+            $mandatoryNumericWithZeroDefault = $this->createDataChild('numeric', 'mandatoryNumericWithZeroDefault', true);
+            $mandatoryNumericWithZeroDefault->setDefaultValue(0);
+            $panel->addChild($mandatoryNumericWithZeroDefault);
+
+            /** @var ClassDefinition\Data\Checkbox $mandatoryCheckboxWithFalseDefault */
+            $mandatoryCheckboxWithFalseDefault = $this->createDataChild('checkbox', 'mandatoryCheckboxWithFalseDefault', true);
+            $mandatoryCheckboxWithFalseDefault->setDefaultValue(0);
+            $panel->addChild($mandatoryCheckboxWithFalseDefault);
+
+            // defaults that are resolved at runtime instead of being configured as a default value
+            /** @var ClassDefinition\Data\Date $mandatoryDateWithCurrentDate */
+            $mandatoryDateWithCurrentDate = $this->createDataChild('date', 'mandatoryDateWithCurrentDate', true);
+            $mandatoryDateWithCurrentDate->setUseCurrentDate(true);
+            $panel->addChild($mandatoryDateWithCurrentDate);
+
+            /** @var ClassDefinition\Data\Datetime $mandatoryDatetimeWithCurrentDate */
+            $mandatoryDatetimeWithCurrentDate = $this->createDataChild('datetime', 'mandatoryDatetimeWithCurrentDate', true);
+            $mandatoryDatetimeWithCurrentDate->setUseCurrentDate(true);
+            $panel->addChild($mandatoryDatetimeWithCurrentDate);
+
+            /** @var ClassDefinition\Data\Select $mandatorySelectWithProviderDefault */
+            $mandatorySelectWithProviderDefault = $this->createDataChild('select', 'mandatorySelectWithProviderDefault', true);
+            $mandatorySelectWithProviderDefault->setOptionsProviderType(ClassDefinition\Data\OptionsProviderInterface::TYPE_CLASS);
+            $mandatorySelectWithProviderDefault->setOptionsProviderClass(DefaultingOptionsProvider::class);
+            $panel->addChild($mandatorySelectWithProviderDefault);
+
+            /** @var ClassDefinition\Data\Multiselect $mandatoryMultiselectWithProviderDefault */
+            $mandatoryMultiselectWithProviderDefault = $this->createDataChild('multiselect', 'mandatoryMultiselectWithProviderDefault', true);
+            $mandatoryMultiselectWithProviderDefault->setOptionsProviderType(ClassDefinition\Data\OptionsProviderInterface::TYPE_CLASS);
+            $mandatoryMultiselectWithProviderDefault->setOptionsProviderClass(DefaultingOptionsProvider::class);
+            $panel->addChild($mandatoryMultiselectWithProviderDefault);
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
@@ -624,9 +724,17 @@ class Model extends AbstractDefinitionHelper
             $lFields->addChild($this->createDataChild('input'));
             $lFields->addChild($this->createDataChild('textarea'));
             $lFields->addChild($this->createDataChild('wysiwyg'));
+            $lCalculatedInherited = $this->createDataChild('calculatedValue', 'lcalculatedinherited');
+            $lCalculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lCalculatedInherited);
+            $lFields->addChild($this->createDataChild('consent', 'lconsentinherited'));
 
             $otherPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('Layout');
             $otherPanel->addChild($this->createDataChild('input', 'normalinput'));
+            $calculatedInherited = $this->createDataChild('calculatedValue', 'calculatedinherited');
+            $calculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $otherPanel->addChild($calculatedInherited);
+            $otherPanel->addChild($this->createDataChild('consent', 'consentinherited'));
             $otherPanel->addChild($this->createDataChild('image', 'yx'));
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
@@ -648,6 +756,104 @@ class Model extends AbstractDefinitionHelper
         }
 
         return $class;
+    }
+
+    /**
+     * Set up a class with a Block that holds a wysiwyg field.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_WysiwygBlock(string $name = 'unittestWysiwygBlock', string $filename = 'wysiwyg-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('testblock');
+            $block->addChild($this->createDataChild('wysiwyg', 'blockwysiwyg'));
+
+            $panel->addChild($block);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a class with a lazy loading Block inside localizedfields, inheritance enabled.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LazyLocalizedBlock(string $name = 'unittestLazyBlock', string $filename = 'lazy-block-import.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lblock = new ClassDefinition\Data\Block();
+            $lblock->setName('lazyblock');
+            $lblock->setLazyLoading(true);
+            $lblock->addChild($this->createDataChild('input', 'lazyblockinput'));
+
+            $lFields->addChild($lblock);
+
+            $panel->addChild($lFields);
+            $panel->addChild($this->createDataChild('fieldcollections', 'lazyfc')
+                ->setAllowedTypes(['LazyBlockFc']));
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a fieldcollection with a lazy loading Block inside localizedfields.
+     *
+     * @throws Exception
+     */
+    public function setupFieldcollection_LazyBlockFc(string $name = 'LazyBlockFc', string $filename = 'lazy-block-fc-import.json'): ?Definition
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lblock = new ClassDefinition\Data\Block();
+            $lblock->setName('lazyblock');
+            $lblock->setLazyLoading(true);
+            $lblock->addChild($this->createDataChild('input', 'lazyblockinput'));
+
+            $lFields->addChild($lblock);
+
+            $panel->addChild($lFields);
+            $root->addChild($rootPanel);
+            $definition = $this->createFieldcollection($name, $root, $filename);
+        }
+
+        return $definition;
     }
 
     protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, ?string $id = null): DataObject\ClassDefinitionInterface
@@ -831,12 +1037,121 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Sets up a class with an object bricks field only, so its brick container class is not loaded by other tests
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_LocalizedBrickRelation(
+        string $name = 'LocalizedBrickRelation',
+        string $filename = 'relations/class_LocalizedBrickRelation_export.json'
+    ): ?DataObject\ClassDefinitionInterface {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $panel->addChild($this->createDataChild('objectbricks', 'bricks'));
+            $root->addChild($panel);
+
+            $class = $this->createClass($name, $root, $filename, false, 'LBR');
+        }
+
+        return $class;
+    }
+
+    /**
+     * Sets up a field collection with localized relations but no relation metadata
+     *
+     * @throws Exception
+     */
+    public function setupFieldcollection_LocalizedPlainRelations(string $name = 'LocalizedPlainRelations', string $filename = 'relations/fieldcollection_LocalizedPlainRelations_export.json'): ?Definition
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')->setClasses(['RelationTest']));
+
+            $panel->addChild($lFields);
+            $root->addChild($panel);
+            $definition = $this->createFieldcollection($name, $root, $filename);
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Sets up a class with a field collection and without advanced many-to-many relations, so it has no metadata table
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_CollectionWithoutMetadata(
+        string $name = 'CollectionWithoutMetadata',
+        string $filename = 'relations/class_CollectionWithoutMetadata_export.json'
+    ): ?DataObject\ClassDefinitionInterface {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $panel->addChild($this->createDataChild('input'));
+            $panel->addChild($this->createDataChild('fieldcollections', 'items')
+                ->setAllowedTypes(['LocalizedPlainRelations']));
+            $root->addChild($panel);
+
+            $class = $this->createClass($name, $root, $filename, false, 'CWM');
+        }
+
+        return $class;
+    }
+
+    /**
+     * Sets up an object brick with a localized URL slug
+     *
+     * @throws Exception
+     */
+    public function setupObjectbrick_LocalizedSlugTest(
+        string $name,
+        string $filename,
+        array $classDefinitions
+    ): ?Definition {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getObjectbrick($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('urlSlug', 'lslug')
+                ->setAction('App\\Controller\\TestController::slugAction'));
+
+            $panel->addChild($lFields);
+            $root->addChild($panel);
+            $definition = $this->createObjectbrick($name, $root, $filename, $classDefinitions);
+        }
+
+        return $definition;
+    }
+
+    /**
      * Sets up an object brick used for lazy loading tests
      *
      * @throws Exception
      */
-    public function setupObjectbrick_LazyLoadingTest(string $name = 'LazyLoadingTest', string $filename = 'lazyloading/objectbrick_LazyLoadingTest_export.json'): ?Definition
-    {
+    public function setupObjectbrick_LazyLoadingTest(
+        string $name = 'LazyLoadingTest',
+        string $filename = 'lazyloading/objectbrick_LazyLoadingTest_export.json',
+        array $classDefinitions = [['classname' => 'LazyLoading', 'fieldname' => 'bricks']]
+    ): ?Definition {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -873,10 +1188,7 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $root->addChild($rootPanel);
-            $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'LazyLoading', 'fieldname' => 'bricks'],
-
-            ]);
+            $definition = $this->createObjectbrick($name, $root, $filename, $classDefinitions);
         }
 
         return $definition;
@@ -887,8 +1199,11 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
-    public function setupObjectbrick_LazyLoadingLocalizedTest(string $name = 'LazyLoadingLocalizedTest', string $filename = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json'): ?Definition
-    {
+    public function setupObjectbrick_LazyLoadingLocalizedTest(
+        string $name = 'LazyLoadingLocalizedTest',
+        string $filename = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json',
+        array $classDefinitions = [['classname' => 'LazyLoading', 'fieldname' => 'bricks']]
+    ): ?Definition {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -931,10 +1246,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
-            $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'LazyLoading', 'fieldname' => 'bricks'],
-
-            ]);
+            $definition = $this->createObjectbrick($name, $root, $filename, $classDefinitions);
         }
 
         return $definition;
@@ -959,6 +1271,11 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('input', 'brickinput'));
 
             $panel->addChild($this->createDataChild('input', 'brickinput2'));
+
+            $brickCalculated = $this->createDataChild('calculatedValue', 'brickcalculated');
+            $brickCalculated->setCalculatorClass('@test.calculatorservice');
+            $panel->addChild($brickCalculated);
+            $panel->addChild($this->createDataChild('consent', 'brickconsent'));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

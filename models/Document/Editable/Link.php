@@ -18,6 +18,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -31,6 +32,17 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      *
      */
     protected ?array $data = null;
+
+    /**
+     * Data keys that carry the editable's own bookkeeping or are already rendered elsewhere
+     * (link text, parameters/anchor folded into the href, internal target reference). They are
+     * kept out of the rendered <a> tag's attributes when the active AttributeSanitizer policy
+     * omitsInternalDataAttributes(); the permissive default still emits them, as it always has.
+     */
+    private const RESERVED_DATA_KEYS = [
+        'path', 'linktype', 'internal', 'internalId', 'internalType',
+        'text', 'parameters', 'anchor',
+    ];
 
     public function getType(): string
     {
@@ -67,6 +79,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function frontend()
     {
+        // via getHref(), so a subclass overriding it (e.g. mapped via documents.editables.map) still
+        // shapes the rendered link
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
@@ -99,15 +113,46 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $availableAttribs = array_merge($this->data, $this->config);
 
             // add attributes to link
+            $sanitizer = AttributeSanitizer::getInstance();
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
+                $key = (string) $key;
+                if ($sanitizer->omitsInternalDataAttributes() && in_array($key, self::RESERVED_DATA_KEYS, true)) {
+                    continue;
+                }
+
+                // an editor-controlled key is one the document editor could have supplied or
+                // influenced via $this->data - including a value that would merge with a
+                // trusted config value into a single attribute below
+                $editorControlled = array_key_exists($key, $this->data);
+
+                if (!$sanitizer->isAttributeKeyAllowed($key, $editorControlled)) {
+                    continue;
+                }
+
+                // only the unconfigured permissive default is deprecated - an application that
+                // installed its own policy via setInstance() has opted out on purpose
+                if ($editorControlled && !AttributeSanitizer::isConfigured()
+                    && !AttributeSanitizer::strict()->isAttributeKeyAllowed($key, true)) {
+                    trigger_deprecation(
+                        'pimcore/pimcore',
+                        '2026.3',
+                        'Rendering a Link editable attribute key ("%s") that the stricter policy closing'
+                        .' GHSA-9g27-c28m-8xg5 would reject. The permissive Link sanitizer default is deprecated and'
+                        .' will be removed in 2027.1; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                        .' reject it now.',
+                        $key
+                    );
+                }
+
                 if (is_string($value) || is_numeric($value)) {
+                    $attributeName = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
-                        $attribs[] = $key.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
+                        $attribs[] = $attributeName.'="'. htmlspecialchars($this->data[$key]) .' '. htmlspecialchars($this->config[$key]) .'"';
                     } elseif ($value) {
                         $attribs[] = (is_string($value)) ?
-                            $key . '="' . htmlspecialchars($value) . '"' :
-                            $key . '="' . $value . '"';
+                            $attributeName . '="' . htmlspecialchars($value) . '"' :
+                            $attributeName . '="' . $value . '"';
                     }
                 }
             }
@@ -115,10 +160,18 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
             $text = '';
             if (!$noText) {
-                $text = htmlspecialchars($disabledText ? $url : ($this->data['text'] ?? $url));
+                // getHref() already escapes the parameters/anchor portions, so don't re-encode
+                // existing entities when the href is used as the fallback text
+                $rawText = $disabledText ? null : ($this->data['text'] ?? null);
+                $text = $rawText !== null
+                    ? htmlspecialchars($rawText)
+                    : htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, null, false);
             }
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . $text . $suffix . '</a>';
+            // '"' is the only character that can end the double-quoted href value, and it is the
+            // only one escaped here: getHref() already escapes parameters/anchor, so escaping it
+            // wholesale would double-encode them, and everything else stays byte-identical
+            return '<a href="'.str_replace('"', '&quot;', $url).'" '.implode(' ', $attribs).'>' . $prefix . $text . $suffix . '</a>';
         }
 
         return '';
@@ -164,11 +217,42 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $sane;
     }
 
+    /**
+     * Returns the link's target URL. The path is returned as stored (not HTML-escaped), so escape
+     * it for the context you print it in - e.g. Twig auto-escaping does that for
+     * {{ pimcore_link('x').href }}. The parameters/anchor portions are HTML-escaped, as they always
+     * have been.
+     *
+     * Whether a path with a dangerous scheme (javascript:, vbscript:, most data: URIs) is rejected
+     * (returning an empty string, even if the link otherwise has parameters or an anchor set)
+     * depends on the active \Pimcore\Model\Document\Editable\Link\AttributeSanitizer policy - see
+     * that class.
+     */
     public function getHref(): string
     {
         $this->updatePathFromInternal();
 
         $url = $this->data['path'] ?? '';
+        $sanitizer = AttributeSanitizer::getInstance();
+
+        if (!$sanitizer->isUrlAllowed($url)) {
+            // reject the link outright rather than letting parameters/anchor below reassemble
+            // a non-empty (if otherwise harmless) href out of a rejected path
+            return '';
+        }
+
+        // only the unconfigured permissive default is deprecated - an application that installed
+        // its own policy via setInstance() has opted out on purpose
+        if ($url !== '' && !AttributeSanitizer::isConfigured() && !AttributeSanitizer::strict()->isUrlAllowed($url)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '2026.3',
+                'Rendering a Link editable path with a URL scheme that the stricter policy closing'
+                .' GHSA-9g27-c28m-8xg5 would reject. The permissive Link sanitizer default is deprecated and'
+                .' will be removed in 2027.1; set "pimcore.documents.editables.link_sanitizer.strict: true" to'
+                .' reject it now.'
+            );
+        }
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
             $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));

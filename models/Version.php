@@ -15,6 +15,7 @@ namespace Pimcore\Model;
 
 use __PHP_Incomplete_Class;
 use Exception;
+use LogicException;
 use Pimcore;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -28,6 +29,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Version\Adapter\ElementTypeAwareStorageTypeInterface;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
@@ -176,19 +178,44 @@ final class Version extends AbstractModel
             $dataString = $data;
         }
 
+        $previousBinaryFileHash = $this->id !== null ? $this->getBinaryFileHash() : null;
+
+        // an asset version that is written into again (see AbstractElement::doSaveVersion()) keeps its binary data
+        // where it is: other versions may share it (binaryFileId) and the storage adapters write binary data only once
+        $keepsBinaryData = false;
         if ($data instanceof Asset && $data->getType() != 'folder') {
             $isAsset = true;
             $dataStream = $data->getStream();
             $ctx = hash_init('sha3-512');
             hash_update_stream($ctx, $dataStream);
-            $this->setBinaryFileHash(hash_final($ctx));
+            $binaryFileHash = hash_final($ctx);
+
+            // checked before the hash is set, so the version keeps its hash and a retry is checked again
+            if ($previousBinaryFileHash !== null) {
+                if (!hash_equals($previousBinaryFileHash, $binaryFileHash)) {
+                    throw new LogicException(sprintf(
+                        'Version %d cannot be written with different binary data, save it as a new version instead',
+                        $this->id
+                    ));
+                }
+                $keepsBinaryData = true;
+            }
+
+            $this->setBinaryFileHash($binaryFileHash);
         }
 
-        $this->setStorageType($this->storageAdapter->getStorageType(strlen($dataString),
-            $isAsset ? $data->getfileSize() : null));
+        $metaDataSize = strlen($dataString);
+        $binaryDataSize = $isAsset ? $data->getfileSize() : null;
 
-        if ($isAsset) {
-            $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
+        if (!$keepsBinaryData) {
+            // the storage type may depend on the element type, see ElementDelegateVersionStorageAdapter
+            $this->setStorageType($this->storageAdapter instanceof ElementTypeAwareStorageTypeInterface
+                ? $this->storageAdapter->getStorageTypeForElementType($this->getCtype(), $metaDataSize, $binaryDataSize)
+                : $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize));
+
+            if ($isAsset) {
+                $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
+            }
         }
 
         $id = $this->getDao()->save();

@@ -22,12 +22,16 @@ use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Controller\Config\Template\BundleTemplateProvider;
 use Pimcore\Controller\Config\Template\ProjectTemplateProvider;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
+use Pimcore\Helper\SymfonyExpression\ReadOnlyValueAdapterInterface;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
+use Pimcore\Telemetry\Snapshot\SnapshotCollectorInterface;
+use Pimcore\Telemetry\TelemetrySettings;
+use Pimcore\Telemetry\Usage\BundleUsageProviderInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -62,6 +66,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
 
+        $container->setParameter('pimcore.assets.storage_operation_queue.enabled', $config['assets']['storage_operation_queue']['enabled']);
+        $container->setParameter('pimcore.assets.storage_operation_queue.resolve_frontend_paths', $config['assets']['storage_operation_queue']['resolve_frontend_paths']);
+
         if (!$container->hasParameter('pimcore.encryption.secret')) {
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
@@ -78,6 +85,14 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
+        $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.documents.editables.unserialize_allowed_classes', $config['documents']['editables']['unserialize_allowed_classes']);
+        $container->setParameter('pimcore.objects.link_sanitizer.strict', $config['objects']['link_sanitizer']['strict']);
+        $container->setParameter('pimcore.objects.link_sanitizer.blocked_url_schemes', $config['objects']['link_sanitizer']['blocked_url_schemes']);
+        $container->setParameter('pimcore.objects.link_sanitizer.block_unsafe_data_urls', $config['objects']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.objects.block.unserialize_allowed_classes', $config['objects']['block']['unserialize_allowed_classes']);
 
         // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
         $container->setParameter('pimcore.cache.max_write_items', $config['cache']['max_write_items']);
@@ -91,11 +106,37 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.allowed_classes', $config['templating_engine']['twig']['sandbox_security_policy']['allowed_classes']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_functions', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_functions']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_methods']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_method_patterns', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_method_patterns']);
 
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
         $container->setParameter('pimcore.config', $config);
+
+        // telemetry - deliberately not configurable (see TelemetrySettings): the relay is a
+        // first-party service at a known address, and cadence/outbox bounds must behave identically
+        // everywhere. Published as parameters so each service keeps one seam tests can drive.
+        // Reporting is gated by the instance identifier + product key, not by a setting.
+        $container->setParameter('pimcore.telemetry.relay_endpoint', TelemetrySettings::RELAY_ENDPOINT);
+        $container->setParameter('pimcore.telemetry.snapshot_interval_seconds', TelemetrySettings::SNAPSHOT_INTERVAL_SECONDS);
+        $container->setParameter('pimcore.telemetry.snapshot_query_timeout_seconds', TelemetrySettings::SNAPSHOT_QUERY_TIMEOUT_SECONDS);
+        $container->setParameter('pimcore.telemetry.spool.cap', TelemetrySettings::SPOOL_CAP);
+        $container->setParameter('pimcore.telemetry.spool.ttl_days', TelemetrySettings::SPOOL_TTL_DAYS);
+        $container->setParameter('pimcore.telemetry.spool.lease_seconds', TelemetrySettings::SPOOL_LEASE_SECONDS);
+
+        $container->setParameter('pimcore.telemetry.main_domain', (string) ($config['general']['domain'] ?? ''));
+        $container->setParameter('pimcore.telemetry.timezone', (string) ($config['general']['timezone'] ?? ''));
+
+        // Registered here rather than via `_instanceof` in services.yaml: `_instanceof` only applies
+        // to services defined in that same file, so a collector or usage provider shipped by another
+        // bundle would never be tagged. These are the telemetry extension points, so they have to be
+        // autoconfigured container-wide.
+        $container->registerForAutoconfiguration(SnapshotCollectorInterface::class)
+            ->addTag('pimcore.telemetry.snapshot_collector');
+        $container->registerForAutoconfiguration(BundleUsageProviderInterface::class)
+            ->addTag('pimcore.telemetry.bundle_usage_provider');
+        $container->registerForAutoconfiguration(ReadOnlyValueAdapterInterface::class)
+            ->addTag('pimcore.expression.read_only_value_adapter');
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
@@ -352,6 +393,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     {
         $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
         $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
+        // Expose the product key as a parameter too: telemetry uses it as the symmetric secret to
+        // encrypt batches for the relay (which looks the same key up by the instance identifier).
+        $container->setParameter('pimcore.product_registration.product_key', $config['product_registration']['product_key'] ?? '');
 
         // Pimcore not installed — env vars are empty (fallback defaults), so skip
         // the product registration check when the install marker exists.

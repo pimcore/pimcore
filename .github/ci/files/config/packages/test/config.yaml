@@ -30,6 +30,23 @@ pimcore:
     product_registration:
         instance_identifier: '%env(PIMCORE_INSTANCE_IDENTIFIER)%'
         product_key: '%env(PIMCORE_PRODUCT_KEY)%'
+    objects:
+        class_definitions:
+            data:
+                map:
+                    # custom field type used by BlockTest::testCustomMarshallerValueObjectInsideBlock()
+                    customValueObject: Pimcore\Tests\Support\Helper\DataType\CustomValueObjectField
+        block:
+            unserialize_allowed_classes:
+                - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
+    documents:
+        editables:
+            unserialize_allowed_classes:
+                - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
+    tmp_store:
+        unserialize_allowed_classes:
+            # converter queued by VideoThumbnailProcessorTest
+            - Pimcore\Tests\Support\Util\FakeVideoConverter
 
 
 parameters:

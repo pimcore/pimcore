@@ -27,9 +27,15 @@ class File extends DAV\File
 {
     private Asset $asset;
 
-    public function __construct(Asset $asset)
+    /**
+     * Size in bytes if already known, e.g. from the parent folder's storage listing
+     */
+    private ?int $size;
+
+    public function __construct(Asset $asset, ?int $size = null)
     {
         $this->asset = $asset;
+        $this->size = $size;
     }
 
     public function getName(): string
@@ -73,16 +79,7 @@ class File extends DAV\File
             // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
             // for details see Asset\WebDAV\Tree::move()
             $log = Asset\WebDAV\Service::getDeleteLog();
-
-            $this->asset->setInDumpState(true);
-            $log[$this->asset->getRealFullPath()] = [
-                'id' => $this->asset->getId(),
-                'timestamp' => time(),
-                'data' => \Pimcore\Tool\Serialize::serialize($this->asset),
-            ];
-
-            $this->asset->setInDumpState(false);
-
+            $log[$this->asset->getRealFullPath()] = Asset\WebDAV\Service::createDeleteLogEntry($this->asset);
             Asset\WebDAV\Service::saveDeleteLog($log);
         } else {
             throw new DAV\Exception\Forbidden();
@@ -115,6 +112,7 @@ class File extends DAV\File
 
             $this->asset->setStream($file);
             $this->asset->save();
+            $this->size = null;
 
             if (is_resource($file)) {
                 fclose($file);
@@ -165,6 +163,6 @@ class File extends DAV\File
      */
     public function getSize(): int
     {
-        return $this->asset->getFileSize();
+        return $this->size ?? $this->asset->getFileSize();
     }
 }

@@ -302,7 +302,7 @@ CREATE TABLE `properties` (
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
   `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL, /* verified to fit within the 3072-byte InnoDB index-prefix limit for `getall` (cpath+ctype+inheritable) at 4 bytes/char */
   `name` varchar(190) NOT NULL DEFAULT '',
-  `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
+  `type` enum('text','document','asset','object','bool','select','date') DEFAULT NULL,
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
@@ -333,8 +333,7 @@ CREATE TABLE `schedule_tasks` (
   `active` tinyint(1) unsigned DEFAULT '0',
   `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
+  KEY `cid_ctype` (`cid`,`ctype`),
   KEY `active` (`active`),
   KEY `version` (`version`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
@@ -402,6 +401,21 @@ CREATE TABLE `settings_store` (
   KEY `scope` (`scope`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
+DROP TABLE IF EXISTS `telemetry_spool`;
+CREATE TABLE `telemetry_spool` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `event_uid` varchar(36) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `payload` longtext NOT NULL,
+  `claimed_at` datetime NULL DEFAULT NULL,
+  `claim_nonce` varchar(32) NULL DEFAULT NULL,
+  `attempts` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_telemetry_spool_event_uid` (`event_uid`),
+  KEY `idx_telemetry_spool_claim_nonce` (`claim_nonce`),
+  KEY `idx_telemetry_spool_created_at` (`created_at`)
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `translations_messages`;
 CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
@@ -432,6 +446,7 @@ CREATE TABLE `users` (
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('user','userfolder','role','rolefolder') NOT NULL DEFAULT 'user',
   `name` varchar(50) DEFAULT NULL,
+  `uniqueName` varchar(64) GENERATED ALWAYS AS (IF(`type` IN ('userfolder','rolefolder'), CONCAT(IFNULL(`parentId`, 0), '/', `name`), `name`)) STORED,
   `password` varchar(190) DEFAULT NULL,
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
@@ -461,7 +476,7 @@ CREATE TABLE `users` (
   `passwordRecoveryToken` varchar(290) DEFAULT NULL,
   `lastPasswordReset` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `type_name` (`type`,`name`),
+  UNIQUE KEY `type_uniqueName` (`type`,`uniqueName`),
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
@@ -828,4 +843,4 @@ CREATE TABLE `webdav_locks` (
     uri     VARBINARY(1000),
     INDEX (token),
     INDEX (uri(100))
-) DEFAULT CHARSET = utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

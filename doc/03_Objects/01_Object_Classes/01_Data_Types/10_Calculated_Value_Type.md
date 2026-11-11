@@ -21,6 +21,13 @@ As display type in object editor three types are available:
 - TextArea: Multi line, displayed as read-only text area.
 - HTML: Multi line HTML content, displayed as display field.
 
+:::info Display-only alternative
+A Calculated Value is a data field: it is part of the object's data model, accessible via
+getter and API, and its result is written to the query table on save so it can be filtered
+and exported. If you only want to show computed, context-dependent text to editors and do
+not want anything persisted or exposed as data, use a
+[Dynamic Text Label](../02_Layout_Elements/01_Dynamic_Text_Labels.md) layout element instead.
+:::
 
 ## Calculation
 
@@ -36,6 +43,12 @@ possibilities.
 ##### Available variables 
 - DataObject itself as `object`.  
 - Context information as `data` (details see Context Information for Calculation below).
+
+Both are read-only: an expression can call the getters of the object's fields (also of related elements, object bricks,
+field collections, localized fields and classification stores), the common element getters such as `getId()`,
+`getKey()`, `getFullPath()` or `getParent()`, and the getters of the stored field values (e.g.
+`object.getPrice().getUnit().getAbbreviation()`). Dates are `DateTimeImmutable` copies. Any other method call is rejected
+and the field shows the error message. Use a calculator class or a custom expression function for anything else.
 
 ##### Simple examples
 ```twig
@@ -161,6 +174,30 @@ class Calculator implements CalculatorClassInterface
 ```
 
 The calculator class sums the x and y values from the corresponding language tab.
+
+#### Passing arguments to the calculator class
+
+Optionally, additional data can be configured for the calculator class in the class definition (field
+`calculatorData`). The value is a free-form string (e.g. a plain value, a comma-separated list or a JSON
+encoded structure) and is exposed to the calculator through the context via `$context->getCalculatorData()`.
+This allows reusing the same calculator class for simple variations without having to define a dedicated
+calculator class per variation.
+
+```php
+public function compute(Concrete $object, CalculatedValue $context): string
+{
+    $factor = (float) ($context->getCalculatorData() ?? '1');
+    $language = $context->getPosition();
+
+    return (string) (($object->getXValue($language) + $object->getYValue($language)) * $factor);
+}
+```
+
+When using the expression calculator type, the value is also available on the `data` variable:
+
+```
+data.getCalculatorData()
+```
 
 Implement the `getCalculatedValueForEditMode` method in addition to `compute`.
 This method provides the display value in object edit mode:

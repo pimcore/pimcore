@@ -54,11 +54,113 @@ class TextTest extends ModelTestCase
         $this->assertEquals($expected, Text::wysiwygText($text));
     }
 
-    private function createDocument(string $key, int $parentId): Document\Page
+    public function testWysiwygTextWithBrokenLinkAndExtraAttributes(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener">Link text</a>',
+            $unpublishedDocument->getId()
+        );
+        $expected = 'Link to a document Link text';
+
+        $this->assertEquals($expected, Text::wysiwygText($text));
+    }
+
+    public function testWysiwygTextWithBrokenLinkAndNestedMarkup(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing-nested', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener"><strong>Link text</strong></a>',
+            $unpublishedDocument->getId()
+        );
+        $expected = 'Link to a document <strong>Link text</strong>';
+
+        $this->assertEquals($expected, Text::wysiwygText($text));
+    }
+
+    public function testWysiwygTextWithBrokenLinkAndEmptyLabel(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing-empty', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener"></a>',
+            $unpublishedDocument->getId()
+        );
+        $expected = 'Link to a document ';
+
+        $this->assertEquals($expected, Text::wysiwygText($text));
+    }
+
+    public function testWysiwygTextKeepingLinksKeepsLinkToUnpublishedDocument(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing-keep', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener">Link text</a>',
+            $unpublishedDocument->getId()
+        );
+
+        $this->assertEquals($text, Text::wysiwygTextKeepingLinks($text));
+        $this->assertEquals('Link to a document Link text', Text::wysiwygText($text));
+    }
+
+    public function testWysiwygTextStillRewritesPublishedLinkWhenKeepingUnpublished(): void
+    {
+        RuntimeCache::clear();
+
+        $text = sprintf(
+            'Link to a document <a href="/old" pimcore_id="%s" pimcore_type="document">The link</a>',
+            $this->testingDocument->getId()
+        );
+        $expected = sprintf(
+            'Link to a document <a href="http://example2.com/testing" pimcore_id="%s" pimcore_type="document">The link</a>',
+            $this->testingDocument->getId()
+        );
+
+        $this->assertEquals($expected, Text::wysiwygTextKeepingLinks($text));
+    }
+
+    public function testWysiwygTextStillRemovesLinkToDeletedElementWhenKeepingUnpublished(): void
+    {
+        RuntimeCache::clear();
+
+        $text = 'Link to a document <a href="/some/path" pimcore_id="99999999" pimcore_type="document">Link text</a>';
+
+        $this->assertEquals('Link to a document Link text', Text::wysiwygTextKeepingLinks($text));
+    }
+
+    public function testDocumentEditableEditmodeKeepsLinkToUnpublishedDocument(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-editable', $this->testingDocument->getParentId(), false);
+        $text = sprintf(
+            '<a href="/some/path" pimcore_id="%s" pimcore_type="document">Link text</a>',
+            $unpublishedDocument->getId()
+        );
+
+        $editable = new Document\Editable\Wysiwyg();
+        $editable->setDocument($this->testingDocument);
+        $editable->setDataFromResource($text);
+
+        $this->assertEquals($text, $editable->getDataEditmode());
+    }
+
+    private function createDocument(string $key, int $parentId, bool $published = true): Document\Page
     {
         $document = new Document\Page();
         $document->setKey($key);
-        $document->setPublished(true);
+        $document->setPublished($published);
         $document->setParentId($parentId);
         $document->setUserOwner(1);
         $document->setUserModification(1);

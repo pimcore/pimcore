@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\SystemSettingsConfig;
 
@@ -102,6 +103,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     protected function update(?bool $isUpdate = null, array $params = []): void
     {
+        // the field getters used for the validation and by the dao must not reduce wysiwyg links to unpublished
+        // elements, whichever request or process saves the object
+        WysiwygPersistingScope::run(fn () => $this->updateObject($isUpdate, $params));
+    }
+
+    private function updateObject(?bool $isUpdate, array $params): void
+    {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
@@ -112,6 +120,24 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $this->__objectAwareFields['localizedfields'] = true;
                 }
 
+                if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    // a calculated value is computed on read and never persisted from user input,
+                    // and CalculatedValue::checkValidity() is a no-op for that reason - including
+                    // for the mandatory check. Calling the getter here would run the calculator
+                    // for every calculated field on every save, only to discard the result.
+                    continue;
+                }
+
+                if ($fd instanceof DataObject\ClassDefinition\Data\DerivedValueInterface
+                    && $fd->isValueDerived()
+                    && (!$fd->getMandatory() || $this->getOmitMandatoryCheck())) {
+                    // a derived value (e.g. a reverse relation, the read-only mirror of a relation stored on
+                    // the owning objects) is not stored on this object; reading it can load every owning
+                    // object, only to validate objects that are not part of this save. Only a mandatory one
+                    // that is checked needs its value.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -119,19 +145,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
-                    // when adding a new object, skip check on mandatory for fields
-                    // with default value or default value or default value generator
-                    if (!$omitMandatoryCheck && empty($value) && !$isUpdate &&
-                        (
-                            (
-                                method_exists($fd, 'getDefaultValue') &&
-                                !empty($fd->getDefaultValue())
-                            ) || (
-                                method_exists($fd, 'getDefaultValueGenerator') &&
-                                $fd->getDefaultValueGenerator() !== ''
-                            )
-                        )
-                    ) {
+                    // When adding a new object, skip the mandatory check for fields that will
+                    // get a default value or default value generator applied anyway.
+                    // "Empty" is deliberately a superset of the plain empty() this replaced:
+                    // it adds the values empty() misjudges (a quantity-value object whose value
+                    // and unit are both unset) without dropping any it already accepted, so
+                    // widening it can only skip a check a default is about to satisfy.
+                    $valueIsEmpty = empty($value) || $fd->isEmpty($value);
+
+                    if (!$omitMandatoryCheck && $valueIsEmpty && !$isUpdate && $fd->hasApplicableDefaultValue($this)) {
                         $omitMandatoryCheck = true;
                     }
 
@@ -145,13 +167,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
-                                $getInheritedValues = DataObject::doGetInheritedValues();
-                                DataObject::setGetInheritedValues(true);
-
-                                $value = $this->$getter();
-                                $fd->checkValidity($value, $omitMandatoryCheck, $params);
-
-                                DataObject::setGetInheritedValues($getInheritedValues);
+                                DataObject\Service::useInheritedValues(
+                                    true,
+                                    fn () => $fd->checkValidity($this->$getter(), $omitMandatoryCheck, $params)
+                                );
                             } catch (Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
@@ -210,7 +229,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, $params['versionNote'] ?? null);
+            // only `existingVersion` is passed on, the versioning events keep their arguments
+            $this->saveVersion(false, false, $params['versionNote'] ?? null, false, array_intersect_key($params, ['existingVersion' => true]));
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
@@ -241,6 +261,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * it is false when the method is called by $this->update()
      *
      * @param string|null $versionNote version note
+     * @param array $parameters custom arguments passed on to the versioning events; `existingVersion` (Model\Version, internal)
+     *                          writes the version data into that version instead of creating a new one
      *
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false, array $parameters = []): ?Model\Version
@@ -250,6 +272,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             'isAutoSave' => $isAutoSave,
         ];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             if ($setModificationDate) {
@@ -270,13 +293,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
+            // with an existing version that version is written into, no version is added
             $objectsConfig = SystemSettingsConfig::get()['objects'];
             if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
                 || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
-                || $setModificationDate) {
+                || $setModificationDate
+                || $existingVersion !== null) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -355,6 +380,21 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                // a calculated value cannot own a dependency: it is computed on read and
+                // CalculatedValue does not override Data::resolveDependencies(), which returns
+                // an empty array. Calling the getter would run the calculator for nothing.
+                continue;
+            }
+
+            if ($field instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                // a reverse relation cannot own a dependency either - the relation is recorded
+                // on the owning object - and ReverseObjectRelation::resolveDependencies() says so
+                // by returning an empty array. Its getter is never memoised, so calling it here
+                // would query the relation table and load every owning object for nothing.
+                continue;
+            }
+
             $key = $field->getName();
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());

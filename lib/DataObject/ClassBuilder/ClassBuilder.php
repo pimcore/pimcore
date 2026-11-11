@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 
 class ClassBuilder implements ClassBuilderInterface
 {
@@ -40,11 +41,8 @@ class ClassBuilder implements ClassBuilderInterface
         $cd .= ' * Variants: '.($classDefinition->getAllowVariants() ? 'yes' : 'no')."\n";
 
         if ($description = $classDefinition->getDescription()) {
-            $description = str_replace(
-                ['/**', '*/', '//', "\n"],
-                ['', '', '', "\n * "],
-                $description
-            );
+            $description = DocBlockSanitizer::sanitize($description);
+            $description = str_replace("\n", "\n * ", $description);
 
             $cd .= ' * '.$description."\n";
         }

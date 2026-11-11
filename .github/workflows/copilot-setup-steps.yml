@@ -18,6 +18,7 @@ jobs:
   # reusable-workflow `uses:` call would be ignored by Copilot.
   copilot-setup-steps:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     permissions:
       contents: read
