@@ -32,6 +32,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
 
+    private const EDITMODE_MASK = '******';
+
     public ?int $minimumLength = null;
 
     public function getMinimumLength(): ?int
@@ -156,7 +158,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return $data;
+        if ($data === null || $data === '') {
+            return null;
+        }
+
+        return self::EDITMODE_MASK;
     }
 
     /**
@@ -169,7 +175,122 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return null;
         }
 
+        if ($data === self::EDITMODE_MASK) {
+            // the placeholder means "unchanged": keep the stored value, never persist or clear it
+            return $this->resolveStoredValue($object, $params);
+        }
+
         return $data;
+    }
+
+    /**
+     * Resolves the currently stored value of this field for the given owner/container context.
+     * Fails safe: if it cannot be resolved the operation is aborted, so the placeholder is never
+     * persisted as a password and an existing password is never cleared.
+     */
+    private function resolveStoredValue(?DataObject\Concrete $object, array $params): ?string
+    {
+        if (array_key_exists('injectedData', $params)) {
+            // the caller already resolved the stored value (e.g. classification store)
+            $injected = $this->unwrapEncrypted($params['injectedData']);
+
+            return is_string($injected) && $injected !== '' ? $injected : null;
+        }
+
+        if ($object === null) {
+            throw new Exception('Cannot keep the stored value of password field [ ' . $this->getName() . ' ] without an object');
+        }
+
+        $context = $params['context'] ?? [];
+        $containerType = $context['containerType'] ?? null;
+        $getter = 'get' . ucfirst((string) $this->getName());
+        $value = null;
+
+        if ($containerType === null) {
+            if (!method_exists($object, $getter)) {
+                throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+            }
+            // localized fields are read per language
+            $value = isset($params['language']) ? $object->$getter($params['language']) : $object->$getter();
+        } elseif ($containerType === 'fieldcollection') {
+            $containerGetter = 'get' . ucfirst((string) ($context['fieldname'] ?? ''));
+            $oIndex = $context['oIndex'] ?? null;
+            if ($oIndex === null) {
+                // a newly added item has no stored value yet
+                return null;
+            }
+            $container = method_exists($object, $containerGetter) ? $object->$containerGetter() : null;
+            $item = $container instanceof DataObject\Fieldcollection ? ($container->getItems()[$oIndex] ?? null) : null;
+            if ($item === null || !method_exists($item, $getter)) {
+                throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+            }
+            $value = isset($params['language']) ? $item->$getter($params['language']) : $item->$getter();
+        } elseif ($containerType === 'objectbrick') {
+            $containerGetter = 'get' . ucfirst((string) ($context['fieldname'] ?? ''));
+            $brickGetter = 'get' . ucfirst((string) ($context['containerKey'] ?? ''));
+            $container = method_exists($object, $containerGetter) ? $object->$containerGetter() : null;
+            $brick = $container !== null && method_exists($container, $brickGetter) ? $container->$brickGetter() : null;
+            if ($brick === null) {
+                // a newly added brick has no stored value yet
+                return null;
+            }
+            if (!method_exists($brick, $getter)) {
+                throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+            }
+            $value = isset($params['language']) ? $brick->$getter($params['language']) : $brick->$getter();
+        } elseif ($containerType === 'block') {
+            $oIndex = $context['oIndex'] ?? null;
+            if ($oIndex === null) {
+                // a newly added block item has no stored value yet
+                return null;
+            }
+            $blockGetter = 'get' . ucfirst((string) ($context['fieldname'] ?? ''));
+            if (!method_exists($object, $blockGetter)) {
+                throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+            }
+            $language = $params['language'] ?? null;
+            $items = $object->$blockGetter($language);
+            $row = is_array($items) ? ($items[$oIndex] ?? null) : null;
+            $element = is_array($row) ? ($row[$this->getName()] ?? null) : null;
+            $localizedElement = is_array($row) ? ($row['localizedfields'] ?? null) : null;
+
+            if ($element instanceof DataObject\Data\BlockElement) {
+                $value = $element->getData();
+            } elseif ($language !== null && $localizedElement instanceof DataObject\Data\BlockElement
+                && $localizedElement->getData() instanceof DataObject\Localizedfield) {
+                // a localized password keeps its values per language below the localized fields of the row
+                $value = $localizedElement->getData()->getItems()[$language][$this->getName()] ?? null;
+            } else {
+                throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+            }
+        } else {
+            // other containers: the stored value cannot be resolved reliably
+            throw new Exception('Cannot resolve the stored value of password field [ ' . $this->getName() . ' ]');
+        }
+
+        $value = $this->unwrapEncrypted($value);
+
+        return is_string($value) && $value !== '' ? $value : null;
+    }
+
+    /**
+     * A password delegated to by an encrypted field is stored wrapped.
+     */
+    private function unwrapEncrypted(mixed $value): mixed
+    {
+        return $value instanceof DataObject\Data\EncryptedField ? $value->getPlain() : $value;
+    }
+
+    /**
+     * @internal
+     */
+    public function getForCsvExport(DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): string
+    {
+        $value = $this->getDataFromObjectParam($object, $params);
+
+        $value = $this->unwrapEncrypted($value);
+
+        return is_string($value) && $value !== '' ? self::EDITMODE_MASK : '';
     }
 
     /**
