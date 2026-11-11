@@ -96,7 +96,7 @@ class Dao extends AbstractDao
         $sender = null;
 
         if ($data['sender']) {
-            $user = User::getAccountById($data['sender']);
+            $user = User::getById($data['sender']);
             if ($user instanceof User) {
                 $sender = $user;
             }

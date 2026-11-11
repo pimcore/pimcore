@@ -600,7 +600,7 @@ final class Version extends AbstractModel
      */
     public function setUserId(int $userId): static
     {
-        if ($user = User::getAccountById($userId)) {
+        if ($user = User::getById($userId)) {
             $this->userId = $userId;
             $this->setUser($user);
         }

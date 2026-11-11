@@ -168,7 +168,7 @@ final class Editlock extends Model\AbstractModel
 
     public function getUser(): ?Model\User
     {
-        if ($user = Model\User::getAccountById($this->getUserId())) {
+        if ($user = Model\User::getById($this->getUserId())) {
             return $user;
         }
 

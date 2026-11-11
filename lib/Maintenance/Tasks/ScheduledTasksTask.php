@@ -46,7 +46,7 @@ class ScheduledTasksTask implements TaskInterface
 
         foreach ($tasks as $task) {
             $taskUserId = $task->getUserId();
-            $taskUser = $taskUserId !== null ? User::getAccountById($taskUserId) : null;
+            $taskUser = $taskUserId !== null ? User::getById($taskUserId) : null;
 
             if (!$taskUser instanceof User) {
                 $this->logger->error(sprintf(

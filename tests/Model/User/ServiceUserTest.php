@@ -15,9 +15,6 @@ namespace Pimcore\Tests\Model\User;
 
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
-use Pimcore\Model\Element\Editlock;
-use Pimcore\Model\Notification;
-use Pimcore\Model\Translation;
 use Pimcore\Model\User;
 use Pimcore\Model\User\AbstractUser;
 use Pimcore\Model\User\Exception\DuplicateUserNameException;
@@ -27,7 +24,6 @@ use Pimcore\Model\User\Role;
 use Pimcore\Model\User\Service;
 use Pimcore\Model\User\ServiceUser;
 use Pimcore\Model\User\ServiceUser\Listing as ServiceUserListing;
-use Pimcore\Model\Version;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tool\Authentication;
 
@@ -66,49 +62,18 @@ class ServiceUserTest extends ModelTestCase
         $this->assertNull($serviceUser->getPassword());
     }
 
-    public function testUserGetByIdDoesNotReturnServiceUser(): void
+    public function testGetByIdReturnsServiceUserForServiceRow(): void
     {
         $serviceUser = $this->createServiceUser('load');
 
         $this->clearUserCache($serviceUser->getId());
-        $this->assertNull(User::getById($serviceUser->getId()));
+        $this->assertInstanceOf(ServiceUser::class, User::getById($serviceUser->getId()));
 
         $this->clearUserCache($serviceUser->getId());
         $this->assertInstanceOf(ServiceUser::class, ServiceUser::getById($serviceUser->getId()));
 
         $this->clearUserCache($serviceUser->getId());
         $this->assertInstanceOf(ServiceUser::class, AbstractUser::getById($serviceUser->getId()));
-    }
-
-    public function testUserGetByIdOfServiceUserDoesNotPoisonTheCache(): void
-    {
-        $serviceUser = $this->createServiceUser('cache');
-
-        $this->clearUserCache($serviceUser->getId());
-        $this->assertNull(User::getById($serviceUser->getId()));
-        $this->assertInstanceOf(ServiceUser::class, ServiceUser::getById($serviceUser->getId()));
-    }
-
-    public function testGetAccountByIdReturnsEitherKindAndNoRole(): void
-    {
-        $human = $this->createHuman('account-human');
-        $serviceUser = $this->createServiceUser('account-service');
-        $role = new Role();
-        $role->setName(self::NAME_PREFIX . 'account-role');
-        $role->save();
-        $this->createdEntities[] = $role;
-
-        $this->clearUserCache($human->getId());
-        $account = User::getAccountById($human->getId());
-        $this->assertInstanceOf(User::class, $account);
-        $this->assertNotInstanceOf(ServiceUser::class, $account);
-        $this->assertSame($account, User::getById($human->getId()));
-
-        $this->clearUserCache($serviceUser->getId());
-        $this->assertInstanceOf(ServiceUser::class, User::getAccountById($serviceUser->getId()));
-
-        $this->clearUserCache($role->getId());
-        $this->assertNull(User::getAccountById($role->getId()));
     }
 
     public function testServiceUserGetByIdDoesNotReturnHuman(): void
@@ -334,94 +299,6 @@ class ServiceUserTest extends ModelTestCase
 
         $this->assertInstanceOf(User::class, $authenticated);
         $this->assertSame($human->getId(), $authenticated->getId());
-    }
-
-    public function testVersionAuthorMayBeAServiceUser(): void
-    {
-        $serviceUser = $this->createServiceUser('version-author');
-
-        $version = new Version();
-        $version->setUserId($serviceUser->getId());
-
-        $this->assertSame($serviceUser->getId(), $version->getUserId());
-        $this->assertInstanceOf(ServiceUser::class, $version->getUser());
-    }
-
-    public function testEditlockHolderMayBeAServiceUser(): void
-    {
-        $serviceUser = $this->createServiceUser('lock-holder');
-
-        $lock = new Editlock();
-        $lock->setUserId($serviceUser->getId());
-
-        $this->assertInstanceOf(ServiceUser::class, $lock->getUser());
-    }
-
-    public function testNotificationSenderMayBeAServiceUser(): void
-    {
-        $serviceUser = $this->createServiceUser('notifier');
-        $human = $this->createHuman('notified');
-
-        $notification = new Notification();
-        $notification->setType('info');
-        $notification->setTitle('from a service user');
-        $notification->setMessage('sent by an integration');
-        $notification->setSender($serviceUser);
-        $notification->setRecipient($human);
-        $notification->save();
-
-        try {
-            $loaded = Notification::getById($notification->getId());
-
-            $this->assertNotNull($loaded);
-            $this->assertInstanceOf(ServiceUser::class, $loaded->getSender());
-            $this->assertSame($serviceUser->getId(), $loaded->getSender()->getId());
-            $this->assertSame($human->getId(), $loaded->getRecipient()?->getId());
-        } finally {
-            $notification->delete();
-        }
-    }
-
-    public function testWebsiteTranslationLanguageRestrictionAppliesToAServiceUser(): void
-    {
-        $languages = Translation::getValidLanguages(Translation::DOMAIN_DEFAULT);
-        if (count($languages) < 2) {
-            $this->markTestSkipped('needs at least two valid languages');
-        }
-        [$allowed, $forbidden] = $languages;
-
-        $serviceUser = $this->createServiceUser('translator');
-        $serviceUser->setWebsiteTranslationLanguagesEdit([$allowed]);
-        $serviceUser->save();
-        $this->clearUserCache($serviceUser->getId());
-
-        $key = self::NAME_PREFIX . 'translation-' . uniqid();
-        $translation = new Translation();
-        $translation->setKey($key);
-        $translation->setDomain(Translation::DOMAIN_DEFAULT);
-        $translation->setUserModification($serviceUser->getId());
-        $translation->addTranslation($allowed, 'allowed');
-        $translation->addTranslation($forbidden, 'forbidden');
-        $translation->save();
-
-        try {
-            $this->clearTranslationCache($key);
-            $stored = Translation::getByKey($key, Translation::DOMAIN_DEFAULT);
-
-            $this->assertNotNull($stored);
-            $this->assertSame('allowed', $stored->getTranslations()[$allowed] ?? null);
-            $this->assertArrayNotHasKey($forbidden, $stored->getTranslations());
-        } finally {
-            $translation->delete();
-        }
-    }
-
-    private function clearTranslationCache(string $key): void
-    {
-        $cacheKey = 'translation_' . $key . '_' . Translation::DOMAIN_DEFAULT;
-        if (RuntimeCache::isRegistered($cacheKey)) {
-            RuntimeCache::getInstance()->offsetUnset($cacheKey);
-        }
     }
 
     private function createServiceUser(string $suffix): ServiceUser

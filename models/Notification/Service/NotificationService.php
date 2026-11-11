@@ -51,7 +51,7 @@ class NotificationService
         string $message,
         ?ElementInterface $element = null
     ): void {
-        $sender = User::getAccountById($fromUser);
+        $sender = User::getById($fromUser);
         $recipient = User::getById($userId);
 
         if (!$recipient instanceof User) {

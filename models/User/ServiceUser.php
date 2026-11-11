@@ -26,8 +26,7 @@ use Pimcore\Model\User\Exception\InvalidServiceUserException;
  * type restrictions apply unchanged. It never logs in interactively: it has no password, is never an
  * administrator and has no two-factor authentication. User::getByName() and \Pimcore\Model\User\Listing
  * return users only; use ServiceUser::getByName() and \Pimcore\Model\User\ServiceUser\Listing for
- * service users. User::getById() returns humans only, so a service user id gives null as a role id does; use
- * ServiceUser::getById() for a service user and User::getAccountById() for either kind. Names are unique across
+ * service users. User::getById() returns a ServiceUser for a service user id. Names are unique across
  * users and service users, and the type of an existing user or service user never changes.
  *
  * @method Dao getDao()

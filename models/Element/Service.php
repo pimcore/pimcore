@@ -1556,7 +1556,7 @@ class Service extends Model\AbstractModel
 
         // prepare user data
         if ($note->getUser()) {
-            $user = Model\User::getAccountById($note->getUser());
+            $user = Model\User::getById($note->getUser());
             if ($user) {
                 $e['user'] = [
                     'id' => $user->getId(),
