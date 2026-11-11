@@ -59,16 +59,18 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     protected function loadData(int $id,
         int $cId,
         string $cType,
-        bool $binaryData = false): mixed
+        bool $binaryData = false): ?string
     {
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
 
-        return $this->databaseConnection->fetchOne('SELECT ' . $dataColumn . ' FROM ' . self::versionsTableName . ' WHERE id = :id AND cid = :cid and ctype = :ctype',
+        $data = $this->databaseConnection->fetchOne('SELECT ' . $dataColumn . ' FROM ' . self::versionsTableName . ' WHERE id = :id AND cid = :cid and ctype = :ctype',
             [
                 'id' => $id,
                 'cid' => $cId,
                 'ctype' => $cType,
             ]);
+
+        return $data === false ? null : $data;
     }
 
     public function loadMetaData(Version $version): ?string
@@ -76,7 +78,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         return $this->loadData($version->getId(), $version->getCid(), $version->getCtype());
     }
 
-    protected function getStream(string $data): mixed
+    protected function getStream(?string $data): mixed
     {
         if ($data) {
             $fileName = tmpfile();

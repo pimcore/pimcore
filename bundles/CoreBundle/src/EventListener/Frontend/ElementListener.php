@@ -83,9 +83,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $user = $this->userLoader->getUser();
             }
 
-            if ($document && !$document->isPublished() && !$user) {
+            $hasDocumentViewPermission = $document && $user && $document->isAllowed('view', $user);
+
+            if ($document && !$document->isPublished() && !$hasDocumentViewPermission) {
                 $this->logger->warning(
-                    "Denying access to document {$document->getFullPath()} as it is unpublished and there is no user in the session."
+                    "Denying access to document {$document->getFullPath()} as it is unpublished and the user has no view permission."
                 );
 
                 throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
@@ -93,7 +95,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
-                $document = $this->handleAdminUserDocumentParams($request, $document, $user);
+                if ($hasDocumentViewPermission) {
+                    $document = $this->handleAdminUserDocumentParams($request, $document, $user);
+                }
                 $this->handleObjectParams($request, $user);
             }
 
@@ -110,14 +114,22 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
         $v = ParameterBagHelper::getInt($request->query, 'v');
         if ($v) {
-            if ($version = Version::getById($v)) {
-                if ($version->getPublic()) {
+            if ($version = $this->loadVersion($v)) {
+                if ($version->getPublic()
+                    && $version->getCtype() === 'document'
+                    && (int) $version->getCid() === $document->getId()
+                ) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
                         'document' => $document->getFullPath(),
                     ]);
 
                     $document = $version->getData();
+                } else {
+                    $this->logger->notice('Denying version {version} for document {document}: not public or foreign', [
+                        'version' => $version->getId(),
+                        'document' => $document->getFullPath(),
+                    ]);
                 }
             } else {
                 $this->logger->notice('Failed to load {version} for document {document}', [
@@ -154,7 +166,22 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         if ($request->query->has('pimcore_version')) {
             $versionId = ParameterBagHelper::getInt($request->query, 'pimcore_version');
             // TODO there was a check with a registry flag here - check if the main request handling is sufficient
-            $version = Version::getById($versionId);
+            $version = $this->loadVersion($versionId);
+            if ($version && (
+                $version->getCtype() !== 'document'
+                || (int) $version->getCid() !== $document->getId()
+                // browsing historical versions by id is a separate grant from "view" (GHSA-v36c-r89g-2226)
+                || !$document->isAllowed('versions', $user)
+            )) {
+                // the version must belong to the already authorized document and the user must be allowed to read versions
+                $this->logger->warning('Denying version {version} for document {document}: not its version or no versions permission', [
+                    'version' => $versionId,
+                    'document' => $document->getFullPath(),
+                ]);
+
+                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
+            }
+
             if ($documentVersion = $version?->getData()) {
                 $document = $documentVersion;
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
@@ -176,6 +203,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
+    protected function loadVersion(int $versionId): ?Version
+    {
+        return Version::getById($versionId);
+    }
+
     protected function handleEditmode(
         Document $document,
         User $user,
@@ -193,6 +225,12 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
                 return $documentFromSession;
             }
+        }
+
+        // substituting the latest (possibly unpublished) version requires the "versions" grant,
+        // same as browsing historical versions by id via pimcore_version
+        if (!$document->isAllowed('versions', $user)) {
+            return $document;
         }
 
         $this->logger->debug('Loading editmode document {document} from latest version', [
@@ -214,7 +252,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleObjectParams(Request $request, UserInterface $user): void
+    protected function handleObjectParams(Request $request, User $user): void
     {
 
         if ($request->query->has('pimcore_studio_preview')) {
@@ -241,19 +279,35 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->cacheObject($object);
     }
 
-    private function handleObjectStudioPreview(int $id, UserInterface $user): void
+    private function handleObjectStudioPreview(int $id, User $user): void
     {
-        $object = $this->getLatestVersion($id, $user);
-        if (!$object instanceof Concrete) {
+        $persisted = $this->getPersistedObject($id);
+        if (!$persisted instanceof Concrete) {
+            return;
+        }
+
+        // the persisted element is authorized, as a version snapshot keeps its own parent, which decides
+        // the workspace grants
+        if (!$persisted->isAllowed('view', $user)) {
+            $this->logger->warning(
+                "Denying access to object {$persisted->getFullPath()} as the user has no view permission."
+            );
+
+            throw new AccessDeniedHttpException(sprintf('Access denied for object %d', $id));
+        }
+
+        // substituting the latest (possibly unpublished) version requires the "versions" grant, same as
+        // for documents; without it the object is served as published
+        if (!$persisted->isAllowed('versions', $user)) {
             return;
         }
 
         $this->logObjectLoading(
-            $object,
+            $persisted,
             'Loading object {object} ({objectId}) for studio preview'
         );
 
-        $this->cacheObject($object);
+        $this->cacheObject($this->getLatestVersion($persisted, $user));
     }
 
     private function handleDocumentClassicPreview(Request $request, Document $document): Document
@@ -273,6 +327,12 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     private function handleDocumentStudioPreview(Document $document, User $user): Document
     {
+        // substituting the latest (possibly unpublished) version requires the "versions" grant,
+        // same as browsing historical versions by id via pimcore_version
+        if (!$document->isAllowed('versions', $user)) {
+            return $document;
+        }
+
         $this->logger->debug('Loading preview document {document} from latest version', [
             'document' => $document->getFullPath(),
         ]);
@@ -291,18 +351,19 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    private function getLatestVersion(int $id, UserInterface $user): ?Concrete
+    protected function getPersistedObject(int $id): ?Concrete
     {
-        $dataObject = Service::getElementById('object', $id);
+        $object = Service::getElementById('object', $id);
 
-        if (!$dataObject instanceof Concrete) {
-            return null;
-        }
+        return $object instanceof Concrete ? $object : null;
+    }
 
-        $version = $dataObject->getLatestVersion($user->getId());
+    protected function getLatestVersion(Concrete $object, UserInterface $user): Concrete
+    {
+        $version = $object->getLatestVersion($user->getId());
 
         if ($version === null || !$version->getData() instanceof Concrete) {
-            return $dataObject;
+            return $object;
         }
 
         return $version->getData();

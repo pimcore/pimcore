@@ -12,6 +12,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -84,11 +85,50 @@ abstract class Dao extends Model\Dao\AbstractDao
         }
         $fullPath = $current->getPath() . $current->getKey();
 
-        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE LOCATE(cpath, ?)=1 AND
-        userId IN (' . implode(',', $userIds) . ')
-        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+        // A workspace applies to this element when its cpath is the element itself or one of its
+        // ancestors. Matching the exact set of ancestor paths (instead of LOCATE(cpath, fullPath),
+        // which matches on a raw substring and therefore also matched unrelated siblings sharing a
+        // path prefix, e.g. "/foo/Car" matching "/foo/Carpets/...") is both boundary-correct and
+        // index-usable on users_workspaces_*.cpath.
+        $paths = $this->getAncestorPaths($fullPath);
 
-        return (int)$this->db->fetchOne($sql, [$fullPath]);
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE cpath IN (:paths) AND
+        userId IN (:userIds)
+        ORDER BY LENGTH(cpath) DESC, FIELD(userId, :lastUserId) DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+
+        return (int)$this->db->fetchOne(
+            $sql,
+            [
+                'paths' => $paths,
+                'userIds' => $userIds,
+                'lastUserId' => end($userIds),
+            ],
+            [
+                'paths' => ArrayParameterType::STRING,
+                'userIds' => ArrayParameterType::INTEGER,
+            ]
+        );
+    }
+
+    /**
+     * Returns the element's own full path and the full paths of all its ancestors, including the
+     * root path "/". Used for exact, boundary-correct workspace matching against cpath.
+     *
+     * @return string[]
+     */
+    protected function getAncestorPaths(string $fullPath): array
+    {
+        $paths = ['/'];
+        $current = '';
+        foreach (explode('/', trim($fullPath, '/')) as $segment) {
+            if ($segment === '') {
+                continue;
+            }
+            $current .= '/' . $segment;
+            $paths[] = $current;
+        }
+
+        return array_values(array_unique($paths));
     }
 
     /**
@@ -180,8 +220,120 @@ abstract class Dao extends Model\Dao\AbstractDao
             WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1
             AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId ='.end($userIds).')
             LIMIT 1',
-            [Helper::escapeLike($path) . '%']);
+            [$this->escapeLikePrefix($path) . '%']);
 
         return (int)$permissionsChildren;
+    }
+
+    /**
+     * Builds a boundary-correct, index-usable "listable child" WHERE fragment (against the `o`
+     * alias of the element table) for the children of the current folder, together with its bound
+     * parameters and types.
+     *
+     * A child is listable when the user has an allowed (list=1, not user-denied) workspace on the
+     * child itself or anywhere in its subtree, or when the folder inherits the list permission and
+     * the child is not explicitly denied. The subtree check is resolved with a single folder-scoped
+     * lookup (a constant cpath prefix, so the cpath index range applies) instead of a
+     * LOCATE(cpath) correlated subquery evaluated per child — turning an
+     * O(children * workspace-rows) scan into O(children + workspace-rows).
+     *
+     * @return array{0: string, 1: array<string, mixed>, 2: array<string, ArrayParameterType>}
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function buildChildListPermissionCondition(User $user, string $tableSuffix, string $keyColumn): array
+    {
+        $userIds = $user->getRoles();
+        $userIds[] = $user->getId();
+        $currentUserId = $user->getId();
+        $table = 'users_workspaces_' . $tableSuffix;
+
+        $folderPath = $this->model->getRealFullPath();
+        $childPrefix = $folderPath === '/' ? '/' : $folderPath . '/';
+
+        // the user's allowed (list=1) workspace paths anywhere in this folder's subtree, excluding
+        // paths the current user is explicitly denied on — a single sargable range on cpath
+        $allowedPaths = $this->db->fetchFirstColumn(
+            'SELECT uw.cpath FROM ' . $table . ' uw
+             WHERE uw.userId IN (:userIds) AND uw.list = 1 AND uw.cpath LIKE :childPrefix
+               AND NOT EXISTS(
+                   SELECT 1 FROM ' . $table . ' denied
+                   WHERE denied.userId = :currentUserId AND denied.list = 0 AND denied.cpath = uw.cpath
+               )',
+            [
+                'userIds' => $userIds,
+                'childPrefix' => $this->escapeLikePrefix($childPrefix) . '%',
+                'currentUserId' => $currentUserId,
+            ],
+            ['userIds' => ArrayParameterType::INTEGER]
+        );
+
+        $allowedChildKeys = $this->immediateChildSegments($childPrefix, $allowedPaths);
+
+        $conditions = [];
+        $params = [];
+        $types = [];
+
+        if ($allowedChildKeys !== []) {
+            $conditions[] = 'o.' . $this->db->quoteIdentifier($keyColumn) . ' IN (:allowedChildKeys)';
+            $params['allowedChildKeys'] = $allowedChildKeys;
+            $types['allowedChildKeys'] = ArrayParameterType::STRING;
+        }
+
+        // when the folder inherits list, a child is listable unless it is explicitly denied
+        if ($this->InheritingPermission('list', $userIds, $tableSuffix) !== 0) {
+            $conditions[] = 'NOT EXISTS(
+                SELECT 1 FROM ' . $table . ' deniedChild
+                WHERE deniedChild.userId IN (:deniedUserIds) AND deniedChild.cid = o.id AND deniedChild.list = 0
+            )';
+            $params['deniedUserIds'] = $userIds;
+            $types['deniedUserIds'] = ArrayParameterType::INTEGER;
+        }
+
+        // no allowed subtree and no inherited permission -> no child is listable
+        $condition = $conditions === [] ? '0' : '(' . implode(' OR ', $conditions) . ')';
+
+        return [$condition, $params, $types];
+    }
+
+    /**
+     * Extracts the distinct immediate child segment directly under $childPrefix from a set of
+     * descendant cpaths (e.g. "/a/b/" + "/a/b/c/d" -> "c").
+     *
+     * @param string[] $cpaths
+     *
+     * @return string[]
+     */
+    private function immediateChildSegments(string $childPrefix, array $cpaths): array
+    {
+        $prefixLength = strlen($childPrefix);
+        // the DB rows were matched with escapeLikePrefix() (backslash-safe), but the raw cpath
+        // values themselves are unescaped, so compare against the unescaped prefix here
+        $segments = [];
+        foreach ($cpaths as $cpath) {
+            if (!str_starts_with($cpath, $childPrefix)) {
+                continue;
+            }
+            $rest = substr($cpath, $prefixLength);
+            $slash = strpos($rest, '/');
+            $segment = $slash === false ? $rest : substr($rest, 0, $slash);
+            if ($segment !== '') {
+                $segments[$segment] = true;
+            }
+        }
+
+        return array_keys($segments);
+    }
+
+    /**
+     * Escapes a value for use as a literal prefix in a LIKE pattern. Unlike Helper::escapeLike(),
+     * this also escapes backslashes — they are valid in (object) element keys but are the default
+     * LIKE escape character in MySQL, so leaving them unescaped would corrupt the pattern and drop
+     * legitimate matches. Backslashes are escaped first so the escapes added for "_"/"%" are not
+     * themselves re-escaped.
+     */
+    private function escapeLikePrefix(string $value): string
+    {
+        return Helper::escapeLike(str_replace('\\', '\\\\', $value));
     }
 }

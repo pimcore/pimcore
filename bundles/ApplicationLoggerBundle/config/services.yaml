@@ -8,11 +8,6 @@ services:
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreApplicationLoggerBundle')"
 
-    Pimcore\Bundle\ApplicationLoggerBundle\Controller\:
-        resource: '../src/Controller'
-        public: true
-        tags: ['controller.service_arguments']
-
     #
     # APPLICATION LOGGER
     #
@@ -71,7 +66,9 @@ services:
 
     Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask:
         arguments:
-            - '@doctrine.dbal.default_connection'
+            $db: '@doctrine.dbal.default_connection'
+            # only for tests; autowiring must not inject a project-level filesystem here
+            $storage: null
         tags:
             - { name: pimcore.maintenance.task, type: archiveLogEntries }
 
@@ -80,6 +77,3 @@ services:
             - '@doctrine.dbal.default_connection'
         tags:
             - { name: pimcore.maintenance.task, type: logmaintenance }
-
-    Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface:
-        class: Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationService

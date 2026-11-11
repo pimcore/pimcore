@@ -265,6 +265,10 @@ class LocationAwareConfigRepository
 
     public function fetchAllKeysByReadTargets(): array
     {
+        if (empty($this->storageConfig[self::READ_TARGET][self::TYPE])) {
+            return $this->fetchAllKeys();
+        }
+
         if ($this->storageConfig[self::READ_TARGET][self::TYPE] === self::LOCATION_SYMFONY_CONFIG) {
             return array_keys($this->containerConfig);
         }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Test;
 
+use Carbon\Carbon;
+use DateTimeInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -96,6 +98,22 @@ abstract class AbstractPropertiesTest extends ModelTestCase
 
         $childElement = Service::getElementById(Service::getElementType($childElement), $childElement->getId(), ['force' => true]);
         $this->assertEquals($expectedData . '_3', $childElement->getProperty('textproperty3'));
+    }
+
+    public function testDateProperty(): void
+    {
+        $date = new Carbon('2026-01-02 03:04:05');
+
+        $this->createElement();
+        $this->testElement->setProperty('dateproperty', 'date', $date);
+        $this->testElement->save();
+        $this->reloadElement();
+
+        $property = $this->testElement->getProperties()['dateproperty'] ?? null;
+        $this->assertNotNull($property);
+        $this->assertSame('date', $property->getType());
+        $this->assertInstanceOf(DateTimeInterface::class, $property->getData());
+        $this->assertSame($date->getTimestamp(), $property->getData()->getTimestamp());
     }
 
     public function testRelation(): void

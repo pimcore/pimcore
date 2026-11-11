@@ -12,6 +12,7 @@
 
 namespace Pimcore\Model\DataObject\AbstractObject;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
@@ -39,6 +40,7 @@ class Dao extends Model\Element\Dao
 
         if ($data) {
             $data['published'] = (bool)$data['published'];
+            $this->assignChangeToken($data);
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
@@ -97,6 +99,9 @@ class Dao extends Model\Element\Dao
             }
         }
 
+        // maintained by the database, see renewChangeToken()
+        unset($data['changeToken']);
+
         // check the type before updating, changing the type or class of an object is not possible
         $checkColumns = ['type', 'classId', 'className'];
         $existingData = $this->db->fetchAssociative('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE id = ?', [$this->model->getId()]);
@@ -111,7 +116,8 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::upsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
+        Helper::updateOrInsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
 
         // tree_locks
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'object']);
@@ -191,6 +197,62 @@ class Dao extends Model\Element\Dao
         }
 
         return null;
+    }
+
+    /**
+     * Same as getCurrentFullPath(), but locks the row so that a concurrent transaction
+     * changing this object's path or parent has to wait until the current transaction finishes.
+     *
+     * @return string|null retrieves the current full object path from DB
+     */
+    public function getCurrentFullPathForUpdate(): ?string
+    {
+        if ($path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM objects WHERE id = ? FOR UPDATE', [$this->model->getId()])) {
+            return $path;
+        }
+
+        return null;
+    }
+
+    /**
+     * Moves the change token of a loaded objects row to the model. Assigned explicitly and removed from the row data,
+     * because a data object field may be named changeToken as well.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function assignChangeToken(array &$data): void
+    {
+        $token = $data['changeToken'] ?? null;
+        unset($data['changeToken']);
+        $this->model->__setChangeToken(is_string($token) ? $token : null);
+    }
+
+    /**
+     * Reads the change token of the object's row and locks the row until the current transaction ends.
+     *
+     * @internal
+     */
+    public function getChangeTokenForUpdate(): ?string
+    {
+        $token = $this->db->fetchOne('SELECT changeToken FROM objects WHERE id = ? FOR UPDATE', [$this->model->getId()]);
+
+        return is_string($token) ? $token : null;
+    }
+
+    /**
+     * Sets a new change token on the object's row and returns it. The column renews itself on every UPDATE that
+     * changes the row (ON UPDATE CURRENT_TIMESTAMP(6)), a save renews it explicitly because its UPDATE may not change
+     * any column of the row.
+     *
+     * @internal
+     */
+    public function renewChangeToken(): ?string
+    {
+        $this->db->executeStatement('UPDATE objects SET changeToken = CURRENT_TIMESTAMP(6) WHERE id = ?', [$this->model->getId()]);
+
+        $token = $this->db->fetchOne('SELECT changeToken FROM objects WHERE id = ?', [$this->model->getId()]);
+
+        return is_string($token) ? $token : null;
     }
 
     public function getVersionCountForUpdate(): int
@@ -286,28 +348,15 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $sql = 'SELECT 1 FROM objects o WHERE parentId = ? ';
+        $sql = 'SELECT 1 FROM objects o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
+
         if ($user && !$user->isAdmin()) {
-            $roleIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $permissionIds = array_merge($roleIds, [$currentUserId]);
-
-            //gets the permission of the ancestors, since it would be the same for each row with same parentId, it is done once outside the query to avoid extra subquery.
-            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
-
-            // $anyAllowedRowOrChildren checks for nested elements that are `list`=1. This is to allow the folders in between from current parent to any nested elements and due the "additive" permission on the element itself, we can simply ignore list=0 children
-            // unless for the same rule found is list=0 on user specific level, in that case it nullifies that entry.
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(o.path,o.key),cpath)=1 AND
-            NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
-
-            // $allowedCurrentRow checks if the current row is blocked, if found a match it "removes/ignores" the entry from object table, doesn't need to check if is list=1 on user level, since it is done in $anyAllowedRowOrChildren (NB: equal or longer cpath) so we are safe to deduce that there are no valid list=1 rules
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN (' . implode(',', $permissionIds) . ')  AND cid = id AND list=0)';
-
-            //If no children with list=1 (with no user-level list=0) is found, we consider the inherited permission rule
-            //if $inheritedPermission=0 then everything is disallowed (or doesn't specify any rule) for that row, we can skip $isDisallowedCurrentRow
-            //if $inheritedPermission=1, then we are allowed unless the current row is specifically disabled, already knowing from $anyAllowedRowOrChildren that there are no list=1(without user permission list=0),so this "blocker" is the highest cpath available for this row if found
-
-            $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'object', 'key');
+            $sql .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
         $includingUnpublished ??= !DataObject::doHideUnpublished();
@@ -316,13 +365,14 @@ class Dao extends Model\Element\Dao
         }
 
         if ($objectTypes) {
-            $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
+            $sql .= ' AND `type` IN (:objectTypes)';
+            $params['objectTypes'] = $objectTypes;
+            $types['objectTypes'] = ArrayParameterType::STRING;
         }
 
         $sql .= ' LIMIT 1';
-        $c = $this->db->fetchOne($sql, [$this->model->getId()]);
 
-        return (bool)$c;
+        return (bool) $this->db->fetchOne($sql, $params, $types);
     }
 
     /**
@@ -381,27 +431,24 @@ class Dao extends Model\Element\Dao
             return 0;
         }
 
-        $query = 'SELECT COUNT(*) AS count FROM objects o WHERE parentId = ?';
+        $query = 'SELECT COUNT(*) AS count FROM objects o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
 
         if ($objectTypes) {
-            $query .= sprintf(' AND `type` IN (\'%s\')', implode("','", $objectTypes));
+            $query .= ' AND `type` IN (:objectTypes)';
+            $params['objectTypes'] = $objectTypes;
+            $types['objectTypes'] = ArrayParameterType::STRING;
         }
 
         if ($user && !$user->isAdmin()) {
-            $roleIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $permissionIds = array_merge($roleIds, [$currentUserId]);
-
-            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(o.path,o.key),cpath)=1 AND
-            NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN (' . implode(',', $permissionIds) . ')  AND cid = id AND list=0)';
-
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'object', 'key');
+            $query .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
-        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($query, $params, $types);
     }
 
     /**

@@ -28,6 +28,10 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Exception\StaleDataException;
+use Throwable;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -128,16 +132,28 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected ?array $__rawRelationData = null;
 
+    /**
+     * Change token of the objects row (DATETIME(6), maintained by the database) this object was loaded from or last
+     * saved to. Null when unknown, e.g. for an object restored from a version. Prefixed like the other internal
+     * properties, so it cannot collide with a data object field named changeToken.
+     *
+     * @internal
+     */
+    protected ?string $__changeToken = null;
+
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $blockedVars = array_merge($blockedVars, ['dirtyFields']);
+            // the change token belongs to the live row, a version or recycle bin dump must not carry it
+            $blockedVars = array_merge($blockedVars, ['dirtyFields', '__changeToken']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+            // the calculated value snapshot belongs to the version dump of an object restored
+            // from a version (see Concrete::__getCalculatedValueSnapshot()) and must never leak into the cache
+            $blockedVars = array_merge($blockedVars, ['children', 'properties', '__calculatedValueSnapshot']);
         }
 
         return $blockedVars;
@@ -187,7 +203,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      *
-     * @param array{force?: bool, ...} $params
+     * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
      */
     public static function getById(int $id, array $params = []): ?static
     {
@@ -197,6 +215,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = self::getCacheKey($id);
 
+        $lock = self::getLockParam($params);
+        unset($params['lock']);
         $params = Model\Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
@@ -222,7 +242,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
-                    $object->getDao()->getById($id);
+
+                    if ($lock) {
+                        $object->getDao()->getById($id);
+                    } else {
+                        HydrationLock::withoutLock(fn () => $object->getDao()->getById($id));
+                    }
+
                     if ($object->getModificationDate() !== null) {
                         $object->__setDataVersionTimestamp($object->getModificationDate());
                     }
@@ -259,6 +285,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $object;
     }
 
+    /**
+     * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
+     */
     public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
@@ -267,11 +298,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $path = Model\Element\Service::correctPath($path);
 
+        $lock = self::getLockParam($params);
+        unset($params['lock']);
+
         try {
             $object = new static();
-            $object->getDao()->getByPath($path);
 
-            return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
+            Model\Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                $path
+            );
+
+            $preparedParams = Model\Element\Service::prepareGetByIdParams($params);
+            $preparedParams['lock'] = $lock;
+
+            return static::getById($object->getId(), $preparedParams);
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
@@ -475,129 +516,193 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
-        $isDirtyDetectionDisabled = null;
+        $isDirtyDetectionDisabled = false;
+        $newChangeToken = null;
         $updatedChildren = [];
         $differentOldPath = '';
         $hideUnpublishedBackup = false;
+        /** @var AbstractObject|null $parent */
+        $parent = null;
 
-        $this->retryableFunction(
-            beforeRetryables: function () use (
-                &$isUpdate,
-                &$parameters,
-                &$isDirtyDetectionDisabled
-            ) {
-                $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
-                $preEvent = new DataObjectEvent($this, $parameters);
-                if ($this->getId()) {
-                    $isUpdate = true;
-                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
-                } else {
-                    self::disableDirtyDetection();
-                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
-                }
-
-                $parameters = $preEvent->getArguments();
-
-                $this->correctPath();
-            },
-            retryableFunc: function () use (
-                &$isUpdate,
-                &$parameters,
-                &$updatedChildren,
-                &$differentOldPath,
-                &$hideUnpublishedBackup
-            ) {
-                $hideUnpublishedBackup = self::getHideUnpublished();
-                self::setHideUnpublished(false);
-
-                if (!in_array($this->getType(), self::$types)) {
-                    throw new Exception('invalid object type given: [' . $this->getType() . ']');
-                }
-
-                if (!$isUpdate) {
-                    $this->getDao()->create();
-                }
-
-                // get the old path from the database before the update is done
-                $oldPath = null;
-                if ($isUpdate) {
-                    $oldPath = $this->getDao()->getCurrentFullPath();
-                }
-
-                // if the old path is different from the new path, update all children
-                // we need to do the update of the children's path before $this->update() because the
-                // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
-                $updatedChildren = [];
-                if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                    $differentOldPath = $oldPath;
-                    $this->getDao()->updateWorkspaces();
-                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
-                }
-
-                $this->update($isUpdate, $parameters);
-
-                self::setHideUnpublished($hideUnpublishedBackup);
-            },
-            onBeforeRetry: function ($e) use (&$hideUnpublishedBackup) {
-                self::setHideUnpublished($hideUnpublishedBackup);
-
-                if ($e instanceof UniqueConstraintViolationException) {
-                    throw new Element\ValidationException('unique constraint violation', 0, $e);
-                }
-            },
-            onCommit: function () use (
-                &$isUpdate,
-                &$parameters,
-                &$differentOldPath,
-                &$updatedChildren,
-                &$isDirtyDetectionDisabled
-            ) {
-                $additionalTags = [];
-
-                foreach ($updatedChildren as $objectId) {
-                    $tag = 'object_' . $objectId;
-                    $additionalTags[] = $tag;
-
-                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                    RuntimeCache::set($tag, null);
-                }
-
-                $this->clearDependentCache($additionalTags);
-
-                if ($differentOldPath) {
-                    $this->renewInheritedProperties();
-                }
-
-                // add to queue that saves dependencies
-                $this->addToDependenciesQueue();
-
-                //Reset Relational data to force a reload
-                $this->__rawRelationData = null;
-
-                $postEvent = new DataObjectEvent($this, $parameters);
-                if ($isUpdate) {
-                    if ($differentOldPath) {
-                        $postEvent->setArgument('oldPath', $differentOldPath);
+        try {
+            $this->retryableFunction(
+                beforeRetryables: function () use (
+                    &$isUpdate,
+                    &$parameters,
+                    &$isDirtyDetectionDisabled,
+                    &$parent
+                ) {
+                    $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+                    $preEvent = new DataObjectEvent($this, $parameters);
+                    if ($this->getId()) {
+                        $isUpdate = true;
+                        $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
+                    } else {
+                        self::disableDirtyDetection();
+                        $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
                     }
-                    $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
-                } else {
-                    self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                    $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
-                }
 
-            },
-            onFailure: function ($e) use (&$isUpdate, &$parameters) {
-                $failureEvent = new DataObjectEvent($this, $parameters);
-                $failureEvent->setArgument('exception', $e);
-                if ($isUpdate) {
-                    $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
-                } else {
-                    $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
+                    $parameters = $preEvent->getArguments();
+
+                    $this->correctPath();
+
+                    // load the parent outside of the save transaction: a non-locking read in the transaction before this
+                    // object's row lock would let the relation rows (see below) be read from an outdated snapshot. This
+                    // does not help when save() runs inside an outer transaction that already read from the database.
+                    if ($isUpdate) {
+                        $parent = DataObject::getById($this->getParentId());
+                    }
+                },
+                retryableFunc: function () use (
+                    &$isUpdate,
+                    &$parameters,
+                    &$newChangeToken,
+                    &$updatedChildren,
+                    &$differentOldPath,
+                    &$hideUnpublishedBackup,
+                    &$parent
+                ) {
+                    $hideUnpublishedBackup = self::getHideUnpublished();
+                    self::setHideUnpublished(false);
+
+                    if (!in_array($this->getType(), self::$types)) {
+                        throw new Exception('invalid object type given: [' . $this->getType() . ']');
+                    }
+
+                    if (!$isUpdate) {
+                        $this->getDao()->create();
+                        // a new object has no relations yet, see the reset of the raw relation data below
+                        $this->__rawRelationData = [];
+                    }
+
+                    // get the old path from the database before the update is done
+                    $oldPath = null;
+                    if ($isUpdate) {
+                        // lock this object's and the new parent's row in a fixed order (ascending id) so that
+                        // two concurrent moves affecting the same pair of objects (e.g. A becomes a child of B
+                        // while B becomes a child of A) are serialized instead of racing past each other's check
+                        if ($parent && $this->getId() > $parent->getId()) {
+                            $parentFullPath = $parent->getDao()->getCurrentFullPathForUpdate();
+                            $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+                        } else {
+                            $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+                            $parentFullPath = $parent?->getDao()->getCurrentFullPathForUpdate();
+                        }
+
+                        $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
+
+                        // the row is locked by now, so the token cannot change until this transaction ends
+                        $this->assertBasedOnCurrentData();
+
+                        // relations are saved as a delta against the raw relation data, which might be outdated (read
+                        // before a concurrent save, or copied from another object by cloning). Reset it before update()
+                        // lazy loads any relation field, so the delta is calculated against the current database state.
+                        $this->__rawRelationData = null;
+                    }
+
+                    // if the old path is different from the new path, update all children
+                    // we need to do the update of the children's path before $this->update() because the
+                    // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
+                    $updatedChildren = [];
+                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $differentOldPath = $oldPath;
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
+                    }
+
+                    $this->update($isUpdate, $parameters);
+
+                    // renewed explicitly: a store-only change in the same second leaves the objects row unchanged
+                    $newChangeToken = $this->getDao()->renewChangeToken();
+
+                    self::setHideUnpublished($hideUnpublishedBackup);
+                },
+                onBeforeRetry: function ($e) use (&$hideUnpublishedBackup) {
+                    self::setHideUnpublished($hideUnpublishedBackup);
+
+                    if ($e instanceof UniqueConstraintViolationException) {
+                        throw (new StructuredValidationException('unique constraint violation', 0, $e))
+                            ->setTranslation(ValidationMessageKey::UNIQUE_CONSTRAINT);
+                    }
+                },
+                onCommit: function () use (
+                    &$isUpdate,
+                    &$parameters,
+                    &$newChangeToken,
+                    &$differentOldPath,
+                    &$updatedChildren,
+                    &$isDirtyDetectionDisabled
+                ) {
+                    // only after the commit: a retried transaction must still compare against the token it loaded
+                    $this->__changeToken = $newChangeToken;
+
+                    $additionalTags = [];
+
+                    foreach ($updatedChildren as $objectId) {
+                        $tag = 'object_' . $objectId;
+                        $additionalTags[] = $tag;
+
+                        // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                        RuntimeCache::set($tag, null);
+                    }
+
+                    $this->clearDependentCache($additionalTags);
+
+                    if ($differentOldPath) {
+                        $this->renewInheritedProperties();
+                    }
+
+                    // add to queue that saves dependencies
+                    $this->addToDependenciesQueue();
+
+                    //Reset Relational data to force a reload
+                    $this->__rawRelationData = null;
+
+                    $postEvent = new DataObjectEvent($this, $parameters);
+                    if ($isUpdate) {
+                        if ($differentOldPath) {
+                            $postEvent->setArgument('oldPath', $differentOldPath);
+                        }
+                        $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
+                    } else {
+                        self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                        $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
+                    }
+
+                },
+                onFailure: function ($e) use (&$isUpdate, &$parameters, &$isDirtyDetectionDisabled) {
+                    $failureEvent = new DataObjectEvent($this, $parameters);
+                    $failureEvent->setArgument('exception', $e);
+                    if ($isUpdate) {
+                        $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
+                    } else {
+                        // like POST_ADD, POST_ADD_FAILURE listeners run with the dirty detection restored
+                        self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                        $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
+                    }
                 }
-            }
-        );
+            );
+        } catch (Throwable $e) {
+            // onFailure restores the dirty detection of a failed add, but retryableFunction() passes only exceptions
+            // to it, not errors
+            self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+
+            throw $e;
+        }
 
         return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @throws Exception
+     */
+    protected function assertParentIsNotOwnDescendant(?string $currentFullPath, ?string $parentFullPath): void
+    {
+        if ($currentFullPath !== null && $parentFullPath !== null && str_starts_with($parentFullPath, $currentFullPath . '/')) {
+            throw new Exception('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+        }
     }
 
     /**
@@ -628,6 +733,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
             // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
+            $this->assertParentIsNotOwnDescendant($this->getDao()->getCurrentFullPath(), $parent->getDao()->getCurrentFullPath());
+
             $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath().'/'));
 
             if (strlen($this->getKey()) < 1) {
@@ -918,6 +1025,74 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(false);
+    }
+
+    /**
+     * @internal
+     */
+    public function __getChangeToken(): ?string
+    {
+        return $this->__changeToken;
+    }
+
+    /**
+     * @internal
+     */
+    public function __setChangeToken(?string $changeToken): void
+    {
+        $this->__changeToken = $changeToken;
+    }
+
+    /**
+     * Compares the change token this object was loaded with against the locked objects row. A mismatch means another
+     * process wrote or deleted the row in the meantime: classes with a disabled hydration lock throw, all others keep
+     * the previous behavior (the concurrent change is overwritten, a deleted row is recreated) and log a warning.
+     *
+     * @throws StaleDataException
+     */
+    private function assertBasedOnCurrentData(): void
+    {
+        if ($this->__changeToken === null) {
+            return;
+        }
+
+        $currentToken = $this->getDao()->getChangeTokenForUpdate();
+        if ($currentToken === $this->__changeToken) {
+            return;
+        }
+
+        $deleted = $currentToken === null;
+        if (HydrationLock::isDisabledFor($this)) {
+            throw new StaleDataException(sprintf(
+                'Object %d was %s by another process since it was loaded, reload it and apply the changes again',
+                $this->getId(),
+                $deleted ? 'deleted' : 'changed'
+            ));
+        }
+
+        Logger::warning(
+            'Saving object {id} based on outdated data: a concurrent {change} is overwritten. Disable the hydration '
+            . 'lock for its class (Pimcore\\Model\\DataObject\\HydrationLock) to get a StaleDataException instead.',
+            ['id' => $this->getId(), 'change' => $deleted ? 'deletion' : 'change']
+        );
+    }
+
+    /**
+     * Extracts and validates the 'lock' option from the given params.
+     *
+     * @param array<string, mixed> $params
+     */
+    private static function getLockParam(array $params): bool
+    {
+        if (!array_key_exists('lock', $params)) {
+            return true;
+        }
+
+        if (!is_bool($params['lock'])) {
+            throw new InvalidArgumentException('The "lock" parameter must be of type boolean');
+        }
+
+        return $params['lock'];
     }
 
     /**

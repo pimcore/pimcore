@@ -151,6 +151,7 @@ return [
     'Pimcore\\Model\\User\\Role' => 'Pimcore\\Model\\User\\Role\\Dao',
     'Pimcore\\Model\\User\\Role\\Folder' => 'Pimcore\\Model\\User\\Role\\Folder\\Dao',
     'Pimcore\\Model\\User\\Role\\Listing' => 'Pimcore\\Model\\User\\Role\\Listing\\Dao',
+    'Pimcore\\Model\\User\\ServiceUser\\Listing' => 'Pimcore\\Model\\User\\Listing\\AbstractListing\\Dao',
     'Pimcore\\Model\\User\\UserRole' => 'Pimcore\\Model\\User\\UserRole\\Dao',
     'Pimcore\\Model\\User\\UserRole\\Folder' => 'Pimcore\\Model\\User\\UserRole\\Dao',
     'Pimcore\\Model\\User\\Workspace\\Asset' => 'Pimcore\\Model\\User\\Workspace\\Dao',

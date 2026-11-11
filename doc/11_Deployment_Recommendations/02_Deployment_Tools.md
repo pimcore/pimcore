@@ -82,6 +82,10 @@ Run `pimcore:deployment:classes-rebuild` after every code update to push changes
 bin/console pimcore:deployment:classes-rebuild
 ```
 
+When multiple nodes share the same database, run the command on every node: even if another node
+already updated the database, the command still regenerates missing or outdated PHP class files
+on the local filesystem without performing additional database writes.
+
 To update only the database structure without dumping classes to the file system:
 
 ```bash

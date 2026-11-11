@@ -79,10 +79,10 @@ Cancel only the entire job run.
 | State | Description |
 |-------|-------------|
 | `running` | Currently executing |
-| `failed` | Execution failed |
+| `failed` | Execution failed, e.g. stopped on the first error or all elements failed |
 | `finished` | Completed successfully |
 | `cancelled` | Cancelled by user |
-| `finished_with_errors` | Completed with one or more errors |
+| `finished_with_errors` | Completed with one or more errors (some elements failed, others succeeded) |
 
 ## Adding Additional Log Entries
 

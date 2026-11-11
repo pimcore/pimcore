@@ -15,7 +15,7 @@ namespace Pimcore\Model\Version\Adapter;
 
 use Pimcore\Model\Version;
 
-class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
+class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface, ElementTypeAwareStorageTypeInterface
 {
     protected VersionStorageAdapterInterface $storageAdapter;
 
@@ -26,6 +26,15 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
 
     public function getStorageType(?int $metaDataSize = null, ?int $binaryDataSize = null): string
     {
+        return $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize);
+    }
+
+    public function getStorageTypeForElementType(string $elementType, ?int $metaDataSize = null, ?int $binaryDataSize = null): string
+    {
+        if ($this->storageAdapter instanceof ElementTypeAwareStorageTypeInterface) {
+            return $this->storageAdapter->getStorageTypeForElementType($elementType, $metaDataSize, $binaryDataSize);
+        }
+
         return $this->storageAdapter->getStorageType($metaDataSize, $binaryDataSize);
     }
 

@@ -131,6 +131,9 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
             new UnmarshalMatcher()
         );
 
+        // the owner chain (BlockElement -> Localizedfield -> all items) must not be copied along with the data
+        $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new PropertyNameMatcher('_owner'));
+
         $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
             /**
              * @param object $object

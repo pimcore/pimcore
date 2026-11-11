@@ -1,0 +1,384 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Unit\Workflow;
+
+use PHPUnit\Framework\MockObject\MockObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\ValidationException;
+use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
+use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
+use Pimcore\Workflow\ExpressionService;
+use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Transition as PimcoreTransition;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Workflow\Definition;
+use Symfony\Component\Workflow\Marking;
+use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
+use Symfony\Component\Workflow\Registry;
+use Symfony\Component\Workflow\StateMachine;
+use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
+
+class ManagerTest extends TestCase
+{
+    private const WORKFLOW_NAME = 'test_wf';
+
+    /**
+     * Regression test for https://github.com/pimcore/pimcore/issues/18178
+     *
+     * When a transition with changePublishedState=force_published is applied
+     * to a Concrete object with empty mandatory fields, the post-transition
+     * save() throws a ValidationException. Marking stores that persist
+     * immediately (e.g. the state_table store) would otherwise leave the
+     * subject in an inconsistent state where the workflow place advanced but
+     * the subject itself was not updated. The Manager must roll back both
+     * the marking and the published state.
+     */
+    public function testRollsBackMarkingAndPublishedStateWhenSaveFails(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $transition = $this->createForcePublishedTransition();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('isPublished')->willReturn(false);
+
+        $publishedStates = [];
+        $subject->method('setPublished')->willReturnCallback(
+            function (bool $value) use (&$publishedStates, $subject): Concrete {
+                $publishedStates[] = $value;
+
+                return $subject;
+            }
+        );
+        $subject->method('save')->willThrowException(new ValidationException('mandatory field missing'));
+
+        $manager = $this->buildManager($eventDispatcher, $transition);
+
+        $this->assertSame(['start' => 1], $store->persisted);
+
+        $thrown = null;
+
+        try {
+            $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
+        } catch (ValidationException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(ValidationException::class, $thrown);
+        $this->assertSame(
+            ['start' => 1],
+            $store->persisted,
+            'Marking should be rolled back when the post-transition save fails.'
+        );
+        $this->assertSame(
+            [true, false],
+            $publishedStates,
+            'Published state should be forced to true by the event listener and then rolled back to false.'
+        );
+    }
+
+    public function testHappyPathPersistsMarkingAndDoesNotRollBack(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $transition = $this->createForcePublishedTransition();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('isPublished')->willReturn(false);
+        $subject->expects($this->once())->method('save');
+
+        $manager = $this->buildManager($eventDispatcher, $transition);
+
+        $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
+
+        $this->assertSame(['end' => 1], $store->persisted);
+    }
+
+    /**
+     * A global action can move the subject to a new place directly, so it is
+     * exposed to the same inconsistency as a transition when the subsequent
+     * save() fails.
+     */
+    public function testGlobalActionRollsBackMarkingWhenSaveFails(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('save')->willThrowException(new ValidationException('mandatory field missing'));
+
+        $manager = $this->buildManager($eventDispatcher);
+        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', ['to' => ['end']]);
+
+        $thrown = null;
+
+        try {
+            $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+        } catch (ValidationException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(ValidationException::class, $thrown);
+        $this->assertSame(
+            ['start' => 1],
+            $store->persisted,
+            'Marking should be rolled back when the save after a global action fails.'
+        );
+    }
+
+    public function testGlobalActionHappyPathPersistsMarking(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->expects($this->once())->method('save');
+
+        $manager = $this->buildManager($eventDispatcher);
+        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', ['to' => ['end']]);
+
+        $marking = $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+
+        $this->assertSame(['end' => 1], $store->persisted);
+        $this->assertSame(['end' => 1], $marking->getPlaces());
+    }
+
+    /**
+     * getDeniedActionsInWorkflow() exists so a caller needing several permission types for one
+     * element resolves the workflow permissions once instead of once per type. It is the only
+     * public view of the workflow permissions, so it must answer exactly what isDeniedInWorkflow()
+     * answers for each type: denied only when a place config sets the type to false. A type no
+     * place config mentions is not denied, and neither are the language-scoped lEdit/lView
+     * entries, whose value is a language list rather than a bool.
+     */
+    public function testGetDeniedActionsInWorkflowMatchesTheSingleTypeCheck(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions([
+            'publish' => false,
+            'settings' => true,
+            'lEdit' => ['en', 'de'],
+            'lView' => [],
+        ]);
+
+        $denied = $manager->getDeniedActionsInWorkflow(
+            $element,
+            ['publish', 'settings', 'rename', 'lEdit', 'lView']
+        );
+
+        $this->assertSame(
+            [
+                'publish' => true,
+                'settings' => false,
+                // no place config mentions 'rename', which is not the same as denying it
+                'rename' => false,
+                // lEdit/lView scope by language; they never deny the permission as a whole
+                'lEdit' => false,
+                'lView' => false,
+            ],
+            $denied
+        );
+
+        foreach ($denied as $permissionType => $isDenied) {
+            $this->assertSame(
+                $manager->isDeniedInWorkflow($element, $permissionType),
+                $isDenied,
+                sprintf('Batch and single-type checks disagree about "%s".', $permissionType)
+            );
+        }
+    }
+
+    /**
+     * 'modify' expands to several element permissions; the batch result reports each of them.
+     */
+    public function testGetDeniedActionsInWorkflowExpandsModify(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions(['modify' => false]);
+
+        $this->assertSame(
+            ['save' => true, 'delete' => true, 'settings' => false],
+            $manager->getDeniedActionsInWorkflow($element, ['save', 'delete', 'settings'])
+        );
+    }
+
+    public function testGetDeniedActionsInWorkflowDeniesNothingWithoutAWorkflow(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions(null);
+
+        $this->assertSame(
+            ['publish' => false, 'save' => false],
+            $manager->getDeniedActionsInWorkflow($element, ['publish', 'save'])
+        );
+        $this->assertFalse($manager->isDeniedInWorkflow($element, 'publish'));
+    }
+
+    /**
+     * The empty batch has nothing to answer, so it must not resolve any marking either.
+     */
+    public function testGetDeniedActionsInWorkflowReturnsAnEmptyMapForNoRequestedTypes(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $manager = $this->buildManagerWithPlacePermissions(['publish' => false], $store);
+
+        $this->assertSame([], $manager->getDeniedActionsInWorkflow(self::createStub(Concrete::class), []));
+        $this->assertSame(0, $store->getMarkingCalls, 'An empty request must not resolve the marking.');
+    }
+
+    /**
+     * The point of the batch API: n permission types for one element cost one marking read, not
+     * n. Resolving the marking is the expensive part under StateTableMarkingStore (a database
+     * read per workflow), and an implementation that fell back to one isDeniedInWorkflow() call
+     * per type would still return the right values, so the call count is asserted directly.
+     */
+    public function testGetDeniedActionsInWorkflowResolvesTheMarkingOnce(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $store = $this->createImmediateMarkingStore();
+        $manager = $this->buildManagerWithPlacePermissions(
+            ['publish' => false, 'settings' => true, 'modify' => false],
+            $store
+        );
+
+        $denied = $manager->getDeniedActionsInWorkflow(
+            $element,
+            ['publish', 'settings', 'rename', 'save', 'delete', 'lEdit']
+        );
+
+        $this->assertCount(6, $denied);
+        $this->assertSame(
+            1,
+            $store->getMarkingCalls,
+            'Requesting several permission types at once must resolve the marking exactly once.'
+        );
+
+        // the single-type check is the baseline: one read per call
+        $manager->isDeniedInWorkflow($element, 'publish');
+        $manager->isDeniedInWorkflow($element, 'settings');
+        $this->assertSame(3, $store->getMarkingCalls);
+    }
+
+    /**
+     * A Manager whose single workflow sits in a place carrying the given permissions, or a Manager
+     * with no workflow at all when null is given. The workflow uses the given marking store, so a
+     * test can observe what the Manager does with it.
+     */
+    private function buildManagerWithPlacePermissions(
+        ?array $permissions,
+        ?MarkingStoreInterface $store = null
+    ): Manager {
+        $eventDispatcher = new EventDispatcher();
+        $registry = new Registry();
+
+        $manager = new Manager(
+            $registry,
+            self::createStub(NotesSubscriber::class),
+            self::createStub(ExpressionService::class),
+            $eventDispatcher
+        );
+
+        if ($permissions === null) {
+            return $manager;
+        }
+
+        $workflow = $this->createWorkflow(
+            $store ?? $this->createImmediateMarkingStore(),
+            new PimcoreTransition('go', 'start', 'end', []),
+            $eventDispatcher
+        );
+        $registry->addWorkflow($workflow, new InstanceOfSupportStrategy(Concrete::class));
+
+        $manager->registerWorkflow(self::WORKFLOW_NAME);
+        // no 'condition' key, so the ExpressionService mock is never consulted
+        $manager->addPlaceConfig(self::WORKFLOW_NAME, 'start', ['permissions' => [$permissions]]);
+
+        return $manager;
+    }
+
+    /**
+     * Marking store that persists immediately, like StateTableMarkingStore, and counts how often
+     * the marking is read - the operation that costs a database query in the real store.
+     */
+    private function createImmediateMarkingStore(): MarkingStoreInterface
+    {
+        return new class() implements MarkingStoreInterface {
+            public array $persisted = ['start' => 1];
+
+            public int $getMarkingCalls = 0;
+
+            public function getMarking(object $subject): Marking
+            {
+                $this->getMarkingCalls++;
+
+                return new Marking($this->persisted);
+            }
+
+            public function setMarking(object $subject, Marking $marking, array $context = []): void
+            {
+                $this->persisted = $marking->getPlaces();
+            }
+        };
+    }
+
+    private function createForcePublishedTransition(): PimcoreTransition
+    {
+        return new PimcoreTransition('go', 'start', 'end', [
+            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
+        ]);
+    }
+
+    private function createEventDispatcher(): EventDispatcher
+    {
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->addSubscriber(new ChangePublishedStateSubscriber());
+
+        return $eventDispatcher;
+    }
+
+    private function createWorkflow(
+        MarkingStoreInterface $store,
+        PimcoreTransition $transition,
+        EventDispatcher $eventDispatcher
+    ): StateMachine {
+        return new StateMachine(
+            new Definition(['start', 'end'], [$transition]),
+            $store,
+            $eventDispatcher,
+            self::WORKFLOW_NAME
+        );
+    }
+
+    private function buildManager(
+        EventDispatcher $eventDispatcher,
+        ?PimcoreTransition $transition = null
+    ): Manager&MockObject {
+        $notesSubscriber = $this->createMock(NotesSubscriber::class);
+        $expressionService = $this->createMock(ExpressionService::class);
+        $registry = new Registry();
+
+        $manager = $this->getMockBuilder(Manager::class)
+            ->setConstructorArgs([$registry, $notesSubscriber, $expressionService, $eventDispatcher])
+            ->onlyMethods(['getTransitionByName'])
+            ->getMock();
+        $manager->method('getTransitionByName')->willReturn($transition);
+
+        return $manager;
+    }
+}
