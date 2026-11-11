@@ -49,7 +49,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
             return false;
         }
 
-        if ($this->expression === '') {
+        if (trim($this->expression) === '') {
             return true;
         }
 

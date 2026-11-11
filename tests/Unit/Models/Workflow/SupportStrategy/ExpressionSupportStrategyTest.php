@@ -52,7 +52,36 @@ class ExpressionSupportStrategyTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testSupportsStillEvaluatesNonBlankExpression(): void
+    public function testSupportsDoesNotEvaluateWhitespaceOnlyExpression(): void
+    {
+        $expressionService = $this->createMock(ExpressionService::class);
+        $expressionService->expects($this->never())->method('evaluateExpression');
+
+        $strategy = new ExpressionSupportStrategy($expressionService, stdClass::class, " \t\n");
+
+        $result = $strategy->supports($this->createStub(WorkflowInterface::class), new stdClass());
+
+        $this->assertTrue($result);
+    }
+
+    public function testSupportsEvaluatesNonBlankExpressionAndReturnsItsResult(): void
+    {
+        $workflow = $this->createStub(WorkflowInterface::class);
+        $subject = new stdClass();
+        $expression = 'subject.foo == "bar"';
+
+        $expressionService = $this->createMock(ExpressionService::class);
+        $expressionService->expects($this->once())
+            ->method('evaluateExpression')
+            ->with($workflow, $subject, $expression)
+            ->willReturn(true);
+
+        $strategy = new ExpressionSupportStrategy($expressionService, stdClass::class, $expression);
+
+        $this->assertTrue($strategy->supports($workflow, $subject));
+    }
+
+    public function testSupportsReturnsFalseWhenNonBlankExpressionEvaluatesToFalse(): void
     {
         $expressionService = $this->createMock(ExpressionService::class);
         $expressionService->expects($this->once())
@@ -61,8 +90,6 @@ class ExpressionSupportStrategyTest extends TestCase
 
         $strategy = new ExpressionSupportStrategy($expressionService, stdClass::class, 'subject.foo == "bar"');
 
-        $result = $strategy->supports($this->createStub(WorkflowInterface::class), new stdClass());
-
-        $this->assertFalse($result);
+        $this->assertFalse($strategy->supports($this->createStub(WorkflowInterface::class), new stdClass()));
     }
 }
