@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Db;
 use stdClass;
 
@@ -48,7 +49,7 @@ class Sql extends AbstractAdapter
 
             $sql = $baseQuery['data'] . $order;
             if ($offset !== null && $limit) {
-                $sql .= " LIMIT $offset,$limit";
+                $sql .= ' LIMIT ' . (int) $offset . ',' . (int) $limit;
             }
 
             $data = $db->fetchAllAssociative($sql);
@@ -63,11 +64,17 @@ class Sql extends AbstractAdapter
         if ($configuration) {
             $sql = $this->buildQueryString($configuration);
         }
+        $sqlStripped = $this->stripSqlCommentsForValidation($sql);
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
-            $sql .= ' LIMIT 0,1';
-            $db = Db::get();
-            $res = $db->fetchAssociative($sql);
+        if (
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
+        ) {
+            // Wrap in a derived table (as getBaseQuery() does) rather than appending a raw
+            // ' LIMIT 0,1' to the concatenated string: a statement-terminating primitive such
+            // as INTO OUTFILE is a syntax error inside the subquery, whereas appending LIMIT
+            // directly is only a string suffix and can be neutralised by a trailing comment.
+            $wrappedSql = 'SELECT * FROM (' . $sql . ') AS somerandxyz LIMIT 0,1';
+            $res = $this->fetchAssociative($wrappedSql);
             if ($res) {
                 return array_keys($res);
             }
@@ -78,10 +85,38 @@ class Sql extends AbstractAdapter
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): string
+    /**
+     * Thin seam around the actual DB round-trip, so tests can assert on the exact
+     * (already-wrapped) SQL getColumns() sends without needing a real DB connection.
+     */
+    protected function fetchAssociative(string $sql): array|false
     {
-        $config = (array)$config;
+        return Db::get()->fetchAssociative($sql);
+    }
+
+    protected function buildQueryString(
+        stdClass $config,
+        bool $ignoreSelectAndGroupBy = false,
+        ?array $drillDownFilters = null,
+        ?string $selectField = null
+    ): string {
+        $config = (array) $config;
         $sql = '';
+
+        foreach (['sql', 'from', 'where', 'groupby'] as $key) {
+            if (!empty($config[$key])) {
+                if (!is_string($config[$key])) {
+                    throw new InvalidArgumentException(sprintf('Invalid "%s" SQL fragment; expected string.', $key));
+                }
+
+                try {
+                    $this->validateSqlFragment($config[$key]);
+                } catch (InvalidArgumentException $e) {
+                    throw new InvalidArgumentException(sprintf('Unsafe "%s" SQL fragment: %s', $key, $e->getMessage()), 0, $e);
+                }
+            }
+        }
+
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
             if (!str_starts_with(strtoupper(trim($config['sql'])), 'SELECT')) {
                 $sql .= 'SELECT';
@@ -93,42 +128,161 @@ class Sql extends AbstractAdapter
         } else {
             $sql .= 'SELECT *';
         }
+
         if (!empty($config['from'])) {
             if (!str_starts_with(strtoupper(trim($config['from'])), 'FROM')) {
-                $sql .= "\n" . 'FROM ';
+                $sql .= "\nFROM ";
             }
             $sql .= "\n" . $config['from'];
         }
 
         if (!empty($config['where'])) {
             if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
-                $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
+                $config['where'] = preg_replace('/^\s*WHERE\s*/i', '', $config['where']);
             }
-            $sql .= "\n" . 'WHERE (' . $config['where'] . ')';
+
+            $sql .= "\nWHERE (" . $config['where'] . ')';
         }
 
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
             if (!str_starts_with(strtoupper(trim($config['groupby'])), 'GROUP BY')) {
-                $sql .= ' GROUP BY ';
+                $sql .= "\nGROUP BY ";
             }
+
             $sql .= "\n" . $config['groupby'];
         }
 
         if ($drillDownFilters) {
             $havingParts = [];
             $db = Db::get();
+
             foreach ($drillDownFilters as $field => $value) {
-                if ($value !== '' && $value !== null) {
-                    $havingParts[] = ($db->quoteIdentifier($field) .' = ' . $db->quote($value));
+                if ($value === '' || $value === null) {
+                    continue;
                 }
+
+                $havingParts[] =
+                    $db->quoteIdentifier($field)
+                    . ' = '
+                    . $db->quote($value);
             }
 
             if ($havingParts) {
-                $sql .= ' HAVING ' . implode(' AND ', $havingParts);
+                $sql .= "\nHAVING " . implode(' AND ', $havingParts);
             }
         }
 
         return $sql;
+    }
+
+    private function validateSqlFragment(string $sql): void
+    {
+        // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
+        $sqlForValidation = $this->stripQuotedRegionsForValidation($sql);
+
+        // Normalize whitespace/newlines for consistent boundary checking
+        $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
+        $forbiddenPatterns = [
+            '/;/',
+            // Comment start: MySQL's lexer treats "--" as a comment when followed by a space
+            // or *any* control character (my_iscntrl), not only the whitespace \s matches, or
+            // when "--" ends the fragment outright.
+            '/--(?:[\x00-\x20\x7F]|$)/',
+            '/#/',
+            '/\/\*/',
+            '/\*\//',
+            '/^\s*DROP\b/i',
+            '/^\s*DELETE\s+FROM\b/i',
+            '/^\s*UPDATE\s+\S+\s+SET\b/i',
+            '/^\s*INSERT\s+INTO\b/i',
+            '/^\s*ALTER\b/i',
+            '/^\s*CREATE\b/i',
+            '/^\s*TRUNCATE\b/i',
+            '/\bINTO\s+OUTFILE\b/i',
+            '/\bINTO\s+DUMPFILE\b/i',
+            '/\bLOAD_FILE\s*\(/i',
+        ];
+
+        foreach ($forbiddenPatterns as $pattern) {
+            if (preg_match($pattern, $sqlForValidation)) {
+                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, DDL/DML, and file access functions are not allowed).');
+            }
+        }
+    }
+
+    /**
+     * Replaces every quoted region (single-quoted string, double-quoted string, backtick
+     * identifier) with a short placeholder, so the denylist above never sees a forbidden
+     * token that only occurs inside one of them.
+     *
+     * This is a single left-to-right scan carrying one "which quote type is currently open"
+     * state: a quote character of a different type inside an open region (e.g. a "'" inside a
+     * backtick identifier or a double-quoted string) is ordinary content of that region, never
+     * the opener of a new one.
+     *
+     * Per MySQL's default (non-NO_BACKSLASH_ESCAPES) lexer: inside '...' and "...", a
+     * backslash escapes the next character and the delimiter can also be doubled to escape
+     * itself; inside `...`, only doubling the backtick escapes it - there is no backslash
+     * escaping for identifiers.
+     *
+     * The backslash handling relies on the connection's sql_mode not containing
+     * NO_BACKSLASH_ESCAPES (with it, a backslash is a literal character and this scan would
+     * read strings differently from MySQL). Core guarantees that through the connection's
+     * init command "SET sql_mode = ''" in bundles/CoreBundle/config/pimcore/default.yaml; keep
+     * the two in sync if that setting is ever changed or overridden.
+     *
+     * An unterminated quoted region is rejected: no valid fragment contains one, and the
+     * fragments are validated separately but concatenated afterwards, so an opening quote in
+     * one fragment could otherwise be closed by a quote in another.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function stripQuotedRegionsForValidation(string $sql): string
+    {
+        $result = '';
+        $length = strlen($sql);
+        $openQuote = null;
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $sql[$i];
+
+            if ($openQuote === null) {
+                if ($char === "'" || $char === '"' || $char === '`') {
+                    $openQuote = $char;
+                } else {
+                    $result .= $char;
+                }
+
+                continue;
+            }
+
+            if ($openQuote !== '`' && $char === '\\' && $i + 1 < $length) {
+                // Backslash escapes the next byte; consume it as a unit so a real closing
+                // quote right after it is not mistaken for an escaped one (or vice versa).
+                $i++;
+
+                continue;
+            }
+
+            if ($char === $openQuote) {
+                if ($i + 1 < $length && $sql[$i + 1] === $openQuote) {
+                    // Doubled delimiter escapes itself within the region.
+                    $i++;
+
+                    continue;
+                }
+
+                // Properly closed region: collapse it to a short placeholder.
+                $result .= $openQuote . $openQuote;
+                $openQuote = null;
+            }
+        }
+
+        if ($openQuote !== null) {
+            throw new InvalidArgumentException('Unsafe SQL fragment detected (unterminated quoted string or identifier).');
+        }
+
+        return $result;
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array
@@ -150,6 +304,8 @@ class Sql extends AbstractAdapter
                 }
                 $value = strtotime($value);
             }
+
+            $value = (string) $value;
 
             switch ($operator) {
                 case 'like':
@@ -188,13 +344,17 @@ class Sql extends AbstractAdapter
             }
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+        $sqlStripped = $this->stripSqlCommentsForValidation($sql);
+        if (
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
+        ) {
             $condition = implode(' AND ', $condition);
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
             if ($fields && !$extractAllFields) {
-                $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $quotedFields = array_map(fn ($f) => $db->quoteIdentifier($f), $fields);
+                $data = 'SELECT ' . implode(', ', $quotedFields) . ' FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }
@@ -233,5 +393,14 @@ class Sql extends AbstractAdapter
                 $filteredData
             ),
         ];
+    }
+
+    private function stripSqlCommentsForValidation(string $sql): string
+    {
+        $sqlStripped = preg_replace('/\/\*!\d*\s*(.*?)\*\//s', ' $1 ', $sql);
+        $sqlStripped = preg_replace('/\/\*(?!\!).*?\*\//s', ' ', $sqlStripped ?? '');
+        $sqlStripped = preg_replace('/\s+/', ' ', $sqlStripped ?? '');
+
+        return $sqlStripped;
     }
 }

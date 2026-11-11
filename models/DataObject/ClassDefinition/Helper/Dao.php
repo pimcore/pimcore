@@ -12,14 +12,16 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+use InvalidArgumentException;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 /**
  * @internal
  */
 trait Dao
 {
-    protected function addIndexToField(DataObject\ClassDefinition\Data $field, string $table, string $columnTypeGetter = 'getColumnType', bool $considerUniqueIndex = false, bool $isLocalized = false, bool $isFieldcollection = false): void
+    protected function addIndexToField(Data $field, string $table, string $columnTypeGetter = 'getColumnType', bool $considerUniqueIndex = false, bool $isLocalized = false, bool $isFieldcollection = false): void
     {
         $columnType = $field->$columnTypeGetter();
 
@@ -39,31 +41,31 @@ trait Dao
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
                         $indexName = $field->getName().'__'.$fkey;
-                        $columnName = '`' . $indexName . '`';
+                        $columnName = $this->db->quoteIdentifier($indexName);
                         if ($unique) {
                             if ($isLocalized) {
-                                $columnName .= ',`language`';
+                                $columnName .= ',' . $this->db->quoteIdentifier('language');
                             } elseif ($isFieldcollection) {
-                                $columnName .= ',`fieldname`';
+                                $columnName .= ',' . $this->db->quoteIdentifier('fieldname');
                             }
                         }
                         if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ADD ' . $uniqueStr . 'INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ' (' . $columnName . ');');
                         }
                     }
                 } else {
                     // single -column field
                     $indexName = $field->getName();
-                    $columnName = '`' . $indexName . '`';
+                    $columnName = $this->db->quoteIdentifier($indexName);
                     if ($unique) {
                         if ($isLocalized) {
-                            $columnName .= ',`language`';
+                            $columnName .= ',' . $this->db->quoteIdentifier('language');
                         } elseif ($isFieldcollection) {
-                            $columnName .= ',`fieldname`';
+                            $columnName .= ',' . $this->db->quoteIdentifier('fieldname');
                         }
                     }
                     if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                        $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ADD ' . $uniqueStr . 'INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ' (' . $columnName . ');');
                     }
                 }
             } else {
@@ -72,22 +74,40 @@ trait Dao
                     foreach ($columnType as $fkey => $fvalue) {
                         $indexName = $field->getName().'__'.$fkey;
                         if ($this->indexExists($table, $prefix, $indexName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' DROP INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ';');
                         }
                     }
                 } else {
                     // single -column field
                     $indexName = $field->getName();
                     if ($this->indexExists($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                        $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' DROP INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ';');
                     }
                 }
             }
         }
     }
 
-    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null): void
+    /**
+     * Column/query column types (Date, Datetime, DateRange) are emitted verbatim into
+     * ALTER TABLE DDL, so they must be restricted to a plain SQL type expression instead
+     * of accepting arbitrary strings. Kept here rather than on Data - the documented
+     * extension base for custom field types - so a name collision in a third-party
+     * subclass can never turn this internal DDL guard into a BC break.
+     */
+    protected function validateColumnType(string $columnType): void
     {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_]*(\(\s*\d+\s*(,\s*\d+\s*)?\))?(\s+(?:unsigned|zerofill))*\z/i', $columnType)) {
+            throw new InvalidArgumentException(sprintf('Invalid column type "%s"', $columnType));
+        }
+    }
+
+    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null, Data $field): void
+    {
+        if ($field instanceof DataObject\ClassDefinition\Data\UserDefinedColumnTypeInterface) {
+            $this->validateColumnType($type);
+        }
+
         $existingColumns = $this->getValidTableColumns($table, false);
 
         $existingColName = null;
@@ -98,11 +118,11 @@ trait Dao
             $existingColName = current($matchingExisting);
         }
         if ($existingColName === null) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ADD COLUMN ' . $this->db->quoteIdentifier($colName) . ' ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
             if (!DataObject\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
-                $this->db->executeQuery('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+                $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' CHANGE COLUMN ' . $this->db->quoteIdentifier($existingColName) . ' ' . $this->db->quoteIdentifier($colName) . ' ' . $type . $default . ' ' . $null . ';');
             }
         }
     }
@@ -117,12 +137,31 @@ trait Dao
         foreach ($columnsToRemove as $value) {
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+                // quoteIdentifier() splits on '.' and quotes each part as a separate qualified-name
+                // segment; StructuredTable keys may legitimately contain a literal '.', so that would
+                // silently turn one physical column into an unquoted, dot-joined multi-part reference.
+                // quoteSingleIdentifier() quotes the whole string as one identifier instead.
+                $dropColumns[] = 'DROP COLUMN ' . $this->db->quoteSingleIdentifier($value);
+
+                if (
+                    str_ends_with(strtolower($value), '__unit') &&
+                    $this->foreignKeyExists($table, self::getForeignKeyName($table, $value))
+                ) {
+                    $this->db->executeQuery(
+                        sprintf(
+                            'ALTER TABLE `%s` DROP FOREIGN KEY %s',
+                            $table,
+                            $this->db->quoteIdentifier(self::getForeignKeyName($table, $value))
+                        )
+                    );
+                }
+
                 $this->removeIndices($table, [$value], []);
             }
         }
+
         if ($dropColumns) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
+            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteSingleIdentifier($table) . ' ' . implode(', ', $dropColumns) . ';');
             $this->resetValidTableColumnsCache($table);
         }
     }
@@ -173,7 +212,9 @@ trait Dao
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $lowerCaseColumns) && $this->indexExists($table, 'u_index_', $value)) {
-                    $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                    // See removeUnusedColumns(): quoteSingleIdentifier() keeps a literal '.' inside
+                    // the value as part of one identifier instead of splitting it as a qualified name.
+                    $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteSingleIdentifier($table) . ' DROP INDEX ' . $this->db->quoteSingleIdentifier('u_index_' . $value) . ';');
                 }
             }
             $this->resetValidTableColumnsCache($table);
@@ -203,5 +244,46 @@ trait Dao
     protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
     {
         return !$this->indexExists($table, $prefix, $indexName);
+    }
+
+    protected function foreignKeyExists(string $table, string $foreignKeyName): bool
+    {
+        $exists = $this->db->fetchFirstColumn(
+            'SELECT COUNT(*)
+            FROM information_schema.referential_constraints
+            WHERE table_name = ?
+                AND constraint_name = ?
+                AND constraint_schema = DATABASE();',
+            [
+                $table,
+                $foreignKeyName,
+            ]
+        );
+
+        return (count($exists) > 0) && ($exists[0] > 0);
+    }
+
+    protected function ensureForeignKeys(string $tableStore, string $key, string $fkey, Data $value): void
+    {
+        $foreignKeyName = self::getForeignKeyName($tableStore, $key . '__' . $fkey);
+
+        if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange
+                || $value instanceof DataObject\ClassDefinition\Data\InputQuantityValue)
+            && $fkey === 'unit'
+            && !$this->foreignKeyExists($tableStore, $foreignKeyName)
+        ) {
+            $columnName = $key . '__' . $fkey;
+
+            $this->db->executeQuery(
+                sprintf(
+                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL ON UPDATE CASCADE',
+                    $tableStore,
+                    $foreignKeyName,
+                    $columnName
+                )
+            );
+        }
     }
 }

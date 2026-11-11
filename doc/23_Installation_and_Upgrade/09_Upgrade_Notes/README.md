@@ -1,5 +1,267 @@
 # Upgrade Notes
 
+## Pimcore 2026.4.0
+
+### [DataObjects] Change token and opting out of the hydration row lock
+
+The `objects` table has a new column `changeToken` (`DATETIME(6)`, migration `Version20261109120000`). The database
+sets a new value on every `UPDATE` that changes the row, and every save of a data object renews it. On save, the token
+an object was loaded with is compared against the row:
+
+- By default nothing changes: data objects are still loaded with `FOR UPDATE`, and a save based on outdated data
+  still overwrites the concurrent change. Pimcore now logs a warning when this happens.
+- For classes opted out of the row lock with `Pimcore\Model\DataObject\HydrationLock::disable()` or the config
+  `pimcore.objects.hydration_lock.disabled_for`, objects are loaded without `FOR UPDATE`, and a save based on
+  outdated data throws `Pimcore\Model\Exception\StaleDataException` instead of overwriting the concurrent change.
+- `getById()` and `getByPath()` accept `['lock' => false]` to load a single object without the row lock.
+
+Objects that were cached before the migration, or restored from a version, carry no token and are not checked.
+Plain SQL writes to `object_store_*`, relation, localized field, brick or field collection tables do not change the
+token. See [Working with Objects via PHP API](../../03_Objects/02_Working_with_Objects_via_PHP_API.md#disable-row-locking-on-load).
+
+### [DataObjects] Structured, translatable validation errors
+
+The new `Pimcore\Model\Element\StructuredValidationException` extends `Pimcore\Model\Element\ValidationException`
+and carries structured data next to its message, so that clients such as Pimcore Studio can show validation errors
+in the language of the user and point to the failed field:
+
+- `setTranslation()`, `getTranslationKey()`, `getTranslationParameters()`: a translation key (a fixed string or a
+  case of the `Pimcore\Model\Element\ValidationMessageKey` enum) with scalar parameters.
+- `setField()`, `getFieldName()`, `getFieldTitle()`: the field that failed.
+- `addPathSegment()`, `getPath()`: the location of the error as a list of
+  `Pimcore\Model\Element\ValidationPathSegment` objects (localized field language, object brick, field
+  collection or block item, classification store and its group), innermost first.
+- `addViolations()`, `getViolations()`: the leaf errors collected by an aggregate exception.
+- `removeTranslation()`: removes key and parameters again, so clients show the plain message.
+- `withMessage()`: creates an exception of the same class with a new message and the structured data of the
+  original one.
+- `from()`: converts a plain `ValidationException` into a structured one with the same message, code, context
+  stack and sub items, and the original exception as previous exception.
+
+The built-in data types, the containers, `Concrete::save()`, `PageSnippet` and the image size check of `Asset` throw
+`StructuredValidationException`. Containers convert a plain `ValidationException` of a child field with `from()`,
+so it becomes a violation with field and path as well. `ValidationException` itself is unchanged, and so are the
+messages and the aggregated messages. Listeners of `DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION` receive the
+exceptions as thrown by the data types.
+
+Code that compares the exact class, for example `$e::class === ValidationException::class` or
+`get_class($e) === ValidationException::class`, sees `StructuredValidationException` for these errors.
+`catch (ValidationException $e)` and `instanceof ValidationException` keep working.
+
+The `value` of an encrypted field is never a translation parameter. If a validation error of its delegate data type
+has to drop a parameter for that reason, the translation of this error is removed as well, so the plain message is
+shown instead of a text with a missing `{{value}}`.
+
+`StructuredValidationException` can be extended. `withMessage()` creates the copy with the constructor signature
+of `Exception` (message, code, previous), so subclasses must keep it.
+
+## Pimcore 2026.3.4
+
+### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
+
+A WYSIWYG field (data object field and Document editable) no longer reduces `<a pimcore_id=... pimcore_type=...>` links
+to unpublished elements, or to objects whose class has no link generator, to their text when it is saved. Only the
+frontend rendering still reduces them.
+
+To make this work for every kind of save (Studio editor, batch edit, scheduled publishing, imports, copy and "update
+references"), the field getters keep these anchors in the following contexts:
+
+- while an object is saved, copied or has its references updated: validation, version and dao reads, and save
+  listeners calling the getters (a listener running outside this scope is not affected),
+- in the admin getters, in versions and in exports,
+- in the query columns, through `getDataForQueryResource()`.
+
+If your own code renders the value of such a getter publicly in one of these contexts (for example a listener that
+outputs getter content during a save, or an integration that publishes the query column), apply
+`Pimcore\Tool\Text::wysiwygText()` to it explicitly. Its signature is unchanged; the variant that keeps the anchors is
+the new `Text::wysiwygTextKeepingLinks()`.
+
+Known limit: custom code that reads a block field outside a save and then saves the object itself still writes the
+reduced text back.
+
+## Pimcore 2026.3.3
+
+### [Core] `schedule_tasks` indexes: the migration waits for open transactions
+
+Migration `Version20261015100000` replaces the single-column `cid` and `ctype` indexes on `schedule_tasks` with a
+composite `(cid, ctype)` index. It does this in a single `ALTER TABLE` statement, so the table is never without an
+index for lookups by element while the migration runs, and InnoDB performs the change in place without rebuilding
+the table.
+
+The statement does need a metadata lock on `schedule_tasks`. It **waits for every open transaction that has used
+the table**, and every element save (asset, document, data object) holds such a transaction until it commits.
+While the migration waits, new statements on `schedule_tasks`, and with them new element saves, queue behind it.
+On an installation with continuous saves (imports, API clients, messenger workers) run the migration while those
+are paused, or expect a short stall of element saves until the open transactions have committed. The change itself
+takes well under a second once the lock is granted.
+
+If your own code queries `schedule_tasks` by `ctype` alone, note that this index no longer exists; the composite
+index serves lookups by `cid` and by `cid` and `ctype`.
+
+Saving an element whose scheduled tasks were neither loaded nor set no longer deletes and rewrites its rows in
+`schedule_tasks`. A save that sets the scheduled tasks explicitly, and deleting an element, still remove the
+element's rows, including rows another transaction committed in the meantime.
+
+## Pimcore 2026.3.0
+
+### [Documents] Static page generator: frontend requests only store a static page when it is safe to share
+
+When a frontend request renders a document that has the static page generator enabled, the
+response is only stored as its static page if all of the following apply:
+
+- the response status is `200` and its `Cache-Control` header has no `no-store` directive,
+- the request has neither a query string nor an `Authorization` header,
+- the request carries no session data (the same check the full page cache uses; session keys
+  can be excluded via the `FullPageCacheEvents::IGNORED_SESSION_KEYS` event),
+- the resolved document is the one addressed by the request path. A sub-path that falls back
+  to an ancestor document, or a static route rendered with a document, no longer overwrites
+  that document's static page.
+
+Requests that do not qualify still render normally; the static page is written by the next
+qualifying request, the maintenance job or `pimcore:documents:generate-static-pages`.
+
+If the static page router (`pimcore.documents.static_page_router`) is enabled, requests with
+a query string or an `Authorization` header are no longer answered from the stored static pages
+and are rendered instead.
+Static pages delivered directly by the web server, as configured in the documentation, are not
+affected.
+
+## Pimcore 2026.2.11
+
+### [Assets] Storage operation queue: `pimcore:assets:storage-queue:process` now stops at the first failing row
+
+The draining command of the opt-in asset storage operation queue used to log a failing
+row and carry on with the rest of the queue. It now **ends the run at the first error**:
+it exits non-zero, names the row it stopped on, and leaves every row it had not reached
+queued for the next run. Nothing is retried automatically.
+
+The reason is that rows are not independent. A folder move that could not complete still
+holds the content its later delete would sweep, and a failure in this job is rarely
+row-specific - credentials, a permission the endpoint does not serve, a quota - so the rows
+after it would fail the same way. Stopping turns thousands of identical errors into one
+diagnosable failure, which suits a command that is meant to run unattended overnight.
+
+If you schedule this command, expect a run that used to finish "with failures" to now fail
+early instead; fix the cause and rerun. Existing invocations remain valid as written, but
+if yours relied on the rows *after* a failure still being processed in the same run, add
+the new `--continue-on-error` option to keep that behaviour. It is also the option to use
+for a supervised one-off migration where you want the bulk to proceed and read the errors
+afterwards. No option controlled this before, so nothing else in the command line changes.
+
+## Pimcore 2026.2.10
+
+### [Assets]
+
+Image thumbnails using Pimcore's existing non-rasterized SVG source-output route now expose the original SVG consistently through `exists()`, `getStream()` and `getFileSize()`. These calls no longer generate an unused raster thumbnail or dispatch `AssetEvents::IMAGE_THUMBNAIL`; integrations that relied on those low-level side effects should be adjusted.
+
+### [Notifications]
+
+Notification `creationDate` / `modificationDate` are now written in UTC, which is the convention
+these columns have used since the `Version20230321133700` migration converted the existing rows,
+and which every reader already assumes. Previously they were written in the local timezone, so with
+a non-UTC `general.timezone` the notification date shown in Studio and in the Classic UI was shifted
+by the zone offset (for example two hours ahead for `Europe/Berlin` during DST).
+
+Rows written before this fix remain in local time and will still be displayed with that offset.
+They cannot be corrected automatically, because a local-time row is indistinguishable from a
+correctly stored UTC row. If the skew on historical entries matters for your instance, convert the
+affected rows manually, for example:
+
+```sql
+-- 1. Preflight. This must return a datetime, not NULL. NULL means the named time-zone
+--    tables are not loaded (see mysql_tzinfo_to_sql) and CONVERT_TZ() cannot be used -
+--    load them first, or convert with a fixed INTERVAL instead.
+SELECT CONVERT_TZ('2000-01-01 00:00:00', 'Europe/Berlin', 'UTC');
+
+-- 2. Convert. COALESCE keeps the original value if the conversion yields NULL, so a
+--    missing time-zone table makes this a no-op rather than erasing the dates.
+UPDATE notifications
+SET creationDate = COALESCE(CONVERT_TZ(creationDate, 'Europe/Berlin', 'UTC'), creationDate),
+    modificationDate = COALESCE(CONVERT_TZ(modificationDate, 'Europe/Berlin', 'UTC'), modificationDate)
+WHERE id > <last id created before the upgrade>;
+```
+
+Take a backup first, and note that a single named-zone conversion is only exact if all the rows
+you convert fall on the same side of a DST boundary.
+
+Directly after the upgrade, unread notifications created shortly before it may be re-announced by
+the Classic UI popup for up to the zone-offset duration - their local-time `creationDate` sits
+"in the future" relative to the corrected UTC polling bound. This resolves itself once that
+offset has elapsed (or once the rows are converted / marked as read).
+
+## Pimcore 2026.2.9
+
+### Deprecations
+
+#### [Document Editor]
+
+The `height` option of the `multiselect` document editable is deprecated and no longer has any effect.
+The Studio UI does not interpret it — the field is sized via `width` only.
+
+## Pimcore 2026.2.8
+
+### [Maintenance]
+
+-   The housekeeping maintenance task no longer removes an empty directory as soon as it finds one. A directory is now removed only once it is also older than the configured retention (`pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than` for the profiler directory, 30 minutes by default). Removing empty directories on sight could delete one that another process had just created and was about to write into, which made the write fail. Expect empty directories to linger for up to the retention period before being cleaned up.
+-   Files whose name *begins* with `-low-quality-preview.svg` are now excluded from deletion as intended. The previous check treated a match at position 0 as "no match", so those files were deleted despite the exclusion.
+
+## Pimcore 2026.2.7
+
+### Possible data loss on 11.5.21, 12.3.12, 12.3.13, 2026.2.5 and 2026.2.6
+
+Those releases restricted object deserialization for two stores that legitimately contain PHP
+objects, so affected values were read back empty:
+
+- **`block` fields** — the child types `externalImage`, `consent`, `date`, `datetime`,
+  `structuredTable`, `hotspotimage`, `imageGallery` and `dateRange`, including inside a block
+  nested in `localizedfields`. A `dateRange` child raised
+  `Carbon\Exceptions\InvalidPeriodParameterException` on save.
+- **Document `image` editables** — hotspot and marker metadata, which made rendering a page with
+  such an editable fail with `Cannot use object of type __PHP_Incomplete_Class as array`.
+
+Reading was affected, so **saving an object or document while running one of those versions
+persisted the empty value**. A field marked mandatory blocked the save instead, which left the
+stored value intact.
+
+If you ran any of those versions, check the affected fields after upgrading. Versioning was not
+affected, so earlier values can be recovered from the element's version history.
+
+### WebDAV move failed on 12.3.7 and later
+
+Independently of the above, and over a wider range of releases (**12.3.7** and later, **2026.1.3**
+and later), replacing an asset over WebDAV failed when the client deleted the file and then moved
+the new one into place — the pattern used by several desktop applications, Photoshop among them.
+The move aborted with `The script tried to call a method on an incomplete object`.
+
+No data was lost in this case; the operation simply did not complete.
+
+## Pimcore 12.3.12
+
+### Deprecations
+
+#### [Serialization]
+
+Calling `Pimcore\Tool\Serialize::unserialize()` without the `$allowedClasses` argument is deprecated.
+Pass an explicit value: `false` to forbid object deserialization (the safe choice for scalar/array data),
+or an array of allowed class names when a trusted stored object graph must be reconstructed.
+The default changes from `true` to `false` (object deserialization disabled) in Pimcore 2027.1.
+
+## Pimcore 12.3.10
+
+### Deprecations
+
+#### [Document Editor]
+
+The `width` and `height` options of `Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration` are deprecated and will be removed in 2027.1. 
+Editable dialog boxes work differently in the new Studio UI, so these options no longer have any effect.
+
+## Pimcore 12.3.6
+
+### [Assets]
+
+-   The MIME type is now read from the storage adapter after the file is written, with a fallback to stream sniffing and finally `application/octet-stream`. Existing assets (e.g. `.doc`/`.xls`/`.ppt` files previously misdetected as `application/octet-stream`) need to be re-uploaded or have their MIME type rewritten to pick up the corrected MIME type.
+-   Added a new command `pimcore:assets:rewrite-mime-type` to rewrite the MIME type of existing assets without re-uploading them.
+
 ## Pimcore 12.3.0
 
 ### [General]
@@ -32,7 +294,7 @@ Support for all Symfony 6.x components will be removed in next major version.
 This is part of the migration to Symfony 7, which requires updating all Symfony dependencies to version 7.3 or higher.
 
 **Action Required:**
-Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
+Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 2026.1.
 
 **Note:**
 If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
@@ -50,7 +312,7 @@ To ensure all core Symfony components are on version 7.x minimum (recommended fo
 composer require pimcore/symfony-freeze:^7.0
 ```
 
-**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 13, as Symfony 6 support will be removed entirely.
+**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 2026, as Symfony 6 support will be removed entirely.
 
 
 #### [Doctrine Annotations]
@@ -63,7 +325,7 @@ No action required for most users. If your custom code relies on `doctrine/annot
 
 #### [Symfony Templating Component]
 
-The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
+The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 2026.1.
 This is part of the migration to Symfony 7, which no longer includes the `symfony/templating` component.
 
 **What's Deprecated:**
@@ -90,7 +352,7 @@ All functionality remains the same, but the interface changes from the Symfony t
 
 #### Folder structure for email logs
 
-The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 13.0.
+The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 2026.1.
 
 **Action Required:**
 Execute the command `pimcore:migrate:mail-logs-folder-structure` or move the files manually to YYYY/MM/DD/\<log filename\>.
@@ -620,7 +882,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 
 #### [Installer] :
 
--   Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete. See [preparing guide](../07_Updating_Pimcore/12_V10_to_V11.md)
+-   Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete.
 -   Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 -   Adding `BundleSetupEvent` Event. Bundles that are available for installation can be customized in the installing process via an Eventlistener or EventSubscriber.
 -   Bundles can be added and removed. You can set a flag if you want to recommend the bundle.
@@ -695,7 +957,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 -   Enabled Content Security Policy by default.
 -   Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
     Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
-    The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../03_Documents/01_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
+    The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../01_Documents/02_Templates/03_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
 
 ---
 
@@ -761,7 +1023,7 @@ The tokens for password reset are now stored in the DB and are one time use only
             ```
             -   Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
     -   [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
-    -   [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
+    -   [File Explorer] System File explorer has been moved to `pimcore/file-explorer-bundle` package.
     -   [Web2Print] has been moved to `pimcore/web-to-print-bundle` package.
         -   Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
         -   Print related Events have been moved into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
@@ -800,11 +1062,11 @@ The tokens for password reset are now stored in the DB and are one time use only
     $web2printConfig = $web2printConfig['chromiumSettings'];
     ```
 -   Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
--   Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/12_V10_to_V11.md)
+-   Removed setting write targets and storage directory in the environment file. Instead, use the symfony config.
 -   Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
 -   Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
 -   Rename config files from `*.yml` to `*.yaml`. Note that we now use `system_settings.yaml` as config file and not `system.yml`
--   System Settings are now implementing the LocationAwareConfigRepository. See [preparing guide](../07_Updating_Pimcore/11_Preparing_for_V11.md)
+-   System Settings are now implementing the LocationAwareConfigRepository.
 -   The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 -   The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 -   Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
@@ -1017,7 +1279,7 @@ pimcore:
 -   Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 -   Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 -   Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
--   Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
+-   Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../01_Documents/14_Working_with_Documents_via_PHP_API.md#cleanup-document-types)
 -   Removed the `attributes` field from the link editable.
 -   Deprecated WkHtmlToImage has been removed.
 -   Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)

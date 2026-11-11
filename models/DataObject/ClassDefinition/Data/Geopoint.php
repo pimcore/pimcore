@@ -16,7 +16,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Geopoint extends AbstractGeo implements
@@ -56,8 +58,7 @@ class Geopoint extends AbstractGeo implements
     public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
         if (is_array($data) &&
-            $data[$this->getName() . '__longitude'] &&
-            $data[$this->getName() . '__latitude']
+            isset($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude'])
         ) {
             $geopoint = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__latitude'], $data[$this->getName() . '__longitude']);
 
@@ -108,8 +109,8 @@ class Geopoint extends AbstractGeo implements
      */
     public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
-        if (is_array($data) && ($data['longitude'] || $data['latitude'])) {
-            return new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
+        if (is_array($data) && (isset($data['longitude']) || isset($data['latitude']))) {
+            return new DataObject\Data\GeoCoordinates($data['latitude'] ?? null, $data['longitude'] ?? null);
         }
 
         return null;
@@ -209,7 +210,8 @@ class Geopoint extends AbstractGeo implements
         }
 
         if ($isEmpty && !$omitMandatoryCheck && $this->getMandatory()) {
-            throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
     }
 

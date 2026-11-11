@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
@@ -59,10 +58,6 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
             return;
         }
 
-        if (class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
-            return;
-        }
-
         $document = $this->documentResolver->getDocument($request);
         if (!$document) {
             return;
@@ -81,7 +76,9 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
         $hardlinkCanonicalSourceDocument = Document::getById($document->getId());
 
         if (Frontend::isDocumentInCurrentSite($hardlinkCanonicalSourceDocument)) {
-            $canonical = $request->getSchemeAndHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath();
+            $path = $hardlinkCanonicalSourceDocument->getFullPath();
+            // outside of any site (main domain) getFullPath() is already absolute for documents of a site
+            $canonical = preg_match('@^https?://@', $path) ? $path : $request->getSchemeAndHttpHost() . $path;
         } elseif (Site::isSiteRequest()) {
             $sourceSite = Frontend::getSiteForDocument($hardlinkCanonicalSourceDocument);
             if ($sourceSite) {

@@ -13,26 +13,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Closure;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Exception;
 use Pimcore;
-use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\ConfigElementInterface;
-use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\AbstractOperator;
-use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Service as GridColumnConfigService;
-use Pimcore\Bundle\AdminBundle\Service\GridData;
-use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
-use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -167,22 +162,24 @@ class Service extends Model\Element\Service
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
         DataObject::setDisableDirtyDetection(true);
 
-        //load properties
-        $source->getProperties();
+        try {
+            //load properties
+            $source->getProperties();
 
-        //load all in case of lazy loading fields
-        self::loadAllObjectFields($source);
+            //load all in case of lazy loading fields
+            self::loadAllObjectFields($source);
 
-        // triggers actions before object cloning
-        $event = new DataObjectEvent($source, [
-            'target_element' => $target,
-        ]);
-        Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
-        $target = $event->getArgument('target_element');
+            // triggers actions before object cloning
+            $event = new DataObjectEvent($source, [
+                'target_element' => $target,
+            ]);
+            Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+            $target = $event->getArgument('target_element');
 
-        $new = $this->copy($source, $target);
-
-        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            $new = $this->copy($source, $target);
+        } finally {
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
 
         $this->updateChildren($target, $new);
 
@@ -262,11 +259,257 @@ class Service extends Model\Element\Service
         $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
+        // reading block fields outside admin mode would write the frontend-rendered Wysiwyg text back into the copy
+        WysiwygPersistingScope::run(fn () => $this->keepNonEditableLanguages($new, $target));
+
+        // the copy is saved as the target, so it is based on the target's row, not on the source's
+        $new->__setChangeToken($target->__getChangeToken());
+
         $new->save();
 
         $target = Concrete::getById($new->getId());
 
         return $target;
+    }
+
+    /**
+     * Restores the localized values of the languages the user is not allowed to edit (lEdit workspace permission)
+     * from the target, in the object itself as well as in its object bricks, field collections and blocks.
+     */
+    private function keepNonEditableLanguages(Concrete $new, Concrete $target): void
+    {
+        if (!$this->_user || $this->_user->isAdmin()) {
+            return;
+        }
+
+        $editableLanguages = self::getLanguagePermissions($target, $this->_user, 'lEdit');
+        if ($editableLanguages === null) {
+            return;
+        }
+
+        // like the editors: for localized fields a list with only the language-independent 'default' means
+        // "no restriction", while the classification store still limits itself to that one value
+        $restrictLocalizedfields = array_keys($editableLanguages) !== ['default'];
+
+        self::loadAllObjectFields($target);
+
+        foreach ($new->getClass()->getFieldDefinitions() as $name => $definition) {
+            $newValue = $new->get($name);
+            $targetValue = $target->get($name);
+
+            if ($newValue instanceof DataObject\Classificationstore) {
+                // like the editors, only localized stores are limited; a store without languages only holds 'default'
+                if ($definition instanceof ClassDefinition\Data\Classificationstore && $definition->isLocalized()) {
+                    $this->restoreClassificationstoreLanguages($newValue, $targetValue, $editableLanguages);
+                }
+            } elseif (!$restrictLocalizedfields) {
+                continue;
+            } elseif ($definition instanceof ClassDefinition\Data\Localizedfields) {
+                $this->restoreLocalizedfields($newValue, $targetValue, $editableLanguages);
+            } elseif ($definition instanceof ClassDefinition\Data\Block) {
+                $this->applyBlockLanguages($new, $name, $definition, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Objectbrick) {
+                $this->restoreBrickLanguages($newValue, $targetValue, $editableLanguages);
+            } elseif ($newValue instanceof DataObject\Fieldcollection) {
+                $this->restoreFieldcollectionLanguages($newValue, $targetValue, $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * The values of a localized classification store are keyed by group, key and language ('default' is the
+     * language-independent value, which is only editable if the user's list contains it).
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreClassificationstoreLanguages(
+        DataObject\Classificationstore $new,
+        mixed $target,
+        array $editableLanguages
+    ): void {
+        // the object is saved with inheritance off, so own values must not be mixed with the parent's
+        [$items, $activeGroups] = self::useInheritedValues(false, static fn (): array => [$new->getItems(), $new->getActiveGroups()]);
+        $targetItems = $target instanceof DataObject\Classificationstore
+            ? self::useInheritedValues(false, static fn (): array => $target->getItems())
+            : [];
+
+        foreach ($items as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $items[$groupId][$keyId] = array_intersect_key($values, $editableLanguages);
+            }
+        }
+
+        foreach ($targetItems as $groupId => $group) {
+            foreach ($group as $keyId => $values) {
+                $kept = array_diff_key($values, $editableLanguages);
+                if ($kept) {
+                    $items[$groupId][$keyId] = ($items[$groupId][$keyId] ?? []) + $kept;
+                    $activeGroups[$groupId] = true;
+                    if (!$new->getGroupCollectionMapping($groupId)) {
+                        $new->setGroupCollectionMapping($groupId, $target->getGroupCollectionMapping($groupId));
+                    }
+                }
+            }
+        }
+
+        foreach ($items as $groupId => $group) {
+            $items[$groupId] = array_filter($group);
+        }
+
+        $new->setItems(array_filter($items));
+        $new->setActiveGroups($activeGroups);
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBrickLanguages(DataObject\Objectbrick $new, mixed $target, array $editableLanguages): void
+    {
+        foreach ($new->getItems() as $brick) {
+            $targetBrick = $target instanceof DataObject\Objectbrick ? $target->get($brick->getType()) : null;
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($brick),
+                $targetBrick ? $this->getLocalizedfieldsOf($targetBrick) : null,
+                $editableLanguages
+            );
+            $this->restoreContainerBlockLanguages($brick, $targetBrick, $editableLanguages);
+        }
+    }
+
+    /**
+     * Blocks inside an object brick or field collection item.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreContainerBlockLanguages(
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new,
+        Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData|null $target,
+        array $editableLanguages
+    ): void {
+        foreach ($new->getDefinition()->getFieldDefinitions() as $name => $definition) {
+            if ($definition instanceof ClassDefinition\Data\Block) {
+                $this->applyBlockLanguages($new, $name, $definition, $target?->get($name), $editableLanguages);
+            }
+        }
+    }
+
+    /**
+     * Writes the block back only if a row got a new localizedfields element, so that an inherited block
+     * (read through the getter) is not turned into an own value.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function applyBlockLanguages(
+        Concrete|Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $new,
+        string $name,
+        ClassDefinition\Data\Block $definition,
+        mixed $target,
+        array $editableLanguages
+    ): void {
+        $value = $new->get($name);
+        $restored = $this->restoreBlockLanguages($definition, $value, $target, $editableLanguages);
+        if ($restored !== $value) {
+            $new->set($name, $restored);
+        }
+    }
+
+    /**
+     * Only blocks with a localizedfields child hold languages. Block items are matched by index. A matched item
+     * without a localizedfields element gets one holding only the target's protected languages.
+     *
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreBlockLanguages(ClassDefinition\Data\Block $definition, mixed $new, mixed $target, array $editableLanguages): mixed
+    {
+        if (!$definition->getFieldDefinition('localizedfields') || !is_array($new)) {
+            return $new;
+        }
+
+        foreach ($new as $index => $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $element = $item['localizedfields'] ?? null;
+            $targetElement = is_array($target) ? ($target[$index]['localizedfields'] ?? null) : null;
+            $targetLocalizedfield = $targetElement instanceof DataObject\Data\BlockElement ? $targetElement->getData() : null;
+
+            if ($element instanceof DataObject\Data\BlockElement && $element->getData() instanceof DataObject\Localizedfield) {
+                $this->restoreLocalizedfields($element->getData(), $targetLocalizedfield, $editableLanguages);
+            } elseif ($targetLocalizedfield instanceof DataObject\Localizedfield) {
+                $localizedfield = new DataObject\Localizedfield();
+                $localizedfield->setObject($targetLocalizedfield->getObject());
+                $localizedfield->setContext($targetLocalizedfield->getContext());
+                $this->restoreLocalizedfields($localizedfield, $targetLocalizedfield, $editableLanguages);
+                if ($localizedfield->getItems()) {
+                    if ($element instanceof DataObject\Data\BlockElement) {
+                        $element->setData($localizedfield);
+                    } else {
+                        $new[$index]['localizedfields'] = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', $localizedfield);
+                    }
+                }
+            }
+        }
+
+        return $new;
+    }
+
+    /**
+     * Items are matched by index and type.
+     *
+     * @param DataObject\Fieldcollection<DataObject\Fieldcollection\Data\AbstractData> $new
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreFieldcollectionLanguages(DataObject\Fieldcollection $new, mixed $target, array $editableLanguages): void
+    {
+        $targetItems = $target instanceof DataObject\Fieldcollection ? $target->getItems() : [];
+        foreach ($new->getItems() as $index => $item) {
+            $targetItem = $targetItems[$index] ?? null;
+            if ($targetItem?->getType() !== $item->getType()) {
+                $targetItem = null;
+            }
+            $this->restoreLocalizedfields(
+                $this->getLocalizedfieldsOf($item),
+                $targetItem ? $this->getLocalizedfieldsOf($targetItem) : null,
+                $editableLanguages
+            );
+            $this->restoreContainerBlockLanguages($item, $targetItem, $editableLanguages);
+        }
+    }
+
+    /**
+     * The getter only exists on generated brick and field collection classes that define localized fields.
+     */
+    private function getLocalizedfieldsOf(Objectbrick\Data\AbstractData|Fieldcollection\Data\AbstractData $container): ?DataObject\Localizedfield
+    {
+        return method_exists($container, 'getLocalizedfields') ? $container->getLocalizedfields() : null;
+    }
+
+    /**
+     * @param array<string, int> $editableLanguages
+     */
+    private function restoreLocalizedfields(mixed $new, mixed $target, array $editableLanguages): void
+    {
+        if (!$new instanceof DataObject\Localizedfield) {
+            return;
+        }
+
+        $items = $new->getItems();
+        $targetItems = $target instanceof DataObject\Localizedfield ? $target->getItems() : [];
+
+        foreach (array_unique(array_merge(array_keys($items), array_keys($targetItems))) as $language) {
+            if (isset($editableLanguages[$language])) {
+                continue;
+            }
+
+            if (isset($targetItems[$language])) {
+                $items[$language] = $targetItems[$language];
+            } else {
+                unset($items[$language]);
+            }
+        }
+
+        $new->setItems($items);
     }
 
     /**
@@ -277,285 +520,8 @@ class Service extends Model\Element\Service
         return str_starts_with($field, '#');
     }
 
-    /**
-     * @deprecated Keeping in here to avoid bundles to require 11.3 or set a compatibility layer when bundles support both 10 & 11
-     *
-     * @todo remove in pimcore 12.0
-     *
-     * @internal
-     */
-    public static function gridObjectData(AbstractObject $object, ?array $fields = null, ?string $requestedLanguage = null, array $params = []): array
-    {
-        if (class_exists(GridData\DataObject::class)) {
-            return GridData\DataObject::getData($object, $fields, $requestedLanguage, $params);
-        } else {
-            $data = Element\Service::gridElementData($object);
-            $csvMode = $params['csvMode'] ?? false;
-
-            if ($object instanceof Concrete) {
-                $user = AdminTool::getCurrentUser();
-
-                $context = ['object' => $object,
-                    'purpose' => 'gridview',
-                    'language' => $requestedLanguage, ];
-                $data['classname'] = $object->getClassName();
-                $data['idPath'] = Element\Service::getIdPath($object);
-                $data['inheritedFields'] = [];
-                $data['permissions'] = $object->getUserPermissions($user);
-                $data['locked'] = $object->isLocked();
-
-                if (is_null($fields)) {
-                    $fields = array_keys($object->getclass()->getFieldDefinitions());
-                }
-
-                $haveHelperDefinition = false;
-
-                foreach ($fields as $key) {
-                    $brickDescriptor = null;
-                    $brickKey = null;
-                    $brickType = null;
-                    $brickGetter = null;
-                    $dataKey = $key;
-                    $keyParts = explode('~', $key);
-
-                    $def = $object->getClass()->getFieldDefinition($key, $context);
-
-                    if (str_starts_with($key, '#')) {
-                        if (!$haveHelperDefinition) {
-                            $helperDefinitions = self::getHelperDefinitions();
-                            $haveHelperDefinition = true;
-                        }
-                        if (!empty($helperDefinitions[$key])) {
-                            $context['fieldname'] = $key;
-                            $data[$key] = self::calculateCellValue($object, $helperDefinitions, $key, $context);
-                        }
-                    } elseif (str_starts_with($key, '~')) {
-                        $type = $keyParts[1];
-                        if ($type === 'classificationstore') {
-                            $data[$key] = self::getStoreValueForObject($object, $key, $requestedLanguage);
-                        }
-                    } elseif (count($keyParts) > 1) {
-                        // brick
-                        $brickType = $keyParts[0];
-                        if (str_contains($brickType, '?')) {
-                            $brickDescriptor = substr($brickType, 1);
-                            $brickDescriptor = json_decode($brickDescriptor, true);
-                            $brickType = $brickDescriptor['containerKey'];
-                        }
-
-                        $brickKey = $keyParts[1];
-
-                        $key = self::getFieldForBrickType($object->getclass(), $brickType);
-
-                        $brickClass = Objectbrick\Definition::getByKey($brickType);
-                        $context['outerFieldname'] = $key;
-
-                        if ($brickDescriptor) {
-                            $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
-                            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
-                            $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                            $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                        } elseif ($brickClass instanceof Objectbrick\Definition) {
-                            $def = $brickClass->getFieldDefinition($brickKey, $context);
-                        }
-                    }
-
-                    if (!empty($key)) {
-                        // some of the not editable field require a special response
-                        $getter = 'get' . ucfirst($key);
-                        $needLocalizedPermissions = false;
-
-                        // if the definition is not set try to get the definition from localized fields
-                        if (!$def) {
-                            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields|null $locFields */
-                            $locFields = $object->getClass()->getFieldDefinition('localizedfields');
-                            if ($locFields) {
-                                $def = $locFields->getFieldDefinition($key, $context);
-                                if ($def) {
-                                    $needLocalizedPermissions = true;
-                                }
-                            }
-                        }
-
-                        //relation type fields with remote owner do not have a getter
-                        if (method_exists($object, $getter)) {
-                            //system columns must not be inherited
-                            if (in_array($key, Concrete::SYSTEM_COLUMN_NAMES)) {
-                                $data[$dataKey] = $object->$getter();
-                            } else {
-                                $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor, $requestedLanguage);
-                                $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
-
-                                if ($csvMode || method_exists($def, 'getDataForGrid')) {
-                                    if ($brickKey) {
-                                        $context['containerType'] = 'objectbrick';
-                                        $context['containerKey'] = $brickType;
-                                        $context['outerFieldname'] = $key;
-                                    }
-
-                                    $params = array_merge($params, ['context' => $context]);
-                                    if (!isset($params['purpose'])) {
-                                        $params['purpose'] = 'gridview';
-                                    }
-
-                                    if ($csvMode) {
-                                        $getterParams = ['language' => $requestedLanguage];
-                                        $tempData = $def->getForCsvExport($object, $getterParams);
-                                    } elseif (method_exists($def, 'getDataForGrid')) {
-                                        $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
-                                    } else {
-                                        continue;
-                                    }
-
-                                    if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                                        $needLocalizedPermissions = true;
-                                        foreach ($tempData as $tempKey => $tempValue) {
-                                            $data[$tempKey] = $tempValue;
-                                        }
-                                    } else {
-                                        $data[$dataKey] = $tempData;
-                                        if (
-                                            $def instanceof Model\DataObject\ClassDefinition\Data\Select
-                                            && !$def->useConfiguredOptions()
-                                            && $def->getOptionsProviderClass()
-                                        ) {
-                                            $data[$dataKey . '%options'] = $def->getOptions();
-                                        }
-                                    }
-                                } else {
-                                    $data[$dataKey] = $valueObject->value;
-                                }
-                            }
-                        }
-
-                        // because the key for the classification store has not a direct getter, you have to check separately if the data is inheritable
-                        if (str_starts_with($key, '~') && empty($data[$key])) {
-                            $type = $keyParts[1];
-
-                            if ($type === 'classificationstore') {
-                                if (!empty($inheritedData = self::getInheritedData($object, $key, $requestedLanguage))) {
-                                    $data[$dataKey] = $inheritedData['value'];
-                                    $data['inheritedFields'][$dataKey] = ['inherited' => $inheritedData['parent']->getId() != $object->getId(), 'objectid' => $inheritedData['parent']->getId()];
-                                }
-                            }
-                        }
-                        if ($needLocalizedPermissions) {
-                            if (!$user->isAdmin()) {
-                                $locale = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
-
-                                $permissionTypes = ['View', 'Edit'];
-                                foreach ($permissionTypes as $permissionType) {
-                                    //TODO, this needs refactoring! Ideally, call it only once!
-                                    $languagesAllowed = self::getLanguagePermissions($object, $user, 'l' . $permissionType);
-
-                                    if ($languagesAllowed) {
-                                        $languagesAllowed = array_keys($languagesAllowed);
-
-                                        if (!in_array($locale, $languagesAllowed)) {
-                                            $data['metadata']['permission'][$key]['no' . $permissionType] = 1;
-                                            if ($permissionType === 'View') {
-                                                $data[$key] = null;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return $data;
-        }
-    }
-
-    /**
-     * @return string[]|null
-     *
-     * @internal
-     */
-    public static function expandGridColumnForExport(array $helperDefinitions, string $key): ?array
-    {
-        $config = self::getConfigForHelperDefinition($helperDefinitions, $key);
-        if (class_exists(AbstractOperator::class) && $config instanceof AbstractOperator && $config->expandLocales()) {
-            return $config->getValidLanguages();
-        }
-
-        return null;
-    }
-
-    /**
-     * @internal
-     */
-    public static function getConfigForHelperDefinition(array $helperDefinitions, string $key, array $context = []): ?ConfigElementInterface
-    {
-        $cacheKey = 'gridcolumn_config_' . $key;
-        if (isset($context['language'])) {
-            $cacheKey .= '_' . $context['language'];
-        }
-        if (RuntimeCache::isRegistered($cacheKey)) {
-            $config = RuntimeCache::get($cacheKey);
-        } else {
-            $definition = $helperDefinitions[$key];
-            $attributes = json_decode(json_encode($definition->attributes));
-
-            // TODO refactor how the service is accessed into something non-static and inject the service there
-            $service = Pimcore::getContainer()->get(GridColumnConfigService::class);
-            if (!$service) {
-                throw new AdminClassicBundleNotFoundException('Admin Bundle not found. Please install the package pimcore/admin-ui-classic-bundle.');
-            }
-            $config = $service->buildOutputDataConfig([$attributes], $context);
-
-            if (!$config) {
-                return null;
-            }
-            $config = $config[0];
-            RuntimeCache::save($config, $cacheKey);
-        }
-
-        return $config;
-    }
-
-    public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): mixed
-    {
-        if (!$config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context)) {
-            return null;
-        }
-
-        return self::useInheritedValues(true, static function () use ($object, $config) {
-            $labeledValue = $config->getLabeledValue($object);
-            if (!$labeledValue || !isset($labeledValue->value)) {
-                return null;
-            }
-            $result = $labeledValue->value;
-            if (!empty($config->getRenderer())) {
-                $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->getRenderer());
-                /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
-                $rendererImpl = new $classname();
-                if (method_exists($rendererImpl, 'getDataForGrid')) {
-                    $result = $rendererImpl->getDataForGrid($result, $object, []);
-                }
-            }
-
-            return $result;
-        });
-    }
-
-    /**
-     * @deprecated Since 11.3, please use GridData\DataObject::getHelperDefinitions() instead (requires pimcore/admin-ui-classic-bundle v1.5)
-     */
     public static function getHelperDefinitions(): array
     {
-        if (class_exists(GridData\DataObject::class)) {
-            return GridData\DataObject::getHelperDefinitions();
-        }
-
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.3.0',
-            sprintf('The "%s" method is deprecated here and moved to admin-ui-classc-bundle v1.5, use "%s" instead.', __METHOD__, 'Pimcore\Bundle\AdminBundle\Service\GridData::getHelperDefinitions()')
-        );
-
         $stack = Pimcore::getContainer()->get('request_stack');
         if ($stack->getMainRequest()?->hasSession()) {
             $session = $stack->getSession();
@@ -754,28 +720,37 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * call the getters of each object field, in case some of the are lazy loading and we need the data to be loaded
+     * call the getters of each object field (except derived values), in case some of them are lazy loading and we need the data to be loaded
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
         $object->getProperties();
 
         if ($object instanceof Concrete) {
-            //load all in case of lazy loading fields
-            $fd = $object->getClass()->getFieldDefinitions();
-            foreach ($fd as $def) {
-                $getter = 'get' . ucfirst($def->getName());
-                if (method_exists($object, $getter)) {
-                    $value = $object->$getter();
-                    if ($value instanceof Localizedfield) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Objectbrick) {
-                        $value->loadLazyData();
-                    } elseif ($value instanceof Fieldcollection) {
-                        $value->loadLazyData();
+            // the values read here are copied and stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object): void {
+                //load all in case of lazy loading fields
+                $fd = $object->getClass()->getFieldDefinitions();
+                foreach ($fd as $def) {
+                    if ($def instanceof ClassDefinition\Data\DerivedValueInterface && $def->isValueDerived()) {
+                        // a derived value (e.g. the owning objects of a reverse relation) is not kept on the object,
+                        // so there is nothing to lazy load; the getter would load it only to discard it
+                        continue;
+                    }
+
+                    $getter = 'get' . ucfirst($def->getName());
+                    if (method_exists($object, $getter)) {
+                        $value = $object->$getter();
+                        if ($value instanceof Localizedfield) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Objectbrick) {
+                            $value->loadLazyData();
+                        } elseif ($value instanceof Fieldcollection) {
+                            $value->loadLazyData();
+                        }
                     }
                 }
-            }
+            });
         }
     }
 
@@ -834,16 +809,11 @@ class Service extends Model\Element\Service
         try {
             $object = new DataObject();
 
-            $pathElements = explode('/', $path);
-            $keyIdx = count($pathElements) - 1;
-            $key = $pathElements[$keyIdx];
-            $validKey = Element\Service::getValidKey($key, 'object');
-
-            unset($pathElements[$keyIdx]);
-            $pathOnly = implode('/', $pathElements);
-
-            if ($validKey == $key && self::isValidPath($pathOnly, 'object')) {
-                $object->getDao()->getByPath($path);
+            if (self::isValidPath($path, 'object')) {
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
@@ -870,14 +840,17 @@ class Service extends Model\Element\Service
         if ($object instanceof Concrete) {
             $fields = $object->getClass()->getFieldDefinitions();
 
-            foreach ($fields as $field) {
-                if ($field instanceof IdRewriterInterface) {
-                    $setter = 'set' . ucfirst($field->getName());
-                    if (method_exists($object, $setter)) { // check for non-owner-objects
-                        $object->$setter($field->rewriteIds($object, $rewriteConfig));
+            // the rewritten values are stored, wysiwyg links to unpublished elements must survive that
+            WysiwygPersistingScope::run(static function () use ($object, $fields, $rewriteConfig): void {
+                foreach ($fields as $field) {
+                    if ($field instanceof IdRewriterInterface) {
+                        $setter = 'set' . ucfirst($field->getName());
+                        if (method_exists($object, $setter)) { // check for non-owner-objects
+                            $object->$setter($field->rewriteIds($object, $rewriteConfig));
+                        }
                     }
                 }
-            }
+            });
         }
 
         // rewriting properties
@@ -985,7 +958,7 @@ class Service extends Model\Element\Service
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
         $mainLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = unserialize(serialize($mainLayout));
+        $superLayout = self::cloneDefinition($mainLayout);
 
         self::createSuperLayout($superLayout);
 
@@ -1106,6 +1079,13 @@ class Service extends Model\Element\Service
         foreach ($permissionList as $permissionSet) {
             $allowedLayoutIds = self::getLayoutPermissions($classId, $permissionSet);
             if (is_array($allowedLayoutIds)) {
+                // layout id 0 is the class' main layout, i.e. the user is not restricted to custom
+                // layouts - same as in getValidLayouts(). The grid must not be reduced to the
+                // intersection of the remaining custom layouts then.
+                if (isset($allowedLayoutIds[0])) {
+                    continue;
+                }
+
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
                     if ($allowedLayoutId) {
                         if (!isset($layoutDefinitions[$allowedLayoutId])) {
@@ -1130,11 +1110,13 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locValue) {
                         $locValue->setInvisible(false);
                         $locValue->setNotEditable(false);
+                        self::resetContainerFieldDefinitions($locValue);
                     }
                     $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $def->setInvisible(false);
                     $def->setNotEditable(false);
+                    self::resetContainerFieldDefinitions($def);
                 }
             }
         }
@@ -1161,15 +1143,59 @@ class Service extends Model\Element\Service
 
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
+                        self::mergeContainerFieldDefinitions($mergedLocalizedFieldDefinitions[$locKey] ?? null, $customLocalizedFieldDefinitions[$locKey] ?? null);
                     }
                     $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
+                    self::mergeContainerFieldDefinitions($mergedFieldDefinition[$key] ?? null, $def);
                 }
             }
         }
 
         return $mergedFieldDefinition;
+    }
+
+    /**
+     * The children of a Block (or a Localizedfields inside it) start out as visible and editable,
+     * the custom layouts restrict them afterwards
+     */
+    private static function resetContainerFieldDefinitions(ClassDefinition\Data $def): void
+    {
+        if (!$def instanceof ClassDefinition\Data\Block && !$def instanceof ClassDefinition\Data\Localizedfields) {
+            return;
+        }
+
+        foreach ($def->getFieldDefinitions(['suppressEnrichment' => true]) as $child) {
+            $child->setInvisible(false);
+            $child->setNotEditable(false);
+            self::resetContainerFieldDefinitions($child);
+        }
+    }
+
+    /**
+     * Applies the children of a Block (or a Localizedfields inside it) in a custom layout to the children of the merged one
+     */
+    private static function mergeContainerFieldDefinitions(?ClassDefinition\Data $mergedDef, ?ClassDefinition\Data $customDef): void
+    {
+        if (
+            !($mergedDef instanceof ClassDefinition\Data\Block && $customDef instanceof ClassDefinition\Data\Block)
+            && !($mergedDef instanceof ClassDefinition\Data\Localizedfields && $customDef instanceof ClassDefinition\Data\Localizedfields)
+        ) {
+            return;
+        }
+
+        $customFieldDefinitions = $customDef->getFieldDefinitions(['suppressEnrichment' => true]);
+        $mergedFieldDefinitions = $mergedDef->getFieldDefinitions(['suppressEnrichment' => true]);
+
+        foreach (array_keys($mergedFieldDefinitions) as $key) {
+            self::mergeFieldDefinition($mergedFieldDefinitions, $customFieldDefinitions, (string) $key);
+            self::mergeContainerFieldDefinitions($mergedFieldDefinitions[$key] ?? null, $customFieldDefinitions[$key] ?? null);
+        }
+
+        // the children already hold the fields of all aggregated sections, a retained reference would add the unfiltered ones again
+        $mergedDef->setReferencedFields([]);
+        $mergedDef->setChildren(array_values($mergedFieldDefinitions));
     }
 
     /**
@@ -1222,6 +1248,15 @@ class Service extends Model\Element\Service
             }
 
             $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
+
+            if (
+                ($layout instanceof ClassDefinition\Data\Block && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Block)
+                || ($layout instanceof ClassDefinition\Data\Localizedfields && $fieldDefinitions[$name] instanceof ClassDefinition\Data\Localizedfields)
+            ) {
+                // the children of a Block or a Localizedfields inside it are no top-level fields,
+                // they are checked against the container's own definitions
+                $fieldDefinitions = $fieldDefinitions[$name]->getFieldDefinitions(['suppressEnrichment' => true]);
+            }
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -1253,7 +1288,8 @@ class Service extends Model\Element\Service
         int $objectId,
         ?User $user = null
     ): array {
-        $layoutDefinitions = $class->getLayoutDefinitions();
+        // work on a copy, the class definition is shared and callers modify the returned layout
+        $layoutDefinitions = self::cloneDefinition($class->getLayoutDefinitions());
 
         $result = [
             'layoutDefinition' => $layoutDefinitions,
@@ -1338,6 +1374,12 @@ class Service extends Model\Element\Service
             return;
         }
 
+        // Some callers (e.g. grid column configuration) cannot supply a Concrete $object - field
+        // enrichment requires that - but can still provide a permission subject via context['object']
+        // (a Folder or Concrete). Capture it before it gets overwritten below.
+        $contextObject = $context['object'] ?? null;
+        $permissionSubject = $object ?? ($contextObject instanceof AbstractObject ? $contextObject : null);
+
         $context['object'] = $object;
 
         if ($layout instanceof LayoutDefinitionEnrichmentInterface) {
@@ -1346,9 +1388,9 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             $user = self::getUser($user);
-            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
-                $allowedView = self::getLanguagePermissions($object, $user, 'lView');
-                $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
+            if (!$user->isAdmin() && $permissionSubject) {
+                $allowedView = self::getLanguagePermissions($permissionSubject, $user, 'lView');
+                $allowedEdit = self::getLanguagePermissions($permissionSubject, $user, 'lEdit');
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
             }
 
@@ -1481,7 +1523,11 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
+        $data->setCalculatorData($fd->getCalculatorData());
+
+        // the edit view always shows freshly computed values: evaluate without the snapshot of the object, so
+        // calculators and expressions that read other calculated fields of a loaded draft see live values as well
+        return self::computeWithoutCalculatedValueSnapshot($object, static fn () => DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                     $className = $fd->getCalculatorClass();
@@ -1505,7 +1551,7 @@ class Service extends Model\Element\Service
                 default:
                     return null;
             }
-        });
+        }));
     }
 
     public static function getCalculatedFieldValue(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|Concrete $object, ?Data\CalculatedValue $data): mixed
@@ -1531,11 +1577,28 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        // only values requested on the object itself can come from its version snapshot (object level and
+        // localized fields, see Version::marshalData()); a field collection item or object brick asking for
+        // one of its own fields never does, even if a field of the object has the same name
+        $snapshotOwner = $object instanceof Concrete ? $object : null;
+
         if (
             $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
             $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
         ) {
             $object = $object->getObject();
+        }
+
+        $data->setCalculatorData($fd->getCalculatorData());
+
+        if ($snapshotOwner !== null) {
+            $snapshot = $snapshotOwner->__getCalculatedValueSnapshot();
+            if ($snapshot !== null) {
+                $snapshotKey = self::getCalculatedValueSnapshotKey($data);
+                if (array_key_exists($snapshotKey, $snapshot)) {
+                    return $snapshot[$snapshotKey];
+                }
+            }
         }
 
         return DataObject\Service::useInheritedValues(true, static function () use ($object, $fd, $data) {
@@ -1565,6 +1628,45 @@ class Service extends Model\Element\Service
         });
     }
 
+    /**
+     * Builds the key under which the value of a calculated field is stored in the
+     * calculated value snapshot of a version (see Concrete::__getCalculatedValueSnapshot()).
+     *
+     * @internal
+     */
+    public static function getCalculatedValueSnapshotKey(Data\CalculatedValue $data): string
+    {
+        return implode('~', [
+            $data->getOwnerType(),
+            (string) $data->getOwnerName(),
+            (string) $data->getIndex(),
+            (string) $data->getPosition(),
+            $data->getFieldname(),
+        ]);
+    }
+
+    /**
+     * Runs $closure with the calculated value snapshot of $object temporarily disabled, so calculated
+     * fields read inside it are computed freshly, and restores the snapshot afterwards.
+     *
+     * @internal
+     */
+    public static function computeWithoutCalculatedValueSnapshot(Concrete $object, Closure $closure): mixed
+    {
+        $snapshot = $object->__getCalculatedValueSnapshot();
+        if ($snapshot === null) {
+            return $closure();
+        }
+
+        $object->__setCalculatedValueSnapshot(null);
+
+        try {
+            return $closure();
+        } finally {
+            $object->__setCalculatedValueSnapshot($snapshot);
+        }
+    }
+
     public static function getSystemFields(): array
     {
         return self::$systemFields;
@@ -1576,7 +1678,9 @@ class Service extends Model\Element\Service
             return;
         }
 
-        $fieldDefinitions = $fd->getFieldDefinitions();
+        // Resetting dirty flags only needs the field names, so skip the enrichment that would run
+        // dynamic options providers (without an object context) for every field.
+        $fieldDefinitions = $fd->getFieldDefinitions(['suppressEnrichment' => true]);
 
         if (is_array($fieldDefinitions)) {
             foreach ($fieldDefinitions as $fieldDefinition) {
@@ -1623,301 +1727,6 @@ class Service extends Model\Element\Service
         return $conditionParts;
     }
 
-    /**
-     * @internal
-     */
-    public static function getCsvDataForObject(Concrete $object, string $requestedLanguage, array $fields, array $helperDefinitions, LocaleServiceInterface $localeService, string $header, bool $returnMappedFieldNames = false, array $context = []): array
-    {
-        $objectData = [];
-        $mappedFieldnames = [];
-        $currentLocale = $localeService->getLocale();
-
-        foreach ($fields as $field) {
-            $key = $field['key'];
-            if (static::isHelperGridColumnConfig($key)) {
-                $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key);
-                if ($validLanguages) {
-                    $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
-
-                    foreach ($validLanguages as $validLanguage) {
-                        $localeService->setLocale($validLanguage);
-                        $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
-                        $localizedFieldKey = $key . '-' . $validLanguage;
-                        if ($returnMappedFieldNames && !isset($mappedFieldnames[$localizedFieldKey])) {
-                            $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
-                            $objectData[$mappedFieldnames[$localizedFieldKey]] = $fieldData;
-                        } else {
-                            $objectData[$localizedFieldKey] = $fieldData;
-                        }
-                    }
-                    $localeService->setLocale($currentLocale);
-
-                    continue;
-                }
-            }
-
-            $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
-            if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
-                $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
-
-                // ensure unique field names, if the same title/label is used more than once, add suffix `_x`
-                $i = 1;
-                $newKey = $mappedFieldnames[$key];
-                while (isset($objectData[$newKey])) {
-                    $newKey = $mappedFieldnames[$key] . '_' . $i;
-                    $i++;
-                }
-
-                $objectData[$newKey] = $fieldData;
-            } else {
-                $objectData[$key] = $fieldData;
-            }
-        }
-
-        $event = new DataObjectEvent($object, ['objectData' => $objectData,
-            'context' => $context,
-            'requestedLanguage' => $requestedLanguage,
-            'fields' => $fields,
-            'helperDefinitions' => $helperDefinitions,
-            'localeService' => $localeService,
-            'returnMappedFieldNames' => $returnMappedFieldNames,
-        ]);
-
-        Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_CSV_ITEM_EXPORT);
-        $objectData = $event->getArgument('objectData');
-
-        return $objectData;
-    }
-
-    /**
-     * @param DataObject\Listing $list
-     * @param string[] $fields
-     *
-     * @internal
-     */
-    public static function getCsvData(string $requestedLanguage, LocaleServiceInterface $localeService, Listing $list, array $fields, string $header = '', bool $addTitles = true, array $context = []): array
-    {
-        $data = [];
-        Logger::debug('objects in list:' . $list->getCount());
-
-        if ($fields) {
-            if (class_exists(GridData\DataObject::class)) {
-                $helperDefinitions = GridData\DataObject::getHelperDefinitions();
-            } else {
-                $helperDefinitions = self::getHelperDefinitions();
-            }
-
-            $objects = $list->getObjects();
-            foreach ($objects as $object) {
-                if ($addTitles && empty($data)) {
-                    $tmp = [];
-                    $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, true, $context);
-                    foreach ($mapped as $key => $value) {
-                        $tmp[] = '"' . $key . '"';
-                    }
-                    $data[] = $tmp;
-                }
-
-                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, false, $context);
-                $rowData = self::escapeCsvRecord($rowData);
-                $data[] = $rowData;
-            }
-        }
-
-        return $data;
-    }
-
-    protected static function mapFieldname(array $field, array $helperDefinitions, string $header): string
-    {
-        if ($header === 'no_header') {
-            return '';
-        }
-
-        $key = $field['key'];
-        $title = $field['label'];
-        if (str_starts_with($key, '#')) {
-            if (isset($helperDefinitions[$key])) {
-                if ($helperDefinitions[$key]->attributes) {
-                    return $helperDefinitions[$key]->attributes->label ? $helperDefinitions[$key]->attributes->label : $title;
-                }
-
-                return $title;
-            }
-        } elseif (str_starts_with($key, '~')) {
-            $fieldParts = explode('~', $key);
-            $type = $fieldParts[1];
-
-            if ($type == 'classificationstore') {
-                $fieldname = $fieldParts[2];
-                $groupKeyId = explode('-', $fieldParts[3]);
-                $groupId = (int) $groupKeyId[0];
-                $keyId = (int) $groupKeyId[1];
-
-                $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
-
-                $key = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
-            }
-        }
-
-        if ($header === 'name') {
-            return $key;
-        }
-
-        return $title;
-    }
-
-    /**
-     * @internal
-     */
-    protected static function getCsvFieldData(string $fallbackLanguage, string $field, Concrete $object, string $requestedLanguage, array $helperDefinitions): string
-    {
-        //check if field is systemfield
-        $systemFieldMap = [
-            'id' => 'getId',
-            'fullpath' => 'getRealFullPath',
-            'published' => 'getPublished',
-            'creationDate' => 'getCreationDate',
-            'modificationDate' => 'getModificationDate',
-            'filename' => 'getKey',
-            'key' => 'getKey',
-            'classname' => 'getClassname',
-        ];
-        if (in_array($field, array_keys($systemFieldMap))) {
-            $getter = $systemFieldMap[$field];
-
-            return (string) $object->$getter();
-        } else {
-            //check if field is standard object field
-            $fieldDefinition = $object->getClass()->getFieldDefinition($field);
-            if ($fieldDefinition) {
-                return $fieldDefinition->getForCsvExport($object, ['language' => $requestedLanguage]);
-            } else {
-                $fieldParts = explode('~', $field);
-
-                // check for objects bricks and localized fields
-                if (static::isHelperGridColumnConfig($field)) {
-                    if ($helperDefinitions[$field]) {
-                        $cellValue = static::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
-
-                        // Mimic grid concatenation behavior
-                        if (is_array($cellValue)) {
-                            $cellValue = implode(',', $cellValue);
-                        }
-
-                        return (string) $cellValue;
-                    }
-                } elseif (str_starts_with($field, '~')) {
-                    $type = $fieldParts[1];
-
-                    if ($type == 'classificationstore') {
-                        $fieldname = $fieldParts[2];
-                        $groupKeyId = explode('-', $fieldParts[3]);
-                        $groupId = (int) $groupKeyId[0];
-                        $keyId = (int) $groupKeyId[1];
-                        $getter = 'get' . ucfirst($fieldname);
-                        if (method_exists($object, $getter)) {
-                            $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
-                            $type = $keyConfig->getType();
-                            $definition = json_decode($keyConfig->getDefinition(), true);
-                            $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
-
-                            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
-                            $csFieldDefinition = $object->getClass()->getFieldDefinition($fieldname);
-                            $csLanguage = $requestedLanguage;
-                            if (!$csFieldDefinition->isLocalized()) {
-                                $csLanguage = 'default';
-                            }
-
-                            return $fieldDefinition->getForCsvExport(
-                                $object,
-                                ['context' => [
-                                    'containerType' => 'classificationstore',
-                                    'fieldname' => $fieldname,
-                                    'groupId' => $groupId,
-                                    'keyId' => $keyId,
-                                    'language' => $csLanguage,
-                                ]]
-                            );
-                        }
-                    }
-                    //key value store - ignore for now
-                } elseif (count($fieldParts) > 1) {
-                    // brick
-                    $brickType = $fieldParts[0];
-                    $brickDescriptor = null;
-                    $innerContainer = null;
-
-                    if (str_contains($brickType, '?')) {
-                        $brickDescriptor = substr($brickType, 1);
-                        $brickDescriptor = json_decode($brickDescriptor, true);
-                        $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
-                        $brickType = $brickDescriptor['containerKey'];
-                    }
-                    $brickKey = $fieldParts[1];
-
-                    $key = static::getFieldForBrickType($object->getClass(), $brickType);
-
-                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
-
-                    if ($brickDescriptor) {
-                        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
-                        $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                        $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                    } else {
-                        $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
-                    }
-
-                    if ($fieldDefinition) {
-                        $brickContainer = $object->{'get' . ucfirst($key)}();
-                        if ($brickContainer && !empty($brickKey)) {
-                            $brick = $brickContainer->{'get' . ucfirst($brickType)}();
-                            if ($brick) {
-                                $params = [
-                                    'context' => [
-                                        'containerType' => 'objectbrick',
-                                        'containerKey' => $brickType,
-                                        'fieldname' => $brickKey,
-                                    ],
-
-                                ];
-
-                                $value = $brick;
-
-                                if ($brickDescriptor) {
-                                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
-                                    $value = $brick->{'get' . ucfirst($innerContainer)}();
-
-                                    if ($value instanceof Localizedfield) {
-                                        $params['language'] = $requestedLanguage;
-                                    }
-                                }
-
-                                return $fieldDefinition->getForCsvExport($value, $params);
-                            }
-                        }
-                    }
-                } else {
-                    // if the definition is not set try to get the definition from localized fields
-                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $locFields */
-                    $locFields = $object->getClass()->getFieldDefinition('localizedfields');
-
-                    if ($locFields) {
-                        $fieldDefinition = $locFields->getFieldDefinition($field);
-                        if ($fieldDefinition) {
-                            return $fieldDefinition->getForCsvExport($object->get('localizedFields'), ['language' => $fallbackLanguage]);
-                        }
-                    }
-                }
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * @deprecated Since 11.3, please use \Pimcore\Bundle\AdminBundle\Service\DataObject::getInheritedData() instead
-     */
     protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
     {
         if (!$parent = self::hasInheritableParentObject($object)) {

@@ -1,0 +1,73 @@
+---
+title: "Interfaces and Traits"
+description: "Adding interfaces and traits to generated data object PHP classes."
+---
+
+# Using Interfaces and Traits
+Use interfaces and traits to extend the generated PHP classes for data objects with additional functionality.
+
+##### Example
+This example uses the demo project to show the usage of these features.
+The `Cars` class gets methods to retrieve the transmission type and the number of gears, implemented via an interface and a trait.
+
+##### Create the interface
+```php
+<?php
+// src/Model/Product/TransmissionInterface.php
+
+namespace App\Model\Product;
+
+interface TransmissionInterface
+{
+    public function getGearboxType(): ?string;
+
+    public function getNumberOfGears(): ?int;
+}
+```
+
+##### Create the trait
+Returns a GearboxType and a number of gears.
+```php
+<?php
+// src/Traits/TransmissionTrait.php
+
+namespace App\Traits;
+
+trait TransmissionTrait
+{
+    public function getGearboxType(): ?string
+    {
+        return "manual";
+    }
+
+    public function getNumberOfGears(): ?int
+    {
+        return 5;
+    }
+}
+
+```
+
+## Use it with Cars product data
+Navigate to **Data Management > Data Model Definitions > Classes > Product Data > Car** in Pimcore Studio.
+
+Click on *General Settings* and paste your interface and trait path into `Implements interface(s)` and `Use (traits)`
+
+![Example Screenshot](../../../img/interfaces-traits.png)
+
+Save your changes
+
+It will generate the `implements \App\Model\Product\TransmissionInterface` and the
+`use \App\Traits\TransmissionTrait;` lines within the DataObject Class.
+
+```php
+// var/classes/DataObject/Car.php
+...
+class Car extends \App\Model\Product\AbstractProduct implements \App\Model\Product\TransmissionInterface {
+
+use \App\Traits\TransmissionTrait;
+
+protected $classId = "CAR";
+protected $className = "Car";
+...
+```

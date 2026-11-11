@@ -14,14 +14,18 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Closure;
 use Exception;
+use InvalidArgumentException;
 use JsonSerializable;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use ReflectionMethod;
 
 abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface, JsonSerializable
@@ -121,7 +125,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
     }
 
@@ -166,6 +171,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function setName(string $name): static
     {
+        // A field name is emitted verbatim into the generated PHP class files (as a property,
+        // getter/setter and constant) and into ALTER TABLE DDL, so it must be a valid identifier.
+        // The length is capped at 63 characters to bound it; note that generated index and
+        // multi-column identifiers add prefixes/suffixes and may still exceed the DB identifier limit.
+        // `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+        if ($name !== '' && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]{0,62}\z/', $name)) {
+            throw new InvalidArgumentException(sprintf('Invalid field name "%s"', $name));
+        }
+
         $this->name = $name;
 
         return $this;
@@ -459,11 +473,29 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return '';
     }
 
+    private function allowsNullReturn(): bool
+    {
+        $type = $this->getReturnTypeDeclaration();
+        if ($type === null || $type === '' || $type === 'mixed' || str_starts_with($type, '?')) {
+            return true;
+        }
+
+        return in_array('null', array_map('strtolower', explode('|', $type)), true);
+    }
+
     protected function getPreGetValueHookCode(string $key): string
     {
         $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
         $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . "\n";
-        $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
+        if ($this->allowsNullReturn()) {
+            $code .= "\t\t" . 'if ($preValue === \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
+            $code .= "\t\t\t" . 'return null;' . "\n";
+            $code .= "\t\t" . '}' . "\n";
+            $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
+        } else {
+            // the getter cannot return null (e.g. "array" getters): the sentinel is ignored and the stored value is used
+            $code .= "\t\t" . 'if ($preValue !== null && $preValue !== \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
+        }
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n\n";
@@ -485,8 +517,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @return ' . DocBlockSanitizer::sanitize($this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
@@ -534,8 +566,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* Set ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @param ' . DocBlockSanitizer::sanitize($this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
@@ -613,8 +645,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '';
         $code .= '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @return ' . DocBlockSanitizer::sanitize($this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
@@ -659,8 +691,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* Set ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @param ' . DocBlockSanitizer::sanitize($this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . '): static' . "\n";
@@ -740,8 +772,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @return ' . DocBlockSanitizer::sanitize($this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
@@ -779,8 +811,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* Set ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @param ' . DocBlockSanitizer::sanitize($this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
@@ -849,17 +881,17 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* Get ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @return ' . DocBlockSanitizer::sanitize($this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '(?string $language = null)' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
-        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
-
         if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
+
+        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . 'return $data->getPlain();' . "\n";
@@ -894,8 +926,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* Set ' . DocBlockSanitizer::sanitize($this->getName()) . ' - ' . DocBlockSanitizer::sanitize($this->getTitle()) . "\n";
+        $code .= '* @param ' . DocBlockSanitizer::sanitize($this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', ?string $language = null): static' . "\n";
@@ -957,7 +989,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $key = $this->getName();
 
         $code = '/**' . "\n";
-        $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' (' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . ")\n";
+        $code .= '* Filter by ' . DocBlockSanitizer::sanitize($key) . ' (' . DocBlockSanitizer::sanitize($this->getTitle()) . ")\n";
 
         $dataParamDoc = 'mixed $data';
         $reflectionMethod = new ReflectionMethod($this, 'addListingFilter');
@@ -1023,6 +1055,48 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function isEmpty(mixed $data): bool
     {
         return empty($data);
+    }
+
+    /**
+     * Decides whether a default will actually be applied when a new object is created
+     * with this field left empty - and so whether the mandatory check can be skipped for it.
+     *
+     * The base implementation probes the configured default value / default value generator.
+     * Field types that resolve their default at runtime from something else must override this
+     * and report on the *resolved* default, not on whether some accessor is configured: a default
+     * that fails to materialise must not waive the mandatory check.
+     *
+     * Overrides may only widen what this returns - a field that qualified before must keep qualifying,
+     * otherwise a save that used to succeed would start throwing a ValidationException.
+     */
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        if (method_exists($this, 'getDefaultValueGenerator') && $this->getDefaultValueGenerator() !== '') {
+            return true;
+        }
+
+        if (!method_exists($this, 'getDefaultValue')) {
+            return false;
+        }
+
+        $defaultValue = $this->getDefaultValue();
+
+        // pre-existing behaviour: any truthy configured default qualifies
+        if (!empty($defaultValue)) {
+            return true;
+        }
+
+        // Compound quantity-value fields (QuantityValue, InputQuantityValue) resolve their
+        // default from a value *and* a unit, and their isEmpty() only understands the value
+        // object, not the configured scalar - so a falsy-but-configured scalar is paired with
+        // the unit instead. The unit check mirrors doGetDefaultValue()'s own truthy check, so
+        // an empty-string unit (which it treats as "no unit") agrees here.
+        if (method_exists($this, 'getDefaultUnit')) {
+            return $defaultValue !== null && (bool) $this->getDefaultUnit();
+        }
+
+        // a type-aware emptiness check, so a default of 0 / false / '0' qualifies
+        return !$this->isEmpty($defaultValue);
     }
 
     /** True if change is allowed in edit mode.

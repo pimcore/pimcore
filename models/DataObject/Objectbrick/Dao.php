@@ -53,7 +53,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
             $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
-                $brick = $modelFactory->build($brickClass);
+                $brick = $modelFactory->build($brickClass, [$object]);
                 $brick->setFieldname($result['fieldname']);
                 $brick->setObject($object);
 

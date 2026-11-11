@@ -24,6 +24,28 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    public function isValidOrderKey(string $key): bool
+    {
+        return in_array($key, [
+            'id',
+            'type',
+            'source',
+            'sourceSite',
+            'target',
+            'targetSite',
+            'statusCode',
+            'priority',
+            'regex',
+            'passThroughParameters',
+            'active',
+            'expiry',
+            'creationDate',
+            'modificationDate',
+            'userOwner',
+            'userModification',
+        ], true);
+    }
+
     /**
      * @return Redirect[]
      */

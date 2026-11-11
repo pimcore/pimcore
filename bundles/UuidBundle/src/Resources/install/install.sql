@@ -5,4 +5,4 @@ CREATE TABLE `uuids` (
     `type` VARCHAR(25) NOT NULL,
     `instanceIdentifier` VARCHAR(50) NOT NULL,
     PRIMARY KEY (`uuid`, `itemId`, `type`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

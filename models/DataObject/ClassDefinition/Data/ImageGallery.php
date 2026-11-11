@@ -18,6 +18,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -115,7 +117,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
             return [
                 $this->getName() . '__images' => $ids,
-                $this->getName() . '__hotspots' => Serialize::serialize($hotspots),
+                $this->getName() . '__hotspots' => $hotspots ? Serialize::serialize($hotspots) : null,
             ];
         }
 
@@ -139,7 +141,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
         $images = $data[$this->getName() . '__images'];
         $hotspots = $data[$this->getName() . '__hotspots'];
-        $hotspots = Serialize::unserialize($hotspots);
+        $hotspots = $hotspots ? Serialize::unserialize($hotspots, false) : [];
 
         if (!$images) {
             return $this->createEmptyImageGallery($params);
@@ -152,7 +154,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $images = array_map('intval', explode(',', $images));
         for ($i = 1; $i < count($images) - 1; $i++) {
             $imageId = $images[$i];
-            $hotspotData = $hotspots[$i - 1];
+            $hotspotData = $hotspots[$i - 1] ?? '';
 
             $itemData = [
                 $fd->getName() . '__image' => $imageId,
@@ -330,7 +332,10 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             $this->getMandatory() && !$omitMandatoryCheck &&
             ($data === null || empty($data->getItems()) || $data->hasValidImages() === false)
         ) {
-            throw new Model\Element\ValidationException('[ ' . $this->getName() . ' ] At least 1 image should be uploaded!');
+            throw (new StructuredValidationException(
+                '[ ' . $this->getName() . ' ] At least 1 image should be uploaded!'
+            ))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         parent::checkValidity($data, $omitMandatoryCheck);

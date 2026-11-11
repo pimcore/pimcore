@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
@@ -308,7 +310,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if ($data instanceof Document) {
@@ -325,7 +328,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!$allow) {
-            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
+            throw (new StructuredValidationException(
+                sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype())
+            ))
+                ->setTranslation(ValidationMessageKey::INVALID_RELATION);
         }
     }
 
@@ -563,7 +569,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $prefix = $params['brickPrefix'] ?? '';
         if (preg_match('/^(asset|object|document)\|(\d+)/', $value, $matches)) {
             $typeField = $params['name'] . '__type';
-            $typeCondition = '`' . $typeField . '` = ' . "'" . $matches[1] . "'";
+            $typeCondition = \Pimcore\Db::get()->quoteIdentifier($typeField) . ' = ' . "'" . $matches[1] . "'";
             $value = $matches[2];
 
             return '(' . $prefix . $typeCondition . ' AND ' . $prefix

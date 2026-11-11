@@ -67,7 +67,7 @@ class Service
         $new_serialized_object = 'O:'.strlen($to_class).':"'.$to_class . '":';
         $new_serialized_object .= substr($old_serialized_object, strlen($old_serialized_prefix));
 
-        $document = Serialize::unserialize($new_serialized_object);
+        $document = Serialize::unserialize($new_serialized_object, true);
 
         return $document;
     }

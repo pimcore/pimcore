@@ -100,7 +100,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $queryBuilder->select($identifierColumn);
             }
 
-            return (int)$this->db->fetchOne('SELECT COUNT(*)  FROM (' . $queryBuilder->getSQL() . ') as XYZ');
+            return (int)$this->db->fetchOne(
+                'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') as XYZ',
+                $queryBuilder->getParameters(),
+                $queryBuilder->getParameterTypes()
+            );
         }
 
         return (int)$this->db->fetchOne(

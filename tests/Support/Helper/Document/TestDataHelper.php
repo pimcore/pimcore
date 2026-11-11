@@ -38,6 +38,7 @@ use Pimcore\Model\Document\Editable\Video;
 use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -114,6 +115,39 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $expectedImage = $params['asset'];
         $this->assertEquals($expectedImage->getId(), $value->getId());
+
+        // Regression guard for pimcore/platform-version#298: hotspot/marker metadata is persisted
+        // as MarkerHotspotItem objects inside the editable's serialized data. A restricted
+        // unserialize() turned them into __PHP_Incomplete_Class, which then made
+        // Image::getCacheTags() fatal on `$metaData['value']`.
+        foreach (['hotspots' => $editable->getHotspots(), 'marker' => $editable->getMarker()] as $what => $entries) {
+            $this->assertNotEmpty($entries, sprintf('expected %s to be persisted', $what));
+            $metaData = $entries[0]['data'][0];
+            $this->assertInstanceOf(
+                MarkerHotspotItem::class,
+                $metaData,
+                sprintf('%s metadata must survive the editable resource unserialize()', $what)
+            );
+            $this->assertSame($what . 'MetaName' . $seed, $metaData['name']);
+            $this->assertSame($what . 'MetaValue' . $seed, $metaData['value']);
+        }
+
+        // The element-typed hotspot entry must still resolve to its Asset through MarkerHotspotItem's
+        // ArrayAccess, which only works while the object is intact.
+        $referenced = $params['referencedAsset'];
+        $metaAsset = $editable->getHotspots()[0]['data'][1];
+        $this->assertInstanceOf(MarkerHotspotItem::class, $metaAsset);
+        $this->assertSame('asset', $metaAsset['type']);
+        $this->assertInstanceOf(Asset::class, $metaAsset['value']);
+        $this->assertEquals($referenced->getId(), $metaAsset['value']->getId());
+
+        // getCacheTags() is the frame that crashed in #298. Note it does NOT collect tags from
+        // element-typed metadata: it calls get_object_vars() on the MarkerHotspotItem first, which
+        // bypasses the lazy id->element resolution in offsetGet(), so `$metaData['value']` is the
+        // raw id and the ElementInterface branch never fires. That gap predates this test (added in
+        // 0338170bb2, 2022) and is deliberately not asserted here.
+        $tags = $editable->getCacheTags($pagesnippet, []);
+        $this->assertArrayHasKey($params['asset']->getCacheTag(), $tags);
     }
 
     public function assertInput(PageSnippet $pagesnippet, string $field, int $seed = 1): void
@@ -407,11 +441,40 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillImage(Page $page, string $field, int $seed = 1, ?array &$returnData): void
     {
         $asset = TestHelper::createImageAsset();
+        // A second, unrelated asset referenced only from hotspot metadata. It is the sole source of
+        // its own cache tag, so assertImage() can prove the metadata was really traversed.
+        $referenced = TestHelper::createImageAsset();
         $editable = new Image();
         $editable->setName($field);
-        $editable->setDataFromEditmode(['id' => $asset->getId()]);
+        // Hotspot and marker metadata is what makes this editable store PHP objects
+        // (MarkerHotspotItem) in its resource blob - see assertImage(). The element-typed entry
+        // matters as well: Image::getCacheTags() only reaches into the metadata to collect tags
+        // from element-typed values, so a text-only fixture would not exercise that branch.
+        $editable->setDataFromEditmode([
+            'id' => $asset->getId(),
+            'hotspots' => [
+                [
+                    'name' => 'hotspot' . $seed,
+                    'top' => 10, 'left' => 20, 'width' => 30, 'height' => 40,
+                    'data' => [
+                        ['name' => 'hotspotsMetaName' . $seed, 'type' => 'text', 'value' => 'hotspotsMetaValue' . $seed],
+                        ['name' => 'hotspotsMetaAsset' . $seed, 'type' => 'asset', 'value' => $referenced->getFullPath()],
+                    ],
+                ],
+            ],
+            'marker' => [
+                [
+                    'name' => 'marker' . $seed,
+                    'top' => 50, 'left' => 60,
+                    'data' => [
+                        ['name' => 'markerMetaName' . $seed, 'type' => 'text', 'value' => 'markerMetaValue' . $seed],
+                    ],
+                ],
+            ],
+        ]);
         $returnData = [
             'asset' => $asset,
+            'referencedAsset' => $referenced,
         ];
         $page->setEditable($editable);
     }

@@ -28,7 +28,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Tool;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
@@ -200,8 +199,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             $data .= 'return ' . $exportedClass . ";\n";
 
-            $filesystem = new Filesystem();
-            $filesystem->dumpFile($definitionFile, $data);
+            \Pimcore\File::putPhpFile($definitionFile, $data);
         }
 
         if ($dumpPHPClasses) {
@@ -343,10 +341,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws Exception
      */
-    private function createContainerClasses(): void
+    private function createContainerClasses(bool $dumpPHPClasses = true): void
     {
-        $containerDefinition = [];
-
         if (!empty($this->classDefinitions)) {
             foreach ($this->classDefinitions as $cl) {
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
@@ -380,7 +376,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class)->dumpContainerClasses($this);
+        if ($dumpPHPClasses) {
+            Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class)->dumpContainerClasses($this);
+        }
     }
 
     /**
@@ -404,7 +402,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function getContainerClassFolder(string $classname): string
     {
-        return PIMCORE_CLASS_DEFINITION_DIRECTORY . '/DataObject/' . ucfirst($classname);
+        return PIMCORE_CLASS_DIRECTORY . '/DataObject/' . ucfirst($classname);
     }
 
     /**
@@ -561,7 +559,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         // for localized fields getting a fresh copy
         RuntimeCache::set($cacheKey, $this);
 
-        $this->createContainerClasses();
+        $this->createContainerClasses($dumpPHPClasses);
         $this->updateDatabase();
 
         foreach ($fieldDefinitions as $fd) {

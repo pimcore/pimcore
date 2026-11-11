@@ -39,13 +39,25 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             'position' => $position ? $position : '0',
             'type' => $type ? $type : 'object', ];
 
+        $emptyColumns = [];
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);
+            $value = $this->model->$getter();
+
+            // a column without a value needs no row, but must not keep a previously stored value
+            if ($value === null) {
+                $emptyColumns[] = $column;
+
+                continue;
+            }
+
             $data = $dataTemplate;
             $data['column'] = $column;
-            $data['data'] = $this->model->$getter();
+            $data['data'] = $value;
             Helper::upsert($this->db, $table, $data, parent::UNIQUE_COLUMNS);
         }
+
+        $this->deleteColumnRows($table, $dataTemplate, $emptyColumns);
     }
 
     protected function getTablename(DataObject\Concrete $object): string

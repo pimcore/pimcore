@@ -16,7 +16,6 @@ namespace Pimcore\Model\Notification\Service;
 
 use Carbon\Carbon;
 use Doctrine\DBAL\Exception;
-use Pimcore\Db;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
@@ -52,8 +51,6 @@ class NotificationService
         string $message,
         ?ElementInterface $element = null
     ): void {
-        $this->beginTransaction();
-
         $sender = User::getById($fromUser);
         $recipient = User::getById($userId);
 
@@ -76,8 +73,6 @@ class NotificationService
         $notification->setMessage($message);
         $notification->setLinkedElement($element);
         $notification->save();
-
-        $this->commit();
     }
 
     /**
@@ -149,7 +144,6 @@ class NotificationService
      */
     public function findAndMarkAsRead(int $id, ?int $recipientId = null): Notification
     {
-        $this->beginTransaction();
         $notification = $this->find($id);
 
         if ($notification->getRecipient()?->getId() !== $recipientId) {
@@ -159,7 +153,6 @@ class NotificationService
         if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
             $notification->setRead(true);
             $notification->save();
-            $this->commit();
         }
 
         return $notification;
@@ -208,16 +201,10 @@ class NotificationService
             $limit = (int) $limit;
         }
 
-        $this->beginTransaction();
-
-        $result = [
+        return [
             'total' => $listing->count(),
             'data' => $listing->getItems($offset, $limit),
         ];
-
-        $this->commit();
-
-        return $result;
     }
 
     /**
@@ -230,23 +217,18 @@ class NotificationService
             'recipient = ? AND `read` = 0 AND `isStudio` = 0 AND creationDate >= ?',
             [
                 $user,
-                date('Y-m-d H:i:s', $lastUpdate),
+                // creationDate is stored in UTC, so the bound must be rendered in UTC too
+                gmdate('Y-m-d H:i:s', $lastUpdate),
             ]
         );
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
         $listing->setLimit(1);
 
-        $this->beginTransaction();
-
-        $result = [
+        return [
             'total' => $listing->count(),
             'data' => $listing->getData(),
         ];
-
-        $this->commit();
-
-        return $result;
     }
 
     public function format(Notification $notification): array
@@ -297,15 +279,11 @@ class NotificationService
      */
     public function delete(int $id, ?int $recipientId = null): void
     {
-        $this->beginTransaction();
-
         $notification = $this->find($id);
 
         if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
             $notification->delete();
         }
-
-        $this->commit();
     }
 
     /**
@@ -316,28 +294,8 @@ class NotificationService
         $listing = new Listing();
         $listing->setCondition('recipient = ?', [$user]);
 
-        $this->beginTransaction();
-
         foreach ($listing->getData() as $notification) {
             $notification->delete();
         }
-
-        $this->commit();
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function beginTransaction(): void
-    {
-        Db::getConnection()->beginTransaction();
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function commit(): void
-    {
-        Db::getConnection()->commit();
     }
 }

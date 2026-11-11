@@ -3,11 +3,22 @@ services:
         autowire: true
         autoconfigure: true
 
+    Pimcore\Bundle\InstallBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/Event/'
+            - '../src/EnvVarDefinition/'
+            - '../src/Profile/'
+            - '../src/Collector/'
+            - '../src/Env/'
+
+    Pimcore\Bundle\InstallBundle\Collector\EnvVarReaderInterface:
+        class: Pimcore\Bundle\InstallBundle\Collector\SystemEnvVarReader
+
     Pimcore\Bundle\InstallBundle\Command\:
         resource: '../src/Command'
         public: true
         tags: ['console.command']
 
-    Pimcore\Composer\PackageInfo: ~
-
-    Pimcore\Bundle\InstallBundle\Installer: ~
+    Pimcore\Bundle\InstallBundle\Installer:
+        public: true

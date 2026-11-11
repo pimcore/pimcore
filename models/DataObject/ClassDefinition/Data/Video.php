@@ -135,7 +135,7 @@ class Video extends Data implements
     public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         if ($data) {
-            $raw = Serialize::unserialize($data);
+            $raw = Serialize::unserialize($data, false);
 
             if ($raw['type'] === 'asset') {
                 if ($asset = Asset::getById($raw['data'])) {
@@ -443,7 +443,7 @@ class Video extends Data implements
         }
 
         foreach ($oldData as $key => $oValue) {
-            if (!isset($newData[$key]) || $oValue !== $newData[$key]) {
+            if (!array_key_exists($key, $newData) || $oValue !== $newData[$key]) {
                 return false;
             }
         }
@@ -464,8 +464,9 @@ class Video extends Data implements
                 $result['description'] = $value->getDescription();
             }
 
+            // poster and asset data can still be a raw asset id if the referenced asset has been deleted
             $poster = $value->getPoster();
-            if ($poster) {
+            if ($poster instanceof Asset) {
                 $result['poster'] = [
                     'type' => Model\Element\Service::getElementType($poster),
                     'id' => $poster->getId(),
@@ -475,10 +476,10 @@ class Video extends Data implements
             $data = $value->getData();
 
             if ($data && $value->getType() == 'asset') {
-                $result['data'] = [
+                $result['data'] = $data instanceof Asset ? [
                     'type' => Model\Element\Service::getElementType($data),
                     'id' => $data->getId(),
-                ];
+                ] : null;
             } else {
                 $result['data'] = $data;
             }

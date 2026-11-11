@@ -27,7 +27,7 @@ class Document
      *
      * @throws Exception
      */
-    public static function getInstance(?string $adapter = null): ?Document\Adapter
+    public static function getInstance(?string $adapter = null): ?Document\AdapterInterface
     {
         try {
             if ($adapter) {
@@ -82,7 +82,7 @@ class Document
      * Returns adapter class if exists or false if doesn't exist
      *
      */
-    public static function getDefaultAdapter(): ?Document\Adapter
+    public static function getDefaultAdapter(): ?Document\AdapterInterface
     {
         $adapters = ['Gotenberg', 'LibreOffice', 'Ghostscript'];
 

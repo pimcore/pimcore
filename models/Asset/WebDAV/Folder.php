@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Exception;
+use League\Flysystem\FileAttributes;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
+use Pimcore\Tool\Storage;
 use Sabre\DAV;
 
 /**
@@ -38,29 +40,73 @@ class Folder extends DAV\Collection
      */
     public function getChildren(): array
     {
-        $children = [];
-
         $childrenList = new Asset\Listing();
 
         $childrenList->addConditionParam('parentId = ?', [$this->asset->getId()]);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         $childrenList->filterAccessibleByUser($user, $this->asset);
 
-        foreach ($childrenList as $child) {
-            try {
-                $children[] = $this->getChild($child);
-            } catch (Exception $e) {
-                Logger::warning((string) $e);
+        $assets = $childrenList->getAssets();
+
+        // only files have a size, so a folder without any needs no storage listing
+        $fileSizes = [];
+        foreach ($assets as $child) {
+            if (!$child instanceof Asset\Folder) {
+                $fileSizes = $this->getFileSizes();
+
+                break;
             }
+        }
+
+        $children = [];
+        foreach ($assets as $child) {
+            $children[] = $this->createNode($child, $fileSizes[$child->getRealFullPath()] ?? null);
         }
 
         return $children;
     }
 
     /**
+     * Reads the size of every file in this folder with a single storage listing.
+     *
+     * A PROPFIND asks for the size of each child, and asking the storage per file costs one
+     * request per child on remote storage (S3, Azure Blob, ...), which does not finish in time
+     * for large folders. Children missing from the listing fall back to the per-file lookup, and
+     * so does every child if the listing fails, e.g. at a symbolic link on local storage.
+     *
+     * @return array<string, int> file sizes in bytes, keyed by the asset's full path
+     */
+    private function getFileSizes(): array
+    {
+        $fileSizes = [];
+
+        try {
+            foreach (Storage::get('asset')->listContents($this->asset->getRealFullPath(), false) as $item) {
+                if ($item instanceof FileAttributes && $item->fileSize() !== null) {
+                    $fileSizes['/' . ltrim($item->path(), '/')] = $item->fileSize();
+                }
+            }
+        } catch (Exception $e) {
+            Logger::info('Unable to list the contents of asset folder ' . $this->asset->getRealFullPath() . ', falling back to a per-file size lookup: ' . $e);
+        }
+
+        return $fileSizes;
+    }
+
+    private function createNode(Asset $asset, ?int $size = null): File|Folder
+    {
+        if ($asset instanceof Asset\Folder) {
+            return new Asset\WebDAV\Folder($asset);
+        }
+
+        return new Asset\WebDAV\File($asset, $size);
+    }
+
+    /**
      * @param Asset|string $name
      *
      * @throws DAV\Exception\NotFound
+     * @throws DAV\Exception\Forbidden
      */
     public function getChild($name): File|Folder
     {
@@ -80,11 +126,16 @@ class Folder extends DAV\Collection
         }
 
         if ($asset instanceof Asset) {
-            if ($asset instanceof Asset\Folder) {
-                return new Asset\WebDAV\Folder($asset);
+            // Direct node resolution (PROPFIND/LOCK on a known path) bypasses the "list"
+            // filtering in getChildren(), so per-asset authorization has to be enforced here too -
+            // "list" for folders (keeps traversal through list-only parents working) and "view" for
+            // files, matching File::get().
+            $requiredPermission = $asset instanceof Asset\Folder ? 'list' : 'view';
+            if (!$asset->isAllowed($requiredPermission)) {
+                throw new DAV\Exception\Forbidden(sprintf('Missing "%s" permission', $requiredPermission));
             }
 
-            return new Asset\WebDAV\File($asset);
+            return $this->createNode($asset);
         }
 
         throw new DAV\Exception\NotFound('File not found: ' . $name);
@@ -105,15 +156,27 @@ class Folder extends DAV\Collection
      */
     public function createFile($name, $data = null)
     {
+        // check authentication and permission before touching the disk, so an unauthorized
+        // request never causes a temp-file write
+        $user = AdminTool::getCurrentUser();
+        if ($user === null) {
+            throw new DAV\Exception\Forbidden('No authenticated user available');
+        }
+
+        if (!$this->asset->isAllowed('create')) {
+            throw new DAV\Exception\Forbidden('Missing "create" permission');
+        }
+
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
         if (is_resource($data)) {
             @rewind($data);
         }
-        file_put_contents($tmpFile, $data);
 
-        $user = AdminTool::getCurrentUser();
+        try {
+            if (file_put_contents($tmpFile, $data) === false) {
+                throw new DAV\Exception('Unable to write temporary file');
+            }
 
-        if ($this->asset->isAllowed('create')) {
             Asset::create($this->asset->getId(), [
                 'filename' => Element\Service::getValidKey($name, 'asset'),
                 'sourcePath' => $tmpFile,
@@ -121,14 +184,12 @@ class Folder extends DAV\Collection
                 'userOwner' => $user->getId(),
             ]);
 
-            unlink($tmpFile);
-
             return null;
+        } finally {
+            if (file_exists($tmpFile)) {
+                unlink($tmpFile);
+            }
         }
-
-        unlink($tmpFile);
-
-        throw new DAV\Exception\Forbidden('Missing "create" permission');
     }
 
     /**
@@ -139,6 +200,9 @@ class Folder extends DAV\Collection
     public function createDirectory($name): void
     {
         $user = AdminTool::getCurrentUser();
+        if ($user === null) {
+            throw new DAV\Exception\Forbidden('No authenticated user available');
+        }
 
         if ($this->asset->isAllowed('create')) {
             $asset = Asset::create($this->asset->getId(), [

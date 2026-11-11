@@ -159,8 +159,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                 if (!empty($parentBrick)) {
                     $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
                     $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
-                    $brick = $modelFactory->build($brickType);
-                    $brick->setObject($object);
+                    $brick = $modelFactory->build($brickType, [$object]);
                     $brick->setFieldname($this->getFieldname());
                     $brick->save($object, $params);
                 }

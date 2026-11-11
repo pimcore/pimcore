@@ -1,0 +1,319 @@
+---
+title: Calculated Value Datatype
+description: "Allows calculating object attributes dynamically based on other attribute values."
+---
+
+# Calculated Value Datatype
+
+
+## General
+
+The calculated-value datatype allows you to calculate attributes based on the value of various other attributes. The 
+value is always calculated on the fly when calling the corresponding getter, no caching applied.
+
+The only data stored is the one in the object's query tables for being able to query (e.g. grid filtering) for calculated values.
+
+> Values in the query table are only updated when the data object is saved. So be careful, the values in the query 
+> table might not be up-to-date depending on the calculation parameters.  
+
+As display type in object editor three types are available: 
+- Input: Single line, displayed as read-only input field.
+- TextArea: Multi line, displayed as read-only text area.
+- HTML: Multi line HTML content, displayed as display field.
+
+:::info Display-only alternative
+A Calculated Value is a data field: it is part of the object's data model, accessible via
+getter and API, and its result is written to the query table on save so it can be filtered
+and exported. If you only want to show computed, context-dependent text to editors and do
+not want anything persisted or exposed as data, use a
+[Dynamic Text Label](../02_Layout_Elements/01_Dynamic_Text_Labels.md) layout element instead.
+:::
+
+## Calculation
+
+For defining the calculation two options are available:
+
+### Expression
+
+The simplest way for defining the calculation is providing an expression. The expression language is based on the 
+[symfony expression language component](https://symfony.com/doc/current/components/expression_language.html). Please 
+see [syntax docs](https://symfony.com/doc/current/components/expression_language/syntax.html) for details concerning 
+possibilities. 
+
+##### Available variables 
+- DataObject itself as `object`.  
+- Context information as `data` (details see Context Information for Calculation below).
+
+Both are read-only: an expression can call the getters of the object's fields (also of related elements, object bricks,
+field collections, localized fields and classification stores), the common element getters such as `getId()`,
+`getKey()`, `getFullPath()` or `getParent()`, and the getters of the stored field values (e.g.
+`object.getPrice().getUnit().getAbbreviation()`). Dates are `DateTimeImmutable` copies. Any other method call is rejected
+and the field shows the error message. Use a calculator class or a custom expression function for anything else.
+
+##### Simple examples
+```twig
+# print ID of data object
+object.getId()
+
+# print firstname and lastname of data object
+object.getFirstname() ~ ' ' ~ object.getLastname()
+
+# check if field is empty
+object.getText() != '' ? 'yes' : 'no'
+
+# get fieldname of current field
+data.getFieldname()
+
+```
+
+##### Adding Expression Functions
+Register new functions for use in Symfony expressions for calculated values.
+
+Example string functions provider:
+
+```php
+<?php
+
+namespace App\ExpressionLanguage;
+
+use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+
+class StringFunctionsProvider implements ExpressionFunctionProviderInterface
+{
+    public function getFunctions(): array
+    {
+        return [
+            new ExpressionFunction(
+                'toLower',
+                function ($str) {
+                    return sprintf('strtolower(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return strtolower($value);
+                }
+            ),
+            new ExpressionFunction(
+                'toUpper',
+                function ($str) {
+                    return sprintf('strtoupper(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return strtoupper($value);
+                }
+            ),
+            new ExpressionFunction(
+                'trim',
+                function ($str) {
+                    return sprintf('trim(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return trim($value);
+                }
+            )
+        ];
+    }
+}
+```
+
+```yaml
+services:
+    App\ExpressionLanguage\StringFunctionsProvider:
+        tags:
+        - { name: "pimcore.calculated_value.expression_language_provider" }
+```
+
+### Calculator Class
+
+The second option for defining the calculation is providing a php calculator class. This is especially useful for more
+complex calculations and reusing the calculators. 
+
+The calculator class is a standard Symfony service (or simple php class) that implements the `CalculatorClassInterface`.
+
+#### Setup in Class Definition
+The calculator class can be defined in two ways:  
+- **Symfony service** (preferred way): Provide service name prefixed with `@` (e.g. `@service_name`), service needs to be public.
+- **Standard PHP class**: Provide fully qualified namespace name of class, Pimcore will instantiate it with `new`.
+
+![Calculated Value Configuration](../../../img/classes-datatypes-calculated-definition.png)
+
+
+#### Calculator Class Implementation
+
+Suppose there is a class with 2 number fields called xValue and yValue and a calculated-value field
+called `sum` placed inside a localizedfields container.
+
+The PHP calculator class needs to implement the `CalculatorClassInterface` interface. 
+
+The `compute` method needs to be implemented which computes the result for the `sum` field. 
+The arguments passed into this method is the Pimcore object and the contextual information 
+with details about calculated-value field is affected and where it is located at
+(details see Context Information for Calculation below).
+
+```php
+namespace App;
+
+use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
+use Pimcore\Model\DataObject\Data\CalculatedValue;
+ 
+class Calculator implements CalculatorClassInterface
+{
+    public function compute(Concrete $object, CalculatedValue $context): string
+    {
+        if ($context->getFieldname() == "sum") {
+            $language = $context->getPosition();
+            return $object->getXValue($language) + $object->getYValue($language);
+        } else {
+            Logger::error("unknown field");
+            return '';
+        }
+    }
+} 
+```
+
+The calculator class sums the x and y values from the corresponding language tab.
+
+#### Passing arguments to the calculator class
+
+Optionally, additional data can be configured for the calculator class in the class definition (field
+`calculatorData`). The value is a free-form string (e.g. a plain value, a comma-separated list or a JSON
+encoded structure) and is exposed to the calculator through the context via `$context->getCalculatorData()`.
+This allows reusing the same calculator class for simple variations without having to define a dedicated
+calculator class per variation.
+
+```php
+public function compute(Concrete $object, CalculatedValue $context): string
+{
+    $factor = (float) ($context->getCalculatorData() ?? '1');
+    $language = $context->getPosition();
+
+    return (string) (($object->getXValue($language) + $object->getYValue($language)) * $factor);
+}
+```
+
+When using the expression calculator type, the value is also available on the `data` variable:
+
+```
+data.getCalculatorData()
+```
+
+Implement the `getCalculatedValueForEditMode` method in addition to `compute`.
+This method provides the display value in object edit mode:
+
+```php
+public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string
+{
+    $language = $context->getPosition();
+    $result = $object->getXValue($language) . " + " . $object->getYValue($language) . " = " . $this->compute($object, $context);
+    return $result;
+}
+```
+
+#### Result 
+
+The visual outcome would be as follows: 
+
+![Calculated Value Field](../../../img/classes-datatypes-calculated-field.png)
+
+
+## Context Information for Calculation
+The content of the context information depends on the location of the calculated-value field in the 
+data model.
+
+#### Object (top-level)
+
+| Name | Description |
+| --- | ---- |
+| ownerType | `"object"` |
+| fieldName | the name of the calculated-value field (e.g. `sum`) |
+
+
+#### Localizedfields
+
+| Name | Description |
+| --- | ---- |
+| position | the language ("en", "de", ...) |
+| ownerType | `"localizedfield"` |
+| ownerName | the name of the localized field ("localizedfields") | 
+
+
+#### Objectbricks
+
+| Name | Description |
+| --- | ---- |
+| ownerType | `"objectbrick"` |
+| ownerName | the name of the objectbrick field inside the object |
+| fieldName | the name of the attribute inside the brick |
+| index | the name of the brick |
+| keyDefinition | the calculated-value field definition |
+| position | the language ("en", "de", ...) if calculated field is localized |
+
+
+#### Fieldcollections
+
+| Name | Description |
+| --- | ---- |
+| ownerType | `"fieldcollection"` |
+| ownerName | the name of the fieldcollection attribute |
+| fieldName | the name of the attribute inside the fieldcollection |
+| index | the index of the fieldcollection item |
+| keyDefinition | the calculated-value field definition |
+
+
+#### Classification Store
+
+| Name | Description |
+| --- | ---- |
+| ownerType | `"classificationstore"` |
+| ownerName | the name of the fieldcollection attribute |
+| fieldName | the name of the attribute inside the fieldcollection |
+| position  | the language |
+| groupId   | group id |
+| keyId     | key id |
+| keyDefinition | the fielddefinition of the classificationstore attribute |
+
+
+
+## Working with PHP API
+
+Getter methods on the object class are generated as usual. The code to retrieve the values would then be:
+```php
+$object = DataObject::getByPath("/demoobject");
+$valueDe =  $object->getSum("de");   // => 38
+$valueEn =  $object->getSum("en");   // => 11
+```
+
+## Versioning
+
+Calculated fields have no stored value, so by default a version of an object does not contain them: version previews
+and version comparisons compute the value at view time, against the current object data and the current calculator.
+Two versions taken before and after a change of an input the calculator reads from elsewhere therefore show the
+same value, and an old version shows a value that did not exist when it was taken.
+
+Enable `calculated_value_snapshot` to capture the values of calculated fields when a version is created:
+
+```yaml
+pimcore:
+    objects:
+        versions:
+            calculated_value_snapshot: true
+```
+
+With the option enabled, the current values of all calculated fields on object level and in localized fields are
+computed when a version is created and stored as part of the version. Version previews and comparisons then show the
+value as of the snapshot, and objects restored from a version return the snapshot values from the calculated-field
+getters until they are saved again. A version that is written again later (for example when its note is changed)
+keeps the values it stored. The edit view is not affected: it always shows freshly computed values, also when a draft
+version is loaded, and so do calculators and expressions that read other calculated fields while it is rendered. The
+value is still computed live in the following cases: for versions created while the option was disabled, for auto-save
+versions (which never capture calculated values), for calculated fields inside field collections, object bricks or
+classification stores (including their localized fields), and for values that cannot be stored safely in the version
+(objects or arrays containing objects; `Stringable` values are stored as strings).
+
+Keep the cost in mind before enabling it: every calculator of the class runs on every version creation except
+auto-saves, including manual drafts, with the queries and side effects the calculator has. Long-running imports or
+queue workers that save objects in a loop pay this on every save. Calculators that read inherited data or data of
+related objects also change behaviour: a version of a child object then shows the parent's value as of the snapshot
+instead of the parent's current value.

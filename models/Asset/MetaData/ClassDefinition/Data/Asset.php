@@ -15,8 +15,10 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\Element\Service;
 
-class Asset extends Data
+class Asset extends Data implements IdRewriterInterface
 {
+    use IdRewriterTrait;
+
     public function normalize(mixed $value, array $params = []): mixed
     {
         $element = $value;
@@ -95,7 +97,7 @@ class Asset extends Data
     public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            $data = \Pimcore\Model\Asset::getById($data);
+            $data = \Pimcore\Model\Asset::getById((int) $data);
         }
 
         if ($data instanceof \Pimcore\Model\Asset) {

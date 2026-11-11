@@ -13,11 +13,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
+use __PHP_Incomplete_Class;
 use InvalidArgumentException;
+use Pimcore;
+use Pimcore\Model\Document\Editable\Image;
+use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
+use Pimcore\Tests\Model\DataType\UnserializeWakeupProbe;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool\Serialize;
 
 /**
  * Class ElementTest
@@ -78,6 +86,66 @@ class EditableTest extends ModelTestCase
 
         $this->reloadPage();
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
+    }
+
+    /**
+     * Studio sends marker/hotspot relations as element id, or null for an empty field,
+     * while the classic editmode sends the full path. All of them must save and reload.
+     */
+    public function testImageMarkerRelationsByIdPathOrEmpty(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $object = TestHelper::createEmptyObject();
+        $document = TestHelper::createEmptyDocumentPage();
+
+        $editable = new Image();
+        $editable->setName('image');
+        $editable->setDataFromEditmode([
+            'id' => $asset->getId(),
+            'marker' => [
+                [
+                    'name' => 'marker',
+                    'top' => 50, 'left' => 60,
+                    'data' => [
+                        ['name' => 'objectById', 'type' => 'object', 'value' => $object->getId()],
+                        ['name' => 'documentByNumericString', 'type' => 'document', 'value' => (string) $document->getId()],
+                        ['name' => 'assetByPath', 'type' => 'asset', 'value' => $asset->getFullPath()],
+                        ['name' => 'emptyObject', 'type' => 'object', 'value' => null],
+                        ['name' => 'emptyAsset', 'type' => 'asset', 'value' => ''],
+                    ],
+                ],
+            ],
+            'hotspots' => [
+                [
+                    'name' => 'hotspot',
+                    'top' => 10, 'left' => 20, 'width' => 30, 'height' => 40,
+                    'data' => [
+                        ['name' => 'emptyDocument', 'type' => 'document', 'value' => null],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->testPage = TestHelper::createEmptyDocumentPage();
+        $this->testPage->setEditable($editable);
+        $this->testPage->save();
+
+        $this->reloadPage();
+
+        $editable = $this->testPage->getEditable('image');
+        $this->assertInstanceOf(Image::class, $editable);
+
+        $markerValues = array_column($editable->getDataEditmode()['marker'][0]['data'], 'value', 'name');
+        $this->assertSame([
+            'objectById' => $object->getRealFullPath(),
+            'documentByNumericString' => $document->getRealFullPath(),
+            'assetByPath' => $asset->getRealFullPath(),
+            'emptyObject' => null,
+            'emptyAsset' => '',
+        ], $markerValues);
+
+        $hotspotValues = array_column($editable->getDataEditmode()['hotspots'][0]['data'], 'value', 'name');
+        $this->assertSame(['emptyDocument' => null], $hotspotValues);
     }
 
     public function testInput(): void
@@ -261,5 +329,178 @@ class EditableTest extends ModelTestCase
 
         $this->reloadPage();
         $this->testDataHelper->assertBlock($this->testPage, 'block', $this->seed);
+    }
+
+    /**
+     * An editable's stored data is only unserialized with the classes core editables write (or the
+     * ones configured in `pimcore.documents.editables.unserialize_allowed_classes`). Any other class
+     * must come back as __PHP_Incomplete_Class, which never has __wakeup() called on it.
+     */
+    public function testStoredDataCannotWakeUpUnlistedClasses(): void
+    {
+        UnserializeWakeupProbe::$wokeUp = false;
+
+        $table = new Table();
+        $table->setDataFromResource(Serialize::serialize([[new UnserializeWakeupProbe()]]));
+
+        $this->assertFalse(
+            UnserializeWakeupProbe::$wokeUp,
+            'Editable::getUnserializedData() must not invoke __wakeup() on a class outside its allowlist'
+        );
+        $this->assertInstanceOf(__PHP_Incomplete_Class::class, $table->getData()[0][0]);
+    }
+
+    /**
+     * Classes registered through `pimcore.documents.editables.unserialize_allowed_classes` (the
+     * test config registers CustomValueObject) are reconstructed, so a project editable storing its
+     * own value objects keeps working.
+     */
+    public function testConfiguredClassesAreReconstructed(): void
+    {
+        $this->assertContains(
+            CustomValueObject::class,
+            Pimcore::getContainer()->getParameter('pimcore.documents.editables.unserialize_allowed_classes'),
+            'precondition: the test config registers the value object class'
+        );
+
+        $table = new Table();
+        $table->setDataFromResource(Serialize::serialize([[new CustomValueObject('custom text')]]));
+
+        $value = $table->getData()[0][0];
+        $this->assertInstanceOf(CustomValueObject::class, $value);
+        $this->assertSame('custom text', $value->getText());
+    }
+
+    /**
+     * A MarkerHotspotItem built through the PHP API (constructor / setValue()) can hold the
+     * referenced element itself - including a generated data object class - as value. The stored
+     * data must reference it by id, the format the editmode and Studio write, so that loading it
+     * never needs to allow element classes.
+     */
+    public function testImageMetaDataElementsAreStoredById(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $object = TestHelper::createEmptyObject();
+
+        $editable = new Image();
+        $editable->setName('image');
+        $editable->setId($asset->getId());
+        $editable->setHotspots([
+            [
+                'name' => 'hotspot',
+                'top' => 10, 'left' => 20, 'width' => 30, 'height' => 40,
+                'data' => [
+                    new MarkerHotspotItem(['name' => 'object', 'type' => 'object', 'value' => $object]),
+                    new MarkerHotspotItem(['name' => 'text', 'type' => 'textfield', 'value' => 'some text']),
+                ],
+            ],
+        ]);
+        $editable->setMarker([
+            [
+                'name' => 'marker',
+                'top' => 50, 'left' => 60,
+                'data' => [
+                    new MarkerHotspotItem(['name' => 'asset', 'type' => 'asset', 'value' => $asset]),
+                ],
+            ],
+        ]);
+
+        $resourceData = Serialize::serialize($editable->getDataForResource());
+        $this->assertStringNotContainsString(get_class($object), $resourceData);
+        $this->assertStringNotContainsString(get_class($asset), $resourceData);
+
+        $this->testPage = TestHelper::createEmptyDocumentPage();
+        $this->testPage->setEditable($editable);
+        $this->testPage->save();
+
+        $this->reloadPage();
+
+        $editable = $this->testPage->getEditable('image');
+        $this->assertInstanceOf(Image::class, $editable);
+
+        $hotspotData = $editable->getHotspots()[0]['data'];
+        $this->assertInstanceOf(MarkerHotspotItem::class, $hotspotData[0]);
+        $this->assertSame($object->getId(), $hotspotData[0]->getValue());
+        $this->assertSame($object->getId(), $hotspotData[0]['value']->getId());
+        $this->assertSame('some text', $hotspotData[1]->getValue());
+
+        $markerData = $editable->getMarker()[0]['data'];
+        $this->assertInstanceOf(MarkerHotspotItem::class, $markerData[0]);
+        $this->assertSame($asset->getId(), $markerData[0]->getValue());
+        $this->assertSame($asset->getId(), $markerData[0]['value']->getId());
+
+        $dependencies = $editable->resolveDependencies();
+        $this->assertArrayHasKey('object_' . $object->getId(), $dependencies);
+        $this->assertArrayHasKey('asset_' . $asset->getId(), $dependencies);
+
+        $cacheTags = $editable->getCacheTags($this->testPage);
+        $this->assertArrayHasKey($object->getCacheTag(), $cacheTags);
+        $this->assertArrayHasKey($asset->getCacheTag(), $cacheTags);
+    }
+
+    /**
+     * Data stored by earlier versions holds MarkerHotspotItem objects, possibly with the referenced
+     * element serialized into them. MarkerHotspotItem is still reconstructed; an element object comes
+     * back as __PHP_Incomplete_Class, from which only its id is taken over.
+     */
+    public function testLegacyImageDataWithElementObjectsKeepsTheReferences(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $object = TestHelper::createEmptyObject();
+
+        $legacyData = Serialize::serialize([
+            'id' => $asset->getId(),
+            'hotspots' => [
+                [
+                    'name' => 'hotspot',
+                    'top' => 10, 'left' => 20, 'width' => 30, 'height' => 40,
+                    'data' => [
+                        new MarkerHotspotItem(['name' => 'object', 'type' => 'object', 'value' => $object]),
+                        new MarkerHotspotItem(['name' => 'assetById', 'type' => 'asset', 'value' => $asset->getId()]),
+                    ],
+                ],
+            ],
+            'marker' => [
+                [
+                    'name' => 'marker',
+                    'top' => 50, 'left' => 60,
+                    'data' => [
+                        new MarkerHotspotItem(['name' => 'asset', 'type' => 'asset', 'value' => $asset]),
+                    ],
+                ],
+            ],
+        ]);
+
+        $editable = new Image();
+        $editable->setName('image');
+        $editable->setDataFromResource($legacyData);
+
+        $hotspotData = $editable->getHotspots()[0]['data'];
+        $this->assertInstanceOf(MarkerHotspotItem::class, $hotspotData[0]);
+        $this->assertSame($object->getId(), $hotspotData[0]->getValue());
+        $this->assertSame($object->getId(), $hotspotData[0]['value']->getId());
+        $this->assertInstanceOf(MarkerHotspotItem::class, $hotspotData[1]);
+        $this->assertSame($asset->getId(), $hotspotData[1]->getValue());
+
+        $markerData = $editable->getMarker()[0]['data'];
+        $this->assertInstanceOf(MarkerHotspotItem::class, $markerData[0]);
+        $this->assertSame($asset->getId(), $markerData[0]->getValue());
+
+        $this->assertNoIncompleteClass([$editable->getHotspots(), $editable->getMarker()]);
+    }
+
+    private function assertNoIncompleteClass(mixed $value): void
+    {
+        $this->assertNotInstanceOf(__PHP_Incomplete_Class::class, $value);
+
+        if ($value instanceof MarkerHotspotItem) {
+            $value = [$value->getName(), $value->getType(), $value->getValue()];
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                $this->assertNoIncompleteClass($item);
+            }
+        }
     }
 }

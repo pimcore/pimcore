@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
 
-class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, UserDefinedColumnTypeInterface
 {
     use DataObject\Traits\DefaultValueTrait;
 
@@ -298,7 +298,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
                 $filterField = $params['name'] ?: $this->getName();
 
-                return '`' . $filterField . '` BETWEEN ' .
+                return $db->quoteIdentifier($filterField) . ' BETWEEN ' .
                     $db->quote((string) $value) . ' AND ' . $db->quote((string)$maxTime);
             }
         }
@@ -323,6 +323,13 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return null;
+    }
+
+    public function hasApplicableDefaultValue(Concrete $object, array $context = []): bool
+    {
+        // the default is resolved at runtime (use current date), the configured default value alone does not tell
+        return parent::hasApplicableDefaultValue($object, $context)
+            || !$this->isEmpty($this->doGetDefaultValue($object, $context));
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool

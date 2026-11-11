@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Helper;
 
+use Pimcore\Bundle\GenericExecutionEngineBundle\Installer as GenericExecutionEngineInstaller;
 use Pimcore\Bundle\SeoBundle\Installer;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Tests\Support\Util\Autoloader;
@@ -23,7 +24,7 @@ class CoreModel extends Model
     {
         parent::_beforeSuite($settings);
         $this->installSeoBundle();
-        $this->installSimpleBackendSearchBundle();
+        $this->installGenericExecutionEngineBundle();
     }
 
     private function installSeoBundle(): void
@@ -41,14 +42,14 @@ class CoreModel extends Model
         Autoloader::load(Redirect::class);
     }
 
-    private function installSimpleBackendSearchBundle(): void
+    private function installGenericExecutionEngineBundle(): void
     {
         /** @var Pimcore $pimcoreModule */
         $pimcoreModule = $this->getModule('\\'.Pimcore::class);
 
-        $this->debug('[PimcoreSimpleBackendSearchBundle] Running SimpleBackendSearchBundle installer');
+        $this->debug('[PimcoreGenericExecutionEngineBundle] Running GenericExecutionEngineBundle installer');
 
-        $installer = $pimcoreModule->getContainer()->get(\Pimcore\Bundle\SimpleBackendSearchBundle\Installer::class);
+        $installer = $pimcoreModule->getContainer()->get(GenericExecutionEngineInstaller::class);
         $installer->install();
     }
 }

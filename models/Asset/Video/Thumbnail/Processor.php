@@ -21,7 +21,7 @@ use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
-use Pimcore\Video\Adapter;
+use Pimcore\Video\AdapterInterface;
 use Symfony\Component\Lock\LockFactory;
 
 /**
@@ -40,7 +40,7 @@ class Processor
     ];
 
     /**
-     * @var \Pimcore\Video\Adapter[]
+     * @var \Pimcore\Video\AdapterInterface[]
      */
     protected array $queue = [];
 
@@ -111,9 +111,12 @@ class Processor
             $thumbDir = $asset->getRealPath().'/'.$asset->getId().'/video-thumb__'.$asset->getId().'__'.$config->getName();
             $filename = preg_replace("/\." . preg_quote(pathinfo($asset->getFilename(), PATHINFO_EXTENSION), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
-            $tmpPath = File::getLocalTempFilePath($format);
+            // The file is written by the VideoConvertMessage handler in a messenger worker, not by the current
+            // process. Without $keep, the current process (e.g. the web request rendering the video) deletes
+            // the file on shutdown, which can happen while ffmpeg is still writing it. execute() removes it.
+            $tmpPath = File::getLocalTempFilePath($format, true);
 
-            if ($converter = \Pimcore\Video::getInstance()) {
+            if ($converter = \Pimcore\Video::newInstance()) {
                 $converter->setAudioBitrate($config->getAudioBitrate());
                 $converter->setVideoBitrate($config->getVideoBitrate());
                 $converter->setFormat($format);
@@ -125,7 +128,7 @@ class Processor
                     $medias = $config->getMedias();
                     foreach ($medias as $media => $transformations) {
                         //used just to generate arguments for medias
-                        if ($subConverter = \Pimcore\Video::getInstance()) {
+                        if ($subConverter = \Pimcore\Video::newInstance()) {
                             self::applyTransformations($subConverter, $transformations);
                             $medias[$media]['converter'] = $subConverter;
                         }
@@ -162,7 +165,7 @@ class Processor
         return $instance;
     }
 
-    private static function applyTransformations(Adapter $converter, array $transformations): void
+    private static function applyTransformations(AdapterInterface $converter, array $transformations): void
     {
         foreach ($transformations as $transformation) {
             if (!empty($transformation)) {
@@ -228,7 +231,7 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
-        $workerSourceFile = $asset->getTemporaryFile();
+        $workerSourceFile = $asset->getLocalFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
@@ -249,7 +252,10 @@ class Processor
                     }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
 
-                    fclose($source);
+                    // some storage adapters close the passed stream themselves inside writeStream()
+                    if (is_resource($source)) {
+                        fclose($source);
+                    }
 
                     unlink($converter->getDestinationFile());
 
@@ -282,6 +288,11 @@ class Processor
                 $converter->destroy();
             } catch (Exception $e) {
                 Logger::error((string) $e);
+            } finally {
+                // the destination file is created with $keep = true, so it has to be cleaned up here in any case
+                if (is_file($converter->getDestinationFile())) {
+                    @unlink($converter->getDestinationFile());
+                }
             }
         }
 
@@ -307,8 +318,6 @@ class Processor
             $asset->save();
             Model\Version::enable();
         }
-
-        @unlink($workerSourceFile);
 
         TmpStore::delete($instance->getJobStoreId());
     }

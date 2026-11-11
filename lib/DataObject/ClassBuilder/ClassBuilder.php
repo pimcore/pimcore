@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DocBlockSanitizer;
 
 class ClassBuilder implements ClassBuilderInterface
 {
@@ -40,11 +41,8 @@ class ClassBuilder implements ClassBuilderInterface
         $cd .= ' * Variants: '.($classDefinition->getAllowVariants() ? 'yes' : 'no')."\n";
 
         if ($description = $classDefinition->getDescription()) {
-            $description = str_replace(
-                ['/**', '*/', '//', "\n"],
-                ['', '', '', "\n * "],
-                $description
-            );
+            $description = DocBlockSanitizer::sanitize($description);
+            $description = str_replace("\n", "\n * ", $description);
 
             $cd .= ' * '.$description."\n";
         }
@@ -66,6 +64,7 @@ class ClassBuilder implements ClassBuilderInterface
         $cd .= "\n\n";
         $cd .= "/**\n";
         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).'\Listing getList(array $config = [])'."\n";
+        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).'|null getByKey(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
 
         foreach ($classDefinition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof ClassDefinition\Data\Localizedfields) {

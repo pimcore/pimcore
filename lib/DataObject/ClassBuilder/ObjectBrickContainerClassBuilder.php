@@ -57,8 +57,7 @@ class ObjectBrickContainerClassBuilder implements ObjectBrickContainerClassBuild
                 $cd .= "\t\t\t\t" . 'if (!empty($parentBrick)) {' . "\n";
                 $cd .= "\t\t\t\t\t" . '$modelFactory = \Pimcore::getContainer()->get(\'pimcore.model.factory\');' . "\n";
                 $cd .= "\t\t\t\t\t" . '$brickType = "\\\Pimcore\\\Model\\\DataObject\\\Objectbrick\\\Data\\\" . ucfirst($parentBrick->getType());' . "\n";
-                $cd .= "\t\t\t\t\t" . '$brick = $modelFactory->build($brickType);' . "\n";
-                $cd .= "\t\t\t\t\t" . '$brick->setObject($this->getObject());' . "\n";
+                $cd .= "\t\t\t\t\t" . '$brick = $modelFactory->build($brickType, [$this->getObject()]);' . "\n";
                 $cd .= "\t\t\t\t\t" . '$brick->setFieldname("' . $fieldName . '");' . "\n";
                 $cd .= "\t\t\t\t\t" . '$this->set'. ucfirst($brickKey) . '($brick);' . "\n";
                 $cd .= "\t\t\t\t\t" . 'return $brick;' . "\n";

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 /**
@@ -14,36 +13,25 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Event;
 
+use Pimcore\Bundle\InstallBundle\Profile\InstallStep;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @internal
  */
-class InstallerStepEvent extends Event
+final class InstallerStepEvent extends Event
 {
-    private string $type;
-
-    private string $message;
-
-    private int $step;
-
-    private int $totalSteps;
-
     public function __construct(
-        string $type,
-        string $message,
-        int $step,
-        int $totalSteps
+        private readonly InstallStep $step,
+        private readonly string $message,
+        private readonly int $stepNumber,
+        private readonly int $totalSteps,
     ) {
-        $this->type = $type;
-        $this->message = $message;
-        $this->step = $step;
-        $this->totalSteps = $totalSteps;
     }
 
-    public function getType(): string
+    public function getStep(): InstallStep
     {
-        return $this->type;
+        return $this->step;
     }
 
     public function getMessage(): string
@@ -51,9 +39,9 @@ class InstallerStepEvent extends Event
         return $this->message;
     }
 
-    public function getStep(): int
+    public function getStepNumber(): int
     {
-        return $this->step;
+        return $this->stepNumber;
     }
 
     public function getTotalSteps(): int

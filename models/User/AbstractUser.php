@@ -19,6 +19,7 @@ use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
+use Pimcore\Model\User\ServiceUser\Listing as ServiceUserListing;
 use ReflectionClass;
 
 /**
@@ -154,15 +155,18 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
      *
      * @throws Exception
      */
-    public function save(): static
+    public function save(array $parameters = []): static
     {
         $isUpdate = false;
+        $preUserRoleEvent = new UserRoleEvent($this, $parameters);
         if ($this->getId()) {
             $isUpdate = true;
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_UPDATE);
+            $this->dispatchEvent($preUserRoleEvent, UserRoleEvents::PRE_UPDATE);
         } else {
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_ADD);
+            $this->dispatchEvent($preUserRoleEvent, UserRoleEvents::PRE_ADD);
         }
+
+        $parameters = $preUserRoleEvent->getArguments();
 
         if (!preg_match('/^[a-zA-Z0-9\-\.~_@]+$/', $this->getName())) {
             throw new Exception('Invalid name for user/role `' . $this->getName() . '` (allowed characters: a-z A-Z 0-9 -.~_@)');
@@ -184,10 +188,11 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
             throw $e;
         }
 
+        $postUserRoleEvent = new UserRoleEvent($this, $parameters);
         if ($isUpdate) {
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_UPDATE);
+            $this->dispatchEvent($postUserRoleEvent, UserRoleEvents::POST_UPDATE);
         } else {
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_ADD);
+            $this->dispatchEvent($postUserRoleEvent, UserRoleEvents::POST_ADD);
         }
 
         return $this;
@@ -196,14 +201,16 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
     /**
      * @throws Exception
      */
-    public function delete(): void
+    public function delete(array $parameters = []): void
     {
         if ($this->getId() < 1) {
             throw new Exception('Deleting the system user is not allowed!');
         }
         $parentUserId = $this->getParentId();
 
-        $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
+        $preUserRoleEvent = new UserRoleEvent($this, $parameters);
+        $this->dispatchEvent($preUserRoleEvent, UserRoleEvents::PRE_DELETE);
+        $parameters = $preUserRoleEvent->getArguments();
 
         $type = $this->getType();
 
@@ -234,7 +241,7 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
             }
         }
 
-        $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
+        $this->dispatchEvent(new UserRoleEvent($this, $parameters), UserRoleEvents::POST_DELETE);
     }
 
     /**
@@ -244,11 +251,15 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
      */
     private function cleanupUserRoleRelations(): void
     {
-        $userRoleListing = new Listing();
-        $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');
-        $userRoleListing = $userRoleListing->load();
-        if (count($userRoleListing)) {
-            foreach ($userRoleListing as $relatedUser) {
+        // users and service users carry roles, both must lose the deleted one
+        $relatedUsers = [];
+        foreach ([new Listing(), new ServiceUserListing()] as $userRoleListing) {
+            $userRoleListing->setCondition('FIND_IN_SET(?, roles)', [$this->getId()]);
+            array_push($relatedUsers, ...$userRoleListing->load());
+        }
+
+        if (count($relatedUsers)) {
+            foreach ($relatedUsers as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
                 $key = array_search($this->getId(), $userRoles);
                 if (false !== $key) {

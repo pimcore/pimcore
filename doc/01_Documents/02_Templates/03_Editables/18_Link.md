@@ -1,0 +1,173 @@
+---
+title: Link
+description: Dynamic link creation editable for documents with full HTML anchor attribute support.
+---
+
+# Link Editable
+
+## General 
+
+The link editable is used for dynamic link creation in documents.
+
+## Configuration
+
+You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
+such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*`, `aria-*` and additionally the following: 
+
+| Name              | Type           | Description                                                                                                                                                                                                                                                                     |
+|-------------------|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `reload`          | boolean        | Set to `true` to reload the page in editmode after changing the state.                                                                                                                                                                                                          |
+| `textPrefix`      | string         | Add an icon or something else before Text.                                                                                                                                                                                                                                      |
+| `textSuffix`      | string         | Add an icon or something else after Text.                                                                                                                                                                                                                                       |
+| `noText`          | boolean        | If you need only the `<a>` tag without text (or only with an `textSuffix`/`textPrefix`).                                                                                                                                                                                        |
+| `required`        | boolean/string | (default: `false`) set to true to make link and text required for publish, set to `linkonly` to make only the link required for publish.                                                                                                                                        |
+| `allowedTypes`    | array          | You can limit the available types for this editable by passing the allowed types explicitly. If this option is not used, all types are available. Valid types are: `asset`, `document`, `object`                                                                                |
+| `allowedSubtypes` | array          | You can limit the available subtypes for this editable by passing the allowed subtypes (grouped by type) explicitly. If this option is not used, all subtypes are available.                                                                                                    |
+| `allowedClasses`  | array          | You can limit the available classes for this editable by passing the allowed object class names explicitly. If this option is not used, all classes are available.                                                                                                              |
+| `allowedTargets`  | array          | You can limit the available targets for this editable by passing the allowed targets explicitly. If this option is not used, all targets are available. Valid targets are: ` ` (empty string), `_blank`, `_self`, `_top`, `_parent`                                             |
+| `disabledFields`  | array          | You can limit the available fields for this editable by passing the allowed fields explicitly. If this option is not used, all fields are available. Valid Fields are: `text`, `target`, `parameters`, `anchor`, `title`, `accesskey`, `rel`, `tabindex`, `class`, `attributes` |
+
+## Security policy (URL schemes and attribute keys)
+
+By default, the Link editable renders whatever the document editor enters: any URL scheme
+(including `javascript:`/`vbscript:`/`data:`) and any custom attribute key (including event
+handlers like `onclick`). This preserves this editable's historical behavior, but means a document
+editor (document-edit permission, not necessarily an administrator) can use it to store a
+persistent (stored) XSS payload that runs for every visitor who views or clicks the rendered link
+(GHSA-9g27-c28m-8xg5).
+
+To close this, enable it via config:
+
+```yaml
+# config/packages/pimcore.yaml
+pimcore:
+    documents:
+        editables:
+            link_sanitizer:
+                strict: true
+```
+
+`PimcoreCoreBundle::boot()` reads this and installs the strict policy for you. If you need a fully
+custom policy instead of the boolean toggle, call `AttributeSanitizer::setInstance(...)` directly
+from your own bundle's `boot()` method - application bundles register at Symfony's default priority
+and boot before `PimcoreCoreBundle` (registered at a lower priority), so an explicit call there
+always takes precedence over the config-driven default, regardless of the config value:
+
+```php
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+class YourBundle extends Bundle
+{
+    public function boot(): void
+    {
+        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+    }
+}
+```
+
+The strict policy rejects `javascript:`/`vbscript:` paths and most `data:` URIs (`data:image/*` other than
+`data:image/svg+xml` is still allowed, e.g. for a downloadable data-uri image), and rejects
+editor-supplied attribute keys that look like an event handler (`on*`) or aren't shaped like a
+conventional HTML attribute name. By default (both the permissive and the strict policy), the editable's own bookkeeping
+data (`path`, `linktype`, `text`, `parameters`, `anchor`, `internal*`, `fullPath`, `direct`) is not emitted as attributes
+on the `<a>` tag, as these are not valid HTML attributes. Before Pimcore 2026.4.0 the permissive default still rendered them
+(e.g. `linktype="direct"`); a custom policy can restore that with `omitInternalDataAttributes: false`. An installed policy
+replaces the configured one, so on a site with `strict: true` pass the strict flags to it as well, otherwise the strict
+protection is off.
+A `target`/`title`/`class`/`data-*`/`aria-*`/... attribute, or an event handler passed only via the
+template call (e.g. `pimcore_link("x", {"onclick": "track()"})`), is unaffected either way.
+
+The permissive default is deprecated since 2026.3 and will be removed in 2027.1, where the strict
+policy becomes the default. While running with the permissive default, a deprecation is triggered
+whenever a Link renders a URL or attribute the strict policy would reject. Enabling it today is
+recommended for any site where document editors are not fully trusted.
+
+## Methods
+
+| Name              | Return      | Description                          |
+|-------------------|-------------|--------------------------------------|
+| `getHref()`       | string      | Get the path of this link. The path is not HTML-escaped (print it in an escaping context, e.g. Twig auto-escaping); query parameters and anchor are. |
+| `getText()`       | string      | Get the text of the link             |
+| `getTarget()`     | string      | Get the target of the link           |
+| `getParameters()` | string      | Get the query params of the link     |
+| `getAnchor()`     | string      | Get the anchor text of the link      |
+| `getTitle()`      | string      | Get the title of the link            |
+| `getRel()`        | string      | Get the rel text of the link         |
+| `getTabindex()`   | string      | Get the tabindex of the link         |
+| `getClass()`      | string      | Get the class of the link            |
+| `getAccessKey()`  | string      | Get the access key of the link       |
+| `isEmpty()`       | string      | Whether the editable is empty or not |
+
+## Examples
+
+### Basic Usage
+
+```twig
+<p>
+    {{ "Visit our" | trans }}
+    {{ pimcore_link("blogLink") }}
+</p>
+```
+
+You could see the edit mode preview in the picture, below.
+
+<div class="image-as-lightbox"></div>
+
+![Link editable - edit mode preview](../../../img/editables_link_backend_preview.png)
+
+And the frontend:
+
+<div class="image-as-lightbox"></div>
+
+![Link editable - frontend](../../../img/editables_link_frontend_preview.png)
+
+
+
+### Use Link in the Block Editable
+
+Let's see how to make a list of links with [Block](./06_Block.md).
+
+```twig
+<h3>{{ "Useful links" | trans }}</h3>
+<ul>
+    {% for i in pimcore_block("linkblock").iterator %}
+        <li>{{ pimcore_link("myLink", {"class": "special-link-class"}) }}</li>
+    {% endfor %}
+</ul>
+```
+
+The above example renders a list of links: 
+
+<div class="image-as-lightbox"></div>
+
+![The links list in the backend](../../../img/editables_link_inside_block.png)
+
+### Link Generators
+
+Please also see the section about [Link Generators](../../../03_Objects/01_Object_Classes/04_Additional_Class_Settings/06_Link_Generator.md)
+
+### DataObject Link data type
+
+`getHtml()` / `__toString()` of the DataObject `Link` data type (`Pimcore\Model\DataObject\Data\Link`) are hardened by an
+independent policy with its own config (GHSA-h78x-47qg-qjmq); it does not depend on the Document setting above:
+
+```yaml
+# config/packages/pimcore.yaml
+pimcore:
+    objects:
+        link_sanitizer:
+            strict: true
+            # optional, only used while strict is true:
+            blocked_url_schemes: ['javascript:', 'vbscript:']   # default
+            block_unsafe_data_urls: true                        # default
+```
+
+With the permissive default (`strict: false`) the output is unchanged apart from `"` in `href` and in the named attributes
+(`title`, `class`, `rel`, `target`, `tabindex`, `accesskey`) being escaped as `&quot;`; a deprecation is triggered whenever
+the strict policy would have rejected the `href` or a free-form attribute. With `strict: true`, `javascript:`/`vbscript:`
+and script-capable `data:` URLs render an empty `href`, and the free-form `attributes` string is parsed and re-serialized
+(event handlers and malformed tokens are dropped; remaining values are HTML-escaped).
+
+For a fully custom policy, call `Pimcore\Model\DataObject\Data\Link\SanitizerPolicy::setInstance(...)` from your own bundle's
+`boot()` method; it takes precedence over the config value.
