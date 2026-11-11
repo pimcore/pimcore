@@ -13,6 +13,7 @@
 namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
@@ -50,7 +51,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
             $fieldDefinitions = $definition->getFieldDefinitions(['object' => $object, 'suppressEnrichment' => true]);
             $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($type);
-            $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
+            $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
                 $brick = $modelFactory->build($brickClass, [$object]);

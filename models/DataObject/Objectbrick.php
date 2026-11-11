@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject;
 
 use __PHP_Incomplete_Class;
 use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -157,7 +158,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                 });
 
                 if (!empty($parentBrick)) {
-                    $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
+                    $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
                     $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
                     $brick = $modelFactory->build($brickType, [$object]);
                     $brick->setFieldname($this->getFieldname());
