@@ -60,6 +60,13 @@ final class Tag extends Model\AbstractModel
      */
     protected ?Tag $parent = null;
 
+    /**
+     * Shared by all tags that were loaded together by a Tag\Listing; answers hasChildren() with one query for the group.
+     *
+     * @internal
+     */
+    protected ?Tag\ChildrenLookup $childrenLookup = null;
+
     public static function getById(int $id): ?Tag
     {
         $cacheKey = 'tags_' . $id;
@@ -285,6 +292,7 @@ final class Tag extends Model\AbstractModel
 
         $this->correctPath();
         $this->getDao()->save();
+        Tag\ChildrenLookup::markChanged();
 
         if ($isUpdate) {
             $this->dispatchEvent(new TagEvent($this), TagEvents::POST_UPDATE);
@@ -412,10 +420,31 @@ final class Tag extends Model\AbstractModel
             return false;
         }
 
+        // tags loaded by a listing share one lookup: one query for the whole result instead of one per tag
+        if ($this->childrenLookup !== null && $this->getId() !== null) {
+            $hasChildren = $this->childrenLookup->hasChildren($this->getId());
+            if ($hasChildren !== null) {
+                return $hasChildren;
+            }
+        }
+
         $listing = new Tag\Listing();
         $listing->setCondition('parentId = ?', $this->getId());
 
         return $listing->getTotalCount() > 0;
+    }
+
+    /**
+     * @internal
+     */
+    public function setChildrenLookup(?Tag\ChildrenLookup $childrenLookup): void
+    {
+        $this->childrenLookup = $childrenLookup;
+    }
+
+    public function __sleep(): array
+    {
+        return array_diff(parent::__sleep(), ['childrenLookup']);
     }
 
     public function correctPath(): void
@@ -446,6 +475,7 @@ final class Tag extends Model\AbstractModel
         $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_DELETE);
 
         $deletedTagIds = $this->getDao()->delete();
+        Tag\ChildrenLookup::markChanged();
 
         foreach ($deletedTagIds as $removeId) {
             $cacheKey = 'tags_' . $removeId;
