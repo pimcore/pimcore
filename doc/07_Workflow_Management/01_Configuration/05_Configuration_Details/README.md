@@ -11,10 +11,10 @@ Add workflow definitions under `pimcore.workflows` in your project's configurati
 to see all available options with inline descriptions.
 
 > **Note:** The `guard` (transitions and global actions), `condition` (permissions and notifications) and
-> `support_strategy` expressions all use the same expression language and variables (`subject`, `role_names`,
-> `user`, `token`, ...). See [Condition and guard expressions](../03_Permissions.md#condition-and-guard-expressions)
-> for the list of available functions and variables and for when to use `is_granted('ROLE_X')` versus
-> `'ROLE_X' in role_names`.
+> `support_strategy` expressions all use the Symfony expression language, but transition guards are evaluated by
+> Symfony's workflow `GuardListener` and offer slightly different variables than the others (for example no `object`
+> alias). See [Condition and guard expressions](../03_Permissions.md#condition-and-guard-expressions)
+> for the variables and functions and for when to use `is_granted('ROLE_X')` versus `'ROLE_X' in role_names`.
 
 ## Available Options
 
