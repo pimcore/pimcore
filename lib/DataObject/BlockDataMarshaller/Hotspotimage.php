@@ -32,6 +32,9 @@ use Pimcore\Model\Element\ElementInterface;
  * resolves back to the element - and rebuilds the MarkerHotspotItem objects on load. Blobs written
  * before this marshaller existed still contain element objects; unserialize() now reconstructs those
  * as __PHP_Incomplete_Class, from which only the id is taken over.
+ *
+ * The Document Image editable stores its hotspot and marker metadata the same way and reuses this
+ * marshaller for it (see Pimcore\Model\Document\Editable\Image::getDataForResource()).
  */
 class Hotspotimage implements MarshallerInterface
 {
