@@ -15,6 +15,7 @@ namespace Pimcore\Tool;
 
 use Exception;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
 use Pimcore\Security\User\TokenStorageUserResolver;
@@ -26,20 +27,25 @@ use stdClass;
  */
 class Admin
 {
-    /**
-     * @var string[]|null
-     */
-    private static ?array $languages = null;
+    private const LANGUAGES_RUNTIME_CACHE_KEY = 'pimcore_admin_languages';
 
     /**
      * finds installed languages
      *
-     * Scans the translations directory once per process: Translation::getByKeyLocalized() calls
-     * this for every admin translation it looks up, and the files only change with a deployment.
+     * Scans the translations directory once per request: Translation::getByKeyLocalized() calls
+     * this for every admin translation it looks up. The result is kept in the RuntimeCache, which
+     * is cleared for every messenger message, so long-running workers see later changes.
      */
     public static function getLanguages(): array
     {
-        return self::$languages ??= self::findLanguages();
+        if (RuntimeCache::isRegistered(self::LANGUAGES_RUNTIME_CACHE_KEY)) {
+            return RuntimeCache::get(self::LANGUAGES_RUNTIME_CACHE_KEY);
+        }
+
+        $languages = self::findLanguages();
+        RuntimeCache::set(self::LANGUAGES_RUNTIME_CACHE_KEY, $languages);
+
+        return $languages;
     }
 
     /**

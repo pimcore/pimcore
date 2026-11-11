@@ -14,49 +14,73 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Tool;
 
+use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Admin;
-use ReflectionMethod;
-use ReflectionProperty;
 
 /**
  * Admin::getLanguages() is called for every admin translation lookup, so it scans the
- * translations directory once and answers from memory afterwards.
+ * translations directory once per request and answers from the RuntimeCache afterwards.
  */
 class AdminTest extends TestCase
 {
-    private ReflectionProperty $languages;
+    private const LANGUAGE = 'yo';
+
+    private string $translationsDir;
+
+    private string $translationFile;
+
+    private bool $createdTranslationsDir = false;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->languages = new ReflectionProperty(Admin::class, 'languages');
-        $this->languages->setValue(null, null);
+        RuntimeCache::clear();
+
+        $this->translationsDir = Pimcore::getContainer()->getParameter('translator.default_path');
+        $this->translationFile = $this->translationsDir . '/admin.' . self::LANGUAGE . '.json';
+
+        if (!is_dir($this->translationsDir)) {
+            mkdir($this->translationsDir, 0777, true);
+            $this->createdTranslationsDir = true;
+        }
     }
 
     protected function tearDown(): void
     {
-        $this->languages->setValue(null, null);
+        if (is_file($this->translationFile)) {
+            unlink($this->translationFile);
+        }
+
+        if ($this->createdTranslationsDir) {
+            rmdir($this->translationsDir);
+        }
+
+        RuntimeCache::clear();
 
         parent::tearDown();
     }
 
-    public function testReturnsTheLanguagesFoundInTheTranslationsDirectory(): void
+    public function testFindsTheLanguagesOfTheTranslationFiles(): void
     {
-        $found = (new ReflectionMethod(Admin::class, 'findLanguages'))->invoke(null);
+        file_put_contents($this->translationFile, '{}');
 
-        $this->assertSame($found, Admin::getLanguages());
+        $this->assertContains(self::LANGUAGE, Admin::getLanguages());
     }
 
-    public function testScansTheTranslationsDirectoryOnlyOnce(): void
+    public function testScansTheTranslationsDirectoryOncePerRequest(): void
     {
-        $first = Admin::getLanguages();
-        $this->assertSame($first, $this->languages->getValue());
+        $languages = Admin::getLanguages();
+        $this->assertNotContains(self::LANGUAGE, $languages);
 
-        // a second call must answer from memory, not scan again
-        $this->languages->setValue(null, ['xx']);
+        // a file added later in the same request is not seen: the second call does not scan again
+        file_put_contents($this->translationFile, '{}');
+        $this->assertSame($languages, Admin::getLanguages());
 
-        $this->assertSame(['xx'], Admin::getLanguages());
+        // once the RuntimeCache is cleared (next request or messenger message), the directory is scanned again
+        RuntimeCache::clear();
+        $this->assertContains(self::LANGUAGE, Admin::getLanguages());
     }
 }
