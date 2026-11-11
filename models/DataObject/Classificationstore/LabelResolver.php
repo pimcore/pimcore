@@ -44,6 +44,19 @@ final class LabelResolver implements LabelResolverInterface, ResetInterface
      */
     private array $labels = [];
 
+    /**
+     * @var array<string, list<string>> language => resolved fallback chain
+     *
+     * The chain is a pure function of the language and the system settings,
+     * neither of which changes within a request, but it was rebuilt per key:
+     * `languageChain()` calls `Tool::getFallbackLanguagesFor()` and
+     * `Tool::getDefaultLanguage()`, and both read `settings_store`. Measured on
+     * an object layout carrying 600 classification store values: 1,266
+     * `SELECT * FROM settings_store WHERE id = 'system_settings'` in one
+     * request. Cleared by reset() with the labels.
+     */
+    private array $languageChains = [];
+
     public function getTitle(
         StoreConfig|CollectionConfig|GroupConfig|KeyConfig $entity,
         string $language
@@ -116,6 +129,7 @@ final class LabelResolver implements LabelResolverInterface, ResetInterface
     public function reset(): void
     {
         $this->labels = [];
+        $this->languageChains = [];
     }
 
     /**
@@ -204,6 +218,11 @@ final class LabelResolver implements LabelResolverInterface, ResetInterface
      * @return string[]
      */
     private function languageChain(string $language): array
+    {
+        return $this->languageChains[$language] ??= $this->buildLanguageChain($language);
+    }
+
+    private function buildLanguageChain(string $language): array
     {
         $chain = [];
         $pending = [$language];
