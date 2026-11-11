@@ -17,6 +17,7 @@ use ImagickException;
 use ImagickPixel;
 use Pimcore\Image\Adapter\Imagick;
 use Pimcore\Tests\Support\Test\TestCase;
+use ReflectionProperty;
 
 /**
  * Regression tests for the Imagick adapter.
@@ -313,6 +314,32 @@ final class ImagickTest extends TestCase
     }
 
     /**
+     * The temporary PNG of reinitializeImage() is only read back once, so it is written with the fastest zlib
+     * level. The option must not reach the image that is saved afterwards.
+     */
+    public function testReinitializationWritesTheTemporaryPngWithTheFastestCompression(): void
+    {
+        $source = $this->tmpFile('png');
+        $gradient = new \Imagick();
+        $gradient->newPseudoImage(self::FIXTURE_SIZE, self::FIXTURE_SIZE, 'gradient:red-blue');
+        $gradient->writeImage('png32:' . $source);
+
+        $adapter = new Imagick();
+        $adapter->load($source);
+        // the second transformation reinitializes the image from a temporary PNG
+        $adapter->scaleByWidth(30);
+        $adapter->crop(0, 0, 20, 20);
+
+        $temporaryFiles = (new ReflectionProperty($adapter, 'tmpFiles'))->getValue($adapter);
+        $this->assertCount(1, $temporaryFiles);
+        $this->assertSame(0, $this->zlibCompressionLevel($temporaryFiles[0]));
+
+        $result = $this->tmpFile('png');
+        $adapter->save($result, 'png');
+        $this->assertNotSame(0, $this->zlibCompressionLevel($result));
+    }
+
+    /**
      * Uses the default options of a thumbnail, so that the intermediate images are kept as PNG.
      */
     private function svgAdapter(): Imagick
@@ -584,6 +611,19 @@ final class ImagickTest extends TestCase
                 sprintf('Unexpected color at %d,%d: rgb(%d,%d,%d)', $x, $y, $color['r'], $color['g'], $color['b'])
             );
         }
+    }
+
+    /**
+     * Returns the FLEVEL field of the zlib header of the first IDAT chunk: 0 for the fastest compression level,
+     * 3 for the levels 7 to 9.
+     */
+    private function zlibCompressionLevel(string $pngPath): int
+    {
+        $png = (string) file_get_contents($pngPath);
+        $offset = strpos($png, 'IDAT');
+        $this->assertIsInt($offset, 'The PNG has no IDAT chunk.');
+
+        return ord($png[$offset + 5]) >> 6;
     }
 
     private function tmpFile(string $extension): string
