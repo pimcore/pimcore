@@ -448,6 +448,7 @@ CREATE TABLE `users` (
   `type` enum('user','userfolder','role','rolefolder','serviceuser') NOT NULL DEFAULT 'user',
   `name` varchar(50) DEFAULT NULL,
   `uniqueName` varchar(64) GENERATED ALWAYS AS (IF(`type` IN ('userfolder','rolefolder'), CONCAT(IFNULL(`parentId`, 0), '/', `name`), `name`)) STORED,
+  `accountName` varchar(50) GENERATED ALWAYS AS (IF(`type` IN ('user','serviceuser'), `name`, NULL)) STORED,
   `password` varchar(190) DEFAULT NULL,
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
@@ -478,6 +479,7 @@ CREATE TABLE `users` (
   `lastPasswordReset` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_uniqueName` (`type`,`uniqueName`),
+  UNIQUE KEY `accountName` (`accountName`),
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)

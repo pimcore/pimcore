@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
@@ -21,6 +22,9 @@ use Pimcore\Model\User\Exception\InvalidServiceUserException;
 use Pimcore\Model\User\Role;
 use Pimcore\Model\User\ServiceUser;
 use Pimcore\Tool;
+
+use function sprintf;
+use function str_contains;
 
 /**
  * Not final because \Pimcore\Model\User\ServiceUser extends it; extending it elsewhere is not supported.
@@ -121,7 +125,21 @@ class User extends User\UserRole implements UserInterface
             );
         }
 
-        return parent::save($parameters);
+        try {
+            return parent::save($parameters);
+        } catch (UniqueConstraintViolationException $e) {
+            // the unique key on users.accountName is the atomic guard behind the check above; a concurrent save
+            // of the same name by the other kind ends here. Same-kind duplicates keep their exception.
+            if (!str_contains($e->getMessage(), 'accountName')) {
+                throw $e;
+            }
+
+            throw new DuplicateUserNameException(
+                sprintf('The name "%s" is already used by another user or service user.', (string) $name),
+                0,
+                $e
+            );
+        }
     }
 
     public function getPassword(): ?string
