@@ -155,6 +155,85 @@ class TagHasChildrenTest extends ModelTestCase
         $this->assertTrue($clone->hasChildren());
     }
 
+    public function testSavingATagInvalidatesEveryListingLookupOfTheProcess(): void
+    {
+        $a = $this->createTag('a');
+        $this->createTag('b');
+
+        // two listings of the same process, both with their own lookup, both already answered once
+        $first = $this->loadTestTags();
+        $second = $this->loadTestTags();
+        $this->assertFalse($first['a']->hasChildren());
+        $this->assertFalse($second['a']->hasChildren());
+
+        // modified through a tag of the first listing, the second one must see it as well
+        $this->createTag('a_child', (int) $a->getId());
+        $this->assertTrue($first['a']->hasChildren());
+        $this->assertTrue($second['a']->hasChildren());
+
+        // deleted through a tag object of the second listing
+        $fresh = $this->loadTestTags();
+        $fresh['a_child']->delete();
+        $this->assertFalse($first['a']->hasChildren());
+        $this->assertFalse($second['a']->hasChildren());
+        $this->assertFalse($fresh['a']->hasChildren());
+    }
+
+    public function testMovingATagToAnotherParentIsSeenByAllListings(): void
+    {
+        $a = $this->createTag('a');
+        $b = $this->createTag('b');
+        $child = $this->createTag('child', (int) $a->getId());
+
+        $first = $this->loadTestTags();
+        $second = $this->loadTestTags();
+        $this->assertTrue($first['a']->hasChildren());
+        $this->assertFalse($second['b']->hasChildren());
+
+        $child->setParentId((int) $b->getId());
+        $child->save();
+
+        foreach ([$first, $second] as $tags) {
+            $this->assertFalse($tags['a']->hasChildren());
+            $this->assertTrue($tags['b']->hasChildren());
+        }
+    }
+
+    public function testTagLoadedWithoutListingHasNoLookupAndAsksTheDatabase(): void
+    {
+        $parent = $this->createTag('parent');
+        $leaf = $this->createTag('leaf');
+
+        $byId = Tag::getById((int) $parent->getId());
+        $this->assertNull($this->lookupOf($byId));
+        $this->assertFalse($byId->hasChildren());
+
+        // not cached by hasChildren(): a later change is seen at once
+        $this->createTag('child', (int) $parent->getId());
+        $this->assertTrue($byId->hasChildren());
+        $this->assertFalse(Tag::getById((int) $leaf->getId())->hasChildren());
+    }
+
+    public function testListedTagsOfOneListingShareALookupAndListingsDoNot(): void
+    {
+        $this->createTag('a');
+        $this->createTag('b');
+
+        $first = $this->loadTestTags();
+        $second = $this->loadTestTags();
+
+        $this->assertNotNull($this->lookupOf($first['a']));
+        $this->assertSame($this->lookupOf($first['a']), $this->lookupOf($first['b']));
+        $this->assertNotSame($this->lookupOf($first['a']), $this->lookupOf($second['a']));
+    }
+
+    private function lookupOf(Tag $tag): ?object
+    {
+        $property = new \ReflectionProperty(Tag::class, 'childrenLookup');
+
+        return $property->getValue($tag);
+    }
+
     public function testHasChildrenWhenAChildIsSavedBeforeTheFirstAnswer(): void
     {
         $this->createTag('a');
