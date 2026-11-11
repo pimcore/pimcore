@@ -447,6 +447,14 @@ final class Tag extends Model\AbstractModel
         return array_diff(parent::__sleep(), ['childrenLookup']);
     }
 
+    public function __clone(): void
+    {
+        parent::__clone();
+
+        // a clone may get another id, so it must not answer from the lookup of the original's listing
+        $this->childrenLookup = null;
+    }
+
     public function correctPath(): void
     {
         //set id path to correct value

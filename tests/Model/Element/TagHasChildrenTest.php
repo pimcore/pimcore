@@ -39,7 +39,7 @@ class TagHasChildrenTest extends ModelTestCase
     private function removeTestTags(): void
     {
         $listing = new Tag\Listing();
-        $listing->setCondition('name LIKE ?', [self::PREFIX . '%']);
+        $listing->setCondition('name LIKE ?', [addcslashes(self::PREFIX, '_%\\') . '%']);
         // children first, so no parent is deleted twice
         $tags = $listing->load();
         usort($tags, static fn (Tag $a, Tag $b): int => strlen($b->getIdPath()) <=> strlen($a->getIdPath()));
@@ -128,6 +128,33 @@ class TagHasChildrenTest extends ModelTestCase
         $this->assertFalse($parent->hasChildren());
     }
 
+    public function testHasChildrenSeesADeleteAfterTheLookupWasBuilt(): void
+    {
+        $parent = $this->createTag('parent');
+        $child = $this->createTag('child', (int) $parent->getId());
+
+        // all saves are done; the lookup is built after the last one, so only delete() can outdate it
+        $tags = $this->loadTestTags();
+        $this->assertTrue($tags['parent']->hasChildren());
+
+        $child->delete();
+        $this->assertFalse($tags['parent']->hasChildren());
+    }
+
+    public function testClonedTagWithAnotherIdDoesNotAnswerFromTheListingLookup(): void
+    {
+        $this->createTag('a');
+        $tags = $this->loadTestTags();
+
+        $clone = clone $tags['a'];
+        $clone->setId(null);
+        $clone->setName(self::PREFIX . 'clone');
+        $clone->save();
+        $this->createTag('clone_child', (int) $clone->getId());
+
+        $this->assertTrue($clone->hasChildren());
+    }
+
     public function testHasChildrenWhenAChildIsSavedBeforeTheFirstAnswer(): void
     {
         $this->createTag('a');
@@ -178,11 +205,13 @@ class TagHasChildrenTest extends ModelTestCase
     public function testHasChildrenOverMoreTagsThanOneChunk(): void
     {
         $db = Db::get();
-        $values = [];
+        $placeholders = [];
+        $params = [];
         for ($i = 1; $i <= 1100; $i++) {
-            $values[] = sprintf("('%sbulk%04d', 0, '/')", self::PREFIX, $i);
+            $placeholders[] = "(?, 0, '/')";
+            $params[] = sprintf('%sbulk%04d', self::PREFIX, $i);
         }
-        $db->executeStatement('INSERT INTO tags (name, parentId, idPath) VALUES ' . implode(',', $values));
+        $db->executeStatement('INSERT INTO tags (name, parentId, idPath) VALUES ' . implode(',', $placeholders), $params);
 
         $first = Tag::getByPath('/' . self::PREFIX . 'bulk0001');
         $last = Tag::getByPath('/' . self::PREFIX . 'bulk1100');
