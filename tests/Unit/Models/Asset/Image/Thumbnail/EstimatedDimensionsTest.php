@@ -98,6 +98,36 @@ class EstimatedDimensionsTest extends ImageThumbnailDimensionTestCase
         self::assertSame(1, $thumbnail->readDimensionsCalls);
     }
 
+    public function testCoreAdapterSubclassThatOnlyOverridesSaveUsesEstimate(): void
+    {
+        $this->installImageAdapter(new EncoderTunedGdAdapter());
+
+        $asset = $this->image(400, 300, 'source.png');
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        self::assertSame(['width' => 200, 'height' => 150], $config->getEstimatedDimensions($asset));
+
+        $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+        self::assertSame(['width' => 200, 'height' => 150], $thumbnail->getDimensions());
+        self::assertSame(0, $thumbnail->readDimensionsCalls);
+    }
+
+    public function testCoreAdapterSubclassOverridingLoadFailsClosedToFileInspection(): void
+    {
+        $this->installImageAdapter(new LoadOverridingGdAdapter());
+
+        $asset = $this->image(400, 300, 'source.png');
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        self::assertSame([], $config->getEstimatedDimensions($asset));
+
+        $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+        self::assertSame(['width' => 91, 'height' => 67], $thumbnail->getDimensions());
+        self::assertSame(1, $thumbnail->readDimensionsCalls);
+    }
+
     public function testScaleByWidthUsesStoredSourceDimensionsWithoutFileAccess(): void
     {
         $thumbnail = $this->probe(
@@ -772,5 +802,21 @@ final class ProjectSpecificGdAdapter extends GD
     public function resize(int $width, int $height): static
     {
         return $this;
+    }
+}
+
+final class EncoderTunedGdAdapter extends GD
+{
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
+    {
+        return parent::save($path, $format, $quality);
+    }
+}
+
+final class LoadOverridingGdAdapter extends GD
+{
+    public function load(string $imagePath, array $options = []): static|false
+    {
+        return parent::load($imagePath, $options);
     }
 }

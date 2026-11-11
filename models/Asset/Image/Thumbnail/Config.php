@@ -15,12 +15,14 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Exception;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Image\Adapter;
 use Pimcore\Image\Adapter\Dimension as DimensionAdapter;
 use Pimcore\Image\Adapter\GD;
 use Pimcore\Image\Adapter\Imagick;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
+use ReflectionClass;
 use Throwable;
 
 /**
@@ -797,7 +799,43 @@ final class Config extends Model\AbstractModel
             return false;
         }
 
-        return in_array($adapter::class, [GD::class, Imagick::class], true);
+        $coreAdapter = match (true) {
+            $adapter instanceof Imagick => Imagick::class,
+            $adapter instanceof GD => GD::class,
+            default => null,
+        };
+        if ($coreAdapter === null) {
+            return false;
+        }
+
+        if ($adapter::class === $coreAdapter) {
+            return true;
+        }
+
+        return self::subclassKeepsCoreDimensionSemantics($adapter, $coreAdapter);
+    }
+
+    /**
+     * A subclass of a core adapter (e.g. one that only tunes encoder options in save()) keeps the core
+     * dimension semantics as long as loading and every modelled transformation stay core implementations.
+     * Overriding any of them fails closed.
+     *
+     * @param class-string<GD|Imagick> $coreAdapter
+     */
+    private static function subclassKeepsCoreDimensionSemantics(Adapter $adapter, string $coreAdapter): bool
+    {
+        foreach ((new ReflectionClass($adapter))->getMethods() as $method) {
+            $name = $method->getName();
+            if ($name !== 'load' && !DimensionAdapter::supportsReliableTransformation($name)) {
+                continue;
+            }
+
+            if (!in_array($method->getDeclaringClass()->getName(), [$coreAdapter, Adapter::class], true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
