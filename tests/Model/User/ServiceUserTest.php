@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\User;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Element\Editlock;
@@ -27,10 +29,18 @@ use Pimcore\Model\User\Role;
 use Pimcore\Model\User\Service;
 use Pimcore\Model\User\ServiceUser;
 use Pimcore\Model\User\ServiceUser\Listing as ServiceUserListing;
+use Pimcore\Model\User\Workspace\Asset as AssetWorkspace;
+use Pimcore\Model\User\Workspace\DataObject as DataObjectWorkspace;
+use Pimcore\Model\User\Workspace\Document as DocumentWorkspace;
 use Pimcore\Model\Version;
+use Pimcore\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
+use ReflectionProperty;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class ServiceUserTest extends ModelTestCase
 {
@@ -217,6 +227,18 @@ class ServiceUserTest extends ModelTestCase
         (new ServiceUser())->setTwoFactorAuthentication('enabled', true);
     }
 
+    public function testSaveRejectsTruthyTwoFactorFlagsWrittenAroundTheSetter(): void
+    {
+        $serviceUser = new ServiceUser();
+        $serviceUser->setName(self::NAME_PREFIX . 'two-factor-raw');
+        // stored data that bypassed the setter, as a loaded row could carry it
+        (new ReflectionProperty(User::class, 'twoFactorAuthentication'))->setValue($serviceUser, ['enabled' => 1]);
+
+        $this->expectException(InvalidServiceUserException::class);
+
+        $serviceUser->save();
+    }
+
     public function testTwoFactorAuthenticationIsDisabled(): void
     {
         $serviceUser = new ServiceUser();
@@ -271,6 +293,37 @@ class ServiceUserTest extends ModelTestCase
 
         $this->expectException(DuplicateUserNameException::class);
         $human->save();
+    }
+
+    public function testTheDatabaseRejectsAUserWithTheNameOfAServiceUser(): void
+    {
+        // a concurrent save passes the check in User::save(); the unique key on users.accountName stops it
+        $serviceUser = $this->createServiceUser('db-guard');
+
+        try {
+            Db::get()->insert('users', ['parentId' => 0, 'type' => 'user', 'name' => $serviceUser->getName()]);
+            $this->fail('the database accepted a user with the name of a service user');
+        } catch (UniqueConstraintViolationException $e) {
+            $this->assertStringContainsString('accountName', $e->getMessage());
+        }
+    }
+
+    public function testARoleAndFoldersMayShareTheNameOfAServiceUser(): void
+    {
+        $serviceUser = $this->createServiceUser('db-guard-role');
+        $db = Db::get();
+
+        $db->insert('users', ['parentId' => 0, 'type' => 'role', 'name' => $serviceUser->getName()]);
+        $roleId = (int) $db->lastInsertId();
+        $db->insert('users', ['parentId' => 0, 'type' => 'userfolder', 'name' => $serviceUser->getName()]);
+        $folderId = (int) $db->lastInsertId();
+
+        try {
+            $this->assertNull($db->fetchOne('SELECT accountName FROM users WHERE id = ?', [$roleId]));
+            $this->assertNull($db->fetchOne('SELECT accountName FROM users WHERE id = ?', [$folderId]));
+        } finally {
+            $db->executeStatement('DELETE FROM users WHERE id IN (?, ?)', [$roleId, $folderId]);
+        }
     }
 
     public function testRenamingHumanToServiceUserNameIsRejected(): void
@@ -348,6 +401,59 @@ class ServiceUserTest extends ModelTestCase
 
         $this->clearUserCache($serviceUser->getId());
         $this->assertSame([], ServiceUser::getById($serviceUser->getId())->getRoles());
+    }
+
+    public function testWorkspacesAreLoadedForAServiceUserThroughEveryLookup(): void
+    {
+        $serviceUser = $this->createServiceUserWithWorkspaces('workspaces-load');
+        $id = $serviceUser->getId();
+
+        $this->clearUserCache($id);
+        $this->assertWorkspacesPresent(ServiceUser::getById($id));
+
+        $this->clearUserCache($id);
+        $this->assertWorkspacesPresent(User::getById($id));
+
+        $this->clearUserCache($id);
+        $this->assertWorkspacesPresent(ServiceUser::getByName(self::NAME_PREFIX . 'workspaces-load'));
+
+        $this->clearUserCache($id);
+        $listing = new ServiceUserListing();
+        $listing->setCondition('id = ?', [$id]);
+        $loaded = $listing->load();
+        $this->assertCount(1, $loaded);
+        $this->assertWorkspacesPresent($loaded[0]);
+    }
+
+    public function testResavingALoadedServiceUserKeepsItsWorkspaceRows(): void
+    {
+        $serviceUser = $this->createServiceUserWithWorkspaces('workspaces-resave');
+        $id = $serviceUser->getId();
+
+        $this->clearUserCache($id);
+        ServiceUser::getById($id)->save();
+
+        $this->assertWorkspaceRowsPersisted($id);
+    }
+
+    public function testDeletingARoleKeepsTheWorkspaceRowsOfItsServiceUsers(): void
+    {
+        $role = new Role();
+        $role->setName(self::NAME_PREFIX . 'role-workspaces');
+        $role->save();
+        $this->createdEntities[] = $role;
+
+        $serviceUser = $this->createServiceUserWithWorkspaces('workspaces-role');
+        $serviceUser->setRoles([$role->getId()]);
+        $serviceUser->save();
+        $id = $serviceUser->getId();
+
+        $this->clearUserCache($id);
+        $role->delete();
+
+        $this->assertWorkspaceRowsPersisted($id);
+        $this->clearUserCache($id);
+        $this->assertSame([], ServiceUser::getById($id)->getRoles());
     }
 
     public function testAuthenticateTokenRefusesServiceUser(): void
@@ -432,12 +538,22 @@ class ServiceUserTest extends ModelTestCase
         $translation = new Translation();
         $translation->setKey($key);
         $translation->setDomain(Translation::DOMAIN_DEFAULT);
-        $translation->setUserModification($serviceUser->getId());
         $translation->addTranslation($allowed, 'allowed');
         $translation->addTranslation($forbidden, 'forbidden');
-        $translation->save();
+
+        // Translation\Dao::save() takes the modifying user from the current user, not from setUserModification()
+        $tokenStorage = $this->tokenStorage();
+        $previousToken = $tokenStorage->getToken();
+        $tokenStorage->setToken(new UsernamePasswordToken(new SecurityUser($serviceUser), 'pimcore_admin'));
 
         try {
+            $translation->save();
+        } finally {
+            $tokenStorage->setToken($previousToken);
+        }
+
+        try {
+            $this->assertSame($serviceUser->getId(), $translation->getUserModification());
             $this->clearTranslationCache($key);
             $stored = Translation::getByKey($key, Translation::DOMAIN_DEFAULT);
 
@@ -447,6 +563,15 @@ class ServiceUserTest extends ModelTestCase
         } finally {
             $translation->delete();
         }
+    }
+
+    private function tokenStorage(): TokenStorageInterface
+    {
+        // security.token_storage is inlined out of the compiled container; Admin::getCurrentUser() reads the
+        // token storage held by the public TokenStorageUserResolver service, so reach it through the resolver
+        $resolver = Pimcore::getContainer()->get(TokenStorageUserResolver::class);
+
+        return (new ReflectionProperty(TokenStorageUserResolver::class, 'tokenStorage'))->getValue($resolver);
     }
 
     private function clearTranslationCache(string $key): void
@@ -465,6 +590,48 @@ class ServiceUserTest extends ModelTestCase
         $this->createdEntities[] = $serviceUser;
 
         return $serviceUser;
+    }
+
+    private function createServiceUserWithWorkspaces(string $suffix): ServiceUser
+    {
+        $serviceUser = $this->createServiceUser($suffix);
+
+        $asset = new AssetWorkspace();
+        $asset->setCid(1)->setCpath('/')->setList(true)->setView(true);
+        $document = new DocumentWorkspace();
+        $document->setCid(1)->setCpath('/')->setList(true)->setView(true);
+        $object = new DataObjectWorkspace();
+        $object->setCid(1)->setCpath('/')->setList(true)->setView(true);
+
+        $serviceUser->setWorkspacesAsset([$asset]);
+        $serviceUser->setWorkspacesDocument([$document]);
+        $serviceUser->setWorkspacesObject([$object]);
+        $serviceUser->save();
+
+        $this->assertWorkspaceRowsPersisted($serviceUser->getId());
+
+        return $serviceUser;
+    }
+
+    private function assertWorkspacesPresent(?User $user): void
+    {
+        $this->assertInstanceOf(ServiceUser::class, $user);
+        $this->assertCount(1, $user->getWorkspacesAsset());
+        $this->assertCount(1, $user->getWorkspacesDocument());
+        $this->assertCount(1, $user->getWorkspacesObject());
+        $this->assertTrue($user->getWorkspacesObject()[0]->getView());
+    }
+
+    private function assertWorkspaceRowsPersisted(?int $userId): void
+    {
+        $db = Db::get();
+        foreach (['asset', 'document', 'object'] as $type) {
+            $this->assertSame(
+                1,
+                (int) $db->fetchOne('SELECT COUNT(*) FROM users_workspaces_' . $type . ' WHERE userId = ?', [$userId]),
+                'workspace rows of type ' . $type
+            );
+        }
     }
 
     private function createHuman(string $suffix): User
