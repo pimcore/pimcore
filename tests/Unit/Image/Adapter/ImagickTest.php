@@ -340,6 +340,57 @@ final class ImagickTest extends TestCase
     }
 
     /**
+     * Every reinitialization writes its own temporary PNG with the fastest level, not only the first one.
+     */
+    public function testEveryReinitializationWritesItsTemporaryPngWithTheFastestCompression(): void
+    {
+        $source = $this->tmpFile('png');
+        $gradient = new \Imagick();
+        $gradient->newPseudoImage(self::FIXTURE_SIZE, self::FIXTURE_SIZE, 'gradient:red-blue');
+        $gradient->writeImage('png32:' . $source);
+
+        $adapter = new Imagick();
+        $adapter->load($source);
+        $adapter->scaleByWidth(30);
+        $adapter->crop(0, 0, 20, 20);
+        $adapter->scaleByWidth(10);
+        $adapter->crop(0, 0, 5, 5);
+
+        $temporaryFiles = (new ReflectionProperty($adapter, 'tmpFiles'))->getValue($adapter);
+        $this->assertCount(3, $temporaryFiles);
+        foreach ($temporaryFiles as $temporaryFile) {
+            $this->assertSame(0, $this->zlibCompressionLevel($temporaryFile));
+        }
+
+        $result = $this->tmpFile('png');
+        $adapter->save($result, 'png');
+        $this->assertNotSame(0, $this->zlibCompressionLevel($result));
+        $this->assertSame([5, 5], [$adapter->getWidth(), $adapter->getHeight()]);
+    }
+
+    /**
+     * A PNG source stays a png32 temporary file when the color profile is preserved (save() converts the "original"
+     * format of a PNG to png32), so it gets the fast level as well.
+     */
+    public function testReinitializationWithPreservedColorWritesTheTemporaryPngWithTheFastestCompression(): void
+    {
+        $source = $this->tmpFile('png');
+        $gradient = new \Imagick();
+        $gradient->newPseudoImage(self::FIXTURE_SIZE, self::FIXTURE_SIZE, 'gradient:red-blue');
+        $gradient->writeImage('png32:' . $source);
+
+        $adapter = new Imagick();
+        $adapter->setPreserveColor(true);
+        $adapter->load($source);
+        $adapter->scaleByWidth(30);
+        $adapter->crop(0, 0, 20, 20);
+
+        $temporaryFiles = (new ReflectionProperty($adapter, 'tmpFiles'))->getValue($adapter);
+        $this->assertCount(1, $temporaryFiles);
+        $this->assertSame(0, $this->zlibCompressionLevel($temporaryFiles[0]));
+    }
+
+    /**
      * Uses the default options of a thumbnail, so that the intermediate images are kept as PNG.
      */
     private function svgAdapter(): Imagick
