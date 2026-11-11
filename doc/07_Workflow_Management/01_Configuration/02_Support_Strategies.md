@@ -46,6 +46,13 @@ user is available too (for example `is_granted('ROLE_PIMCORE_ADMIN')` or `'ROLE_
 See [Condition and guard expressions](./03_Permissions.md#condition-and-guard-expressions) for the full list of
 available functions and variables.
 
+> **Warning:** Do not use user-specific checks (roles, `is_granted()`, `user`, `token`) in a support strategy to
+> restrict who may *use* a workflow. The strategy decides whether the workflow applies to the element at all. When it
+> evaluates to false for the current user, the workflow is treated as not applicable, so it is hidden for that user
+> and none of its place permissions, transitions or global actions apply. It is evaluated per request and depends on
+> who is logged in (for CLI and worker contexts there is no user). Restrict access with permission `condition`s and
+> transition `guard`s instead, and keep the support strategy to criteria of the element itself.
+
 ## Custom Support Strategy
 
 For custom logic, add a service that implements

@@ -48,7 +48,7 @@ and delete button will be hidden. `modify` is a short hand for save, publish, un
 ## Condition and guard expressions
 
 The `condition` of a permission set is a [Symfony expression](https://symfony.com/doc/current/reference/formats/expression_language.html).
-Pimcore evaluates these expressions in two places that offer slightly different variables:
+Pimcore evaluates expressions in two different contexts that offer slightly different variables:
 
 - **Pimcore expressions** (evaluated by `Pimcore\Workflow\ExpressionService`): permission `condition`s (this page),
   global action `guard`s, notification `condition`s (see [Notifications](./04_Notifications.md)) and the
@@ -64,7 +64,7 @@ Pimcore evaluates these expressions in two places that offer slightly different 
 | `object`       | Alias for `subject`.                                                                                          | **Not available**, use `subject`.         |
 | `role_names`   | Array of the current user's role names, **expanded through the configured role hierarchy**. Includes `ROLE_PIMCORE_ADMIN` / `ROLE_PIMCORE_USER` and `ROLE_<ROLE NAME>` for each Pimcore role (see below). | Same.                                     |
 | `user`         | The authenticated user object, or the string `anonymous` when there is no user.                               | The user object, or `null` when there is no user. |
-| `token`        | The current security token (a null token when nobody is logged in).                                           | The current security token.               |
+| `token`        | The current security token (a null token when nobody is logged in).                                           | The current security token, or `null` when nobody is logged in. |
 
 > The transition guard column follows Symfony's `GuardListener`; it is not defined in Pimcore code. If you rely on a
 > specific variable in a guard, check it against the Symfony version your project uses.
@@ -74,7 +74,7 @@ Pimcore evaluates these expressions in two places that offer slightly different 
 | Function                         | Description                                                                                                          |
 |----------------------------------|--------------------------------------------------------------------------------------------------------------------|
 | `is_granted('ROLE_X'[, subject])`| Checks the attribute through Symfony's authorization checker. Honors the role hierarchy **and any custom voters**. Element-level attributes (for example `is_granted('VIEW', subject)`) only work if your project registers a voter for them; Pimcore core ships no such voter, so without one the check is always false. |
-| `is_fully_authenticated()`       | `true` only when the user is authenticated in the current session (not via a "remember me" cookie).                 |
+| `is_fully_authenticated()`       | `true` only when the user is fully authenticated (not only via a "remember me" cookie).                 |
 | `is_authenticated()`             | `true` for any authenticated user, including "remember me".                                                          |
 | `is_remember_me()`               | `true` when the user was authenticated from a "remember me" cookie.                                                  |
 | `is_valid(subject[, groups])`    | `true` when the subject passes validation (requires the Validator component).                                        |
@@ -95,7 +95,7 @@ The security token exposes roles as uppercase, `ROLE_`-prefixed strings:
 
 ### `is_granted('ROLE_X')` vs `'ROLE_X' in role_names` vs `has_role('ROLE_X')`
 
-- **`is_granted('ROLE_X')`** &mdash; the recommended, idiomatic form. It runs the check through the Symfony
+- **`is_granted('ROLE_X')`** &mdash; the idiomatic form. It runs the check through the Symfony
   authorization checker, so it respects the role hierarchy and also consults any custom security voters. It is the
   only form that can check non-role attributes or an element, provided a voter handles them.
 - **`'ROLE_X' in role_names`** &mdash; a plain array membership test. Because Pimcore expands `role_names`
