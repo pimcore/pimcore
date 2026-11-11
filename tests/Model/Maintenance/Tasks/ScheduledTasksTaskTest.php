@@ -18,9 +18,12 @@ use Pimcore\Maintenance\Tasks\ScheduledTasksTask;
 use Pimcore\Model\Document;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
+use Pimcore\Model\User\ServiceUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\AbstractLogger;
 use Psr\Log\NullLogger;
+use Stringable;
 
 /**
  * @group model.maintenance.scheduledtaskstask
@@ -120,6 +123,38 @@ class ScheduledTasksTaskTest extends ModelTestCase
 
         $reloaded->delete();
         $user->delete();
+    }
+
+    public function testTaskOfServiceUserIsResolvedAndNotTreatedAsDangling(): void
+    {
+        $serviceUser = new ServiceUser();
+        $serviceUser->setName('scheduled-tasks-service-' . uniqid());
+        $serviceUser->save();
+        $document = TestHelper::createEmptyDocumentPage('scheduled-tasks-', true, true);
+
+        $task = $this->scheduleUnpublish($document, $serviceUser->getId());
+
+        $logger = new class() extends AbstractLogger {
+            /** @var string[] */
+            public array $errors = [];
+
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                if ($level === 'error') {
+                    $this->errors[] = (string) $message;
+                }
+            }
+        };
+        (new ScheduledTasksTask($logger))->execute();
+
+        $this->assertSame([], $logger->errors, 'a service user is a valid task owner, no dangling-user error');
+        $row = Db::get()->fetchAssociative('SELECT active FROM schedule_tasks WHERE id = ?', [$task->getId()]);
+        $this->assertIsArray($row);
+        // Processed, not skipped as dangling; without document workspaces the service user may not unpublish.
+        $this->assertSame(0, (int) $row['active']);
+
+        TestHelper::cleanUp();
+        $serviceUser->delete();
     }
 
     private function scheduleUnpublish(Document $document, ?int $userId): Task
