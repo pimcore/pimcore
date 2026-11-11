@@ -16,7 +16,6 @@ namespace Pimcore\Tests\Unit\Tool;
 
 use __PHP_Incomplete_Class;
 use Pimcore\Model\User as PimcoreUser;
-use Pimcore\Model\User\ServiceUser;
 use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Authentication;
@@ -117,15 +116,6 @@ class AuthenticationTest extends TestCase
     }
 
     /**
-     * A session token never carries a service user: it stays outside the allowlist, so a
-     * serialized session holding one is reduced to an incomplete class and dropped.
-     */
-    public function testAllowedClassListDoesNotContainServiceUser(): void
-    {
-        $this->assertNotContains(ServiceUser::class, Authentication::getSessionTokenAllowedClasses());
-    }
-
-    /**
      * @return array<string, array{PimcoreUser, bool}>
      */
     public static function isValidUserProvider(): array
@@ -171,9 +161,9 @@ class AuthenticationTest extends TestCase
         return $user;
     }
 
-    private static function createServiceUser(bool $active, ?int $id): ServiceUser
+    private static function createServiceUser(bool $active, ?int $id): PimcoreUser
     {
-        $user = new ServiceUser();
+        $user = PimcoreUser::newServiceUser();
         if ($id !== null) {
             $user->setId($id);
         }

@@ -17,23 +17,46 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User\Exception\DuplicateUserNameException;
 use Pimcore\Model\User\Exception\InvalidServiceUserException;
 use Pimcore\Model\User\Role;
-use Pimcore\Model\User\ServiceUser;
 use Pimcore\Tool;
 
+use function array_key_exists;
+use function bin2hex;
+use function is_array;
+use function is_string;
+use function random_bytes;
 use function sprintf;
 use function str_contains;
 
 /**
- * Not final because \Pimcore\Model\User\ServiceUser extends it; extending it elsewhere is not supported.
+ * A user of Pimcore: a person (type `user`) or a service user (type `serviceuser`, see isServiceUser()), a
+ * machine identity for integrations, agents and pipelines. Both are rows of the `users` table and share this
+ * class; a service user is authorized like a person (permissions, roles, workspaces, class and document type
+ * restrictions) but never logs in interactively: it keeps an unusable random password, is never an administrator
+ * and has no two-factor authentication. User::getByName() and \Pimcore\Model\User\Listing return persons only;
+ * service users are found with User::getServiceUserByName() and \Pimcore\Model\User\ServiceUser\Listing, and
+ * User::getById() returns either kind. Names are unique across persons and service users, and the type of a
+ * saved user never changes.
  *
  * @method User\Dao getDao()
  */
-class User extends User\UserRole implements UserInterface
+final class User extends User\UserRole implements UserInterface
 {
     use TemporaryFileHelperTrait;
+
+    private const TYPE_SERVICE_USER = 'serviceuser';
+
+    private const TWO_FACTOR_DEFAULTS = [
+        'required' => false,
+        'enabled' => false,
+        'secret' => '',
+        'type' => '',
+    ];
+
+    private const UNUSABLE_PASSWORD_PREFIX = '!serviceuser-';
 
     protected string $type = 'user';
 
@@ -106,16 +129,108 @@ class User extends User\UserRole implements UserInterface
     protected ?string $provider = null;
 
     /**
+     * Whether this is a service user (type `serviceuser`): a machine identity that never logs in interactively.
+     */
+    public function isServiceUser(): bool
+    {
+        return $this->type === self::TYPE_SERVICE_USER;
+    }
+
+    /**
+     * An unsaved service user; set its values and save() it.
+     */
+    public static function newServiceUser(): self
+    {
+        $serviceUser = new self();
+        $serviceUser->setType(self::TYPE_SERVICE_USER);
+
+        return $serviceUser;
+    }
+
+    /**
+     * Creates and saves a service user with the values, like create() does for a person.
+     *
+     * @param array<string, mixed> $values
+     *
+     * @throws DuplicateUserNameException if a person or service user already has the name
+     * @throws InvalidServiceUserException if the values give it a password, administrator rights or two-factor data
+     * @throws Exception
+     */
+    public static function createServiceUser(array $values = []): self
+    {
+        $serviceUser = self::newServiceUser();
+        $serviceUser->setValues($values);
+        $serviceUser->setType(self::TYPE_SERVICE_USER);
+        $serviceUser->save();
+
+        return $serviceUser;
+    }
+
+    /**
+     * The service user with this name, or null. getByName() finds persons only.
+     */
+    public static function getServiceUserByName(string $name): ?self
+    {
+        $serviceUser = self::newServiceUser();
+
+        try {
+            $serviceUser->getDao()->getByName($name);
+        } catch (NotFoundException) {
+            return null;
+        }
+
+        return $serviceUser;
+    }
+
+    /**
+     * Applies the type first, so the other values are validated for the right kind of user, and keeps the
+     * stored password of a service user as it is: a loaded service user passes the same validity check
+     * (active, saved, with a password) as a person, and save() replaces the value with a new unusable one anyway.
+     */
+    public function setValues(array $data = [], bool $ignoreEmptyValues = false): static
+    {
+        if (isset($data['type']) && is_string($data['type'])) {
+            $this->setType($data['type']);
+            unset($data['type']);
+        }
+
+        if ($this->isServiceUser() && array_key_exists('password', $data)) {
+            $password = $data['password'];
+            unset($data['password']);
+            $this->password = is_string($password) && $password !== '' ? $password : null;
+        }
+
+        return parent::setValues($data, $ignoreEmptyValues);
+    }
+
+    /**
      * @return $this
      *
-     * @throws DuplicateUserNameException if a user or service user of the other kind already has the name
-     * @throws InvalidServiceUserException if a user that is no service user is saved with the service user type
+     * @throws DuplicateUserNameException if a person or service user of the other kind already has the name
+     * @throws InvalidServiceUserException if the type of a saved user is changed, or a service user has
+     *     administrator rights or two-factor data
      * @throws Exception
      */
     public function save(array $parameters = []): static
     {
-        if (!$this instanceof ServiceUser && $this->getType() === 'serviceuser') {
-            throw new InvalidServiceUserException('Only a service user can be saved with the service user type.');
+        if ($this->getId() !== null) {
+            $storedType = $this->getDao()->getStoredType();
+            if ($storedType !== null && $storedType !== $this->getType()) {
+                throw new InvalidServiceUserException(
+                    'The type of a saved user never changes: a person does not become a service user, nor the reverse.'
+                );
+            }
+        }
+
+        if ($this->isServiceUser()) {
+            if ($this->admin || $this->hasTwoFactorData()) {
+                throw new InvalidServiceUserException(
+                    'A service user cannot have administrator rights or two-factor authentication.'
+                );
+            }
+
+            // never a usable password: not a password hash, so no password ever verifies against it
+            $this->password = self::UNUSABLE_PASSWORD_PREFIX . bin2hex(random_bytes(32));
         }
 
         $name = $this->getName();
@@ -148,10 +263,23 @@ class User extends User\UserRole implements UserInterface
     }
 
     /**
+     * A service user never gets a password from a caller: save() stores an unusable value instead, and passing
+     * null keeps it.
+     *
      * @return $this
+     *
+     * @throws InvalidServiceUserException when a service user is given a password
      */
     public function setPassword(?string $password): static
     {
+        if ($this->isServiceUser()) {
+            if ($password !== null) {
+                throw new InvalidServiceUserException('A service user cannot have a password.');
+            }
+
+            return $this;
+        }
+
         if (strlen((string) $password) > 4) {
             $this->password = $password;
         }
@@ -274,16 +402,25 @@ class User extends User\UserRole implements UserInterface
         return $this->getAdmin();
     }
 
+    /**
+     * A service user is never an administrator.
+     */
     public function getAdmin(): bool
     {
-        return $this->admin;
+        return $this->admin && !$this->isServiceUser();
     }
 
     /**
      * @return $this
+     *
+     * @throws InvalidServiceUserException when a service user is given administrator rights
      */
     public function setAdmin(bool $admin): static
     {
+        if ($admin && $this->isServiceUser()) {
+            throw new InvalidServiceUserException('A service user cannot be an administrator.');
+        }
+
         $this->admin = $admin;
 
         return $this;
@@ -716,8 +853,19 @@ class User extends User\UserRole implements UserInterface
         $this->keyBindings = $keyBindings;
     }
 
+    /**
+     * A service user has no two-factor authentication; for it this always returns the disabled defaults.
+     */
     public function getTwoFactorAuthentication(?string $key = null): mixed
     {
+        if ($this->isServiceUser()) {
+            if ($key) {
+                return self::TWO_FACTOR_DEFAULTS[$key] ?? null;
+            }
+
+            return self::TWO_FACTOR_DEFAULTS;
+        }
+
         if ($this->twoFactorAuthentication === null) {
             // set defaults if no data is present
             $this->twoFactorAuthentication = [
@@ -736,9 +884,12 @@ class User extends User\UserRole implements UserInterface
     }
 
     /**
-     * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument
+     * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument.
+     * A service user accepts only data that leaves two-factor authentication disabled and without a secret.
      *
      * @param array<string, mixed>|string $key
+     *
+     * @throws InvalidServiceUserException when the data enables two-factor authentication for a service user
      */
     public function setTwoFactorAuthentication(array|string $key, mixed $value = null): void
     {
@@ -749,11 +900,32 @@ class User extends User\UserRole implements UserInterface
         } else {
             if ($this->twoFactorAuthentication === null) {
                 // load defaults
-                $this->getTwoFactorAuthentication();
+                $this->twoFactorAuthentication = self::TWO_FACTOR_DEFAULTS;
             }
 
             $this->twoFactorAuthentication[$key] = $value;
         }
+
+        if ($this->isServiceUser() && $this->hasTwoFactorData()) {
+            $this->twoFactorAuthentication = null;
+
+            throw new InvalidServiceUserException('A service user cannot use two-factor authentication.');
+        }
+    }
+
+    private function hasTwoFactorData(): bool
+    {
+        $data = $this->twoFactorAuthentication;
+        if (!is_array($data)) {
+            return false;
+        }
+
+        // the flags are read by PHP truthiness (see \Pimcore\Security\User\User::isGoogleAuthenticatorEnabled()),
+        // so any truthy value (1, '1', 'true', even 'false') enables two-factor authentication just like true does
+        return (bool) ($data['enabled'] ?? false)
+            || (bool) ($data['required'] ?? false)
+            || (string) ($data['secret'] ?? '') !== ''
+            || (string) ($data['type'] ?? '') !== '';
     }
 
     public function getProvider(): ?string

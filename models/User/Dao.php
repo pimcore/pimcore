@@ -42,6 +42,20 @@ class Dao extends UserRole\Dao
     }
 
     /**
+     * The type the row of the model has in the database, null while the model is not saved.
+     */
+    public function getStoredType(): ?string
+    {
+        if ($this->model->getId() === null) {
+            return null;
+        }
+
+        $type = $this->db->fetchOne('SELECT `type` FROM `users` WHERE `id` = ?', [$this->model->getId()]);
+
+        return $type === false ? null : (string) $type;
+    }
+
+    /**
      * Deletes object from database
      */
     public function delete(): void

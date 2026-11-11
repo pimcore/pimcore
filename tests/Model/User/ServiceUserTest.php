@@ -27,7 +27,6 @@ use Pimcore\Model\User\Exception\InvalidServiceUserException;
 use Pimcore\Model\User\Listing as UserListing;
 use Pimcore\Model\User\Role;
 use Pimcore\Model\User\Service;
-use Pimcore\Model\User\ServiceUser;
 use Pimcore\Model\User\ServiceUser\Listing as ServiceUserListing;
 use Pimcore\Model\User\Workspace\Asset as AssetWorkspace;
 use Pimcore\Model\User\Workspace\DataObject as DataObjectWorkspace;
@@ -35,12 +34,14 @@ use Pimcore\Model\User\Workspace\Document as DocumentWorkspace;
 use Pimcore\Model\Version;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Security\User\User as SecurityUser;
+use Pimcore\Security\User\UserProvider;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 use ReflectionProperty;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class ServiceUserTest extends ModelTestCase
 {
@@ -63,40 +64,42 @@ class ServiceUserTest extends ModelTestCase
         parent::tearDown();
     }
 
-    public function testServiceTypeMapsToServiceUserClass(): void
+    public function testServiceTypeMapsToTheUserClass(): void
     {
-        $this->assertSame(ServiceUser::class, Service::getClassNameForType('serviceuser'));
+        $this->assertSame(User::class, Service::getClassNameForType('serviceuser'));
     }
 
     public function testNewServiceUserHasServiceType(): void
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
 
         $this->assertSame('serviceuser', $serviceUser->getType());
+        $this->assertTrue($serviceUser->isServiceUser());
+        $this->assertFalse((new User())->isServiceUser());
         $this->assertFalse($serviceUser->isAdmin());
         $this->assertNull($serviceUser->getPassword());
     }
 
-    public function testGetByIdReturnsServiceUserForServiceRow(): void
+    public function testGetByIdReturnsAServiceUserForAServiceRow(): void
     {
         $serviceUser = $this->createServiceUser('load');
 
         $this->clearUserCache($serviceUser->getId());
-        $this->assertInstanceOf(ServiceUser::class, User::getById($serviceUser->getId()));
+        $this->assertIsServiceUser(User::getById($serviceUser->getId()));
 
         $this->clearUserCache($serviceUser->getId());
-        $this->assertInstanceOf(ServiceUser::class, ServiceUser::getById($serviceUser->getId()));
-
-        $this->clearUserCache($serviceUser->getId());
-        $this->assertInstanceOf(ServiceUser::class, AbstractUser::getById($serviceUser->getId()));
+        $this->assertIsServiceUser(AbstractUser::getById($serviceUser->getId()));
     }
 
-    public function testServiceUserGetByIdDoesNotReturnHuman(): void
+    public function testGetByIdReturnsAPersonForAUserRow(): void
     {
         $human = $this->createHuman('human-by-id');
 
         $this->clearUserCache($human->getId());
-        $this->assertNull(ServiceUser::getById($human->getId()));
+        $loaded = User::getById($human->getId());
+
+        $this->assertInstanceOf(User::class, $loaded);
+        $this->assertFalse($loaded->isServiceUser());
     }
 
     public function testUserGetByNameDoesNotFindServiceUser(): void
@@ -104,7 +107,7 @@ class ServiceUserTest extends ModelTestCase
         $serviceUser = $this->createServiceUser('by-name');
 
         $this->assertNull(User::getByName($serviceUser->getName()));
-        $this->assertInstanceOf(ServiceUser::class, ServiceUser::getByName($serviceUser->getName()));
+        $this->assertIsServiceUser(User::getServiceUserByName($serviceUser->getName()));
     }
 
     public function testUserGetByNameStillFindsHuman(): void
@@ -114,7 +117,7 @@ class ServiceUserTest extends ModelTestCase
         $found = User::getByName($human->getName());
 
         $this->assertInstanceOf(User::class, $found);
-        $this->assertNotInstanceOf(ServiceUser::class, $found);
+        $this->assertFalse($found->isServiceUser());
     }
 
     public function testServiceUserIsPersistedWithUnusablePasswordAndNoAdmin(): void
@@ -140,7 +143,7 @@ class ServiceUserTest extends ModelTestCase
         $this->assertTrue(Authentication::isValidUser($serviceUser));
 
         $this->clearUserCache($serviceUser->getId());
-        $this->assertTrue(Authentication::isValidUser(ServiceUser::getById($serviceUser->getId())));
+        $this->assertTrue(Authentication::isValidUser(User::getById($serviceUser->getId())));
     }
 
     public function testInactiveServiceUserIsNotValid(): void
@@ -157,7 +160,7 @@ class ServiceUserTest extends ModelTestCase
         $serviceUser = $this->createServiceUser('verify');
 
         $this->clearUserCache($serviceUser->getId());
-        $loaded = ServiceUser::getById($serviceUser->getId());
+        $loaded = User::getById($serviceUser->getId());
 
         $this->assertFalse(Authentication::verifyPassword($loaded, ''));
         $this->assertFalse(Authentication::verifyPassword($loaded, 'a-long-test-password'));
@@ -167,7 +170,7 @@ class ServiceUserTest extends ModelTestCase
     public function testPasswordGivenOnCreateIsReplacedByAnUnusableOne(): void
     {
         $hash = Authentication::getPasswordHash(self::NAME_PREFIX . 'create-pw', 'a-long-test-password');
-        $serviceUser = ServiceUser::create(['name' => self::NAME_PREFIX . 'create-pw', 'password' => $hash]);
+        $serviceUser = User::createServiceUser(['name' => self::NAME_PREFIX . 'create-pw', 'password' => $hash]);
         $this->createdEntities[] = $serviceUser;
 
         $this->assertNotSame($hash, $serviceUser->getPassword());
@@ -187,7 +190,7 @@ class ServiceUserTest extends ModelTestCase
 
             $this->assertInstanceOf(Version::class, $version);
             $this->assertSame($serviceUser->getId(), $version->getUserId());
-            $this->assertInstanceOf(ServiceUser::class, $version->getUser());
+            $this->assertIsServiceUser($version->getUser());
             $this->assertSame($serviceUser->getId(), $version->getUser()->getId());
         } finally {
             $document->delete();
@@ -198,12 +201,12 @@ class ServiceUserTest extends ModelTestCase
     {
         $this->expectException(InvalidServiceUserException::class);
 
-        (new ServiceUser())->setPassword('some-password-hash');
+        (User::newServiceUser())->setPassword('some-password-hash');
     }
 
     public function testSetPasswordNullIsAccepted(): void
     {
-        $serviceUser = (new ServiceUser())->setPassword(null);
+        $serviceUser = (User::newServiceUser())->setPassword(null);
 
         $this->assertNull($serviceUser->getPassword());
     }
@@ -212,24 +215,24 @@ class ServiceUserTest extends ModelTestCase
     {
         $this->expectException(InvalidServiceUserException::class);
 
-        (new ServiceUser())->setAdmin(true);
+        (User::newServiceUser())->setAdmin(true);
     }
 
     public function testSetAdminFalseIsAccepted(): void
     {
-        $this->assertFalse((new ServiceUser())->setAdmin(false)->isAdmin());
+        $this->assertFalse((User::newServiceUser())->setAdmin(false)->isAdmin());
     }
 
     public function testEnablingTwoFactorAuthenticationThrows(): void
     {
         $this->expectException(InvalidServiceUserException::class);
 
-        (new ServiceUser())->setTwoFactorAuthentication('enabled', true);
+        (User::newServiceUser())->setTwoFactorAuthentication('enabled', true);
     }
 
     public function testSaveRejectsTruthyTwoFactorFlagsWrittenAroundTheSetter(): void
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
         $serviceUser->setName(self::NAME_PREFIX . 'two-factor-raw');
         // stored data that bypassed the setter, as a loaded row could carry it
         (new ReflectionProperty(User::class, 'twoFactorAuthentication'))->setValue($serviceUser, ['enabled' => 1]);
@@ -241,7 +244,7 @@ class ServiceUserTest extends ModelTestCase
 
     public function testTwoFactorAuthenticationIsDisabled(): void
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
 
         $this->assertFalse($serviceUser->getTwoFactorAuthentication('enabled'));
         $this->assertFalse($serviceUser->getTwoFactorAuthentication('required'));
@@ -257,27 +260,33 @@ class ServiceUserTest extends ModelTestCase
         $serviceUser->save();
     }
 
-    public function testHumanCannotBeSavedAsServiceType(): void
+    public function testASavedPersonCannotBecomeAServiceUser(): void
     {
-        $human = new User();
-        $human->setName(self::NAME_PREFIX . 'disguised');
-        $human->setPassword('some-password-hash');
+        $human = $this->createHuman('disguised');
         $human->setType('serviceuser');
 
         try {
             $this->expectException(InvalidServiceUserException::class);
             $human->save();
         } finally {
-            $this->assertNull(User::getByName(self::NAME_PREFIX . 'disguised'));
-            $this->assertNull(ServiceUser::getByName(self::NAME_PREFIX . 'disguised'));
+            $this->clearUserCache($human->getId());
+            $this->assertFalse(User::getById($human->getId())?->isServiceUser());
         }
+    }
+
+    public function testSessionRefreshRefusesAServiceUser(): void
+    {
+        $serviceUser = $this->createServiceUser('session');
+
+        $this->expectException(UserNotFoundException::class);
+        (new UserProvider())->refreshUser(new SecurityUser($serviceUser));
     }
 
     public function testServiceUserNameTakenByHumanIsRejected(): void
     {
         $human = $this->createHuman('shared-1');
 
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
         $serviceUser->setName($human->getName());
 
         $this->expectException(DuplicateUserNameException::class);
@@ -343,7 +352,7 @@ class ServiceUserTest extends ModelTestCase
         $serviceUser->save();
 
         $this->clearUserCache($serviceUser->getId());
-        $this->assertSame('integration-owner@example.com', ServiceUser::getById($serviceUser->getId())->getEmail());
+        $this->assertSame('integration-owner@example.com', User::getById($serviceUser->getId())->getEmail());
     }
 
     public function testRoleNameMayEqualServiceUserName(): void
@@ -380,7 +389,7 @@ class ServiceUserTest extends ModelTestCase
         $this->assertContains($serviceUser->getId(), $ids);
         $this->assertNotContains($human->getId(), $ids);
         foreach ($listing->getServiceUsers() as $item) {
-            $this->assertInstanceOf(ServiceUser::class, $item);
+            $this->assertIsServiceUser($item);
         }
     }
 
@@ -391,7 +400,7 @@ class ServiceUserTest extends ModelTestCase
         $role->save();
         $this->createdEntities[] = $role;
 
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
         $serviceUser->setName(self::NAME_PREFIX . 'role-holder');
         $serviceUser->setRoles([$role->getId()]);
         $serviceUser->save();
@@ -400,7 +409,7 @@ class ServiceUserTest extends ModelTestCase
         $role->delete();
 
         $this->clearUserCache($serviceUser->getId());
-        $this->assertSame([], ServiceUser::getById($serviceUser->getId())->getRoles());
+        $this->assertSame([], User::getById($serviceUser->getId())->getRoles());
     }
 
     public function testWorkspacesAreLoadedForAServiceUserThroughEveryLookup(): void
@@ -409,13 +418,13 @@ class ServiceUserTest extends ModelTestCase
         $id = $serviceUser->getId();
 
         $this->clearUserCache($id);
-        $this->assertWorkspacesPresent(ServiceUser::getById($id));
+        $this->assertWorkspacesPresent(User::getById($id));
 
         $this->clearUserCache($id);
         $this->assertWorkspacesPresent(User::getById($id));
 
         $this->clearUserCache($id);
-        $this->assertWorkspacesPresent(ServiceUser::getByName(self::NAME_PREFIX . 'workspaces-load'));
+        $this->assertWorkspacesPresent(User::getServiceUserByName(self::NAME_PREFIX . 'workspaces-load'));
 
         $this->clearUserCache($id);
         $listing = new ServiceUserListing();
@@ -431,7 +440,7 @@ class ServiceUserTest extends ModelTestCase
         $id = $serviceUser->getId();
 
         $this->clearUserCache($id);
-        ServiceUser::getById($id)->save();
+        User::getById($id)->save();
 
         $this->assertWorkspaceRowsPersisted($id);
     }
@@ -453,7 +462,7 @@ class ServiceUserTest extends ModelTestCase
 
         $this->assertWorkspaceRowsPersisted($id);
         $this->clearUserCache($id);
-        $this->assertSame([], ServiceUser::getById($id)->getRoles());
+        $this->assertSame([], User::getById($id)->getRoles());
     }
 
     public function testAuthenticateTokenRefusesServiceUser(): void
@@ -483,7 +492,7 @@ class ServiceUserTest extends ModelTestCase
         $version->setUserId($serviceUser->getId());
 
         $this->assertSame($serviceUser->getId(), $version->getUserId());
-        $this->assertInstanceOf(ServiceUser::class, $version->getUser());
+        $this->assertIsServiceUser($version->getUser());
     }
 
     public function testEditlockHolderMayBeAServiceUser(): void
@@ -493,7 +502,7 @@ class ServiceUserTest extends ModelTestCase
         $lock = new Editlock();
         $lock->setUserId($serviceUser->getId());
 
-        $this->assertInstanceOf(ServiceUser::class, $lock->getUser());
+        $this->assertIsServiceUser($lock->getUser());
     }
 
     public function testNotificationSenderMayBeAServiceUser(): void
@@ -513,7 +522,7 @@ class ServiceUserTest extends ModelTestCase
             $loaded = Notification::getById($notification->getId());
 
             $this->assertNotNull($loaded);
-            $this->assertInstanceOf(ServiceUser::class, $loaded->getSender());
+            $this->assertIsServiceUser($loaded->getSender());
             $this->assertSame($serviceUser->getId(), $loaded->getSender()->getId());
             $this->assertSame($human->getId(), $loaded->getRecipient()?->getId());
         } finally {
@@ -582,9 +591,9 @@ class ServiceUserTest extends ModelTestCase
         }
     }
 
-    private function createServiceUser(string $suffix): ServiceUser
+    private function createServiceUser(string $suffix): User
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
         $serviceUser->setName(self::NAME_PREFIX . $suffix);
         $serviceUser->save();
         $this->createdEntities[] = $serviceUser;
@@ -592,7 +601,7 @@ class ServiceUserTest extends ModelTestCase
         return $serviceUser;
     }
 
-    private function createServiceUserWithWorkspaces(string $suffix): ServiceUser
+    private function createServiceUserWithWorkspaces(string $suffix): User
     {
         $serviceUser = $this->createServiceUser($suffix);
 
@@ -613,9 +622,15 @@ class ServiceUserTest extends ModelTestCase
         return $serviceUser;
     }
 
+    private function assertIsServiceUser(mixed $user): void
+    {
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertTrue($user->isServiceUser());
+    }
+
     private function assertWorkspacesPresent(?User $user): void
     {
-        $this->assertInstanceOf(ServiceUser::class, $user);
+        $this->assertIsServiceUser($user);
         $this->assertCount(1, $user->getWorkspacesAsset());
         $this->assertCount(1, $user->getWorkspacesDocument());
         $this->assertCount(1, $user->getWorkspacesObject());

@@ -18,7 +18,6 @@ use Pimcore\Maintenance\Tasks\ScheduledTasksTask;
 use Pimcore\Model\Document;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
-use Pimcore\Model\User\ServiceUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Psr\Log\AbstractLogger;
@@ -127,7 +126,7 @@ class ScheduledTasksTaskTest extends ModelTestCase
 
     public function testTaskOfServiceUserIsResolvedAndNotTreatedAsDangling(): void
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
         $serviceUser->setName('scheduled-tasks-service-' . uniqid());
         $serviceUser->save();
         $document = TestHelper::createEmptyDocumentPage('scheduled-tasks-', true, true);

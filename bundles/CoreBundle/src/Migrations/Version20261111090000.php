@@ -21,14 +21,14 @@ use function random_bytes;
 
 /**
  * Stores an unusable password for every service user that has none, the value
- * \Pimcore\Model\User\ServiceUser::save() writes on every save, so that
+ * \Pimcore\Model\User::save() for a service user writes on every save, so that
  * \Pimcore\Tool\Authentication::isValidUser() keeps treating a saved, active service user like a user.
  * Service users saved after the change already carry such a value; the prefix marks it as unusable
  * (it is no password hash, so no password ever verifies against it).
  */
 final class Version20261111090000 extends AbstractMigration
 {
-    /** the same prefix as the private \Pimcore\Model\User\ServiceUser::UNUSABLE_PASSWORD_PREFIX */
+    /** the same prefix as the private \Pimcore\Model\User::UNUSABLE_PASSWORD_PREFIX */
     private const UNUSABLE_PASSWORD_PREFIX = '!serviceuser-';
 
     public function getDescription(): string

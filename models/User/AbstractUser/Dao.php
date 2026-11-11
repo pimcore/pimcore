@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getById(int $id): void
     {
         if ($this->model->getType() === 'user') {
-            // a service user is a user, too: AbstractUser::getById() loads it again as ServiceUser
+            // a service user is a user, too (same class, type 'serviceuser')
             $data = $this->db->fetchAssociative(
                 'SELECT * FROM users WHERE `type` IN (?) AND id = ?',
                 [['user', 'serviceuser'], $id],

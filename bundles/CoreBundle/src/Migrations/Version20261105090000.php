@@ -30,7 +30,7 @@ use function substr;
 
 /**
  * Adds the `serviceuser` member to the `users`.`type` enum, so service users
- * (\Pimcore\Model\User\ServiceUser) can be stored next to users, roles and their folders.
+ * (\Pimcore\Model\User objects with isServiceUser()) can be stored next to users, roles and their folders.
  *
  * The member is appended to the column's current definition instead of replacing it with a hardcoded
  * list, so members a project added itself survive; appending at the end is a metadata-only change.

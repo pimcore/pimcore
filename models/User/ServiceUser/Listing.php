@@ -13,17 +13,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User\ServiceUser;
 
+use Pimcore\Model\User;
 use Pimcore\Model\User\Listing\AbstractListing;
 use Pimcore\Model\User\Listing\AbstractListing\Dao;
-use Pimcore\Model\User\ServiceUser;
 
 /**
- * Lists service users. Service users are a flat list without folders, and \Pimcore\Model\User\Listing
- * never contains them.
+ * Lists service users (\Pimcore\Model\User objects whose isServiceUser() is true). Service users are a flat list
+ * without folders, and \Pimcore\Model\User\Listing never contains them.
  *
  * @method Dao getDao()
- * @method ServiceUser[] load()
- * @method ServiceUser|false current()
+ * @method User[] load()
+ * @method User|false current()
  */
 class Listing extends AbstractListing
 {
@@ -32,7 +32,7 @@ class Listing extends AbstractListing
     /**
      * Alias for $this->getItems()
      *
-     * @return ServiceUser[]
+     * @return User[]
      */
     public function getServiceUsers(): array
     {

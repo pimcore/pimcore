@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\User;
 
+use Pimcore\Model\User;
 use Pimcore\Model\User\Exception\InvalidServiceUserException;
-use Pimcore\Model\User\ServiceUser;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -48,7 +48,7 @@ class ServiceUserTwoFactorTest extends TestCase
      */
     public function testDataThatEnablesTwoFactorAuthenticationIsRefused(array|string $data): void
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
 
         $this->expectException(InvalidServiceUserException::class);
         $serviceUser->setTwoFactorAuthentication($data);
@@ -56,7 +56,7 @@ class ServiceUserTwoFactorTest extends TestCase
 
     public function testDisabledDataIsAcceptedAndReadsAsTheDefaults(): void
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
         $serviceUser->setTwoFactorAuthentication(['enabled' => false, 'required' => '0', 'secret' => '', 'type' => '']);
 
         $this->assertFalse($serviceUser->getTwoFactorAuthentication('enabled'));
@@ -66,7 +66,7 @@ class ServiceUserTwoFactorTest extends TestCase
 
     public function testASingleEnablingKeyIsRefused(): void
     {
-        $serviceUser = new ServiceUser();
+        $serviceUser = User::newServiceUser();
 
         $this->expectException(InvalidServiceUserException::class);
         $serviceUser->setTwoFactorAuthentication('enabled', 'on');
