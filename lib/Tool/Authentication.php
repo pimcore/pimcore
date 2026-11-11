@@ -22,7 +22,6 @@ use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
-use Pimcore\Model\User\ServiceUser;
 use Pimcore\Security\User\UserProvider;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
@@ -213,16 +212,8 @@ class Authentication
         return true;
     }
 
-    /**
-     * A user is valid when it is active, saved and has a password. A service user has no password:
-     * it is valid when it is active and saved.
-     */
     public static function isValidUser(?User $user): bool
     {
-        if ($user instanceof ServiceUser) {
-            return $user->isActive() && $user->getId();
-        }
-
         return $user instanceof User && $user->isActive() && $user->getId() && $user->getPassword();
     }
 

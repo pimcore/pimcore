@@ -29,6 +29,7 @@ use Pimcore\Model\User\ServiceUser;
 use Pimcore\Model\User\ServiceUser\Listing as ServiceUserListing;
 use Pimcore\Model\Version;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 
 class ServiceUserTest extends ModelTestCase
@@ -106,7 +107,7 @@ class ServiceUserTest extends ModelTestCase
         $this->assertNotInstanceOf(ServiceUser::class, $found);
     }
 
-    public function testServiceUserIsPersistedWithoutPasswordAndAdmin(): void
+    public function testServiceUserIsPersistedWithUnusablePasswordAndNoAdmin(): void
     {
         $serviceUser = $this->createServiceUser('persisted');
 
@@ -116,8 +117,71 @@ class ServiceUserTest extends ModelTestCase
         );
 
         $this->assertSame('serviceuser', $row['type']);
-        $this->assertNull($row['password']);
+        $this->assertIsString($row['password']);
+        $this->assertNotSame('', $row['password']);
+        $this->assertNull(password_get_info($row['password'])['algo'], 'The stored value must not be a password hash');
         $this->assertSame(0, (int) $row['admin']);
+    }
+
+    public function testSavedServiceUserIsValidLikeAUserWithAPassword(): void
+    {
+        $serviceUser = $this->createServiceUser('valid');
+
+        $this->assertTrue(Authentication::isValidUser($serviceUser));
+
+        $this->clearUserCache($serviceUser->getId());
+        $this->assertTrue(Authentication::isValidUser(ServiceUser::getById($serviceUser->getId())));
+    }
+
+    public function testInactiveServiceUserIsNotValid(): void
+    {
+        $serviceUser = $this->createServiceUser('inactive');
+        $serviceUser->setActive(false);
+        $serviceUser->save();
+
+        $this->assertFalse(Authentication::isValidUser($serviceUser));
+    }
+
+    public function testNoPasswordVerifiesAgainstAServiceUser(): void
+    {
+        $serviceUser = $this->createServiceUser('verify');
+
+        $this->clearUserCache($serviceUser->getId());
+        $loaded = ServiceUser::getById($serviceUser->getId());
+
+        $this->assertFalse(Authentication::verifyPassword($loaded, ''));
+        $this->assertFalse(Authentication::verifyPassword($loaded, 'a-long-test-password'));
+        $this->assertFalse(Authentication::verifyPassword($loaded, (string) $loaded->getPassword()));
+    }
+
+    public function testPasswordGivenOnCreateIsReplacedByAnUnusableOne(): void
+    {
+        $hash = Authentication::getPasswordHash(self::NAME_PREFIX . 'create-pw', 'a-long-test-password');
+        $serviceUser = ServiceUser::create(['name' => self::NAME_PREFIX . 'create-pw', 'password' => $hash]);
+        $this->createdEntities[] = $serviceUser;
+
+        $this->assertNotSame($hash, $serviceUser->getPassword());
+        $this->assertFalse(Authentication::verifyPassword($serviceUser, 'a-long-test-password'));
+    }
+
+    public function testVersionOfAnElementSavedByAServiceUserKeepsTheServiceUserAsAuthor(): void
+    {
+        $serviceUser = $this->createServiceUser('version-author');
+
+        $document = TestHelper::createEmptyDocumentPage('svc-version-', false);
+        $document->setUserModification($serviceUser->getId());
+        $document->save();
+
+        try {
+            $version = $document->getLatestVersion(null, true);
+
+            $this->assertInstanceOf(Version::class, $version);
+            $this->assertSame($serviceUser->getId(), $version->getUserId());
+            $this->assertInstanceOf(ServiceUser::class, $version->getUser());
+            $this->assertSame($serviceUser->getId(), $version->getUser()->getId());
+        } finally {
+            $document->delete();
+        }
     }
 
     public function testSetPasswordThrows(): void

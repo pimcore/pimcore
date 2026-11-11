@@ -93,7 +93,9 @@ The users table stores every identity in one model hierarchy, selected by its `t
 A service user is a Pimcore user for everything that authorizes it: it has roles, workspaces, permissions,
 class and document type restrictions, and MCP server access, just like a user. It differs in what it cannot do:
 
-- It has no password, is never an administrator and has no two-factor authentication.
+- It never gets a password from a caller: `setPassword()` with a value throws, and every save stores a new unusable
+  random value that no password verifies against, as for users created through OpenID Connect. It is never an
+  administrator and has no two-factor authentication.
 - It cannot log in interactively, and a password recovery never reaches it.
 - It is not counted or listed as a person.
 
