@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\User;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
@@ -175,6 +176,24 @@ class ServiceUserTest extends ModelTestCase
 
         $this->assertNotSame($hash, $serviceUser->getPassword());
         $this->assertFalse(Authentication::verifyPassword($serviceUser, 'a-long-test-password'));
+    }
+
+    public function testCreateServiceUserIgnoresATypeInTheValues(): void
+    {
+        $serviceUser = User::createServiceUser(['name' => self::NAME_PREFIX . 'create-type', 'type' => 'user']);
+        $this->createdEntities[] = $serviceUser;
+
+        $this->assertTrue($serviceUser->isServiceUser());
+        $this->clearUserCache($serviceUser->getId());
+        $this->assertTrue(User::getById($serviceUser->getId())?->isServiceUser());
+    }
+
+    public function testCreateServiceUserRefusesAnId(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('including `id` key');
+
+        User::createServiceUser(['id' => 7, 'name' => self::NAME_PREFIX . 'create-id']);
     }
 
     public function testVersionOfAnElementSavedByAServiceUserKeepsTheServiceUserAsAuthor(): void

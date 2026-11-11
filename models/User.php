@@ -148,19 +148,22 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
-     * Creates and saves a service user with the values, like create() does for a person.
+     * Creates and saves a service user with the values, like create() does for a person. A `type` in the values is
+     * ignored, and a `password` is replaced by the unusable value save() stores anyway.
      *
      * @param array<string, mixed> $values
      *
      * @throws DuplicateUserNameException if a person or service user already has the name
-     * @throws InvalidServiceUserException if the values give it a password, administrator rights or two-factor data
-     * @throws Exception
+     * @throws InvalidServiceUserException if the values give it administrator rights or two-factor data
+     * @throws Exception if the values carry an `id`
      */
     public static function createServiceUser(array $values = []): self
     {
+        unset($values['type']);
+        self::checkCreateData($values);
+
         $serviceUser = self::newServiceUser();
         $serviceUser->setValues($values);
-        $serviceUser->setType(self::TYPE_SERVICE_USER);
         $serviceUser->save();
 
         return $serviceUser;
