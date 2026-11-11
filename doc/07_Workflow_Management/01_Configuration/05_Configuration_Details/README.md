@@ -65,7 +65,7 @@ pimcore:
                 type:                expression
                 arguments:
                     - \Pimcore\Model\DataObject\Product
-                    - subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in role_names
+                    - subject.getProductType() == "article"
 
                 # Type "expression": a symfony expression to define a criteria.
                 type:                 ~ # One of "expression"

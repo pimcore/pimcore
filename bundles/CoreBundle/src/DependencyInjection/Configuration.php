@@ -1740,7 +1740,7 @@ final class Configuration implements ConfigurationInterface
                                         'type' => 'expression',
                                         'arguments' => [
                                             '\Pimcore\Model\DataObject\Product',
-                                            'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in role_names',
+                                            'subject.getProductType() == "article"',
                                         ],
                                     ])
                                 ->end()
