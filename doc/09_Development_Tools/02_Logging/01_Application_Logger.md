@@ -103,7 +103,7 @@ Entries are sent in batches of at most 100 entries per email.
 
 Note that every maintenance run flags all existing log entries as processed, regardless of
 whether mail notifications are enabled. When you enable `send_log_summary`, you therefore
-only receive entries logged from that point on — historical entries are never emailed.
+only receive entries logged since the last maintenance run — older entries are not emailed.
 
 ### Log Archival
 
@@ -127,7 +127,9 @@ Log archival, the deletion of old archive tables and file objects, and the mail
 notifications are all executed as
 [maintenance tasks](../../10_Extending_Pimcore/03_Custom_Extension_Guides/07_Maintenance_Tasks.md).
 None of these run unless the Pimcore maintenance command (`pimcore:maintenance`)
-is executed regularly, e.g. via cron job.
+is executed regularly, e.g. via cron job. The command only dispatches the tasks as messages
+to the `pimcore_maintenance` Messenger transport, so a worker consuming that transport
+(`bin/console messenger:consume pimcore_maintenance`) must be running as well.
 
 ### File Object Storage
 
@@ -135,13 +137,15 @@ While log entries themselves are stored in the database, attached file objects
 (see [Special Context Variables](#special-context-variables)) are stored on a
 [Flysystem](https://flysystem.thephpleague.com/docs/) storage named
 `pimcore.application_log.storage`. Files are written to a date-based path within
-the storage (`Y/m/d/fileobject_<uniqueId>`), unless a custom filename is passed
+the storage (`/Y/m/d/fileobject_<uniqueId>`), unless a custom filename is passed
 as second constructor argument to `FileObject`.
 
-If writing to the storage fails, the failure is silently ignored — only a warning
+If writing a file to the storage fails, the failure is ignored — only a warning
 is written to the system log, and the log entry is still created with a file object
-path that does not exist. A misconfigured storage therefore does not surface as an
-error when logging, but as file objects that cannot be opened in the log viewer.
+path that does not exist. Such a failed write therefore does not surface as an
+error when logging, but as a file object that cannot be opened in the log viewer.
+Errors while initializing the storage itself (e.g. a directory that cannot be created or
+a missing client service) are not caught and can be thrown to the code that logs.
 
 By default, the storage points to a local directory:
 
@@ -164,7 +168,8 @@ files that were written by another server, resulting in errors in the log viewer
 
 In such setups, configure `pimcore.application_log.storage` to use a storage location
 shared by all servers — either a shared/network filesystem mounted on every server or a
-remote Flysystem adapter such as S3:
+remote Flysystem adapter such as S3 (requires `league/flysystem-aws-s3-v3` and an
+S3 client service, here `my_aws_s3_client_service`):
 
 ```yaml
 flysystem:
@@ -395,6 +400,12 @@ class TestController
 }
 ```
 
+In the Application Logger grid, the new row appears as *my error message* with a related object.
+
+Click the row to navigate to the object editor via the *Related object* edit icon in the popup.
+
+![App logger popup](../../img/applogger_backend_popup.png)
+
 The `fileObject` context variable accepts either a `FileObject` instance (which writes
 the given data to the [file object storage](#file-object-storage)) or a string path
 pointing to an already existing file on that storage:
@@ -405,11 +416,12 @@ $logger->error('my error message', [
 ]);
 ```
 
-In the Application Logger grid, the new row appears as *my error message* with a related object.
+:::caution
 
-Click the row to navigate to the object editor via the *Related object* edit icon in the popup.
+A referenced file is deleted from the storage when the log entry is archived, also when it
+was passed as a string path and is used by other entries (see [Log Archival](#log-archival)).
 
-![App logger popup](../../img/applogger_backend_popup.png)
+:::
 
 
 ### Logging Exceptions
