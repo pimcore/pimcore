@@ -262,6 +262,19 @@ class TagHasChildrenTest extends ModelTestCase
         $this->assertTrue($tags['parent']->hasChildren());
     }
 
+    public function testTagLoadedByPathHasNoLookupAndSeesLaterChanges(): void
+    {
+        $parent = $this->createTag('pathparent');
+        $byPath = Tag::getByPath('/' . self::PREFIX . 'pathparent');
+
+        $this->assertNull($this->lookupOf($byPath));
+        $this->assertFalse($byPath->hasChildren());
+
+        Db::get()->insert('tags', ['name' => self::PREFIX . 'pathchild', 'parentId' => $parent->getId(), 'idPath' => '/']);
+
+        $this->assertTrue($byPath->hasChildren());
+    }
+
     public function testRecursiveChildrenCostOneQueryPerLevel(): void
     {
         $root = $this->createTag('root');
