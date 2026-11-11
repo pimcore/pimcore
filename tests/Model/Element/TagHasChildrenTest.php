@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\Element;
 use Pimcore\Db;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use ReflectionProperty;
 
 /**
  * @group model.element.tag
@@ -229,7 +230,7 @@ class TagHasChildrenTest extends ModelTestCase
 
     private function lookupOf(Tag $tag): ?object
     {
-        $property = new \ReflectionProperty(Tag::class, 'childrenLookup');
+        $property = new ReflectionProperty(Tag::class, 'childrenLookup');
 
         return $property->getValue($tag);
     }
