@@ -66,8 +66,9 @@ trait EmbeddedMetaDataTrait
                 if ($outputArray) {
                     $embeddedMetaData = $this->flattenArray($outputArray[0]);
 
-                    // strip tags describing the local (temporary) file itself, as they carry no
-                    // information about the asset: location, tool version and file system attributes
+                    // strip tags describing the local file that was read (a temporary copy or the stored
+                    // file itself), as they carry no information about the asset: location, tool version
+                    // and file system attributes
                     foreach ([
                         'Directory',
                         'FileName',
@@ -96,6 +97,10 @@ trait EmbeddedMetaDataTrait
 
                 $iptc = $this->flattenArray($this->getIPTCData($filePath));
                 $exif = $this->flattenArray($this->getEXIFData($filePath));
+
+                // exif_read_data() reports the file name and the file system modification time of the local file
+                unset($exif['FileName'], $exif['FileDateTime']);
+
                 $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
             }
         } catch (Exception $e) {
