@@ -164,8 +164,10 @@ class ServiceUser extends User
             return false;
         }
 
-        return ($data['enabled'] ?? false) === true
-            || ($data['required'] ?? false) === true
+        // the flags are read by PHP truthiness (see \Pimcore\Security\User\User::isGoogleAuthenticatorEnabled()),
+        // so any truthy value (1, '1', 'true', even 'false') enables two-factor authentication just like true does
+        return (bool) ($data['enabled'] ?? false)
+            || (bool) ($data['required'] ?? false)
             || (string) ($data['secret'] ?? '') !== ''
             || (string) ($data['type'] ?? '') !== '';
     }
