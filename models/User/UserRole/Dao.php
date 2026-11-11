@@ -31,7 +31,7 @@ class Dao extends Model\User\AbstractUser\Dao
     {
         parent::getById($id);
 
-        if (in_array($this->model->getType(), ['user', 'role'])) {
+        if (in_array($this->model->getType(), ['user', 'role', 'serviceuser'], true)) {
             $this->loadWorkspaces();
         }
     }
@@ -44,7 +44,7 @@ class Dao extends Model\User\AbstractUser\Dao
     {
         parent::getByName($name);
 
-        if (in_array($this->model->getType(), ['user', 'role'])) {
+        if (in_array($this->model->getType(), ['user', 'role', 'serviceuser'], true)) {
             $this->loadWorkspaces();
         }
     }

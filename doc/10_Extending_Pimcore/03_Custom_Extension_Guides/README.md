@@ -68,6 +68,7 @@ which layers it touches so you know what to expect before diving in.
 | [Context Menus](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/09_Customize_Context_Menus.md) | Add or modify context menu entries                                                         | UI |
 | [Dynamic Types](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/07_Use_Dynamic_Types.md) | Use the dynamic type system for extensible rendering                                       | UI |
 | [Custom Perspective Widgets](./14_Custom_Perspective_Widgets.md) | Add custom widget types to perspectives (schema, repository, hydrator, Widget Editor type) | Backend, UI |
+| [Custom Dashboard Widgets](./15_Custom_Dashboard_Widgets.md) | Add custom widget types to Studio Dashboards (config repository, hydrator, data resolver, frontend widget type) | Backend, UI |
 | [Perspectives Overview](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/11_Perspectives/README.md) | Perspective configuration and context menu permissions                                     | Backend |
 
 ## Permissions and Security

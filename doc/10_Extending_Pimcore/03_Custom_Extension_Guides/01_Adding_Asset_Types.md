@@ -49,6 +49,30 @@ pimcore:
 
 No database migration is needed. The `assets.type` column is `varchar(20)`.
 
+### Overriding the Detected MIME Type (optional)
+
+For certain file types Pimcore's automatic MIME type detection falls back to
+`application/octet-stream` because the underlying detectors do not recognize
+the file (e.g. Adobe InDesign `.indd` files). You can register an explicit
+MIME type for a file extension via the `pimcore.assets.mime_mappings`
+configuration. Keys are file extensions (lower-case, without the leading dot),
+values are the MIME types that should be assigned instead of the detected one:
+
+```yaml
+# config/config.yaml
+
+pimcore:
+    assets:
+        mime_mappings:
+            indd: application/x-indesign
+```
+
+The override is applied both when an asset is created and when its binary
+data changes, before the asset type is resolved through
+`pimcore.assets.type_definitions.map`. This means a matching MIME type
+pattern (e.g. `application/x-indesign`) can be used in the `matching` list
+of an asset type, in addition to (or instead of) a file extension regex.
+
 ## 3) Add a Studio UI Frontend Plugin
 
 To give your asset type a proper editor in Pimcore Studio, create a frontend plugin that:

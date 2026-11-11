@@ -15,6 +15,8 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Objectbrick;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -28,32 +30,77 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
     ) {
     }
 
-    public function getCollectionNames(string $dir): array
+    public function getObjectBrickCollectionNames(): array
     {
-        if (!is_dir($dir)) {
-            return [];
+        return $this->mapCollectionNames((new Objectbrick\Definition\Listing())->loadNames());
+    }
+
+    public function getFieldcollectionCollectionNames(): array
+    {
+        return $this->mapCollectionNames((new Fieldcollection\Definition\Listing())->loadNames());
+    }
+
+    /**
+     * @param string[] $names
+     *
+     * @return array<string, string>
+     */
+    private function mapCollectionNames(array $names): array
+    {
+        $mapLowerToActual = [];
+        foreach ($names as $name) {
+            $mapLowerToActual[strtolower($name)] = $name;
         }
 
-        $mapLowerToCamelCase = [];
-        $files = array_diff(scandir($dir), ['..', '.']);
-        foreach ($files as $file) {
-            $classname = str_replace('.php', '', $file);
-            $mapLowerToCamelCase[strtolower($classname)] = $classname;
+        return $mapLowerToActual;
+    }
+
+    /**
+     * @param array<string, string> $collectionNames lowercased => actual collection key
+     *
+     * @return string[]
+     */
+    public function matchCollectionKeys(string $tableIdentifier, array $collectionNames): array
+    {
+        $matches = [];
+        foreach ($collectionNames as $key) {
+            // Case-insensitive, underscore-delimited prefix match.
+            if (stripos($tableIdentifier, $key . '_') === 0) {
+                $matches[] = $key;
+            }
         }
 
-        return $mapLowerToCamelCase;
+        // Because both collection keys and class ids may contain underscores, several keys can
+        // claim the same identifier (e.g. "Foo" and "Foo_Bar" both match "Foo_Bar_5"). Longest
+        // (most specific) key first: its class-id split is the most likely correct one, and the
+        // caller probes the candidates in order until one resolves to a live class.
+        usort($matches, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
+
+        return $matches;
+    }
+
+    public function classExists(string $classId): bool
+    {
+        return ClassDefinition::getByIdIgnoreCase($classId) !== null;
+    }
+
+    public function dropOrphanedTable(string $tableName): void
+    {
+        $this->logger->warning('Dropping orphaned data object table ' . $tableName);
+        $this->db->executeStatement('DROP TABLE IF EXISTS ' . $this->db->quoteIdentifier($tableName));
     }
 
     public function cleanupTable(
         string $tableName,
         string $classId,
         bool $isLocalized = true
-    ): void {
+    ): bool {
         $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
         if (!$classDefinition) {
-            $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
-
-            return;
+            // Defensive: callers resolve ownership with classExists() before invoking this
+            // mutating cleanup, so a missing class here means the caller passed an unresolved
+            // parse - refuse to touch the table.
+            return false;
         }
 
         $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
@@ -76,5 +123,7 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
                 $this->db->delete($tableName, ['fieldname' => $fieldName]);
             }
         }
+
+        return true;
     }
 }

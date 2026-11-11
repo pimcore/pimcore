@@ -103,7 +103,13 @@ class Dao extends Model\Dao\AbstractDao
             INNER JOIN assets a ON a.id = d.targetid AND d.targettype = 'asset'
             WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
-        ORDER BY " . $orderBy . ' ' . $orderDirection;
+        ORDER BY " . $orderBy . ' ' . $orderDirection . ', type, id';
+        // `type, id` is always appended as a final tiebreaker: `id` alone is not unique across
+        // element types (an asset, a document, and an object can share the same numeric id), so
+        // ties on the requested $orderBy column would otherwise leave row order among them
+        // unspecified - and a caller paginating this query across repeated LIMIT/OFFSET calls
+        // (as the admin dependency grid does) needs a fully deterministic order or rows can be
+        // duplicated or skipped between calls. `(type, id)` is always unique per row here.
 
         $params = [
             'sourceType' => $sourceType,
@@ -167,7 +173,13 @@ class Dao extends Model\Dao\AbstractDao
             INNER JOIN assets a ON a.id = d.sourceid AND d.targettype = 'asset'
             WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
-        ORDER BY " . $orderBy . ' ' . $orderDirection;
+        ORDER BY " . $orderBy . ' ' . $orderDirection . ', type, id';
+        // `type, id` is always appended as a final tiebreaker: `id` alone is not unique across
+        // element types (an asset, a document, and an object can share the same numeric id), so
+        // ties on the requested $orderBy column would otherwise leave row order among them
+        // unspecified - and a caller paginating this query across repeated LIMIT/OFFSET calls
+        // (as the admin dependency grid does) needs a fully deterministic order or rows can be
+        // duplicated or skipped between calls. `(type, id)` is always unique per row here.
 
         $params = [
             'targetType' => $targetType,

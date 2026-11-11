@@ -41,9 +41,10 @@ class OptionsProviderResolver extends ClassResolver
                 );
             }
 
+            // SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface,
+            // so the MULTISELECT check below covers select providers as well
             return ($mode == self::MODE_SELECT && ($provider instanceof SelectOptionsProviderInterface))
-                || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface))
-                || ($mode == self::MODE_MULTISELECT && ($provider instanceof SelectOptionsProviderInterface));
+                || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface));
         }, $showError);
     }
 }

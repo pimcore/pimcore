@@ -23,12 +23,9 @@ use Pimcore\Tool\Authentication;
  */
 final class PermissionService implements PermissionServiceInterface
 {
-    private ?UserInterface $user;
+    private ?UserInterface $user = null;
 
-    public function __construct(
-    ) {
-        $this->user = Authentication::authenticateSession();
-    }
+    private bool $userResolved = false;
 
     public function allowedToSeeJobRuns(): void
     {
@@ -48,19 +45,37 @@ final class PermissionService implements PermissionServiceInterface
 
     public function isAllowedToSeeJobRuns(): bool
     {
-        if (!$this->user) {
+        $user = $this->getUser();
+        if (!$user) {
             return false;
         }
 
-        return $this->user->isAllowed(PermissionConstants::GEE_JOB_RUN);
+        return $user->isAllowed(PermissionConstants::GEE_JOB_RUN);
     }
 
     public function isAllowedToSeeAllJobRuns(): bool
     {
-        if (!$this->user) {
+        $user = $this->getUser();
+        if (!$user) {
             return false;
         }
 
-        return $this->user->isAllowed(PermissionConstants::GEE_SEE_ALL_JOB_RUNS);
+        return $user->isAllowed(PermissionConstants::GEE_SEE_ALL_JOB_RUNS);
+    }
+
+    /**
+     * Resolved on first use, not in the constructor: the service is built as a dependency of
+     * JobRunStatusChangeSubscriber, which Doctrine instantiates on the first preUpdate of any
+     * entity. Reading the session there starts it, which fails once a streamed response has
+     * sent its headers and closes the EntityManager in the middle of flush().
+     */
+    private function getUser(): ?UserInterface
+    {
+        if (!$this->userResolved) {
+            $this->user = Authentication::authenticateSession();
+            $this->userResolved = true;
+        }
+
+        return $this->user;
     }
 }

@@ -26,6 +26,7 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Security\PermissionServiceInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
@@ -38,6 +39,7 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
         private EntityManagerInterface $pimcoreEntityManager,
         private ExecutionContextInterface $executionContext,
         private LoggerInterface $genericExecutionEngineLogger,
+        private LogParser $logParser,
         private PermissionServiceInterface $permissionService,
         private Translator $translator,
     ) {
@@ -116,14 +118,13 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
      */
     public function updateLog(JobRun $jobRun, string $message): void
     {
-
         $this->db->executeStatement(
             'UPDATE ' .
             TableConstants::JOB_RUN_TABLE .
-            ' SET log = IF(ISNULL(log),:message,CONCAT(log, "\n", :message)) WHERE id = :id',
+            ' SET log = CONCAT(COALESCE(log, \'\'), :message) WHERE id = :id',
             [
                 'id' => $jobRun->getId(),
-                'message' => (new DateTimeImmutable())->format('c') . ': ' . trim($message),
+                'message' => $this->logParser->formatEntry(new DateTimeImmutable(), $message),
             ]
         );
 

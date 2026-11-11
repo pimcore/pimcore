@@ -22,6 +22,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 use stdClass;
@@ -415,6 +418,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                 if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            // a calculated value cannot own a dependency: it is computed on read and
+                            // CalculatedValue does not override Data::resolveDependencies(), which
+                            // returns an empty array. Calling the getter would run the calculator
+                            // for nothing.
+                            continue;
+                        }
+
                         $key = $fd->getName();
                         $getter = 'get' . ucfirst($key);
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
@@ -468,6 +479,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
+        $code .= $this->getPreGetValueHookCode($key);
+
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if (!$data) {' . "\n";
 
@@ -483,8 +496,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         }
 
-        $code .= $this->getPreGetValueHookCode($key);
-
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
@@ -495,6 +506,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         if ($data instanceof DataObject\Objectbrick) {
             $validationExceptions = [];
+            $violations = [];
 
             $itemCount = 0;
             $allowedTypes = $this->getAllowedTypes();
@@ -515,7 +527,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     //max limit check should be performed irrespective of omitMandatory check
                     if (!empty($this->maxItems) && $itemCount > $this->maxItems) {
-                        throw new Model\Element\ValidationException('Maximum limit reached for items in brick: ' . $this->getName());
+                        throw (new StructuredValidationException(
+                            'Maximum limit reached for items in brick: ' . $this->getName()
+                        ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->maxItems]);
                     }
 
                     //needed when new brick is added but not saved yet - then validity check fails.
@@ -525,6 +539,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            if ($fd instanceof CalculatedValue) {
+                                // a calculated value is computed on read and never persisted from
+                                // user input, and CalculatedValue::checkValidity() is a no-op for
+                                // that reason. Calling the getter here would run the calculator
+                                // only to discard the result. Fieldcollections::checkValidity()
+                                // has skipped calculated values the same way since #3962.
+                                continue;
+                            }
+
                             $key = $fd->getName();
                             $getter = 'get' . ucfirst($key);
 
@@ -534,21 +557,19 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                 if ($item->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($item->$getter())) {
                                     //try again with parent data when inheritance is activated
                                     try {
-                                        $getInheritedValues = DataObject::doGetInheritedValues();
-                                        DataObject::setGetInheritedValues(true);
-
-                                        $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params);
-
-                                        DataObject::setGetInheritedValues($getInheritedValues);
+                                        DataObject\Service::useInheritedValues(
+                                            true,
+                                            fn () => $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params)
+                                        );
                                     } catch (Exception $e) {
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }
-                                        $e->addContext($this->getName());
+                                        $violations[] = $this->addBrickContext($e, $fd, $collectionDef);
                                         $validationExceptions[] = $e;
                                     }
                                 } else {
-                                    $ve->addContext($this->getName());
+                                    $violations[] = $this->addBrickContext($ve, $fd, $collectionDef);
                                     $validationExceptions[] = $ve;
                                 }
                             }
@@ -559,15 +580,36 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
             if ($validationExceptions) {
                 $errors = [];
+                // the original exceptions, so a custom getAggregatedMessage() keeps its text
                 /** @var Model\Element\ValidationException $e */
                 foreach ($validationExceptions as $e) {
                     $errors[] = $e->getAggregatedMessage();
                 }
                 $message = implode(' / ', $errors);
 
-                throw new Model\Element\ValidationException('invalid brick ' . $this->getName().': '.$message);
+                throw (new StructuredValidationException('invalid brick ' . $this->getName().': '.$message))
+                    ->addViolations(...$violations);
             }
         }
+    }
+
+    private function addBrickContext(
+        Model\Element\ValidationException $exception,
+        Data $fieldDefinition,
+        DataObject\Objectbrick\Definition $brickDefinition
+    ): StructuredValidationException {
+        $exception->addContext($this->getName());
+        $title = $this->getTitle();
+        $brickTitle = $brickDefinition->getTitle();
+
+        return StructuredValidationException::from($exception)
+            ->setField($fieldDefinition->getName(), $fieldDefinition->getTitle())
+            ->addPathSegment(new ValidationPathSegment(
+                field: $this->getName(),
+                title: $title !== '' ? $title : null,
+                type: $brickDefinition->getKey(),
+                typeTitle: $brickTitle !== null && $brickTitle !== '' ? $brickTitle : null
+            ));
     }
 
     /**
