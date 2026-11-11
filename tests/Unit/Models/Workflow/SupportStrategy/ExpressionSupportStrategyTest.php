@@ -19,7 +19,7 @@ use Pimcore\Workflow\SupportStrategy\ExpressionSupportStrategy;
 use stdClass;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class ExpressionSupportStrategyTest extends TestCase
+final class ExpressionSupportStrategyTest extends TestCase
 {
     /**
      * Regression: supports() unconditionally evaluated the configured expression, even when
