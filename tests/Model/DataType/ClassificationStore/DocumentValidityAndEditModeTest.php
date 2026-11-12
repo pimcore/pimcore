@@ -63,6 +63,8 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
     private const VARIANT = 'metric';
 
+    private const KEPT_VALUE = 'kept';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -894,6 +896,187 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
 
         $this->addToAssertionCount(1);
+    }
+
+    /**
+     * The second copy of the gate: a default-variant list longer than the maximum, on a key that
+     * declines the unqualified value, is a hidden slot and so reports no violation.
+     */
+    public function testAnOverLongDefaultVariantListOfAKeyDecliningItIsNotReported(): void
+    {
+        $group = $this->createGroup('validity_declined_maximum');
+        $listKey = $this->createKey('validity_declined_maximum', true, $this->multiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-declined-maximum');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('one', null, null, 0),
+            new MultiValueEntry('two', null, null, 1),
+            new MultiValueEntry('three', null, null, 2),
+            new MultiValueEntry('four', null, null, 3),
+        ]);
+
+        $this->assertNotEmpty(
+            $this->validationFailuresContaining($object, 'at most'),
+            'a key that permits the unqualified value reports the over-long list'
+        );
+
+        $declining = $this->multiValueDefinition();
+        $declining->setUnqualifiedValue(false);
+        $this->tightenTheInnerConstraint($listKey, $declining);
+
+        $this->assertSame([], $this->validationFailuresContaining($object, 'at most'));
+    }
+
+    /**
+     * The per-slot skip of the same gate: a default-variant value above position 0 that the inner type
+     * refuses is validated while the key permits the unqualified value and is hidden once it declines.
+     */
+    public function testARefusedDefaultVariantValueAbovePositionZeroOfAKeyDecliningItIsNotValidated(): void
+    {
+        $group = $this->createGroup('validity_declined_slots');
+        $listKey = $this->createKey('validity_declined_slots', true, $this->constrainedMultiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-declined-slots');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry('ok', null, null, 0),
+            new MultiValueEntry('far too long', null, null, 1),
+            new MultiValueEntry('ok', null, self::VARIANT),
+        ]);
+
+        $this->assertNotEmpty(
+            $this->validationFailuresContaining($object, ''),
+            'a key that permits the unqualified value validates the slot above position 0'
+        );
+
+        $declining = $this->constrainedMultiValueDefinition();
+        $declining->setUnqualifiedValue(false);
+        $this->tightenTheInnerConstraint($listKey, $declining);
+
+        $this->assertSame([], $this->validationFailuresContaining($object, ''));
+    }
+
+    /**
+     * A stored unqualified value on a key that no longer permits one stays valid, saves and stays
+     * readable, and the editor re-sending it through the legacy write path does not refuse the save.
+     */
+    public function testAnUnqualifiedValueOfAKeyThatNoLongerPermitsOneStillValidatesSavesAndResends(): void
+    {
+        $group = $this->createGroup('validity_declined_resend');
+        $listKey = $this->createKey('validity_declined_resend', true, $this->plainMultiValueDefinition());
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-declined-resend');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry(self::KEPT_VALUE),
+        ]);
+        $object->save();
+
+        $declining = $this->plainMultiValueDefinition();
+        $declining->setUnqualifiedValue(false);
+        $this->tightenTheInnerConstraint($listKey, $declining);
+
+        $object = Csstorelocalized::getById($object->getId(), ['force' => true]);
+        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
+
+        $fieldDefinition->checkValidity($object->getCsstore());
+        $object->save();
+
+        $this->assertSame(
+            self::KEPT_VALUE,
+            $object->getCsstore()->getLocalizedKeyValue($group->getId(), $listKey->getId())
+        );
+        $this->assertSame(
+            self::KEPT_VALUE,
+            $object->getCsstore()->getItems()[$group->getId()][$listKey->getId()]['default']
+        );
+
+        $payload = $fieldDefinition->getDataForEditmode($object->getCsstore(), $object);
+        $restored = $fieldDefinition->getDataFromEditmode($payload, $object);
+        $object->setCsstore($restored);
+        $object->save();
+
+        $object = Csstorelocalized::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame(
+            self::KEPT_VALUE,
+            $object->getCsstore()->getLocalizedKeyValue($group->getId(), $listKey->getId())
+        );
+    }
+
+    /**
+     * Switching the unqualified value off on a mandatory key that declares variants hides the stored
+     * value; it must not make the object unsavable.
+     */
+    public function testDecliningTheUnqualifiedValueOfAMandatoryKeyHoldingOneDoesNotRefuseTheSave(): void
+    {
+        $group = $this->createGroup('validity_declined_mandatory');
+        $declaration = $this->plainMultiValueDefinition();
+        $declaration->setMandatory(true);
+        $declaration->setVariants([['name' => self::VARIANT]]);
+        $listKey = $this->createKey('validity_declined_mandatory', true, $declaration);
+
+        // mandatory on the assignment, which is where the validation reads the flag from
+        $this->assignKey($group, $listKey, 0, true);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-declined-mandatory');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+            new MultiValueEntry(self::KEPT_VALUE),
+        ]);
+        $object->save();
+
+        $declining = clone $declaration;
+        $declining->setUnqualifiedValue(false);
+        $this->tightenTheInnerConstraint($listKey, $declining);
+
+        $object = Csstorelocalized::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame([], $this->validationFailuresContaining($object, ''));
+    }
+
+    /**
+     * A key that declines the unqualified value and declares no variant has no writable slot. The
+     * declaration is accepted and the writes refused, but an empty mandatory key is still empty: the
+     * mandatory refusal must not depend on there being a variant to hold the placeholder.
+     */
+    public function testAnEmptyMandatoryKeyDecliningTheUnqualifiedValueWithNoVariantIsStillRefused(): void
+    {
+        $group = $this->createGroup('validity_declined_no_variant');
+        $declaration = $this->plainMultiValueDefinition();
+        $declaration->setMandatory(true);
+        $declaration->setUnqualifiedValue(false);
+        $listKey = $this->createKey('validity_declined_no_variant', true, $declaration);
+
+        // mandatory on the assignment, which is where the validation reads the flag from
+        $this->assignKey($group, $listKey, 0, true);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-declined-no-variant');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        $this->assertNotSame([], $this->validationFailuresContaining($object, 'mandatory'));
     }
 
     /**

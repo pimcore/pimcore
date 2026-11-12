@@ -732,4 +732,100 @@ class ServiceTest extends TestCase
         $this->assertSame(['metric'], $rebuilt->getVariantNames());
         $this->assertTrue($rebuilt->isMultiValue());
     }
+
+    /**
+     * The declaration of the unqualified value is a member of its own beside the variants and the
+     * list: a freshly constructed key permits it and carries no label for it, and declining it
+     * leaves the declared variants, the list and its maximum exactly as they were - the default
+     * slot is not one of the variant names either way.
+     */
+    public function testAMultiValueKeyPermitsTheUnqualifiedValueUnlessItDeclinesIt(): void
+    {
+        $definition = new MultiValue();
+
+        $this->assertTrue($definition->permitsUnqualifiedValue());
+        $this->assertNull($definition->getUnqualifiedValueLabel());
+
+        $definition->setVariants([['name' => 'metric']]);
+        $definition->setMultiValue(3);
+        $definition->setUnqualifiedValue(false)->setUnqualifiedValueLabel('Standard');
+
+        $this->assertFalse($definition->permitsUnqualifiedValue());
+        $this->assertSame('Standard', $definition->getUnqualifiedValueLabel());
+        $this->assertSame(['metric'], $definition->getVariantNames());
+        $this->assertNotContains(
+            'default',
+            $definition->getVariantNames(),
+            'the default slot is declared by its own member, not as a variant row'
+        );
+        $this->assertSame([['name' => 'metric']], $definition->getVariants());
+        $this->assertSame(3, $definition->getMaximum());
+
+        $definition->setUnqualifiedValue(true)->setUnqualifiedValueLabel(null);
+
+        $this->assertTrue($definition->permitsUnqualifiedValue());
+        $this->assertNull($definition->getUnqualifiedValueLabel());
+        $this->assertSame(['metric'], $definition->getVariantNames());
+        $this->assertTrue($definition->isMultiValue());
+    }
+
+    public function testAMultiValueKeyDefinitionRoundTripsTheUnqualifiedValueDeclaration(): void
+    {
+        $inner = new QuantityValue();
+        $inner->setName('mvInner');
+        $inner->setDefaultUnit('kg');
+
+        $declined = new MultiValue();
+        $declined->setName('mvDeclined');
+        $declined->setVariants([['name' => 'metric']]);
+        $declined->setUnqualifiedValue(false);
+        $declined->setDelegateDatatype($inner->getFieldType());
+        $declined->setDelegate($inner);
+
+        $permitted = new MultiValue();
+        $permitted->setName('mvPermitted');
+        $permitted->setUnqualifiedValueLabel('Standard');
+        $permitted->setDelegateDatatype($inner->getFieldType());
+        $permitted->setDelegate($inner);
+
+        $rebuiltDeclined = Service::getFieldDefinitionFromJson(
+            json_decode((string) json_encode($declined), true),
+            $declined->getFieldType()
+        );
+        $rebuiltPermitted = Service::getFieldDefinitionFromJson(
+            json_decode((string) json_encode($permitted), true),
+            $permitted->getFieldType()
+        );
+
+        $this->assertInstanceOf(MultiValue::class, $rebuiltDeclined);
+        $this->assertFalse($rebuiltDeclined->permitsUnqualifiedValue());
+        $this->assertSame(['metric'], $rebuiltDeclined->getVariantNames());
+        $this->assertInstanceOf(QuantityValue::class, $rebuiltDeclined->getDelegate());
+        $this->assertSame('kg', $rebuiltDeclined->getDelegate()->getDefaultUnit());
+
+        $this->assertInstanceOf(MultiValue::class, $rebuiltPermitted);
+        $this->assertTrue($rebuiltPermitted->permitsUnqualifiedValue());
+        $this->assertSame('Standard', $rebuiltPermitted->getUnqualifiedValueLabel());
+    }
+
+    public function testABlobOmittingTheUnqualifiedValueDeclarationRebuildsAsPermitting(): void
+    {
+        $rebuilt = Service::getFieldDefinitionFromJson(
+            ['name' => 'mvNoDelegateKey', 'variants' => [['name' => 'metric']]],
+            'multiValue'
+        );
+
+        $this->assertInstanceOf(MultiValue::class, $rebuilt);
+        $this->assertTrue($rebuilt->permitsUnqualifiedValue());
+        $this->assertNull($rebuilt->getUnqualifiedValueLabel());
+
+        $declined = Service::getFieldDefinitionFromJson(
+            ['name' => 'mvNoDelegateKey', 'unqualifiedValue' => false],
+            'multiValue'
+        );
+
+        $this->assertInstanceOf(MultiValue::class, $declined);
+        $this->assertFalse($declined->permitsUnqualifiedValue());
+        $this->assertNull($declined->getDelegate());
+    }
 }

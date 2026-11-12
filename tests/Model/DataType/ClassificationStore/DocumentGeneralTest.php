@@ -13,12 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
-use Pimcore;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
-use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueKey;
-use Pimcore\Model\DataObject\Data\MultiValue;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue as CalculatedValueDefinition;
@@ -28,6 +25,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFie
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery as ImageGalleryDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueKey;
 use Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable as StructuredTableDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug as UrlSlugDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -41,6 +40,7 @@ use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\ImageGallery;
 use Pimcore\Model\DataObject\Data\Link;
+use Pimcore\Model\DataObject\Data\MultiValue;
 use Pimcore\Model\DataObject\Data\NumericRange;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Data\StructuredTable;
@@ -70,6 +70,8 @@ class DocumentGeneralTest extends GeneralTest
     private const MULTI_VALUE_KEY = 'mvHeight';
 
     private const MULTI_VALUE_GROUP = 'testgroupMultiValue';
+
+    private const UNQUALIFIED_VALUE = 'unqualified value';
 
     private const DOCUMENT_TABLE_PREFIX = 'object_classificationstore_doc_';
 
@@ -1938,6 +1940,7 @@ class DocumentGeneralTest extends GeneralTest
 
         return $fieldDefinition;
     }
+
     /**
      * A document written before the qualifiers existed carries only the language and the value, and
      * reads back as the default variant at position 0 - so the envelope version does not move and
@@ -2261,6 +2264,42 @@ class DocumentGeneralTest extends GeneralTest
     }
 
     /**
+     * The declaration that declines the unqualified value hides it the way a removed variant is
+     * hidden: out of the index and out of getKeyValues(), with nothing deleted, so permitting it
+     * again brings it back.
+     */
+    public function testDecliningTheUnqualifiedValueHidesItAndPermittingItAgainShowsIt(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC], false);
+
+        $object = $this->createObject('declining-unqualified');
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [
+            new MultiValue(self::UNQUALIFIED_VALUE),
+            new MultiValue('1.80 m', null, self::METRIC),
+        ]);
+        $object->save();
+
+        $this->assertStringContainsString(self::UNQUALIFIED_VALUE, $this->searchIndexData($object));
+
+        $this->narrowMultiValueKey([self::METRIC], false, false);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $object->save();
+
+        $this->assertSame([], $object->getCsstore()->getKeyValues($groupId, $keyId));
+        $this->assertStringNotContainsString(self::UNQUALIFIED_VALUE, $this->searchIndexData($object));
+        $this->assertStringContainsString('1.80 m', $this->searchIndexData($object));
+        $this->assertCount(2, $this->storedEntries($object->getId(), $groupId, $keyId));
+
+        $this->narrowMultiValueKey([self::METRIC], false, true);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+
+        $this->assertSame([self::UNQUALIFIED_VALUE], $object->getCsstore()->getKeyValues($groupId, $keyId));
+        $this->assertStringContainsString(self::UNQUALIFIED_VALUE, $this->searchIndexData($object));
+    }
+
+    /**
      * The two readers of position 0 of the default variant, on one fixture. getLocalizedKeyValue()
      * resolves the language - the fallback languages, then the language-independent default - while
      * getKeyValues() and getKeyValue() address the slot they are given and nothing else.
@@ -2408,7 +2447,7 @@ class DocumentGeneralTest extends GeneralTest
     /**
      * @param string[] $variants
      */
-    private function multiValueDefinition(array $variants, bool $list): MultiValueKey
+    private function multiValueDefinition(array $variants, bool $list, bool $unqualified = true): MultiValueKey
     {
         $inner = new Input();
         $inner->setName(self::MULTI_VALUE_KEY);
@@ -2417,6 +2456,7 @@ class DocumentGeneralTest extends GeneralTest
         $definition->setName(self::MULTI_VALUE_KEY);
         $definition->setVariants(array_map(static fn (string $name): array => ['name' => $name], $variants));
         $definition->setMultiValue($list);
+        $definition->setUnqualifiedValue($unqualified);
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
 
@@ -2428,11 +2468,11 @@ class DocumentGeneralTest extends GeneralTest
      *
      * @param string[] $variants
      */
-    private function narrowMultiValueKey(array $variants, bool $list): void
+    private function narrowMultiValueKey(array $variants, bool $list, bool $unqualified = true): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $keyConfig = Classificationstore\KeyConfig::getByName(self::MULTI_VALUE_KEY, $store->getId());
-        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants, $list)));
+        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants, $list, $unqualified)));
         $keyConfig->save();
 
         $this->clearDefinitionCaches();
@@ -2479,5 +2519,4 @@ class DocumentGeneralTest extends GeneralTest
     {
         return $this->keyIdOf('textarea');
     }
-
 }

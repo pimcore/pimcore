@@ -85,13 +85,29 @@ class MultiValue extends Data implements
 {
     /**
      * The declared variants, each an entry carrying a `name` and an optional `label`. Empty by
-     * default, which is a key addressable under the default variant alone.
+     * default, which is a key addressable under no variant beside the default one, if that is
+     * permitted - see {@see self::$unqualifiedValue}.
      *
      * @internal
      *
      * @var array<int, array<string, string>>
      */
     public array $variants = [];
+
+    /**
+     * Whether the default variant, the slot of a value that names no variant, is permitted. On by
+     * default, so a key that does not carry the member permits it.
+     *
+     * @internal
+     */
+    public bool $unqualifiedValue = true;
+
+    /**
+     * The label of the default variant slot, or null for none - the way a declared variant carries one.
+     *
+     * @internal
+     */
+    public ?string $unqualifiedValueLabel = null;
 
     /**
      * @internal
@@ -145,7 +161,9 @@ class MultiValue extends Data implements
 
         foreach ($variants as $variant) {
             $name = is_array($variant) ? ($variant['name'] ?? null) : $variant;
-            if (!is_string($name) || $name === '') {
+            if (!is_string($name) || $name === '' || $name === 'default') {
+                // 'default' is the reserved name of the unqualified slot, declared by
+                // unqualifiedValue and not by a variant row
                 continue;
             }
 
@@ -172,6 +190,36 @@ class MultiValue extends Data implements
     public function getVariantNames(): array
     {
         return array_column($this->variants, 'name');
+    }
+
+    public function permitsUnqualifiedValue(): bool
+    {
+        return $this->unqualifiedValue;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setUnqualifiedValue(bool $unqualifiedValue): static
+    {
+        $this->unqualifiedValue = $unqualifiedValue;
+
+        return $this;
+    }
+
+    public function getUnqualifiedValueLabel(): ?string
+    {
+        return $this->unqualifiedValueLabel;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setUnqualifiedValueLabel(?string $unqualifiedValueLabel): static
+    {
+        $this->unqualifiedValueLabel = $unqualifiedValueLabel === '' ? null : $unqualifiedValueLabel;
+
+        return $this;
     }
 
     public function isMultiValue(): bool
