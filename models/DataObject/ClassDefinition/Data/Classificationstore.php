@@ -1065,6 +1065,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         }
 
                         if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
+                            if (!$this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
+                                // the unqualified value this descriptor is, is one the key declines:
+                                // hidden, like the value of a variant no longer declared, so it must
+                                // not refuse the save
+                                continue;
+                            }
+
                             if (!$keyDef instanceof Relations\AbstractRelations) {
                                 // the key is not a relation any more: the descriptor the document
                                 // holds is not a value this definition can be asked about
@@ -2037,9 +2044,18 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $selectedListStartsAboveZero = isset($slotValues[self::DEFAULT_VARIANT])
             && !array_key_exists(0, $slotValues[self::DEFAULT_VARIANT]);
 
-        $slots = $holdsAList && $selectedListStartsAboveZero
-            ? []
-            : [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
+        if ($holdsAList && $selectedListStartsAboveZero) {
+            $slots = [];
+        } elseif ($this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
+            $slots = [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
+        } elseif ($keyDef instanceof MultiValue && $keyDef->getVariantNames() !== []) {
+            // the key declines the unqualified value, so what it holds there is hidden and neither
+            // validated nor able to answer the mandatory check. An empty placeholder keeps the
+            // mandatory refusal of a key whose declared variants hold nothing
+            $slots = [['value' => null, 'context' => $language, 'supplied' => false]];
+        } else {
+            $slots = [];
+        }
 
         foreach ($slotValues as $variant => $positions) {
             if (!$this->declaresVariant($keyDef, (string) $variant)) {
@@ -2150,13 +2166,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * Whether the current declaration of a key still permits the given variant: the default variant
-     * always, a declared one, and nothing else. It is the one rule the maximum check and the
-     * per-slot validation both read, so the two cannot disagree about which slots are visible.
+     * unless the key declines the unqualified value, a declared one, and nothing else. It is the
+     * one rule the maximum check, the per-slot validation and the search index all read, and it is
+     * the rule of {@see DataObject\Classificationstore::declaresVariant()}, so the two cannot disagree
+     * about which slots are visible.
      */
     private function declaresVariant(Data $keyDef, string $variant): bool
     {
         if ($variant === self::DEFAULT_VARIANT) {
-            return true;
+            return !$keyDef instanceof MultiValue || $keyDef->permitsUnqualifiedValue();
         }
 
         return $keyDef instanceof MultiValue && in_array($variant, $keyDef->getVariantNames(), true);

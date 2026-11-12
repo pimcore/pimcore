@@ -27,8 +27,8 @@ use Pimcore\Model\DataObject\Classificationstore\RenderedRelation;
 use Pimcore\Model\DataObject\Data\MultiValue;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
-use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Model\Exception\InvalidConfigException;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
 /**
@@ -1302,7 +1302,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     private function declaresVariant(?MultiValueKey $declaration, string $variant): bool
     {
         if ($variant === self::DEFAULT_VARIANT) {
-            return true;
+            return $declaration === null || $declaration->permitsUnqualifiedValue();
         }
 
         return $declaration !== null && in_array($variant, $declaration->getVariantNames(), true);

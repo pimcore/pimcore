@@ -244,9 +244,10 @@ $allValues = $store->getItems();
 ### Keys holding several values
 
 A key of type `multiValue` wraps an inner type and declares which qualifiers it permits: the
-*variants* a value may be written under — `metric` and `imperial`, say — and whether the key holds
-an ordered *list* of values per slot, optionally with a maximum. A slot is one (language, variant)
-pair, and it holds the values of the inner type.
+*variants* a value may be written under — `metric` and `imperial`, say — whether the *unqualified*
+value, the one naming no variant, is permitted, and whether the key holds an ordered *list* of values
+per slot, optionally with a maximum. A slot is one (language, variant) pair, and it holds the values
+of the inner type.
 
 ```php
 use Pimcore\Model\DataObject\Data\MultiValue;
@@ -274,11 +275,16 @@ $values = $store->getKeyValues(1, 3);            // [0 => 'red', 1 => 'blue']
 $value  = $store->getKeyValue(1, 3, null, null, 1);  // 'blue'
 ```
 
-A `null` language means the default language and a `null` variant the default variant, which every
-key is addressable under whatever it declares — the declared variants are additional slots beside
-it. `getLocalizedKeyValue()` and `Key::getValue()` are unchanged: they answer position 0 of the
-default variant, so a key that declares no qualifier behaves exactly as it always has, on every
-path.
+A `null` language means the default language and a `null` variant the default variant, which a key is
+addressable under unless it declines the unqualified value — the declared variants are additional
+slots beside it. A `multiValue` key declines it with `unqualifiedValue` off (on by default, with an
+optional `unqualifiedValueLabel` for that slot): `setKeyValues()` then refuses an entry that names no
+variant, or `default` explicitly, and `getKeyValues()`, `getKeyValue()` and the search index leave a
+value already stored there out — it stays stored and returns when the declaration is switched back
+on. `getLocalizedKeyValue()` and `Key::getValue()` are unchanged: they answer position 0 of the
+default variant whatever the key declares, so a key that declares no qualifier behaves exactly as it
+always has, on every path, and a stored unqualified value of a key that declines one stays readable
+and still saves.
 
 `getKeyValues()` and `getKeyValue()` address one slot exactly and apply **no language fallback**:
 they answer what that slot holds, which is what a save stores for it. `getLocalizedKeyValue()` is
@@ -298,16 +304,17 @@ list; nothing is stored in that case. A list longer than the declared maximum is
 write but reported by the field's validation when the object is saved, beside the other per-key
 failures.
 
-Narrowing a declaration hides values rather than deleting them. Removing a variant from a key, or
-clearing its list, makes those values unreadable while an ordinary save keeps them stored — so
-widening the declaration again brings them back.
+Narrowing a declaration hides values rather than deleting them. Removing a variant from a key,
+clearing its list, or declining its unqualified value makes those values unreadable while an
+ordinary save keeps them stored — so widening the declaration again brings them back.
 
 > **Holding several values is a capability of the storage engine.** The `document` engine supports
 > both variants and lists, because a value there carries its qualifiers as part of its own stored
 > entry. The default `eav` engine supports neither: the primary key of its value table has room for
 > the language and for nothing else, so a write or a read it cannot address raises
 > `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException` rather than truncating the
-> list or writing a variant into the slot of another. An unqualified value works on both engines.
+> list or writing a variant into the slot of another. An unqualified value works on both engines, on
+> a key that permits one.
 > A store that is not attached to an object yet cannot resolve its engine, so a write to one is
 > accepted and the same exception is raised when it is saved — the save fails rather than storing
 > part of the value.
