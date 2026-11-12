@@ -19,6 +19,7 @@ use Pimcore\Bundle\CoreBundle\Migrations\Version20261112100000;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\CollectionConfig;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
+use Pimcore\Model\DataObject\Classificationstore\IdentifierBackfill;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\SubGroupConfig;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -190,11 +191,9 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         $storeId = $this->seedStore();
         $keyId = $this->seedKey($storeId, 'Volume', true);
 
-        $command = new class($keyId) extends BackfillClassificationStoreIdentifiersCommand {
+        $backfill = new class($keyId) extends IdentifierBackfill {
             public function __construct(private readonly int $targetId)
             {
-                // the AsCommand attribute is not inherited by an anonymous subclass
-                parent::__construct('pimcore:classificationstore:backfill-identifiers');
             }
 
             protected function write(Connection $db, string $table, array $assignment): bool
@@ -205,6 +204,19 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
                 }
 
                 return parent::write($db, $table, $assignment);
+            }
+        };
+
+        $command = new class($backfill) extends BackfillClassificationStoreIdentifiersCommand {
+            public function __construct(private readonly IdentifierBackfill $backfill)
+            {
+                // the AsCommand attribute is not inherited by an anonymous subclass
+                parent::__construct('pimcore:classificationstore:backfill-identifiers');
+            }
+
+            protected function createBackfill(): IdentifierBackfill
+            {
+                return $this->backfill;
             }
         };
 

@@ -15,7 +15,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\CoreBundle\Command\BackfillClassificationStoreIdentifiersCommand;
+use Pimcore\Model\DataObject\Classificationstore\IdentifierBackfill;
 
 /**
  * Gives every classification store row that has no identifier a generated one, by the routine of
@@ -39,12 +39,12 @@ final class Version20261112100000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        [$written, $unresolved] = (new BackfillClassificationStoreIdentifiersCommand())->backfill($this->connection);
+        [$written, $unresolved] = (new IdentifierBackfill())->run($this->connection);
 
         $this->write(sprintf('%d classification store row(s) backfilled.', $written));
 
         foreach ($unresolved as $row) {
-            $this->write(BackfillClassificationStoreIdentifiersCommand::formatUnresolved($row));
+            $this->write(IdentifierBackfill::formatUnresolved($row));
         }
     }
 
