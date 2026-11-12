@@ -838,6 +838,20 @@ final class Configuration implements ConfigurationInterface
                             .'setting. Defaults to false to preserve existing behavior; the permissive default is deprecated '
                             .'since 2026.3 and will be removed in 2027.1. See Pimcore\\Model\\DataObject\\Data\\Link\\SanitizerPolicy.'
                         ))
+                        ->arrayNode('hydration_lock')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('disabled_for')
+                                    ->info('Data object classes (FQCN, subclasses included) loaded without the FOR UPDATE row '
+                                        .'lock. Their saves are checked against the change token of the object and throw a '
+                                        .'Pimcore\\Model\\Exception\\StaleDataException on outdated data. Use '
+                                        .'Pimcore\\Model\\DataObject\\Concrete for all classes. See '
+                                        .'Pimcore\\Model\\DataObject\\HydrationLock.')
+                                    ->scalarPrototype()->cannotBeEmpty()->end()
+                                    ->defaultValue([])
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('block')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -868,6 +882,7 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue(60)
                         ->end()
                         ->arrayNode('versions')
+                            ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('days')->defaultNull()->end()
                                 ->scalarNode('steps')->defaultNull()->end()
@@ -1035,6 +1050,7 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('versions')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('days')
                             ->defaultNull()
@@ -1110,6 +1126,14 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('unserialize_allowed_classes')
+                            ->info('Additional PHP classes to allow when unserializing the stored data of a '
+                                .'document editable, on top of the classes the core editables write. Register the '
+                                .'classes a custom editable\'s getDataForResource() places into its data; every other '
+                                .'class in the stored data is reduced to __PHP_Incomplete_Class.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
                         ->end()
                         ->append($this->createLinkSanitizerNode(
                             'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
@@ -1716,7 +1740,7 @@ final class Configuration implements ConfigurationInterface
                                         'type' => 'expression',
                                         'arguments' => [
                                             '\Pimcore\Model\DataObject\Product',
-                                            'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles',
+                                            'subject.getProductType() == "article"',
                                         ],
                                     ])
                                 ->end()
@@ -1782,7 +1806,7 @@ final class Configuration implements ConfigurationInterface
                                                 'label' => 'close product',
                                                 'permissions' => [
                                                     [
-                                                        'condition' => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles",
+                                                        'condition' => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in role_names",
                                                         'modify' => false,
                                                     ],
                                                     [

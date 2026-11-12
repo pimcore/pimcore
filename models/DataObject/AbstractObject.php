@@ -28,6 +28,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Exception\StaleDataException;
 use Throwable;
 
 /**
@@ -129,13 +132,23 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected ?array $__rawRelationData = null;
 
+    /**
+     * Change token of the objects row (DATETIME(6), maintained by the database) this object was loaded from or last
+     * saved to. Null when unknown, e.g. for an object restored from a version. Prefixed like the other internal
+     * properties, so it cannot collide with a data object field named changeToken.
+     *
+     * @internal
+     */
+    protected ?string $__changeToken = null;
+
     protected function getBlockedVars(): array
     {
         $blockedVars = ['versions', 'class', 'scheduledTasks', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $blockedVars = array_merge($blockedVars, ['dirtyFields']);
+            // the change token belongs to the live row, a version or recycle bin dump must not carry it
+            $blockedVars = array_merge($blockedVars, ['dirtyFields', '__changeToken']);
         } else {
             // this is if we want to cache the object
             // the calculated value snapshot belongs to the version dump of an object restored
@@ -190,7 +203,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      *
-     * @param array{force?: bool, ...} $params
+     * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
      */
     public static function getById(int $id, array $params = []): ?static
     {
@@ -200,6 +215,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = self::getCacheKey($id);
 
+        $lock = self::getLockParam($params);
+        unset($params['lock']);
         $params = Model\Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
@@ -225,7 +242,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
-                    $object->getDao()->getById($id);
+
+                    if ($lock) {
+                        $object->getDao()->getById($id);
+                    } else {
+                        HydrationLock::withoutLock(fn () => $object->getDao()->getById($id));
+                    }
+
                     if ($object->getModificationDate() !== null) {
                         $object->__setDataVersionTimestamp($object->getModificationDate());
                     }
@@ -262,6 +285,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $object;
     }
 
+    /**
+     * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
+     */
     public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
@@ -269,6 +297,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         $path = Model\Element\Service::correctPath($path);
+
+        $lock = self::getLockParam($params);
+        unset($params['lock']);
 
         try {
             $object = new static();
@@ -278,7 +309,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $path
             );
 
-            return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
+            $preparedParams = Model\Element\Service::prepareGetByIdParams($params);
+            $preparedParams['lock'] = $lock;
+
+            return static::getById($object->getId(), $preparedParams);
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
@@ -483,6 +517,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $isUpdate = false;
         $isDirtyDetectionDisabled = false;
+        $newChangeToken = null;
         $updatedChildren = [];
         $differentOldPath = '';
         $hideUnpublishedBackup = false;
@@ -521,6 +556,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 retryableFunc: function () use (
                     &$isUpdate,
                     &$parameters,
+                    &$newChangeToken,
                     &$updatedChildren,
                     &$differentOldPath,
                     &$hideUnpublishedBackup,
@@ -555,6 +591,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                         $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
 
+                        // the row is locked by now, so the token cannot change until this transaction ends
+                        $this->assertBasedOnCurrentData();
+
                         // relations are saved as a delta against the raw relation data, which might be outdated (read
                         // before a concurrent save, or copied from another object by cloning). Reset it before update()
                         // lazy loads any relation field, so the delta is calculated against the current database state.
@@ -573,22 +612,30 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                     $this->update($isUpdate, $parameters);
 
+                    // renewed explicitly: a store-only change in the same second leaves the objects row unchanged
+                    $newChangeToken = $this->getDao()->renewChangeToken();
+
                     self::setHideUnpublished($hideUnpublishedBackup);
                 },
                 onBeforeRetry: function ($e) use (&$hideUnpublishedBackup) {
                     self::setHideUnpublished($hideUnpublishedBackup);
 
                     if ($e instanceof UniqueConstraintViolationException) {
-                        throw new Element\ValidationException('unique constraint violation', 0, $e);
+                        throw (new StructuredValidationException('unique constraint violation', 0, $e))
+                            ->setTranslation(ValidationMessageKey::UNIQUE_CONSTRAINT);
                     }
                 },
                 onCommit: function () use (
                     &$isUpdate,
                     &$parameters,
+                    &$newChangeToken,
                     &$differentOldPath,
                     &$updatedChildren,
                     &$isDirtyDetectionDisabled
                 ) {
+                    // only after the commit: a retried transaction must still compare against the token it loaded
+                    $this->__changeToken = $newChangeToken;
+
                     $additionalTags = [];
 
                     foreach ($updatedChildren as $objectId) {
@@ -978,6 +1025,74 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(false);
+    }
+
+    /**
+     * @internal
+     */
+    public function __getChangeToken(): ?string
+    {
+        return $this->__changeToken;
+    }
+
+    /**
+     * @internal
+     */
+    public function __setChangeToken(?string $changeToken): void
+    {
+        $this->__changeToken = $changeToken;
+    }
+
+    /**
+     * Compares the change token this object was loaded with against the locked objects row. A mismatch means another
+     * process wrote or deleted the row in the meantime: classes with a disabled hydration lock throw, all others keep
+     * the previous behavior (the concurrent change is overwritten, a deleted row is recreated) and log a warning.
+     *
+     * @throws StaleDataException
+     */
+    private function assertBasedOnCurrentData(): void
+    {
+        if ($this->__changeToken === null) {
+            return;
+        }
+
+        $currentToken = $this->getDao()->getChangeTokenForUpdate();
+        if ($currentToken === $this->__changeToken) {
+            return;
+        }
+
+        $deleted = $currentToken === null;
+        if (HydrationLock::isDisabledFor($this)) {
+            throw new StaleDataException(sprintf(
+                'Object %d was %s by another process since it was loaded, reload it and apply the changes again',
+                $this->getId(),
+                $deleted ? 'deleted' : 'changed'
+            ));
+        }
+
+        Logger::warning(
+            'Saving object {id} based on outdated data: a concurrent {change} is overwritten. Disable the hydration '
+            . 'lock for its class (Pimcore\\Model\\DataObject\\HydrationLock) to get a StaleDataException instead.',
+            ['id' => $this->getId(), 'change' => $deleted ? 'deletion' : 'change']
+        );
+    }
+
+    /**
+     * Extracts and validates the 'lock' option from the given params.
+     *
+     * @param array<string, mixed> $params
+     */
+    private static function getLockParam(array $params): bool
+    {
+        if (!array_key_exists('lock', $params)) {
+            return true;
+        }
+
+        if (!is_bool($params['lock'])) {
+            throw new InvalidArgumentException('The "lock" parameter must be of type boolean');
+        }
+
+        return $params['lock'];
     }
 
     /**

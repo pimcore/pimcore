@@ -122,31 +122,40 @@ class Hardlink extends Document
     public function getProperties(): array
     {
         if ($this->properties === null) {
-            $properties = parent::getProperties();
+            // build and store the complete list; the inheritance setting is applied to the returned list only,
+            // so that the filtered list is never stored
+            $backup = static::getGetInheritedProperties();
+            static::setGetInheritedProperties(true);
 
-            if ($this->getPropertiesFromSource() && $this->getSourceDocument()) {
-                $sourceProperties = $this->getSourceDocument()->getProperties();
-                foreach ($sourceProperties as &$prop) {
-                    $prop = clone $prop; // because of cache
-                    $prop->setInherited(true);
+            try {
+                $properties = parent::getProperties();
+
+                if ($this->getPropertiesFromSource() && $this->getSourceDocument()) {
+                    $sourceProperties = $this->getSourceDocument()->getProperties();
+                    foreach ($sourceProperties as &$prop) {
+                        $prop = clone $prop; // because of cache
+                        $prop->setInherited(true);
+                    }
+                    $properties = array_merge($sourceProperties, $properties);
+                } elseif ($this->getSourceDocument()) {
+                    $sourceProperties = $this->getSourceDocument()->getDao()->getProperties(false, true);
+                    foreach ($sourceProperties as &$prop) {
+                        /**
+                         * @var Model\Property $prop
+                         */
+                        $prop = clone $prop; // because of cache
+                        $prop->setInherited(true);
+                    }
+                    $properties = array_merge($sourceProperties, $properties);
                 }
-                $properties = array_merge($sourceProperties, $properties);
-            } elseif ($this->getSourceDocument()) {
-                $sourceProperties = $this->getSourceDocument()->getDao()->getProperties(false, true);
-                foreach ($sourceProperties as &$prop) {
-                    /**
-                     * @var Model\Property $prop
-                     */
-                    $prop = clone $prop; // because of cache
-                    $prop->setInherited(true);
-                }
-                $properties = array_merge($sourceProperties, $properties);
+
+                $this->setProperties($properties);
+            } finally {
+                static::setGetInheritedProperties($backup);
             }
-
-            $this->setProperties($properties);
         }
 
-        return $this->properties;
+        return $this->filterInheritedProperties($this->properties);
     }
 
     public function getChildren(bool $includingUnpublished = false): Listing

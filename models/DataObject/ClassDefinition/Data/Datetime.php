@@ -310,15 +310,17 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             $db = Db::get();
 
             if ($this->getColumnType() == 'datetime') {
-                $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote((string) $value);
+                // brickPrefix arrives ready to concatenate - already quoted where it needs to be
+                // and already carrying its trailing dot - so it must not be quoted again here.
+                $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
+                $condition = 'DATE(' . $brickPrefix . $db->quoteIdentifier($params['name']) . ') = ' . $db->quote((string) $value);
 
                 return $condition;
             } else {
                 $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
                 $filterField = $params['name'] ?: $this->getName();
 
-                return '`' . $filterField . '` BETWEEN ' .
+                return $db->quoteIdentifier($filterField) . ' BETWEEN ' .
                     $db->quote((string) $value) . ' AND ' . $db->quote((string)$maxTime);
             }
         }

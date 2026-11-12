@@ -53,6 +53,11 @@ class Authentication
 
         if ($token instanceof TokenInterface) {
             $token = static::refreshUser($token, Pimcore::getContainer()->get(UserProvider::class));
+            if (!$token instanceof TokenInterface) {
+                // the user of the session no longer exists or may not hold a session (a service user)
+                return null;
+            }
+
             $user = $token->getUser();
 
             if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
@@ -155,6 +160,11 @@ class Authentication
         try {
             [$timestamp, $user] = self::tokenDecrypt($token);
         } catch (CryptoException|NotFoundException) {
+            return null;
+        }
+
+        // a service user never logs in interactively, so it never authenticates with a login token
+        if ($user->getType() === 'serviceuser') {
             return null;
         }
 
