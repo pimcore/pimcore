@@ -27,6 +27,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\DataObject\Fieldcollection\Dao
 {
+    /**
+     * @return Model\DataObject\Objectbrick\Data\AbstractData[]
+     */
     public function load(DataObject\Concrete $object, array $params = []): array
     {
         /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
@@ -54,6 +57,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
             $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
+                /** @var Model\DataObject\Objectbrick\Data\AbstractData $brick */
                 $brick = $modelFactory->build($brickClass, [$object]);
                 $brick->setFieldname($result['fieldname']);
                 $brick->setObject($object);
