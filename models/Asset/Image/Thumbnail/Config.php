@@ -661,7 +661,8 @@ final class Config extends Model\AbstractModel
             || Processor::usesOriginalAssetOutput($asset, $this);
 
         // Pass-through output returns the source before Processor creates an adapter.
-        // Generated thumbnails may only be estimated for the exact core implementations whose semantics DimensionAdapter models.
+        // Generated thumbnails may only be estimated for the core implementations whose semantics DimensionAdapter models,
+        // or for subclasses that override nothing but dimension-neutral methods.
         if (!$usesSourceAssetOutput && !$this->supportsConfiguredAdapterForDimensionEstimation()) {
             return [];
         }
@@ -791,6 +792,29 @@ final class Config extends Model\AbstractModel
         ];
     }
 
+    /**
+     * Core adapter methods a subclass may override without changing the size of the generated thumbnail.
+     *
+     * @var list<string>
+     */
+    private const DIMENSION_NEUTRAL_ADAPTER_OVERRIDES = [
+        'save',
+        'getContentOptimizedFormat',
+        'supportsFormat',
+        'setPreserveColor',
+        'setPreserveMetaData',
+        'setPreserveAnimation',
+        'setColorspace',
+        'setRGBColorProfile',
+        'setCMYKColorProfile',
+        'setForceProcessICCProfiles',
+    ];
+
+    /**
+     * @var array<class-string, bool>
+     */
+    private static array $dimensionNeutralAdapterSubclasses = [];
+
     private function supportsConfiguredAdapterForDimensionEstimation(): bool
     {
         try {
@@ -817,25 +841,37 @@ final class Config extends Model\AbstractModel
 
     /**
      * A subclass of a core adapter (e.g. one that only tunes encoder options in save()) keeps the core
-     * dimension semantics as long as loading and every modelled transformation stay core implementations.
-     * Overriding any of them fails closed.
+     * dimension semantics as long as every core method it overrides is dimension-neutral. Any other
+     * public or protected override fails closed; methods that only exist in the subclass are never
+     * called by the core and do not count.
      *
      * @param class-string<GD|Imagick> $coreAdapter
      */
     private static function subclassKeepsCoreDimensionSemantics(Adapter $adapter, string $coreAdapter): bool
     {
+        if (isset(self::$dimensionNeutralAdapterSubclasses[$adapter::class])) {
+            return self::$dimensionNeutralAdapterSubclasses[$adapter::class];
+        }
+
+        $core = new ReflectionClass($coreAdapter);
+        $result = true;
         foreach ((new ReflectionClass($adapter))->getMethods() as $method) {
             $name = $method->getName();
-            if ($name !== 'load' && !DimensionAdapter::supportsReliableTransformation($name)) {
+            if ($method->isPrivate()
+                || in_array($method->getDeclaringClass()->getName(), [$coreAdapter, Adapter::class], true)
+                || !$core->hasMethod($name)
+                || $core->getMethod($name)->isPrivate()) {
                 continue;
             }
 
-            if (!in_array($method->getDeclaringClass()->getName(), [$coreAdapter, Adapter::class], true)) {
-                return false;
+            if (!in_array($name, self::DIMENSION_NEUTRAL_ADAPTER_OVERRIDES, true)) {
+                $result = false;
+
+                break;
             }
         }
 
-        return true;
+        return self::$dimensionNeutralAdapterSubclasses[$adapter::class] = $result;
     }
 
     /**
