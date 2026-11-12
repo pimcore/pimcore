@@ -17,9 +17,12 @@ use Exception;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
+use Pimcore\Model\User\Workspace\Asset as AssetWorkspace;
 use Pimcore\Model\User\Workspace\DataObject as DataObjectWorkspace;
+use Pimcore\Model\User\Workspace\Document as DocumentWorkspace;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -177,6 +180,144 @@ class RecyclebinTest extends ModelTestCase
         $this->restrictedUser = $user;
 
         return $user;
+    }
+
+    public function testRestoreKeepsObjectWorkspaces(): void
+    {
+        $parent = TestHelper::createEmptyObject('ws-parent-');
+        $child = TestHelper::createEmptyObject('ws-child-', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('object', $parent, $child);
+    }
+
+    public function testRestoreKeepsAssetWorkspaces(): void
+    {
+        $parent = TestHelper::createAssetFolder('ws-parent-');
+        $child = TestHelper::createImageAsset('ws-child-', null, false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('asset', $parent, $child);
+    }
+
+    public function testRestoreKeepsDocumentWorkspaces(): void
+    {
+        $parent = TestHelper::createDocumentFolder('ws-parent-');
+        $child = TestHelper::createEmptyDocumentPage('ws-child-', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('document', $parent, $child);
+    }
+
+    public function testRestoreSkipsWorkspacesOfDeletedRole(): void
+    {
+        $object = TestHelper::createEmptyObject('ws-deleted-role-');
+        $objectId = $object->getId();
+        $path = $object->getRealFullPath();
+        $role = $this->createRoleWithWorkspaces('object', [$object]);
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $roleId = $role->getId();
+        $role->delete();
+        $this->restrictedRole = null;
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertIsObject(DataObject::getById($objectId, ['force' => true]));
+        $this->assertSame([], $this->workspaceRows('object', $roleId));
+    }
+
+    public function testDeletingItemRemovesWorkspaceSnapshot(): void
+    {
+        $object = TestHelper::createEmptyObject('ws-flush-');
+        $path = $object->getRealFullPath();
+        $this->createRoleWithWorkspaces('object', [$object]);
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $item = $this->recycledItem($path);
+        $snapshot = 'object/' . $item->getId() . '_workspaces.json';
+        $storage = Storage::get('recycle_bin');
+        $this->assertTrue($storage->fileExists($snapshot));
+
+        $item->delete();
+
+        $this->assertFalse($storage->fileExists($snapshot));
+    }
+
+    private function assertWorkspacesSurviveRecycleAndRestore(
+        string $type,
+        ElementInterface $parent,
+        ElementInterface $child
+    ): void {
+        $role = $this->createRoleWithWorkspaces($type, [$parent, $child]);
+        $expected = $this->workspaceRows($type, $role->getId());
+        $this->assertCount(2, $expected);
+        $path = $parent->getRealFullPath();
+
+        Item::create($parent, $this->user);
+        $parent->delete();
+        $this->assertSame([], $this->workspaceRows($type, $role->getId()));
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertEquals($expected, $this->workspaceRows($type, $role->getId()));
+    }
+
+    /**
+     * @param ElementInterface[] $elements
+     */
+    private function createRoleWithWorkspaces(string $type, array $elements): User\Role
+    {
+        $workspaceClass = [
+            'asset' => AssetWorkspace::class,
+            'document' => DocumentWorkspace::class,
+            'object' => DataObjectWorkspace::class,
+        ][$type];
+
+        $workspaces = [];
+        foreach ($elements as $element) {
+            $workspace = new $workspaceClass();
+            $workspace->setCid($element->getId());
+            $workspace->setCpath($element->getRealFullPath());
+            $workspace->setList(true);
+            $workspace->setView(true);
+            $workspaces[] = $workspace;
+        }
+
+        $role = new User\Role();
+        $role->setParentId(0);
+        $role->setName('recyclebin_ws_role_' . uniqid());
+        $role->{'setWorkspaces' . ucfirst($type)}($workspaces);
+        $role->save();
+        $this->restrictedRole = $role;
+
+        return $role;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function workspaceRows(string $type, int $userId): array
+    {
+        return Db::get()->fetchAllAssociative(
+            'SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ? ORDER BY cid',
+            [$userId]
+        );
+    }
+
+    private function recycledItem(string $path): Item
+    {
+        $recycledItems = new Item\Listing();
+        $recycledItems->setCondition('`path` = ?', $path);
+
+        return $recycledItems->current();
     }
 
     private function loginAs(User $user): void
