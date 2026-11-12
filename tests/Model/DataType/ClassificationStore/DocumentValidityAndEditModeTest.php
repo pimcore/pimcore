@@ -1032,7 +1032,8 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $declaration->setVariants([['name' => self::VARIANT]]);
         $listKey = $this->createKey('validity_declined_mandatory', true, $declaration);
 
-        $this->assignKey($group, $listKey, 0);
+        // mandatory on the assignment, which is where the validation reads the flag from
+        $this->assignKey($group, $listKey, 0, true);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);
@@ -1066,7 +1067,8 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $declaration->setUnqualifiedValue(false);
         $listKey = $this->createKey('validity_declined_no_variant', true, $declaration);
 
-        $this->assignKey($group, $listKey, 0);
+        // mandatory on the assignment, which is where the validation reads the flag from
+        $this->assignKey($group, $listKey, 0, true);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);

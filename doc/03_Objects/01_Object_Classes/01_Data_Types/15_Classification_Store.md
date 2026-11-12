@@ -577,8 +577,10 @@ $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDef
 );
 ```
 
-> **Note**: `definitionOverride` is stored but not yet read by core. The object editor still renders the key's own
-> definition, so saving an override changes nothing that is visible until a reader is wired up.
+> **Note**: `definitionOverride` is read by core: `KeyGroupRelation::getEffectiveDefinitionData()` is the definition
+> the key resolves to within the group, and core's own resolution (`Service::getFieldDefinitionFromKeyConfig()`, the
+> key-group relation cache and so the validation of a save) reads it. A client that renders a key from
+> `KeyConfig::getDefinition()` instead shows the key's own definition, whatever the group overrides.
 
 ## Storage engines
 
@@ -745,11 +747,11 @@ whose tables are gone holds all of its values.
   before switching it.
 * A group that is active but holds no value is stored as the document `{}`. The presence of the row is what makes
   the group active; there is no second table.
-* It offers exactly one capability the EAV engine does not: `supports()` answers `true` for
-  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature::StructuredValues` and `false` for
-  `MultiValue`, `Variants` and `Relations`. That capability is what widens the key types a store can hold - see
-  [Available Data Types](#available-data-types). It also answers `true` for `PerKeyLocalization`, but that one
-  both engines serve, as it is a property of the key configuration rather than of the storage. Nothing in the
+* It offers every capability the EAV engine does not: `supports()` answers `true` for
+  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature::MultiValue`, `Variants`, `StructuredValues` and
+  `Relations`, and the EAV engine answers `false` for all four. Those capabilities are what widen the key types a store
+  can hold - see [Available Data Types](#available-data-types). It also answers `true` for `PerKeyLocalization`, but
+  that one both engines serve, as it is a property of the key configuration rather than of the storage. Nothing in the
   object editor or Studio selects the engine yet.
 * Values are stored as the field definition's `normalize()` output. An `encryptedField` key is the one exception:
   it keeps its classification store marshaller, which encrypts the value, so the cleartext is never in the

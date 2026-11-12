@@ -32,10 +32,6 @@ namespace Pimcore\Model\DataObject\Classificationstore\Engine;
  * carries the language - so both engines answer it, as it is a property of the key configuration
  * rather than of the storage.
  *
- * PerKeyLocalization is the one the existing value table always served - its primary key already
- * carries the language - so both engines answer it, as it is a property of the key configuration
- * rather than of the storage.
- *
  * @internal
  */
 enum EngineFeature
