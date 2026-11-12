@@ -29,6 +29,7 @@ trait ClassificationStoreAutoIncrementTrait
         'classificationstore_stores',
         'classificationstore_collections',
         'classificationstore_groups',
+        'classificationstore_subgroups',
         'classificationstore_keys',
     ];
 

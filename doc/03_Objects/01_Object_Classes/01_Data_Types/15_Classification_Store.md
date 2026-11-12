@@ -448,19 +448,14 @@ Rows that already existed before the identifier was introduced have none. The co
 bin/console pimcore:classificationstore:backfill-identifiers
 ```
 
-assigns an identifier derived from the entity's name to every row across the four tables whose identifier is still
-`NULL`, disabled keys included. It writes the `identifier` column and nothing else - no title, modification date or
-definition is rewritten - and it is idempotent, so running it twice changes nothing.
+assigns a generated, opaque identifier to every row across the five tables (stores, collections, groups, sub groups and
+keys) whose identifier is still `NULL`, disabled keys included. The identifier does not derive from the name, so rows
+sharing a name, or with a name that has no usable characters, are backfilled like any other and no row is left without
+one. It writes the `identifier` column and nothing else - no title, modification date or definition is rewritten - and
+it is idempotent, so running it twice changes nothing. The same backfill runs once as a migration when you upgrade.
 
-A pre-flight runs before anything is written. Rows for which no unique identifier can be derived from the name are
-left untouched, listed in the command's report with their type, id, name and the reason, and the command still exits
-with `0`. That happens when two entities of the same kind share a name within one store - whether or not the other
-one already carries an identifier - when the derived identifier is already taken, or when the name contains no
-characters a valid identifier can be built from. Those rows keep a `NULL` identifier until someone renames them and
-runs the command again.
-
-Each write is guarded by `identifier IS NULL`, so a row that was given an identifier between the pre-flight and the
-write keeps it; the command reports that row as unresolved rather than counting it as backfilled.
+Each write is guarded by `identifier IS NULL`, so a row that was given an identifier while the command was running
+keeps it; the command reports that row as unresolved rather than counting it as backfilled.
 
 #### Translating stored references to identifiers
 
