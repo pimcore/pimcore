@@ -53,8 +53,9 @@ the warning below for user-specific variables.
 > `modify: false`: they stop applying to that user, so the user is **less** restricted, not more. The expression is
 > evaluated each time the workflow is looked up (it is not cached) and depends on who is logged in. Outside a login
 > (CLI, workers) there is no user: `user` is the string `anonymous`, so a method call such as `user.getId()` throws an
-> exception. Restrict access with permission `condition`s and transition `guard`s instead, and keep the support
-> strategy to criteria of the element itself.
+> exception. Likewise, `is_fully_authenticated()` is a login-state check, not a Studio-vs-API switch: outside a
+> full login the workflow does not apply and its restrictions (including deny rules) are lifted. Restrict access with permission
+> `condition`s and transition `guard`s instead, and keep the support strategy to criteria of the element itself.
 
 ## Custom Support Strategy
 
