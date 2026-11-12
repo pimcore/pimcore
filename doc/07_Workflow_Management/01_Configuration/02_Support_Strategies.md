@@ -45,6 +45,22 @@ In the following example, the workflow applies to products where the attribute "
            - "subject.getProductType() == 'article'"
 ```
 
+The expression uses the same expression language as permission conditions and global action guards. See
+[Condition and guard expressions](./03_Permissions.md#condition-and-guard-expressions) for the full list of
+available functions and variables. Only use the variables that describe the element (such as `subject`) here; see
+the warning below for user-specific variables.
+
+> **Warning:** Do not use user-specific checks (roles, `is_granted()`, `user`, `token`) in a support strategy to
+> restrict who may *use* a workflow. The strategy decides whether the workflow applies to the element at all. When it
+> evaluates to false for the current user, the workflow is treated as not applicable, so it is hidden for that user
+> and none of its place permissions, transitions or global actions apply. This includes deny rules such as
+> `modify: false`: they stop applying to that user, so the user is **less** restricted, not more. The expression is
+> evaluated each time the workflow is looked up (it is not cached) and depends on who is logged in. Outside a login
+> (CLI, workers) there is no user: `user` is the string `anonymous`, so a method call such as `user.getId()` throws an
+> exception. Likewise, `is_fully_authenticated()` is a login-state check, not a Studio-vs-API switch: outside a
+> full login the workflow does not apply and its restrictions (including deny rules) are lifted. Restrict access with permission
+> `condition`s and transition `guard`s instead, and keep the support strategy to criteria of the element itself.
+
 ## Custom Support Strategy
 
 For custom logic, add a service that implements
