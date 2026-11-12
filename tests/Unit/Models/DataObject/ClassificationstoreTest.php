@@ -435,6 +435,100 @@ class ClassificationstoreTest extends TestCase
     }
 
     /**
+     * A key that declines the unqualified value refuses the slot of a value naming no variant, and
+     * the slot of one naming `default` explicitly, the way it refuses a variant it never declared -
+     * and the refusal is not partial: the write that carries a declared variant beside the refused
+     * entry stores neither.
+     */
+    public function testAKeyDecliningTheUnqualifiedValueRefusesItAndKeepsWhatItHolds(): void
+    {
+        $this->seedKey(self::VARIANT_KEY_ID, $this->decliningKey([self::IMPERIAL]));
+
+        $store = new Classificationstore();
+        $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
+            new MultiValue('stored', null, self::IMPERIAL),
+        ]);
+
+        foreach ([null, 'default'] as $variant) {
+            try {
+                // the declared variant comes FIRST, so a partial write replaces what the key holds
+                $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
+                    new MultiValue('overwritten', null, self::IMPERIAL),
+                    new MultiValue('refused', null, $variant),
+                ]);
+                $this->fail('a key declining the unqualified value has to refuse it');
+            } catch (InvalidConfigException $exception) {
+                $this->assertStringContainsString((string) self::VARIANT_KEY_ID, $exception->getMessage());
+                $this->assertStringContainsString('"default"', $exception->getMessage());
+            }
+        }
+
+        $this->assertSame(
+            ['stored'],
+            $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::IMPERIAL),
+            'the refusal is not partial'
+        );
+        $this->assertSame([], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID));
+    }
+
+    /**
+     * Every key that permits the unqualified value: one declaring it, a definition blob that does
+     * not carry the member at all, and a key of another type - which carries no declaration of any
+     * kind. The write is accepted on all three and read back as it always was.
+     *
+     * @dataProvider keysPermittingTheUnqualifiedValueProvider
+     */
+    public function testAKeyPermittingTheUnqualifiedValueAcceptsItAndReadsItBack(string $case): void
+    {
+        $keyId = self::PLAIN_KEY_ID;
+
+        if ($case === 'declared') {
+            $this->seedKey($keyId, $this->variantKey([self::IMPERIAL]));
+        } elseif ($case === 'absent from the blob') {
+            $this->seedKeyFromBlob($keyId, ['name' => 'mvKey', 'variants' => [['name' => self::IMPERIAL]]]);
+        } else {
+            $this->seedKeyOfAnotherType($keyId);
+        }
+
+        $store = new Classificationstore();
+        $store->setKeyValues(self::GROUP_ID, $keyId, [new MultiValue('stored')]);
+
+        $this->assertSame(['stored'], $store->getKeyValues(self::GROUP_ID, $keyId));
+        $this->assertSame('stored', $store->getLocalizedKeyValue(self::GROUP_ID, $keyId));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function keysPermittingTheUnqualifiedValueProvider(): array
+    {
+        return [
+            'the declaration on' => ['declared'],
+            'the member absent from the blob' => ['absent from the blob'],
+            'a key of another type' => ['another type'],
+        ];
+    }
+
+    /**
+     * And the fourth key with no declaration: one whose configuration is gone, which is what the
+     * load path of an engine reaches for a value whose key was deleted. The read answers the stored
+     * unqualified value rather than hiding it. It is read here and not written: the legacy write
+     * path resolves the key configuration itself and has never been reachable without one.
+     */
+    public function testAKeyWhoseConfigurationIsGoneStillReadsItsUnqualifiedValue(): void
+    {
+        $this->seedKey(self::PLAIN_KEY_ID, $this->variantKey([self::IMPERIAL]));
+
+        $store = new Classificationstore();
+        $store->setKeyValues(self::GROUP_ID, self::PLAIN_KEY_ID, [new MultiValue('stored')]);
+
+        DefinitionCache::clear(null);
+        Service::clearDefinitionsCache();
+
+        $this->assertSame(['stored'], $store->getKeyValues(self::GROUP_ID, self::PLAIN_KEY_ID));
+    }
+
+    /**
      * A position above 0 needs the key to declare a list; without one the write has no slot to
      * occupy, which is the same class of fault as an undeclared variant.
      */
@@ -676,12 +770,47 @@ class ClassificationstoreTest extends TestCase
     {
         $definition ??= $this->plainKey();
 
+        $this->seedKeyConfig($keyId, $definition->getFieldType(), (string) json_encode($definition));
+    }
+
+    /**
+     * @param string[] $variants
+     */
+    private function decliningKey(array $variants): MultiValueKey
+    {
+        return $this->variantKey($variants, false)->setUnqualifiedValue(false);
+    }
+
+    /**
+     * The same, seeded from the definition blob itself: a blob that does not carry a member the
+     * definition class does is what a key written before that member existed looks like.
+     *
+     * @param array<string, mixed> $blob
+     */
+    private function seedKeyFromBlob(int $keyId, array $blob): void
+    {
+        $this->seedKeyConfig($keyId, 'multiValue', (string) json_encode($blob));
+    }
+
+    /**
+     * A key of a type other than `multiValue`, which carries no qualifier declaration at all.
+     */
+    private function seedKeyOfAnotherType(int $keyId): void
+    {
+        $definition = new Input();
+        $definition->setName('mvKey');
+
+        $this->seedKeyConfig($keyId, $definition->getFieldType(), (string) json_encode($definition));
+    }
+
+    private function seedKeyConfig(int $keyId, string $type, string $definition): void
+    {
         $keyConfig = new KeyConfig();
         $keyConfig->setId($keyId);
         $keyConfig->setName('mvKey' . $keyId);
         $keyConfig->setEnabled(true);
-        $keyConfig->setType($definition->getFieldType());
-        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->setType($type);
+        $keyConfig->setDefinition($definition);
 
         DefinitionCache::put($keyConfig);
         // the resolved definition is memoized by key id, so a re-seeded key has to drop it
