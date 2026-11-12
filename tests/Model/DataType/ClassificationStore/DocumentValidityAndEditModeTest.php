@@ -1054,6 +1054,30 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
+     * A key that declines the unqualified value and declares no variant has no writable slot. The
+     * declaration is accepted and the writes refused, but an empty mandatory key is still empty: the
+     * mandatory refusal must not depend on there being a variant to hold the placeholder.
+     */
+    public function testAnEmptyMandatoryKeyDecliningTheUnqualifiedValueWithNoVariantIsStillRefused(): void
+    {
+        $group = $this->createGroup('validity_declined_no_variant');
+        $declaration = $this->plainMultiValueDefinition();
+        $declaration->setMandatory(true);
+        $declaration->setUnqualifiedValue(false);
+        $listKey = $this->createKey('validity_declined_no_variant', true, $declaration);
+
+        $this->assignKey($group, $listKey, 0);
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-declined-no-variant');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        $this->assertNotSame([], $this->validationFailuresContaining($object, 'mandatory'));
+    }
+
+    /**
      * The inner type validates every slot the declaration permits and not only the first value of
      * the default variant: a value it refuses at a higher position, or under a variant, is a per-key
      * failure of the save rather than something that stores clean.

@@ -2067,15 +2067,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $slots = [];
         } elseif ($this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
             $slots = [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
-        } elseif (
-            $keyDef instanceof MultiValue
-            && $keyDef->getVariantNames() !== []
-            && !$declinedValueHeld
-            && $value === null
-        ) {
+        } elseif ($keyDef instanceof MultiValue && !$declinedValueHeld && $value === null) {
             // the key declines the unqualified value, so what it holds there is hidden and neither
             // validated nor able to answer the mandatory check. An empty placeholder keeps the
-            // mandatory refusal of a key that holds nothing at all - and only of such a key: one
+            // mandatory refusal of a key that holds nothing at all - declaring no variant included,
+            // since a key with no writable slot is empty all the same - and only of such a key: one
             // holding a hidden value is not empty, and narrowing must not make it unsavable
             $slots = [['value' => null, 'context' => $language, 'supplied' => false]];
         } else {
