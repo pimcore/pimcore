@@ -146,6 +146,6 @@ application, analyze traffic, and filter malicious activity.
 As a standard PHP application, Pimcore works with all industry-standard products such as
 ModSecurity, Cloudflare WAF, and others. The choice depends on the IT infrastructure.
 For Pimcore Studio, WAF rules may need to allow multipart file uploads,
-WebSocket connections (used by Mercure for real-time updates), and larger request bodies.
+long-lived Server-Sent Events responses (used by Mercure for real-time updates), and larger request bodies.
 
 WAF and IPS serve as the final safety net in the multi-layer security concept.
