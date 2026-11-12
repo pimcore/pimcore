@@ -1064,14 +1064,21 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                         }
 
-                        if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
-                            if (!$this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
-                                // the unqualified value this descriptor is, is one the key declines:
-                                // hidden, like the value of a variant no longer declared, so it must
-                                // not refuse the save
-                                continue;
-                            }
+                        $declinedValueHeld = false;
 
+                        if (
+                            $value instanceof DataObject\Classificationstore\RelationDescriptor
+                            && !$this->declaresVariant($keyDef, self::DEFAULT_VARIANT)
+                        ) {
+                            // the unqualified value this descriptor is, is one the key declines:
+                            // hidden, like the value of a variant no longer declared. It is
+                            // neither validated nor allowed to refuse the save, but the declared
+                            // variants of the key are still checked, as for any other type
+                            $value = null;
+                            $declinedValueHeld = true;
+                        }
+
+                        if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
                             if (!$keyDef instanceof Relations\AbstractRelations) {
                                 // the key is not a relation any more: the descriptor the document
                                 // holds is not a value this definition can be asked about
@@ -1110,7 +1117,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $params,
                                 $keyGroupRelation->getName(),
                                 $activeGroupId,
-                                $refusesEveryValue
+                                $refusesEveryValue,
+                                $declinedValueHeld
                             ) as $violation
                         ) {
                             $subItems[] = $violation;
@@ -1880,6 +1888,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      * @param array<string, mixed> $params
      * @param bool $refusesEveryValue {@see self::refusesEveryValue()}
+     * @param bool $declinedValueHeld {@see self::collectDeclaredSlots()}
      *
      * @return Model\Element\ValidationException[]
      */
@@ -1891,9 +1900,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         array $params,
         string $keyName,
         int $groupId,
-        bool $refusesEveryValue = false
+        bool $refusesEveryValue = false,
+        bool $declinedValueHeld = false
     ): array {
-        $slots = $this->collectDeclaredSlots($keyDef, $value, $language, $slotValues);
+        $slots = $this->collectDeclaredSlots($keyDef, $value, $language, $slotValues, $declinedValueHeld);
         $mandatorySlot = $this->slotAnsweringTheMandatoryCheck($keyDef, $slots);
         $violations = [];
 
@@ -2034,12 +2044,21 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * absence, and `null` is what an absent slot holds on both paths - the resolved value of a key
      * nothing was written to, and a position the tree carries no entry for.
      *
+     * `declinedValueHeld` says the key declines the unqualified value and the object still holds one:
+     * hidden, it must not make the object unsavable, so no empty placeholder is put in its place to
+     * answer the mandatory check.
+     *
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      *
      * @return array<int, array{value: mixed, context: string, supplied: bool}>
      */
-    private function collectDeclaredSlots(Data $keyDef, mixed $value, string $language, array $slotValues): array
-    {
+    private function collectDeclaredSlots(
+        Data $keyDef,
+        mixed $value,
+        string $language,
+        array $slotValues,
+        bool $declinedValueHeld = false
+    ): array {
         $holdsAList = $keyDef instanceof MultiValue && $keyDef->isMultiValue();
         $selectedListStartsAboveZero = isset($slotValues[self::DEFAULT_VARIANT])
             && !array_key_exists(0, $slotValues[self::DEFAULT_VARIANT]);
@@ -2048,10 +2067,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $slots = [];
         } elseif ($this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
             $slots = [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
-        } elseif ($keyDef instanceof MultiValue && $keyDef->getVariantNames() !== []) {
+        } elseif (
+            $keyDef instanceof MultiValue
+            && $keyDef->getVariantNames() !== []
+            && !$declinedValueHeld
+            && $value === null
+        ) {
             // the key declines the unqualified value, so what it holds there is hidden and neither
             // validated nor able to answer the mandatory check. An empty placeholder keeps the
-            // mandatory refusal of a key whose declared variants hold nothing
+            // mandatory refusal of a key that holds nothing at all - and only of such a key: one
+            // holding a hidden value is not empty, and narrowing must not make it unsavable
             $slots = [['value' => null, 'context' => $language, 'supplied' => false]];
         } else {
             $slots = [];

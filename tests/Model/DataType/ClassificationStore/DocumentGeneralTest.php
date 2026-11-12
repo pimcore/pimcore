@@ -71,6 +71,8 @@ class DocumentGeneralTest extends GeneralTest
 
     private const MULTI_VALUE_GROUP = 'testgroupMultiValue';
 
+    private const UNQUALIFIED_VALUE = 'unqualified value';
+
     private const DOCUMENT_TABLE_PREFIX = 'object_classificationstore_doc_';
 
     private const STORE_NAME = 'teststore';
@@ -2272,12 +2274,12 @@ class DocumentGeneralTest extends GeneralTest
 
         $object = $this->createObject('declining-unqualified');
         $object->getCsstore()->setKeyValues($groupId, $keyId, [
-            new MultiValue('unqualified value'),
+            new MultiValue(self::UNQUALIFIED_VALUE),
             new MultiValue('1.80 m', null, self::METRIC),
         ]);
         $object->save();
 
-        $this->assertStringContainsString('unqualified value', $this->searchIndexData($object));
+        $this->assertStringContainsString(self::UNQUALIFIED_VALUE, $this->searchIndexData($object));
 
         $this->narrowMultiValueKey([self::METRIC], false, false);
 
@@ -2285,7 +2287,7 @@ class DocumentGeneralTest extends GeneralTest
         $object->save();
 
         $this->assertSame([], $object->getCsstore()->getKeyValues($groupId, $keyId));
-        $this->assertStringNotContainsString('unqualified value', $this->searchIndexData($object));
+        $this->assertStringNotContainsString(self::UNQUALIFIED_VALUE, $this->searchIndexData($object));
         $this->assertStringContainsString('1.80 m', $this->searchIndexData($object));
         $this->assertCount(2, $this->storedEntries($object->getId(), $groupId, $keyId));
 
@@ -2293,8 +2295,8 @@ class DocumentGeneralTest extends GeneralTest
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
 
-        $this->assertSame(['unqualified value'], $object->getCsstore()->getKeyValues($groupId, $keyId));
-        $this->assertStringContainsString('unqualified value', $this->searchIndexData($object));
+        $this->assertSame([self::UNQUALIFIED_VALUE], $object->getCsstore()->getKeyValues($groupId, $keyId));
+        $this->assertStringContainsString(self::UNQUALIFIED_VALUE, $this->searchIndexData($object));
     }
 
     /**
