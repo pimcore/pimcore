@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Console\AbstractCommand;
@@ -22,13 +21,14 @@ use Pimcore\Db;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * @internal
  */
 #[AsCommand(
     name: 'pimcore:classificationstore:backfill-identifiers',
-    description: 'Assign a name derived identifier to classification store rows which do not have one yet'
+    description: 'Assign a generated identifier to classification store rows which do not have one yet'
 )]
 class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
 {
@@ -38,34 +38,35 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
         'store' => self::TABLE_STORES,
         'collection' => 'classificationstore_collections',
         'group' => 'classificationstore_groups',
+        'subgroup' => 'classificationstore_subgroups',
         'key' => 'classificationstore_keys',
     ];
-
-    private const IDENTIFIER_MAX_LENGTH = 190;
-
-    private const REASON_NO_USABLE_NAME = 'the name yields no valid identifier';
-
-    private const REASON_DUPLICATE_NAME = 'the name is not unique within its store';
-
-    private const REASON_ALREADY_IN_USE = 'the derived identifier is already in use';
 
     private const REASON_ASSIGNED_MEANWHILE = 'an identifier was assigned while the command was running';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $db = Db::get();
+        [$written, $unresolved] = $this->backfill(Db::get());
+
+        $this->report($written, $unresolved);
+
+        return 0;
+    }
+
+    /**
+     * Shared with the migration that runs the backfill on upgrade.
+     *
+     * @return array{0: int, 1: array} the number of rows written and the rows left without an identifier
+     */
+    public function backfill(Connection $db): array
+    {
         $plan = [];
-        $unresolved = [];
-
         foreach (self::TABLES as $type => $table) {
-            [$plan[$type], $failures] = $this->resolve($this->loadRows($db, $table));
-
-            foreach ($failures as $failure) {
-                $unresolved[] = ['type' => $type] + $failure;
-            }
+            $plan[$type] = $this->resolve($this->loadRows($db, $table));
         }
 
         $written = 0;
+        $unresolved = [];
         foreach ($plan as $type => $assignments) {
             foreach ($assignments as $assignment) {
                 if ($this->write($db, self::TABLES[$type], $assignment)) {
@@ -74,7 +75,10 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
                     continue;
                 }
 
-                $unresolved[] = ['type' => $type] + $this->failure($assignment, self::REASON_ASSIGNED_MEANWHILE);
+                // the guard also matches nothing for a row deleted since it was read; that row needs no identifier
+                if ($this->rowExists($db, self::TABLES[$type], $assignment['id'])) {
+                    $unresolved[] = ['type' => $type] + $this->failure($assignment, self::REASON_ASSIGNED_MEANWHILE);
+                }
             }
         }
 
@@ -83,103 +87,56 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
             Cache::clearAll();
         }
 
-        $this->report($written, $unresolved);
-
-        return 0;
+        return [$written, $unresolved];
     }
 
-    /**
-     * Every row of the table, identified or not: a name clash is a clash against the whole store, not only
-     * against the rows this command may write to.
-     */
     private function loadRows(Connection $db, string $table): array
     {
         return $db->fetchAllAssociative(
-            'SELECT `id`, `name`, `identifier`, ' . $this->storeIdExpression($table) . ' AS `storeId`'
-            . ' FROM `' . $table . '` ORDER BY `id`'
+            'SELECT `id`, `name` FROM `' . $table . '` WHERE `identifier` IS NULL ORDER BY `id`'
         );
     }
 
-    private function storeIdExpression(string $table): string
-    {
-        return $table === self::TABLE_STORES ? '0' : '`storeId`';
-    }
-
-    /**
-     * Pre-flight: decides for every row whether a unique identifier can be derived, before anything is written.
-     */
     private function resolve(array $rows): array
     {
-        $taken = [];
-        $namesInScope = [];
-
-        foreach ($rows as $row) {
-            $scope = (int) $row['storeId'];
-
-            if ($row['identifier'] !== null) {
-                $taken[$scope][strtolower((string) $row['identifier'])] = true;
-            }
-
-            $derived = $this->deriveIdentifier($row['name']);
-            if ($derived !== null) {
-                $namesInScope[$scope][$derived] = ($namesInScope[$scope][$derived] ?? 0) + 1;
-            }
-        }
-
         $assignments = [];
-        $failures = [];
 
         foreach ($rows as $row) {
-            if ($row['identifier'] !== null) {
-                continue;
-            }
-
-            $scope = (int) $row['storeId'];
-            $identifier = $this->deriveIdentifier($row['name']);
-
-            if ($identifier === null) {
-                $failures[] = $this->failure($row, self::REASON_NO_USABLE_NAME);
-            } elseif ($namesInScope[$scope][$identifier] > 1) {
-                $failures[] = $this->failure($row, self::REASON_DUPLICATE_NAME);
-            } elseif (isset($taken[$scope][$identifier])) {
-                $failures[] = $this->failure($row, self::REASON_ALREADY_IN_USE);
-            } else {
-                $assignments[] = [
-                    'id' => (int) $row['id'],
-                    'name' => (string) $row['name'],
-                    'identifier' => $identifier,
-                ];
-            }
+            $assignments[] = [
+                'id' => (int) $row['id'],
+                'name' => (string) $row['name'],
+                'identifier' => Ulid::generate(),
+            ];
         }
 
-        return [$assignments, $failures];
+        return $assignments;
     }
 
     /**
-     * `identifier IS NULL` makes the write lose against an identifier assigned since the pre-flight read,
+     * `identifier IS NULL` makes the write lose against an identifier assigned since the rows were read,
      * rather than replace one that is already immutable.
      */
     protected function write(Connection $db, string $table, array $assignment): bool
     {
-        try {
-            $affected = $db->executeStatement(
-                'UPDATE `' . $table . '` SET `identifier` = ? WHERE `id` = ? AND `identifier` IS NULL',
-                [$assignment['identifier'], $assignment['id']]
-            );
-        } catch (UniqueConstraintViolationException) {
-            // another process claimed the derived identifier between the pre-flight and here
-            return false;
-        }
+        $affected = $db->executeStatement(
+            'UPDATE `' . $table . '` SET `identifier` = ? WHERE `id` = ? AND `identifier` IS NULL',
+            [$assignment['identifier'], $assignment['id']]
+        );
 
         return $affected > 0;
     }
 
-    private function deriveIdentifier(?string $name): ?string
+    private function rowExists(Connection $db, string $table, int $id): bool
     {
-        $identifier = strtolower((string) preg_replace('/[^A-Za-z0-9_-]+/', '-', (string) $name));
-        $identifier = substr(ltrim($identifier, '-_'), 0, self::IDENTIFIER_MAX_LENGTH);
+        return $db->fetchOne('SELECT 1 FROM `' . $table . '` WHERE `id` = ?', [$id]) !== false;
+    }
 
-        return $identifier === '' ? null : $identifier;
+    /**
+     * The one line describing a row left without an identifier, shared by the command report and the migration log.
+     */
+    public static function formatUnresolved(array $row): string
+    {
+        return sprintf('%s %d "%s": %s', $row['type'], $row['id'], $row['name'], $row['reason']);
     }
 
     private function failure(array $row, string $reason): array
@@ -199,9 +156,7 @@ class BackfillClassificationStoreIdentifiersCommand extends AbstractCommand
 
         $this->io->section('Rows left without an identifier');
         foreach ($unresolved as $row) {
-            $this->io->writeln(
-                sprintf('%s %d "%s": %s', $row['type'], $row['id'], $row['name'], $row['reason'])
-            );
+            $this->io->writeln(self::formatUnresolved($row));
         }
     }
 }

@@ -15,11 +15,14 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\CoreBundle\Command\BackfillClassificationStoreIdentifiersCommand;
+use Pimcore\Bundle\CoreBundle\Migrations\Version20261112100000;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Classificationstore\CollectionConfig;
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
+use Pimcore\Model\DataObject\Classificationstore\SubGroupConfig;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -37,10 +40,15 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
 
     private const TABLE_KEYS = 'classificationstore_keys';
 
+    private const TABLE_SUBGROUPS = 'classificationstore_subgroups';
+
+    private const PRESET_IDENTIFIER = '01JA0PQ7XK';
+
     private const TABLES = [
         self::TABLE_STORES,
         self::TABLE_COLLECTIONS,
         self::TABLE_GROUPS,
+        self::TABLE_SUBGROUPS,
         self::TABLE_KEYS,
     ];
 
@@ -53,7 +61,7 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         $db = Db::get();
 
         foreach ($this->createdStoreIds as $storeId) {
-            foreach ([self::TABLE_COLLECTIONS, self::TABLE_GROUPS, self::TABLE_KEYS] as $table) {
+            foreach ([self::TABLE_COLLECTIONS, self::TABLE_GROUPS, self::TABLE_SUBGROUPS, self::TABLE_KEYS] as $table) {
                 $db->delete($table, ['storeId' => $storeId]);
             }
             $db->delete(self::TABLE_STORES, ['id' => $storeId]);
@@ -72,6 +80,7 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         $disabledKeyId = $this->seedKey($storeId, 'Disabled Key', false);
         $groupId = $this->seedRow(self::TABLE_GROUPS, $storeId, 'Backfill Group');
         $collectionId = $this->seedRow(self::TABLE_COLLECTIONS, $storeId, 'Backfill Collection');
+        $subGroupId = $this->seedRow(self::TABLE_SUBGROUPS, $storeId, 'Backfill Sub Group');
 
         $this->runCommand();
 
@@ -80,6 +89,7 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         $this->assertDerivedIdentifier(self::TABLE_KEYS, $disabledKeyId);
         $this->assertDerivedIdentifier(self::TABLE_GROUPS, $groupId);
         $this->assertDerivedIdentifier(self::TABLE_COLLECTIONS, $collectionId);
+        $this->assertDerivedIdentifier(self::TABLE_SUBGROUPS, $subGroupId);
 
         $this->assertSame(
             0,
@@ -91,58 +101,88 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         );
     }
 
-    public function testUnresolvedRowsAreReportedAndExitZero(): void
+    public function testEveryNullIdentifierIsBackfilledWithAnOpaqueOneRegardlessOfTheName(): void
     {
         $storeId = $this->seedStore();
         $firstHeightId = $this->seedKey($storeId, 'Height', true);
         $secondHeightId = $this->seedKey($storeId, 'Height', true);
         $namelessId = $this->seedKey($storeId, '...', true);
         $widthId = $this->seedKey($storeId, 'Width', true);
+        $firstGroupId = $this->seedRow(self::TABLE_GROUPS, $storeId, 'Shared');
+        $secondGroupId = $this->seedRow(self::TABLE_GROUPS, $storeId, 'Shared');
+
+        $this->assertSame(7, $this->countNullIdentifiers($storeId), 'Every seeded row starts without one');
 
         $tester = $this->runCommand();
 
         $this->assertSame(0, $tester->getStatusCode());
+        $this->assertSame(0, $this->countNullIdentifiers($storeId));
 
-        foreach ([$firstHeightId, $secondHeightId, $namelessId] as $id) {
-            $this->assertNull($this->fetchIdentifier(self::TABLE_KEYS, $id));
-        }
-
-        $this->assertSame('width', $this->fetchIdentifier(self::TABLE_KEYS, $widthId));
+        $this->assertGeneratedIdentifiersDiffer(
+            self::TABLE_KEYS,
+            [$firstHeightId, $secondHeightId, $namelessId, $widthId],
+            ['height', 'width']
+        );
+        $this->assertGeneratedIdentifiersDiffer(self::TABLE_GROUPS, [$firstGroupId, $secondGroupId], ['shared']);
 
         $display = $tester->getDisplay();
-        $this->assertStringContainsString(
-            sprintf('key %d "Height": the name is not unique within its store', $firstHeightId),
-            $display
-        );
-        $this->assertStringContainsString(
-            sprintf('key %d "Height": the name is not unique within its store', $secondHeightId),
-            $display
-        );
-        $this->assertStringContainsString(
-            sprintf('key %d "...": the name yields no valid identifier', $namelessId),
-            $display
-        );
+        foreach ([
+            'the name is not unique within its store',
+            'the name yields no valid identifier',
+            'the derived identifier is already in use',
+        ] as $retiredReason) {
+            $this->assertStringNotContainsString($retiredReason, $display);
+        }
+        $this->assertSame([], $this->unresolvedLines($display));
     }
 
-    public function testADuplicateNameIsReportedEvenWhenTheOtherRowIsAlreadyIdentified(): void
+    public function testASubGroupIsBackfilledAndReadByItsConfig(): void
     {
         $storeId = $this->seedStore();
-        $identifiedHeightId = $this->seedKey($storeId, 'Height', true);
-        $unidentifiedHeightId = $this->seedKey($storeId, 'Height', true);
-        Db::get()->update(self::TABLE_KEYS, ['identifier' => '01JA0PQ7XK'], ['id' => $identifiedHeightId]);
+        $subGroupId = $this->seedRow(self::TABLE_SUBGROUPS, $storeId, 'Sub Group');
 
-        $tester = $this->runCommand();
+        $this->assertNull(SubGroupConfig::getById($subGroupId)?->getIdentifier());
 
-        $this->assertSame(0, $tester->getStatusCode());
-        $this->assertSame('01JA0PQ7XK', $this->fetchIdentifier(self::TABLE_KEYS, $identifiedHeightId));
-        $this->assertNull(
-            $this->fetchIdentifier(self::TABLE_KEYS, $unidentifiedHeightId),
-            'A name shared with an already identified row must not be backfilled'
-        );
-        $this->assertStringContainsString(
-            sprintf('key %d "Height": the name is not unique within its store', $unidentifiedHeightId),
-            $tester->getDisplay()
-        );
+        $this->runCommand();
+
+        $this->assertNotNull(SubGroupConfig::getById($subGroupId)?->getIdentifier());
+    }
+
+    public function testARowWithAnIdentifierKeepsIt(): void
+    {
+        $storeId = $this->seedStore();
+        $identifiedId = $this->seedKey($storeId, 'Height', true);
+        $unidentifiedId = $this->seedKey($storeId, 'Height', true);
+        Db::get()->update(self::TABLE_KEYS, ['identifier' => self::PRESET_IDENTIFIER], ['id' => $identifiedId]);
+
+        $this->runCommand();
+
+        $this->assertSame(self::PRESET_IDENTIFIER, $this->fetchIdentifier(self::TABLE_KEYS, $identifiedId));
+        $this->assertNotNull($this->fetchIdentifier(self::TABLE_KEYS, $unidentifiedId));
+    }
+
+    public function testTheMigrationBackfillsEveryTableAndIsIdempotent(): void
+    {
+        $storeId = $this->seedStore();
+        $this->seedKey($storeId, 'Height', true);
+        $this->seedRow(self::TABLE_GROUPS, $storeId, 'Migration Group');
+        $this->seedRow(self::TABLE_COLLECTIONS, $storeId, 'Migration Collection');
+        $this->seedRow(self::TABLE_SUBGROUPS, $storeId, 'Migration Sub Group');
+
+        $db = Db::get();
+        $migration = new Version20261112100000($db, new NullLogger());
+        $schema = $db->createSchemaManager()->introspectSchema();
+
+        $migration->up($schema);
+        $this->assertSame(0, $this->countNullIdentifiers($storeId));
+
+        $afterFirstUp = $this->snapshot();
+        $migration->up($schema);
+        $this->assertSame($afterFirstUp, $this->snapshot(), 'A second up() must change nothing');
+
+        $migration->down($schema);
+        $this->assertSame([], $migration->getSql(), 'down() must plan no SQL');
+        $this->assertSame($afterFirstUp, $this->snapshot(), 'down() must keep every identifier');
     }
 
     public function testAnIdentifierAssignedAfterThePreflightIsPreservedAndNotCounted(): void
@@ -197,6 +237,9 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         );
         $this->seedRow(self::TABLE_GROUPS, $storeId, 'Untouched Group');
         $this->seedRow(self::TABLE_COLLECTIONS, $storeId, 'Untouched Collection');
+        $this->seedRow(self::TABLE_SUBGROUPS, $storeId, 'Untouched Sub Group');
+        $identifiedId = $this->seedKey($storeId, 'Identified', true);
+        $db->update(self::TABLE_KEYS, ['identifier' => self::PRESET_IDENTIFIER], ['id' => $identifiedId]);
 
         $before = $this->snapshot();
         $this->runCommand();
@@ -213,7 +256,13 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
             }
         }
 
-        $this->assertSame('weight', $this->fetchIdentifier(self::TABLE_KEYS, $keyId));
+        $this->assertNotNull($this->fetchIdentifier(self::TABLE_KEYS, $keyId));
+        $this->assertSame(self::PRESET_IDENTIFIER, $this->fetchIdentifier(self::TABLE_KEYS, $identifiedId));
+        $this->assertSame(
+            $before[self::TABLE_KEYS][array_search($identifiedId, array_column($before[self::TABLE_KEYS], 'id'))],
+            $after[self::TABLE_KEYS][array_search($identifiedId, array_column($after[self::TABLE_KEYS], 'id'))],
+            'A row that already had an identifier must be byte-identical'
+        );
     }
 
     public function testCachedConfigsAreInvalidated(): void
@@ -240,6 +289,7 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
         $this->seedKey($storeId, 'Length', true);
         $this->seedKey($storeId, 'Depth', true);
         $this->seedKey($storeId, 'Depth', true);
+        $this->seedRow(self::TABLE_SUBGROUPS, $storeId, 'Idempotent Sub Group');
 
         $firstRun = $this->runCommand();
         $afterFirstRun = $this->snapshot();
@@ -249,9 +299,9 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
 
         $this->assertSame($afterFirstRun, $afterSecondRun, 'A second run must not change a single row');
 
-        $unresolved = $this->unresolvedLines($firstRun->getDisplay());
-        $this->assertNotEmpty($unresolved);
-        $this->assertSame($unresolved, $this->unresolvedLines($secondRun->getDisplay()));
+        $this->assertSame([], $this->unresolvedLines($firstRun->getDisplay()));
+        $this->assertSame([], $this->unresolvedLines($secondRun->getDisplay()));
+        $this->assertStringContainsString('0 row(s) backfilled.', $secondRun->getDisplay());
     }
 
     private function runCommand(): CommandTester
@@ -280,12 +330,47 @@ final class BackfillIdentifiersCommandTest extends ModelTestCase
 
         foreach (explode("\n", $display) as $line) {
             $line = trim($line);
-            if (preg_match('/^(store|collection|group|key) \d+ "/', $line) === 1) {
+            if (preg_match('/^(store|collection|group|subgroup|key) \d+ "/', $line) === 1) {
                 $lines[] = $line;
             }
         }
 
         return $lines;
+    }
+
+    private function countNullIdentifiers(int $storeId): int
+    {
+        $db = Db::get();
+        $count = (int) $db->fetchOne(
+            'SELECT COUNT(*) FROM ' . self::TABLE_STORES . ' WHERE id = ? AND identifier IS NULL',
+            [$storeId]
+        );
+
+        foreach ([self::TABLE_COLLECTIONS, self::TABLE_GROUPS, self::TABLE_SUBGROUPS, self::TABLE_KEYS] as $table) {
+            $count += (int) $db->fetchOne(
+                'SELECT COUNT(*) FROM ' . $table . ' WHERE storeId = ? AND identifier IS NULL',
+                [$storeId]
+            );
+        }
+
+        return $count;
+    }
+
+    private function assertGeneratedIdentifiersDiffer(string $table, array $ids, array $names): void
+    {
+        $identifiers = array_map(fn (int $id) => $this->fetchIdentifier($table, $id), $ids);
+
+        $this->assertCount(count($ids), array_unique($identifiers), 'Every row must get its own identifier');
+
+        foreach ($identifiers as $identifier) {
+            $this->assertNotNull($identifier);
+            $this->assertMatchesRegularExpression(self::IDENTIFIER_PATTERN, $identifier);
+            $this->assertLessThanOrEqual(190, strlen($identifier));
+
+            foreach ($names as $name) {
+                $this->assertStringNotContainsStringIgnoringCase($name, $identifier);
+            }
+        }
     }
 
     private function assertDerivedIdentifier(string $table, int $id): void
