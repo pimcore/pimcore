@@ -1008,127 +1008,126 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $subItems = [];
         $storedRelations = [];
 
-        if (!$omitMandatoryCheck) {
-            if ($this->maxItems && count($activeGroups) > $this->maxItems) {
-                throw (new StructuredValidationException(
-                    'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
-                ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->getMaxItems()]);
-            }
+        if ($this->maxItems && count($activeGroups) > $this->maxItems) {
+            throw (new StructuredValidationException(
+                'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
+            ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->getMaxItems()]);
+        }
 
-            $relationCache = $this->getKeyGroupRelationCache();
-            $existingGroupIds = $this->getExistingGroupIds(array_keys($activeGroups, true, true));
-            $relationCache->load($existingGroupIds);
-            $qualifiedItems = $this->collectQualifiedItemsForValidation($data);
+        $relationCache = $this->getKeyGroupRelationCache();
+        $existingGroupIds = $this->getExistingGroupIds(array_keys($activeGroups, true, true));
+        $relationCache->load($existingGroupIds);
+        $qualifiedItems = $this->collectQualifiedItemsForValidation($data);
 
-            foreach ($existingGroupIds as $activeGroupId) {
-                foreach ($relationCache->getRelations($activeGroupId) as $keyId => $keyGroupRelation) {
-                    $keyDef = $relationCache->getMutableFieldDefinition($activeGroupId, $keyId);
+        foreach ($existingGroupIds as $activeGroupId) {
+            foreach ($relationCache->getRelations($activeGroupId) as $keyId => $keyGroupRelation) {
+                $keyDef = $relationCache->getMutableFieldDefinition($activeGroupId, $keyId);
 
-                    if ($keyGroupRelation->isMandatory()) {
-                        $keyDef->setMandatory(true);
+                if ($keyGroupRelation->isMandatory()) {
+                    $keyDef->setMandatory(true);
+                }
+
+                $refusesEveryValue = $this->refusesEveryValue($keyDef, $keyGroupRelation);
+
+                foreach (
+                    $this->collectMaximumViolations(
+                        $keyDef,
+                        $qualifiedItems[$activeGroupId][$keyId] ?? [],
+                        $this->getValidLanguages($keyId)
+                    ) as $violation
+                ) {
+                    $subItems[] = $violation;
+                }
+
+                // only a relation-typed key is selected without being resolved; every other key
+                // is read the way it always was, through getLocalizedKeyValue(). The two reads
+                // differ in that alone, and a key that is not stored as descriptors has to keep
+                // the read the store offers for it: a store overriding that read answers for
+                // every key it holds, and the inherited-values mode it leaves behind when it
+                // throws is what Inheritance\ValidationTest guards.
+                $isRelationKey = $this->getRelationResolver()->isRelation($keyDef);
+
+                foreach ($this->getValidLanguages($keyId) as $validLanguage) {
+                    $object = $data->getObject();
+                    if ($object->getClass()->getAllowInherit()) {
+                        // the inherited value of a relation key is selected without being
+                        // resolved, so that a reload-and-save of an inheritable class reads no
+                        // target of a key nobody looked at
+                        $value = DataObject\Service::useInheritedValues(
+                            true,
+                            fn () => $isRelationKey
+                                ? $data->getStoredKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                                : $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
+                        );
+                    } else {
+                        $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                     }
 
-                    $refusesEveryValue = $this->refusesEveryValue($keyDef, $keyGroupRelation);
+                    $declinedValueHeld = false;
+
+                    if (
+                        $value instanceof DataObject\Classificationstore\RelationDescriptor
+                        && !$this->declaresVariant($keyDef, self::DEFAULT_VARIANT)
+                    ) {
+                        // the unqualified value this descriptor is, is one the key declines:
+                        // hidden, like the value of a variant no longer declared. It is
+                        // neither validated nor allowed to refuse the save, but the declared
+                        // variants of the key are still checked, as for any other type
+                        $value = null;
+                        $declinedValueHeld = true;
+                    }
+
+                    if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
+                        if (!$keyDef instanceof Relations\AbstractRelations) {
+                            // the key is not a relation any more: the descriptor the document
+                            // holds is not a value this definition can be asked about
+                            continue;
+                        }
+
+                        $resolver = $this->getRelationResolver();
+
+                        if ($resolver->isCoreRelation($keyDef)) {
+                            // an unread descriptor names its targets without holding them, and
+                            // the key's own check reads the element of every entry. It is
+                            // checked against the definition in force now - this one, the
+                            // group's - once the walk is done, so that the whole store costs
+                            // one round of lookups and no element load
+                            $storedRelations[] = [$keyDef, $value->getValue(), $validLanguage];
+
+                            continue;
+                        }
+
+                        // a relation type core does not ship may refuse what the four core
+                        // constraints allow, and the bulk check implements those four alone. So
+                        // its own validator is asked, over the elements and the $params it
+                        // expects, at the cost of an element load per target - the same trade
+                        // {@see DataObject\Classificationstore\RelationEditModeResolver} makes
+                        // for such a type. Validation must not depend on whether the key had
+                        // been read.
+                        $value = $resolver->resolve($keyDef, $value->getValue(), $object, $data)->getData();
+                    }
 
                     foreach (
-                        $this->collectMaximumViolations(
+                        $this->collectKeyViolations(
                             $keyDef,
-                            $qualifiedItems[$activeGroupId][$keyId] ?? [],
-                            $this->getValidLanguages($keyId)
+                            $value,
+                            (string) $validLanguage,
+                            $qualifiedItems[$activeGroupId][$keyId][$validLanguage] ?? [],
+                            $params,
+                            $keyGroupRelation->getName(),
+                            $activeGroupId,
+                            $refusesEveryValue,
+                            $declinedValueHeld,
+                            $omitMandatoryCheck
                         ) as $violation
                     ) {
                         $subItems[] = $violation;
                     }
-
-                    // only a relation-typed key is selected without being resolved; every other key
-                    // is read the way it always was, through getLocalizedKeyValue(). The two reads
-                    // differ in that alone, and a key that is not stored as descriptors has to keep
-                    // the read the store offers for it: a store overriding that read answers for
-                    // every key it holds, and the inherited-values mode it leaves behind when it
-                    // throws is what Inheritance\ValidationTest guards.
-                    $isRelationKey = $this->getRelationResolver()->isRelation($keyDef);
-
-                    foreach ($this->getValidLanguages($keyId) as $validLanguage) {
-                        $object = $data->getObject();
-                        if ($object->getClass()->getAllowInherit()) {
-                            // the inherited value of a relation key is selected without being
-                            // resolved, so that a reload-and-save of an inheritable class reads no
-                            // target of a key nobody looked at
-                            $value = DataObject\Service::useInheritedValues(
-                                true,
-                                fn () => $isRelationKey
-                                    ? $data->getStoredKeyValue($activeGroupId, $keyId, $validLanguage, true)
-                                    : $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true)
-                            );
-                        } else {
-                            $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
-                        }
-
-                        $declinedValueHeld = false;
-
-                        if (
-                            $value instanceof DataObject\Classificationstore\RelationDescriptor
-                            && !$this->declaresVariant($keyDef, self::DEFAULT_VARIANT)
-                        ) {
-                            // the unqualified value this descriptor is, is one the key declines:
-                            // hidden, like the value of a variant no longer declared. It is
-                            // neither validated nor allowed to refuse the save, but the declared
-                            // variants of the key are still checked, as for any other type
-                            $value = null;
-                            $declinedValueHeld = true;
-                        }
-
-                        if ($value instanceof DataObject\Classificationstore\RelationDescriptor) {
-                            if (!$keyDef instanceof Relations\AbstractRelations) {
-                                // the key is not a relation any more: the descriptor the document
-                                // holds is not a value this definition can be asked about
-                                continue;
-                            }
-
-                            $resolver = $this->getRelationResolver();
-
-                            if ($resolver->isCoreRelation($keyDef)) {
-                                // an unread descriptor names its targets without holding them, and
-                                // the key's own check reads the element of every entry. It is
-                                // checked against the definition in force now - this one, the
-                                // group's - once the walk is done, so that the whole store costs
-                                // one round of lookups and no element load
-                                $storedRelations[] = [$keyDef, $value->getValue(), $validLanguage];
-
-                                continue;
-                            }
-
-                            // a relation type core does not ship may refuse what the four core
-                            // constraints allow, and the bulk check implements those four alone. So
-                            // its own validator is asked, over the elements and the $params it
-                            // expects, at the cost of an element load per target - the same trade
-                            // {@see DataObject\Classificationstore\RelationEditModeResolver} makes
-                            // for such a type. Validation must not depend on whether the key had
-                            // been read.
-                            $value = $resolver->resolve($keyDef, $value->getValue(), $object, $data)->getData();
-                        }
-
-                        foreach (
-                            $this->collectKeyViolations(
-                                $keyDef,
-                                $value,
-                                (string) $validLanguage,
-                                $qualifiedItems[$activeGroupId][$keyId][$validLanguage] ?? [],
-                                $params,
-                                $keyGroupRelation->getName(),
-                                $activeGroupId,
-                                $refusesEveryValue,
-                                $declinedValueHeld
-                            ) as $violation
-                        ) {
-                            $subItems[] = $violation;
-                        }
-                    }
                 }
             }
-
-            $subItems = array_merge($subItems, $this->checkStoredRelations($storedRelations));
         }
+
+        $subItems = array_merge($subItems, $this->checkStoredRelations($storedRelations, $omitMandatoryCheck));
 
         if ($subItems) {
             $messages = array_map(function (Model\Element\ValidationException $validationException) {
@@ -1210,12 +1209,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * {@see DataObject\Classificationstore\RelationResolver::checkStoredValidity()}.
      *
      * @param list<array{0: Relations\AbstractRelations, 1: mixed, 2: string}> $storedRelations
+     * @param bool $omitMandatoryCheck the caller's flag, on for a draft save
      *
      * @return list<Model\Element\ValidationException>
      *
      * @throws Exception
      */
-    private function checkStoredRelations(array $storedRelations): array
+    private function checkStoredRelations(array $storedRelations, bool $omitMandatoryCheck): array
     {
         if ($storedRelations === []) {
             return [];
@@ -1235,7 +1235,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         foreach ($storedRelations as [$keyDef, $normalizedValue, $language]) {
             try {
-                $resolver->checkStoredValidity($keyDef, $normalizedValue, $summaries);
+                $resolver->checkStoredValidity($keyDef, $normalizedValue, $summaries, $omitMandatoryCheck);
             } catch (Model\Element\ValidationException $exception) {
                 $exceptions[] = new Model\Element\ValidationException(
                     $exception->getMessage() . ' (' . $language . ')',
@@ -1878,17 +1878,21 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * table, so each of those answers about the shape of the value the same way. An absent slot is
      * one the declaration permits and nothing was written to, which is what `null` means here.
      *
-     * Every slot that IS checked is checked in full, so that the constraints core's types gate on
-     * `$omitMandatoryCheck` run on it as well - an `input`'s regex ({@see Input::checkValidity()}),
-     * a `numeric`'s range, integer and unsigned checks ({@see Numeric::checkValidity()}). The one
-     * thing that flag turns off is turned off exactly where the slot does not own it,
-     * {@see self::omitsTheMandatoryCheck()}: the mandatory refusal is raised once per key, against
-     * the slot that answers for it, rather than once per slot holding a value the type calls empty.
+     * On a published save every slot that IS checked is checked in full, so that the constraints
+     * core's types gate on `$omitMandatoryCheck` run on it as well - an `input`'s regex
+     * ({@see Input::checkValidity()}), a `numeric`'s range, integer and unsigned checks
+     * ({@see Numeric::checkValidity()}). The one thing that flag turns off is turned off exactly where
+     * the slot does not own it, {@see self::omitsTheMandatoryCheck()}: the mandatory refusal is raised
+     * once per key, against the slot that answers for it, rather than once per slot holding a value
+     * the type calls empty. On a draft save the flag is on for every slot, so a key validates as the
+     * same type does directly on the object: the constraints that type gates on the flag stay off and
+     * the ones it does not gate, such as a select's option list, still refuse.
      *
      * @param array<string, array<int, mixed>> $slotValues structure: [variant][position] = value
      * @param array<string, mixed> $params
      * @param bool $refusesEveryValue {@see self::refusesEveryValue()}
      * @param bool $declinedValueHeld {@see self::collectDeclaredSlots()}
+     * @param bool $omitMandatoryCheck the caller's flag, on for a draft save
      *
      * @return Model\Element\ValidationException[]
      */
@@ -1901,7 +1905,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         string $keyName,
         int $groupId,
         bool $refusesEveryValue = false,
-        bool $declinedValueHeld = false
+        bool $declinedValueHeld = false,
+        bool $omitMandatoryCheck = false
     ): array {
         $slots = $this->collectDeclaredSlots($keyDef, $value, $language, $slotValues, $declinedValueHeld);
         $mandatorySlot = $this->slotAnsweringTheMandatoryCheck($keyDef, $slots);
@@ -1917,7 +1922,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             try {
                 $keyDef->checkValidity(
                     $slot['value'],
-                    $this->omitsTheMandatoryCheck($keyDef, $slot['value'], $index === $mandatorySlot),
+                    $this->omitsTheMandatoryCheck(
+                        $keyDef,
+                        $slot['value'],
+                        $index === $mandatorySlot,
+                        $omitMandatoryCheck
+                    ),
                     $params
                 );
 
@@ -2007,12 +2017,24 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * value at another position, and it masks the failure the slot really has - a malformed `time`
      * reported as an empty one. So it is omitted exactly there, and only where it could fire at all.
      *
-     * Nothing else is omitted with it. Every constraint a type does not gate on the flag still runs
-     * on such a slot, which is what catches the malformed value: {@see Time::checkValidity()} gates
-     * its min and max on the flag and its format check on nothing.
+     * When the caller omits the mandatory check for the whole object, a draft save, it is omitted
+     * for every slot; the constraints a type gates on the flag go with it, as they do for the same
+     * type placed directly on the object.
+     *
+     * Otherwise nothing else is omitted with it. Every constraint a type does not gate on the flag
+     * still runs on such a slot, which is what catches the malformed value:
+     * {@see Time::checkValidity()} gates its min and max on the flag and its format check on nothing.
      */
-    private function omitsTheMandatoryCheck(Data $keyDef, mixed $value, bool $answersIt): bool
-    {
+    private function omitsTheMandatoryCheck(
+        Data $keyDef,
+        mixed $value,
+        bool $answersIt,
+        bool $omitMandatoryCheck
+    ): bool {
+        if ($omitMandatoryCheck) {
+            return true;
+        }
+
         if ($answersIt) {
             return false;
         }

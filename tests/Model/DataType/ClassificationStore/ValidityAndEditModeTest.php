@@ -14,9 +14,12 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
 use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstorelocalized;
 use Pimcore\Model\DataObject\Data\QuantityValue as QuantityValueData;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
@@ -36,6 +39,8 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
     private const FIELDNAME = 'csstore';
 
     private const OPTIONS = 'options';
+
+    private const LANGUAGE = 'en';
 
     /**
      * The EAV engine maps every group holding a stored value, with a null collection when it has none.
@@ -438,6 +443,220 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
         $fieldDefinition->checkValidity($object->getCsstore());
 
         $this->addToAssertionCount(1);
+    }
+
+    /**
+     * A draft save omits the mandatory check and nothing else on the store's own account: a value
+     * outside the key's options is refused as on a published save, one inside them is saved.
+     */
+    public function testADraftSaveRefusesAValueOutsideTheKeysOptions(): void
+    {
+        $group = $this->createGroup('draft_options');
+        $keyConfig = $this->createKey('draft_options', true, $this->createEnforcingSelect());
+        $this->assignKey($group, $keyConfig);
+
+        foreach ([false, true] as $published) {
+            $object = $this->createStoreObject('draft-options-' . (int) $published, $published, $group);
+            $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'gamma', self::LANGUAGE);
+
+            $this->assertSaveRefusedWith($object, "Invalid option 'gamma' for field [");
+        }
+    }
+
+    public function testADraftSaveOfAValueInsideTheKeysOptionsIsSaved(): void
+    {
+        $group = $this->createGroup('draft_options_valid');
+        $keyConfig = $this->createKey('draft_options_valid', true, $this->createEnforcingSelect());
+        $this->assignKey($group, $keyConfig);
+
+        foreach ([false, true] as $published) {
+            $object = $this->createStoreObject('draft-valid-' . (int) $published, $published, $group);
+            $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'alpha', self::LANGUAGE);
+            $object->save();
+
+            $reloaded = Csstorelocalized::getById($object->getId(), ['force' => true]);
+            $this->assertSame(
+                'alpha',
+                $reloaded->getCsstore()->getLocalizedKeyValue($group->getId(), $keyConfig->getId(), self::LANGUAGE)
+            );
+        }
+    }
+
+    public function testADraftSaveOfAnEmptyMandatoryKeyIsSavedAndAPublishedOneIsRefused(): void
+    {
+        $group = $this->createGroup('draft_mandatory');
+        $keyConfig = $this->createKey('draft_mandatory');
+        $this->assignKey($group, $keyConfig, 0, true);
+
+        $draft = $this->createStoreObject('draft-mandatory-draft', false, $group);
+        $draft->save();
+        $this->assertNotNull(Csstorelocalized::getById($draft->getId(), ['force' => true]));
+
+        $this->assertSaveRefusedWith(
+            $this->createStoreObject('draft-mandatory-published', true, $group),
+            'Empty mandatory field [ '
+        );
+    }
+
+    public function testADraftSaveIsRefusedForAValueTheGroupsOptionSubsetExcludes(): void
+    {
+        $group = $this->createGroup('draft_subset');
+        // 'gamma' is an option of the key itself, so only the group's subset can exclude it
+        $keyConfig = $this->createKey('draft_subset', true, $this->createEnforcingSelect(true));
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['alpha', 'beta']]);
+
+        foreach ([false, true] as $published) {
+            $excluded = $this->createStoreObject('draft-subset-excluded-' . (int) $published, $published, $group);
+            $excluded->getCsstore()->setLocalizedKeyValue(
+                $group->getId(),
+                $keyConfig->getId(),
+                'gamma',
+                self::LANGUAGE
+            );
+            $this->assertSaveRefusedWith($excluded, "Invalid option 'gamma'");
+        }
+
+        $allowed = $this->createStoreObject('draft-subset-allowed', false, $group);
+        $allowed->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'beta', self::LANGUAGE);
+        $allowed->save();
+        $this->assertNotNull(Csstorelocalized::getById($allowed->getId(), ['force' => true]));
+    }
+
+    public function testADraftSaveIsRefusedWhenTheSubsetFiltersEveryOptionAway(): void
+    {
+        $group = $this->createGroup('draft_empty_subset');
+        $keyConfig = $this->createKey('draft_empty_subset', true, $this->createEnforcingSelect());
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['gone']]);
+
+        foreach ([false, true] as $published) {
+            $object = $this->createStoreObject('draft-empty-subset-' . (int) $published, $published, $group);
+            $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'alpha', self::LANGUAGE);
+
+            $this->assertSaveRefusedWith($object, "Invalid option 'alpha'");
+        }
+    }
+
+    /**
+     * A regex is a constraint core gates on the mandatory flag, so a draft keeps it off exactly as for
+     * the same type on the object; the column length is not gated and refuses on both.
+     */
+    public function testADraftSaveSkipsTheRegexOfAKeyButNotItsColumnLength(): void
+    {
+        $input = new Input();
+        $input->setRegex('^[A-Z]{2}$');
+        $input->setColumnLength(5);
+
+        $group = $this->createGroup('draft_input');
+        $keyConfig = $this->createKey('draft_input', true, $input);
+        $this->assignKey($group, $keyConfig);
+
+        $draft = $this->createStoreObject('draft-input-regex-draft', false, $group);
+        $draft->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'abc', self::LANGUAGE);
+        $draft->save();
+        $this->assertNotNull(Csstorelocalized::getById($draft->getId(), ['force' => true]));
+
+        $published = $this->createStoreObject('draft-input-regex-published', true, $group);
+        $published->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 'abc', self::LANGUAGE);
+        $this->assertSaveRefusedWith($published, "doesn't match input validation");
+
+        // a value the regex accepts, so only the length can refuse it
+        $lengthOnly = new Input();
+        $lengthOnly->setRegex('^[A-Z]+$');
+        $lengthOnly->setColumnLength(5);
+        $lengthKey = $this->createKey('draft_input_length', true, $lengthOnly);
+        $this->assignKey($group, $lengthKey);
+
+        foreach ([false, true] as $isPublished) {
+            $object = $this->createStoreObject('draft-input-length-' . (int) $isPublished, $isPublished, $group);
+            $object->getCsstore()->setLocalizedKeyValue(
+                $group->getId(),
+                $lengthKey->getId(),
+                'ABCDEFGH',
+                self::LANGUAGE
+            );
+
+            $this->assertSaveRefusedWith($object, 'is longer than 5 characters');
+        }
+    }
+
+    /**
+     * Numeric gates its range, integer and unsigned checks on the mandatory flag, so a draft keeps them
+     * off for a key exactly as for a plain Numeric field; a published save refuses the same value.
+     */
+    public function testADraftSaveSkipsTheRangeOfANumericKeyAndAPublishedOneIsRefused(): void
+    {
+        $numeric = new Numeric();
+        $numeric->setMaxValue(10);
+
+        $group = $this->createGroup('draft_numeric');
+        $keyConfig = $this->createKey('draft_numeric', true, $numeric);
+        $this->assignKey($group, $keyConfig);
+
+        $draft = $this->createStoreObject('draft-numeric-draft', false, $group);
+        $draft->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 99, self::LANGUAGE);
+        $draft->save();
+        $this->assertNotNull(Csstorelocalized::getById($draft->getId(), ['force' => true]));
+
+        $published = $this->createStoreObject('draft-numeric-published', true, $group);
+        $published->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 99, self::LANGUAGE);
+        $this->assertSaveRefusedWith($published, 'is bigger than 10');
+    }
+
+    public function testTheGroupLimitOfTheFieldIsEnforcedOnADraftSave(): void
+    {
+        $groupA = $this->createGroup('draft_max_items_a');
+        $groupB = $this->createGroup('draft_max_items_b');
+        $fieldDefinition = (new Csstorelocalized())->getClass()->getFieldDefinition(self::FIELDNAME);
+        $original = $fieldDefinition->getMaxItems();
+        $fieldDefinition->setMaxItems(1);
+
+        try {
+            foreach ([false, true] as $published) {
+                $object = $this->createStoreObject('draft-max-items-' . (int) $published, $published, $groupA);
+                $object->getCsstore()->setActiveGroups([$groupA->getId() => true, $groupB->getId() => true]);
+
+                $this->assertSaveRefusedWith($object, 'is bigger than 1');
+            }
+        } finally {
+            $fieldDefinition->setMaxItems($original);
+        }
+    }
+
+    private function createEnforcingSelect(bool $withGamma = false): Select
+    {
+        $options = [['key' => 'Alpha', 'value' => 'alpha'], ['key' => 'Beta', 'value' => 'beta']];
+        if ($withGamma) {
+            $options[] = ['key' => 'Gamma', 'value' => 'gamma'];
+        }
+        $select = new Select();
+        $select->setOptions($options);
+        $select->setEnforceValidation(true);
+
+        return $select;
+    }
+
+    private function createStoreObject(
+        string $key,
+        bool $published,
+        Classificationstore\GroupConfig $group
+    ): Csstorelocalized {
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey($key);
+        $object->setPublished($published);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+
+        return $object;
+    }
+
+    private function assertSaveRefusedWith(Csstorelocalized $object, string $message): void
+    {
+        try {
+            $object->save();
+            $this->fail('the save must be refused');
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString($message, $exception->getMessage());
+        }
     }
 
     /**

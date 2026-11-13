@@ -1526,6 +1526,142 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         }
     }
 
+    /**
+     * The per-key maximum is a constraint of the declaration, not a missing value, so a draft save
+     * is refused for it as a published one is.
+     */
+    public function testAListLongerThanTheDeclaredMaximumIsRefusedOnADraftSave(): void
+    {
+        $group = $this->createGroup('validity_draft_maximum');
+        $listKey = $this->createKey('validity_draft_maximum', true, $this->multiValueDefinition());
+        $this->assignKey($group, $listKey, 0);
+
+        foreach ([false, true] as $published) {
+            $object = new Csstorelocalized();
+            $object->setParentId(1);
+            $object->setKey('validity-draft-maximum-' . (int) $published);
+            $object->setPublished($published);
+            $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+            $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
+                new MultiValueEntry('one', null, null, 0),
+                new MultiValueEntry('two', null, null, 1),
+                new MultiValueEntry('three', null, null, 2),
+                new MultiValueEntry('four', null, null, 3),
+            ]);
+
+            try {
+                $object->save();
+                $this->fail('a list longer than the declared maximum must not validate');
+            } catch (ValidationException $exception) {
+                $this->assertStringContainsString('at most', $exception->getMessage());
+            }
+        }
+    }
+
+    /**
+     * A stored descriptor is checked against the definition in force now on a draft save too: a key
+     * rewritten to allow fewer targets refuses the object holding more, while its mandatory flag
+     * stays off.
+     */
+    public function testAStoredRelationBeyondItsLimitIsRefusedOnADraftSave(): void
+    {
+        $group = $this->createGroup('validity_draft_relation');
+        $keyConfig = $this->createKey('validity_draft_relation', true, new ManyToManyObjectRelation());
+        $this->assignKey($group, $keyConfig, 0, true);
+
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey('validity-draft-relation');
+        $object->setPublished(true);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), [
+            TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'draft-one'),
+            TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'draft-two'),
+        ]);
+        $object->save();
+
+        $limited = new ManyToManyObjectRelation();
+        $limited->setName($keyConfig->getName());
+        $limited->setMaxItems(1);
+        $keyConfig->setDefinition(json_encode($limited));
+        $keyConfig->save();
+        $this->clearDefinitionCaches();
+
+        foreach ([false, true] as $published) {
+            $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+            $reloaded->setPublished($published);
+
+            try {
+                $reloaded->save();
+                $this->fail('a stored relation beyond its limit must be refused, published: ' . (int) $published);
+            } catch (ValidationException $exception) {
+                $this->assertStringContainsString('exceeded', $exception->getMessage());
+            }
+        }
+    }
+
+    /**
+     * A descriptor whose every target is gone is the key holding nothing: the mandatory refusal of
+     * the stored-relation check stays off on a draft and applies on a published save.
+     */
+    public function testAMandatoryStoredRelationOfDeadTargetsIsSavedAsADraftAndRefusedWhenPublished(): void
+    {
+        $group = $this->createGroup('validity_draft_relation_dead');
+        $keyConfig = $this->createKey('validity_draft_relation_dead', true, new ManyToManyObjectRelation());
+        $this->assignKey($group, $keyConfig, 0, true);
+
+        $target = TestHelper::createEmptyObject(self::RELATION_KEY_PREFIX . 'draft-dead');
+
+        $object = new Csstorelocalized();
+        $object->setParentId(1);
+        $object->setKey('validity-draft-relation-dead');
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), [$target]);
+        $object->save();
+
+        $target->delete();
+        $this->clearDefinitionCaches();
+
+        $draft = Csstorelocalized::getById($object->getId(), ['force' => true]);
+        $draft->setPublished(false);
+        $draft->save();
+        $this->assertNotNull(Csstorelocalized::getById($object->getId(), ['force' => true]));
+
+        $published = Csstorelocalized::getById($object->getId(), ['force' => true]);
+        $published->setPublished(true);
+
+        try {
+            $published->save();
+            $this->fail('a mandatory relation of nothing but dead targets must be refused when published');
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('Empty mandatory field', $exception->getMessage());
+        }
+    }
+
+    /**
+     * The mandatory refusal of a stored relation of nothing stays off on a draft.
+     */
+    public function testAMandatoryStoredRelationOfNothingIsSavedAsADraft(): void
+    {
+        $group = $this->createGroup('validity_draft_relation_empty');
+        $keyConfig = $this->createKey('validity_draft_relation_empty', true, new ManyToManyObjectRelation());
+        $this->assignKey($group, $keyConfig, 0, true);
+
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey('validity-draft-relation-empty');
+        $object->setPublished(false);
+        $store = $object->getCsstore();
+        $store->setActiveGroups([$group->getId() => true]);
+        $store->setItems([$group->getId() => [$keyConfig->getId() => ['default' => []]]]);
+        $object->save();
+
+        $reloaded = Csstore::getById($object->getId(), ['force' => true]);
+        $reloaded->save();
+
+        $this->assertNotNull(Csstore::getById($object->getId(), ['force' => true]));
+    }
+
     private function multiValueDefinition(): MultiValue
     {
         $definition = $this->wrapperOf($this->innerType());
