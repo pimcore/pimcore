@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Tool;
 
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\SystemSettingsConfig;
@@ -172,7 +173,7 @@ class SystemSettingsConfigMemoTest extends ModelTestCase
         $this->debugDataHolder->reset();
 
         $this->assertSame(
-            \Pimcore\Config::getSystemConfiguration()['general']['domain'],
+            Config::getSystemConfiguration()['general']['domain'],
             SystemSettingsConfig::get()['general']['domain']
         );
         $this->assertGreaterThan(0, $this->countSettingsStoreQueries());
