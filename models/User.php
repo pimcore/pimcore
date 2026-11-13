@@ -159,7 +159,7 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
-     * @param int[] $userIds
+     * @param array<int|numeric-string> $userIds
      *
      * @return $this
      *
@@ -183,7 +183,7 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
-     * @param int[] $roleIds
+     * @param array<int|numeric-string> $roleIds
      *
      * @return $this
      *

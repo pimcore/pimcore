@@ -72,6 +72,7 @@ class ServiceUserResponsiblesTest extends ModelTestCase
         $this->assertSame([5, 7], $serviceUser->getResponsibleUsers());
 
         $this->expectException(InvalidArgumentException::class);
+        // @phpstan-ignore argument.type (deliberately invalid input)
         $serviceUser->setResponsibleRoles(['abc']);
     }
 

@@ -125,7 +125,11 @@ class Dao extends Model\User\AbstractUser\Dao
         $serviceUserId = $this->model->getId();
         $this->db->delete('users_responsibles', ['serviceUserId' => $serviceUserId]);
 
-        foreach (['user' => $this->model->getResponsibleUsers(), 'role' => $this->model->getResponsibleRoles()] as $type => $ids) {
+        $principals = [
+            'user' => $this->model->getResponsibleUsers(),
+            'role' => $this->model->getResponsibleRoles(),
+        ];
+        foreach ($principals as $type => $ids) {
             foreach ($ids as $id) {
                 $this->db->insert('users_responsibles', [
                     'serviceUserId' => $serviceUserId,
