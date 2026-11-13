@@ -13,8 +13,10 @@
 namespace Pimcore\Model\Element\Recyclebin\Item;
 
 use Exception;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Element;
 
 /**
  * @internal
@@ -71,5 +73,47 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(): void
     {
         $this->db->delete('recyclebin', ['id' => $this->model->getId()]);
+    }
+
+    /**
+     * Workspace rows of the element and all its children.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getWorkspaces(): array
+    {
+        $path = $this->model->getPath();
+
+        return $this->db->fetchAllAssociative(
+            'SELECT * FROM users_workspaces_' . $this->model->getType() . ' WHERE cpath = ? OR cpath LIKE ?',
+            [$path, Helper::escapeLike($path) . '/%']
+        );
+    }
+
+    /**
+     * @param array<mixed> $rows rows from getWorkspaces()
+     */
+    public function restoreWorkspaces(array $rows): void
+    {
+        $type = $this->model->getType();
+        $table = 'users_workspaces_' . $type;
+        $columns = array_flip($this->getValidTableColumns($table));
+
+        foreach ($rows as $row) {
+            if (!is_array($row) || !isset($row['cid'], $row['userId'])) {
+                continue;
+            }
+
+            $element = Element\Service::getElementById($type, (int) $row['cid'], ['force' => true]);
+            $userExists = $this->db->fetchOne('SELECT id FROM users WHERE id = ?', [(int) $row['userId']]);
+            if (!$element || !$userExists) {
+                continue;
+            }
+
+            $row = array_intersect_key($row, $columns);
+            $row['cpath'] = $element->getRealFullPath();
+
+            $this->db->insert($table, Helper::quoteDataIdentifiers($this->db, $row));
+        }
     }
 }
