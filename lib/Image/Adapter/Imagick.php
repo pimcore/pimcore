@@ -351,6 +351,12 @@ class Imagick extends Adapter
             $i->profileImage('*', '');
         }
 
+        if ($this->reinitializing && $format == 'png32') {
+            // the temporary file of reinitializeImage() is read back right away and never kept, so the default
+            // zlib level only costs time: on large images it takes several times longer than the transformations
+            $i->setOption('png:compression-level', '1');
+        }
+
         if ($quality && !$this->isPreserveColor()) {
             $i->setCompressionQuality($quality);
             $i->setImageCompressionQuality($quality);

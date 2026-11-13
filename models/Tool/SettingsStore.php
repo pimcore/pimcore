@@ -16,6 +16,7 @@ namespace Pimcore\Model\Tool;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore\Dao;
+use Pimcore\SystemSettingsConfig;
 
 /**
  * @method Dao getDao()
@@ -103,7 +104,10 @@ final class SettingsStore extends Model\AbstractModel
         $instance = self::getInstance();
         self::clearScopeSnapshots();
 
-        return $instance->getDao()->set($id, $data, $type, $scope);
+        $result = $instance->getDao()->set($id, $data, $type, $scope);
+        SystemSettingsConfig::onSettingsStoreChange($scope);
+
+        return $result;
     }
 
     public static function delete(string $id, ?string $scope = null): int|string
@@ -111,7 +115,10 @@ final class SettingsStore extends Model\AbstractModel
         $instance = self::getInstance();
         self::clearScopeSnapshots();
 
-        return $instance->getDao()->delete($id, $scope);
+        $result = $instance->getDao()->delete($id, $scope);
+        SystemSettingsConfig::onSettingsStoreChange($scope);
+
+        return $result;
     }
 
     /**

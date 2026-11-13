@@ -208,15 +208,6 @@ parameters:
 			count: 1
 			path: lib/Event/Traits/ResponseAwareTrait.php
 
-		# PHPStan 2.3.x reads FILTER_FLAG_GLOBAL_RANGE as FILTER_THROW_ON_FAILURE when analysing on PHP 8.4
-		# (PHP 8.5 moved the constant) and drops `false` from the filter_var() return type, see
-		# https://github.com/phpstan/phpstan/issues/15481. Remove once this is fixed upstream.
-		-
-			message: '#^Strict comparison using !== between non\-falsy\-string and false will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: lib/Http/SsrfProtection.php
-
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
@@ -1070,21 +1061,9 @@ parameters:
 		# longer invalidated, so PHPStan assumes they keep their initial value. Remove them once
 		# this is fixed upstream.
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: models/Asset.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 5
-			path: models/Asset.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
+			count: 4
 			path: models/Asset.php
 
 		-
