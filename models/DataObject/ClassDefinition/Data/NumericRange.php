@@ -407,7 +407,11 @@ class NumericRange extends Data implements
             $minimum = $data->getMinimum();
             $maximum = $data->getMaximum();
 
-            if ($minimum >= PHP_INT_MAX || $maximum >= PHP_INT_MAX) {
+            // A boundary may be absent, and PHP compares null against a number as a boolean, so
+            // every comparison below has to be guarded: "7 > null" is true and would reject a
+            // range that only carries a minimum.
+            if ((null !== $minimum && $minimum >= PHP_INT_MAX)
+                || (null !== $maximum && $maximum >= PHP_INT_MAX)) {
                 throw new ValidationException('Value exceeds PHP_INT_MAX');
             }
 
@@ -420,7 +424,7 @@ class NumericRange extends Data implements
 
             $minimumThreshold = $this->getMinValue();
 
-            if (null !== $minimumThreshold && $minimum < $minimumThreshold) {
+            if (null !== $minimumThreshold && null !== $minimum && $minimum < $minimumThreshold) {
                 throw (new StructuredValidationException(
                     sprintf('Minimum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
                 ))
@@ -433,7 +437,7 @@ class NumericRange extends Data implements
                     );
             }
 
-            if (null !== $minimumThreshold && $maximum < $minimumThreshold) {
+            if (null !== $minimumThreshold && null !== $maximum && $maximum < $minimumThreshold) {
                 throw (new StructuredValidationException(
                     sprintf('Maximum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
                 ))
@@ -448,7 +452,7 @@ class NumericRange extends Data implements
 
             $maximumThreshold = $this->getMaxValue();
 
-            if (null !== $maximumThreshold && $minimum > $maximumThreshold) {
+            if (null !== $maximumThreshold && null !== $minimum && $minimum > $maximumThreshold) {
                 throw (new StructuredValidationException(
                     sprintf('Minimum value in field [ %s ] is bigger than %d', $fieldName, $maximumThreshold)
                 ))
@@ -461,7 +465,7 @@ class NumericRange extends Data implements
                     );
             }
 
-            if (null !== $maximumThreshold && $maximum > $maximumThreshold) {
+            if (null !== $maximumThreshold && null !== $maximum && $maximum > $maximumThreshold) {
                 throw (new StructuredValidationException(
                     sprintf('Maximum value in field [ %s ] is bigger than %s', $fieldName, $maximumThreshold)
                 ))
@@ -474,20 +478,29 @@ class NumericRange extends Data implements
                     );
             }
 
-            if ($minimum > $maximum) {
+            if (null !== $minimum && null !== $maximum && $minimum > $maximum) {
                 throw (new StructuredValidationException(
                     sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
                 ))
                     ->setTranslation(ValidationMessageKey::RANGE_START_AFTER_END);
             }
 
-            if ($minimum < 0 && $this->getUnsigned()) {
+            if (null !== $minimum && $minimum < 0 && $this->getUnsigned()) {
                 throw (new StructuredValidationException(
                     sprintf('Value in field [ %s ] is not unsigned (bigger than 0)', $fieldName)
                 ))
                     ->setTranslation(ValidationMessageKey::NOT_UNSIGNED, ['value' => $minimum]);
             }
         }
+    }
+
+    public function isEmpty(mixed $data): bool
+    {
+        if ($data instanceof DataObject\Data\NumericRange) {
+            return $data->getMinimum() === null && $data->getMaximum() === null;
+        }
+
+        return parent::isEmpty($data);
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool

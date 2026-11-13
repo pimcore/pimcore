@@ -90,7 +90,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         }
 
         $keyNames = ['date', 'datetime', 'encryptedField', 'input', 'rgbaColor', 'select', 'time', 'numeric', 'booleanSelect', 'user', 'textarea', 'wysiwyg', 'checkbox', 'slider',
-            'table', 'country', 'language', 'multiselect', 'countrymultiselect', 'languagemultiselect', 'quantityValue', 'inputQuantityValue', ];
+            'table', 'country', 'language', 'multiselect', 'countrymultiselect', 'languagemultiselect', 'quantityValue', 'inputQuantityValue', 'numericRange', ];
 
         self::$configCount = count($keyNames);
 
@@ -163,6 +163,10 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                         break;
                     case 'numeric':
                         $definition = new ClassDefinition\Data\Numeric();
+
+                        break;
+                    case 'numericRange':
+                        $definition = new ClassDefinition\Data\NumericRange();
 
                         break;
                     case 'rgbaColor':

@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Data\EncryptedField;
 use Pimcore\Model\DataObject\Data\InputQuantityValue;
+use Pimcore\Model\DataObject\Data\NumericRange;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\DataObject\Data\RgbaColor;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
@@ -255,6 +256,90 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         /** @var \Pimcore\Model\DataObject\Data\QuantityValue $value1 */
+        $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertNull($value1);
+
+        Cache::enable();
+    }
+
+    public function testClassificationStoreNumericRange(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $o = $this->createCsObject();
+
+        Cache::disable();
+
+        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
+        $csField = $o->getCsstore();
+        $groupConfig = Classificationstore\GroupConfig::getByName('testgroup2');
+        $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName(
+            'numericRange',
+            $store->getId()
+        );
+
+        $value = new NumericRange(1.5, 42);
+        $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $value);
+        $o->save();
+
+        Cache::clearAll();
+        Cache\RuntimeCache::clear();
+
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
+        /** @var NumericRange $value1 */
+        $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertInstanceOf(NumericRange::class, $value1);
+        $this->assertEquals(1.5, $value1->getMinimum());
+        $this->assertEquals(42, $value1->getMaximum());
+
+        // a half open range keeps the boundary it has
+        $o->getCsstore()->setLocalizedKeyValue(
+            $groupConfig->getId(),
+            $keyConfig->getId(),
+            new NumericRange(null, 7)
+        );
+        $o->save();
+
+        Cache::clearAll();
+        Cache\RuntimeCache::clear();
+
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
+        /** @var NumericRange $value1 */
+        $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertInstanceOf(NumericRange::class, $value1);
+        $this->assertNull($value1->getMinimum());
+        $this->assertEquals(7, $value1->getMaximum());
+
+        // the same the other way round: checkValidity() compares the boundaries against each
+        // other, and an unguarded "7 > null" rejected a range that only carries a minimum
+        $o->getCsstore()->setLocalizedKeyValue(
+            $groupConfig->getId(),
+            $keyConfig->getId(),
+            new NumericRange(7, null)
+        );
+        $o->save();
+
+        Cache::clearAll();
+        Cache\RuntimeCache::clear();
+
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
+        /** @var NumericRange $value1 */
+        $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertInstanceOf(NumericRange::class, $value1);
+        $this->assertEquals(7, $value1->getMinimum());
+        $this->assertNull($value1->getMaximum());
+
+        // nullify field
+        $o->getCsstore()->setLocalizedKeyValue(
+            $groupConfig->getId(),
+            $keyConfig->getId(),
+            new NumericRange(null, null)
+        );
+        $o->save();
+
+        Cache::clearAll();
+        Cache\RuntimeCache::clear();
+
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
         $this->assertNull($value1);
 
