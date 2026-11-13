@@ -26,6 +26,8 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogReposit
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
 use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Version\CoauthorContext;
+use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\GenericExecutionEngineBundle\Agent\Support\ProcessElementMessage;
 use Pimcore\Translation\Translator;
@@ -273,8 +275,72 @@ class JobExecutionAgentTest extends TestCase
     }
 
     /**
-     * @param ElementDescriptor[] $elements
+     * A job started inside an MCP tool call (a coauthor is active) keeps the coauthor in its context so the
+     * worker can stamp the versions of its steps.
      */
+    public function testJobStartedWithAnActiveCoauthorStoresItInTheJobRunContext(): void
+    {
+        $jobRun = $this->createRunningJobRun([new ElementDescriptor('object', 1)]);
+        $jobRun->setContext(['existing' => 'value']);
+        $coauthorContext = new CoauthorContext();
+        $agent = $this->createAgent(
+            $this->createRepository($jobRun),
+            $this->createMock(JobRunElementCounterInterface::class),
+            messageBus: $this->createMessageBus(),
+            coauthorContext: $coauthorContext
+        );
+
+        $coauthorContext->withCoauthor('mcp-server', 'pme-test', function () use ($agent, $jobRun): void {
+            $agent->startJobExecution($jobRun->getJob(), 1);
+        });
+
+        $this->assertSame(
+            ['existing' => 'value', '_coauthor' => ['type' => 'mcp-server', 'coauthor' => 'pme-test']],
+            $jobRun->getContext()
+        );
+    }
+
+    public function testJobStartedWithoutACoauthorStoresNothing(): void
+    {
+        $jobRun = $this->createRunningJobRun([new ElementDescriptor('object', 1)]);
+        $agent = $this->createAgent(
+            $this->createRepository($jobRun),
+            $this->createMock(JobRunElementCounterInterface::class),
+            messageBus: $this->createMessageBus()
+        );
+
+        $agent->startJobExecution($jobRun->getJob(), 1);
+
+        $this->assertNull($jobRun->getContext());
+    }
+
+    public function testJobStartedWithACoauthorSwitchedOffStoresNothing(): void
+    {
+        $jobRun = $this->createRunningJobRun([new ElementDescriptor('object', 1)]);
+        $coauthorContext = new CoauthorContext();
+        $coauthorContext->disable();
+        $agent = $this->createAgent(
+            $this->createRepository($jobRun),
+            $this->createMock(JobRunElementCounterInterface::class),
+            messageBus: $this->createMessageBus(),
+            coauthorContext: $coauthorContext
+        );
+
+        $coauthorContext->withCoauthor('mcp-server', 'pme-test', function () use ($agent, $jobRun): void {
+            $agent->startJobExecution($jobRun->getJob(), 1);
+        });
+
+        $this->assertNull($jobRun->getContext());
+    }
+
+    private function createMessageBus(): MessageBusInterface
+    {
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->method('dispatch')->willReturnCallback(static fn (object $message): Envelope => new Envelope($message));
+
+        return $bus;
+    }
+
     private function createRunningJobRun(array $elements, int $stepCount = 1): JobRun
     {
         $jobRun = new JobRun(1);
@@ -296,7 +362,8 @@ class JobExecutionAgentTest extends TestCase
         JobRunRepositoryInterface $repository,
         JobRunElementCounterInterface $counter,
         ?JobRunErrorLogRepositoryInterface $errorLogRepository = null,
-        ?MessageBusInterface $messageBus = null
+        ?MessageBusInterface $messageBus = null,
+        ?CoauthorContextInterface $coauthorContext = null
     ): JobExecutionAgent {
         return new JobExecutionAgent(
             'test',
@@ -307,7 +374,8 @@ class JobExecutionAgentTest extends TestCase
             $counter,
             new NullLogger(),
             $messageBus ?? $this->createMock(MessageBusInterface::class),
-            $this->createMock(Translator::class)
+            $this->createMock(Translator::class),
+            $coauthorContext ?? new CoauthorContext()
         );
     }
 

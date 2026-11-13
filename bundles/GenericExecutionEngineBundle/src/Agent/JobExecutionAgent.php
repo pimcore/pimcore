@@ -25,9 +25,11 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunElementCounterI
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\JobRunContextKey;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\SelectionProcessingMode;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -55,7 +57,8 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         private readonly JobRunElementCounterInterface $jobRunElementCounter,
         private readonly LoggerInterface $genericExecutionEngineLogger,
         private readonly MessageBusInterface $executionEngineBus,
-        private readonly Translator $translator
+        private readonly Translator $translator,
+        private readonly CoauthorContextInterface $coauthorContext,
     ) {
         $this->isDev = $environment === 'dev';
     }
@@ -73,6 +76,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         $jobRun->setState(JobRunStates::RUNNING);
         $jobRun->setCurrentStep(0);
         $jobRun->setTotalElements(count($job->getSelectedElements()));
+        $this->storeActiveCoauthor($jobRun);
 
         $this->jobRunRepository->updateLogLocalizedWithDomain(
             $jobRun,
@@ -508,5 +512,24 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         }
 
         $currentJobStep->setState($jobStepState);
+    }
+
+    /**
+     * A job started while a coauthor is active (for example inside an MCP tool call) keeps it in its context,
+     * so the worker can stamp the versions the steps create (see the CoauthorMiddleware). A job started
+     * without one stores nothing.
+     */
+    private function storeActiveCoauthor(JobRun $jobRun): void
+    {
+        if (!$this->coauthorContext->isActive()) {
+            return;
+        }
+
+        $context = $jobRun->getContext() ?? [];
+        $context[JobRunContextKey::COAUTHOR->value] = [
+            'type' => $this->coauthorContext->getType(),
+            'coauthor' => $this->coauthorContext->getCoauthor(),
+        ];
+        $jobRun->setContext($context);
     }
 }
