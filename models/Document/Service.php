@@ -376,6 +376,12 @@ class Service extends Model\Element\Service
                         $editable->rewriteIds($rewriteConfig);
                     }
                 }
+
+                // a copied document inheriting from a copied document has to inherit from the copy
+                $contentMainId = $document->getContentMainDocumentId();
+                if ($contentMainId && isset($rewriteConfig['document'][$contentMainId])) {
+                    $document->setContentMainDocumentId($rewriteConfig['document'][$contentMainId]);
+                }
             }
 
             $document->setEditables($editables);

@@ -174,6 +174,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function resolveDependencies(): array
     {
+        $this->load();
+
         $dependencies = [];
 
         if ($this->snippet instanceof Document\Snippet) {
@@ -214,6 +216,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         $id = $this->getId();
         if (array_key_exists('document', $idMapping) && array_key_exists($id, $idMapping['document'])) {
             $this->id = $idMapping['document'][$id];
+            $this->snippet = null;
         }
     }
 
