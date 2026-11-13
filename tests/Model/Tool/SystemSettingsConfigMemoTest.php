@@ -156,6 +156,28 @@ class SystemSettingsConfigMemoTest extends ModelTestCase
         $this->assertSame(self::TEST_DOMAIN, SystemSettingsConfig::get()['general']['domain']);
     }
 
+    public function testDeletingSystemSettingsStoreEntryReloadsContainerConfig(): void
+    {
+        $this->assertNotSame(self::TEST_DOMAIN, SystemSettingsConfig::get()['general']['domain'] ?? null);
+
+        $entry = SettingsStore::get(self::SETTINGS_STORE_ID, self::SETTINGS_STORE_SCOPE);
+        $this->assertNotNull($entry, 'precondition: the system settings are stored in the settings store');
+
+        $data = json_decode($entry->getData(), true);
+        $data['general']['domain'] = self::TEST_DOMAIN;
+        SettingsStore::set(self::SETTINGS_STORE_ID, json_encode($data), SettingsStore::TYPE_STRING, self::SETTINGS_STORE_SCOPE);
+        $this->assertSame(self::TEST_DOMAIN, SystemSettingsConfig::get()['general']['domain']);
+
+        SettingsStore::delete(self::SETTINGS_STORE_ID, self::SETTINGS_STORE_SCOPE);
+        $this->debugDataHolder->reset();
+
+        $this->assertSame(
+            \Pimcore\Config::getSystemConfiguration()['general']['domain'],
+            SystemSettingsConfig::get()['general']['domain']
+        );
+        $this->assertGreaterThan(0, $this->countSettingsStoreQueries());
+    }
+
     public function testWritesToOtherSettingsStoreScopesKeepTheLoadedSettings(): void
     {
         SystemSettingsConfig::get();
