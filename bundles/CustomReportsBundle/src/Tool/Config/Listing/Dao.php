@@ -65,6 +65,6 @@ class Dao extends \Pimcore\Bundle\CustomReportsBundle\Tool\Config\Dao
 
     public function getTotalCount(): int
     {
-        return count($this->loadIdList());
+        return count($this->loadIdListWithoutEntries());
     }
 }

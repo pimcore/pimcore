@@ -64,6 +64,16 @@ class Dao extends Model\Dao\AbstractDao
             throw new Model\Exception\NotFoundException('settings store with id ' . $id . ' and scope ' . $scope . ' not found');
         }
 
+        $this->assignRow($item);
+    }
+
+    /**
+     * Populates the model from a row of the settings store table.
+     *
+     * @param array<string, mixed> $item
+     */
+    public function assignRow(array $item): void
+    {
         $this->assignVariablesToModel($item);
 
         $data = $item['data'] ?? null;
@@ -73,5 +83,13 @@ class Dao extends Model\Dao\AbstractDao
     public function getIdsByScope(string $scope): array
     {
         return $this->db->fetchFirstColumn('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function getRowsByScope(string $scope): array
+    {
+        return $this->db->fetchAllAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
     }
 }
