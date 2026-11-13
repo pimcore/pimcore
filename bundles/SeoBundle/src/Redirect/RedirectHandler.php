@@ -22,7 +22,11 @@ use Pimcore\Config;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Model\Document;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\ElementType;
 use Pimcore\Model\Site;
 use Pimcore\Tool;
 use Psr\Log\LoggerInterface;
@@ -31,6 +35,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
+use Throwable;
 
 /**
  * @internal
@@ -58,7 +63,7 @@ final class RedirectHandler
 
     private ?LockInterface $lock = null;
 
-    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory, LoggerInterface $routingLogger, LoggerInterface $redirectLogger)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory, LoggerInterface $routingLogger, LoggerInterface $redirectLogger, private readonly TargetResolverInterface $targetResolver)
     {
         $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
@@ -143,6 +148,53 @@ final class RedirectHandler
     }
 
     /**
+     * Resolves the frontend URL of a redirect target element, or null if the element cannot be
+     * used as a redirect target - an element Pimcore does not serve under its own URL, such as
+     * a folder, a snippet, or a data object whose class has no link generator.
+     */
+    private function resolveElementTarget(ElementInterface $element): ?string
+    {
+        // the write paths reject elements that cannot be a target, but an element can lose that
+        // property later - a class dropping its link generator, say - so it is checked again here
+        if (!$this->targetResolver->isUsableAsTarget($element)) {
+            return null;
+        }
+
+        return $element instanceof Concrete
+            ? $this->generateObjectUrl($element)
+            : $element->getFullPath();
+    }
+
+    /**
+     * Data objects have no path of their own on the frontend - their URL comes from the link
+     * generator of their class, which is project code and may fail for reasons of its own.
+     */
+    private function generateObjectUrl(Concrete $element): ?string
+    {
+        // isUsableAsTarget() established that the class has one
+        $linkGenerator = $element->getClass()->getLinkGenerator();
+
+        $getInheritedValues = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(true);
+        $getFallbackValues = Localizedfield::getGetFallbackValues();
+        Localizedfield::setGetFallbackValues(true);
+
+        try {
+            return $linkGenerator->generate($element) ?: null;
+        } catch (Throwable $e) {
+            $this->logger->error('Link generator of data object {object} failed: {error}', [
+                'object' => $element->getId(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        } finally {
+            DataObject::setGetInheritedValues($getInheritedValues);
+            Localizedfield::setGetFallbackValues($getFallbackValues);
+        }
+    }
+
+    /**
      *
      *
      * @throws Exception
@@ -151,18 +203,23 @@ final class RedirectHandler
     {
         $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
+        $targetType = $redirect->getTargetType();
         if (is_numeric($target)) {
-            $d = Document::getById((int) $target);
-            if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
-                $target = $d->getFullPath();
-            } else {
-                $this->logger->error('Target of redirect {redirect} not found (Document-ID: {document})', [
+            $targetElement = $this->targetResolver->resolveTargetElement($target, $targetType);
+            $resolvedTarget = $targetElement ? $this->resolveElementTarget($targetElement) : null;
+
+            if (null === $resolvedTarget) {
+                $this->logger->error('Target of redirect {redirect} is invalid or not found ({targetType} ID: {target})', [
                     'redirect' => $redirect->getId(),
-                    'document' => $target,
+                    'target' => $target,
+                    // a target without a type is a document, see TargetResolverInterface
+                    'targetType' => ($targetType ?? ElementType::Document)->value,
                 ]);
 
                 return null;
             }
+
+            $target = $resolvedTarget;
         }
 
         $url = $target;

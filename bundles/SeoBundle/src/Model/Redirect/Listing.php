@@ -32,6 +32,7 @@ class Listing extends Model\Listing\AbstractListing
             'source',
             'sourceSite',
             'target',
+            'targetType',
             'targetSite',
             'statusCode',
             'priority',
