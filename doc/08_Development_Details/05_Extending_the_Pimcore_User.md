@@ -124,3 +124,29 @@ Names are unique across both types: saving a user or service user with a name th
 `Pimcore\Model\User\Exception\DuplicateUserNameException`. Service users are not converted from users and users are not
 converted from service users. To give a service user the access of a person, copy its roles and workspaces to a new
 service user.
+
+### Responsible users
+
+A service user can name the people who answer for it, wherever a human is needed: for example the review of a Change
+Control proposal the service user created, or a notice that a token expires. They are users and roles, stored in the
+table `users_responsibles` (`serviceUserId`, `principalType` `user` or `role`, `principalId`). The relation only exists
+for service users: saving a person with responsible users or roles throws `InvalidServiceUserException`. A role
+stands for its members.
+
+```php
+$serviceUser->setResponsibleUsers([$alice->getId()]);
+$serviceUser->setResponsibleRoles([$integrationOwners->getId()]);
+$serviceUser->save();
+
+$serviceUser->getResponsibleUsers(); // int[]
+$serviceUser->getResponsibleRoles(); // int[]
+```
+
+Two lookups cover the consumers:
+
+- `User::getResponsibleForServiceUserIds(User $person): int[]` returns the ids of the service users the person is
+  responsible for, directly or through one of their roles.
+- `$serviceUser->resolveResponsibleUsers(): User[]` returns the active people: the responsible users plus the members
+  of the responsible roles. Inactive users and service users are left out.
+
+Deleting the service user, a responsible user or a responsible role removes the matching rows.

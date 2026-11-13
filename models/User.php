@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
+use InvalidArgumentException;
+use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Exception\NotFoundException;
@@ -24,8 +27,13 @@ use Pimcore\Tool;
 
 use function array_key_exists;
 use function array_keys;
+use function array_map;
+use function array_values;
 use function bin2hex;
+use function ctype_digit;
+use function implode;
 use function is_array;
+use function is_int;
 use function is_string;
 use function random_bytes;
 use function sprintf;
@@ -129,11 +137,170 @@ final class User extends User\UserRole implements UserInterface
     protected ?string $provider = null;
 
     /**
+     * Ids of the users who answer for this service user (service users only, see users_responsibles).
+     *
+     * @var int[]
+     */
+    protected array $responsibleUsers = [];
+
+    /**
+     * Ids of the roles whose members answer for this service user (service users only).
+     *
+     * @var int[]
+     */
+    protected array $responsibleRoles = [];
+
+    /**
      * Whether this is a service user (type `serviceuser`): a machine identity that never logs in interactively.
      */
     public function isServiceUser(): bool
     {
         return $this->type === self::TYPE_SERVICE_USER;
+    }
+
+    /**
+     * @param int[] $userIds
+     *
+     * @return $this
+     *
+     * @throws InvalidArgumentException if an entry is not a positive integer id
+     */
+    public function setResponsibleUsers(array $userIds): static
+    {
+        $this->responsibleUsers = self::normalizeIds($userIds);
+
+        return $this;
+    }
+
+    /**
+     * The people (user ids) who answer for this service user.
+     *
+     * @return int[]
+     */
+    public function getResponsibleUsers(): array
+    {
+        return $this->responsibleUsers;
+    }
+
+    /**
+     * @param int[] $roleIds
+     *
+     * @return $this
+     *
+     * @throws InvalidArgumentException if an entry is not a positive integer id
+     */
+    public function setResponsibleRoles(array $roleIds): static
+    {
+        $this->responsibleRoles = self::normalizeIds($roleIds);
+
+        return $this;
+    }
+
+    /**
+     * The roles (role ids) whose members answer for this service user.
+     *
+     * @return int[]
+     */
+    public function getResponsibleRoles(): array
+    {
+        return $this->responsibleRoles;
+    }
+
+    /**
+     * @param mixed[] $ids
+     *
+     * @return int[]
+     */
+    private static function normalizeIds(array $ids): array
+    {
+        $normalized = [];
+        foreach ($ids as $id) {
+            if (is_string($id) && ctype_digit($id)) {
+                $id = (int) $id;
+            }
+            if (!is_int($id) || $id < 1) {
+                throw new InvalidArgumentException('Responsible user and role ids must be positive integers.');
+            }
+            $normalized[$id] = $id;
+        }
+
+        return array_values($normalized);
+    }
+
+    /**
+     * The active people who answer for this service user: the responsible users, plus the members of the
+     * responsible roles. Service users and inactive users are never part of the result.
+     *
+     * @return User[]
+     *
+     * @throws Exception
+     */
+    public function resolveResponsibleUsers(): array
+    {
+        if (!$this->isServiceUser()) {
+            return [];
+        }
+
+        $people = [];
+        foreach ($this->responsibleUsers as $userId) {
+            $user = self::getById($userId);
+            if ($user !== null) {
+                $people[$user->getId()] = $user;
+            }
+        }
+
+        if ($this->responsibleRoles !== []) {
+            $conditions = [];
+            foreach ($this->responsibleRoles as $ignored) {
+                $conditions[] = 'FIND_IN_SET(?, `roles`)';
+            }
+            // User\Listing lists people only, never service users
+            $members = new User\Listing();
+            $members->setCondition('(' . implode(' OR ', $conditions) . ')', $this->responsibleRoles);
+            foreach ($members->load() as $member) {
+                $people[$member->getId()] = $member;
+            }
+        }
+
+        $result = [];
+        foreach ($people as $person) {
+            if ($person->isActive() && !$person->isServiceUser()) {
+                $result[] = $person;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * The ids of the service users the person answers for: directly, or through one of the person's roles.
+     *
+     * @return int[]
+     *
+     * @throws Exception
+     */
+    public static function getResponsibleForServiceUserIds(User $person): array
+    {
+        $personId = $person->getId();
+        if ($personId === null || $person->isServiceUser()) {
+            return [];
+        }
+
+        $sql = 'SELECT DISTINCT `serviceUserId` FROM `users_responsibles`'
+            . ' WHERE (`principalType` = :user AND `principalId` = :userId)';
+        $params = ['user' => 'user', 'userId' => $personId];
+        $types = [];
+
+        if ($person->getRoles() !== []) {
+            $sql .= ' OR (`principalType` = :role AND `principalId` IN (:roleIds))';
+            $params['role'] = 'role';
+            $params['roleIds'] = $person->getRoles();
+            $types['roleIds'] = ArrayParameterType::INTEGER;
+        }
+
+        $ids = Db::get()->fetchFirstColumn($sql . ' ORDER BY `serviceUserId`', $params, $types);
+
+        return array_map('intval', $ids);
     }
 
     /**
@@ -233,8 +400,8 @@ final class User extends User\UserRole implements UserInterface
      * @return $this
      *
      * @throws DuplicateUserNameException if a person or service user of the other kind already has the name
-     * @throws InvalidServiceUserException if the type of a saved user is changed, or a service user has
-     *     administrator rights or two-factor data
+     * @throws InvalidServiceUserException if the type of a saved user is changed, a service user has
+     *     administrator rights or two-factor data, or a person has responsible users or roles
      * @throws Exception
      */
     public function save(array $parameters = []): static
@@ -246,6 +413,10 @@ final class User extends User\UserRole implements UserInterface
                     'The type of a saved user never changes: a person does not become a service user, nor the reverse.'
                 );
             }
+        }
+
+        if (!$this->isServiceUser() && ($this->responsibleUsers !== [] || $this->responsibleRoles !== [])) {
+            throw new InvalidServiceUserException('Only a service user can have responsible users or roles.');
         }
 
         if ($this->isServiceUser()) {
