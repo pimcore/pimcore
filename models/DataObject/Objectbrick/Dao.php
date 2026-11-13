@@ -27,9 +27,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\DataObject\Fieldcollection\Dao
 {
-    /**
-     * @return Model\DataObject\Objectbrick\Data\AbstractData[]
-     */
     public function load(DataObject\Concrete $object, array $params = []): array
     {
         /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
@@ -111,9 +108,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                 $setter = 'set' . ucfirst($type);
 
-                if ($brick instanceof Model\Element\DirtyIndicatorInterface) {
-                    $brick->markFieldDirty('_self', false);
-                }
+                $brick->markFieldDirty('_self', false);
 
                 $this->model->$setter($brick);
 
