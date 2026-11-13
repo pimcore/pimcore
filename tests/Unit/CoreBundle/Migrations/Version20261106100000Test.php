@@ -28,6 +28,8 @@ use Psr\Log\NullLogger;
  */
 class Version20261106100000Test extends TestCase
 {
+    private const TABLES = ['users_workspaces_asset', 'users_workspaces_document', 'users_workspaces_object'];
+
     private function createMigration(): Version20261106100000
     {
         $connection = $this->createStub(Connection::class);
@@ -53,7 +55,7 @@ class Version20261106100000Test extends TestCase
 
         $schema = $this->createStub(Schema::class);
         $schema->method('hasTable')->willReturnCallback(
-            static fn (string $name): bool => $hasTables && in_array($name, Version20261106100000::TABLES, true)
+            static fn (string $name): bool => $hasTables && in_array($name, self::TABLES, true)
         );
         $schema->method('getTable')->willReturn($table);
 
@@ -113,19 +115,15 @@ class Version20261106100000Test extends TestCase
         $this->assertSame([], $this->planSql($migration));
     }
 
-    public function testDownRestoresPlainIndex(): void
+    public function testDownLeavesUniqueIndexInPlaceOnFreshInstallation(): void
     {
         $migration = $this->createMigration();
         $migration->down($this->schemaWith(true));
 
-        $this->assertSame(
-            'ALTER TABLE `users_workspaces_asset` DROP INDEX `idx_users_workspaces_list_permission`, ADD INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`)',
-            $this->planSql($migration)[0]
-        );
-        $this->assertCount(3, $this->planSql($migration));
+        $this->assertSame([], $this->planSql($migration));
     }
 
-    public function testDownIsIdempotent(): void
+    public function testDownLeavesPlainIndexAlone(): void
     {
         $migration = $this->createMigration();
         $migration->down($this->schemaWith(false));

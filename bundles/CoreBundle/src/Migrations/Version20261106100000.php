@@ -30,7 +30,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20261106100000 extends AbstractMigration
 {
-    public const TABLES = ['users_workspaces_asset', 'users_workspaces_document', 'users_workspaces_object'];
+    private const TABLES = ['users_workspaces_asset', 'users_workspaces_document', 'users_workspaces_object'];
 
     private const INDEX_NAME = 'idx_users_workspaces_list_permission';
 
@@ -70,20 +70,10 @@ final class Version20261106100000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        foreach (self::TABLES as $tableName) {
-            if (!$schema->hasTable($tableName)) {
-                continue;
-            }
-
-            $table = $schema->getTable($tableName);
-            if ($table->hasIndex(self::INDEX_NAME) && $table->getIndex(self::INDEX_NAME)->isUnique()) {
-                $this->addSql(sprintf(
-                    'ALTER TABLE `%1$s` DROP INDEX `%2$s`, ADD INDEX `%2$s` (%3$s)',
-                    $tableName,
-                    self::INDEX_NAME,
-                    self::INDEX_COLUMNS
-                ));
-            }
-        }
+        // Nothing to revert: install.sql has declared the index as unique since it was introduced, so the
+        // unique index is the correct state on every installation. Fresh installations only mark this
+        // migration as executed without running up(), so converting the index back to a plain one here
+        // would change a schema up() never touched.
+        $this->write('Nothing to revert: idx_users_workspaces_list_permission stays unique, as install.sql declares it.');
     }
 }
