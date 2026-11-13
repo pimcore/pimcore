@@ -34,6 +34,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
         $object->__objectAwareFields[$this->model->getFieldname()] = true;
 
+        /** @var array<mixed> $values Brick data objects; the parent contract names fieldcollection items */
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
