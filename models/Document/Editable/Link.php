@@ -61,6 +61,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
+        $this->syncFullPath();
 
         return $this->data;
     }
@@ -264,6 +265,16 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
 
         return $url;
+    }
+
+    /**
+     * Pimcore Studio sends fullPath back as the link target on save, so it has to follow the internal target.
+     */
+    private function syncFullPath(): void
+    {
+        if (isset($this->data['fullPath']) && !empty($this->data['internal']) && !empty($this->data['path'])) {
+            $this->data['fullPath'] = $this->data['path'];
+        }
     }
 
     private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void
@@ -481,7 +492,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             if (array_key_exists($type, $idMapping)) {
                 if (array_key_exists($id, $idMapping[$type])) {
                     $this->data['internalId'] = $idMapping[$type][$id];
-                    $this->getHref();
+                    $this->updatePathFromInternal(true, true);
+                    $this->syncFullPath();
                 }
             }
         }

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Document;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Link;
 use Pimcore\Model\Document\Editable\Relation;
 use Pimcore\Model\Document\Editable\Snippet;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -22,7 +23,7 @@ use Pimcore\Tests\Support\Util\TestHelper;
 /**
  * @group model.document.document
  */
-class RelationSnippetRewriteIdsTest extends ModelTestCase
+class RewriteIdsTest extends ModelTestCase
 {
     public function testSnippetDependenciesFollowRewrittenId(): void
     {
@@ -63,6 +64,55 @@ class RelationSnippetRewriteIdsTest extends ModelTestCase
         } finally {
             $old->delete();
             $new->delete();
+        }
+    }
+
+    public function testLinkFullPathFollowsRewrittenId(): void
+    {
+        $old = TestHelper::createEmptyDocumentPage();
+        $new = TestHelper::createEmptyDocumentPage();
+
+        try {
+            // fullPath is what Pimcore Studio stores and sends back as the link target on save
+            $editable = new Link();
+            $editable->setName('link');
+            $editable->setDataFromResource(serialize([
+                'linktype' => 'internal',
+                'internal' => true,
+                'internalType' => 'document',
+                'internalId' => $old->getId(),
+                'path' => $old->getRealFullPath(),
+                'fullPath' => $old->getRealFullPath(),
+            ]));
+
+            $editable->rewriteIds(['document' => [$old->getId() => $new->getId()]]);
+
+            $data = $editable->getData();
+            $this->assertSame($new->getId(), $data['internalId']);
+            $this->assertSame($new->getRealFullPath(), $data['fullPath']);
+            $this->assertSame($new->getRealFullPath(), $editable->getDataEditmode()['fullPath']);
+        } finally {
+            $old->delete();
+            $new->delete();
+        }
+    }
+
+    public function testContentMainDocumentFollowsRewrittenId(): void
+    {
+        $oldMain = TestHelper::createEmptyDocumentPage();
+        $newMain = TestHelper::createEmptyDocumentPage();
+        $page = TestHelper::createEmptyDocumentPage();
+
+        try {
+            $page->setContentMainDocumentId($oldMain->getId());
+
+            Document\Service::rewriteIds($page, ['document' => [$oldMain->getId() => $newMain->getId()]]);
+
+            $this->assertSame($newMain->getId(), $page->getContentMainDocumentId());
+        } finally {
+            $page->delete();
+            $oldMain->delete();
+            $newMain->delete();
         }
     }
 
