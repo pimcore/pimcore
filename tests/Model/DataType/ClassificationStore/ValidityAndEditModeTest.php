@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
 use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
@@ -576,6 +577,29 @@ class ValidityAndEditModeTest extends AbstractBatchedRelationTest
 
             $this->assertSaveRefusedWith($object, 'is longer than 5 characters');
         }
+    }
+
+    /**
+     * Numeric gates its range, integer and unsigned checks on the mandatory flag, so a draft keeps them
+     * off for a key exactly as for a plain Numeric field; a published save refuses the same value.
+     */
+    public function testADraftSaveSkipsTheRangeOfANumericKeyAndAPublishedOneIsRefused(): void
+    {
+        $numeric = new Numeric();
+        $numeric->setMaxValue(10);
+
+        $group = $this->createGroup('draft_numeric');
+        $keyConfig = $this->createKey('draft_numeric', true, $numeric);
+        $this->assignKey($group, $keyConfig);
+
+        $draft = $this->createStoreObject('draft-numeric-draft', false, $group);
+        $draft->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 99, self::LANGUAGE);
+        $draft->save();
+        $this->assertNotNull(Csstorelocalized::getById($draft->getId(), ['force' => true]));
+
+        $published = $this->createStoreObject('draft-numeric-published', true, $group);
+        $published->getCsstore()->setLocalizedKeyValue($group->getId(), $keyConfig->getId(), 99, self::LANGUAGE);
+        $this->assertSaveRefusedWith($published, 'is bigger than 10');
     }
 
     public function testTheGroupLimitOfTheFieldIsEnforcedOnADraftSave(): void
