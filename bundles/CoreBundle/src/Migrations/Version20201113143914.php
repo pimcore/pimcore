@@ -24,6 +24,11 @@ final class Version20201113143914 extends AbstractMigration
     private array $tables = ['documents_email', 'documents_newsletter', 'documents_page',
         'documents_snippet', 'documents_printpage', ];
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         foreach ($this->tables as $table) {

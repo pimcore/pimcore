@@ -31,6 +31,11 @@ final class Version20241021111028 extends AbstractMigration
         return 'Add versionCount index to elements and versions table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         foreach ($this->tables as $table) {

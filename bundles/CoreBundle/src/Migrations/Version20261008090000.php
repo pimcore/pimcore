@@ -40,6 +40,11 @@ final class Version20261008090000 extends AbstractMigration
         return 'Scope user/role folder name uniqueness to the parent folder instead of globally';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $table = $schema->getTable('users');

@@ -23,6 +23,11 @@ final class Version20251110144107 extends AbstractMigration
         return 'Add shareBetweenFolders column to gridconfigs table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $table = $schema->getTable('gridconfigs');

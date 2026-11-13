@@ -24,6 +24,11 @@ final class Version20230615103905 extends AbstractMigration
         return 'Add definitionModificationDate to classes table for optimizing rebuild command performance.';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('classes')->hasColumn('definitionModificationDate')) {

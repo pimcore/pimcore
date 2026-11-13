@@ -22,6 +22,11 @@ use Doctrine\Migrations\AbstractMigration;
  */
 class Version20211103055110 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $db = \Pimcore\Db::get();

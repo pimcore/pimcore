@@ -23,6 +23,11 @@ use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
  */
 class Version20211209131141 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $table = $schema->getTable(ApplicationLoggerDb::TABLE_NAME);
