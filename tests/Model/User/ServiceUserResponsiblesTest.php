@@ -172,7 +172,7 @@ class ServiceUserResponsiblesTest extends ModelTestCase
         $serviceMember->setRoles([$role->getId()])->save();
 
         $serviceUser = $this->createServiceUser('s7');
-        $serviceUser->setResponsibleUsers([$direct->getId(), $inactive->getId(), $serviceMember->getId()])
+        $serviceUser->setResponsibleUsers([$direct->getId(), $inactive->getId()])
             ->setResponsibleRoles([$role->getId()])
             ->save();
 
@@ -182,6 +182,52 @@ class ServiceUserResponsiblesTest extends ModelTestCase
         sort($expected);
 
         $this->assertSame($expected, $ids);
+    }
+
+    public function testServiceUserIdAsResponsibleUserIsRefused(): void
+    {
+        $other = $this->createServiceUser('s8other');
+        $serviceUser = $this->createServiceUser('s8');
+        $serviceUser->setResponsibleUsers([$other->getId()]);
+
+        $this->expectException(InvalidServiceUserException::class);
+        $serviceUser->save();
+    }
+
+    public function testRoleIdAsResponsibleUserIsRefused(): void
+    {
+        $role = $this->createRole('r9');
+        $serviceUser = $this->createServiceUser('s9');
+        $serviceUser->setResponsibleUsers([$role->getId()]);
+
+        $this->expectException(InvalidServiceUserException::class);
+        $serviceUser->save();
+    }
+
+    public function testUserIdAsResponsibleRoleIsRefused(): void
+    {
+        $human = $this->createHuman('h10');
+        $serviceUser = $this->createServiceUser('s10');
+        $serviceUser->setResponsibleRoles([$human->getId()]);
+
+        $this->expectException(InvalidServiceUserException::class);
+        $serviceUser->save();
+    }
+
+    public function testDeletedResponsibleIdIsRefusedAndNoRowIsWritten(): void
+    {
+        $human = $this->createHuman('h11');
+        $serviceUser = $this->createServiceUser('s11');
+        $serviceUser->setResponsibleUsers([$human->getId()])->save();
+
+        $human->delete();
+
+        $this->expectException(InvalidServiceUserException::class);
+        try {
+            $serviceUser->save();
+        } finally {
+            $this->assertSame(0, $this->countRows('serviceUserId', $serviceUser->getId()));
+        }
     }
 
     private function countRows(string $column, int $value, ?string $principalType = null): int

@@ -30,6 +30,7 @@ use function array_keys;
 use function array_map;
 use function array_values;
 use function bin2hex;
+use function count;
 use function ctype_digit;
 use function implode;
 use function is_array;
@@ -401,7 +402,8 @@ final class User extends User\UserRole implements UserInterface
      *
      * @throws DuplicateUserNameException if a person or service user of the other kind already has the name
      * @throws InvalidServiceUserException if the type of a saved user is changed, a service user has
-     *     administrator rights or two-factor data, or a person has responsible users or roles
+     *     administrator rights or two-factor data, a person has responsible users or roles, or a responsible
+     *     id is not an existing user or role
      * @throws Exception
      */
     public function save(array $parameters = []): static
@@ -426,6 +428,8 @@ final class User extends User\UserRole implements UserInterface
                 );
             }
 
+            $this->assertResponsiblesExist();
+
             // never a usable password: not a password hash, so no password ever verifies against it
             $this->password = self::UNUSABLE_PASSWORD_PREFIX . bin2hex(random_bytes(32));
         }
@@ -438,6 +442,40 @@ final class User extends User\UserRole implements UserInterface
         }
 
         return parent::save($parameters);
+    }
+
+    /**
+     * Every responsible user id must be a person (type 'user'), every responsible role id a role.
+     *
+     * @throws InvalidServiceUserException
+     * @throws Exception
+     */
+    private function assertResponsiblesExist(): void
+    {
+        $expected = [
+            'user' => $this->responsibleUsers,
+            'role' => $this->responsibleRoles,
+        ];
+
+        foreach ($expected as $type => $ids) {
+            if ($ids === []) {
+                continue;
+            }
+
+            $found = Db::get()->fetchFirstColumn(
+                'SELECT `id` FROM `users` WHERE `type` = :type AND `id` IN (:ids)',
+                ['type' => $type, 'ids' => $ids],
+                ['ids' => ArrayParameterType::INTEGER]
+            );
+
+            if (count($found) !== count($ids)) {
+                throw new InvalidServiceUserException(sprintf(
+                    'Every responsible %s id must belong to an existing %s.',
+                    $type === 'user' ? 'user' : 'role',
+                    $type === 'user' ? 'user (not a service user or folder)' : 'role'
+                ));
+            }
+        }
     }
 
     public function getPassword(): ?string
