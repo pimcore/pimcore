@@ -15,6 +15,7 @@ namespace Pimcore\Model\User\UserRole;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use Pimcore\Model\User;
 
 /**
  * @internal
@@ -34,6 +35,8 @@ class Dao extends Model\User\AbstractUser\Dao
         if (in_array($this->model->getType(), ['user', 'role', 'serviceuser'], true)) {
             $this->loadWorkspaces();
         }
+
+        $this->loadResponsibles();
     }
 
     /**
@@ -47,6 +50,8 @@ class Dao extends Model\User\AbstractUser\Dao
         if (in_array($this->model->getType(), ['user', 'role', 'serviceuser'], true)) {
             $this->loadWorkspaces();
         }
+
+        $this->loadResponsibles();
     }
 
     public function loadWorkspaces(): void
@@ -78,6 +83,60 @@ class Dao extends Model\User\AbstractUser\Dao
             }
 
             $this->model->{'setWorkspaces' . ucfirst($type)}($workspaces);
+        }
+    }
+
+    /**
+     * Loads the responsible users and roles of a service user.
+     */
+    protected function loadResponsibles(): void
+    {
+        if (!$this->model instanceof User || !$this->model->isServiceUser()) {
+            return;
+        }
+
+        $users = [];
+        $roles = [];
+        $rows = $this->db->fetchAllAssociative(
+            'SELECT `principalType`, `principalId` FROM `users_responsibles` WHERE `serviceUserId` = ?'
+            . ' ORDER BY `principalId`',
+            [$this->model->getId()]
+        );
+        foreach ($rows as $row) {
+            if ($row['principalType'] === 'role') {
+                $roles[] = (int) $row['principalId'];
+            } else {
+                $users[] = (int) $row['principalId'];
+            }
+        }
+
+        $this->model->setResponsibleUsers($users)->setResponsibleRoles($roles);
+    }
+
+    /**
+     * Replaces the stored responsible users and roles of a service user (runs in the transaction of save()).
+     */
+    protected function saveResponsibles(): void
+    {
+        if (!$this->model instanceof User || !$this->model->isServiceUser()) {
+            return;
+        }
+
+        $serviceUserId = $this->model->getId();
+        $this->db->delete('users_responsibles', ['serviceUserId' => $serviceUserId]);
+
+        $principals = [
+            'user' => $this->model->getResponsibleUsers(),
+            'role' => $this->model->getResponsibleRoles(),
+        ];
+        foreach ($principals as $type => $ids) {
+            foreach ($ids as $id) {
+                $this->db->insert('users_responsibles', [
+                    'serviceUserId' => $serviceUserId,
+                    'principalType' => $type,
+                    'principalId' => $id,
+                ]);
+            }
         }
     }
 
