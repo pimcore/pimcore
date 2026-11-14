@@ -18,42 +18,13 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Config;
 use Pimcore\Model\Asset;
-use Symfony\Component\Yaml\Yaml;
 
 /**
- * Checks the default asset type mapping (bundles/CoreBundle/config/pimcore/default.yaml) for font files.
+ * Checks the asset type mapping for font files, using the processed system configuration
+ * (bundles/CoreBundle/config/pimcore/default.yaml normalized by the configuration tree).
  */
 class FontTypeMappingTest extends TestCase
 {
-    private ?array $previousAssetsConfig = null;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $defaults = Yaml::parseFile(
-            __DIR__ . '/../../../bundles/CoreBundle/config/pimcore/default.yaml',
-            Yaml::PARSE_CONSTANT | Yaml::PARSE_CUSTOM_TAGS
-        );
-
-        $typeDefinitions = $defaults['pimcore']['assets']['type_definitions'];
-        foreach ($typeDefinitions['map'] as &$definition) {
-            // default applied by the configuration tree
-            $definition['matching'] ??= [];
-        }
-        unset($definition);
-
-        $this->previousAssetsConfig = Config::getSystemConfiguration('assets');
-        Config::setSystemConfiguration(['type_definitions' => $typeDefinitions], 'assets');
-    }
-
-    protected function tearDown(): void
-    {
-        Config::setSystemConfiguration($this->previousAssetsConfig, 'assets');
-
-        parent::tearDown();
-    }
-
     public static function mappingProvider(): array
     {
         return [
@@ -92,8 +63,18 @@ class FontTypeMappingTest extends TestCase
     {
         $this->assertContains('font', Asset::getTypes());
         $this->assertSame(
-            '\\' . Asset\Font::class,
-            Config::getSystemConfiguration('assets')['type_definitions']['map']['font']['class']
+            Asset\Font::class,
+            ltrim(Config::getSystemConfiguration('assets')['type_definitions']['map']['font']['class'], '\\')
         );
+    }
+
+    public function testFontThumbnailConfigurationDefaults(): void
+    {
+        $thumbnails = Config::getSystemConfiguration('assets')['font']['thumbnails'];
+
+        $this->assertTrue($thumbnails['enabled']);
+        $this->assertSame(48, $thumbnails['font_size']);
+        $this->assertStringStartsWith("The quick brown fox jumps over the lazy dog\n", $thumbnails['preview_text']);
+        $this->assertStringEndsWith('$%()', $thumbnails['preview_text']);
     }
 }

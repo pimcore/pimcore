@@ -26,7 +26,7 @@ class PreviewGeneratorTest extends TestCase
 {
     private const FIXTURE_DIR = __DIR__ . '/../../../Support/Resources/assets/font/';
 
-    private string $targetFile;
+    private ?string $targetFile = null;
 
     protected function setUp(): void
     {
@@ -36,12 +36,14 @@ class PreviewGeneratorTest extends TestCase
             $this->markTestSkipped('GD with FreeType support is required');
         }
 
-        $this->targetFile = tempnam(sys_get_temp_dir(), 'font-preview-') . '.png';
+        $this->targetFile = sys_get_temp_dir() . '/font-preview-' . bin2hex(random_bytes(8)) . '.png';
     }
 
     protected function tearDown(): void
     {
-        @unlink($this->targetFile);
+        if ($this->targetFile !== null) {
+            @unlink($this->targetFile);
+        }
 
         parent::tearDown();
     }

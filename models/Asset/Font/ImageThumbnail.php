@@ -134,13 +134,15 @@ final class ImageThumbnail implements ImageThumbnailInterface
             $this->getPreviewHash()
         );
 
-        if (!$storage->fileExists($cacheFilePath)) {
+        $imageAvailable = $storage->fileExists($cacheFilePath);
+        if (!$imageAvailable) {
             $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
             $lock->acquire(true);
 
             try {
                 // after we got the lock, check again if the image exists in the meantime - if not - generate it
-                if (!$storage->fileExists($cacheFilePath)) {
+                $imageAvailable = $storage->fileExists($cacheFilePath);
+                if (!$imageAvailable) {
                     $tempFile = File::getLocalTempFilePath('png');
 
                     try {
