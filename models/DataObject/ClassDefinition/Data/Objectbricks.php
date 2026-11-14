@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -264,8 +265,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $getter = 'get' . ucfirst($collectionRaw['type']);
                 $brick = $container->$getter();
                 if (empty($brick)) {
+                    $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
                     $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($collectionRaw['type']);
-                    $brick = new $brickClass($object);
+                    $brick = $modelFactory->build($brickClass, [$object]);
                 }
 
                 $brick->setFieldname($this->getName());
@@ -729,8 +731,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $brick = $brickdata->$getter();
             if (!$brick) {
                 // brick must be added to object
+                $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
                 $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickname);
-                $brick = new $brickClass($object);
+                $brick = $modelFactory->build($brickClass, [$object]);
             }
 
             $fieldname = $subdata['name'];

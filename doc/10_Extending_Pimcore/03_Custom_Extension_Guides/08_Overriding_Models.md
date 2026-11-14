@@ -16,6 +16,8 @@ themselves):
 - `Pimcore\Model\DataObject\Listing`
 - `Pimcore\Model\Asset`
 - `Pimcore\Model\Asset\Listing`
+- `Pimcore\Model\DataObject\Objectbrick\Data\AbstractData`
+- `Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData`
 
 For example, overriding `Pimcore\Model\DataObject\News\Listing` or
 `Pimcore\Model\Asset\Image` is supported. Overriding the abstract base classes
