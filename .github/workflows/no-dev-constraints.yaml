@@ -1,0 +1,57 @@
+name: "Guard: no Pimcore dev constraints"
+
+# Runs ONLY when this branch is proposed for merge into a version branch.
+#
+# It lives here, on the epic branch, rather than on 2026.x, because `pull_request`
+# executes the workflow from the HEAD ref - so this file is the definition GitHub
+# runs when the epic is proposed for merge, and it can see the epic's own
+# composer.json. It deliberately does not run on push: the dev pins are intentional
+# while the epic is in flight, and a guard that fails on every push gets switched off.
+on:
+    pull_request:
+        branches:
+            - "2026.*"
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+
+permissions:
+    contents: read
+
+jobs:
+    no-dev-constraints:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Refuse a Pimcore dev constraint
+              shell: python3 {0}
+              run: |
+                  import json, sys
+
+                  with open('composer.json') as fh:
+                      doc = json.load(fh)
+
+                  bad = []
+                  for section in ('require', 'require-dev'):
+                      for pkg, constraint in (doc.get(section) or {}).items():
+                          # Only our own packages. Third-party dev constraints are
+                          # legitimate - roave/security-advisories ships only as dev-latest.
+                          if not pkg.startswith('pimcore/'):
+                              continue
+                          c = str(constraint)
+                          if 'dev-' in c or c.endswith('@dev'):
+                              bad.append((section, pkg, c))
+
+                  if bad:
+                      for section, pkg, c in bad:
+                          print(f'::error file=composer.json::{section}: {pkg} is pinned to '
+                                f'"{c}" - a development branch must not reach a version branch')
+                      print(f'\n{len(bad)} Pimcore dev constraint(s) in composer.json.',
+                            file=sys.stderr)
+                      print('These are temporary epic pins. Restore the released constraint '
+                            'before merging.', file=sys.stderr)
+                      sys.exit(1)
+
+                  print('composer.json: no Pimcore dev constraints')
