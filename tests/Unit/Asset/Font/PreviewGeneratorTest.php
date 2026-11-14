@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\Font;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset\Font\PreviewGenerator;
 
@@ -56,7 +55,9 @@ class PreviewGeneratorTest extends TestCase
         ];
     }
 
-    #[DataProvider('fontFileProvider')]
+    /**
+     * @dataProvider fontFileProvider
+     */
     public function testRendersPreviewImage(string $fontFile): void
     {
         $generator = new PreviewGenerator();

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Config;
 use Pimcore\Model\Asset;
@@ -53,7 +52,9 @@ class FontTypeMappingTest extends TestCase
         ];
     }
 
-    #[DataProvider('mappingProvider')]
+    /**
+     * @dataProvider mappingProvider
+     */
     public function testTypeFromMimeMapping(string $mimeType, string $filename, string $expectedType): void
     {
         $this->assertSame($expectedType, Asset::getTypeFromMimeMapping($mimeType, $filename));
