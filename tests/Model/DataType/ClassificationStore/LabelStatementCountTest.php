@@ -19,6 +19,7 @@ use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\Label\Dao as LabelDao;
 use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
 use Pimcore\Model\DataObject\Classificationstore\LabelResolver;
+use Pimcore\SystemSettingsConfig;
 
 /**
  * The labels of a whole set of entities are read in one batch, and a second resolution of the same
@@ -105,8 +106,11 @@ class LabelStatementCountTest extends AbstractBatchedRelationTest
      * The language chain is a pure function of the language and the system settings, and
      * `walk()` asks for it BEFORE consulting the label memo — so without a memo of its own
      * every resolved key rebuilt it, and each rebuild reads the system settings. Measured on
-     * a Studio object layout carrying 600 classification store values: 1,266
-     * `SELECT * FROM settings_store`.
+     * a Studio object layout carrying 600 classification store values, before the system
+     * settings were themselves memoised per request (#19706): 1,266
+     * `SELECT * FROM settings_store`. That lower memo now absorbs most of the SQL, so the
+     * rebuild is only observable with it dropped at every measurement boundary — which is
+     * what {@see startChainMeasurement()} does.
      *
      * The memo is only safe because `reset()` drops it, so this pins both halves: the repeat
      * reads nothing, and the reset makes the next resolution read again. Delete the
@@ -121,7 +125,7 @@ class LabelStatementCountTest extends AbstractBatchedRelationTest
 
         $entityIds = array_map(static fn ($keyConfig): int => (int) $keyConfig->getId(), $keys);
 
-        $this->startMeasurement();
+        $this->startChainMeasurement();
         $resolver->preload(LabelEntityType::Key, $entityIds, self::LANGUAGE_WITH_TRANSITIVE_FALLBACK);
         foreach ($keys as $keyConfig) {
             $resolver->getTitle($keyConfig, self::LANGUAGE_WITH_TRANSITIVE_FALLBACK);
@@ -138,7 +142,7 @@ class LabelStatementCountTest extends AbstractBatchedRelationTest
             );
         }
 
-        $this->startMeasurement();
+        $this->startChainMeasurement();
         foreach ($keys as $keyConfig) {
             $resolver->getTitle($keyConfig, self::LANGUAGE_WITH_TRANSITIVE_FALLBACK);
         }
@@ -151,7 +155,7 @@ class LabelStatementCountTest extends AbstractBatchedRelationTest
 
         $resolver->reset();
 
-        $this->startMeasurement();
+        $this->startChainMeasurement();
         foreach ($keys as $keyConfig) {
             $resolver->getTitle($keyConfig, self::LANGUAGE_WITH_TRANSITIVE_FALLBACK);
         }
@@ -162,6 +166,17 @@ class LabelStatementCountTest extends AbstractBatchedRelationTest
             'reset() must drop the memoised chains, so a settings change after the boundary '
             . 'is picked up by the next resolution'
         );
+    }
+
+    /**
+     * The system settings are memoised per request themselves (#19706), so a chain rebuild only
+     * shows in the statement log with that memo dropped too.
+     */
+    private function startChainMeasurement(): void
+    {
+        SystemSettingsConfig::clearRuntimeCache();
+
+        $this->startMeasurement();
     }
 
     /**
