@@ -31,7 +31,7 @@ class GeneratePagePreviewHandler
     public function __invoke(GeneratePagePreviewMessage $message): void
     {
         try {
-            Service::generatePagePreview($message->getPageId(), null, $message->getHostUrl());
+            Service::generatePagePreview($message->getPageId(), $message->getHostUrl());
         } catch (Exception $e) {
             Logger::err(sprintf('Unable to generate preview of document: %s, reason: %s ', $message->getPageId(), $e->getMessage()));
         }

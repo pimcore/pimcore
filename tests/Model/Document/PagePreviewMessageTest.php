@@ -16,7 +16,9 @@ namespace Pimcore\Tests\Model\Document;
 use Closure;
 use Pimcore;
 use Pimcore\Config;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -26,18 +28,25 @@ use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 
 /**
  * Page::save() queues the tree preview with the host Gotenberg's Chromium has to load: the
- * configured documents.preview_url_prefix, or the host of the current request without it.
+ * configured documents.preview_url_prefix, or (without it) the system's main domain setting. The
+ * host of the save request itself must never be used, since that host is attacker-controlled and
+ * would otherwise let an inbound request pick the network destination the renderer navigates to.
  *
  * @group model.document.document
  */
 class PagePreviewMessageTest extends ModelTestCase
 {
-    private const REQUEST_HOST_URL = 'https://admin.example.test';
+    private const ATTACKER_CONTROLLED_REQUEST_HOST_URL = 'https://127.0.0.3:18080';
 
     private const PREVIEW_URL_PREFIX = 'http://internal-host';
 
+    private const SYSTEM_DOMAIN = 'pimcore.example';
+
     /** @var array<string, mixed>|null */
     private ?array $documentsConfig = null;
+
+    /** @var array<string, mixed>|null */
+    private ?array $originalSystemSettings = null;
 
     private RequestStack $requestStack;
 
@@ -54,9 +63,13 @@ class PagePreviewMessageTest extends ModelTestCase
 
         $this->documentsConfig = Config::getSystemConfiguration('documents');
 
-        // Page::save() resolves the fallback host from the main request, as a backend save does
+        $systemSettings = SystemSettingsConfig::get();
+        unset($systemSettings['writeable']);
+        $this->originalSystemSettings = $systemSettings;
+
+        // Page::save() must ignore this and fall back to the configured system domain instead
         $this->requestStack = Pimcore::getContainer()->get('request_stack');
-        $this->requestStack->push(Request::create(self::REQUEST_HOST_URL . '/'));
+        $this->requestStack->push(Request::create(self::ATTACKER_CONTROLLED_REQUEST_HOST_URL . '/'));
 
         // capture what is handed to the transport, independent of the configured transport
         $this->dispatched = [];
@@ -76,12 +89,17 @@ class PagePreviewMessageTest extends ModelTestCase
         $this->requestStack->pop();
         Config::setSystemConfiguration($this->documentsConfig, 'documents');
 
+        if (null !== $this->originalSystemSettings) {
+            $this->systemSettingsConfig()->testSave($this->originalSystemSettings);
+        }
+
         parent::tearDown();
     }
 
     public function testConfiguredPreviewUrlPrefixWinsOverTheRequestHost(): void
     {
         $this->configurePreviews(true, self::PREVIEW_URL_PREFIX);
+        $this->configureSystemDomain(self::SYSTEM_DOMAIN);
 
         $page = TestHelper::createEmptyDocumentPage();
 
@@ -90,14 +108,25 @@ class PagePreviewMessageTest extends ModelTestCase
         $this->assertSame(self::PREVIEW_URL_PREFIX, $this->dispatched[0]->getHostUrl());
     }
 
-    public function testRequestHostIsUsedWithoutAPreviewUrlPrefix(): void
+    public function testSystemDomainIsUsedInsteadOfTheRequestHostWithoutAPreviewUrlPrefix(): void
     {
         $this->configurePreviews(true, '');
+        $this->configureSystemDomain(self::SYSTEM_DOMAIN);
 
         TestHelper::createEmptyDocumentPage();
 
         $this->assertCount(1, $this->dispatched);
-        $this->assertSame(self::REQUEST_HOST_URL, $this->dispatched[0]->getHostUrl());
+        $this->assertSame('http://' . self::SYSTEM_DOMAIN, $this->dispatched[0]->getHostUrl());
+    }
+
+    public function testNothingIsQueuedWhenNeitherAPreviewUrlPrefixNorASystemDomainIsConfigured(): void
+    {
+        $this->configurePreviews(true, '');
+        $this->configureSystemDomain('');
+
+        TestHelper::createEmptyDocumentPage();
+
+        $this->assertSame([], $this->dispatched);
     }
 
     public function testNothingIsQueuedWhilePreviewsAreDisabled(): void
@@ -116,5 +145,21 @@ class PagePreviewMessageTest extends ModelTestCase
         $config['preview_url_prefix'] = $previewUrlPrefix;
 
         Config::setSystemConfiguration($config, 'documents');
+    }
+
+    private function configureSystemDomain(string $domain): void
+    {
+        $systemSettings = $this->originalSystemSettings ?? [];
+        $systemSettings['general']['domain'] = $domain;
+
+        $this->systemSettingsConfig()->testSave($systemSettings);
+    }
+
+    private function systemSettingsConfig(): SystemSettingsConfig
+    {
+        return new SystemSettingsConfig(
+            Pimcore::getContainer()->get('event_dispatcher'),
+            Pimcore::getContainer()->get(LocaleServiceInterface::class)
+        );
     }
 }
