@@ -537,7 +537,9 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
 
     public function testVisibleFieldsAreSynchronizedWithMainDefinition(): void
     {
+        // a saved definition always carries the upload path (a typed property without default), and the sync copies it
         $main = new ManyToManyRelation();
+        $main->setAssetUploadPath('/');
         $main->setVisibleFields('someAttribute,filename');
 
         $fd = new ManyToManyRelation();
@@ -545,6 +547,7 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertSame('someAttribute,filename', $fd->getVisibleFields());
 
         $advancedMain = new AdvancedManyToManyRelation();
+        $advancedMain->setAssetUploadPath('/');
         $advancedMain->setColumns([]);
         $advancedMain->setVisibleFields('filename');
 
