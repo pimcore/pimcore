@@ -1206,7 +1206,14 @@ class Service extends Model\AbstractModel
             } elseif ($i === count($pathsArray) - 1) {
                 // a concurrent request has created the requested folder itself since the check above, possibly along
                 // with the parent taken over from it in the previous iteration
-                $lastFolder = $type::getByPath($currentPath, ['force' => true]);
+                $element = $type::getByPath($currentPath, ['force' => true]);
+                if (!$element instanceof $folderType) {
+                    $exception = new DuplicateFullPathException('Duplicate full path [ ' . $currentPath . ' ] - cannot create folder');
+                    $exception->setDuplicateElement($element);
+
+                    throw $exception;
+                }
+                $lastFolder = $element;
             }
         }
 

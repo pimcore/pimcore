@@ -26,6 +26,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use RuntimeException;
 use Throwable;
 
@@ -86,111 +87,152 @@ class CreateFolderByPathRaceTest extends ModelTestCase
     }
 
     /**
-     * Within an outer transaction the folder committed by the other request is not visible, so the exception is
-     * rethrown, and the outer transaction can still be used: the failed save only rolled back to its savepoint
+     * Within an outer transaction the folder committed by the other request is not visible (under the default
+     * REPEATABLE READ, set explicitly here), so the exception is rethrown, and the outer transaction can still be
+     * used: the failed save only rolled back to its savepoint
+     *
+     * @dataProvider types
      */
-    public function testFolderInsertedConcurrentlyWithinTransaction(): void
+    public function testFolderInsertedConcurrentlyWithinTransaction(string $type): void
     {
+        [$service, $folderClass, , $table, $keyColumn] = self::TYPES[$type];
         $root = '/race-' . uniqid();
-        $parent = Asset\Service::createFolderByPath($root);
+        $parent = $service::createFolderByPath($root);
         $db = Db::get();
 
+        $db->executeStatement('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
         $db->beginTransaction();
 
         try {
-            $process = $this->startConcurrentInsert('assets', 'filename', $parent->getId(), $root . '/', 'a');
+            $process = $this->startConcurrentInsert($table, $keyColumn, $parent->getId(), $root . '/', 'a');
 
             try {
                 $this->assertGreaterThan(0, (int) $process['id'], 'the concurrent insert failed: ' . $process['error']);
-                Asset\Service::createFolderByPath($root . '/a/b');
-                $this->fail('no exception thrown');
-            } catch (UniqueConstraintViolationException) {
-                // expected
+                $exception = $this->captureException(fn () => $service::createFolderByPath($root . '/a/b'));
             } finally {
                 $this->finishProcess($process);
             }
 
+            $this->assertTrue(self::isCausedBy($exception, UniqueConstraintViolationException::class), (string) $exception);
             $this->assertTrue($db->isTransactionActive());
             $this->assertFalse($db->isRollbackOnly());
-            $this->assertNull(Asset::getByPath($root . '/a'));
+            $this->assertNull($service::getElementByPath($type, $root . '/a'));
             $this->assertSame(1, (int) $db->fetchOne('SELECT 1'));
         } finally {
-            $db->rollBack();
+            // only if still active, so that a failed assertion above is not replaced by the exception of rollBack()
+            if ($db->isTransactionActive()) {
+                $db->rollBack();
+            }
         }
 
-        $this->assertInstanceOf(Asset\Folder::class, Asset::getByPath($root . '/a'));
+        $this->assertInstanceOf($folderClass, $service::getElementByPath($type, $root . '/a'));
     }
 
     /**
      * A concurrently created element which is not a folder is not taken over as one
+     *
+     * @dataProvider types
      */
-    public function testConcurrentNonFolderIsNotUsed(): void
+    public function testConcurrentNonFolderIsNotUsed(string $type): void
     {
+        [$service, , $events] = self::TYPES[$type];
         $root = '/race-' . uniqid();
-        $parentId = Asset\Service::createFolderByPath($root)->getId();
+        $parentId = $service::createFolderByPath($root)->getId();
 
         $created = false;
-        $this->addListener(AssetEvents::PRE_ADD, function (ElementEventInterface $event) use (&$created, $parentId): void {
+        $this->addListener($events::PRE_ADD, function (ElementEventInterface $event) use (&$created, $type, $parentId): void {
             if (!$created && self::isNewChild($event->getElement(), $parentId, 'a')) {
                 $created = true;
-                $asset = new Asset\Text();
-                $asset->setParentId($parentId);
-                $asset->setFilename('a');
-                $asset->setData('not a folder');
-                $asset->save();
+                self::createNonFolder($type, $parentId, 'a');
             }
         });
 
-        $this->expectException(DuplicateFullPathException::class);
-        Asset\Service::createFolderByPath($root . '/a/b');
+        $exception = $this->captureException(fn () => $service::createFolderByPath($root . '/a/b'));
+
+        $this->assertTrue(self::isCausedBy($exception, DuplicateFullPathException::class), (string) $exception);
+        $this->assertNull($service::getElementByPath($type, $root . '/a/b'));
+    }
+
+    /**
+     * The other request creates the requested folder's parent and, at the requested path, an element which is not a
+     * folder: that is not returned as the folder
+     *
+     * @dataProvider types
+     */
+    public function testConcurrentNonFolderAtRequestedPathIsNotReturned(string $type): void
+    {
+        [$service, $folderClass, $events] = self::TYPES[$type];
+        $root = '/race-' . uniqid();
+        $parentId = $service::createFolderByPath($root)->getId();
+
+        $nonFolder = null;
+        $this->addListener($events::PRE_ADD, function (ElementEventInterface $event) use (&$nonFolder, $service, $type, $root, $parentId): void {
+            if ($nonFolder === null && self::isNewChild($event->getElement(), $parentId, 'a')) {
+                $nonFolder = false; // the save of the other request dispatches this event too
+                $nonFolder = self::createNonFolder($type, $service::createFolderByPath($root . '/a')->getId(), 'b');
+            }
+        });
+
+        $exception = $this->captureException(fn () => $service::createFolderByPath($root . '/a/b'));
+
+        $this->assertInstanceOf(DuplicateFullPathException::class, $exception, (string) $exception);
+        $this->assertSame($nonFolder->getId(), $exception->getDuplicateElement()?->getId());
+        $this->assertInstanceOf($folderClass, $service::getElementByPath($type, $root . '/a'));
     }
 
     /**
      * An exception which is not about a duplicate path is not swallowed, even if the path exists afterwards
+     *
+     * @dataProvider types
      */
-    public function testUnrelatedFailureIsRethrown(): void
+    public function testUnrelatedFailureIsRethrown(string $type): void
     {
+        [$service, , $events] = self::TYPES[$type];
         $root = '/race-' . uniqid();
-        $parentId = Asset\Service::createFolderByPath($root)->getId();
+        $parentId = $service::createFolderByPath($root)->getId();
 
         $thrown = false;
-        $this->addListener(AssetEvents::PRE_ADD, function (ElementEventInterface $event) use (&$thrown, $root, $parentId): void {
+        $this->addListener($events::PRE_ADD, function (ElementEventInterface $event) use (&$thrown, $service, $root, $parentId): void {
             if (!$thrown && self::isNewChild($event->getElement(), $parentId, 'a')) {
                 $thrown = true;
-                Asset\Service::createFolderByPath($root . '/a');
+                $service::createFolderByPath($root . '/a');
 
                 throw new RuntimeException('unrelated failure');
             }
         });
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('unrelated failure');
-        Asset\Service::createFolderByPath($root . '/a/b');
+        $exception = $this->captureException(fn () => $service::createFolderByPath($root . '/a/b'));
+
+        $this->assertInstanceOf(RuntimeException::class, $exception, (string) $exception);
+        $this->assertSame('unrelated failure', $exception->getMessage());
     }
 
     /**
      * The other request creates the whole remaining path, so the requested folder exists already when it is reached
      * after taking over its parent, and is the one returned
+     *
+     * @dataProvider types
      */
-    public function testConcurrentRequestCreatesRemainingPath(): void
+    public function testConcurrentRequestCreatesRemainingPath(string $type): void
     {
+        [$service, $folderClass, $events] = self::TYPES[$type];
         $root = '/race-' . uniqid();
-        $parentId = Asset\Service::createFolderByPath($root)->getId();
+        $parentId = $service::createFolderByPath($root)->getId();
 
         $concurrentFolder = null;
-        $this->addListener(AssetEvents::PRE_ADD, function (ElementEventInterface $event) use (&$concurrentFolder, $root, $parentId): void {
+        $this->addListener($events::PRE_ADD, function (ElementEventInterface $event) use (&$concurrentFolder, $service, $root, $parentId): void {
             if ($concurrentFolder === null && self::isNewChild($event->getElement(), $parentId, 'a')) {
                 $concurrentFolder = false; // the save of the other request dispatches this event too
-                $concurrentFolder = Asset\Service::createFolderByPath($root . '/a/b');
+                $concurrentFolder = $service::createFolderByPath($root . '/a/b');
             }
         });
-        $failure = $this->captureAddFailure(AssetEvents::class);
+        $failure = $this->captureAddFailure($events);
 
-        $folder = Asset\Service::createFolderByPath($root . '/a/b');
+        $folder = $service::createFolderByPath($root . '/a/b');
 
-        $this->assertInstanceOf(DuplicateFullPathException::class, $failure(), 'the race was not hit');
-        $this->assertInstanceOf(Asset\Folder::class, $concurrentFolder);
-        $this->assertInstanceOf(Asset\Folder::class, $folder);
+        $this->assertTrue(self::isCausedBy($failure(), DuplicateFullPathException::class), 'the race was not hit');
+        $this->assertInstanceOf($folderClass, $concurrentFolder);
+        $this->assertInstanceOf($folderClass, $folder);
         $this->assertSame($root . '/a/b', $folder->getRealFullPath());
         $this->assertSame($concurrentFolder->getId(), $folder->getId());
     }
@@ -198,28 +240,33 @@ class CreateFolderByPathRaceTest extends ModelTestCase
     /**
      * A duplicate exception thrown by a post add listener, after the folder was committed, is not mistaken for a
      * concurrently created folder
+     *
+     * @dataProvider types
      */
-    public function testPostAddDuplicateFailureIsRethrown(): void
+    public function testPostAddDuplicateFailureIsRethrown(string $type): void
     {
+        [$service, $folderClass, $events] = self::TYPES[$type];
         $root = '/race-' . uniqid();
-        $parentId = Asset\Service::createFolderByPath($root)->getId();
+        $parentId = $service::createFolderByPath($root)->getId();
 
-        $this->addListener(AssetEvents::POST_ADD, function (ElementEventInterface $event) use ($parentId): void {
+        $this->addListener($events::POST_ADD, function (ElementEventInterface $event) use ($parentId): void {
             $element = $event->getElement();
             if ($element->getParentId() === $parentId && $element->getKey() === 'a') {
                 throw new DuplicateFullPathException('duplicate from a listener');
             }
         });
 
-        try {
-            Asset\Service::createFolderByPath($root . '/a/b');
-            $this->fail('no exception thrown');
-        } catch (DuplicateFullPathException $e) {
-            $this->assertSame('duplicate from a listener', $e->getMessage());
-        }
+        $exception = $this->captureException(fn () => $service::createFolderByPath($root . '/a/b'));
 
-        $this->assertInstanceOf(Asset\Folder::class, Asset::getByPath($root . '/a', ['force' => true]));
-        $this->assertNull(Asset::getByPath($root . '/a/b', ['force' => true]));
+        $this->assertInstanceOf(DuplicateFullPathException::class, $exception, (string) $exception);
+        $this->assertSame('duplicate from a listener', $exception->getMessage());
+        $this->assertInstanceOf($folderClass, $service::getElementByPath($type, $root . '/a'));
+        $this->assertNull($service::getElementByPath($type, $root . '/a/b'));
+    }
+
+    public static function types(): array
+    {
+        return ['asset' => ['asset'], 'document' => ['document'], 'object' => ['object']];
     }
 
     /**
@@ -280,6 +327,34 @@ class CreateFolderByPathRaceTest extends ModelTestCase
         $this->assertInstanceOf($folderClass, $service::getElementByPath($type, $root . '/a'));
     }
 
+    private function captureException(callable $callable): Throwable
+    {
+        try {
+            $callable();
+        } catch (Throwable $e) {
+            return $e;
+        }
+
+        $this->fail('no exception thrown');
+    }
+
+    private static function createNonFolder(string $type, int $parentId, string $key): ElementInterface
+    {
+        if ($type === 'asset') {
+            $element = new Asset\Text();
+            $element->setData('not a folder');
+        } elseif ($type === 'document') {
+            $element = new Document\Page();
+        } else {
+            $element = TestHelper::createEmptyObject('', false);
+        }
+        $element->setParentId($parentId);
+        $element->setKey($key);
+        $element->save();
+
+        return $element;
+    }
+
     private function addListener(string $eventName, callable $listener): void
     {
         Pimcore::getEventDispatcher()->addListener($eventName, $listener);
@@ -318,8 +393,8 @@ class CreateFolderByPathRaceTest extends ModelTestCase
     }
 
     /**
-     * Inserts a folder row in a separate process and transaction, which is committed once another connection inserts
-     * into the table, i.e. the insert of the conflicting folder waits for the uncommitted row
+     * Inserts a folder row in a separate process and transaction, which is committed once the test's connection
+     * inserts into the table, i.e. the insert of the conflicting folder waits for the uncommitted row
      *
      * @return array{handle: resource, pipes: array<int, resource>, id: string, error: string}
      */
@@ -342,15 +417,15 @@ class CreateFolderByPathRaceTest extends ModelTestCase
             ))->execute([$p['parentId'], 'folder', $p['key'], $p['path'], time(), time()]);
             echo $pdo->lastInsertId(), "\n";
             fflush(STDOUT);
-            // commit only once the conflicting insert runs, at most after the timeout: it waits for the lock on this
-            // row then. SHOW PROCESSLIST lists the threads of the same user without the PROCESS privilege
-            $ownId = $pdo->query('SELECT CONNECTION_ID()')->fetchColumn();
+            // commit only once the test's connection runs the conflicting insert, at most after the timeout: it waits
+            // for the lock on this row then. SHOW PROCESSLIST lists the threads of the same user without the PROCESS
+            // privilege
             $deadline = microtime(true) + $p['timeout'];
             do {
                 usleep(10000);
                 $inserting = false;
                 foreach ($pdo->query('SHOW FULL PROCESSLIST', PDO::FETCH_ASSOC) as $thread) {
-                    $inserting = $inserting || ($thread['Id'] != $ownId
+                    $inserting = $inserting || ($thread['Id'] == $p['connectionId']
                         && preg_match('/^\s*INSERT INTO\s+`?' . $p['table'] . '`?\s*\(/i', (string) $thread['Info']));
                 }
             } while (!$inserting && microtime(true) < $deadline);
@@ -368,6 +443,7 @@ class CreateFolderByPathRaceTest extends ModelTestCase
             'path' => $path,
             'key' => $key,
             'timeout' => 10,
+            'connectionId' => (int) Db::get()->fetchOne('SELECT CONNECTION_ID()'),
         ]);
 
         $handle = proc_open([PHP_BINARY, '-r', $script], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, $env);
