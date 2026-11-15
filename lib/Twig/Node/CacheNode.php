@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Node;
 
+use Pimcore\Twig\Extension\CacheTagExtension;
 use Twig\Compiler;
 use Twig\Node\Node;
+use function sprintf;
 
 /**
  * @internal
@@ -22,55 +24,81 @@ use Twig\Node\Node;
 final class CacheNode extends Node
 {
     public function __construct(
-        private string $key,
-        private ?int $ttl,
-        private array $tags,
-        private bool $force,
+        Node $key,
+        ?Node $ttl,
+        ?Node $tags,
+        ?Node $force,
         Node $body,
-        int $lineno,
-        ?string $tag = 'pimcorecache'
+        int $lineno
     ) {
-        parent::__construct(['body' => $body], [], $lineno, $tag);
+        $nodes = ['key' => $key, 'body' => $body];
+        foreach (['ttl' => $ttl, 'tags' => $tags, 'force' => $force] as $name => $node) {
+            if ($node !== null) {
+                $nodes[$name] = $node;
+            }
+        }
+
+        parent::__construct($nodes, [], $lineno);
     }
 
     public function compile(Compiler $compiler): void
     {
-        $splitChars = uniqid('', true);
-
-        [$before, $after] = explode($splitChars, $this->getPhpCode($splitChars));
+        // unique variable names, so nested pimcorecache blocks do not overwrite each other
+        $extension = $compiler->getVarName();
+        $key = $compiler->getVarName();
+        $tags = $compiler->getVarName();
+        $ttl = $compiler->getVarName();
+        $force = $compiler->getVarName();
+        $content = $compiler->getVarName();
 
         $compiler
             ->addDebugInfo($this)
-            ->write($before)
+            ->write(sprintf("\$%s = \$this->env->getExtension('%s');\n", $extension, CacheTagExtension::class))
+            ->write(sprintf('$%s = ', $key))
+            ->raw(sprintf('$%s->normalizeKey(', $extension))
+            ->subcompile($this->getNode('key'))
+            ->raw(");\n")
+            ->write(sprintf('$%s = ', $tags))
+            ->raw(sprintf('$%s->normalizeTags(', $extension));
+        $this->compileOptional($compiler, 'tags', '[]');
+        $compiler
+            ->raw(");\n")
+            ->write(sprintf('$%s = ', $ttl))
+            ->raw(sprintf('$%s->normalizeTtl(', $extension));
+        $this->compileOptional($compiler, 'ttl', 'null');
+        $compiler
+            ->raw(");\n")
+            ->write(sprintf('$%s = ', $force))
+            ->raw(sprintf('$%s->normalizeForce(', $extension));
+        $this->compileOptional($compiler, 'force', 'false');
+        $compiler
+            ->raw(");\n")
+            ->write(sprintf("\$%s = \$%s->getContentFromCache(\$%s, \$%s);\n", $content, $extension, $key, $force))
+            ->write(sprintf("if (!\$%s) {\n", $content))
+            ->indent()
+            ->write(sprintf("\$%s->startBuffering();\n", $extension))
             ->subcompile($this->getNode('body'))
-            ->write($after)
+            ->write(sprintf(
+                "\$%s = \$%s->endBuffering(\$%s, \$%s, \$%s, \$%s);\n",
+                $content,
+                $extension,
+                $key,
+                $tags,
+                $ttl,
+                $force
+            ))
+            ->outdent()
+            ->write("}\n")
+            ->write(sprintf("echo \$%s;\n", $content))
         ;
     }
 
-    private function getPhpCode(string $splitChars): string
+    private function compileOptional(Compiler $compiler, string $name, string $default): void
     {
-
-        $key = $this->key;
-        $tags = json_encode($this->tags);
-        $ttl = $this->ttl ?? 'null';
-        $force = json_encode($this->force);
-
-        return <<<PHP
-
-    \$cacheExtension = \$this->env->getExtension('Pimcore\Twig\Extension\CacheTagExtension');
-    \$key = '{$key}';
-    \$tags = {$tags};
-    \$ttl = {$ttl};
-    \$force = {$force};
-    \$content = \$cacheExtension->getContentFromCache(\$key, \$force);
-    if (!\$content) {
-        \$cacheExtension->startBuffering();
-        {$splitChars}
-
-        \$content = \$cacheExtension->endBuffering(\$key, \$tags, \$ttl, \$force);
-    }
-    echo \$content;
-PHP;
-
+        if ($this->hasNode($name)) {
+            $compiler->subcompile($this->getNode($name));
+        } else {
+            $compiler->raw($default);
+        }
     }
 }

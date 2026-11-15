@@ -22,7 +22,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 use stdClass;
@@ -647,6 +648,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
+        $violations = [];
         if (!$omitMandatoryCheck) {
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
@@ -660,32 +662,23 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             if ($data->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($dataForValidityCheck[$language][$fd->getName()])) {
                                 //try again with parent data when inheritance is activated
                                 try {
-                                    $getInheritedValues = DataObject::doGetInheritedValues();
-                                    DataObject::setGetInheritedValues(true);
-
-                                    $value = null;
-                                    $context = $data->getContext();
-                                    $containerType = $context['containerType'] ?? null;
-                                    if ($containerType === 'objectbrick') {
-                                        $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
-                                        $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
-                                        if ($brick) {
-                                            $value = $brick->{'get' . ucfirst($fd->getName())}($language);
-                                        }
-                                    } elseif ($containerType === null || $containerType === 'object') {
-                                        $getter = 'get' . ucfirst($fd->getName());
-                                        $value = $data->getObject()->$getter($language);
-                                    }
-
-                                    $fd->checkValidity($value, $omitMandatoryCheck, $params);
-                                    DataObject::setGetInheritedValues($getInheritedValues);
+                                    DataObject\Service::useInheritedValues(
+                                        true,
+                                        fn () => $fd->checkValidity(
+                                            $this->getValueForInheritanceCheck($data, $fd, $language),
+                                            $omitMandatoryCheck,
+                                            $params
+                                        )
+                                    );
                                 } catch (Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
                                     }
-                                    $exceptionClass = get_class($e);
 
-                                    throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                    throw StructuredValidationException::copyWithMessage(
+                                        $e,
+                                        $e->getMessage() . ' fieldname=' . $fd->getName()
+                                    );
                                 }
                             } else {
                                 if ($e instanceof Model\Element\ValidationException) {
@@ -699,6 +692,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     } catch (Model\Element\ValidationException $ve) {
                         $ve->addContext($this->getName() . '-' . $language);
                         $validationExceptions[] = $ve;
+                        $violations[] = StructuredValidationException::from($ve)
+                            ->setField($fd->getName(), $fd->getTitle())
+                            ->addPathSegment(new ValidationPathSegment(field: $this->getName(), language: $language));
                     }
                 }
             }
@@ -706,14 +702,34 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         if (count($validationExceptions) > 0) {
             $errors = [];
-            /** @var Element\ValidationException $e */
+            // the original exceptions, so a custom getAggregatedMessage() keeps its text
+            /** @var Model\Element\ValidationException $e */
             foreach ($validationExceptions as $e) {
                 $errors[] = $e->getAggregatedMessage();
             }
             $message = implode(' / ', $errors);
 
-            throw new Model\Element\ValidationException($message);
+            throw (new StructuredValidationException($message))->addViolations(...$violations);
         }
+    }
+
+    private function getValueForInheritanceCheck(Localizedfield $data, Data $fd, string $language): mixed
+    {
+        $value = null;
+        $context = $data->getContext();
+        $containerType = $context['containerType'] ?? null;
+        if ($containerType === 'objectbrick') {
+            $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
+            $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
+            if ($brick) {
+                $value = $brick->{'get' . ucfirst($fd->getName())}($language);
+            }
+        } elseif ($containerType === null || $containerType === 'object') {
+            $getter = 'get' . ucfirst($fd->getName());
+            $value = $data->getObject()->$getter($language);
+        }
+
+        return $value;
     }
 
     private function getDataForValidity(Localizedfield $localizedObject, array $languages): array
@@ -728,6 +744,16 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         foreach ($languages as $language) {
             $data[$language] = [];
             foreach ($this->getFieldDefinitions() as $fd) {
+                if ($fd instanceof CalculatedValue) {
+                    // getLocalizedValue() runs the calculator for a calculated value, and the only
+                    // consumer of this array is checkValidity(), where CalculatedValue::checkValidity()
+                    // is a no-op. The non-variant branch above already yields null for these fields,
+                    // because Localizedfield::getInternalData() nulls them out.
+                    $data[$language][$fd->getName()] = null;
+
+                    continue;
+                }
+
                 $data[$language][$fd->getName()] = $localizedObject->getLocalizedValue($fd->getName(), $language);
             }
         }

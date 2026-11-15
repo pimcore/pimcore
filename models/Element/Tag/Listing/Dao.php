@@ -48,6 +48,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $tags[] = $tag;
         }
 
+        // lets the tags answer hasChildren() with one query for the whole result
+        $tagIds = array_map(static fn (Model\Element\Tag $tag): int => (int) $tag->getId(), $tags);
+        $childrenLookup = new Model\Element\Tag\ChildrenLookup($tagIds);
+        foreach ($tags as $tag) {
+            $tag->setChildrenLookup($childrenLookup);
+        }
+
         $this->model->setTags($tags);
 
         return $tags;

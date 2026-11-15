@@ -40,10 +40,29 @@ class VersionDeleteHandler implements BatchHandlerInterface
         foreach ($jobs as [$message, $ack]) {
             try {
                 $versions = new Version\Listing();
-                $versions->setCondition('cid = :cid AND ctype = :ctype', [
-                    'cid' => $message->getElementId(),
-                    'ctype' => $message->getElementType(),
-                ]);
+                if ($message->getMaxVersionId() !== null) {
+                    // only delete versions that existed when the element was deleted - the id may
+                    // have been re-used since (e.g. WebDAV delete-log restore), and versions
+                    // created after that restore must survive this deferred cleanup
+                    $versions->setCondition('cid = :cid AND ctype = :ctype AND id <= :maxVersionId', [
+                        'cid' => $message->getElementId(),
+                        'ctype' => $message->getElementType(),
+                        'maxVersionId' => $message->getMaxVersionId(),
+                    ]);
+                } else {
+                    // legacy message queued by a previous release: it recorded no bound, and one
+                    // cannot be reconstructed here, so the cleanup stays unbounded. During a
+                    // mixed-version deployment window the same limitation exists in the other
+                    // direction (a previous-release worker ignores the bound on a new message).
+                    // In both cases the exposure is confined to that transient window and to an
+                    // element id re-used within it (WebDAV delete-log restore): version history
+                    // created by such a restore may be cleaned up, the restored element itself is
+                    // never touched. Drain the messenger queue across the deployment to avoid it.
+                    $versions->setCondition('cid = :cid AND ctype = :ctype', [
+                        'cid' => $message->getElementId(),
+                        'ctype' => $message->getElementType(),
+                    ]);
+                }
 
                 foreach ($versions as $version) {
                     try {

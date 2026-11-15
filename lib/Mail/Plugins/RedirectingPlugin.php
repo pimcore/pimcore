@@ -99,7 +99,8 @@ final class RedirectingPlugin
      */
     public function sendPerformed(Mail $message): void
     {
-        if ($message->doRedirectMailsToDebugMailAddresses()) {
+        // without the snapshot of the original data nothing was decorated and there is nothing to restore
+        if ($message->doRedirectMailsToDebugMailAddresses() && $message->getOriginalData() !== null) {
             $this->setSenderAndReceiversParams($message);
             $this->removeDebugInformation($message);
         }

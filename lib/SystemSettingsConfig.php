@@ -29,6 +29,8 @@ class SystemSettingsConfig
 
     private const SCOPE = 'pimcore_system_settings';
 
+    private const RUNTIME_CACHE_KEY = 'pimcore_system_settings_config';
+
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
     private LocaleServiceInterface $localeService;
@@ -63,6 +65,12 @@ class SystemSettingsConfig
 
     public static function get(): array
     {
+        // the settings are read on hot paths (e.g. the fallback languages of every empty localized
+        // value); with the settings store as read target each read would be a database query
+        if (RuntimeCache::isRegistered(self::RUNTIME_CACHE_KEY)) {
+            return RuntimeCache::get(self::RUNTIME_CACHE_KEY);
+        }
+
         $repository = self::getRepository();
 
         $data = SystemConfig::getConfigDataByKey($repository, self::CONFIG_ID);
@@ -77,7 +85,33 @@ class SystemSettingsConfig
             $data['writeable'] = $repository->isWriteable();
         }
 
+        RuntimeCache::set(self::RUNTIME_CACHE_KEY, $data);
+
         return $data;
+    }
+
+    /**
+     * Drops the settings kept for the current process, so the next read loads them again.
+     *
+     * @internal
+     */
+    public static function clearRuntimeCache(): void
+    {
+        if (RuntimeCache::isRegistered(self::RUNTIME_CACHE_KEY)) {
+            RuntimeCache::getInstance()->offsetUnset(self::RUNTIME_CACHE_KEY);
+        }
+    }
+
+    /**
+     * Called by the settings store after an entry of the given scope was written or deleted.
+     *
+     * @internal
+     */
+    public static function onSettingsStoreChange(?string $scope): void
+    {
+        if ($scope === self::SCOPE) {
+            self::clearRuntimeCache();
+        }
     }
 
     public function save(array $values): void
@@ -94,6 +128,8 @@ class SystemSettingsConfig
                 return ['pimcore' => $data];
             });
         }
+
+        self::clearRuntimeCache();
     }
 
     /**
@@ -109,6 +145,7 @@ class SystemSettingsConfig
             return ['pimcore' => $data];
         });
 
+        self::clearRuntimeCache();
     }
 
     /**
@@ -117,8 +154,8 @@ class SystemSettingsConfig
      */
     public function getSystemSettingsConfig(): array
     {
-        if (RuntimeCache::isRegistered('pimcore_system_settings_config')) {
-            $config = RuntimeCache::get('pimcore_system_settings_config');
+        if (RuntimeCache::isRegistered(self::RUNTIME_CACHE_KEY)) {
+            $config = RuntimeCache::get(self::RUNTIME_CACHE_KEY);
         } else {
             $config = self::get();
             $this->setSystemSettingsConfig($config);
@@ -133,7 +170,7 @@ class SystemSettingsConfig
      */
     public function setSystemSettingsConfig(array $config): void
     {
-        RuntimeCache::set('pimcore_system_settings_config', $config);
+        RuntimeCache::set(self::RUNTIME_CACHE_KEY, $config);
     }
 
     /**
@@ -144,7 +181,7 @@ class SystemSettingsConfig
         $fallbackLanguages = [];
         $localizedErrorPages = [];
         $languages = explode(',', $values['general.validLanguages']);
-        $requiredLanguages = explode(',', $values['general.requiredLanguages']);
+        $requiredLanguages = array_values(array_filter(explode(',', (string) $values['general.requiredLanguages'])));
         $filteredLanguages = [];
         $existingValues = self::get();
 

@@ -163,9 +163,6 @@ abstract class AbstractAutomationActionHandler
         if (!preg_match_all("/job_env\('([^']*)'\)/", $value, $matches)) {
             return $value;
         }
-        if (empty($matches[1])) {
-            return $value;
-        }
         $envVariableKey = $matches[1][0];
         if (!array_key_exists($envVariableKey, $variables)) {
             throw new NotFoundException("Missing environment variable $envVariableKey");

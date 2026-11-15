@@ -8,12 +8,6 @@ services:
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreCustomReportsBundle')"
 
-    Pimcore\Bundle\CustomReportsBundle\Controller\:
-        resource: '../src/Controller'
-        public: true
-        tags: ['controller.service_arguments']
-
-
     pimcore.custom_report.adapter.factory.sql:
         class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
         arguments:

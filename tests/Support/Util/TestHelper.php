@@ -873,6 +873,24 @@ class TestHelper
     /**
      * @throws Exception
      */
+    public static function createThumbnailConfigurationOriginalFormat(): Asset\Image\Thumbnail\Config
+    {
+        $name = 'assettest_original_format';
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config();
+            $pipe->setName($name);
+            $pipe->setFormat('ORIGINAL');
+            $pipe->save(true);
+            self::$thumbnail_configs[] = $name;
+        }
+
+        return $pipe;
+    }
+
+    /**
+     * @throws Exception
+     */
     public static function createThumbnailConfigurationRotate(int $angle = 90): Asset\Image\Thumbnail\Config
     {
         $name = 'assettest_rotate_' . $angle;

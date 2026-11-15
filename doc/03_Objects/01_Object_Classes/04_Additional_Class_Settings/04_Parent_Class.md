@@ -68,6 +68,27 @@ class Special extends DataObject\Concrete implements DataObject\PreGetValueHookI
 }
 ```
 
+Returning `null` from `preGetValue()` means "no override", the getter then continues with the stored value.
+To make a getter actively return `null` instead of the stored value, return the sentinel
+`PreGetValueHookResult::ReturnNull`:
+
+```php
+use Pimcore\Model\DataObject\PreGetValueHookResult;
+
+public function preGetValue(string $key): mixed
+{
+    if ($key == "internalNote" && !$this->isNoteVisible()) {
+        return PreGetValueHookResult::ReturnNull;
+    }
+
+    return null;
+}
+```
+
+The sentinel is only honoured by getters whose return type allows `null` (e.g. `?string`). Getters with a
+non-nullable return type, such as the `array` getters of relation and table fields, ignore it and fall
+through to the stored value. Return the matching empty value (e.g. `[]`) from the hook for those fields.
+
 ## Overriding Pimcore Models
 
 In addition to parent classes, you can override Pimcore object classes with custom classes and

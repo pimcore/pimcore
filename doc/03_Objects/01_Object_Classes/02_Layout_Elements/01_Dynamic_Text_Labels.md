@@ -13,6 +13,12 @@ This is an alternative to the static text defined in the class definition.
 
 The preview tab shows a preview of the generated content. If your content uses object context, drag and drop an object onto the "Drag Object for Preview" field to check the output in the preview tab.
 
+:::info Rendering only
+Dynamic Text Labels are rendered on the fly whenever the object editor is displayed.
+The generated text is never saved to the database or anywhere else and is not part of
+the object's data. If you need a computed value that is persisted, queryable, and
+exportable, use a [Calculated Value](../01_Data_Types/10_Calculated_Value_Type.md) instead.
+:::
 
 ## Custom Renderer Class
 
@@ -83,3 +89,7 @@ security policies for tags, filters, and functions. Use the following configurat
                   filters: ['upper']
                   functions: ['include', 'path']
 ```
+
+The sandbox also restricts which objects a template may call methods or access properties
+on. See [Twig Sandbox Object Access](../../../09_Development_Tools/03_Security_and_Authentication/07_Twig_Sandbox_Object_Access.md)
+for the `blocked_classes` / `allowed_classes` options.

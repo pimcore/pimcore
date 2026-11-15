@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Helper;
 
+use Pimcore\Bundle\GenericExecutionEngineBundle\Installer as GenericExecutionEngineInstaller;
 use Pimcore\Bundle\SeoBundle\Installer;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Tests\Support\Util\Autoloader;
@@ -23,6 +24,7 @@ class CoreModel extends Model
     {
         parent::_beforeSuite($settings);
         $this->installSeoBundle();
+        $this->installGenericExecutionEngineBundle();
     }
 
     private function installSeoBundle(): void
@@ -38,5 +40,16 @@ class CoreModel extends Model
 
         //explicitly load installed classes so that the new ones are used during tests
         Autoloader::load(Redirect::class);
+    }
+
+    private function installGenericExecutionEngineBundle(): void
+    {
+        /** @var Pimcore $pimcoreModule */
+        $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+
+        $this->debug('[PimcoreGenericExecutionEngineBundle] Running GenericExecutionEngineBundle installer');
+
+        $installer = $pimcoreModule->getContainer()->get(GenericExecutionEngineInstaller::class);
+        $installer->install();
     }
 }

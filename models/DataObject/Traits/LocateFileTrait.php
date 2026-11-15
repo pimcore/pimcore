@@ -31,14 +31,9 @@ trait LocateFileTrait
 
         if ($customBase !== false) {
             $customFile = sprintf('%s/' . $pathTemplate, $customBase, $key);
-            $realCustomFile = realpath($customFile);
 
-            if (
-                $realCustomFile !== false &&
-                is_file($realCustomFile) &&
-                str_starts_with($realCustomFile, $customBase . DIRECTORY_SEPARATOR)
-            ) {
-                return $realCustomFile;
+            if (is_file($customFile)) {
+                return $customFile;
             }
         }
 
@@ -48,18 +43,7 @@ trait LocateFileTrait
             throw new RuntimeException('Invalid file path');
         }
 
-        $defaultFile = sprintf('%s/' . $pathTemplate, $defaultBase, $key);
-        $realDefaultFile = realpath($defaultFile);
-
-        if ($realDefaultFile !== false) {
-            if (!str_starts_with($realDefaultFile, $defaultBase . DIRECTORY_SEPARATOR)) {
-                throw new RuntimeException('Invalid file path');
-            }
-
-            return $realDefaultFile;
-        }
-
-        return $defaultFile;
+        return sprintf('%s/' . $pathTemplate, $defaultBase, $key);
     }
 
     // @throws RuntimeException
@@ -73,14 +57,9 @@ trait LocateFileTrait
 
         if ($customBase !== false) {
             $customFile = sprintf('%s/' . $pathTemplate, $customBase, $key);
-            $realCustomFile = realpath($customFile);
 
-            if (
-                $realCustomFile !== false &&
-                is_file($realCustomFile) &&
-                str_starts_with($realCustomFile, $customBase . DIRECTORY_SEPARATOR)
-            ) {
-                return $realCustomFile;
+            if (is_file($customFile)) {
+                return $customFile;
             }
         }
 
@@ -90,17 +69,6 @@ trait LocateFileTrait
             throw new RuntimeException('Invalid file path');
         }
 
-        $defaultFile = sprintf('%s/' . $pathTemplate, $defaultBase, $key);
-        $realDefaultFile = realpath($defaultFile);
-
-        if ($realDefaultFile !== false) {
-            if (!str_starts_with($realDefaultFile, $defaultBase . DIRECTORY_SEPARATOR)) {
-                throw new RuntimeException('Invalid file path');
-            }
-
-            return $realDefaultFile;
-        }
-
-        return $defaultFile;
+        return sprintf('%s/' . $pathTemplate, $defaultBase, $key);
     }
 }

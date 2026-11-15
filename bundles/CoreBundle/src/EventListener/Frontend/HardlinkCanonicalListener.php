@@ -76,7 +76,9 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
         $hardlinkCanonicalSourceDocument = Document::getById($document->getId());
 
         if (Frontend::isDocumentInCurrentSite($hardlinkCanonicalSourceDocument)) {
-            $canonical = $request->getSchemeAndHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath();
+            $path = $hardlinkCanonicalSourceDocument->getFullPath();
+            // outside of any site (main domain) getFullPath() is already absolute for documents of a site
+            $canonical = preg_match('@^https?://@', $path) ? $path : $request->getSchemeAndHttpHost() . $path;
         } elseif (Site::isSiteRequest()) {
             $sourceSite = Frontend::getSiteForDocument($hardlinkCanonicalSourceDocument);
             if ($sourceSite) {

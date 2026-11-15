@@ -360,17 +360,21 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             $data['path'] = $data['id'];
         }
 
-        $video = Asset::getByPath((string)$data['path']);
-        if ($video instanceof Asset\Video) {
-            $this->id = $video->getId();
-        } else {
-            $this->id = $data['path'];
+        // only scalar paths can be resolved, anything else (e.g. an object sent by the UI) is treated as no video
+        $path = $data['path'] ?? null;
+        $this->id = null;
+        if (is_string($path) || is_int($path)) {
+            $video = Asset::getByPath((string) $path);
+            $this->id = $video instanceof Asset\Video ? $video->getId() : $path;
         }
 
         $this->poster = null;
-        $poster = Asset::getByPath($data['poster']);
-        if ($poster instanceof Asset\Image) {
-            $this->poster = $poster->getId();
+        $posterPath = $data['poster'] ?? null;
+        if (is_string($posterPath) && $posterPath !== '') {
+            $poster = Asset::getByPath($posterPath);
+            if ($poster instanceof Asset\Image) {
+                $this->poster = $poster->getId();
+            }
         }
 
         return $this;
@@ -655,7 +659,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additionalParams . '" title="YouTube video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . htmlspecialchars($youtubeId, ENT_QUOTES, 'UTF-8') . $wmode . $additionalParams . '" title="YouTube video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
         </div>';
 
         return $code;
@@ -805,7 +809,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             }
 
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-                <iframe src="https://www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="DailyMotion video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
+                <iframe src="https://www.dailymotion.com/embed/video/' . htmlspecialchars($dailymotionId, ENT_QUOTES, 'UTF-8') . '?' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="DailyMotion video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
             </div>';
 
             return $code;

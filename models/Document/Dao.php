@@ -54,22 +54,56 @@ class Dao extends Model\Element\Dao
      */
     public function getByPath(string $path): void
     {
+        try {
+            $this->getByExactPath($path);
+        } catch (Model\Exception\NotFoundException $e) {
+            try {
+                $this->getByPrettyUrl($path);
+            } catch (Model\Exception\NotFoundException) {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Fetch a row by an exact path/key match only, without falling back to a pretty URL match.
+     * Used for the Unicode-normalization fallback candidates in
+     * Element\Service::getByPathWithNfcFallback(): a candidate is a synthetic, NFC-normalized
+     * variant of the caller's path, not a literal pretty URL a content editor configured, so
+     * matching it against documents_page.prettyUrl could return an unrelated page instead of
+     * correctly falling through to the next candidate.
+     *
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByExactPath(string $path): void
+    {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
         if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            // try to find a page with a pretty URL (use the original $path)
-            $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
-                'prettyUrl' => $path,
-            ]);
+            throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
+        }
+    }
 
-            if ($data) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
-            }
+    /**
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByPrettyUrl(string $path): void
+    {
+        $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl ORDER BY id LIMIT 1', [
+            'prettyUrl' => $path,
+        ]);
+
+        if ($data) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
         }
     }
 
@@ -149,10 +183,13 @@ class Dao extends Model\Element\Dao
         $dataDocument['path'] = $this->model->getRealPath();
 
         // update the values in the database
-        Helper::upsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
+        Helper::updateOrInsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
-            Helper::upsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
+            // the built-in types insert their type-specific row in create(), so this is a single UPDATE
+            // as well; a custom type whose row does not exist yet is inserted by the fallback
+            Helper::updateOrInsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
         }
 
         $this->updateLocks();

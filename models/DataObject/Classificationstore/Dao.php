@@ -71,9 +71,12 @@ class Dao extends Model\Dao\AbstractDao
 
         // check and exclude if an object is the top of the hierarchy
         // otherwise it wouldn't be able to distinguish whether the exact collections are from itself, rather from a common parent
-        if ($allowInherit && DataObject\Service::hasInheritableParentObject($object)) {
-            $parentCollectionMapping = DataObject\Service::useInheritedValues(true, $this->model->getGroupCollectionMappings(...));
-            $collectionToAdd = array_diff($collectionToAdd, $parentCollectionMapping);
+        if ($allowInherit && ($parent = DataObject\Service::hasInheritableParentObject($object))) {
+            $parentStore = $parent->{'get' . ucfirst($fieldname)}();
+            if ($parentStore instanceof DataObject\Classificationstore) {
+                $parentCollectionMapping = DataObject\Service::useInheritedValues(true, $parentStore->getGroupCollectionMappings(...));
+                $collectionToAdd = array_diff_assoc($collectionToAdd, $parentCollectionMapping);
+            }
         }
 
         $groupsTable = $this->getGroupsTableName();
@@ -96,7 +99,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $alreadySavedGroups = [];
-        $alreadySavedKeyIds = [];
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
@@ -143,7 +145,6 @@ class Dao extends Model\Dao\AbstractDao
 
                     Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
                     $alreadySavedGroups[] = $groupId;
-                    $alreadySavedKeyIds[] = $keyId;
                 }
             }
         }
@@ -154,26 +155,25 @@ class Dao extends Model\Dao\AbstractDao
             // Ignore the groups that are already saved and those without any collection id
             if ($collectionId && !in_array($groupId, $alreadySavedGroups)) {
                 $group = GroupConfig::getById($groupId);
-                $groupKeys = $group->getRelations();
-                // make sure that any of the group keys are not among those already saved
-                // if so, skip as there no need for a placeholder
-                if (!in_array(array_keys($groupKeys), $alreadySavedKeyIds)) {
-                    $firstKey = reset($groupKeys);
-                    $keyId = $firstKey->getKeyId();
-                    $keyConfig = DefinitionCache::get($keyId);
-                    $data = [
-                        'id' => $objectId,
-                        'collectionId' => $collectionId,
-                        'groupId' => $groupId,
-                        'keyId' => $keyId,
-                        'fieldname' => $fieldname,
-                        'language' => 'default',
-                        'type' => $keyConfig->getType(),
-                        'value' => null,
-                        'value2' => null,
-                    ];
-                    $this->db->insert($dataTable, $data);
+                $groupKeys = $group?->getRelations();
+                if (!$groupKeys) {
+                    continue;
                 }
+                $firstKey = reset($groupKeys);
+                $keyId = $firstKey->getKeyId();
+                $keyConfig = DefinitionCache::get($keyId);
+                $data = [
+                    'id' => $objectId,
+                    'collectionId' => $collectionId,
+                    'groupId' => $groupId,
+                    'keyId' => $keyId,
+                    'fieldname' => $fieldname,
+                    'language' => 'default',
+                    'type' => $keyConfig->getType(),
+                    'value' => null,
+                    'value2' => null,
+                ];
+                $this->db->insert($dataTable, $data);
             }
         }
     }

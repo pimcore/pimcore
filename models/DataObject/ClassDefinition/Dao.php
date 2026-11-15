@@ -220,12 +220,12 @@ class Dao extends Model\Dao\AbstractDao
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                             $protectedDatastoreColumns[] = $key . '__' . $fkey;
                             $this->ensureForeignKeys($objectDatastoreTable, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
-                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
+                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL', $value);
                         $protectedDatastoreColumns[] = $key;
                     }
                 }
@@ -237,12 +237,12 @@ class Dao extends Model\Dao\AbstractDao
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL', $value);
                         $protectedColumns[] = $key . '__' . $fkey;
                         $this->ensureForeignKeys($objectTable, $key, $fkey, $value);
                     }
                 } elseif ($value->getQueryColumnType()) {
-                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL', $value);
                     $protectedColumns[] = $key;
                 }
 
@@ -264,10 +264,20 @@ class Dao extends Model\Dao\AbstractDao
 
         // create view
         try {
+            // the internal change token stays out of the view: it could collide with a field named changeToken,
+            // and a view referencing it would break when the column is dropped again
+            $objectsColumns = [];
+            foreach ($this->db->fetchFirstColumn('SHOW COLUMNS FROM objects') as $column) {
+                if ($column !== 'changeToken') {
+                    $objectsColumns[] = $qObjectsTable . '.' . $this->db->quoteIdentifier($column);
+                }
+            }
+            $objectsColumns = implode(', ', $objectsColumns);
+
             $this->db->executeStatement(
                 "
             CREATE OR REPLACE VIEW {$qObjectView} AS
-            SELECT *
+            SELECT {$qObjectTable}.*, {$objectsColumns}
             FROM {$qObjectTable}
             JOIN {$qObjectsTable}
                 ON {$qObjectsTable}.{$qId} = {$qObjectTable}.{$qOoId}

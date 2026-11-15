@@ -30,6 +30,7 @@ class Service
             'userfolder' => User\Folder::class,
             'role' => User\Role::class,
             'rolefolder' => User\Role\Folder::class,
+            'serviceuser' => User::class,
             default => null,
         };
     }

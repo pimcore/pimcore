@@ -60,6 +60,13 @@ final class Tag extends Model\AbstractModel
      */
     protected ?Tag $parent = null;
 
+    /**
+     * Shared by all tags that were loaded together by a Tag\Listing; answers hasChildren() with one query for the group.
+     *
+     * @internal
+     */
+    protected ?Tag\ChildrenLookup $childrenLookup = null;
+
     public static function getById(int $id): ?Tag
     {
         $cacheKey = 'tags_' . $id;
@@ -132,9 +139,38 @@ final class Tag extends Model\AbstractModel
     public static function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $tag = new Tag();
+        $batchEvent = new TagEvent($tag, [
+            'tagIds' => array_map(static fn (Tag $assignedTag) => $assignedTag->getId(), $tags),
+            'elementType' => $cType,
+            'elementIds' => [$cId],
+        ]);
+
+        $newTags = [];
+        foreach ($tags as $newTag) {
+            $newTags[$newTag->getId()] = $newTag;
+        }
+        $oldTags = [];
+        foreach ($tag->getDao()->getTagsForElement($cType, $cId) as $oldTag) {
+            $oldTags[$oldTag->getId()] = $oldTag;
+        }
+
+        $removedTags = array_diff_key($oldTags, $newTags);
+        $addedTags = array_diff_key($newTags, $oldTags);
+
+        $events = self::createAssignmentEvents($cType, $cId, $addedTags, $removedTags);
+        self::dispatchAssignmentEvents($events, 'pre');
+
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
+
+        self::dispatchAssignmentEvents($events, 'post');
+
+        $tag->dispatchEvent($batchEvent, TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT);
     }
 
+    /**
+     * Assigns the given tags to all given elements, with $replace all other tags of these elements are removed.
+     * Fires the add/remove events for every assignment that changes, plus one batch event at the end.
+     */
     public static function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace = false): void
     {
         $tag = new Tag();
@@ -144,9 +180,73 @@ final class Tag extends Model\AbstractModel
             'elementIds' => $cIds,
         ]);
 
+        $assigned = $tag->getDao()->getTagIdsForElements($cType, $cIds);
+
+        $tagIds = array_unique($tagIds);
+        $events = [];
+        foreach (array_unique($cIds) as $cId) {
+            $currentTagIds = $assigned[$cId] ?? [];
+            $addedTags = self::getTagsByIds(array_diff($tagIds, $currentTagIds));
+            $removedTags = $replace ? self::getTagsByIds(array_diff($currentTagIds, $tagIds)) : [];
+            foreach (self::createAssignmentEvents($cType, (int) $cId, $addedTags, $removedTags) as $assignmentEvent) {
+                $events[] = $assignmentEvent;
+            }
+        }
+
+        self::dispatchAssignmentEvents($events, 'pre');
+
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
 
+        self::dispatchAssignmentEvents($events, 'post');
+
         $tag->dispatchEvent($event, TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT);
+    }
+
+    /**
+     * @param Tag[] $addedTags
+     * @param Tag[] $removedTags
+     *
+     * @return array<int, array{string, string, TagEvent}> list of [pre event name, post event name, event]
+     */
+    private static function createAssignmentEvents(string $cType, int $cId, array $addedTags, array $removedTags): array
+    {
+        $events = [];
+        foreach ($removedTags as $removedTag) {
+            $events[] = [
+                TagEvents::PRE_REMOVE_FROM_ELEMENT,
+                TagEvents::POST_REMOVE_FROM_ELEMENT,
+                new TagEvent($removedTag, ['elementType' => $cType, 'elementId' => $cId]),
+            ];
+        }
+        foreach ($addedTags as $addedTag) {
+            $events[] = [
+                TagEvents::PRE_ADD_TO_ELEMENT,
+                TagEvents::POST_ADD_TO_ELEMENT,
+                new TagEvent($addedTag, ['elementType' => $cType, 'elementId' => $cId]),
+            ];
+        }
+
+        return $events;
+    }
+
+    /**
+     * @param array<int, array{string, string, TagEvent}> $events
+     */
+    private static function dispatchAssignmentEvents(array $events, string $phase): void
+    {
+        foreach ($events as [$preName, $postName, $event]) {
+            $event->getTag()->dispatchEvent($event, $phase === 'pre' ? $preName : $postName);
+        }
+    }
+
+    /**
+     * @param int[] $tagIds
+     *
+     * @return Tag[]
+     */
+    private static function getTagsByIds(array $tagIds): array
+    {
+        return array_filter(array_map(static fn ($tagId) => self::getById((int) $tagId), $tagIds));
     }
 
     /**
@@ -192,6 +292,7 @@ final class Tag extends Model\AbstractModel
 
         $this->correctPath();
         $this->getDao()->save();
+        Tag\ChildrenLookup::markChanged();
 
         if ($isUpdate) {
             $this->dispatchEvent(new TagEvent($this), TagEvents::POST_UPDATE);
@@ -319,10 +420,39 @@ final class Tag extends Model\AbstractModel
             return false;
         }
 
+        // tags loaded by a listing share one lookup: one query for the whole result instead of one per tag
+        if ($this->childrenLookup !== null && $this->getId() !== null) {
+            $hasChildren = $this->childrenLookup->hasChildren($this->getId());
+            if ($hasChildren !== null) {
+                return $hasChildren;
+            }
+        }
+
         $listing = new Tag\Listing();
         $listing->setCondition('parentId = ?', $this->getId());
 
         return $listing->getTotalCount() > 0;
+    }
+
+    /**
+     * @internal
+     */
+    public function setChildrenLookup(?Tag\ChildrenLookup $childrenLookup): void
+    {
+        $this->childrenLookup = $childrenLookup;
+    }
+
+    public function __sleep(): array
+    {
+        return array_diff(parent::__sleep(), ['childrenLookup']);
+    }
+
+    public function __clone(): void
+    {
+        parent::__clone();
+
+        // a clone may get another id, so it must not answer from the lookup of the original's listing
+        $this->childrenLookup = null;
     }
 
     public function correctPath(): void
@@ -353,6 +483,7 @@ final class Tag extends Model\AbstractModel
         $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_DELETE);
 
         $deletedTagIds = $this->getDao()->delete();
+        Tag\ChildrenLookup::markChanged();
 
         foreach ($deletedTagIds as $removeId) {
             $cacheKey = 'tags_' . $removeId;

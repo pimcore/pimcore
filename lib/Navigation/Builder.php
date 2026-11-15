@@ -135,6 +135,9 @@ class Builder
             if (Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 $cacheKeys[] = 'site__' . $site->getId();
+            } elseif ($this->requestHelper->hasMainRequest()) {
+                // outside of sites links to site documents are absolute and carry the scheme of the request
+                $cacheKeys[] = 'scheme__' . $this->requestHelper->getMainRequest()->getScheme();
             }
 
             if (is_string($cache)) {

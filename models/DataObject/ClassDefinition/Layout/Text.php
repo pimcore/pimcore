@@ -45,7 +45,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      * @internal
      *
      */
-    public string $renderingData;
+    public string $renderingData = '';
 
     /**
      * @internal

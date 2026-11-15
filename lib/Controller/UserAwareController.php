@@ -111,7 +111,7 @@ abstract class UserAwareController extends Controller
         $actionName = null;
         $controller = $event->getController();
 
-        if (is_array($controller) && count($controller) === 2 && is_string($controller[1])) {
+        if (is_array($controller)) {
             $actionName = $controller[1];
         }
 

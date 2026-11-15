@@ -92,9 +92,10 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
         }
 
         if ($input->getOption('retry-failed')) {
+            // customSettings is a JSON column: MySQL normalizes its text (`"key": true`), so match on the value
             $conditions[] = sprintf(
-                "customSettings LIKE '%%%s%%'",
-                '"' . Asset::CUSTOM_SETTING_PROCESSING_FAILED . '":true'
+                "JSON_UNQUOTE(JSON_EXTRACT(customSettings, '$.\"%s\"')) = 'true'",
+                Asset::CUSTOM_SETTING_PROCESSING_FAILED
             );
         }
 

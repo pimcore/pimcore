@@ -17,11 +17,14 @@ use DOMElement;
 use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
@@ -31,7 +34,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
 
-    private static HtmlSanitizer $pimcoreWysiwygSanitizer;
+    private static HtmlSanitizerInterface $pimcoreWysiwygSanitizer;
 
     /**
      * @internal
@@ -56,7 +59,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    private static function getWysiwygSanitizer(): HtmlSanitizer
+    private static function getWysiwygSanitizer(): HtmlSanitizerInterface
     {
         return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
@@ -107,7 +110,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = self::getWysiwygSanitizer()->sanitizeFor('body', $data);
         }
 
-        return Text::wysiwygText($data, [
+        return Text::wysiwygTextKeepingLinks($data, [
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
@@ -121,7 +124,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return Text::wysiwygText($data, [
+        return Text::wysiwygTextKeepingLinks($data, [
             'object' => $params['owner'] ?? null,
             'context' => $this,
             'language' => $params['language'] ?? null,
@@ -195,7 +198,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);
         foreach ($dependencies as $key => $value) {
@@ -219,11 +223,19 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = $container->getObjectVar($this->getName());
         }
 
-        return Text::wysiwygText($data, [
-                'object' => $container,
-                'context' => $this,
-                'language' => $params['language'] ?? null,
-            ]);
+        $textParams = [
+            'object' => $container,
+            'context' => $this,
+            'language' => $params['language'] ?? null,
+        ];
+
+        // the editor and the save keep links to unpublished elements, everywhere else (frontend, CLI) they are
+        // reduced to their text
+        if (Pimcore::inAdmin() || WysiwygPersistingScope::isActive()) {
+            return Text::wysiwygTextKeepingLinks($data, $textParams);
+        }
+
+        return Text::wysiwygText($data, $textParams);
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
@@ -318,6 +330,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
-        return self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
+        $sanitized = self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
+
+        return Text::wysiwygText($sanitized, array_merge($params, [
+            'object' => $object,
+            'context' => $this,
+        ])) ?? '';
     }
 }

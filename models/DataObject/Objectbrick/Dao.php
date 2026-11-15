@@ -13,6 +13,7 @@
 namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
@@ -33,6 +34,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
         $object->__objectAwareFields[$this->model->getFieldname()] = true;
 
+        /** @var array<mixed> $values Brick data objects; the parent contract names fieldcollection items */
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
@@ -50,9 +52,11 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
             $fieldDefinitions = $definition->getFieldDefinitions(['object' => $object, 'suppressEnrichment' => true]);
             $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($type);
+            $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
-                $brick = new $brickClass($object);
+                /** @var Model\DataObject\Objectbrick\Data\AbstractData $brick */
+                $brick = $modelFactory->build($brickClass, [$object]);
                 $brick->setFieldname($result['fieldname']);
                 $brick->setObject($object);
 
@@ -105,9 +109,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                 $setter = 'set' . ucfirst($type);
 
-                if ($brick instanceof Model\Element\DirtyIndicatorInterface) {
-                    $brick->markFieldDirty('_self', false);
-                }
+                $brick->markFieldDirty('_self', false);
 
                 $this->model->$setter($brick);
 

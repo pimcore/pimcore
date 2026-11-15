@@ -28,8 +28,13 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
 {
     private const SOURCE_FORMATS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-    private function image(string $fullPath, bool $vector = false, string $mime = 'image/jpeg', ?int $focalPointX = null): Image
-    {
+    private function image(
+        string $fullPath,
+        bool $vector = false,
+        string $mime = 'image/jpeg',
+        ?int $focalPointX = null,
+        ?int $focalPointY = null
+    ): Image {
         $image = $this->getMockBuilder(Image::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getRealFullPath', 'isVectorGraphic', 'getMimeType', 'getCustomSetting'])
@@ -38,7 +43,11 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $image->method('isVectorGraphic')->willReturn($vector);
         $image->method('getMimeType')->willReturn($mime);
         $image->method('getCustomSetting')->willReturnCallback(
-            static fn (string $key) => $key === 'focalPointX' ? $focalPointX : null,
+            static fn (string $key) => match ($key) {
+                'focalPointX' => $focalPointX,
+                'focalPointY' => $focalPointY,
+                default => null,
+            },
         );
 
         return $image;
@@ -150,7 +159,51 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $adapter->expects(self::never())->method('buildUrl');
 
         $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS, new AssetWebPath());
+        $event = $this->event(
+            $this->image('/folder/photo.jpg', focalPointX: 50, focalPointY: 25),
+            new Config()
+        );
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testRewritesCoverWithIncompleteFocalPoint(): void
+    {
+        // Only one of the two coordinates is set, so there is no usable focal point - the
+        // processor crops centered in that case and the CDN can reproduce it faithfully.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(200, 200, 'cover'));
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::once())
+            ->method('buildUrl')
+            ->willReturn('https://cdn.example.com/var/assets/folder/photo.jpg?width=200&height=200&fit=cover');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS, new AssetWebPath());
         $event = $this->event($this->image('/folder/photo.jpg', focalPointX: 50), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame(
+            'https://cdn.example.com/var/assets/folder/photo.jpg?width=200&height=200&fit=cover',
+            $event->getArgument('frontendPath'),
+        );
+    }
+
+    public function testDoesNotRewriteCoverWithFocalPointOnTheEdge(): void
+    {
+        // A focal point on the left/top edge has the coordinate 0 - it is a focal point like any
+        // other and must not be mistaken for "no focal point" by a truthiness check.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(200, 200, 'cover'));
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::never())->method('buildUrl');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS, new AssetWebPath());
+        $event = $this->event($this->image('/folder/photo.jpg', focalPointX: 0, focalPointY: 0), new Config());
 
         $listener->onThumbnailPath($event);
 

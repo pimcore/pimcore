@@ -155,11 +155,13 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 `{% pimcorecache "cache_key" tags([...]) ttl(int) force(bool) %}`
 
+The cache key and the values of `tags`, `ttl` and `force` are Twig expressions, so they can use variables of the template.
+
 
 | Name        | Type             | Description                                                                                                                                                                                                                              |
 |-------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `cache_key` | string           | Key/name of cache item                                                                                                                                                                                                                   |
-| `tags`      | string, string[] | One or multiple additional cache tags. The `in_template` cache tag is automatically added to all items. When no ttl is defined the `output` cache tag is additionally added.                                                             |
+| `cache_key` | string           | Key/name of cache item. Can be any Twig expression, e.g. `"navigation_" ~ site.id`. A key with one of the characters `{}()/\@:` is hashed. Every distinct key creates its own cache entry, so do not build it from unbounded request input. |
+| `tags`      | string, string[] | One or multiple additional cache tags (must not be empty or contain `{}()/\@:`; the value can be an expression). The `in_template` cache tag is automatically added to all items. When no ttl is defined the `output` cache tag is additionally added.                                                             |
 | `ttl`       | int              | Time to life - lifetime in seconds. If you define no ttl the behavior is like the output cache, so if you make any change in Pimcore, the cache will be flushed. When specifying a lifetime this is independent from changes in the CMS. |
 | `force`     | bool             | Force caching, even when request is done within Pimcore Studio                                                                                                                                                                  |
 
@@ -169,6 +171,13 @@ of calculation or require a huge amount of objects (like navigations, ...).
 {% pimcorecache "test_cache_key" ttl(60) %}
     <h1>This is some cached microtime</h1>
     {{ 'now'|date('U') }}
+{% endpimcorecache %}
+```
+
+```twig
+{# dynamic cache key, so context dependent output (e.g. per site) does not collide #}
+{% pimcorecache "navigation_" ~ document.id ~ "_" ~ app.request.locale ttl(60) %}
+    {% include "navigation.html.twig" %}
 {% endpimcorecache %}
 ```
 

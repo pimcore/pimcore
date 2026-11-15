@@ -33,7 +33,7 @@ class Table implements MarshallerInterface
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
-            return Serialize::unserialize($value['value']);
+            return Serialize::unserialize($value['value'], false);
         }
 
         return null;

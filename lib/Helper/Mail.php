@@ -15,6 +15,7 @@ namespace Pimcore\Helper;
 
 use Exception;
 use Net_URL2;
+use Pimcore\Http\SsrfProtection;
 use Pimcore\Mail as MailClient;
 use Pimcore\Model;
 use Pimcore\Tool;
@@ -293,10 +294,18 @@ CSS;
                         $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                     }
                 } elseif (str_starts_with($path, 'http')) {
-                    $fileContent = \Pimcore\Tool::getHttpData($path);
-                    $fileInfo = [
-                        'fileUrlNormalized' => $path,
-                    ];
+                    // The href comes from (potentially user-supplied) mail content, so guard the
+                    // server-side fetch against SSRF: only fetch http(s) URLs that resolve to a
+                    // public host, never redirect (a redirect could target an internal host) and
+                    // pin the connection to the validated address to defeat DNS rebinding.
+                    $safeIps = SsrfProtection::resolvePublicIps($path);
+                    if ($safeIps !== []) {
+                        $options = SsrfProtection::getRequestOptions($path, $safeIps);
+                        $fileContent = \Pimcore\Tool::getHttpData($path, [], [], $options);
+                        $fileInfo = [
+                            'fileUrlNormalized' => $path,
+                        ];
+                    }
                 }
 
                 if ($fileContent) {

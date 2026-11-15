@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 
 class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
@@ -430,7 +432,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                         if (!$value) {
                             continue;
                         }
-                        $subItems[] = $key . ': ' . $value;
+                        // the metadata is free text and this string is rendered as HTML in the
+                        // version preview, so a value must not be able to close the span below
+                        $subItems[] = htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8')
+                            . ': ' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
                     }
 
                     if (count($subItems)) {
@@ -450,7 +455,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if (is_array($data)) {
@@ -474,12 +480,19 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
+                    throw (new StructuredValidationException(
+                        sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype())
+                    ))
+                        ->setTranslation(ValidationMessageKey::INVALID_RELATION);
                 }
             }
 
             if ($this->getMaxItems() && count($data) > $this->getMaxItems()) {
-                throw new Element\ValidationException('Number of allowed relations in field `' . $this->getName() . '` exceeded (max. ' . $this->getMaxItems() . ')');
+                throw (new StructuredValidationException(
+                    'Number of allowed relations in field `' . $this->getName() . '` exceeded (max. '
+                        . $this->getMaxItems() . ')'
+                ))
+                    ->setTranslation(ValidationMessageKey::MAX_RELATIONS, ['max' => $this->getMaxItems()]);
             }
         }
     }
@@ -543,14 +556,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $index = $context['index'] ?? null;
-            $containerName = $context['fieldname'];
-
-            if ($context['containerType'] === 'fieldcollection') {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%';
-            } else {
-                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
-            }
+            $ownerName = DataObject\Localizedfield\ContainerOwnerName::likePattern($context);
 
             $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
@@ -633,25 +639,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
-            $containerName = $context['fieldname'] ?? null;
-
-            if ($context['containerType'] === 'objectbrick') {
-                $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                );
-            } else {
-                $index = $context['index'];
-
-                $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                );
-            }
+            $db->executeStatement(
+                'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
+                Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', DataObject\Localizedfield\ContainerOwnerName::likePattern($context))
+                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            );
         } else {
             $deleteCondition = [
                 'id' => $object->getId(),
@@ -661,6 +654,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             if ($context) {
                 if (!empty($context['fieldname'])) {
                     $deleteCondition['ownername'] = $context['fieldname'];
+                }
+
+                // the metadata of a brick is stored with the brick type as position, keep the other bricks' metadata
+                if (($context['containerType'] ?? null) === 'objectbrick' && !empty($context['containerKey'])) {
+                    $deleteCondition['position'] = $context['containerKey'];
                 }
 
                 if (!DataObject::isDirtyDetectionDisabled()) {
@@ -778,8 +776,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     {
         if (is_array($value)) {
             $result = [];
-            /** @var DataObject\Data\ElementMetadata $elementMetadata */
             foreach ($value as $elementMetadata) {
+                if (!($elementMetadata instanceof DataObject\Data\ElementMetadata)) {
+                    continue;
+                }
+
                 $element = $elementMetadata->getElement();
 
                 $type = Element\Service::getElementType($element);

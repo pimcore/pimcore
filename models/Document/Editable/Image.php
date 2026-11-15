@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore\DataObject\BlockDataMarshaller\Hotspotimage as HotspotMetaDataMarshaller;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -115,8 +116,19 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         ];
     }
 
+    /**
+     * Hotspot and marker metadata is stored as plain arrays with a referenced element reduced to its
+     * id - the format the editmode and Studio write anyway - so that loading it never needs to
+     * allow element classes in Editable::getUnserializedData(). A MarkerHotspotItem built through
+     * the PHP API (constructor / setValue()) would otherwise serialize the whole element into it.
+     */
     public function getDataForResource(): array
     {
+        $locations = (new HotspotMetaDataMarshaller())->marshal([
+            'hotspots' => $this->hotspots,
+            'marker' => $this->marker,
+        ]);
+
         return [
             'id' => $this->id,
             'alt' => $this->alt,
@@ -125,8 +137,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             'cropHeight' => $this->cropHeight,
             'cropTop' => $this->cropTop,
             'cropLeft' => $this->cropLeft,
-            'hotspots' => $this->hotspots,
-            'marker' => $this->marker,
+            'hotspots' => $locations['hotspots'],
+            'marker' => $locations['marker'],
             'thumbnail' => $this->thumbnail,
         ];
     }
@@ -148,7 +160,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                                 $metaData = get_object_vars($metaData);
                             }
 
-                            if (in_array($metaData['type'], ['object', 'asset', 'document'])
+                            if (in_array($metaData['type'], ['object', 'asset', 'document']) && $metaData['value']
                             && $el = Element\Service::getElementById($metaData['type'], $metaData['value'])) {
                                 $metaData['value'] = $el;
                             }
@@ -266,27 +278,16 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     {
         $unserializedData = $this->getUnserializedData($data) ?? [];
 
-        $rewritePath = function ($data) {
-            if (!is_array($data)) {
-                return [];
-            }
+        // rebuilds the MarkerHotspotItem objects from the stored arrays (or from the MarkerHotspotItem
+        // objects older versions stored); an element object serialized into older data comes back as
+        // __PHP_Incomplete_Class, from which only its id is taken over
+        $locations = (new HotspotMetaDataMarshaller())->unmarshal([
+            'hotspots' => is_array($unserializedData['hotspots'] ?? null) ? $unserializedData['hotspots'] : [],
+            'marker' => is_array($unserializedData['marker'] ?? null) ? $unserializedData['marker'] : [],
+        ]);
 
-            foreach ($data as &$element) {
-                if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
-                    foreach ($element['data'] as &$metaData) {
-                        // this is for backward compatibility (Array vs. MarkerHotspotItem)
-                        if (is_array($metaData)) {
-                            $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                        }
-                    }
-                }
-            }
-
-            return $data;
-        };
-
-        $unserializedData['marker'] = $rewritePath($unserializedData['marker'] ?? []);
-        $unserializedData['hotspots'] = $rewritePath($unserializedData['hotspots'] ?? []);
+        $unserializedData['marker'] = $locations['marker'];
+        $unserializedData['hotspots'] = $locations['hotspots'];
 
         $this->setData($unserializedData);
 
@@ -304,8 +305,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as &$metaData) {
                         $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                        if (in_array($metaData['type'], ['object', 'asset', 'document'])) {
-                            $el = Element\Service::getElementByPath($metaData['type'], $metaData->getValue());
+                        if (in_array($metaData['type'], ['object', 'asset', 'document']) && $metaData->getValue()) {
+                            if (is_numeric($metaData->getValue())) {
+                                $el = Element\Service::getElementById($metaData['type'], (int)$metaData->getValue());
+                            } else {
+                                $el = Element\Service::getElementByPath($metaData['type'], (string)$metaData->getValue());
+                            }
                             $metaData['value'] = $el;
                         }
                     }
@@ -476,14 +481,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             foreach ($data as $element) {
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as $metaData) {
-                        if ($metaData instanceof Element\Data\MarkerHotspotItem) {
-                            $metaData = get_object_vars($metaData);
-                        }
-
-                        if ($metaData['value'] instanceof Element\ElementInterface) {
-                            if (!array_key_exists($metaData['value']->getCacheTag(), $tags)) {
-                                $tags = $metaData['value']->getCacheTags($tags);
-                            }
+                        $metaDataElement = $this->getMetaDataElement($metaData);
+                        if ($metaDataElement !== null && !array_key_exists($metaDataElement->getCacheTag(), $tags)) {
+                            $tags = $metaDataElement->getCacheTags($tags);
                         }
                     }
                 }
@@ -496,6 +496,33 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         $tags = $getMetaDataCacheTags($this->hotspots, $tags);
 
         return $tags;
+    }
+
+    /**
+     * The element a hotspot/marker metadata entry references. The stored data holds it by id (see
+     * getDataForResource()), while metadata set through the PHP API may still hold the element itself.
+     */
+    private function getMetaDataElement(mixed $metaData): ?Element\ElementInterface
+    {
+        if ($metaData instanceof Element\Data\MarkerHotspotItem) {
+            $metaData = get_object_vars($metaData);
+        }
+
+        if (!is_array($metaData)) {
+            return null;
+        }
+
+        $value = $metaData['value'] ?? null;
+        if ($value instanceof Element\ElementInterface) {
+            return $value;
+        }
+
+        $type = $metaData['type'] ?? null;
+        if (!in_array($type, ['object', 'asset', 'document'], true) || !is_numeric($value)) {
+            return null;
+        }
+
+        return Element\Service::getElementById($type, (int) $value);
     }
 
     public function resolveDependencies(): array
@@ -520,13 +547,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             foreach ($data as $element) {
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as $metaData) {
-                        if ($metaData instanceof Element\Data\MarkerHotspotItem) {
-                            $metaData = get_object_vars($metaData);
-                        }
-
-                        if ($metaData['value'] instanceof Element\ElementInterface) {
-                            $dependencies[$metaData['type'] . '_' . $metaData['value']->getId()] = [
-                                'id' => $metaData['value']->getId(),
+                        $metaDataElement = $this->getMetaDataElement($metaData);
+                        if ($metaDataElement !== null) {
+                            $dependencies[$metaData['type'] . '_' . $metaDataElement->getId()] = [
+                                'id' => $metaDataElement->getId(),
                                 'type' => $metaData['type'],
                             ];
                         }

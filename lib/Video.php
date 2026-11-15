@@ -22,6 +22,8 @@ class Video
 {
     private static ?Video\AdapterInterface $defaultAdapterInstance = null;
 
+    private static bool $defaultAdapterUnavailable = false;
+
     /**
      * Returns the cached default adapter, or a new named adapter instance.
      * Use for read-only operations (e.g. getDuration, getDimensions).
@@ -90,6 +92,12 @@ class Video
             return self::$defaultAdapterInstance;
         }
 
+        // the executables an adapter needs are looked up once per process (see Console::getExecutable()), so a
+        // missing adapter stays missing - don't probe (and log the same failure) again on every call
+        if (self::$defaultAdapterUnavailable) {
+            return null;
+        }
+
         foreach (['Ffmpeg'] as $adapter) {
             $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
             if (Tool::classExists($adapterClass)) {
@@ -103,6 +111,8 @@ class Video
                 }
             }
         }
+
+        self::$defaultAdapterUnavailable = true;
 
         return null;
     }

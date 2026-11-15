@@ -26,6 +26,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
@@ -90,13 +92,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         $result = [];
         if (is_array($data)) {
-            foreach ($data as $siteId => $item) {
-                $siteId = $item[0];
-                $slug = $item[1];
-                $slug = new Model\DataObject\Data\UrlSlug($slug, (int) $siteId);
+            foreach ($data as $item) {
+                $siteId = $item['siteId'] ?? $item[0] ?? 0;
+                $slugStr = $item['slug'] ?? $item[1] ?? '';
+                $slug = new Model\DataObject\Data\UrlSlug($slugStr, (int) $siteId);
 
-                if ($item[2]) {
-                    $slug->setPreviousSlug($item[2]);
+                $previousSlug = $item['previousSlug'] ?? $item[2] ?? null;
+                if ($previousSlug) {
+                    $slug->setPreviousSlug($previousSlug);
                 }
 
                 $result[] = $slug;
@@ -132,22 +135,37 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 if (strlen($slug) > 0) {
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
-                        throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
+                        throw (new StructuredValidationException(
+                            'Slug must be unique. Found conflict with document path "' . $slug . '"'
+                        ))
+                            ->setTranslation(ValidationMessageKey::SLUG_NOT_UNIQUE, ['value' => $slug]);
                     }
 
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
-                        throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
+                        throw (new StructuredValidationException(
+                            'Slug must be at least 2 characters long and start with slash'
+                        ))
+                            ->setTranslation(ValidationMessageKey::SLUG_INVALID);
                     }
 
                     if (preg_match_all('([?#])', $item->getSlug(), $matches)) {
-                        throw new Model\Element\ValidationException('Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']');
+                        throw (new StructuredValidationException(
+                            'Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']'
+                        ))
+                            ->setTranslation(
+                                ValidationMessageKey::SLUG_RESERVED_CHARACTERS,
+                                [
+                                    'characters' => implode(' ', array_unique($matches[0])),
+                                ],
+                            );
                     }
                 }
             }
         }
 
         if (!$omitMandatoryCheck && $this->getMandatory() && !$foundSlug) {
-            throw new Model\Element\ValidationException('Mandatory check failed');
+            throw (new StructuredValidationException('Mandatory check failed'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -279,13 +297,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         } elseif ($object instanceof Model\DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
-                $fieldname = $context['fieldname'] ?? null;
-                if ($context['containerType'] === 'fieldcollection') {
-                    $index = $context['index'] ?? null;
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
-                } else {
-                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
-                }
+                $filter = Model\DataObject\Localizedfield\ContainerOwnerName::likePattern($context);
                 $rawResult = $object->getObject()->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
             } else {
                 $rawResult = $object->getObject()->retrieveSlugData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
@@ -305,10 +317,31 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
-        if (!isset($params['isUpdate']) || !$params['isUpdate']) {
-            $db = Db::get();
-            $db->delete(Model\DataObject\Data\UrlSlug::TABLE_NAME, ['objectId' => $object->getId()]);
+        if ($params['isUpdate'] ?? false) {
+            return;
         }
+
+        $db = Db::get();
+        $context = $params['context'] ?? [];
+        if (isset($context['containerType'], $context['subContainerType'])
+            && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')
+            && $context['subContainerType'] === 'localizedfield'
+        ) {
+            // a single brick or field collection item is removed, keep the other slugs of the object
+            $db->executeStatement(
+                'DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE objectId = ?'
+                . " AND ownertype = 'localizedfield' AND ownername LIKE ? AND fieldname = ?",
+                [
+                    $object->getId(),
+                    Model\DataObject\Localizedfield\ContainerOwnerName::likePattern($context),
+                    $this->getName(),
+                ]
+            );
+
+            return;
+        }
+
+        $db->delete(Model\DataObject\Data\UrlSlug::TABLE_NAME, ['objectId' => $object->getId()]);
     }
 
     public function getUnique(): bool
