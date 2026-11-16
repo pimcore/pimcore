@@ -397,7 +397,7 @@ class ClassificationstoreTest extends ModelTestCase
     public function testAVariantIsInheritedOnItsOwn(): void
     {
         $this->putTheStoreOnTheDocumentEngine();
-        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], false);
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL]);
 
         DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
             $parent = $this->createObject('variant-parent', 1);
@@ -429,120 +429,6 @@ class ClassificationstoreTest extends ModelTestCase
     }
 
     /**
-     * Within one (language, variant) slot a list is inherited whole: a child that holds its own
-     * list answers exactly that list, and the parent's positions are never merged into it.
-     */
-    public function testAListIsInheritedWholeRatherThanMergedPerPosition(): void
-    {
-        $this->putTheStoreOnTheDocumentEngine();
-        [$groupId, $keyId] = $this->createMultiValueKey([], true);
-
-        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
-            $parent = $this->createObject('list-parent', 1);
-            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
-                new MultiValue('a', null, null, 0),
-                new MultiValue('b', null, null, 1),
-                new MultiValue('c', null, null, 2),
-            ]);
-            $parent->save();
-
-            $child = $this->createObject('list-child', (int) $parent->getId());
-            $child->getTeststore()->setKeyValues($groupId, $keyId, [new MultiValue('x', null, null, 0)]);
-            $child->save();
-
-            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
-
-            $this->assertSame(['x'], $childStore->getKeyValues($groupId, $keyId));
-
-            $parentStore = Inheritance::getById($parent->getId(), ['force' => true])->getTeststore();
-            $this->assertSame(['a', 'b', 'c'], $parentStore->getKeyValues($groupId, $keyId));
-        });
-    }
-
-    /**
-     * A (language, variant) slot the child owns is the child's whole answer, even where the list it
-     * holds starts above position 0: the value the documented items answer at position 0 is the
-     * parent's there, and writing it into the child's list would give the child a value it never
-     * wrote.
-     */
-    public function testAChildsListIsNotMergedWithTheParentsFirstValue(): void
-    {
-        $this->putTheStoreOnTheDocumentEngine();
-        [$groupId, $keyId] = $this->createMultiValueKey([], true);
-
-        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
-            $parent = $this->createObject('offset-parent', 1);
-            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
-                new MultiValue('a', null, null, 0),
-                new MultiValue('b', null, null, 1),
-            ]);
-            $parent->save();
-
-            $child = $this->createObject('offset-child', (int) $parent->getId());
-            $child->getTeststore()->setKeyValues($groupId, $keyId, [new MultiValue('x', null, null, 1)]);
-            $child->save();
-
-            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
-
-            $this->assertSame(
-                [1 => 'x'],
-                $childStore->getKeyValues($groupId, $keyId),
-                'the slot the child owns answers the child alone'
-            );
-            $this->assertNull(
-                $childStore->getKeyValue($groupId, $keyId),
-                'and the position the child holds nothing at is not the parent\'s to fill'
-            );
-        });
-    }
-
-    /**
-     * Three generations, and the list the child answers is the one it took whole.
-     *
-     * The grandparent holds [0 => 'a', 1 => 'b'] and the parent a list of its own that starts above
-     * position 0, [1 => 'x']. The child holds nothing, so it takes the nearest ancestor's whole
-     * slot - the parent's - and the grandparent's position 0 is not part of it: the question "does
-     * the selected list start above position 0" is about the object the list came from, and asking it
-     * of the child alone answered [0 => 'a', 1 => 'x'], which is two objects' values in one list.
-     */
-    public function testAGrandparentsFirstValueIsNotMergedIntoTheParentsInheritedList(): void
-    {
-        $this->putTheStoreOnTheDocumentEngine();
-        [$groupId, $keyId] = $this->createMultiValueKey([], true);
-
-        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
-            $grandparent = $this->createObject('three-grandparent', 1);
-            $grandparent->getTeststore()->setKeyValues($groupId, $keyId, [
-                new MultiValue('a', null, null, 0),
-                new MultiValue('b', null, null, 1),
-            ]);
-            $grandparent->save();
-
-            $parent = $this->createObject('three-parent', (int) $grandparent->getId());
-            $parent->getTeststore()->setKeyValues($groupId, $keyId, [new MultiValue('x', null, null, 1)]);
-            $parent->save();
-
-            $child = $this->createObject('three-child', (int) $parent->getId());
-            $child->save();
-
-            $this->assertSame(
-                [1 => 'x'],
-                Inheritance::getById($parent->getId(), ['force' => true])
-                    ->getTeststore()
-                    ->getKeyValues($groupId, $keyId),
-                'the parent answers the list it owns'
-            );
-            $this->assertSame(
-                [1 => 'x'],
-                Inheritance::getById($child->getId(), ['force' => true])
-                    ->getTeststore()
-                    ->getKeyValues($groupId, $keyId),
-                'and the child answers the same list, without the grandparent\'s first value in it'
-            );
-        });
-    }
-
-    /**
      * A key whose field type refuses inheritance refuses it for its QUALIFIED slots as well.
      *
      * `consent` is the type in the unlocked set that answers no: a consent is the record of what one
@@ -550,16 +436,14 @@ class ClassificationstoreTest extends ModelTestCase
      * behind it - answers "has this one consented" with somebody else's answer. The per-key read and
      * the whole-store read both ask
      * {@see Classificationstore\Service::supportsInheritance()} about it, and the merge of an
-     * ancestor's qualified slots did not: a parent's named variant and its higher positions arrived
-     * in the child regardless, which also made them satisfy the child's mandatory check and reach
-     * the child's search index.
+     * ancestor's qualified slots did not: a parent's named variant arrived in the child regardless,
+     * which also made it satisfy the child's mandatory check and reach the child's search index.
      */
     public function testAParentsQualifiedSlotsAreNotInheritedByAKeyThatRefusesInheritance(): void
     {
         $this->putTheStoreOnTheDocumentEngine();
         [$groupId, $keyId] = $this->createMultiValueKey(
             [self::METRIC, self::IMPERIAL],
-            true,
             new ClassDefinition\Data\Consent()
         );
 
@@ -567,7 +451,6 @@ class ClassificationstoreTest extends ModelTestCase
             $parent = $this->createObject('consent-parent', 1);
             $parent->getTeststore()->setKeyValues($groupId, $keyId, [
                 new MultiValue(new Consent(true, 11), null, null, 0),
-                new MultiValue(new Consent(true, 12), null, null, 1),
                 new MultiValue(new Consent(true, 13), null, self::IMPERIAL, 0),
             ]);
             $parent->save();
@@ -580,7 +463,7 @@ class ClassificationstoreTest extends ModelTestCase
             $this->assertSame(
                 [],
                 $childStore->getKeyValues($groupId, $keyId),
-                'the parent\'s list in the default variant is not the child\'s consent'
+                'the parent\'s value in the default variant is not the child\'s consent'
             );
             $this->assertSame(
                 [],
@@ -594,30 +477,29 @@ class ClassificationstoreTest extends ModelTestCase
                 . ' and the search index are all read from'
             );
 
-            // and the parent still answers all three of its own, so the filter is about the
+            // and the parent still answers both of its own, so the filter is about the
             // ancestor's values rather than about the key
             $parentStore = Inheritance::getById($parent->getId(), ['force' => true])->getTeststore();
 
-            $this->assertCount(2, $parentStore->getKeyValues($groupId, $keyId));
+            $this->assertCount(1, $parentStore->getKeyValues($groupId, $keyId));
             $this->assertCount(1, $parentStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL));
         });
     }
 
     /**
      * An inheritable key beside it, on the same fixture: the filter is per KEY, so a `multiValue`
-     * key of an inheriting type still hands its variants and positions down. Without this the fix
-     * above would pass by inheriting nothing at all.
+     * key of an inheriting type still hands its variants down. Without this the fix above would
+     * pass by inheriting nothing at all.
      */
     public function testAnInheritableKeysQualifiedSlotsAreStillInherited(): void
     {
         $this->putTheStoreOnTheDocumentEngine();
-        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], true);
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL]);
 
         DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
             $parent = $this->createObject('inheritable-parent', 1);
             $parent->getTeststore()->setKeyValues($groupId, $keyId, [
                 new MultiValue('1.80 m', null, self::METRIC, 0),
-                new MultiValue('1.90 m', null, self::METRIC, 1),
                 new MultiValue('5 ft 11 in', null, self::IMPERIAL, 0),
             ]);
             $parent->save();
@@ -628,7 +510,7 @@ class ClassificationstoreTest extends ModelTestCase
             $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
 
             $this->assertSame(
-                ['1.80 m', '1.90 m'],
+                ['1.80 m'],
                 $childStore->getKeyValues($groupId, $keyId, null, self::METRIC)
             );
             $this->assertSame(
@@ -676,7 +558,7 @@ class ClassificationstoreTest extends ModelTestCase
      *
      * @return array{int, int} the group id and the key id
      */
-    private function createMultiValueKey(array $variants, bool $list, ?ClassDefinition\Data $innerType = null): array
+    private function createMultiValueKey(array $variants, ?ClassDefinition\Data $innerType = null): array
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
 
@@ -691,7 +573,6 @@ class ClassificationstoreTest extends ModelTestCase
         $definition = new ClassDefinition\Data\MultiValue();
         $definition->setName(self::MULTI_VALUE_KEY);
         $definition->setVariants(array_map(static fn (string $name): array => ['name' => $name], $variants));
-        $definition->setMultiValue($list);
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
 

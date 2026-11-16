@@ -676,7 +676,6 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
         $this->saveStore(function (Classificationstore $store) use ($groupId, $multiValueKey, $delegate): void {
             $store->setKeyValues($groupId, $multiValueKey->getId(), [
                 new MultiValueEntry(new EncryptedField($delegate, self::SECRET), null, null, 0),
-                new MultiValueEntry(new EncryptedField($delegate, self::OTHER_SECRET), null, null, 1),
             ]);
         });
 
@@ -687,14 +686,12 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
             $document,
             'the cleartext of a wrapped secret must not be readable in the stored document'
         );
-        $this->assertStringNotContainsString(self::OTHER_SECRET, $document);
 
         $values = $this->reloadStore()->getKeyValues($groupId, $multiValueKey->getId());
 
-        $this->assertCount(2, $values);
+        $this->assertCount(1, $values);
         $this->assertInstanceOf(EncryptedField::class, $values[0]);
         $this->assertSame(self::SECRET, $values[0]->getPlain());
-        $this->assertSame(self::OTHER_SECRET, $values[1]->getPlain());
     }
 
     /**
@@ -845,7 +842,6 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
     public function testAKeyWithNoInnerTypeStoresAndReadsBackThePlainValuesItWasGiven(): void
     {
         $definition = new MultiValueDefinition();
-        $definition->setMultiValue(true);
 
         $keyConfig = $this->createKey('doc_mv_no_inner', true, $definition);
         $this->assignKey($this->groupA, $keyConfig, 4);
@@ -861,7 +857,6 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
         $this->saveStore(function (Classificationstore $store) use ($groupId, $keyConfig): void {
             $store->setKeyValues($groupId, $keyConfig->getId(), [
                 new MultiValueEntry('plain', null, null, 0),
-                new MultiValueEntry('another', null, null, 1),
             ]);
         });
 
@@ -872,7 +867,7 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
         );
 
         $this->assertSame(
-            [0 => 'plain', 1 => 'another'],
+            ['plain'],
             $this->reloadStore()->getKeyValues($groupId, $keyConfig->getId())
         );
     }
@@ -928,7 +923,6 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
         $inner->setDelegate($delegate);
 
         $definition = new MultiValueDefinition();
-        $definition->setMultiValue(true);
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
 
@@ -957,12 +951,10 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
 
         $innerWrapper = new MultiValueDefinition();
         $innerWrapper->setName($name);
-        $innerWrapper->setMultiValue(true);
         $innerWrapper->setDelegateDatatype($encrypted->getFieldType());
         $innerWrapper->setDelegate($encrypted);
 
         $definition = new MultiValueDefinition();
-        $definition->setMultiValue(true);
         $definition->setDelegateDatatype($innerWrapper->getFieldType());
         $definition->setDelegate($innerWrapper);
 
@@ -990,7 +982,6 @@ class DocumentEngineTest extends AbstractBatchedRelationTest
 
         $innerWrapper = new MultiValueDefinition();
         $innerWrapper->setName($name);
-        $innerWrapper->setMultiValue(true);
         $innerWrapper->setDelegateDatatype($coordinates->getFieldType());
         $innerWrapper->setDelegate($coordinates);
 

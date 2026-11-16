@@ -553,7 +553,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * The slots are measured against the key's own DECLARATION first, the way
      * {@see DataObject\Classificationstore::getKeyValues()} measures a read: narrowing a declaration
      * hides the values it stops showing rather than deleting them, so a variant that has been
-     * removed - or the positions of a list that has been switched off - is still stored and still
+     * removed - or a value stored above position 0, which no key reads any more - is still stored and still
      * traversed for dependencies and cache tags, and must not be the one place it stays FINDABLE.
      * The index is the only surface a classification store value is filterable from at all, so a
      * value hidden everywhere else and left here answers a search with something the object does not
@@ -585,8 +585,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         continue;
                     }
 
-                    $holdsAList = $keyDefinition instanceof MultiValue && $keyDefinition->isMultiValue();
-
                     foreach ($languages as $variants) {
                         foreach ($variants as $variant => $values) {
                             if (!$this->declaresVariant($keyDefinition, (string) $variant)) {
@@ -594,7 +592,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             }
 
                             foreach ($values as $position => $value) {
-                                if ((int) $position !== 0 && !$holdsAList) {
+                                if ((int) $position !== 0) {
+                                    // kept but no longer read, so not findable either
                                     continue;
                                 }
 
@@ -1028,16 +1027,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
 
                 $refusesEveryValue = $this->refusesEveryValue($keyDef, $keyGroupRelation);
-
-                foreach (
-                    $this->collectMaximumViolations(
-                        $keyDef,
-                        $qualifiedItems[$activeGroupId][$keyId] ?? [],
-                        $this->getValidLanguages($keyId)
-                    ) as $violation
-                ) {
-                    $subItems[] = $violation;
-                }
 
                 // only a relation-typed key is selected without being resolved; every other key
                 // is read the way it always was, through getLocalizedKeyValue(). The two reads
@@ -2046,19 +2035,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * The slots of one key in one language that its declaration permits, the default variant at
      * position 0 first - that one carries the value the caller resolved rather than the stored one,
      * because the language fallback and the inherited value it may come from are resolved there.
-     *
-     * It is left out in the one case the tree it is measured against leaves it out too: a selected
-     * list that starts above position 0. {@see DataObject\Classificationstore::getQualifiedItems()}
-     * writes no position 0 for such a slot, because the resolved value there belongs to a further
-     * ancestor than the list came from, and merging the two would put two objects' values into one
-     * list. Validation has to measure the same list the object answers: with a parent holding
-     * position 0 = `too long` and a child holding `[1 => 'ok']`, the resolved value was added back
-     * in and tightening the length constraint refused the child's own valid list over a value the
-     * child does not inherit.
-     *
-     * Only while the declaration still permits the list. A narrowed one addresses position 0 alone -
-     * {@see DataObject\Classificationstore::resolveSlots()} refuses anything above it - so the
-     * resolved value is then what the key answers, and the legacy resolution stands.
+     * A value stored above position 0 is kept but not read, so it is not validated either.
      *
      * `supplied` is whether a value was written to the slot at all, which is the only ground a slot
      * is skipped on, {@see self::collectKeyViolations()}. It is NOT whether the inner type calls the
@@ -2081,13 +2058,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         array $slotValues,
         bool $declinedValueHeld = false
     ): array {
-        $holdsAList = $keyDef instanceof MultiValue && $keyDef->isMultiValue();
-        $selectedListStartsAboveZero = isset($slotValues[self::DEFAULT_VARIANT])
-            && !array_key_exists(0, $slotValues[self::DEFAULT_VARIANT]);
-
-        if ($holdsAList && $selectedListStartsAboveZero) {
-            $slots = [];
-        } elseif ($this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
+        if ($this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
             $slots = [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
         } elseif ($keyDef instanceof MultiValue && !$declinedValueHeld && $value === null) {
             // the key declines the unqualified value, so what it holds there is hidden and neither
@@ -2110,7 +2081,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     continue;
                 }
 
-                if ((int) $position !== 0 && !$holdsAList) {
+                if ((int) $position !== 0) {
+                    // kept but no longer read, so it must not make the object unsavable
                     continue;
                 }
 
@@ -2144,73 +2116,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * The slots of one key that hold more values than its declaration permits, as the per-key
-     * failures the caller collects - a field-level message in the editor rather than one generic
-     * error for the whole store, which is why the declared maximum is reported here and not refused
-     * by {@see DataObject\Classificationstore::setKeyValues()}.
-     *
-     * A slot whose variant the key no longer declares is hidden rather than reported: narrowing a
-     * declaration keeps the values it stops showing, so they must not make the object unsavable.
-     *
-     * A language the key is no longer kept in is hidden for the same reason, and the languages are
-     * the effective ones this check shares with every other per-key check,
-     * {@see self::getValidLanguages()}: once a key stops being localized it holds the one
-     * language-independent value, and the list retained in a language nobody can now reach must not
-     * be what refuses the save.
-     *
-     * @param array<string, array<string, array<int, mixed>>> $keyItems
-     *        structure: [language][variant][position] = value
-     * @param string[] $validLanguages the languages this key is kept in
-     *
-     * @return Model\Element\ValidationException[]
-     */
-    private function collectMaximumViolations(Data $keyDef, array $keyItems, array $validLanguages): array
-    {
-        if (!$keyDef instanceof MultiValue || !$keyDef->isMultiValue()) {
-            return [];
-        }
-
-        $maximum = $keyDef->getMaximum();
-        if ($maximum === null) {
-            return [];
-        }
-
-        $violations = [];
-
-        foreach ($keyItems as $language => $variants) {
-            if (!in_array((string) $language, $validLanguages, true)) {
-                // a language the key is no longer kept in: its list is retained and hidden, exactly
-                // as a slot of an undeclared variant is, so it must not refuse the save
-                continue;
-            }
-
-            foreach ($variants as $variant => $values) {
-                if (!$this->declaresVariant($keyDef, (string) $variant)) {
-                    continue;
-                }
-
-                if (count($values) <= $maximum) {
-                    continue;
-                }
-
-                $violations[] = new Model\Element\ValidationException(sprintf(
-                    'Key [ %s ] holds %d values where at most %d are allowed (%s/%s)',
-                    $keyDef->getName(),
-                    count($values),
-                    $maximum,
-                    $language,
-                    $variant
-                ));
-            }
-        }
-
-        return $violations;
-    }
-
-    /**
      * Whether the current declaration of a key still permits the given variant: the default variant
      * unless the key declines the unqualified value, a declared one, and nothing else. It is the
-     * one rule the maximum check, the per-slot validation and the search index all read, and it is
+     * one rule the per-slot validation and the search index both read, and it is
      * the rule of {@see DataObject\Classificationstore::declaresVariant()}, so the two cannot disagree
      * about which slots are visible.
      */

@@ -51,15 +51,7 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
     private const FIELDNAME = 'csstore';
 
-    private const MAXIMUM = 3;
-
     private const INNER_MAX_LENGTH = 5;
-
-    /**
-     * Loose enough for a value the tightened constraint refuses to be stored under it in the first
-     * place, {@see self::createParentHoldingAFirstValueThatIsAboutToBeRefused()}.
-     */
-    private const LOOSE_MAX_LENGTH = 50;
 
     private const VARIANT = 'metric';
 
@@ -686,89 +678,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
-     * A list at the declared maximum validates, so the check is a maximum rather than a limit one
-     * value below it.
-     */
-    public function testAListAtTheDeclaredMaximumValidates(): void
-    {
-        $group = $this->createGroup('validity_at_maximum');
-        $listKey = $this->createKey('validity_at_maximum', true, $this->multiValueDefinition());
-
-        $this->assignKey($group, $listKey, 0);
-
-        $object = new Csstorelocalized();
-        $object->setParentId(1);
-        $object->setKey('validity-at-maximum');
-        $object->setPublished(true);
-        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
-        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-            new MultiValueEntry('one', null, null, 0),
-            new MultiValueEntry('two', null, null, 1),
-            new MultiValueEntry('three', null, null, 2),
-        ]);
-
-        $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
-
-        $this->addToAssertionCount(1);
-    }
-
-    /**
-     * A list longer than the key's declared maximum is one of the per-key failures the field
-     * collects, so it is reported beside the mandatory failures of the same save rather than
-     * instead of them.
-     */
-    public function testAListLongerThanTheDeclaredMaximumIsReportedBesideTheMandatoryFailures(): void
-    {
-        $group = $this->createGroup('validity_maximum');
-        $listKey = $this->createKey('validity_maximum', true, $this->multiValueDefinition());
-        $mandatoryKey = $this->createKey('validity_mandatory');
-
-        $this->assignKey($group, $listKey, 0);
-        $this->assignKey($group, $mandatoryKey, 1, true);
-
-        $object = new Csstorelocalized();
-        $object->setParentId(1);
-        $object->setKey('validity-maximum');
-        $object->setPublished(true);
-        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
-        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-            new MultiValueEntry('one', null, null, 0),
-            new MultiValueEntry('two', null, null, 1),
-            new MultiValueEntry('three', null, null, 2),
-            new MultiValueEntry('four', null, null, 3),
-        ]);
-
-        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
-
-        try {
-            $fieldDefinition->checkValidity($object->getCsstore());
-            $this->fail('a list longer than the declared maximum must not validate');
-        } catch (ValidationException $validationException) {
-            $messages = array_map(
-                static fn (ValidationException $subItem): string => $subItem->getMessage(),
-                $validationException->getSubItems()
-            );
-
-            $maximumMessages = array_values(array_filter(
-                $messages,
-                static fn (string $message): bool => str_contains($message, 'at most')
-            ));
-
-            $this->assertCount(1, $maximumMessages, 'the one over-long slot is reported once');
-            $this->assertStringContainsString($listKey->getName(), $maximumMessages[0]);
-            $this->assertStringContainsString((string) self::MAXIMUM, $maximumMessages[0]);
-
-            $this->assertNotEmpty(
-                array_filter(
-                    $messages,
-                    static fn (string $message): bool => str_contains($message, $mandatoryKey->getName())
-                ),
-                'the mandatory failure of the other key is reported alongside it'
-            );
-        }
-    }
-
-    /**
      * And a mandatory multi-value key that does hold a value validates, so the check is about the
      * value rather than about the type of the key.
      */
@@ -788,36 +697,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         foreach ($this->getValidLanguages() as $language) {
             $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
                 new MultiValueEntry('held', $language, null, 0),
-            ]);
-        }
-
-        $object->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($object->getCsstore());
-
-        $this->addToAssertionCount(1);
-    }
-
-    /**
-     * A mandatory key holds a value when any slot of it does: a list whose first value was cleared
-     * still holds the two behind it, and the positions of a list are what it is read back by - so a
-     * check that only ever saw position 0 would refuse to save a key that is not empty.
-     */
-    public function testAMandatoryMultiValueKeyWhoseListStartsAboveTheFirstPositionValidates(): void
-    {
-        $group = $this->createGroup('validity_mandatory_mv_tail');
-        $listKey = $this->createKey('validity_mandatory_mv_tail', true, $this->multiValueDefinition());
-
-        $this->assignKey($group, $listKey, 0, true);
-
-        $object = new Csstorelocalized();
-        $object->setParentId(1);
-        $object->setKey('validity-mandatory-mv-tail');
-        $object->setPublished(true);
-        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
-
-        foreach ($this->getValidLanguages() as $language) {
-            $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-                new MultiValueEntry('two', $language, null, 1),
-                new MultiValueEntry('three', $language, null, 2),
             ]);
         }
 
@@ -885,7 +764,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $object->getCsstore()->setActiveGroups([$group->getId() => true]);
         $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
             new MultiValueEntry('ok', null, null, 0),
-            new MultiValueEntry('far too long', null, null, 1),
             new MultiValueEntry('also too long', null, self::VARIANT),
         ]);
 
@@ -899,70 +777,33 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
-     * The second copy of the gate: a default-variant list longer than the maximum, on a key that
-     * declines the unqualified value, is a hidden slot and so reports no violation.
+     * A value stored above position 0 by a document written earlier is kept but no longer read, so a
+     * value the inner type refuses there must not make the object unsavable either.
      */
-    public function testAnOverLongDefaultVariantListOfAKeyDecliningItIsNotReported(): void
+    public function testAValueKeptAbovePositionZeroIsNotValidated(): void
     {
-        $group = $this->createGroup('validity_declined_maximum');
-        $listKey = $this->createKey('validity_declined_maximum', true, $this->multiValueDefinition());
+        $group = $this->createGroup('validity_kept_position');
+        $listKey = $this->createKey('validity_kept_position', true, $this->constrainedMultiValueDefinition());
 
         $this->assignKey($group, $listKey, 0);
 
         $object = new Csstorelocalized();
         $object->setParentId(1);
-        $object->setKey('validity-declined-maximum');
+        $object->setKey('validity-kept-position');
         $object->setPublished(true);
         $object->getCsstore()->setActiveGroups([$group->getId() => true]);
-        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-            new MultiValueEntry('one', null, null, 0),
-            new MultiValueEntry('two', null, null, 1),
-            new MultiValueEntry('three', null, null, 2),
-            new MultiValueEntry('four', null, null, 3),
-        ]);
-
-        $this->assertNotEmpty(
-            $this->validationFailuresContaining($object, 'at most'),
-            'a key that permits the unqualified value reports the over-long list'
-        );
-
-        $declining = $this->multiValueDefinition();
-        $declining->setUnqualifiedValue(false);
-        $this->tightenTheInnerConstraint($listKey, $declining);
-
-        $this->assertSame([], $this->validationFailuresContaining($object, 'at most'));
-    }
-
-    /**
-     * The per-slot skip of the same gate: a default-variant value above position 0 that the inner type
-     * refuses is validated while the key permits the unqualified value and is hidden once it declines.
-     */
-    public function testARefusedDefaultVariantValueAbovePositionZeroOfAKeyDecliningItIsNotValidated(): void
-    {
-        $group = $this->createGroup('validity_declined_slots');
-        $listKey = $this->createKey('validity_declined_slots', true, $this->constrainedMultiValueDefinition());
-
-        $this->assignKey($group, $listKey, 0);
-
-        $object = new Csstorelocalized();
-        $object->setParentId(1);
-        $object->setKey('validity-declined-slots');
-        $object->setPublished(true);
-        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
-        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-            new MultiValueEntry('ok', null, null, 0),
-            new MultiValueEntry('far too long', null, null, 1),
-            new MultiValueEntry('ok', null, self::VARIANT),
-        ]);
-
-        $this->assertNotEmpty(
-            $this->validationFailuresContaining($object, ''),
-            'a key that permits the unqualified value validates the slot above position 0'
-        );
-
-        $declining = $this->constrainedMultiValueDefinition();
-        $declining->setUnqualifiedValue(false);
-        $this->tightenTheInnerConstraint($listKey, $declining);
+        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [new MultiValueEntry('ok')]);
+        // the way the engine restores a stored position onto the model
+        foreach ([null, self::VARIANT] as $variant) {
+            $object->getCsstore()->setQualifiedKeyValue(
+                $group->getId(),
+                $listKey->getId(),
+                'far too long',
+                null,
+                $variant,
+                1
+            );
+        }
 
         $this->assertSame([], $this->validationFailuresContaining($object, ''));
     }
@@ -1081,16 +922,16 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
     /**
      * The inner type validates every slot the declaration permits and not only the first value of
-     * the default variant: a value it refuses at a higher position, or under a variant, is a per-key
-     * failure of the save rather than something that stores clean.
+     * the default variant: a value it refuses under a variant is a per-key failure of the save
+     * rather than something that stores clean.
      */
     /**
      * A slot is skipped only when no value was supplied for it, never because the inner type calls
      * the value it holds empty - those are two different questions, and some types answer the second
      * about the SHAPE of a value: `Time::isEmpty()` is a format check, so it calls `'25:99'` empty.
      *
-     * Skipping on that answer left every malformed value after the first valid one unvalidated, at a
-     * higher position and under a named variant alike, and the object saved with them.
+     * Skipping on that answer left every malformed value after the first valid one unvalidated -
+     * under a named variant among others - and the object saved with them.
      *
      * @dataProvider malformedTimeProvider
      */
@@ -1110,7 +951,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $object->getCsstore()->setActiveGroups([$group->getId() => true]);
         $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
             new MultiValueEntry('06:49', null, null, 0),
-            new MultiValueEntry('25:99', null, null, 1),
             new MultiValueEntry('31:00', null, self::VARIANT),
         ]);
 
@@ -1128,11 +968,7 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
                 static fn (string $message): bool => str_contains($message, $expectedMessage)
             ));
 
-            $this->assertCount(2, $malformed, 'the higher position and the variant are both reported');
-            $this->assertNotEmpty(
-                array_filter($malformed, static fn (string $message): bool => str_contains($message, '/1')),
-                'the failure names the position it was found at'
-            );
+            $this->assertCount(1, $malformed, 'the variant is reported');
             $this->assertNotEmpty(
                 array_filter($malformed, static fn (string $message): bool => str_contains($message, self::VARIANT)),
                 'and the variant it was found in'
@@ -1180,7 +1016,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $object->getCsstore()->setActiveGroups([$group->getId() => true]);
         $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
             new MultiValueEntry('ok', null, null, 0),
-            new MultiValueEntry('far too long', null, null, 1),
             new MultiValueEntry('also too long', null, self::VARIANT),
         ]);
 
@@ -1198,11 +1033,7 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
                 static fn (string $message): bool => str_contains($message, 'is longer than')
             ));
 
-            $this->assertCount(2, $tooLong, 'the higher position and the variant are both reported');
-            $this->assertNotEmpty(
-                array_filter($tooLong, static fn (string $message): bool => str_contains($message, '/1')),
-                'the failure names the position it was found at'
-            );
+            $this->assertCount(1, $tooLong, 'the variant is reported');
             $this->assertNotEmpty(
                 array_filter($tooLong, static fn (string $message): bool => str_contains($message, self::VARIANT)),
                 'and the variant it was found in'
@@ -1256,54 +1087,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     }
 
     /**
-     * A key that has stopped being localized keeps the lists it holds in the languages it is no
-     * longer kept in, and they must not refuse the save.
-     *
-     * The maximum check was handed every stored language, where every other per-key check is put to
-     * the effective ones, {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::getValidLanguages()}.
-     * So a list nobody can now reach - or shorten - made the object unsavable.
-     */
-    public function testAListRetainedInALanguageTheKeyIsNoLongerKeptInDoesNotRefuseTheSave(): void
-    {
-        $group = $this->createGroup('validity_delocalized_maximum');
-        $listKey = $this->createKey('validity_delocalized_maximum', true, $this->multiValueDefinition());
-        $listKey->setLocalized(true);
-        $listKey->save();
-
-        $this->assignKey($group, $listKey, 0);
-        $this->clearDefinitionCaches();
-
-        $object = new Csstorelocalized();
-        $object->setParentId(1);
-        $object->setKey('validity-delocalized-maximum');
-        $object->setPublished(true);
-        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
-        $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-            new MultiValueEntry('one', 'de', null, 0),
-            new MultiValueEntry('two', 'de', null, 1),
-            new MultiValueEntry('three', 'de', null, 2),
-            new MultiValueEntry('four', 'de', null, 3),
-        ]);
-
-        $fieldDefinition = $object->getClass()->getFieldDefinition(self::FIELDNAME);
-
-        try {
-            $fieldDefinition->checkValidity($object->getCsstore());
-            $this->fail('while the key is kept per language, the over-long German list is reported');
-        } catch (ValidationException) {
-            $this->addToAssertionCount(1);
-        }
-
-        $listKey->setLocalized(false);
-        $listKey->save();
-        $this->clearDefinitionCaches();
-
-        $fieldDefinition->checkValidity($object->getCsstore());
-
-        $this->addToAssertionCount(1);
-    }
-
-    /**
      * The delegated constraints core's types gate on `$omitMandatoryCheck` reach every slot that is
      * validated, and not only the first populated one. An `input`'s REGEX is one of them.
      *
@@ -1311,11 +1094,10 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
      * regex on it and `Numeric::checkValidity()` its range, its integer and its unsigned checks. The
      * slots after the first populated one were checked with it true - because the mandatory flag is
      * answered once per key and per language - so a value the key's own regex refuses stored clean
-     * at a higher position or under a named variant. Its length constraint is NOT gated on the flag,
-     * which is why {@see self::testTheInnerTypeValidatesEveryDeclaredSlotAndNotOnlyTheFirst()} passed
-     * over this.
+     * under a named variant. Its length constraint is NOT gated on the flag, which is why
+     * {@see self::testTheInnerTypeValidatesEveryDeclaredSlotAndNotOnlyTheFirst()} passed over this.
      */
-    public function testTheDelegatedRegexRefusesAValueBeyondTheFirstPosition(): void
+    public function testTheDelegatedRegexRefusesAValueBeyondTheFirstSlot(): void
     {
         $group = $this->createGroup('validity_delegated_regex');
         $listKey = $this->createKey('validity_delegated_regex', true, $this->regexMultiValueDefinition());
@@ -1329,17 +1111,12 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $object->getCsstore()->setActiveGroups([$group->getId() => true]);
         $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
             new MultiValueEntry('AB-1', null, null, 0),
-            new MultiValueEntry('nope', null, null, 1),
             new MultiValueEntry('also-nope', null, self::VARIANT),
         ]);
 
         $failures = $this->validationFailuresContaining($object, "doesn't match input validation");
 
-        $this->assertCount(2, $failures, 'the higher position and the variant are both refused');
-        $this->assertNotEmpty(
-            array_filter($failures, static fn (string $message): bool => str_contains($message, '/1')),
-            'the failure names the position it was found at'
-        );
+        $this->assertCount(1, $failures, 'the variant is refused');
         $this->assertNotEmpty(
             array_filter($failures, static fn (string $message): bool => str_contains($message, self::VARIANT)),
             'and the variant it was found in'
@@ -1350,7 +1127,7 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
      * And a `numeric`'s range, which is gated on the same flag together with its integer and its
      * unsigned checks - so a second delegated type is pinned rather than one type's one constraint.
      */
-    public function testTheDelegatedNumericRangeRefusesAValueBeyondTheFirstPosition(): void
+    public function testTheDelegatedNumericRangeRefusesAValueBeyondTheFirstSlot(): void
     {
         $group = $this->createGroup('validity_delegated_range');
         $listKey = $this->createKey('validity_delegated_range', true, $this->numericMultiValueDefinition());
@@ -1364,127 +1141,12 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $object->getCsstore()->setActiveGroups([$group->getId() => true]);
         $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
             new MultiValueEntry(5, null, null, 0),
-            new MultiValueEntry(50, null, null, 1),
             new MultiValueEntry(99, null, self::VARIANT),
         ]);
 
         $failures = $this->validationFailuresContaining($object, 'is bigger than');
 
-        $this->assertCount(2, $failures, 'the higher position and the variant are both out of range');
-    }
-
-    /**
-     * A child whose list starts above position 0 is not validated against the value position 0 would
-     * have resolved to, because that value is an ancestor's and the child does not hold it.
-     *
-     * The resolved value is prepended as the default variant's position 0, which is how every caller
-     * read the key before a value could carry qualifiers. But
-     * {@see \Pimcore\Model\DataObject\Classificationstore::getQualifiedItems()} deliberately writes
-     * no position 0 for a selected list that starts above it - the list came from a nearer store
-     * than the resolved value did, and merging the two would put two objects' values into one list.
-     * Validation added it back, so tightening the inner type's constraint refused the CHILD's own
-     * valid list over a value the child does not inherit.
-     */
-    public function testAChildsSparseListIsNotValidatedAgainstThePositionItDoesNotInherit(): void
-    {
-        [$group, $listKey, $parent, $child] = $this->createParentHoldingAFirstValueThatIsAboutToBeRefused(
-            'validity_sparse_list'
-        );
-
-        // the child holds position 1 alone, and it is a value the inner type accepts
-        foreach ($this->getValidLanguages() as $language) {
-            $child->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-                new MultiValueEntry('ok', $language, null, 1),
-            ]);
-        }
-
-        $this->tightenTheInnerConstraint($listKey, $this->constrainedMultiValueDefinition());
-
-        $child->getClass()->getFieldDefinition(self::FIELDNAME)->checkValidity($child->getCsstore());
-
-        // the parent itself does hold position 0, so the legacy resolution stands there: this must
-        // not pass by validating nothing at all
-        $this->assertNotEmpty(
-            $this->validationFailuresContaining($parent, 'is longer than'),
-            'the parent holds position 0 itself and is refused for it'
-        );
-
-        // and the child's OWN list is still validated
-        foreach ($this->getValidLanguages() as $language) {
-            $child->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-                new MultiValueEntry('far too long', $language, null, 1),
-            ]);
-        }
-
-        $this->assertNotEmpty(
-            $this->validationFailuresContaining($child, 'is longer than'),
-            "suppressing the inherited position 0 must not stop the child's own value being checked"
-        );
-    }
-
-    /**
-     * And the legacy resolution is retained once the declaration no longer permits the list: a
-     * narrowed key addresses position 0 alone, so the value resolved there is the one it answers -
-     * an inherited one included - and it is validated as the value in force.
-     */
-    public function testANarrowedKeyIsStillValidatedAgainstTheValueItResolvesAtPositionZero(): void
-    {
-        [$group, $listKey, , $child] = $this->createParentHoldingAFirstValueThatIsAboutToBeRefused(
-            'validity_sparse_narrowed'
-        );
-
-        foreach ($this->getValidLanguages() as $language) {
-            $child->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-                new MultiValueEntry('ok', $language, null, 1),
-            ]);
-        }
-
-        // narrowed as well as tightened: no variants and no list, so position 1 is hidden and
-        // position 0 - the parent's value - is all the key addresses
-        $this->tightenTheInnerConstraint($listKey, $this->plainMultiValueDefinition());
-
-        $this->assertNotEmpty(
-            $this->validationFailuresContaining($child, 'is longer than'),
-            'the inherited position 0 is the value in force once the list is no longer declared'
-        );
-    }
-
-    /**
-     * A parent holding a position 0 of its own, declared loosely enough for its own save to pass,
-     * and an empty child under it - the shape both sparse-list cases are measured in. The constraint
-     * is tightened afterwards by {@see self::tightenTheInnerConstraint()}, which is the finding's own
-     * scenario: the value was legal when it was stored and the child is the one that pays for it.
-     *
-     * @return array{0: Classificationstore\GroupConfig, 1: Classificationstore\KeyConfig, 2: Csstorelocalized, 3: Csstorelocalized}
-     */
-    private function createParentHoldingAFirstValueThatIsAboutToBeRefused(string $label): array
-    {
-        $group = $this->createGroup($label);
-        $listKey = $this->createKey($label, true, $this->constrainedMultiValueDefinition(self::LOOSE_MAX_LENGTH));
-
-        $this->assignKey($group, $listKey, 0);
-
-        $parent = new Csstorelocalized();
-        $parent->setParentId(1);
-        $parent->setKey(str_replace('_', '-', $label) . '-parent');
-        $parent->setPublished(true);
-        $parent->getCsstore()->setActiveGroups([$group->getId() => true]);
-
-        foreach ($this->getValidLanguages() as $language) {
-            $parent->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-                new MultiValueEntry('far too long', $language, null, 0),
-            ]);
-        }
-
-        $parent->save();
-
-        $child = new Csstorelocalized();
-        $child->setParentId((int) $parent->getId());
-        $child->setKey(str_replace('_', '-', $label) . '-child');
-        $child->setPublished(true);
-        $child->getCsstore()->setActiveGroups([$group->getId() => true]);
-
-        return [$group, $listKey, $parent, $child];
+        $this->assertCount(1, $failures, 'the variant is out of range');
     }
 
     /**
@@ -1523,38 +1185,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
                 $messages,
                 static fn (string $message): bool => str_contains($message, $text)
             ));
-        }
-    }
-
-    /**
-     * The per-key maximum is a constraint of the declaration, not a missing value, so a draft save
-     * is refused for it as a published one is.
-     */
-    public function testAListLongerThanTheDeclaredMaximumIsRefusedOnADraftSave(): void
-    {
-        $group = $this->createGroup('validity_draft_maximum');
-        $listKey = $this->createKey('validity_draft_maximum', true, $this->multiValueDefinition());
-        $this->assignKey($group, $listKey, 0);
-
-        foreach ([false, true] as $published) {
-            $object = new Csstorelocalized();
-            $object->setParentId(1);
-            $object->setKey('validity-draft-maximum-' . (int) $published);
-            $object->setPublished($published);
-            $object->getCsstore()->setActiveGroups([$group->getId() => true]);
-            $object->getCsstore()->setKeyValues($group->getId(), $listKey->getId(), [
-                new MultiValueEntry('one', null, null, 0),
-                new MultiValueEntry('two', null, null, 1),
-                new MultiValueEntry('three', null, null, 2),
-                new MultiValueEntry('four', null, null, 3),
-            ]);
-
-            try {
-                $object->save();
-                $this->fail('a list longer than the declared maximum must not validate');
-            } catch (ValidationException $exception) {
-                $this->assertStringContainsString('at most', $exception->getMessage());
-            }
         }
     }
 
@@ -1664,10 +1294,7 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
     private function multiValueDefinition(): MultiValue
     {
-        $definition = $this->wrapperOf($this->innerType());
-        $definition->setMultiValue(self::MAXIMUM);
-
-        return $definition;
+        return $this->wrapperOf($this->innerType());
     }
 
     /**
@@ -1682,7 +1309,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
 
         $definition = $this->wrapperOf($inner);
         $definition->setVariants([['name' => self::VARIANT]]);
-        $definition->setMultiValue(self::MAXIMUM);
 
         return $definition;
     }
@@ -1700,7 +1326,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
         $definition->setVariants([['name' => self::VARIANT]]);
-        $definition->setMultiValue(self::MAXIMUM);
 
         return $definition;
     }
@@ -1723,7 +1348,6 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
         $definition->setVariants([['name' => self::VARIANT]]);
-        $definition->setMultiValue(self::MAXIMUM);
         $definition->setMandatory($mandatory);
 
         return $definition;
@@ -1733,14 +1357,13 @@ class DocumentValidityAndEditModeTest extends ValidityAndEditModeTest
     {
         $definition = $this->wrapperOf($this->innerType($maxLength));
         $definition->setVariants([['name' => self::VARIANT]]);
-        $definition->setMultiValue(self::MAXIMUM);
 
         return $definition;
     }
 
     /**
-     * The narrowed declaration of that key: no variants and no list, so every slot but the first is
-     * one it no longer permits.
+     * The narrowed declaration of that key: no variants, so every slot but the default one is one
+     * it no longer permits.
      */
     private function plainMultiValueDefinition(): MultiValue
     {

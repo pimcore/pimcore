@@ -590,7 +590,6 @@ class ServiceTest extends TestCase
     {
         $wrap = static function (?Data $inner): MultiValue {
             $wrapper = new MultiValue();
-            $wrapper->setMultiValue(true);
 
             if ($inner !== null) {
                 $wrapper->setDelegateDatatype($inner->getFieldType());
@@ -661,7 +660,6 @@ class ServiceTest extends TestCase
         $definition = new MultiValue();
         $definition->setName('mvKey');
         $definition->setVariants([['name' => 'metric'], ['name' => 'imperial', 'label' => 'Imperial']]);
-        $definition->setMultiValue(3);
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
 
@@ -677,8 +675,6 @@ class ServiceTest extends TestCase
             $rebuilt->getVariants()
         );
         $this->assertSame(['metric', 'imperial'], $rebuilt->getVariantNames());
-        $this->assertTrue($rebuilt->isMultiValue());
-        $this->assertSame(3, $rebuilt->getMaximum());
 
         $delegate = $rebuilt->getDelegate();
         $this->assertInstanceOf(QuantityValue::class, $delegate);
@@ -707,8 +703,6 @@ class ServiceTest extends TestCase
 
         $this->assertInstanceOf(MultiValue::class, $rebuilt);
         $this->assertSame([], $rebuilt->getVariants());
-        $this->assertFalse($rebuilt->isMultiValue());
-        $this->assertNull($rebuilt->getMaximum());
         $this->assertInstanceOf(Input::class, $rebuilt->getDelegate());
     }
 
@@ -722,7 +716,7 @@ class ServiceTest extends TestCase
     public function testAMultiValueKeyDefinitionNamingNoInnerTypeRebuildsWithoutADelegate(): void
     {
         $rebuilt = Service::getFieldDefinitionFromJson(
-            ['name' => 'mvNoDelegateKey', 'variants' => [['name' => 'metric']], 'multiValue' => true],
+            ['name' => 'mvNoDelegateKey', 'variants' => [['name' => 'metric']]],
             'multiValue'
         );
 
@@ -730,14 +724,12 @@ class ServiceTest extends TestCase
         $this->assertNull($rebuilt->getDelegateDatatype());
         $this->assertNull($rebuilt->getDelegate(), 'the raw decoded blob is not left behind as a definition');
         $this->assertSame(['metric'], $rebuilt->getVariantNames());
-        $this->assertTrue($rebuilt->isMultiValue());
     }
 
     /**
-     * The declaration of the unqualified value is a member of its own beside the variants and the
-     * list: a freshly constructed key permits it and carries no label for it, and declining it
-     * leaves the declared variants, the list and its maximum exactly as they were - the default
-     * slot is not one of the variant names either way.
+     * The declaration of the unqualified value is a member of its own beside the variants: a freshly
+     * constructed key permits it and carries no label for it, and declining it leaves the declared
+     * variants exactly as they were - the default slot is not one of the variant names either way.
      */
     public function testAMultiValueKeyPermitsTheUnqualifiedValueUnlessItDeclinesIt(): void
     {
@@ -747,7 +739,6 @@ class ServiceTest extends TestCase
         $this->assertNull($definition->getUnqualifiedValueLabel());
 
         $definition->setVariants([['name' => 'metric']]);
-        $definition->setMultiValue(3);
         $definition->setUnqualifiedValue(false)->setUnqualifiedValueLabel('Standard');
 
         $this->assertFalse($definition->permitsUnqualifiedValue());
@@ -759,14 +750,12 @@ class ServiceTest extends TestCase
             'the default slot is declared by its own member, not as a variant row'
         );
         $this->assertSame([['name' => 'metric']], $definition->getVariants());
-        $this->assertSame(3, $definition->getMaximum());
 
         $definition->setUnqualifiedValue(true)->setUnqualifiedValueLabel(null);
 
         $this->assertTrue($definition->permitsUnqualifiedValue());
         $this->assertNull($definition->getUnqualifiedValueLabel());
         $this->assertSame(['metric'], $definition->getVariantNames());
-        $this->assertTrue($definition->isMultiValue());
     }
 
     public function testAMultiValueKeyDefinitionRoundTripsTheUnqualifiedValueDeclaration(): void

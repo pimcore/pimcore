@@ -605,16 +605,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * The values one (language, variant) slot of a key holds, in their order.
+     * The value one (language, variant) slot of a key holds, as a list of at most one entry, keyed 0.
      *
      * A null $language means the default language, the way {@see self::getLanguage()} resolves it,
-     * and a null $variant means the default variant. The list is keyed by the position of each of
-     * its values, so a slot that holds no value at a position is read as holding none there rather
-     * than as the values behind it moving up.
+     * and a null $variant means the default variant. A value stored above position 0 is kept but
+     * not read, and a slot holding only such a value answers an empty list.
      *
      * What the list carries is what the current declaration of the key permits: a variant the key
-     * no longer declares reads as nothing, and a key that no longer declares a list answers its
-     * first value - neither read removes what is stored.
+     * no longer declares reads as nothing - the read removes nothing that is stored.
      *
      * The slot is addressed exactly, with no language fallback: a value stored under another
      * language, or under the language-independent default, is not answered here even where
@@ -654,12 +652,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         $values = $this->getQualifiedItems()[$groupId][$keyId][$language][$variant] ?? [];
 
-        if ($declaration === null || !$declaration->isMultiValue()) {
-            // the one position such a key permits, addressed by its position key rather than by
-            // being first in the list: a slot a narrowed declaration left holding only a higher
-            // position holds nothing here, instead of that value moving up into position 0
-            $values = array_key_exists(0, $values) ? [0 => $values[0]] : [];
-        }
+        // the one position a slot holds, addressed by its position key rather than by being first in
+        // the list: a slot holding only a value stored above it holds nothing here, instead of that
+        // value moving up into position 0
+        $values = array_key_exists(0, $values) ? [0 => $values[0]] : [];
 
         foreach ($values as $position => $value) {
             $values[$position] = $this->readQualifiedValue(
@@ -788,12 +784,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * Replaces the (language, variant) slots the given entries name, and leaves every other slot of
      * the key as it is: writing one variant does not touch the values of another.
      *
-     * The entries of one slot form its list, in the order their positions give. An absent qualifier
-     * is the default - the default language, the default variant, position 0 - so two entries whose
-     * qualifiers resolve to one slot and one position are a conflict, and the whole write is refused
-     * before anything is stored. So is a variant the key does not declare, and a position above 0 on
-     * a key that declares no list; the declared maximum is not refused here but reported by
-     * {@see \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::checkValidity()}.
+     * A slot holds one value. An absent qualifier is the default - the default language, the default
+     * variant, position 0 - so two entries whose qualifiers resolve to one slot are a conflict, and
+     * the whole write is refused before anything is stored. So is a variant the key does not
+     * declare, and any position above 0.
      *
      * @param MultiValue[] $entries
      *
@@ -822,8 +816,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 $keyId,
                 $slot['language'],
                 $slot['variant'],
-                $slot['values'],
-                $declaration !== null && $declaration->isMultiValue()
+                $slot['values']
             );
         }
 
@@ -835,7 +828,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * Nothing is checked against the declaration of the key here: a stored value whose variant the
      * key no longer declares is kept and hidden by the read, so that narrowing a declaration does
-     * not destroy values and widening it again brings them back.
+     * not destroy values and widening it again brings them back. A value stored above position 0
+     * is restored here the same way: no write can put one there any more, but the engine writes
+     * back what this puts on the model, so refusing it here would delete it on the next save.
      *
      * @internal
      *
@@ -1135,9 +1130,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * of them is stored.
      *
      * @param MultiValue[] $entries
-     * @param MultiValueKey|null $declaration the qualifier declaration of the key, resolved once by
-     *                                        the caller because what the write may replace is read
-     *                                        off the same declaration
+     * @param MultiValueKey|null $declaration the qualifier declaration of the key
      *
      * @return array<string, array{language: string, variant: string, values: array<int, mixed>}>
      *
@@ -1166,10 +1159,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 ));
             }
 
-            if ($position > 0 && ($declaration === null || !$declaration->isMultiValue())) {
+            if ($position > 0) {
                 throw new InvalidConfigException(sprintf(
-                    'Classification store key %d does not declare a list of values,'
-                    . ' so it holds no position %d.',
+                    'Classification store key %d holds one value per variant, so it holds no position %d.',
                     $keyId,
                     $position
                 ));
@@ -1194,28 +1186,20 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         foreach ($slots as $slot) {
-            // the highest position the slot addresses, so that a single value written at a position
-            // of its own needs the same capability as a list does
-            $this->assertTheEngineCanAddress($groupId, $keyId, $slot['variant'], max(array_keys($slot['values'])));
+            $this->assertTheEngineCanAddress($groupId, $keyId, $slot['variant'], 0);
         }
 
         return $slots;
     }
 
     /**
-     * One (language, variant) slot, replaced by the values the write gives it.
+     * One (language, variant) slot, replaced by the value the write gives it.
      *
-     * What the write may replace is what the declaration lets it address. While the key declares a
-     * list, the entries ARE the list and the whole slot is replaced, so a write that drops a value
-     * drops it. While it declares none, the write can address position 0 alone -
-     * {@see self::resolveSlots()} refuses anything above it - and the positions a narrowed
-     * declaration hides are not the write's to remove: narrowing HIDES values and deletes none, so
-     * widening the declaration again has to bring them back. Clearing the slot here would delete
-     * them on the next save instead, and nothing about the write said so.
+     * The write addresses position 0 alone - {@see self::resolveSlots()} refuses anything above
+     * it - and a value stored above it is not the write's to remove: it is kept and hidden, so
+     * clearing the whole slot here would delete it on the next save without the write saying so.
      *
      * @param array<int, mixed> $values
-     * @param bool $replaceWholeSlot whether the declaration permits a list, which is what makes the
-     *                               entries the whole list rather than its first value
      *
      * @throws Exception
      */
@@ -1224,30 +1208,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         int $keyId,
         string $language,
         string $variant,
-        array $values,
-        bool $replaceWholeSlot
+        array $values
     ): void {
-        ksort($values);
-
-        // the slot is replaced rather than added to, so a write that drops a value changes the
-        // store even where nothing new lands in it - and a save compares documents anyway, so a
-        // write that changed nothing still writes no row
+        // a save compares documents anyway, so a write that changed nothing still writes no row
         $this->markFieldDirty('_self');
 
-        if ($replaceWholeSlot) {
-            unset($this->variantItems[$groupId][$keyId][$language][$variant]);
-        } else {
-            $this->forgetQualifiedSlotValue($groupId, $keyId, $language, $variant, 0);
-        }
+        $this->forgetQualifiedSlotValue($groupId, $keyId, $language, $variant, 0);
 
         foreach ($values as $position => $value) {
             $this->setQualifiedKeyValue($groupId, $keyId, $value, $language, $variant, (int) $position);
-        }
-
-        if ($variant === self::DEFAULT_VARIANT && !array_key_exists(0, $values)) {
-            // $items holds position 0 of the default variant, so a list that no longer carries one
-            // has to clear it rather than leave the value the slot used to start with behind
-            $this->setLocalizedKeyValue($groupId, $keyId, null, $language);
         }
     }
 
