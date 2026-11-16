@@ -130,8 +130,10 @@ service user.
 A service user can name the people who answer for it, wherever a human is needed: for example the review of a Change
 Control proposal the service user created, or a notice that a token expires. They are users and roles, stored in the
 table `users_responsibles` (`serviceUserId`, `principalType` `user` or `role`, `principalId`). The relation only exists
-for service users: saving a person with responsible users or roles throws `InvalidServiceUserException`. A role
-stands for its members.
+for service users: saving a person with responsible users or roles throws `InvalidServiceUserException`, and so does
+an id that is not an existing person (for a responsible user) or role (for a responsible role). Both checks run inside
+the save transaction, after the `pimcore.user.preAdd` / `pimcore.user.preUpdate` events, so values a listener sets are
+checked too and nothing is written when they fail. A role stands for its members.
 
 ```php
 $serviceUser->setResponsibleUsers([$alice->getId()]);

@@ -13,6 +13,7 @@
 namespace Pimcore\Model\User;
 
 use Exception;
+use Pimcore\Model\User\Exception\InvalidServiceUserException;
 
 /**
  * @internal
@@ -58,6 +59,7 @@ class Dao extends UserRole\Dao
     }
 
     /**
+     * @throws InvalidServiceUserException if the responsible users or roles are not valid for the model
      * @throws Exception
      */
     public function update(): void

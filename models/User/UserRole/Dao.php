@@ -12,10 +12,15 @@
 
 namespace Pimcore\Model\User\UserRole;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
+use Pimcore\Model\User\Exception\InvalidServiceUserException;
+
+use function count;
+use function sprintf;
 
 /**
  * @internal
@@ -119,20 +124,38 @@ class Dao extends Model\User\AbstractUser\Dao
 
     /**
      * Replaces the stored responsible users and roles of a service user (runs in the transaction of save()).
+     *
+     * The values are checked here, right before they are written and after the pre-save events, so a value a
+     * listener set is checked as well; the exception rolls the whole save back.
+     *
+     * @throws InvalidServiceUserException if a person has responsible users or roles, or a responsible id is not
+     *     an existing user or role
+     * @throws Exception
      */
     protected function saveResponsibles(): void
     {
-        if (!$this->model instanceof User || !$this->model->isServiceUser()) {
+        if (!$this->model instanceof User) {
             return;
         }
-
-        $serviceUserId = $this->model->getId();
-        $this->db->delete('users_responsibles', ['serviceUserId' => $serviceUserId]);
 
         $principals = [
             'user' => $this->model->getResponsibleUsers(),
             'role' => $this->model->getResponsibleRoles(),
         ];
+
+        if (!$this->model->isServiceUser()) {
+            if ($principals['user'] !== [] || $principals['role'] !== []) {
+                throw new InvalidServiceUserException('Only a service user can have responsible users or roles.');
+            }
+
+            return;
+        }
+
+        $this->assertResponsiblesExist($principals);
+
+        $serviceUserId = $this->model->getId();
+        $this->db->delete('users_responsibles', ['serviceUserId' => $serviceUserId]);
+
         foreach ($principals as $type => $ids) {
             foreach ($ids as $id) {
                 $this->db->insert('users_responsibles', [
@@ -140,6 +163,37 @@ class Dao extends Model\User\AbstractUser\Dao
                     'principalType' => $type,
                     'principalId' => $id,
                 ]);
+            }
+        }
+    }
+
+    /**
+     * Every responsible user id must be a person (type 'user'), every responsible role id a role.
+     *
+     * @param array{user: int[], role: int[]} $principals
+     *
+     * @throws InvalidServiceUserException
+     * @throws Exception
+     */
+    private function assertResponsiblesExist(array $principals): void
+    {
+        foreach ($principals as $type => $ids) {
+            if ($ids === []) {
+                continue;
+            }
+
+            $found = $this->db->fetchFirstColumn(
+                'SELECT `id` FROM `users` WHERE `type` = :type AND `id` IN (:ids)',
+                ['type' => $type, 'ids' => $ids],
+                ['ids' => ArrayParameterType::INTEGER]
+            );
+
+            if (count($found) !== count($ids)) {
+                throw new InvalidServiceUserException(sprintf(
+                    'Every responsible %s id must belong to an existing %s.',
+                    $type,
+                    $type === 'user' ? 'user (not a service user or folder)' : 'role'
+                ));
             }
         }
     }

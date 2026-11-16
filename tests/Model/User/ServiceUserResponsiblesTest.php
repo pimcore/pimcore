@@ -14,8 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\User;
 
 use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
+use Pimcore\Event\Model\UserRoleEvent;
+use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model\User;
 use Pimcore\Model\User\AbstractUser;
 use Pimcore\Model\User\Exception\InvalidServiceUserException;
@@ -32,8 +35,18 @@ class ServiceUserResponsiblesTest extends ModelTestCase
      */
     private array $created = [];
 
+    /**
+     * @var array<array{string, callable}>
+     */
+    private array $registeredListeners = [];
+
     protected function tearDown(): void
     {
+        foreach ($this->registeredListeners as [$eventName, $listener]) {
+            Pimcore::getEventDispatcher()->removeListener($eventName, $listener);
+        }
+        $this->registeredListeners = [];
+
         foreach (array_reverse($this->created) as $entity) {
             if ($entity->getId() && AbstractUser::getById($entity->getId())) {
                 $entity->delete();
@@ -266,6 +279,67 @@ class ServiceUserResponsiblesTest extends ModelTestCase
         $human->setRoles([$missingRoleId]);
 
         $this->assertSame([], User::getResponsibleForServiceUserIds($human));
+    }
+
+    public function testResponsibleSetByAPreUpdateListenerIsCheckedAndNoRowIsWritten(): void
+    {
+        $human = $this->createHuman('h14');
+        $serviceUser = $this->createServiceUser('s14');
+        $serviceUser->setResponsibleUsers([$human->getId()])->save();
+        $otherServiceUser = $this->createServiceUser('s14other');
+        $serviceUserId = $serviceUser->getId();
+
+        // the listener runs after save() started, so a check made before the event never sees this id
+        $this->addListener(
+            UserRoleEvents::PRE_UPDATE,
+            static function (UserRoleEvent $event) use ($serviceUserId, $otherServiceUser): void {
+                $user = $event->getUserRole();
+                if ($user instanceof User && $user->getId() === $serviceUserId) {
+                    $user->setResponsibleUsers([$otherServiceUser->getId()]);
+                }
+            }
+        );
+
+        try {
+            $serviceUser->save();
+            $this->fail('A service user id set as responsible user by a listener must be refused.');
+        } catch (InvalidServiceUserException) {
+            // expected
+        }
+
+        // the transaction is rolled back: the stored responsible user is unchanged, no row names the service user
+        $this->assertSame(1, $this->countRows('serviceUserId', $serviceUserId));
+        $this->assertSame(0, $this->countRows('principalId', $otherServiceUser->getId(), 'user'));
+    }
+
+    public function testResponsibleSetByAPreAddListenerIsChecked(): void
+    {
+        $missingId = $this->unusedUserId();
+        $this->addListener(UserRoleEvents::PRE_ADD, static function (UserRoleEvent $event) use ($missingId): void {
+            $user = $event->getUserRole();
+            if ($user instanceof User && $user->isServiceUser()) {
+                $user->setResponsibleRoles([$missingId]);
+            }
+        });
+
+        $serviceUser = User::newServiceUser();
+        $serviceUser->setName(self::NAME_PREFIX . 's15');
+
+        try {
+            $serviceUser->save();
+            $this->fail('A missing role id set as responsible role by a listener must be refused.');
+        } catch (InvalidServiceUserException) {
+            // expected
+        }
+
+        $this->assertNull(User::getServiceUserByName(self::NAME_PREFIX . 's15'));
+        $this->assertSame(0, $this->countRows('principalId', $missingId, 'role'));
+    }
+
+    private function addListener(string $eventName, callable $listener): void
+    {
+        Pimcore::getEventDispatcher()->addListener($eventName, $listener);
+        $this->registeredListeners[] = [$eventName, $listener];
     }
 
     private function unusedUserId(): int
