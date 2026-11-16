@@ -258,7 +258,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     private function isUnloadedRelationValid(AbstractRelations $fd): bool
     {
-        if (!$this->isCoreRelation($fd)) {
+        if (!$this->canShortcutUnloadedRelation($fd)) {
             return false;
         }
 
@@ -304,11 +304,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * Whether the field is one of the relation types of the core. A custom type or a subclass may validate a
-     * relation or resolve its dependencies differently, so the shortcuts for unloaded relations do not apply.
+     * Whether the shortcuts for an unloaded relation apply: the field is one of the relation types of the core (a
+     * custom type or a subclass may validate a relation or resolve its dependencies differently), and no pre get
+     * value hook can replace the stored value, like it does in the getter outside of the admin.
      */
-    private function isCoreRelation(AbstractRelations $field): bool
+    private function canShortcutUnloadedRelation(AbstractRelations $field): bool
     {
+        if ($this instanceof PreGetValueHookInterface && !Pimcore::inAdmin()) {
+            return false;
+        }
+
         return in_array($field::class, [
             ManyToOneRelation::class,
             ManyToManyRelation::class,
@@ -503,7 +508,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     private function resolveDependenciesOfUnloadedRelation(AbstractRelations $field): ?array
     {
-        if (!$this->isCoreRelation($field)
+        if (!$this->canShortcutUnloadedRelation($field)
             || (!$field instanceof ManyToManyRelation && !$field instanceof ManyToManyObjectRelation)) {
             // a many-to-one relation loads a single element only
             return null;

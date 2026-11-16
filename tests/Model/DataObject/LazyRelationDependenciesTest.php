@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\Unittest;
+use Pimcore\Tests\Support\Model\HookedUnittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -169,6 +170,32 @@ class LazyRelationDependenciesTest extends ModelTestCase
                 isset($dependencies['object_' . $target->getId()]),
                 'the inherited relation is a dependency only with inherited values'
             );
+        }
+    }
+
+    /**
+     * A pre get value hook may return a value for the relation although it was not loaded, the dependencies are the
+     * ones of that value like before.
+     */
+    public function testResolveDependenciesUsesTheValueOfAPreGetValueHook(): void
+    {
+        $owner = $this->createOwnerWithAllRelationTypes();
+        $hookedTarget = TestHelper::createEmptyObject('lazy-dependencies-hooked-');
+        $this->assertFalse(Pimcore::inAdmin(), 'precondition: the hook is only called outside of the admin');
+
+        HookedUnittest::setHookedValue('objects', [$hookedTarget]);
+
+        try {
+            $hooked = HookedUnittest::fromStored($owner);
+            $this->assertFalse($hooked->isLazyKeyLoaded('objects'), 'precondition: the relation is not loaded');
+            $dependencies = $hooked->resolveDependencies();
+
+            $loaded = HookedUnittest::fromStored($owner);
+            Service::loadAllObjectFields($loaded);
+            $this->assertEquals($loaded->resolveDependencies(), $dependencies);
+            $this->assertArrayHasKey('object_' . $hookedTarget->getId(), $dependencies);
+        } finally {
+            HookedUnittest::resetHookedValues();
         }
     }
 

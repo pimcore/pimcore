@@ -23,6 +23,8 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Version;
+use Pimcore\Tests\Support\Model\HookedUnittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -251,6 +253,43 @@ class LazyRelationSaveValidationTest extends ModelTestCase
             $fd->setMaxItems($maxItems);
             DataObject::setGetInheritedValues($inheritedValues);
         }
+    }
+
+    /**
+     * A pre get value hook may return a value for the relation although it was not loaded, so that value is
+     * validated like before instead of the stored rows.
+     */
+    public function testSaveStillValidatesTheValueOfAPreGetValueHook(): void
+    {
+        [$owner, $targets] = $this->createOwnerWithTargets(2);
+        $this->assertFalse(Pimcore::inAdmin(), 'precondition: the hook is only called outside of the admin');
+
+        $this->withRelationSettings(false, 1, function () use ($owner, $targets): void {
+            $owner->setObjects([$targets[0]]);
+            $owner->save();
+
+            HookedUnittest::setHookedValue('objects', $targets);
+            $versionsEnabled = Version::isEnabled();
+            // a version of an object of a test class could not be restored, and is not needed here
+            Version::disable();
+
+            try {
+                $hooked = HookedUnittest::fromStored($owner);
+                $this->assertFalse($hooked->isLazyKeyLoaded('objects'), 'precondition: the relation is not loaded');
+                $hooked->save();
+                $this->fail('The value of the hook exceeds the max. items');
+            } catch (ValidationException $e) {
+                $this->assertStringContainsString(
+                    'Number of allowed relations in field `objects` exceeded',
+                    $e->getMessage()
+                );
+            } finally {
+                HookedUnittest::resetHookedValues();
+                if ($versionsEnabled) {
+                    Version::enable();
+                }
+            }
+        });
     }
 
     /**
