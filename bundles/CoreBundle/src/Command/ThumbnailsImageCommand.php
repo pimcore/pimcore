@@ -18,7 +18,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
-use Pimcore\Model\Asset\Image\Thumbnail\Config;
+use Pimcore\Model\Asset\Image\Thumbnail\VariantResolver;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,6 +37,11 @@ class ThumbnailsImageCommand extends AbstractCommand
     use Parallelization;
 
     private const DATE_FORMAT = 'Y-m-d H:i:s';
+
+    public function __construct(private readonly VariantResolver $variantResolver = new VariantResolver())
+    {
+        parent::__construct();
+    }
 
     protected function configure(): void
     {
@@ -92,7 +97,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'skip-high-res',
                 null,
                 InputOption::VALUE_NONE,
-                'do not generate high-res (@2x) versions of thumbnails'
+                'do not generate high-res (@2x, ...) versions of thumbnails'
             );
 
         foreach (Image\Thumbnail\Config::getAutoFormats() as $autoFormat => $autoFormatConfig) {
@@ -221,40 +226,20 @@ class ThumbnailsImageCommand extends AbstractCommand
     {
         /** @var Image\Thumbnail\Config $thumbnailConfig */
         $thumbnailConfig = Image\Thumbnail\Config::getByName($thumbnailConfigName);
-        $thumbnailsToGenerate = [$thumbnailConfig];
 
-        $medias = array_merge(['default' => 'defaultMedia'], $thumbnailConfig->getMedias() ?: []);
-        foreach ($medias as $mediaName => $media) {
-            $configMedia = clone $thumbnailConfig;
-            if ($mediaName !== 'default') {
-                $configMedia->selectMedia($mediaName);
-            }
-
-            if ($input->getOption('skip-medias') && $mediaName !== 'default') {
-                continue;
-            }
-
-            $resolutions = [1, 2];
-            if ($input->getOption('skip-high-res')) {
-                $resolutions = [1];
-            }
-
-            foreach ($resolutions as $resolution) {
-                $resConfig = clone $configMedia;
-                $resConfig->setHighResolution($resolution);
-                $thumbnailsToGenerate[] = $resConfig;
-
-                if (Config::isAutoFormat($resConfig->getFormat())) {
-                    foreach ($resConfig->getAutoFormatThumbnailConfigs() as $autoFormat => $autoFormatThumbnailConfig) {
-                        if (!$input->getOption('skip-' . $autoFormat)) {
-                            $thumbnailsToGenerate[] = $autoFormatThumbnailConfig;
-                        }
-                    }
-                }
+        $excludedAutoFormats = [];
+        foreach (Image\Thumbnail\Config::getAutoFormats() as $autoFormat => $autoFormatConfig) {
+            if ($autoFormatConfig['enabled'] && $input->getOption('skip-' . $autoFormat)) {
+                $excludedAutoFormats[] = $autoFormat;
             }
         }
 
-        return $thumbnailsToGenerate;
+        return $this->variantResolver->resolve(
+            $thumbnailConfig,
+            !$input->getOption('skip-medias'),
+            !$input->getOption('skip-high-res'),
+            $excludedAutoFormats
+        );
     }
 
     protected function getItemName(?int $count): string

@@ -14,6 +14,19 @@ services:
             - '@logger'
             - '@Pimcore\Helper\LongRunningHelper'
             - '@lock.factory'
+            - '@messenger.bus.pimcore-core'
+            - '%pimcore.assets.image.thumbnails.pre_generate.definitions%'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Model\Asset\Image\Thumbnail\VariantResolver: ~
+
+    Pimcore\Messenger\Handler\GenerateImageThumbnailsHandler:
+        arguments:
+            - '@logger'
+            - '@Pimcore\Helper\LongRunningHelper'
+            - '@Pimcore\Model\Asset\Image\Thumbnail\VariantResolver'
+            - '%pimcore.assets.image.thumbnails.pre_generate.max_variants_per_config%'
         tags:
             - { name: messenger.message_handler }
 
