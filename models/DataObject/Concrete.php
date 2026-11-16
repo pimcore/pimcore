@@ -29,8 +29,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
-use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\ElementDescriptor;
@@ -304,49 +304,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     private function isUnloadedRelationValid(AbstractRelations $fd): bool
     {
-        if (!$this->canShortcutUnloadedRelation($fd)) {
-            return false;
-        }
-
-        $checkMandatory = $fd->getMandatory() && !$this->getOmitMandatoryCheck();
-        if (!$fd instanceof ManyToManyRelation && !$fd instanceof ManyToManyObjectRelation) {
-            // a many-to-one relation has no max. items, its mandatory check loads the single element
-            return !$checkMandatory;
-        }
-
-        $maxItems = $fd->getMaxItems() ?? 0;
-        if (!$checkMandatory && $maxItems <= 0) {
-            return true;
-        }
-
-        $count = count($this->describeUnloadedRelation($fd));
-        if ($count === 0 && ($checkMandatory || DataObject::doGetInheritedValues($this))) {
-            // without own relations the value may be inherited from the parent, and its number of relations too
-            return false;
-        }
-
-        return $maxItems <= 0 || $count <= $maxItems;
-    }
-
-    /**
-     * The elements a relation that was not loaded refers to, described by its stored relation rows the way the
-     * getter would return them: elements that no longer exist, folders in an object relation and, while
-     * unpublished elements are hidden, unpublished ones are left out.
-     *
-     * @return list<array{id: int, parentId: int, type: string, subtype: string, className: string|null, fullpath: string, filename: string, published: bool}>
-     */
-    private function describeUnloadedRelation(ManyToManyRelation|ManyToManyObjectRelation $field): array
-    {
-        $summaries = $field->loadRelationSummaries($this);
-        if (!$field instanceof ManyToManyObjectRelation) {
-            return $summaries;
-        }
-
-        // the getter of an object relation only returns concrete objects
-        return array_values(array_filter(
-            $summaries,
-            static fn (array $summary) => $summary['subtype'] !== 'folder'
-        ));
+        return $this->canShortcutUnloadedRelation($fd) && UnloadedRelation::isValid(
+            $fd,
+            $this,
+            [],
+            $fd->getMandatory() && !$this->getOmitMandatoryCheck(),
+            DataObject::doGetInheritedValues($this),
+            false
+        );
     }
 
     /**
@@ -360,13 +325,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             return false;
         }
 
-        return in_array($field::class, [
-            ManyToOneRelation::class,
-            ManyToManyRelation::class,
-            ManyToManyObjectRelation::class,
-            AdvancedManyToManyRelation::class,
-            AdvancedManyToManyObjectRelation::class,
-        ], true);
+        return UnloadedRelation::isCoreRelationType($field);
     }
 
     /**
@@ -674,34 +633,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * The dependencies of a relation that was not loaded, read from its stored relation rows instead of loading
-     * every related element. They are the ones the loaded relation resolves to, see describeUnloadedRelation().
-     * Returns null if the rows cannot tell, then the relation has to be loaded.
+     * every related element. Returns null if the rows cannot tell, then the relation has to be loaded.
      *
      * @return array<string, array{id: int, type: string}>|null
      */
     private function resolveDependenciesOfUnloadedRelation(AbstractRelations $field): ?array
     {
-        if (!$this->canShortcutUnloadedRelation($field)
-            || (!$field instanceof ManyToManyRelation && !$field instanceof ManyToManyObjectRelation)) {
-            // a many-to-one relation loads a single element only
+        if (!$this->canShortcutUnloadedRelation($field)) {
             return null;
         }
 
-        $elements = $this->describeUnloadedRelation($field);
-        if ($elements === [] && DataObject::doGetInheritedValues($this)) {
-            // without own relations the getter returns the relations of the parent
-            return null;
-        }
-
-        $dependencies = [];
-        foreach ($elements as $element) {
-            $dependencies[$element['type'] . '_' . $element['id']] = [
-                'id' => $element['id'],
-                'type' => $element['type'],
-            ];
-        }
-
-        return $dependencies;
+        return UnloadedRelation::resolveDependencies($field, $this, [], DataObject::doGetInheritedValues($this), false);
     }
 
     /**
