@@ -33,6 +33,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\SystemSettingsConfig;
 
 /**
@@ -321,6 +322,105 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             AdvancedManyToManyRelation::class,
             AdvancedManyToManyObjectRelation::class,
         ], true);
+    }
+
+    /**
+     * The values a version stores for the lazy loaded relations that were not loaded, keyed by field name: the types
+     * and ids of the related elements, which is what the loaded relation is stored as (see
+     * Element\Service::getDeepCopyInstance()). They are read from the stored relation rows instead of loading every
+     * related element. A relation the rows cannot tell this for is not listed, it has to be loaded to be stored.
+     *
+     * @internal
+     *
+     * @return array<string, list<ElementDescriptor>>
+     */
+    public function describeUnloadedRelationsForVersion(): array
+    {
+        $relations = [];
+        foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            // the advanced relations store the ids of the related elements already, they do not load them
+            if ((!$field instanceof ManyToManyRelation && !$field instanceof ManyToManyObjectRelation)
+                || $field instanceof AdvancedManyToManyRelation
+                || $field instanceof AdvancedManyToManyObjectRelation
+                || $this->isLazyKeyLoaded($field->getName())
+                || !$this->canShortcutUnloadedRelation($field)) {
+                continue;
+            }
+
+            $descriptors = $this->describeStoredRelationForVersion($field);
+            if ($descriptors !== null) {
+                $relations[$field->getName()] = $descriptors;
+            }
+        }
+
+        return $relations;
+    }
+
+    /**
+     * The elements a relation that was not loaded would be stored with in a version, see
+     * describeUnloadedRelationsForVersion(). Null if they may differ from the ones loading the relation returns.
+     *
+     * @return list<ElementDescriptor>|null
+     */
+    private function describeStoredRelationForVersion(ManyToManyRelation|ManyToManyObjectRelation $field): ?array
+    {
+        $rows = $this->retrieveRelationData(['fieldname' => $field->getName(), 'ownertype' => 'object']);
+
+        // the loaded relation keeps unpublished elements, only its getter leaves them out
+        $hideUnpublished = DataObject::getHideUnpublished();
+        DataObject::setHideUnpublished(false);
+
+        try {
+            $summaries = $field->loadRelationSummaries($this);
+        } finally {
+            DataObject::setHideUnpublished($hideUnpublished);
+        }
+
+        if (count($summaries) !== count($rows)) {
+            // a related element does not exist anymore, loading the relation leaves it out and marks the field dirty
+            return null;
+        }
+
+        $descriptors = [];
+        foreach ($summaries as $summary) {
+            if ($summary['type'] !== 'object') {
+                if ($field instanceof ManyToManyObjectRelation) {
+                    // an object relation loads the object with the id of a relation of any type
+                    return null;
+                }
+            } elseif (!$this->isLoadableRelatedObject($field, $summary)) {
+                return null;
+            }
+
+            $descriptors[] = new ElementDescriptor($summary['type'], $summary['id']);
+        }
+
+        return $descriptors;
+    }
+
+    /**
+     * Whether loading the relation returns the related object the summary describes, as an element that a version
+     * stores as a descriptor.
+     *
+     * @param array{id: int, subtype: string, className: string|null} $summary
+     */
+    private function isLoadableRelatedObject(
+        ManyToManyRelation|ManyToManyObjectRelation $field,
+        array $summary
+    ): bool {
+        if ($summary['id'] === $this->getId()) {
+            // a relation to the object itself is stored as the object, not as a descriptor
+            return false;
+        }
+
+        if ($summary['subtype'] === DataObject::OBJECT_TYPE_FOLDER) {
+            // an object relation leaves a folder out
+            return !$field instanceof ManyToManyObjectRelation;
+        }
+
+        // an object of an unknown type is not loaded, one of a class that does not exist cannot be
+        return in_array($summary['subtype'], DataObject::$types, true)
+            && class_exists('Pimcore\\Model\\DataObject\\' . ucfirst((string) $summary['className']));
     }
 
     private function saveChildData(): void
