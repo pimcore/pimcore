@@ -19,6 +19,8 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -337,6 +339,15 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             continue;
                         }
 
+                        if ($fd instanceof AbstractRelations && $this->isUnloadedRelation($item, $fd)) {
+                            $relationDependencies = UnloadedRelation::resolveDependencies($fd, $item, [], false, false);
+                            if ($relationDependencies !== null) {
+                                $dependencies = array_merge($dependencies, $relationDependencies);
+
+                                continue;
+                            }
+                        }
+
                         $getter = 'get' . ucfirst($fd->getName());
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
                     }
@@ -371,6 +382,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         if ($data instanceof DataObject\Fieldcollection) {
             $validationExceptions = [];
+            $keepsStoredRelations = $this->keepsStoredRelations($data);
 
             $idx = -1;
             foreach ($data as $item) {
@@ -387,6 +399,16 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 if (!$omitMandatoryCheck) {
                     if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            if ($keepsStoredRelations
+                                && $fd instanceof AbstractRelations
+                                && $this->isUnloadedRelation($item, $fd)
+                                && UnloadedRelation::isValid($fd, $item, [], $fd->getMandatory(), false, false)) {
+                                // a lazy loaded relation that was not read in this request cannot have been changed
+                                // by it (a setter marks it as loaded) and is not written either, see
+                                // Concrete::updateObject()
+                                continue;
+                            }
+
                             try {
                                 $getter = 'get' . ucfirst($fd->getName());
                                 if (!$fd instanceof CalculatedValue) {
@@ -824,5 +846,51 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getFieldType(): string
     {
         return 'fieldcollections';
+    }
+
+    /**
+     * Whether saving the field collection leaves the relation rows of its items as they are. Otherwise it deletes
+     * them and writes them again from the loaded values, see Fieldcollection\Dao::delete(), so a relation that was
+     * not loaded has to be loaded before.
+     */
+    private function keepsStoredRelations(DataObject\Fieldcollection $data): bool
+    {
+        if (DataObject::isDirtyDetectionDisabled() || $data->isFieldDirty('_self')) {
+            return false;
+        }
+
+        foreach ($data->getItems() as $item) {
+            if ($item->hasDirtyFields()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether the getter of the item would load the relation from the relation rows stored for the item, see
+     * Fieldcollection::loadLazyField(). A field collection does not inherit, so the rows tell the value.
+     */
+    private function isUnloadedRelation(AbstractData $item, AbstractRelations $fd): bool
+    {
+        if ($item->isLazyKeyLoaded($fd->getName())) {
+            return false;
+        }
+
+        $container = $item->getObject()?->getObjectVar($item->getFieldname());
+        if (!$container instanceof DataObject\Fieldcollection) {
+            // without a stored field collection, the getter marks the relation as loaded instead
+            return false;
+        }
+
+        // the getter loads the relation into the first item with the same index only
+        foreach ($container->getItems() as $storedItem) {
+            if ($storedItem->getIndex() === $item->getIndex()) {
+                return $storedItem === $item;
+            }
+        }
+
+        return false;
     }
 }

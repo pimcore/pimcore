@@ -18,6 +18,8 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -573,7 +575,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             return [];
         }
 
-        foreach ($data->getInternalData(true) as $language => $values) {
+        $unloadedRelationDependencies = $this->resolveDependenciesOfUnloadedRelations($data);
+
+        foreach ($data->getInternalData($unloadedRelationDependencies === null) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 if (isset($values[$fd->getName()])) {
                     $dependencies = array_merge($dependencies, $fd->resolveDependencies($values[$fd->getName()]));
@@ -581,7 +585,44 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             }
         }
 
-        return $dependencies;
+        return array_merge($dependencies, $unloadedRelationDependencies ?? []);
+    }
+
+    /**
+     * The dependencies of the lazy loaded relations that were not loaded, read from their stored relation rows like
+     * Concrete::resolveDependencies() does. A relation the rows cannot tell about is loaded, so that its value is
+     * part of the internal data. Returns null if the lazy loaded fields have to be loaded as usual.
+     *
+     * @return array<string, array{id: int, type: string}>|null
+     */
+    private function resolveDependenciesOfUnloadedRelations(Localizedfield $data): ?array
+    {
+        $unloadedRelations = $this->getUnloadedRelations($data, Tool::getValidLanguages());
+        if ($unloadedRelations === null) {
+            return null;
+        }
+
+        $dependencies = [];
+        foreach ($unloadedRelations as $language => $fieldDefinitions) {
+            foreach ($fieldDefinitions as $fd) {
+                // the internal data is the stored value, without inheritance and with unpublished elements
+                $relationDependencies = UnloadedRelation::resolveDependencies(
+                    $fd,
+                    $data,
+                    $this->getRelationLoadParams($data, $fd, $language),
+                    false,
+                    true
+                );
+
+                if ($relationDependencies === null) {
+                    $this->loadUnloadedRelation($data, $fd, $language);
+                } else {
+                    $dependencies[] = $relationDependencies;
+                }
+            }
+        }
+
+        return array_merge(...$dependencies);
     }
 
     /**
@@ -645,11 +686,20 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         $languages = Tool::getRequiredLanguages();
 
-        $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
         if (!$omitMandatoryCheck) {
+            // the values are read for the mandatory checks only, without them there is nothing to load
+            $validUnloadedRelations = $this->getValidUnloadedRelations($data, $languages);
+            $dataForValidityCheck = $this->getDataForValidity($data, $languages, $validUnloadedRelations !== null);
+
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
+                    if (isset($validUnloadedRelations[$language][$fd->getName()])) {
+                        // a lazy loaded relation that was not read in this request cannot have been changed by it (a
+                        // setter marks it as loaded) and is not written either, see Concrete::updateObject()
+                        continue;
+                    }
+
                     try {
                         try {
                             if (!isset($dataForValidityCheck[$language][$fd->getName()])) {
@@ -724,11 +774,139 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $value;
     }
 
-    private function getDataForValidity(Localizedfield $localizedObject, array $languages): array
+    /**
+     * Judges the lazy loaded relations that were not loaded in the given languages by their stored relation rows,
+     * the way checkValidity() checks the stored value: without inheritance and with unpublished elements. A
+     * relation the rows cannot tell about is loaded, so that its stored value can be checked as usual.
+     *
+     * Returns the names of the relations that pass the checks that do not need the related elements, by language,
+     * or null if the lazy loaded fields have to be loaded as usual.
+     *
+     * @param string[] $languages
+     *
+     * @return array<string, array<string, true>>|null
+     */
+    private function getValidUnloadedRelations(Localizedfield $data, array $languages): ?array
     {
+        if ($data->getObject()?->getType() === DataObject::OBJECT_TYPE_VARIANT) {
+            // the values of a variant are checked with inheritance and fallback languages, see getDataForValidity()
+            return null;
+        }
+
+        if (($data->getContext()['containerType'] ?? null) === 'fieldcollection') {
+            // saving a field collection deletes the relation rows of its localized fields and writes them again
+            // from the loaded values, see Fieldcollection\Dao::delete(), so they have to be loaded before
+            return null;
+        }
+
+        $unloadedRelations = $this->getUnloadedRelations($data, $languages);
+        if ($unloadedRelations === null) {
+            return null;
+        }
+
+        $validRelations = [];
+        foreach ($unloadedRelations as $language => $fieldDefinitions) {
+            foreach ($fieldDefinitions as $name => $fd) {
+                $params = $this->getRelationLoadParams($data, $fd, $language);
+                if (UnloadedRelation::isValid($fd, $data, $params, $fd->getMandatory(), false, true)) {
+                    $validRelations[$language][$name] = true;
+                } else {
+                    $this->loadUnloadedRelation($data, $fd, $language);
+                }
+            }
+        }
+
+        return $validRelations;
+    }
+
+    /**
+     * The lazy loaded relations that were not loaded in the given languages, by language and name, the way
+     * Localizedfield::getInternalData() would load them. Returns null if they cannot be told apart from other
+     * lazy loaded fields, then those have to be loaded as usual.
+     *
+     * @param string[] $languages
+     *
+     * @return array<string, array<string, AbstractRelations>>|null
+     */
+    private function getUnloadedRelations(Localizedfield $data, array $languages): ?array
+    {
+        if (!$data->getObject() instanceof Concrete || ($data->getContext()['containerType'] ?? null) === 'block') {
+            // without the object there are no relation rows, in a block the localized fields do not lazy load
+            return null;
+        }
+
+        // a language that is not valid is not loaded either
+        $languages = array_intersect($languages, Tool::getValidLanguages());
+
+        $unloadedRelations = [];
+        foreach ($this->getFieldDefinitions() as $fd) {
+            if (!$fd instanceof LazyLoadingSupportInterface || !$fd->getLazyLoading()) {
+                continue;
+            }
+
+            foreach ($languages as $language) {
+                if ($data->isLazyKeyLoaded($data->buildLazyKey($fd->getName(), $language))) {
+                    continue;
+                }
+
+                if (!$fd instanceof AbstractRelations) {
+                    // another lazy loaded field type, e.g. a block, is loaded as usual
+                    return null;
+                }
+
+                $unloadedRelations[$language][$fd->getName()] = $fd;
+            }
+        }
+
+        return $unloadedRelations;
+    }
+
+    /**
+     * Loads a lazy loaded relation into the localized fields like Localizedfield::loadLazyField() does.
+     */
+    private function loadUnloadedRelation(Localizedfield $data, AbstractRelations $fd, string $language): void
+    {
+        $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+        DataObject::disableDirtyDetection();
+
+        try {
+            $value = $fd->load($data, $this->getRelationLoadParams($data, $fd, $language));
+            if ($value !== null && $value !== []) {
+                $data->setLocalizedValue($fd->getName(), $value, $language, false);
+            }
+        } finally {
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
+
+        $data->markLazyKeyAsLoaded($data->buildLazyKey($fd->getName(), $language));
+    }
+
+    /**
+     * The params Localizedfield::loadLazyField() loads a relation with.
+     */
+    private function getRelationLoadParams(Localizedfield $data, AbstractRelations $fd, string $language): array
+    {
+        return [
+            'language' => $language,
+            'object' => $data->getObject(),
+            'context' => $data->getContext(),
+            'owner' => $data,
+            'fieldname' => $fd->getName(),
+        ];
+    }
+
+    /**
+     * @param bool $unloadedRelationsJudged whether getValidUnloadedRelations() judged or loaded every lazy loaded
+     *   field that was not loaded, then the stored values are complete without loading them
+     */
+    private function getDataForValidity(
+        Localizedfield $localizedObject,
+        array $languages,
+        bool $unloadedRelationsJudged
+    ): array {
         if (!$localizedObject->getObject()
             || $localizedObject->getObject()->getType() != DataObject::OBJECT_TYPE_VARIANT) {
-            return $localizedObject->getInternalData(true);
+            return $localizedObject->getInternalData(!$unloadedRelationsJudged);
         }
 
         //prepare data for variants
