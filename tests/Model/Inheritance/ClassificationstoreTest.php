@@ -520,6 +520,47 @@ class ClassificationstoreTest extends ModelTestCase
         });
     }
 
+    /**
+     * The default slot of a child that holds only a value above position 0 reads as nothing, so the
+     * value resolved for it is the parent's. That value is the parent's to answer for: validating it
+     * against this key would reject the child for something it does not show.
+     */
+    public function testAParentsValueIsNotValidatedAgainstAChildHoldingOnlyAHigherPosition(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC]);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('kept-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.80 m', null, null, 0),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('kept-child', (int) $parent->getId());
+            $this->writeKeptPosition($child, $groupId, $keyId);
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            // the child's own default slot reads as nothing, whatever the parent holds
+            $this->assertSame([], $childStore->getKeyValues($groupId, $keyId));
+
+            // and saving it again does not fail on the parent's value
+            $childStore->getObject()->save();
+        });
+    }
+
+    /**
+     * A value above position 0 the way an installation carries one written before the list went:
+     * setKeyValues() refuses it now, while setQualifiedKeyValue() still restores a stored position,
+     * which is how the document engine puts one back on the model.
+     */
+    private function writeKeptPosition(Inheritance $object, int $groupId, int $keyId): void
+    {
+        $object->getTeststore()->setQualifiedKeyValue($groupId, $keyId, '1.70 m', null, null, 1);
+        $object->save();
+    }
+
     private function createObject(string $key, int $parentId): Inheritance
     {
         $object = new Inheritance();

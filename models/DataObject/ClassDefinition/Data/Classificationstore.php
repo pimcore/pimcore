@@ -2058,8 +2058,17 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         array $slotValues,
         bool $declinedValueHeld = false
     ): array {
+        // A default slot this object holds only above position 0 reads as nothing, so the resolved
+        // value here is the ancestor's. It is not supplied BY this object, so the inner type does
+        // not validate it - rejecting a child for a value only its ancestor holds. The slot stays
+        // so it can still answer the mandatory check, which that inherited value does satisfy.
+        $defaultSlotHeldAboveZero = isset($slotValues[self::DEFAULT_VARIANT])
+            && $slotValues[self::DEFAULT_VARIANT] !== []
+            && !array_key_exists(0, $slotValues[self::DEFAULT_VARIANT]);
+
         if ($this->declaresVariant($keyDef, self::DEFAULT_VARIANT)) {
-            $slots = [['value' => $value, 'context' => $language, 'supplied' => $value !== null]];
+            $supplied = $value !== null && !$defaultSlotHeldAboveZero;
+            $slots = [['value' => $value, 'context' => $language, 'supplied' => $supplied]];
         } elseif ($keyDef instanceof MultiValue && !$declinedValueHeld && $value === null) {
             // the key declines the unqualified value, so what it holds there is hidden and neither
             // validated nor able to answer the mandatory check. An empty placeholder keeps the
