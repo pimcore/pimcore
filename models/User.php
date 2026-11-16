@@ -287,19 +287,21 @@ final class User extends User\UserRole implements UserInterface
             return [];
         }
 
-        $sql = 'SELECT DISTINCT `serviceUserId` FROM `users_responsibles`'
-            . ' WHERE (`principalType` = :user AND `principalId` = :userId)';
+        // the join skips rows whose principal no longer exists with the stored type
+        $sql = 'SELECT DISTINCT r.`serviceUserId` FROM `users_responsibles` r'
+            . ' INNER JOIN `users` p ON p.`id` = r.`principalId` AND p.`type` = r.`principalType`'
+            . ' WHERE ((r.`principalType` = :user AND r.`principalId` = :userId)';
         $params = ['user' => 'user', 'userId' => $personId];
         $types = [];
 
         if ($person->getRoles() !== []) {
-            $sql .= ' OR (`principalType` = :role AND `principalId` IN (:roleIds))';
+            $sql .= ' OR (r.`principalType` = :role AND r.`principalId` IN (:roleIds))';
             $params['role'] = 'role';
             $params['roleIds'] = $person->getRoles();
             $types['roleIds'] = ArrayParameterType::INTEGER;
         }
 
-        $ids = Db::get()->fetchFirstColumn($sql . ' ORDER BY `serviceUserId`', $params, $types);
+        $ids = Db::get()->fetchFirstColumn($sql . ') ORDER BY r.`serviceUserId`', $params, $types);
 
         return array_map('intval', $ids);
     }

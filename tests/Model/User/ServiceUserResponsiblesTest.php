@@ -230,6 +230,58 @@ class ServiceUserResponsiblesTest extends ModelTestCase
         }
     }
 
+    public function testOrphanRowIsIgnoredOnLoadAndDroppedOnSave(): void
+    {
+        // a principal deleted while the service user was saved can leave a row behind; it must not block the user
+        $human = $this->createHuman('h12');
+        $role = $this->createRole('r12');
+        $serviceUser = $this->createServiceUser('s12');
+        $serviceUser->setResponsibleUsers([$human->getId()])->setResponsibleRoles([$role->getId()])->save();
+
+        $missingId = $this->unusedUserId();
+        $this->insertRow($serviceUser->getId(), 'user', $missingId);
+        $this->insertRow($serviceUser->getId(), 'role', $missingId);
+        // an existing id stored with the wrong type is not a valid principal either
+        $this->insertRow($serviceUser->getId(), 'role', $human->getId());
+
+        $this->clearUserCache($serviceUser->getId());
+        $loaded = User::getById($serviceUser->getId());
+        $this->assertSame([$human->getId()], $loaded->getResponsibleUsers());
+        $this->assertSame([$role->getId()], $loaded->getResponsibleRoles());
+
+        $loaded->save();
+
+        $this->assertSame(2, $this->countRows('serviceUserId', $serviceUser->getId()));
+        $this->assertSame(0, $this->countRows('principalId', $missingId));
+    }
+
+    public function testReverseLookupIgnoresOrphanRows(): void
+    {
+        $serviceUser = $this->createServiceUser('s13');
+        $missingRoleId = $this->unusedUserId();
+        $this->insertRow($serviceUser->getId(), 'role', $missingRoleId);
+
+        // a person whose stored roles still list the deleted role id
+        $human = $this->createHuman('h13');
+        $human->setRoles([$missingRoleId]);
+
+        $this->assertSame([], User::getResponsibleForServiceUserIds($human));
+    }
+
+    private function unusedUserId(): int
+    {
+        return (int) Db::get()->fetchOne('SELECT COALESCE(MAX(id), 0) + 1000 FROM users');
+    }
+
+    private function insertRow(int $serviceUserId, string $principalType, int $principalId): void
+    {
+        Db::get()->insert('users_responsibles', [
+            'serviceUserId' => $serviceUserId,
+            'principalType' => $principalType,
+            'principalId' => $principalId,
+        ]);
+    }
+
     private function countRows(string $column, int $value, ?string $principalType = null): int
     {
         $sql = 'SELECT COUNT(*) FROM users_responsibles WHERE `' . $column . '` = ?';

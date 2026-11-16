@@ -88,6 +88,9 @@ class Dao extends Model\User\AbstractUser\Dao
 
     /**
      * Loads the responsible users and roles of a service user.
+     *
+     * Only principals that still exist with the stored type are loaded: a row left behind by a principal deleted
+     * while the service user was being saved is ignored here and dropped by the next save().
      */
     protected function loadResponsibles(): void
     {
@@ -98,8 +101,9 @@ class Dao extends Model\User\AbstractUser\Dao
         $users = [];
         $roles = [];
         $rows = $this->db->fetchAllAssociative(
-            'SELECT `principalType`, `principalId` FROM `users_responsibles` WHERE `serviceUserId` = ?'
-            . ' ORDER BY `principalId`',
+            'SELECT r.`principalType`, r.`principalId` FROM `users_responsibles` r'
+            . ' INNER JOIN `users` p ON p.`id` = r.`principalId` AND p.`type` = r.`principalType`'
+            . ' WHERE r.`serviceUserId` = ? ORDER BY r.`principalId`',
             [$this->model->getId()]
         );
         foreach ($rows as $row) {
