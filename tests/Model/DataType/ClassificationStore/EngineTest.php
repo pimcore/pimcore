@@ -1217,9 +1217,8 @@ class EngineTest extends ModelTestCase
     }
 
     /**
-     * What the EAV value table cannot address it refuses, rather than truncating the list to its
-     * first value or writing a variant into the slot of another: its primary key has room for the
-     * language and for nothing else.
+     * What the EAV value table cannot address it refuses, rather than writing a variant into the
+     * slot of another: its primary key has room for the language and for nothing else.
      *
      * @dataProvider refusedEavCallProvider
      */
@@ -1288,13 +1287,6 @@ class EngineTest extends ModelTestCase
     public static function refusedEavCallProvider(): array
     {
         return [
-            'a list for one slot' => [
-                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->setKeyValues(
-                    $groupId,
-                    $keyId,
-                    [new MultiValue('first', null, null, 0), new MultiValue('second', null, null, 1)]
-                ),
-            ],
             'a non-default variant on write' => [
                 static fn (Classificationstore $store, int $groupId, int $keyId) => $store->setKeyValues(
                     $groupId,
@@ -1396,7 +1388,6 @@ class EngineTest extends ModelTestCase
 
         $innerWrapper = new MultiValueField();
         $innerWrapper->setName('mvGeoSecret');
-        $innerWrapper->setMultiValue(true);
         $innerWrapper->setDelegateDatatype($coordinates->getFieldType());
         $innerWrapper->setDelegate($coordinates);
 
@@ -1409,7 +1400,7 @@ class EngineTest extends ModelTestCase
     }
 
     /**
-     * A key declaring both qualifiers, so that what the EAV store refuses is the storage's answer
+     * A key declaring a variant, so that what the EAV store refuses is the storage's answer
      * and not the declaration's.
      */
     private function createMultiValueKey(int $storeId, int $groupId): int
@@ -1420,7 +1411,6 @@ class EngineTest extends ModelTestCase
         $definition = new MultiValueField();
         $definition->setName('mvKey');
         $definition->setVariants([['name' => self::VARIANT]]);
-        $definition->setMultiValue(true);
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
 

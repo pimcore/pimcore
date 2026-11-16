@@ -23,11 +23,10 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  * @package Pimcore\Model\DataObject\ClassDefinition\Data
  *
- * A classification store key that may hold more than one value, and that declares which qualifiers
- * it permits: the variants a value can be written under, and whether the key holds an ordered list
- * per slot. What a slot holds is the value of the inner type, which this one wraps the way
- * {@see EncryptedField} wraps its own delegate - the declarations live in this definition rather
- * than in a column of their own.
+ * A classification store key that holds one value per declared variant, and that declares which
+ * variants a value can be written under. What a slot holds is the value of the inner type, which
+ * this one wraps the way {@see EncryptedField} wraps its own delegate - the declarations live in
+ * this definition rather than in a column of their own.
  *
  * Whether those declarations can actually be stored is a property of the engine behind the store,
  * {@see \Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature}.
@@ -60,8 +59,9 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  *  - `getFieldType()`, which is `multiValue`: it is the type the key is DEFINED with, and it is what
  *    resolves this definition from a key config in the first place
- *  - `getParameterTypeDeclaration()` / `getReturnTypeDeclaration()`, which answer null: a slot can
- *    hold a list, so the inner type's single-value declaration is not the shape of what is held
+ *  - `getParameterTypeDeclaration()` / `getReturnTypeDeclaration()`, which answer null: a key holds
+ *    one value per declared variant, so the inner type's single-value declaration is not the shape
+ *    of what is held
  *  - `ResourcePersistenceAwareInterface`, `CustomResourcePersistingInterface` and the marshaller:
  *    where the value goes is the engine's question, and both engines resolve the inner definition
  *    at their own boundary ({@see \Pimcore\Model\DataObject\Classificationstore\Service::getValueDefinition()}).
@@ -108,20 +108,6 @@ class MultiValue extends Data implements
      * @internal
      */
     public ?string $unqualifiedValueLabel = null;
-
-    /**
-     * @internal
-     */
-    public bool $multiValue = false;
-
-    /**
-     * How many values one slot may hold, or null for no declared limit. Read by
-     * \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore::checkValidity() rather
-     * than enforced on write, so that an over-long list is reported as a field-level failure.
-     *
-     * @internal
-     */
-    public ?int $maximum = null;
 
     /**
      * The inner type of the key, or null for a definition blob that names none - a stored key config
@@ -218,96 +204,6 @@ class MultiValue extends Data implements
     public function setUnqualifiedValueLabel(?string $unqualifiedValueLabel): static
     {
         $this->unqualifiedValueLabel = $unqualifiedValueLabel === '' ? null : $unqualifiedValueLabel;
-
-        return $this;
-    }
-
-    public function isMultiValue(): bool
-    {
-        return $this->multiValue;
-    }
-
-    /**
-     * `true` declares an unbounded list, an integer declares the list and its maximum in one, and
-     * `false` clears both - the shape the key's definition blob carries either way.
-     *
-     * A BOOLEAN therefore carries no maximum and clears the one in force, whichever of the two it
-     * is: `true` declares an unbounded list and `false` declares no list at all, and neither has a
-     * limit to bound. `setMultiValue(3)` followed by `setMultiValue(true)` left the maximum at 3,
-     * and a fourth value was still refused by {@see Classificationstore::checkValidity()} on a key
-     * documented as unbounded.
-     *
-     * That is what an explicit call means, and it is all this setter answers for. The ORDER a blob
-     * carries the two members in is not its problem: {@see self::setValues()} applies the
-     * declaration before the maximum whatever order it reads them in, so hydration cannot have its
-     * limit destroyed by a declaration that happens to follow it. The two were entangled before -
-     * the setter kept a flag for which call had set the maximum, and {@see self::setMaximum()} reset
-     * that flag - so a definition that had round-tripped was hydrated as "set on its own" and
-     * `setMultiValue(true)` no longer cleared anything: the same call cleared the limit before
-     * persistence and left it in place after a reload.
-     *
-     * @return $this
-     */
-    public function setMultiValue(bool|int $multiValue): static
-    {
-        if (is_int($multiValue)) {
-            $this->multiValue = $multiValue > 0;
-            $this->maximum = $multiValue > 0 ? $multiValue : null;
-
-            return $this;
-        }
-
-        $this->multiValue = $multiValue;
-        $this->maximum = null;
-
-        return $this;
-    }
-
-    /**
-     * The list declaration is applied BEFORE the maximum, whatever order the members are read in.
-     *
-     * Hydration order is handled here rather than in {@see self::setMultiValue()}, which answers for
-     * what an explicit call means and nothing else. A boolean declaration clears the maximum, so a
-     * blob holding `maximum` before `multiValue` would have its limit destroyed by the declaration
-     * that follows it - and `maximum` is a member of its own in the blob, carried for the bounded
-     * list the key declares.
-     *
-     * Both paths that rebuild a key definition run this walk:
-     * {@see \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson()}
-     * runs it over the decoded blob and then again over the instance's own properties, through
-     * {@see \Pimcore\Model\DataObject\ClassDefinition\Helper\VarExport::__set_state()}.
-     *
-     * @param array<string, mixed> $data
-     * @param string[] $blockedKeys
-     *
-     * @return $this
-     */
-    public function setValues(array $data = [], array $blockedKeys = []): static
-    {
-        if (array_key_exists('maximum', $data)) {
-            $maximum = $data['maximum'];
-            unset($data['maximum']);
-            $data['maximum'] = $maximum;
-        }
-
-        return parent::setValues($data, $blockedKeys);
-    }
-
-    public function getMaximum(): ?int
-    {
-        return $this->maximum;
-    }
-
-    /**
-     * The limit on its own, which is how the bounded list a key declares is hydrated -
-     * {@see self::setValues()} applies it after the declaration, so the two cannot fight over the
-     * order a blob happens to carry them in.
-     *
-     * @return $this
-     */
-    public function setMaximum(?int $maximum): static
-    {
-        $this->maximum = $maximum;
 
         return $this;
     }

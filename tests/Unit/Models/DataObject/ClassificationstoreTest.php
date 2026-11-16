@@ -30,7 +30,7 @@ class ClassificationstoreTest extends TestCase
 
     private const PLAIN_KEY_ID = 920001;
 
-    private const LIST_KEY_ID = 920002;
+    private const POSITIONED_KEY_ID = 920002;
 
     private const VARIANT_KEY_ID = 920003;
 
@@ -141,99 +141,83 @@ class ClassificationstoreTest extends TestCase
         );
     }
 
-    public function testAPositionPastTheEndOfTheListAnswersNullRatherThanThrowing(): void
-    {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
-
-        $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [new MultiValue('only')]);
-
-        $this->assertNull($store->getKeyValue(self::GROUP_ID, self::LIST_KEY_ID, null, null, 7));
-    }
-
     /**
-     * The list is ordered by the positions its entries carry, and replacing a value in the middle
-     * leaves the ones around it where they were.
+     * A value stored above position 0 - put on the model the way an engine restores it from a
+     * document written earlier - is kept and not read: the slot answers position 0 alone.
      */
-    public function testAListKeepsItsOrderWhenAValueInTheMiddleIsReplaced(): void
+    public function testAValueStoredAbovePositionZeroIsKeptAndNotRead(): void
     {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
+        $this->seedKey(self::POSITIONED_KEY_ID, $this->variantKey());
 
         $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [
-            new MultiValue('red', null, null, 0),
-            new MultiValue('blue', null, null, 1),
-            new MultiValue('green', null, null, 2),
-        ]);
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'first');
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'second', null, null, 1);
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, '1.8 m', null, self::METRIC);
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, '1.9 m', null, self::METRIC, 1);
 
-        $this->assertSame(['red', 'blue', 'green'], $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID));
-
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [
-            new MultiValue('red', null, null, 0),
-            new MultiValue('teal', null, null, 1),
-            new MultiValue('green', null, null, 2),
-        ]);
-
-        $this->assertSame(['red', 'teal', 'green'], $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID));
+        $this->assertSame(['first'], $store->getKeyValues(self::GROUP_ID, self::POSITIONED_KEY_ID));
         $this->assertSame(
-            'red',
-            $store->getLocalizedKeyValue(self::GROUP_ID, self::LIST_KEY_ID),
-            'the documented getter answers position 0 and not the whole list'
+            ['1.8 m'],
+            $store->getKeyValues(self::GROUP_ID, self::POSITIONED_KEY_ID, null, self::METRIC)
         );
+        $this->assertNull($store->getKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, null, null, 1));
+        $this->assertNull($store->getKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, null, self::METRIC, 1));
+
+        $qualified = $store->getQualifiedItems()[self::GROUP_ID][self::POSITIONED_KEY_ID]['default'];
+        $this->assertSame('second', $qualified['default'][1], 'the value above position 0 is still held');
+        $this->assertSame('1.9 m', $qualified[self::METRIC][1]);
     }
 
     /**
-     * The position a value holds is what the list is read back by, so a slot that holds nothing at
-     * position 0 answers nothing there - the values behind it keep the positions they were written
-     * at instead of moving up by one.
+     * The read answers the value addressed by position 0, not the first in the list: a slot holding
+     * only a higher position answers nothing, instead of that value moving up into position 0.
      */
-    public function testClearingTheFirstValueOfAListLeavesThePositionsOfTheOthers(): void
+    public function testASlotHoldingOnlyAHigherPositionAnswersNothing(): void
     {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
+        $this->seedKey(self::POSITIONED_KEY_ID, $this->variantKey());
 
         $store = new Classificationstore();
-        $store->setKeyValues(
-            self::GROUP_ID,
-            self::LIST_KEY_ID,
-            $this->positionalEntries(['red', 'blue', 'green'])
-        );
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'blue', null, null, 1);
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'green', null, null, 2);
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, '1.9 m', null, self::METRIC, 1);
 
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [
-            new MultiValue('blue', null, null, 1),
-            new MultiValue('green', null, null, 2),
+        $this->assertSame([], $store->getKeyValues(self::GROUP_ID, self::POSITIONED_KEY_ID));
+        $this->assertNull($store->getKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID));
+        $this->assertSame([], $store->getKeyValues(self::GROUP_ID, self::POSITIONED_KEY_ID, null, self::METRIC));
+        // getLocalizedKeyValue() is not asserted here: an empty read enters the inheritance path,
+        // which reads the owning object's class, and a store built without one has none.
+    }
+
+    /**
+     * A write addresses position 0 and nothing else, so a value stored above it is not the write's
+     * to remove - clearing the slot would delete it on the next save.
+     */
+    public function testWritingPositionZeroKeepsTheValueStoredAboveIt(): void
+    {
+        $this->seedKey(self::POSITIONED_KEY_ID, $this->variantKey());
+
+        $store = new Classificationstore();
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'first');
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'second', null, null, 1);
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, '1.80 m', null, self::METRIC);
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, '1.81 m', null, self::METRIC, 1);
+
+        $store->setKeyValues(self::GROUP_ID, self::POSITIONED_KEY_ID, [
+            new MultiValue('edited'),
+            new MultiValue('1.82 m', null, self::METRIC),
         ]);
 
+        $this->assertSame(['edited'], $store->getKeyValues(self::GROUP_ID, self::POSITIONED_KEY_ID));
         $this->assertSame(
-            [1 => 'blue', 2 => 'green'],
-            $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID)
+            ['1.82 m'],
+            $store->getKeyValues(self::GROUP_ID, self::POSITIONED_KEY_ID, null, self::METRIC)
         );
-        $this->assertSame('blue', $store->getKeyValue(self::GROUP_ID, self::LIST_KEY_ID, null, null, 1));
-        $this->assertSame('green', $store->getKeyValue(self::GROUP_ID, self::LIST_KEY_ID, null, null, 2));
-        $this->assertNull(
-            $store->getKeyValue(self::GROUP_ID, self::LIST_KEY_ID),
-            'the position the list no longer holds answers nothing'
-        );
-    }
 
-    /**
-     * The read of a key that declares no list answers position 0 alone, by that position rather
-     * than by what comes first in the list: a slot left holding only a higher position answers
-     * nothing, instead of that value moving up into the one position the declaration permits.
-     */
-    public function testAKeyDeclaringNoListAnswersNothingForASlotThatHoldsNoFirstValue(): void
-    {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
-
-        $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [
-            new MultiValue('blue', null, null, 1),
-            new MultiValue('green', null, null, 2),
-        ]);
-
-        $this->seedKey(self::LIST_KEY_ID, $this->plainKey());
-
-        $this->assertSame([], $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID));
-        $this->assertNull($store->getKeyValue(self::GROUP_ID, self::LIST_KEY_ID));
+        $qualified = $store->getQualifiedItems()[self::GROUP_ID][self::POSITIONED_KEY_ID]['default'];
+        $this->assertSame('edited', $qualified['default'][0]);
+        $this->assertSame('second', $qualified['default'][1], 'the value above position 0 survived the write');
+        $this->assertSame('1.82 m', $qualified[self::METRIC][0]);
+        $this->assertSame('1.81 m', $qualified[self::METRIC][1]);
     }
 
     /**
@@ -265,10 +249,10 @@ class ClassificationstoreTest extends TestCase
     }
 
     /**
-     * One emptiness rule for every slot: an entry carrying no value clears the position it
-     * addresses. The default slot is the only one that ever did, so a value under a variant or at a
-     * higher position could not be removed at all - and the slot read back as holding one value,
-     * which is not the same thing as holding none.
+     * One emptiness rule for every slot: an entry carrying no value clears the slot it addresses.
+     * The default slot is the only one that ever did, so a value under a variant could not be
+     * removed at all - and the slot read back as holding one value, which is not the same thing as
+     * holding none.
      */
     public function testAnEntryWithoutAValueClearsTheSlotItAddresses(): void
     {
@@ -278,7 +262,6 @@ class ClassificationstoreTest extends TestCase
         $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
             new MultiValue('1.8 m', null, self::METRIC),
             new MultiValue('tall'),
-            new MultiValue('very tall', null, null, 1),
         ]);
 
         $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
@@ -286,7 +269,6 @@ class ClassificationstoreTest extends TestCase
         ]);
         $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
             new MultiValue(null),
-            new MultiValue(null, null, null, 1),
         ]);
 
         $this->assertSame([], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::METRIC));
@@ -296,30 +278,6 @@ class ClassificationstoreTest extends TestCase
             $store->getQualifiedItems(),
             'no slot was left holding the absence of a value'
         );
-    }
-
-    /**
-     * And the empty string is the absence of a value at every position, where it used to be dropped
-     * at position 0 and stored at every other one.
-     */
-    public function testTheEmptyStringIsNotAValueAtAnyPositionOfAList(): void
-    {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
-
-        $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [
-            new MultiValue('red', null, null, 0),
-            new MultiValue('', null, null, 1),
-        ]);
-
-        $this->assertSame(['red'], $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID));
-
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [
-            new MultiValue('', null, null, 0),
-            new MultiValue('blue', null, null, 1),
-        ]);
-
-        $this->assertSame([1 => 'blue'], $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID));
     }
 
     /**
@@ -333,11 +291,10 @@ class ClassificationstoreTest extends TestCase
         $store = new Classificationstore();
         $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
             new MultiValue('0'),
-            new MultiValue('0', null, null, 1),
             new MultiValue('0', null, self::METRIC),
         ]);
 
-        $this->assertSame([0 => '0', 1 => '0'], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID));
+        $this->assertSame(['0'], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID));
         $this->assertSame(
             ['0'],
             $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::METRIC)
@@ -355,13 +312,13 @@ class ClassificationstoreTest extends TestCase
      */
     public function testTwoEntriesAddressingOneSlotAreRefusedAndNothingIsStored(array $entries): void
     {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
+        $this->seedKey(self::PLAIN_KEY_ID);
 
         $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [new MultiValue('stored')]);
+        $store->setKeyValues(self::GROUP_ID, self::PLAIN_KEY_ID, [new MultiValue('stored')]);
 
         try {
-            $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, $entries);
+            $store->setKeyValues(self::GROUP_ID, self::PLAIN_KEY_ID, $entries);
             $this->fail('two entries addressing one slot have to be refused');
         } catch (InvalidConfigException $exception) {
             $this->assertStringContainsString('same slot', $exception->getMessage());
@@ -369,7 +326,7 @@ class ClassificationstoreTest extends TestCase
 
         $this->assertSame(
             ['stored'],
-            $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID),
+            $store->getKeyValues(self::GROUP_ID, self::PLAIN_KEY_ID),
             'the refusal is not partial'
         );
     }
@@ -529,21 +486,31 @@ class ClassificationstoreTest extends TestCase
     }
 
     /**
-     * A position above 0 needs the key to declare a list; without one the write has no slot to
-     * occupy, which is the same class of fault as an undeclared variant.
+     * A key holds one value per variant, so every write above position 0 is refused - on the
+     * default variant and on a declared one alike - and the refusal is not partial.
      */
-    public function testAPositionAboveZeroIsRefusedOnAKeyThatDeclaresNoList(): void
+    public function testAPositionAboveZeroIsRefusedAndNothingIsStored(): void
     {
-        $this->seedKey(self::PLAIN_KEY_ID);
+        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey());
 
         $store = new Classificationstore();
+        $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [new MultiValue('stored')]);
 
-        $this->expectException(InvalidConfigException::class);
+        foreach ([null, self::METRIC] as $variant) {
+            try {
+                $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
+                    new MultiValue('overwritten', null, null, 0),
+                    new MultiValue('second', null, $variant, 1),
+                ]);
+                $this->fail('a position above 0 has to be refused');
+            } catch (InvalidConfigException $exception) {
+                $this->assertStringContainsString('position 1', $exception->getMessage());
+                $this->assertStringNotContainsString('declare a list', $exception->getMessage());
+            }
+        }
 
-        $store->setKeyValues(self::GROUP_ID, self::PLAIN_KEY_ID, [
-            new MultiValue('first', null, null, 0),
-            new MultiValue('second', null, null, 1),
-        ]);
+        $this->assertSame(['stored'], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID));
+        $this->assertSame([], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::METRIC));
     }
 
     /**
@@ -558,18 +525,13 @@ class ClassificationstoreTest extends TestCase
         $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
             new MultiValue('1.8 m', null, self::METRIC),
             new MultiValue('5 ft 11 in', null, self::IMPERIAL),
-            new MultiValue('tall', null, null, 0),
-            new MultiValue('very tall', null, null, 1),
+            new MultiValue('tall'),
         ]);
 
-        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey([self::METRIC], false));
+        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey([self::METRIC]));
 
         $this->assertSame([], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::IMPERIAL));
-        $this->assertSame(
-            ['tall'],
-            $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID),
-            'a key that no longer declares a list answers its first value alone'
-        );
+        $this->assertSame(['tall'], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID));
 
         $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey());
 
@@ -577,88 +539,6 @@ class ClassificationstoreTest extends TestCase
             ['5 ft 11 in'],
             $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::IMPERIAL)
         );
-        $this->assertSame(['tall', 'very tall'], $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID));
-    }
-
-    /**
-     * Narrowing hides values on the WRITE path too. A key that no longer declares a list permits a
-     * write to position 0 and nothing else, so what the write replaces is position 0 - the positions
-     * the narrowed declaration hides are not its to remove. Clearing the slot instead deleted them,
-     * the next save wrote the slot without them, and widening the declaration again could never
-     * bring them back: the documented retention behaviour held for the read alone.
-     */
-    public function testNarrowingAListAndThenWritingItsFirstValueKeepsTheHiddenPositions(): void
-    {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
-
-        $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, $this->positionalEntries(['first', 'second']));
-
-        $this->seedKey(self::LIST_KEY_ID, $this->multiValueKeyWithoutAList());
-
-        // the write the editor of a key that declares no list makes: one value, position 0
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [new MultiValue('edited')]);
-
-        $this->assertSame(
-            ['edited'],
-            $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID),
-            'the one position the declaration permits holds what was just written'
-        );
-
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
-
-        $this->assertSame(
-            [0 => 'edited', 1 => 'second'],
-            $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID),
-            'widening the declaration again shows the position the narrowed one hid'
-        );
-    }
-
-    /**
-     * The same on a named variant, whose whole list lives in the qualified slots rather than having
-     * its first value in the items.
-     */
-    public function testNarrowingAListKeepsTheHiddenPositionsOfANamedVariant(): void
-    {
-        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey());
-
-        $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
-            new MultiValue('1.80 m', null, self::METRIC, 0),
-            new MultiValue('1.81 m', null, self::METRIC, 1),
-        ]);
-
-        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey([self::METRIC, self::IMPERIAL], false));
-
-        $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [new MultiValue('1.82 m', null, self::METRIC)]);
-
-        $this->assertSame(
-            ['1.82 m'],
-            $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::METRIC)
-        );
-
-        $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey());
-
-        $this->assertSame(
-            [0 => '1.82 m', 1 => '1.81 m'],
-            $store->getKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, null, self::METRIC),
-            'the hidden position of the variant survived the write to its first value'
-        );
-    }
-
-    /**
-     * While the declaration permits a list, the entries ARE the list: a write that drops a value
-     * drops it, and this is the behaviour the narrowing rule above must not be confused with.
-     */
-    public function testAWriteWhileTheListIsDeclaredReplacesTheWholeSlot(): void
-    {
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
-
-        $store = new Classificationstore();
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, $this->positionalEntries(['first', 'second']));
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, [new MultiValue('only')]);
-
-        $this->assertSame(['only'], $store->getKeyValues(self::GROUP_ID, self::LIST_KEY_ID));
     }
 
     /**
@@ -670,14 +550,15 @@ class ClassificationstoreTest extends TestCase
     public function testTheQualifiedItemsAgreeWithGetItemsAboutThePositionZeroDefaultVariantValue(): void
     {
         $this->seedKey(self::PLAIN_KEY_ID);
-        $this->seedKey(self::LIST_KEY_ID, $this->listKey());
+        $this->seedKey(self::POSITIONED_KEY_ID, $this->variantKey());
         $this->seedKey(self::VARIANT_KEY_ID, $this->variantKey());
 
         $store = new Classificationstore();
-        // a scalar leaf, an array leaf, a list and a named variant, in two languages
+        // a scalar leaf, an array leaf, a value kept above position 0 and a named variant, in two languages
         $store->setLocalizedKeyValue(self::GROUP_ID, self::PLAIN_KEY_ID, 'scalar');
         $store->setLocalizedKeyValue(self::GROUP_ID, self::PLAIN_KEY_ID, ['a', 'b'], 'en');
-        $store->setKeyValues(self::GROUP_ID, self::LIST_KEY_ID, $this->positionalEntries(['red', 'blue']));
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'red');
+        $store->setQualifiedKeyValue(self::GROUP_ID, self::POSITIONED_KEY_ID, 'blue', null, null, 1);
         $store->setKeyValues(self::GROUP_ID, self::VARIANT_KEY_ID, [
             new MultiValue('1.8 m', null, self::METRIC),
             new MultiValue('plain'),
@@ -708,46 +589,17 @@ class ClassificationstoreTest extends TestCase
     }
 
     /**
-     * @param string[] $values
-     *
-     * @return MultiValue[]
+     * @param string[] $variants
      */
-    private function positionalEntries(array $values): array
+    private function variantKey(array $variants = [self::METRIC, self::IMPERIAL]): MultiValueKey
     {
-        $entries = [];
-        foreach ($values as $position => $value) {
-            $entries[] = new MultiValue($value, null, null, $position);
-        }
-
-        return $entries;
-    }
-
-    private function listKey(): MultiValueKey
-    {
-        return $this->multiValueKey([], true);
-    }
-
-    /**
-     * The same key with its list declaration taken away: a narrowed declaration, which still
-     * declares the key and permits position 0 alone.
-     */
-    private function multiValueKeyWithoutAList(): MultiValueKey
-    {
-        return $this->multiValueKey([], false);
+        return $this->multiValueKey($variants);
     }
 
     /**
      * @param string[] $variants
      */
-    private function variantKey(array $variants = [self::METRIC, self::IMPERIAL], bool $list = true): MultiValueKey
-    {
-        return $this->multiValueKey($variants, $list);
-    }
-
-    /**
-     * @param string[] $variants
-     */
-    private function multiValueKey(array $variants, bool $list): MultiValueKey
+    private function multiValueKey(array $variants): MultiValueKey
     {
         $inner = new Input();
         $inner->setName('mvInner');
@@ -755,7 +607,6 @@ class ClassificationstoreTest extends TestCase
         $definition = new MultiValueKey();
         $definition->setName('mvKey');
         $definition->setVariants(array_map(static fn (string $name): array => ['name' => $name], $variants));
-        $definition->setMultiValue($list);
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
 
@@ -778,7 +629,7 @@ class ClassificationstoreTest extends TestCase
      */
     private function decliningKey(array $variants): MultiValueKey
     {
-        return $this->variantKey($variants, false)->setUnqualifiedValue(false);
+        return $this->variantKey($variants)->setUnqualifiedValue(false);
     }
 
     /**
@@ -819,6 +670,6 @@ class ClassificationstoreTest extends TestCase
 
     private function plainKey(): MultiValueKey
     {
-        return $this->multiValueKey([], false);
+        return $this->multiValueKey([]);
     }
 }

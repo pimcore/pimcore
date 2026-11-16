@@ -241,13 +241,12 @@ $allValues = $store->getItems();
    
 ```
 
-### Keys holding several values
+### Keys holding a value per variant
 
 A key of type `multiValue` wraps an inner type and declares which qualifiers it permits: the
-*variants* a value may be written under — `metric` and `imperial`, say — whether the *unqualified*
-value, the one naming no variant, is permitted, and whether the key holds an ordered *list* of values
-per slot, optionally with a maximum. A slot is one (language, variant) pair, and it holds the values
-of the inner type.
+*variants* a value may be written under — `metric` and `imperial`, say — and whether the
+*unqualified* value, the one naming no variant, is permitted. A slot is one (language, variant) pair,
+and it holds one value of the inner type.
 
 ```php
 use Pimcore\Model\DataObject\Data\MultiValue;
@@ -263,16 +262,9 @@ $store->setKeyValues(1, 2, [
 // writing one variant leaves the other as it is
 $store->setKeyValues(1, 2, [new MultiValue('6 ft 0 in', null, 'imperial')]);
 
-// an ordered list for one slot - the positions are where the values go
-$store->setKeyValues(1, 3, [
-    new MultiValue('red', null, null, 0),
-    new MultiValue('blue', null, null, 1),
-]);
-
-// read one slot's list - keyed by the position of each value - or one value of it;
-// a position the list does not hold is null
-$values = $store->getKeyValues(1, 3);            // [0 => 'red', 1 => 'blue']
-$value  = $store->getKeyValue(1, 3, null, null, 1);  // 'blue'
+// read one slot - as a list of at most one value - or its value; a slot holding nothing is [] or null
+$values = $store->getKeyValues(1, 2, null, 'metric');  // ['1.80 m']
+$value  = $store->getKeyValue(1, 2, null, 'imperial'); // '6 ft 0 in'
 ```
 
 A `null` language means the default language and a `null` variant the default variant, which a key is
@@ -281,7 +273,7 @@ slots beside it. A `multiValue` key declines it with `unqualifiedValue` off (on 
 optional `unqualifiedValueLabel` for that slot): `setKeyValues()` then refuses an entry that names no
 variant, or `default` explicitly, and `getKeyValues()`, `getKeyValue()` and the search index leave a
 value already stored there out — it stays stored and returns when the declaration is switched back
-on. `getLocalizedKeyValue()` and `Key::getValue()` are unchanged: they answer position 0 of the
+on. `getLocalizedKeyValue()` and `Key::getValue()` are unchanged: they answer the value of the
 default variant whatever the key declares, so a key that declares no qualifier behaves exactly as it
 always has, on every path, and a stored unqualified value of a key that declines one stays readable
 and still saves.
@@ -293,28 +285,27 @@ the resolving reader — it falls back through the fallback languages, then to t
 replacing a call to it with `getKeyValue()` changes what a key answers for a language it holds no
 value of.
 
-An entry carrying no value — `null` or the empty string — clears the position it addresses instead
-of storing an empty value there, and that is the rule in every slot alike, the default one included.
+An entry carrying no value — `null` or the empty string — clears the slot it addresses instead of
+storing an empty value there, and that is the rule in every slot alike, the default one included.
 A slot the write does not mention keeps what it holds, so clearing one variant is a write of that
 variant with no value.
 
-Two entries of one write whose qualifiers resolve to the same (language, variant, position) are
-refused, as is a variant the key does not declare and a position above 0 on a key that declares no
-list; nothing is stored in that case. A list longer than the declared maximum is not refused on
-write but reported by the field's validation when the object is saved, beside the other per-key
-failures.
+Two entries of one write whose qualifiers resolve to the same (language, variant) slot are refused,
+as is a variant the key does not declare and an entry carrying a position above 0; nothing is stored
+in that case.
 
-Narrowing a declaration hides values rather than deleting them. Removing a variant from a key,
-clearing its list, or declining its unqualified value makes those values unreadable while an
-ordinary save keeps them stored — so widening the declaration again brings them back.
+Narrowing a declaration hides values rather than deleting them. Removing a variant from a key or
+declining its unqualified value makes those values unreadable while an ordinary save keeps them
+stored — so widening the declaration again brings them back. A value an earlier version stored above
+position 0 is kept the same way: it is no longer read, validated or indexed, and a save writes it
+back unchanged.
 
-> **Holding several values is a capability of the storage engine.** The `document` engine supports
-> both variants and lists, because a value there carries its qualifiers as part of its own stored
-> entry. The default `eav` engine supports neither: the primary key of its value table has room for
-> the language and for nothing else, so a write or a read it cannot address raises
-> `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException` rather than truncating the
-> list or writing a variant into the slot of another. An unqualified value works on both engines, on
-> a key that permits one.
+> **Holding a value per variant is a capability of the storage engine.** The `document` engine
+> supports variants, because a value there carries its qualifiers as part of its own stored entry.
+> The default `eav` engine does not: the primary key of its value table has room for the language and
+> for nothing else, so a write or a read it cannot address raises
+> `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException` rather than writing a variant
+> into the slot of another. An unqualified value works on both engines, on a key that permits one.
 > A store that is not attached to an object yet cannot resolve its engine, so a write to one is
 > accepted and the same exception is raised when it is saved — the save fails rather than storing
 > part of the value.

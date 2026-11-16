@@ -2047,76 +2047,81 @@ class DocumentGeneralTest extends GeneralTest
     }
 
     /**
-     * A list keeps its order through a save and a load, including after a value in the middle is
-     * replaced - the document holds one entry per position, and the positions it holds are the ones
-     * the list is read back in.
+     * A value stored above position 0 is KEPT. The document of an object written while a key could
+     * hold a list still carries it, and a load followed by a save that changes nothing must write
+     * that document back byte for byte: the engine restores the stored position onto the model and
+     * serializes it again from there, so a guard on that path would delete the value silently.
      */
-    public function testAListKeepsItsOrderThroughASaveAndALoad(): void
+    public function testAValueStoredAbovePositionZeroSurvivesAnUnchangedSave(): void
     {
-        [$groupId, $keyId] = $this->createMultiValueKey([], true);
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC]);
 
-        $object = $this->createObject('list');
-        $object->getCsstore()->setKeyValues($groupId, $keyId, $this->listEntries(['red', 'blue', 'green']));
-        $object->save();
+        $object = $this->createObject('kept-position');
+        $this->writeADocumentHoldingAPositionAboveZero($object, $groupId, $keyId);
 
+        $before = $this->storedRow($object->getId(), $groupId);
+        $this->assertStringContainsString('"p":1', (string) $before['values'], 'the fixture holds position 1');
+        $this->assertNotNull($before['checksum']);
+
+        // a save of the object as loaded, with nothing changed
         $object = Csstore::getById($object->getId(), ['force' => true]);
-        $this->assertSame(['red', 'blue', 'green'], $object->getCsstore()->getKeyValues($groupId, $keyId));
-
-        $object->getCsstore()->setKeyValues($groupId, $keyId, $this->listEntries(['red', 'teal', 'green']));
         $object->save();
 
-        $object = Csstore::getById($object->getId(), ['force' => true]);
-        $this->assertSame(['red', 'teal', 'green'], $object->getCsstore()->getKeyValues($groupId, $keyId));
-        $this->assertSame(
-            'red',
-            $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId),
-            'the documented getter answers position 0 and not the whole list'
-        );
+        $this->assertSame($before['values'], $this->storedRow($object->getId(), $groupId)['values']);
+        $this->assertSame($before['checksum'], $this->storedRow($object->getId(), $groupId)['checksum']);
 
-        $positions = array_map(
-            static fn (array $entry): int => (int) ($entry['p'] ?? 0),
-            $this->storedEntries($object->getId(), $groupId, $keyId)
-        );
-
-        sort($positions);
-        $this->assertSame([0, 1, 2], $positions);
-    }
-
-    /**
-     * A list whose first value is cleared keeps the positions of the values behind it, through the
-     * save and through the load: the document holds the positions it was given rather than closing
-     * the gap, so the second value is still read as the second.
-     */
-    public function testAListWhoseFirstValueIsClearedKeepsThePositionsOfTheOthers(): void
-    {
-        [$groupId, $keyId] = $this->createMultiValueKey([], true);
-
-        $object = $this->createObject('cleared');
-        $object->getCsstore()->setKeyValues($groupId, $keyId, $this->listEntries(['red', 'blue', 'green']));
-        $object->save();
-
+        // and a save that does serialize the group again, by writing position 0 as it already is
         $object = Csstore::getById($object->getId(), ['force' => true]);
         $object->getCsstore()->setKeyValues($groupId, $keyId, [
-            new MultiValue('blue', null, null, 1),
-            new MultiValue('green', null, null, 2),
+            new MultiValue('first'),
+            new MultiValue('1.80 m', null, self::METRIC),
         ]);
         $object->save();
 
-        $positions = array_map(
-            static fn (array $entry): int => (int) ($entry['p'] ?? 0),
-            $this->storedEntries($object->getId(), $groupId, $keyId)
-        );
-
-        sort($positions);
-        $this->assertSame([1, 2], $positions, 'the cleared position is gone and the others stayed where they were');
+        $after = $this->storedRow($object->getId(), $groupId);
+        $this->assertSame($before['values'], $after['values'], 'the document is byte-identical');
+        $this->assertSame($before['checksum'], $after['checksum'], 'and so is its checksum');
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
-
-        $this->assertSame([1 => 'blue', 2 => 'green'], $object->getCsstore()->getKeyValues($groupId, $keyId));
+        $this->assertSame(['first'], $object->getCsstore()->getKeyValues($groupId, $keyId));
         $this->assertNull(
-            $object->getCsstore()->getLocalizedKeyValue($groupId, $keyId),
-            'the documented getter answers position 0, which the list no longer holds'
+            $object->getCsstore()->getKeyValue($groupId, $keyId, null, null, 1),
+            'the value above position 0 is no longer read'
         );
+    }
+
+    /**
+     * An edit of position 0 keeps the value stored above it too, and that value is no longer
+     * findable: the search index reads what the object shows.
+     */
+    public function testEditingPositionZeroKeepsTheValueStoredAboveItOutOfTheSearchIndex(): void
+    {
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC]);
+
+        $object = $this->createObject('kept-position-edit');
+        $this->writeADocumentHoldingAPositionAboveZero($object, $groupId, $keyId);
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $object->getCsstore()->setKeyValues($groupId, $keyId, [
+            new MultiValue('edited'),
+            new MultiValue('1.81 m', null, self::METRIC),
+        ]);
+        $object->save();
+
+        $entries = $this->storedEntries($object->getId(), $groupId, $keyId);
+        $kept = array_values(array_filter($entries, static fn (array $entry): bool => ($entry['p'] ?? 0) === 1));
+
+        $this->assertCount(2, $kept, 'both values above position 0 are still in the document');
+        $this->assertContains('second', array_column($kept, 'd'));
+        $this->assertContains('1.90 m', array_column($kept, 'd'));
+
+        $object = Csstore::getById($object->getId(), ['force' => true]);
+        $indexed = $this->searchIndexData($object);
+
+        $this->assertStringContainsString('edited', $indexed);
+        $this->assertStringContainsString('1.81 m', $indexed);
+        $this->assertStringNotContainsString('second', $indexed);
+        $this->assertStringNotContainsString('1.90 m', $indexed);
     }
 
     /**
@@ -2126,7 +2131,7 @@ class DocumentGeneralTest extends GeneralTest
      */
     public function testEachVariantOfAKeyIsWritableOnItsOwn(): void
     {
-        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], false);
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL]);
         $otherGroupId = Classificationstore\GroupConfig::getByName('testgroup1')->getId();
         $otherKeyId = $this->inputKeyId();
 
@@ -2175,7 +2180,7 @@ class DocumentGeneralTest extends GeneralTest
      */
     public function testNarrowingADeclarationKeepsTheValuesItHides(): void
     {
-        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], false);
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL]);
 
         $object = $this->createObject('narrowing');
         $object->getCsstore()->setKeyValues($groupId, $keyId, [
@@ -2184,7 +2189,7 @@ class DocumentGeneralTest extends GeneralTest
         ]);
         $object->save();
 
-        $this->narrowMultiValueKey([self::METRIC], false);
+        $this->narrowMultiValueKey([self::METRIC]);
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
         $this->assertSame(
@@ -2202,7 +2207,7 @@ class DocumentGeneralTest extends GeneralTest
         $this->assertSame('5 ft 11 in', $this->entryOf($entries, self::IMPERIAL)['d']);
         $this->assertSame('1.81 m', $this->entryOf($entries, self::METRIC)['d']);
 
-        $this->narrowMultiValueKey([self::METRIC, self::IMPERIAL], false);
+        $this->narrowMultiValueKey([self::METRIC, self::IMPERIAL]);
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
         $this->assertSame(
@@ -2213,113 +2218,42 @@ class DocumentGeneralTest extends GeneralTest
     }
 
     /**
-     * The same rule on the WRITE path, which is where it was broken: a key that no longer declares a
-     * list permits a write to position 0 and to nothing else, so the positions the narrowed
-     * declaration hides are not that write's to remove.
-     *
-     * Store positions 0 and 1, take the list declaration away, edit position 0 through
-     * setKeyValues() and save: the write replaced the whole slot, the save wrote it without position
-     * 1, and widening the declaration again could never bring that value back. Narrowing HIDES
-     * values and deletes none of them, on both paths.
-     */
-    public function testNarrowingAListAndThenEditingItsFirstValueKeepsTheHiddenPositions(): void
-    {
-        [$groupId, $keyId] = $this->createMultiValueKey([], true);
-
-        $object = $this->createObject('narrowing-write');
-        $object->getCsstore()->setKeyValues($groupId, $keyId, [
-            new MultiValue('1.80 m', null, null, 0),
-            new MultiValue('1.90 m', null, null, 1),
-        ]);
-        $object->save();
-
-        $this->narrowMultiValueKey([], false);
-
-        $object = Csstore::getById($object->getId(), ['force' => true]);
-        $this->assertSame(
-            ['1.80 m'],
-            $object->getCsstore()->getKeyValues($groupId, $keyId),
-            'a key that no longer declares a list reads its first value alone'
-        );
-
-        // the write the editor of a narrowed key makes, followed by the save that rewrites the group
-        $object->getCsstore()->setKeyValues($groupId, $keyId, [new MultiValue('1.81 m')]);
-        $object->save();
-
-        $entries = $this->storedEntries($object->getId(), $groupId, $keyId);
-
-        $this->assertSame(
-            ['1.81 m', '1.90 m'],
-            array_map(static fn (array $entry): mixed => $entry['d'], $entries),
-            'the hidden position is still in the document the save wrote'
-        );
-
-        $this->narrowMultiValueKey([], true);
-
-        $object = Csstore::getById($object->getId(), ['force' => true]);
-        $this->assertSame(
-            [0 => '1.81 m', 1 => '1.90 m'],
-            $object->getCsstore()->getKeyValues($groupId, $keyId),
-            'widening the declaration again shows the position the narrowed one hid'
-        );
-    }
-
-    /**
      * And the same rule on the SEARCH INDEX, which is the one surface a classification store value
-     * is filterable from at all - its values never reach `object_query_<CLASS>`.
-     *
-     * A value hidden by a narrowed declaration is still stored, and still carries its dependency
-     * rows and cache tags, because narrowing deletes nothing. The index is a different question: a
-     * value the object does not show must not be what a search finds it by. Read off the raw
-     * qualified tree, the index kept every hidden variant and position after the next indexing pass.
+     * is filterable from at all - its values never reach `object_query_<CLASS>`. A variant hidden
+     * by a narrowed declaration is still stored, but a value the object does not show must not be
+     * what a search finds it by.
      */
     public function testNarrowingADeclarationKeepsTheValuesItHidesOutOfTheSearchIndex(): void
     {
-        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL], true);
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL]);
 
         $object = $this->createObject('narrowing-index');
         $object->getCsstore()->setKeyValues($groupId, $keyId, [
-            new MultiValue('1.80 m', null, self::METRIC, 0),
-            new MultiValue('1.90 m', null, self::METRIC, 1),
-            new MultiValue('5 ft 11 in', null, self::IMPERIAL, 0),
+            new MultiValue('1.80 m', null, self::METRIC),
+            new MultiValue('5 ft 11 in', null, self::IMPERIAL),
         ]);
         $object->save();
 
-        $indexed = $this->searchIndexData($object);
+        $this->assertStringContainsString('5 ft 11 in', $this->searchIndexData($object));
 
-        $this->assertStringContainsString('1.80 m', $indexed);
-        $this->assertStringContainsString('1.90 m', $indexed, 'a declared position above zero is indexed');
-        $this->assertStringContainsString('5 ft 11 in', $indexed, 'a declared variant is indexed');
-
-        // the variant goes and the list is switched off, which hides both of the others
-        $this->narrowMultiValueKey([self::METRIC], false);
+        $this->narrowMultiValueKey([self::METRIC]);
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
         $indexed = $this->searchIndexData($object);
 
         $this->assertStringContainsString('1.80 m', $indexed, 'the one value the narrowed key shows is indexed');
-        $this->assertStringNotContainsString(
-            '5 ft 11 in',
-            $indexed,
-            'a variant the key no longer declares reads as nothing, so it is findable as nothing'
-        );
-        $this->assertStringNotContainsString(
-            '1.90 m',
-            $indexed,
-            'a position of a list the key no longer declares is hidden from the index the same way'
-        );
+        $this->assertStringNotContainsString('5 ft 11 in', $indexed, 'a variant the key no longer declares is not');
+        $this->assertCount(2, $this->storedEntries($object->getId(), $groupId, $keyId), 'and nothing was deleted');
 
-        // and none of it was deleted: the document still carries all three, which is what makes
-        // widening the declaration again bring them back
-        $this->assertCount(3, $this->storedEntries($object->getId(), $groupId, $keyId));
-
-        $this->narrowMultiValueKey([self::METRIC, self::IMPERIAL], true);
+        $this->narrowMultiValueKey([self::METRIC, self::IMPERIAL]);
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
-        $indexed = $this->searchIndexData($object);
 
-        $this->assertStringContainsString('5 ft 11 in', $indexed, 'widening makes the value findable again');
-        $this->assertStringContainsString('1.90 m', $indexed);
+        $this->assertStringContainsString(
+            '5 ft 11 in',
+            $this->searchIndexData($object),
+            'widening makes it findable again'
+        );
     }
 
     /**
@@ -2329,7 +2263,7 @@ class DocumentGeneralTest extends GeneralTest
      */
     public function testDecliningTheUnqualifiedValueHidesItAndPermittingItAgainShowsIt(): void
     {
-        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC], false);
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC]);
 
         $object = $this->createObject('declining-unqualified');
         $object->getCsstore()->setKeyValues($groupId, $keyId, [
@@ -2340,7 +2274,7 @@ class DocumentGeneralTest extends GeneralTest
 
         $this->assertStringContainsString(self::UNQUALIFIED_VALUE, $this->searchIndexData($object));
 
-        $this->narrowMultiValueKey([self::METRIC], false, false);
+        $this->narrowMultiValueKey([self::METRIC], false);
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
         $object->save();
@@ -2350,7 +2284,7 @@ class DocumentGeneralTest extends GeneralTest
         $this->assertStringContainsString('1.80 m', $this->searchIndexData($object));
         $this->assertCount(2, $this->storedEntries($object->getId(), $groupId, $keyId));
 
-        $this->narrowMultiValueKey([self::METRIC], false, true);
+        $this->narrowMultiValueKey([self::METRIC], true);
 
         $object = Csstore::getById($object->getId(), ['force' => true]);
 
@@ -2416,7 +2350,7 @@ class DocumentGeneralTest extends GeneralTest
      *
      * @return array{int, int} the group id and the key id
      */
-    private function createMultiValueKey(array $variants, bool $list): array
+    private function createMultiValueKey(array $variants): array
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
 
@@ -2430,7 +2364,7 @@ class DocumentGeneralTest extends GeneralTest
         $keyConfig->setName(self::MULTI_VALUE_KEY);
         $keyConfig->setEnabled(true);
         $keyConfig->setType('multiValue');
-        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants, $list)));
+        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants)));
         $keyConfig->save();
 
         $relation = new Classificationstore\KeyGroupRelation();
@@ -2442,6 +2376,24 @@ class DocumentGeneralTest extends GeneralTest
         $this->clearDefinitionCaches();
 
         return [(int) $group->getId(), (int) $keyConfig->getId()];
+    }
+
+    /**
+     * The document an object carries from before a key held one value per variant: positions 1 of
+     * the default variant and of a named one, written by the engine itself so that the document is
+     * byte for byte the one it wrote then.
+     */
+    private function writeADocumentHoldingAPositionAboveZero(Csstore $object, int $groupId, int $keyId): void
+    {
+        $store = $object->getCsstore();
+        $store->setKeyValues($groupId, $keyId, [
+            new MultiValue('first'),
+            new MultiValue('1.80 m', null, self::METRIC),
+        ]);
+        // the path DocumentEngine::applyDocument() restores a stored position on, and the only one left
+        $store->setQualifiedKeyValue($groupId, $keyId, 'second', null, null, 1);
+        $store->setQualifiedKeyValue($groupId, $keyId, '1.90 m', null, self::METRIC, 1);
+        $object->save();
     }
 
     private function createObject(string $key): Csstore
@@ -2489,24 +2441,9 @@ class DocumentGeneralTest extends GeneralTest
     }
 
     /**
-     * @param string[] $values
-     *
-     * @return MultiValue[]
-     */
-    private function listEntries(array $values): array
-    {
-        $entries = [];
-        foreach ($values as $position => $value) {
-            $entries[] = new MultiValue($value, null, null, $position);
-        }
-
-        return $entries;
-    }
-
-    /**
      * @param string[] $variants
      */
-    private function multiValueDefinition(array $variants, bool $list, bool $unqualified = true): MultiValueKey
+    private function multiValueDefinition(array $variants, bool $unqualified = true): MultiValueKey
     {
         $inner = new Input();
         $inner->setName(self::MULTI_VALUE_KEY);
@@ -2514,7 +2451,6 @@ class DocumentGeneralTest extends GeneralTest
         $definition = new MultiValueKey();
         $definition->setName(self::MULTI_VALUE_KEY);
         $definition->setVariants(array_map(static fn (string $name): array => ['name' => $name], $variants));
-        $definition->setMultiValue($list);
         $definition->setUnqualifiedValue($unqualified);
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
@@ -2527,11 +2463,11 @@ class DocumentGeneralTest extends GeneralTest
      *
      * @param string[] $variants
      */
-    private function narrowMultiValueKey(array $variants, bool $list, bool $unqualified = true): void
+    private function narrowMultiValueKey(array $variants, bool $unqualified = true): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $keyConfig = Classificationstore\KeyConfig::getByName(self::MULTI_VALUE_KEY, $store->getId());
-        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants, $list, $unqualified)));
+        $keyConfig->setDefinition((string) json_encode($this->multiValueDefinition($variants, $unqualified)));
         $keyConfig->save();
 
         $this->clearDefinitionCaches();
