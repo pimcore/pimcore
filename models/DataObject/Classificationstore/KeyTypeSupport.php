@@ -133,6 +133,10 @@ final class KeyTypeSupport
      * key of one of these types stays governed by the engine check instead of silently falling out
      * of it.
      *
+     * The Studio key-type pickers filter the same three names, from a list of their own in
+     * studio-ui-bundle `.../dynamic-types/utils/classification-store-key-types.ts`. Nothing couples
+     * the two, so this list is never edited alone; `WithdrawnKeyTypePickerAgreementTest` pins both.
+     *
      * @var string[]
      */
     private const WITHDRAWN_KEY_TYPES = [
