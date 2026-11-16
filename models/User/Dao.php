@@ -12,6 +12,9 @@
 
 namespace Pimcore\Model\User;
 
+use Exception;
+use Pimcore\Model\User\Exception\InvalidServiceUserException;
+
 /**
  * @internal
  *
@@ -53,6 +56,17 @@ class Dao extends UserRole\Dao
         $type = $this->db->fetchOne('SELECT `type` FROM `users` WHERE `id` = ?', [$this->model->getId()]);
 
         return $type === false ? null : (string) $type;
+    }
+
+    /**
+     * @throws InvalidServiceUserException if the responsible users or roles are not valid for the model
+     * @throws Exception
+     */
+    public function update(): void
+    {
+        parent::update();
+
+        $this->saveResponsibles();
     }
 
     /**
