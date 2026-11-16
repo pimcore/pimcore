@@ -236,6 +236,7 @@ class ServiceUserResponsiblesTest extends ModelTestCase
         $human->delete();
 
         $this->expectException(InvalidServiceUserException::class);
+
         try {
             $serviceUser->save();
         } finally {
