@@ -43,7 +43,6 @@ class Csv
         'source',
         'sourceSite',
         'target',
-        'targetType',
         'targetSite',
         'statusCode',
         'priority',
@@ -51,6 +50,7 @@ class Csv
         'passThroughParameters',
         'active',
         'expiry',
+        'targetType',
     ];
 
     private ?ArrayNormalizer $importNormalizer = null;
@@ -95,7 +95,6 @@ class Csv
                 $redirect->getSource(),
                 $redirect->getSourceSite(),
                 $target,
-                $targetType?->value,
                 $redirect->getTargetSite(),
                 $redirect->getStatusCode(),
                 $redirect->getPriority(),
@@ -103,6 +102,7 @@ class Csv
                 $redirect->getPassThroughParameters(),
                 $redirect->getActive(),
                 $expiry,
+                $targetType?->value,
             ];
             $data = Service::escapeCsvRecord($data);
 
