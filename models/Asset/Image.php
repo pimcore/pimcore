@@ -31,6 +31,11 @@ class Image extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
+    /**
+     * How much of each end of an EPS file's PostScript is searched for its size comments.
+     */
+    private const EPS_COMMENTS_BYTES = 65536;
+
     protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
@@ -265,6 +270,12 @@ EOT;
             }
         }
 
+        // EPS needs a PostScript interpreter to render, which ImageMagick's default policy on many
+        // distributions refuses. Its DSC header comments carry the size, so read that instead.
+        if (!$dimensions) {
+            $dimensions = self::getEpsDimensionsFromHeader($path);
+        }
+
         if (!$dimensions) {
             // Flysystem commonly materializes remote streams as extensionless temporary files.
             // Some ImageMagick delegates (notably SVG) require the source suffix to select a decoder.
@@ -308,6 +319,184 @@ EOT;
         }
 
         return $dimensions;
+    }
+
+    /**
+     * The size an EPS file declares in its DSC header comments: Photoshop's %ImageData, which the Imagick
+     * adapter also prefers, else %%HiResBoundingBox or %%BoundingBox in points - what ImageMagick reports at
+     * its default 72 dpi. Handles DOS EPS binary headers and boxes deferred to the trailer with "(atend)".
+     * Reads at most EPS_COMMENTS_BYTES from each end of the PostScript section, so the size of the file
+     * does not matter, and never reads outside that section.
+     *
+     * @return array{width: int, height: int}|null null if the file is not EPS or declares no usable size
+     */
+    private static function getEpsDimensionsFromHeader(string $path): ?array
+    {
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $handle = @fopen($path, 'rb');
+        if (!$handle) {
+            return null;
+        }
+
+        try {
+            $start = 0;
+            $length = (int) (fstat($handle)['size'] ?? 0);
+            $magic = (string) fread($handle, 12);
+
+            if (str_starts_with($magic, "\xC5\xD0\xD3\xC6") && strlen($magic) === 12) {
+                // DOS EPS binary header: offset and length of the PostScript section
+                ['start' => $start, 'length' => $length] = unpack('Vstart/Vlength', substr($magic, 4, 8));
+            } elseif (!str_starts_with($magic, '%!PS-Adobe')) {
+                return null;
+            }
+
+            if ($length <= 0 || fseek($handle, $start) !== 0) {
+                return null;
+            }
+            $lines = self::readLines($handle, min($length, self::EPS_COMMENTS_BYTES), $length > self::EPS_COMMENTS_BYTES, false);
+
+            // EPS declares itself on the first line ("%!PS-Adobe-3.0 EPSF-3.0"); other PostScript is left to the adapter
+            if (!preg_match('/^%!PS-Adobe-\S+\s+EPSF-/', $lines[0] ?? '')) {
+                return null;
+            }
+
+            // the Imagick adapter looks for this in the first 100 lines too
+            foreach (array_slice($lines, 0, 100) as $line) {
+                if (preg_match('/^%ImageData:\s*(\d+)\s+(\d+)/i', $line, $matches)) {
+                    return self::positiveDimensions((float) $matches[1], (float) $matches[2]);
+                }
+            }
+
+            $boxes = self::readBoundingBoxes(self::headerComments($lines));
+            if (in_array('atend', $boxes, true)) {
+                // deferred to the trailer, at the end of the PostScript section
+                $tailLength = min($length, self::EPS_COMMENTS_BYTES);
+                $trailer = fseek($handle, $start + $length - $tailLength) === 0
+                    ? self::readBoundingBoxes(self::trailerComments(self::readLines($handle, $tailLength, false, $tailLength < $length)))
+                    : [];
+                foreach ($boxes as $key => $box) {
+                    if ($box === 'atend') {
+                        $boxes[$key] = $trailer[$key] ?? null;
+                    }
+                }
+            }
+
+            foreach (['HiResBoundingBox', 'BoundingBox'] as $key) {
+                if (is_array($boxes[$key] ?? null)) {
+                    [$llx, $lly, $urx, $ury] = $boxes[$key];
+
+                    return self::positiveDimensions($urx - $llx, $ury - $lly);
+                }
+            }
+
+            return null;
+        } finally {
+            fclose($handle);
+        }
+    }
+
+    /**
+     * Reads $bytes and splits them into lines, dropping a line the read cut off: the last one if the
+     * section continues after the read, the first one if it started before it.
+     *
+     * @param resource $handle
+     *
+     * @return string[]
+     */
+    private static function readLines($handle, int $bytes, bool $cutAtEnd, bool $cutAtStart): array
+    {
+        $lines = preg_split('/\r\n|\r|\n/', (string) fread($handle, $bytes));
+        if ($cutAtEnd) {
+            array_pop($lines);
+        }
+        if ($cutAtStart) {
+            array_shift($lines);
+        }
+
+        return $lines;
+    }
+
+    /**
+     * The header comments end at %%EndComments or, without it, at the first line that is not a comment.
+     *
+     * @param string[] $lines
+     *
+     * @return string[]
+     */
+    private static function headerComments(array $lines): array
+    {
+        $header = [];
+        foreach ($lines as $line) {
+            if (str_starts_with($line, '%%EndComments') || !preg_match('/^%[!-~]/', $line)) {
+                break;
+            }
+            $header[] = $line;
+        }
+
+        return $header;
+    }
+
+    /**
+     * The trailer comments follow the last %%Trailer.
+     *
+     * @param string[] $lines
+     *
+     * @return string[]
+     */
+    private static function trailerComments(array $lines): array
+    {
+        for ($i = count($lines) - 1; $i >= 0; $i--) {
+            if (str_starts_with($lines[$i], '%%Trailer')) {
+                return array_slice($lines, $i + 1);
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * The first value of each box comment; in a header, a box deferred to the trailer is 'atend'.
+     *
+     * @param string[] $comments
+     *
+     * @return array<string, float[]|string|null>
+     */
+    private static function readBoundingBoxes(array $comments): array
+    {
+        $boxes = [];
+        foreach ($comments as $line) {
+            if (!preg_match('/^%%(HiResBoundingBox|BoundingBox):\s*(.*)$/', $line, $matches) || isset($boxes[$matches[1]])) {
+                continue;
+            }
+            $value = trim($matches[2]);
+            if ($value === '(atend)') {
+                $boxes[$matches[1]] = 'atend';
+            } elseif (preg_match('/^(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)/', $value, $numbers)) {
+                $boxes[$matches[1]] = array_map('floatval', array_slice($numbers, 1, 4));
+            }
+        }
+
+        return $boxes;
+    }
+
+    /**
+     * @return array{width: int, height: int}|null
+     */
+    private static function positiveDimensions(float $width, float $height): ?array
+    {
+        // a cast of a non-finite or out of range float is undefined; the size columns are 32 bit
+        $max = 2147483647;
+        if (!is_finite($width) || !is_finite($height) || abs($width) > $max || abs($height) > $max) {
+            return null;
+        }
+
+        $width = (int) round($width);
+        $height = (int) round($height);
+
+        return $width > 0 && $height > 0 ? ['width' => $width, 'height' => $height] : null;
     }
 
     public function getWidth(): int
