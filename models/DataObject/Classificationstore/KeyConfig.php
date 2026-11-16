@@ -253,6 +253,7 @@ final class KeyConfig extends Model\AbstractModel
     public function save(): void
     {
         // first, so that a refused key consumes no identifier either
+        $this->assertTheTypeIsNotWithdrawn();
         $this->assertTheDelegateMayBeAKeyType();
         $this->assertTypeFitsTheStoreEngine();
 
@@ -281,6 +282,7 @@ final class KeyConfig extends Model\AbstractModel
         // delegate between the checks above and here, and the configuration the DAO would persist is
         // the one that has to be eligible and has to fit the engine. The checks above stay where
         // they are so that a key refused outright consumes no identifier
+        $this->assertTheTypeIsNotWithdrawn();
         $this->assertTheDelegateMayBeAKeyType();
         $this->assertTypeFitsTheStoreEngine();
 
@@ -406,6 +408,73 @@ final class KeyConfig extends Model\AbstractModel
     public function setStoreId(int $storeId): void
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * Refuses a configuration that would introduce a field type withdrawn as a key type - as the
+     * key's own type or as the delegate of a wrapper - before anything is written and before an
+     * identifier is generated for it, {@see KeyTypeSupport::isWithdrawnKeyType()}.
+     *
+     * Withdrawn is not the same as never accepted, which is why this cannot be an exclusion name in
+     * {@see KeyTypeSupport} and has to be a refusal here. A key already defined with one of these
+     * types keeps working, and has to keep being saveable: renaming it, disabling it or editing its
+     * titles would otherwise fail, and the only way out of such a key would be deleting it with its
+     * values. So what is refused is a configuration that PUTS the name there, which is why the
+     * stored row is read and compared rather than the model - the model's properties already carry
+     * what is about to be written.
+     *
+     * The stored row is read only once a withdrawn name is actually in play, so an ordinary key
+     * costs no statement for this.
+     *
+     * @throws Model\Exception\InvalidConfigException
+     */
+    private function assertTheTypeIsNotWithdrawn(): void
+    {
+        $typeSupport = Pimcore::getContainer()->get(KeyTypeSupport::class);
+
+        // the property carries no default, and a key saved to take an id carries no type yet
+        $introduced = $this->withdrawnNames(
+            $typeSupport,
+            [$this->getObjectVars()['type'] ?? null, $this->getDelegateType()]
+        );
+        if ($introduced === []) {
+            return;
+        }
+
+        $introduced = array_diff($introduced, $this->withdrawnNames($typeSupport, $this->getDao()->fetchStoredTypes()));
+        if ($introduced === []) {
+            return;
+        }
+
+        throw new Model\Exception\InvalidConfigException(sprintf(
+            'A classification store key cannot be defined with "%s" in store %d: the field type has'
+            . ' been withdrawn as a key type, because a key outlives the bundle its type comes from'
+            . ' - the row survives, the type does not, and the editor layout and the grid cannot'
+            . ' resolve it. Keys already defined with it are untouched. Give the key a field type a'
+            . ' key may be defined with.',
+            implode('", "', $introduced),
+            $this->storeId
+        ));
+    }
+
+    /**
+     * The withdrawn field type names among the ones given, in order and without the empty entries.
+     *
+     * @param array<int, ?string> $types
+     *
+     * @return string[]
+     */
+    private function withdrawnNames(KeyTypeSupport $typeSupport, array $types): array
+    {
+        $withdrawn = [];
+
+        foreach ($types as $type) {
+            if (is_string($type) && $type !== '' && $typeSupport->isWithdrawnKeyType($type)) {
+                $withdrawn[] = $type;
+            }
+        }
+
+        return $withdrawn;
     }
 
     /**

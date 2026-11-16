@@ -119,6 +119,39 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * The field type the stored row carries and the wrapper delegate its stored definition names,
+     * for a key that has a row. Both null for a key that has none, and for a row that names neither.
+     *
+     * Read from the table rather than from the model because the model carries what is about to be
+     * written: telling a key that already IS of a withdrawn type from one being turned into it
+     * needs the value that is there now ({@see Model\DataObject\Classificationstore\KeyConfig::save()}).
+     *
+     * @return array{0: ?string, 1: ?string}
+     */
+    public function fetchStoredTypes(): array
+    {
+        $id = $this->model->getId();
+        if ($id === null) {
+            return [null, null];
+        }
+
+        $row = $this->db->fetchAssociative(
+            'SELECT `type`, JSON_UNQUOTE(JSON_EXTRACT(`definition`, \'$.delegateDatatype\')) AS delegateType'
+            . ' FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?',
+            [$id]
+        );
+
+        if ($row === false) {
+            return [null, null];
+        }
+
+        return [
+            is_string($row['type']) && $row['type'] !== '' ? $row['type'] : null,
+            is_string($row['delegateType']) && $row['delegateType'] !== '' ? $row['delegateType'] : null,
+        ];
+    }
+
+    /**
      * @throws Exception
      */
     public function save(): void

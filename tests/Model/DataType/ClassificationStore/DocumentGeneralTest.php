@@ -91,6 +91,13 @@ class DocumentGeneralTest extends GeneralTest
 
     private const ENCRYPTED_CONSENT_KEY_NAME = 'encryptedConsent';
 
+    /** The fixture's key name, and the one type withdrawn as a key type that core ships itself. */
+    private const CONSENT_TYPE = 'consent';
+
+    private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
+
+    private const INPUT_TYPE = 'input';
+
     private const MIXED_GROUP_NAME = 'testgroupEncryptedMixed';
 
     private const MIXED_KEY_NAME = 'encryptedMixedNormalizing';
@@ -1073,7 +1080,7 @@ class DocumentGeneralTest extends GeneralTest
             $slugKey = new Classificationstore\KeyConfig();
             $slugKey->setStoreId($store->getId());
             $slugKey->setName(self::ENCRYPTED_SLUG_KEY_NAME);
-            $slugKey->setType('encryptedField');
+            $slugKey->setType(self::ENCRYPTED_FIELD_TYPE);
             $slugKey->setEnabled(true);
             $slugKey->setDefinition((string) json_encode($slugDefinition));
 
@@ -1104,7 +1111,7 @@ class DocumentGeneralTest extends GeneralTest
             $calculatedKey = new Classificationstore\KeyConfig();
             $calculatedKey->setStoreId($store->getId());
             $calculatedKey->setName(self::ENCRYPTED_CALCULATED_KEY_NAME);
-            $calculatedKey->setType('encryptedField');
+            $calculatedKey->setType(self::ENCRYPTED_FIELD_TYPE);
             $calculatedKey->setEnabled(true);
             $calculatedKey->setDefinition((string) json_encode($calculatedDefinition));
             $calculatedKey->save();
@@ -1148,7 +1155,7 @@ class DocumentGeneralTest extends GeneralTest
         $this->assertNotNull($store);
 
         $group = $this->configureStoreWithStructuredFields($store);
-        $consentKeyId = $this->keyId($store, 'consent');
+        $consentKeyId = $this->keyId($store, self::CONSENT_TYPE);
         $geopointKeyId = $this->keyId($store, 'geopoint');
 
         $class = ClassDefinition::getByName(self::CLASS_NAME);
@@ -1264,7 +1271,7 @@ class DocumentGeneralTest extends GeneralTest
                 $store,
                 $group,
                 self::ENCRYPTED_CONSENT_KEY_NAME,
-                'consent',
+                self::CONSENT_TYPE,
                 new ConsentDefinition(),
                 1
             )->getId();
@@ -1612,7 +1619,7 @@ class DocumentGeneralTest extends GeneralTest
         $this->assertNotNull($store);
 
         $group = $this->configureStoreWithStructuredFields($store);
-        $keyId = $this->keyId($store, 'consent');
+        $keyId = $this->keyId($store, self::CONSENT_TYPE);
         $fieldDefinition = $this->getCsstoreFieldDefinition();
 
         try {
@@ -1650,6 +1657,37 @@ class DocumentGeneralTest extends GeneralTest
                 $secondConsent->getNoteId(),
                 'an unchanged consent keeps the note of the change that set it'
             );
+        } finally {
+            $this->dropStructuredFields($store);
+        }
+    }
+
+    /**
+     * `consent` is withdrawn as a key type, which blocks a new key and nothing else: a key an
+     * installation defined before the withdrawal has to stay saveable, or disabling it, renaming it
+     * or editing its titles would fail and the only way out of such a key would be deleting it
+     * together with its values. The fixture writes exactly that key
+     * ({@see AbstractClassificationStoreTest::writeStoredKeyType()}).
+     */
+    public function testAStoredKeyOfAWithdrawnTypeStaysSaveable(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::STORE_NAME);
+        $this->assertNotNull($store);
+
+        $this->configureStoreWithStructuredFields($store);
+
+        try {
+            $keyConfig = Classificationstore\KeyConfig::getById($this->keyId($store, self::CONSENT_TYPE));
+            $this->assertNotNull($keyConfig);
+            $this->assertSame(self::CONSENT_TYPE, $keyConfig->getType(), 'the fixture carries the withdrawn type');
+
+            $keyConfig->setDescription('edited after the withdrawal');
+            $keyConfig->save();
+
+            $reloaded = Classificationstore\KeyConfig::getById((int) $keyConfig->getId(), true);
+            $this->assertNotNull($reloaded);
+            $this->assertSame(self::CONSENT_TYPE, $reloaded->getType(), 'the stored type is untouched');
+            $this->assertSame('edited after the withdrawal', $reloaded->getDescription());
         } finally {
             $this->dropStructuredFields($store);
         }
@@ -1726,7 +1764,7 @@ class DocumentGeneralTest extends GeneralTest
         $keyConfig = new Classificationstore\KeyConfig();
         $keyConfig->setStoreId($store->getId());
         $keyConfig->setName(self::MIXED_KEY_NAME);
-        $keyConfig->setType('encryptedField');
+        $keyConfig->setType(self::ENCRYPTED_FIELD_TYPE);
         $keyConfig->setEnabled(true);
         $keyConfig->setDefinition((string) json_encode($definition));
         $keyConfig->save();
@@ -1820,6 +1858,10 @@ class DocumentGeneralTest extends GeneralTest
 
     /**
      * An `encryptedField` key delegating to the given type.
+     *
+     * A delegate withdrawn as a key type is refused at definition time exactly as the type itself
+     * is, so such a key is written the way an installation carries the one it defined before the
+     * withdrawal: saved with an `input` delegate and then given its real definition.
      */
     private function createEncryptedDelegateKey(
         Classificationstore\StoreConfig $store,
@@ -1834,13 +1876,30 @@ class DocumentGeneralTest extends GeneralTest
         $definition->setDelegateDatatype($delegateType);
         $definition->setDelegate($delegate);
 
+        $withdrawn = Pimcore::getContainer()
+            ->get(Classificationstore\KeyTypeSupport::class)
+            ->isWithdrawnKeyType($delegateType);
+
+        $definable = new EncryptedFieldDefinition();
+        $definable->setName($keyName);
+        $definable->setDelegateDatatype(self::INPUT_TYPE);
+        $definable->setDelegate(new Input());
+
         $keyConfig = new Classificationstore\KeyConfig();
         $keyConfig->setStoreId($store->getId());
         $keyConfig->setName($keyName);
-        $keyConfig->setType('encryptedField');
+        $keyConfig->setType(self::ENCRYPTED_FIELD_TYPE);
         $keyConfig->setEnabled(true);
-        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->setDefinition((string) json_encode($withdrawn ? $definable : $definition));
         $keyConfig->save();
+
+        if ($withdrawn) {
+            $this->writeStoredKeyType(
+                (int) $keyConfig->getId(),
+                self::ENCRYPTED_FIELD_TYPE,
+                (string) json_encode($definition)
+            );
+        }
 
         $relation = new Classificationstore\KeyGroupRelation();
         $relation->setKeyId((int) $keyConfig->getId());
@@ -1887,7 +1946,7 @@ class DocumentGeneralTest extends GeneralTest
         $videoValue->setPoster($asset);
 
         return [
-            'consent' => new Consent(true, 4711),
+            self::CONSENT_TYPE => new Consent(true, 4711),
             'dateRange' => CarbonPeriod::create(new Carbon('2026-10-29'), new Carbon('2026-11-05')),
             'externalImage' => new ExternalImage('https://www.pimcore.com/image.jpg'),
             'geobounds' => new Geobounds(new GeoCoordinates(48.3, 16.4), new GeoCoordinates(48.1, 16.2)),
@@ -2419,7 +2478,7 @@ class DocumentGeneralTest extends GeneralTest
 
     private function inputKeyId(): int
     {
-        return $this->keyIdOf('input');
+        return $this->keyIdOf(self::INPUT_TYPE);
     }
 
     private function keyIdOf(string $name): int
