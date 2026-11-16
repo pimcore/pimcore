@@ -59,8 +59,9 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  *  - `getFieldType()`, which is `multiValue`: it is the type the key is DEFINED with, and it is what
  *    resolves this definition from a key config in the first place
- *  - `getParameterTypeDeclaration()` / `getReturnTypeDeclaration()`, which answer null: a slot can
- *    hold a list, so the inner type's single-value declaration is not the shape of what is held
+ *  - `getParameterTypeDeclaration()` / `getReturnTypeDeclaration()`, which answer null: a key holds
+ *    one value per declared variant, so the inner type's single-value declaration is not the shape
+ *    of what is held
  *  - `ResourcePersistenceAwareInterface`, `CustomResourcePersistingInterface` and the marshaller:
  *    where the value goes is the engine's question, and both engines resolve the inner definition
  *    at their own boundary ({@see \Pimcore\Model\DataObject\Classificationstore\Service::getValueDefinition()}).
