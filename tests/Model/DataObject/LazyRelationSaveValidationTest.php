@@ -19,6 +19,7 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\Unittest;
@@ -290,6 +291,52 @@ class LazyRelationSaveValidationTest extends ModelTestCase
                 }
             }
         });
+    }
+
+    public function testSaveDoesNotLoadAnUntouchedManyToOneRelation(): void
+    {
+        [$owner, $target] = $this->createOwnerWithManyToOneTarget();
+
+        $owner = $this->reloadAndChange($owner);
+        $this->assertFalse($owner->isLazyKeyLoaded('href'), 'precondition: the relation is not loaded');
+
+        $this->assertSame(0, $this->saveAndCountValidationLoads($owner, [$target]));
+    }
+
+    /**
+     * The mandatory check of a many-to-one relation needs its single element, so it is loaded like before.
+     */
+    public function testSaveLoadsAnUntouchedMandatoryManyToOneRelation(): void
+    {
+        [$owner, $target] = $this->createOwnerWithManyToOneTarget();
+
+        $fd = DataObject\ClassDefinition::getByName('unittest')->getFieldDefinition('href');
+        $this->assertInstanceOf(ManyToOneRelation::class, $fd);
+        $mandatory = $fd->getMandatory();
+        $fd->setMandatory(true);
+
+        try {
+            $owner = $this->reloadAndChange($owner);
+            $owner->setOmitMandatoryCheck(false);
+
+            $this->assertSame(1, $this->saveAndCountValidationLoads($owner, [$target]));
+        } finally {
+            $fd->setMandatory($mandatory);
+        }
+    }
+
+    /**
+     * @return array{Unittest, Unittest}
+     */
+    private function createOwnerWithManyToOneTarget(): array
+    {
+        $target = TestHelper::createEmptyObject('lazy-relation-href-target-');
+
+        $owner = TestHelper::createEmptyObject('lazy-relation-href-owner-', false);
+        $owner->setHref($target);
+        $owner->save();
+
+        return [$owner, $target];
     }
 
     /**
