@@ -253,6 +253,24 @@ class LazyNestedRelationSaveTest extends ModelTestCase
     }
 
     /**
+     * Without the mandatory check the localized fields have nothing to check, so their values are not read.
+     *
+     * @dataProvider provideContainersKeepingTheirRelationRows
+     */
+    public function testSaveWithoutMandatoryCheckDoesNotLoadUntouchedNestedRelations(string $container): void
+    {
+        $targets = $this->createTargets(2);
+        $owner = $this->createOwner($container, $targets);
+
+        $this->withRelationSettings($container, true, 1, function () use ($owner, $targets): void {
+            $object = $this->reloadAndChange($owner);
+            $object->setOmitMandatoryCheck(true);
+
+            $this->assertSame(0, $this->saveAndCountValidationLoads($object, $targets));
+        });
+    }
+
+    /**
      * @dataProvider provideContainers
      */
     public function testSaveStillFailsForAnUntouchedEmptyMandatoryNestedRelation(string $container): void
