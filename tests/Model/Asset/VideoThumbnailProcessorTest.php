@@ -114,6 +114,22 @@ final class VideoThumbnailProcessorTest extends ModelTestCase
     }
 
     /**
+     * Ffmpeg::load() resets the arguments of the converter, so the thumbnail config has to be applied after it.
+     */
+    public function testExecuteAppliesThumbnailConfigAfterLoadingTheSource(): void
+    {
+        $asset = TestHelper::createVideoAsset();
+        $this->queueConversion($asset, FakeVideoConverter::OUTCOME_SUCCESS, [
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 500]],
+        ]);
+
+        Processor::execute(self::PROCESS_ID, $asset->getId());
+
+        $this->assertSame(['-ab', '128k', '-vb', '400k'], FakeVideoConverter::$lastArguments);
+        $this->assertSame(['scale=500:trunc(ow/a/2)*2'], FakeVideoConverter::$lastVideoFilter);
+    }
+
+    /**
      * The end of the process that called process() is simulated by the clean-up that runs after every
      * request and every handled message; the shutdown function registered next to it cannot be triggered
      * from within a test.
@@ -148,7 +164,7 @@ final class VideoThumbnailProcessorTest extends ModelTestCase
     /**
      * Stores a conversion job the way process() does, but with a converter that does not need FFmpeg.
      */
-    private function queueConversion(Asset\Video $asset, string $outcome): FakeVideoConverter
+    private function queueConversion(Asset\Video $asset, string $outcome, array $items = []): FakeVideoConverter
     {
         $converter = new FakeVideoConverter();
         $converter->outcome = $outcome;
@@ -171,7 +187,7 @@ final class VideoThumbnailProcessorTest extends ModelTestCase
         $processor = new Processor();
         $processor->setProcessId(self::PROCESS_ID);
         $processor->setAssetId($asset->getId());
-        $processor->setConfig($this->createConfig());
+        $processor->setConfig($this->createConfig($items));
         $processor->setQueue([$converter]);
         $processor->save();
         $this->jobStoreIds[] = 'video-job-' . self::PROCESS_ID;
@@ -179,12 +195,13 @@ final class VideoThumbnailProcessorTest extends ModelTestCase
         return $converter;
     }
 
-    private function createConfig(): Config
+    private function createConfig(array $items = []): Config
     {
         $config = new Config();
         $config->setName(self::CONFIG_NAME);
         $config->setAudioBitrate(128);
         $config->setVideoBitrate(400);
+        $config->setItems($items);
 
         return $config;
     }
