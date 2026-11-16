@@ -274,8 +274,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
 
         $count = count($this->describeUnloadedRelation($fd));
-        if ($checkMandatory && $count === 0) {
-            // without own relations the value may be inherited from the parent
+        if ($count === 0 && ($checkMandatory || DataObject::doGetInheritedValues($this))) {
+            // without own relations the value may be inherited from the parent, and its number of relations too
             return false;
         }
 

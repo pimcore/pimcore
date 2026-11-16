@@ -210,6 +210,50 @@ class LazyRelationSaveValidationTest extends ModelTestCase
     }
 
     /**
+     * Without own relation rows and with inherited values, the getter returns the relations of the parent, so their
+     * number is checked against the max. items like before.
+     */
+    public function testSaveStillChecksTheMaxItemsOfAnUntouchedLazyRelationInheritedFromTheParent(): void
+    {
+        $targets = [
+            TestHelper::createEmptyObject('lazy-relation-inherited-max-'),
+            TestHelper::createEmptyObject('lazy-relation-inherited-max-'),
+        ];
+
+        $parent = $this->createInheritance('lazy-relation-max-parent-', 1);
+        $parent->setRelationobjects($targets);
+        $parent->save();
+
+        $child = $this->createInheritance('lazy-relation-max-child-', $parent->getId());
+        $child->save();
+
+        $fd = $child->getClass()->getFieldDefinition('relationobjects');
+        $this->assertInstanceOf(ManyToManyObjectRelation::class, $fd);
+        $maxItems = $fd->getMaxItems();
+        $inheritedValues = DataObject::getGetInheritedValues();
+        $fd->setMaxItems(1);
+        DataObject::setGetInheritedValues(true);
+
+        try {
+            $child = Inheritance::getById($child->getId(), ['force' => true]);
+            $child->setNormalinput('changed');
+
+            try {
+                $child->save();
+                $this->fail('The inherited relations exceed the max. items');
+            } catch (ValidationException $e) {
+                $this->assertStringContainsString(
+                    'Number of allowed relations in field `relationobjects` exceeded',
+                    $e->getMessage()
+                );
+            }
+        } finally {
+            $fd->setMaxItems($maxItems);
+            DataObject::setGetInheritedValues($inheritedValues);
+        }
+    }
+
+    /**
      * @return array{Unittest, list<Unittest>}
      */
     private function createOwnerWithTargets(int $count): array
