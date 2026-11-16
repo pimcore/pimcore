@@ -16,6 +16,9 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 use DateTimeInterface;
 use Exception;
 use Pimcore;
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
@@ -36,6 +39,9 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
     ];
 
     protected const STRUCTURED_GROUP_NAME = 'testgroupStructured';
+
+    /** The type a key of a withdrawn type is defined as before its row is given the real one. */
+    private const PLACEHOLDER_KEY_TYPE = 'input';
 
     public static int $configCount = 0;
 
@@ -88,14 +94,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         $group->save();
 
         foreach (self::STRUCTURED_KEY_NAMES as $sorter => $keyName) {
-            $keyConfig = new Classificationstore\KeyConfig();
-            $keyConfig->setStoreId($store->getId());
-            $keyConfig->setName($keyName);
-            $keyConfig->setDescription('keyDesc' . $keyName . 'Desc');
-            $keyConfig->setEnabled(true);
-            $keyConfig->setType($keyName);
-            $keyConfig->setDefinition($this->encodeKeyDefinition($keyName));
-            $keyConfig->save();
+            $keyConfig = $this->defineStructuredKey($store, $keyName);
 
             $relation = new Classificationstore\KeyGroupRelation();
             $relation->setKeyId($keyConfig->getId());
@@ -105,6 +104,63 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         }
 
         return $group;
+    }
+
+    /**
+     * One key of the structured fixture.
+     *
+     * A field type withdrawn as a key type ({@see Classificationstore\KeyTypeSupport::isWithdrawnKeyType()})
+     * can no longer be defined, so its row is written the way an installation carries a key it
+     * defined before the withdrawal: saved as an `input` and then given its real type and
+     * definition. That is the state the tests below are about - such a key keeps working, and the
+     * behaviour of its type inside a store is unchanged by the withdrawal.
+     *
+     * @throws Exception
+     */
+    private function defineStructuredKey(
+        Classificationstore\StoreConfig $store,
+        string $keyName
+    ): Classificationstore\KeyConfig {
+        $withdrawn = Pimcore::getContainer()
+            ->get(Classificationstore\KeyTypeSupport::class)
+            ->isWithdrawnKeyType($keyName);
+        $definedAs = $withdrawn ? self::PLACEHOLDER_KEY_TYPE : $keyName;
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName($keyName);
+        $keyConfig->setDescription('keyDesc' . $keyName . 'Desc');
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType($definedAs);
+        $keyConfig->setDefinition($this->encodeKeyDefinition($definedAs));
+        $keyConfig->save();
+
+        if ($withdrawn) {
+            $this->writeStoredKeyType((int) $keyConfig->getId(), $keyName);
+        }
+
+        return $keyConfig;
+    }
+
+    /**
+     * Gives a stored key row a type the definition gate no longer accepts, as an upgraded
+     * installation carries one, and drops every cache that would still answer with the old type.
+     *
+     * @throws Exception
+     */
+    protected function writeStoredKeyType(int $keyId, string $keyName, ?string $definition = null): void
+    {
+        Db::get()->update(
+            Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS,
+            ['type' => $keyName, 'definition' => $definition ?? $this->encodeKeyDefinition($keyName)],
+            ['id' => $keyId]
+        );
+
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+        RuntimeCache::clear();
+        Cache::clearAll();
     }
 
     /**

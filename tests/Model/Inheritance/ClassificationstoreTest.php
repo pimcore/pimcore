@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore;
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -694,13 +695,28 @@ class ClassificationstoreTest extends ModelTestCase
         $definition->setDelegateDatatype($inner->getFieldType());
         $definition->setDelegate($inner);
 
+        // A withdrawn delegate can no longer be defined, so such a key is written the way an
+        // installation carries one it defined before the withdrawal: saved with a delegate the
+        // guard accepts, then given its real definition. That is the state this test is about.
+        $withdrawn = Pimcore::getContainer()
+            ->get(Classificationstore\KeyTypeSupport::class)
+            ->isWithdrawnKeyType((string) $inner->getFieldType());
+
         $keyConfig = new Classificationstore\KeyConfig();
         $keyConfig->setStoreId($store->getId());
         $keyConfig->setName(self::MULTI_VALUE_KEY);
         $keyConfig->setEnabled(true);
         $keyConfig->setType($definition->getFieldType());
-        $keyConfig->setDefinition((string) json_encode($definition));
+        $keyConfig->setDefinition((string) json_encode($withdrawn ? $this->withInputDelegate($definition) : $definition));
         $keyConfig->save();
+
+        if ($withdrawn) {
+            Db::get()->update(
+                Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS,
+                ['definition' => (string) json_encode($definition)],
+                ['id' => $keyConfig->getId()]
+            );
+        }
 
         $relation = new Classificationstore\KeyGroupRelation();
         $relation->setKeyId($keyConfig->getId());
@@ -713,5 +729,18 @@ class ClassificationstoreTest extends ModelTestCase
         Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
 
         return [(int) $group->getId(), (int) $keyConfig->getId()];
+    }
+
+    /** The same declaration with a delegate the definition-time guard accepts. */
+    private function withInputDelegate(ClassDefinition\Data\MultiValue $definition): ClassDefinition\Data\MultiValue
+    {
+        $placeholder = new ClassDefinition\Data\Input();
+        $placeholder->setName(self::MULTI_VALUE_KEY);
+
+        $accepted = clone $definition;
+        $accepted->setDelegateDatatype($placeholder->getFieldType());
+        $accepted->setDelegate($placeholder);
+
+        return $accepted;
     }
 }

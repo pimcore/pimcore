@@ -22,14 +22,17 @@ use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\EncryptedField as EncryptedFieldValue;
 use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
 use Pimcore\Tests\Support\Helper\DataType\MixedNormalizingField;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -62,6 +65,11 @@ class KeyTypeTest extends AbstractClassificationStoreTest
     private const INPUT_TYPE = 'input';
 
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
+
+    private const MULTI_VALUE_TYPE = 'multiValue';
+
+    /** One of the three types withdrawn as key types, and the only one core ships itself. */
+    private const WITHDRAWN_TYPE = 'consent';
 
     /**
      * The test-only field type that declares `mixed` and returns an array.
@@ -139,6 +147,92 @@ class KeyTypeTest extends AbstractClassificationStoreTest
             $this->countKeyRows(self::KEY_PREFIX . self::GEOPOINT_TYPE, $store->getId()),
             'no key row for the refused name'
         );
+    }
+
+    /**
+     * A withdrawn type is refused because of where it comes from, not because of what it holds, so
+     * the refusal does not depend on the engine and comes before the engine question.
+     * {@see Classificationstore\KeyTypeSupport::isWithdrawnKeyType()}
+     */
+    public function testDefiningAKeyOfAWithdrawnTypeIsRefusedAndWritesNothing(): void
+    {
+        $store = $this->getStore();
+        $name = self::KEY_PREFIX . self::WITHDRAWN_TYPE;
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName($name);
+        $keyConfig->setType(self::WITHDRAWN_TYPE);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setDefinition($this->encodeDefinition(new Consent()));
+
+        try {
+            $keyConfig->save();
+            $this->fail('a key of a withdrawn type has to be refused');
+        } catch (InvalidConfigException $exception) {
+            $this->assertStringContainsString(self::WITHDRAWN_TYPE, $exception->getMessage());
+            $this->assertStringContainsString('withdrawn', $exception->getMessage());
+        }
+
+        $this->assertNull($keyConfig->getId(), 'no row was inserted');
+        $this->assertNull($keyConfig->getIdentifier(), 'the identifier of a refused key is not consumed');
+        $this->assertSame(0, $this->countKeyRows($name, $store->getId()), 'no key row for the refused name');
+    }
+
+    /**
+     * Neither wrapper launders the name. What a key may not be defined with, an `encryptedField`
+     * and a `multiValue` may not take as their delegate either: encrypting the value or letting it
+     * carry qualifiers changes nothing about which bundle the type comes from.
+     */
+    public function testAWrapperDelegatingToAWithdrawnTypeIsRefused(): void
+    {
+        $encrypted = new EncryptedField();
+        $encrypted->setDelegateDatatype(self::WITHDRAWN_TYPE);
+        $encrypted->setDelegate(new Consent());
+
+        $multiValue = new MultiValue();
+        $multiValue->setDelegateDatatype(self::WITHDRAWN_TYPE);
+        $multiValue->setDelegate(new Consent());
+
+        $wrappers = [self::ENCRYPTED_FIELD_TYPE => $encrypted, self::MULTI_VALUE_TYPE => $multiValue];
+
+        foreach ($wrappers as $type => $definition) {
+            $keyConfig = new Classificationstore\KeyConfig();
+            $keyConfig->setStoreId($this->getStore()->getId());
+            $keyConfig->setName(self::KEY_PREFIX . $type . 'Withdrawn');
+            $keyConfig->setType($type);
+            $keyConfig->setEnabled(true);
+            $keyConfig->setDefinition($this->encodeDefinition($definition));
+
+            try {
+                $keyConfig->save();
+                $this->fail($type . ' delegating to a withdrawn type has to be refused');
+            } catch (InvalidConfigException $exception) {
+                $this->assertStringContainsString(self::WITHDRAWN_TYPE, $exception->getMessage());
+            }
+
+            $this->assertNull($keyConfig->getId(), 'no row was inserted for ' . $type);
+        }
+    }
+
+    public function testChangingTheTypeOfAStoredKeyToAWithdrawnOneLeavesTheStoredTypeAlone(): void
+    {
+        $keyConfig = $this->createInputKey('withdrawnSwitch');
+
+        $keyConfig->setType(self::WITHDRAWN_TYPE);
+        $keyConfig->setDefinition($this->encodeDefinition(new Consent()));
+
+        $this->expectException(InvalidConfigException::class);
+
+        try {
+            $keyConfig->save();
+        } finally {
+            $this->assertSame(
+                self::INPUT_TYPE,
+                $this->readKeyType((int) $keyConfig->getId()),
+                'the stored type column is unchanged'
+            );
+        }
     }
 
     public function testChangingTheTypeOfAStoredKeyToAStructuredOneLeavesTheStoredTypeAlone(): void

@@ -62,9 +62,22 @@ class KeyTypeSupportTest extends TestCase
      * types are accepted and structured as well, and are a ticket of their own.
      */
     private const STRUCTURED_TYPES = [
-        'consent', 'dateRange', 'externalImage', 'geobounds', 'geopoint', 'geopolygon', 'geopolyline',
+        self::CONSENT_TYPE, 'dateRange', 'externalImage', 'geobounds', 'geopoint', 'geopolygon', 'geopolyline',
         'hotspotimage', 'imageGallery', 'link', 'numericRange', 'structuredTable', 'video',
     ];
+
+    /**
+     * The types withdrawn as key types. Named here as they are named in the class under test: a
+     * withdrawal is a decision about names, so a test deriving it would assert nothing.
+     */
+    private const WITHDRAWN_KEY_TYPES = [
+        self::CONSENT_TYPE,
+        'permissionManyToManyRelation',
+        'permissionManyToOneRelation',
+    ];
+
+    /** The one withdrawn key type core ships itself. */
+    private const CONSENT_TYPE = 'consent';
 
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
 
@@ -123,6 +136,36 @@ class KeyTypeSupportTest extends TestCase
         // a misspelled delegate is answered by nothing here, which is what every release so far has
         // done with one
         $this->assertTrue($support->isAcceptedDelegateType('noSuchFieldType'));
+    }
+
+    /**
+     * Withdrawn and accepted are deliberately different answers, and deliberately not linked.
+     *
+     * A withdrawal is about the keys that may still be DEFINED, which is why
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyConfig::save()} enforces it. Acceptance
+     * is about what a key holds, and a key that already carries a withdrawn type has to keep every
+     * answer it had: the engine check keeps governing it because `isAcceptedType()` still says yes,
+     * and data-hub-simple-rest keeps publishing it because `isAcceptedDelegateType()` still does.
+     * Reading these names into one of the two exclusion lists is what would have broken that.
+     */
+    public function testTheWithdrawnTypesAreRefusedAsKeyTypesWithoutLosingTheirOtherAnswers(): void
+    {
+        $support = $this->support();
+
+        foreach (self::WITHDRAWN_KEY_TYPES as $type) {
+            $this->assertTrue($support->isWithdrawnKeyType($type), $type . ' is withdrawn as a key type');
+            $this->assertTrue(
+                $support->isAcceptedDelegateType($type),
+                $type . ' stays accepted, so a key already carrying it keeps its answers'
+            );
+        }
+
+        // consent is the one of the three core ships itself, so the loader resolves it here
+        $this->assertTrue($support->isAcceptedType(self::CONSENT_TYPE));
+
+        foreach (['input', 'geopoint', 'manyToOneRelation', self::MULTI_VALUE_TYPE] as $type) {
+            $this->assertFalse($support->isWithdrawnKeyType($type), $type . ' is not withdrawn');
+        }
     }
 
     public function testATypeNoLoaderResolvesIsNotAccepted(): void

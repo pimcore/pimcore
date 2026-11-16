@@ -34,6 +34,9 @@ use ReflectionUnionType;
  * The accepted set is not a list. It is every type the object data implementation loader resolves,
  * minus the exclusion names below, so a field type added to core - or by a bundle - is accepted
  * without this class being edited.
+ *
+ * {@see self::WITHDRAWN_KEY_TYPES} is the one part that is a list and has to be: a withdrawal is a
+ * decision about named types, not a property of them.
  */
 final class KeyTypeSupport
 {
@@ -106,6 +109,43 @@ final class KeyTypeSupport
     ];
 
     /**
+     * The field types a new key may no longer be defined with, and that a wrapper may no longer
+     * take as its delegate. A list, and nothing in the types themselves derives it: all three are
+     * ordinary storable field types, and what rules them out is where they come from rather than
+     * what they hold.
+     *
+     * A classification store key outlives the bundle that gave it its type. The key row survives an
+     * uninstalled bundle; the type does not, and the two paths that resolve a field definition from
+     * the stored type name part company there - the editor layout and the grid resolver throw on a
+     * type no loader resolves, while the index and options paths degrade quietly. `consent` is a
+     * core type whose value is only meaningful to the customer management framework, and the two
+     * permission relations come from the frontend permission toolkit, which never asked for them to
+     * be offered: they inherit the Studio key-type tag from the core relation types they extend.
+     *
+     * Deliberately NOT read into {@see self::EXCLUDED_VALUE_TYPES}, which would be the shorter
+     * edit. That list is also what {@see self::isAcceptedDelegateType()} answers, and that answer
+     * is what data-hub-simple-rest publishes a key on - so putting these names there would drop
+     * every key that ALREADY carries one of them out of the REST catalog. A withdrawal is about the
+     * keys that may still be created, so the refusal lives in {@see KeyConfig::save()}, which can
+     * tell a new configuration from a stored one, and neither of the two lists above moves.
+     *
+     * For the same reason {@see self::isAcceptedType()} keeps answering true for them: an existing
+     * key of one of these types stays governed by the engine check instead of silently falling out
+     * of it.
+     *
+     * The Studio key-type pickers filter the same three names, from a list of their own in
+     * studio-ui-bundle `.../dynamic-types/utils/classification-store-key-types.ts`. Nothing couples
+     * the two, so this list is never edited alone; `WithdrawnKeyTypePickerAgreementTest` pins both.
+     *
+     * @var string[]
+     */
+    private const WITHDRAWN_KEY_TYPES = [
+        'consent',
+        'permissionManyToManyRelation',
+        'permissionManyToOneRelation',
+    ];
+
+    /**
      * Return types of `normalize()` whose value the two value columns of an EAV row take as it is.
      * An undeclared return type is `mixed` and counts the same way.
      *
@@ -164,6 +204,20 @@ final class KeyTypeSupport
     public function isAcceptedDelegateType(string $delegateType): bool
     {
         return !in_array($delegateType, self::EXCLUDED_VALUE_TYPES, true);
+    }
+
+    /**
+     * Whether this field type has been withdrawn as a key type, {@see self::WITHDRAWN_KEY_TYPES}.
+     *
+     * A different question from acceptance, and asked separately on purpose: acceptance is about
+     * what a key can hold and is answered the same way for a key that already exists, while this
+     * one is about what may still be defined. {@see KeyConfig::save()} is where the two meet - it
+     * refuses a configuration that introduces one of these names, as its own type or as the
+     * delegate of a wrapper, and leaves a stored key that already carries one alone.
+     */
+    public function isWithdrawnKeyType(string $type): bool
+    {
+        return in_array($type, self::WITHDRAWN_KEY_TYPES, true);
     }
 
     /**
