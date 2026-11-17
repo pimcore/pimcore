@@ -144,7 +144,22 @@ class RewriteIdsTest extends ModelTestCase
         }
     }
 
-    public function testContentMainDocumentIsKeptWhenCopyInheritsFromItsSource(): void
+    /**
+     * Pimcore Studio starts the rewrite with empty parameters, also for an inheritance paste;
+     * other callers pass enableInheritance.
+     */
+    public function inheritancePasteParamsProvider(): array
+    {
+        return [
+            'empty parameters' => [[]],
+            'enableInheritance' => [['enableInheritance' => true]],
+        ];
+    }
+
+    /**
+     * @dataProvider inheritancePasteParamsProvider
+     */
+    public function testContentMainDocumentIsKeptWhenCopyInheritsFromItsSource(array $params): void
     {
         $source = TestHelper::createEmptyDocumentPage();
         $copy = TestHelper::createEmptyDocumentPage();
@@ -154,7 +169,7 @@ class RewriteIdsTest extends ModelTestCase
             $copy->setContentMainDocumentId($source->getId());
             $copy->setProperty('target', 'document', $source);
 
-            Document\Service::rewriteIds($copy, ['document' => [$source->getId() => $copy->getId()]]);
+            Document\Service::rewriteIds($copy, ['document' => [$source->getId() => $copy->getId()]], $params);
 
             $this->assertSame($source->getId(), $copy->getContentMainDocumentId());
             // the rewrite must not abort, properties are still rewritten
