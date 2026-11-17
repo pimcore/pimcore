@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -255,9 +256,110 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertTrue($definitions['doesNotExist']['noteditable']);
         $this->assertSame([], $definitions['doesNotExist']['sources']);
 
-        $fd->setVisibleFields(null);
+        // without visible fields the enrichment is a strict no-op: the definition is left exactly as it is
+        $untouched = $this->createMixedDefinition();
+        $before = get_object_vars($untouched);
+        $untouched->enrichLayoutDefinition(null);
+        $this->assertSame($before, get_object_vars($untouched));
+        $this->assertSame([], $untouched->visibleFieldDefinitions);
+    }
+
+    public function testDefinitionsSavedBeforeTheFeatureLoadAndExportUnchanged(): void
+    {
+        // a field as a class definition file written before this feature restores it: none of the new keys
+        $fd = ManyToManyRelation::__set_state([
+            'name' => 'legacyRelation',
+            'title' => 'Legacy relation',
+            'assetUploadPath' => '/',
+            'objectsAllowed' => true,
+            'classes' => [['classes' => 'RelationTest']],
+            'assetsAllowed' => true,
+            'assetTypes' => [],
+            'documentsAllowed' => false,
+            'documentTypes' => [],
+        ]);
+        $this->assertNull($fd->getVisibleFields());
+        $this->assertSame([], $fd->getVisibleFieldNames());
+
         $fd->enrichLayoutDefinition(null);
         $this->assertSame([], $fd->visibleFieldDefinitions);
+
+        // its JSON (class export files, APIs) does not grow the new keys ...
+        $json = json_decode(json_encode($fd, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertArrayNotHasKey('visibleFields', $json);
+        $this->assertArrayNotHasKey('visibleFieldDefinitions', $json);
+        // ... and the resolved definitions are never exported, with or without visible fields
+        $this->assertContains('visibleFieldDefinitions', $fd->resolveBlockedVars());
+        $this->assertContains('visibleFieldDefinitions', (new AdvancedManyToManyRelation())->resolveBlockedVars());
+
+        // once visible fields are configured, the JSON carries them
+        $fd->setVisibleFields('someAttribute');
+        $json = json_decode(json_encode($fd, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('someAttribute', $json['visibleFields']);
+        $this->assertArrayNotHasKey('visibleFieldDefinitions', $json, 'not resolved yet');
+
+        $fd->enrichLayoutDefinition(null);
+        $json = json_decode(json_encode($fd, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(['someAttribute'], array_keys($json['visibleFieldDefinitions']));
+    }
+
+    public function testSavedClassDefinitionsOnlyChangeWhereVisibleFieldsAreConfigured(): void
+    {
+        $relation = (new ManyToManyRelation())->setName('relation')->setAssetUploadPath('/');
+        $relation->setObjectsAllowed(true)->setClasses([['classes' => 'RelationTest']]);
+        $relation->setAssetsAllowed(true)->setAssetTypes([])->setDocumentsAllowed(false)->setDocumentTypes([]);
+
+        $advanced = (new AdvancedManyToManyRelation())->setName('advancedRelation')->setAssetUploadPath('/');
+        $advanced->setColumns([['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'Meta']]);
+        $advanced->setObjectsAllowed(true)->setClasses([['classes' => 'RelationTest']]);
+        $advanced->setAssetsAllowed(false)->setAssetTypes([])->setDocumentsAllowed(false)->setDocumentTypes([]);
+
+        $panel = (new ClassDefinition\Layout\Panel())->setName('Layout');
+        $panel->addChild($relation);
+        $panel->addChild($advanced);
+
+        $class = new ClassDefinition();
+        $class->setName('VisibleFieldsExportTest');
+        $class->setId('VisibleFieldsExportTest');
+        $class->setLayoutDefinitions($panel);
+        $class->save();
+
+        try {
+            // without visible fields, neither the class definition file nor the JSON export mention the feature
+            // (the definition file only gains the NULL entry every property of a data type has)
+            $definitionFile = file_get_contents($class->getDefinitionFile());
+            $this->assertStringNotContainsString('visibleFieldDefinitions', $definitionFile);
+            $this->assertStringNotContainsString("'visibleFields' => '", $definitionFile);
+            $this->assertStringNotContainsString('visibleField', ClassDefinition\Service::generateClassDefinitionJson($class));
+
+            // the file restores definitions without the feature in use
+            $reloaded = ClassDefinition::getById('VisibleFieldsExportTest', true);
+            $this->assertInstanceOf(ClassDefinition::class, $reloaded);
+            $reloadedRelation = $reloaded->getFieldDefinition('relation');
+            $this->assertInstanceOf(ManyToManyRelation::class, $reloadedRelation);
+            $this->assertNull($reloadedRelation->getVisibleFields());
+
+            // configured visible fields are stored and exported, the resolved definitions still are not
+            $relation->setVisibleFields('someAttribute,filename');
+            $relation->enrichLayoutDefinition(null);
+            $this->assertNotSame([], $relation->visibleFieldDefinitions);
+            $class->save();
+
+            $definitionFile = file_get_contents($class->getDefinitionFile());
+            $this->assertStringContainsString("'visibleFields' => 'someAttribute,filename'", $definitionFile);
+            $this->assertStringNotContainsString('visibleFieldDefinitions', $definitionFile);
+            $json = ClassDefinition\Service::generateClassDefinitionJson($class);
+            $this->assertStringContainsString('"visibleFields": "someAttribute,filename"', $json);
+            $this->assertStringNotContainsString('visibleFieldDefinitions', $json);
+
+            $reloaded = ClassDefinition::getById('VisibleFieldsExportTest', true);
+            $this->assertInstanceOf(ClassDefinition::class, $reloaded);
+            $reloadedRelation = $reloaded->getFieldDefinition('relation');
+            $this->assertInstanceOf(ManyToManyRelation::class, $reloadedRelation);
+            $this->assertSame('someAttribute,filename', $reloadedRelation->getVisibleFields());
+        } finally {
+            $class->delete();
+        }
     }
 
     public function testVisibleFieldDataIsResolvedPerElementType(): void

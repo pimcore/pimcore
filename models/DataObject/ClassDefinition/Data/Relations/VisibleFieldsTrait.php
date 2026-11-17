@@ -35,11 +35,19 @@ use Pimcore\Model\Metadata\Predefined;
  * that row. The resolved definitions are exposed through {@see enrichLayoutDefinition()} as
  * `visibleFieldDefinitions`, the per-row values through {@see getVisibleFieldData()}.
  *
+ * A definition without visible fields behaves, is stored and is exported exactly as before the
+ * feature existed: {@see enrichLayoutDefinition()} leaves it untouched, the resolved definitions are
+ * never part of an exported class definition and the JSON representation only carries the two
+ * properties once they hold something.
+ *
  * @internal
  */
 trait VisibleFieldsTrait
 {
     /**
+     * Typed exactly like the property of the same name on the object relation types, so that a subclass
+     * declared after their example redeclares it compatibly.
+     *
      * @internal
      *
      * @var string[]|string|null
@@ -103,10 +111,9 @@ trait VisibleFieldsTrait
      */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
-        $this->visibleFieldDefinitions = [];
-
         $names = $this->getVisibleFieldNames();
         if (!$names) {
+            // no visible fields configured: a strict no-op, the definition is left exactly as it is
             return $this;
         }
 
@@ -115,20 +122,54 @@ trait VisibleFieldsTrait
         }
 
         $available = $this->getAvailableVisibleFields($context);
+        $definitions = [];
 
         foreach ($names as $name) {
             if (isset($available[$name])) {
-                $this->visibleFieldDefinitions[$name] = $available[$name];
+                $definitions[$name] = $available[$name];
 
                 continue;
             }
 
             // unknown field (e.g. class/metadata definition removed in the meantime): keep the
             // configured name so the UI can still render a column, as a plain read-only input
-            $this->visibleFieldDefinitions[$name] = VisibleFieldDefinitionHelper::buildFallbackDefinition($name) + ['sources' => []];
+            $definitions[$name] = VisibleFieldDefinitionHelper::buildFallbackDefinition($name) + ['noteditable' => true, 'sources' => []];
         }
 
+        $this->visibleFieldDefinitions = $definitions;
+
         return $this;
+    }
+
+    /**
+     * The resolved definitions are derived state: never part of an exported class definition (PHP
+     * definition file or JSON export), like the field definition caches of the container types.
+     */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+        $blockedVars[] = 'visibleFieldDefinitions';
+
+        return $blockedVars;
+    }
+
+    /**
+     * A definition without visible fields serializes exactly as it did before the feature existed: the
+     * two properties only appear once they hold something.
+     */
+    public function jsonSerialize(): mixed
+    {
+        $data = parent::jsonSerialize();
+        if (is_array($data)) {
+            if (empty($data['visibleFields'])) {
+                unset($data['visibleFields']);
+            }
+            if (empty($data['visibleFieldDefinitions'])) {
+                unset($data['visibleFieldDefinitions']);
+            }
+        }
+
+        return $data;
     }
 
     /**
