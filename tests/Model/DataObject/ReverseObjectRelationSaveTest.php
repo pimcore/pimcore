@@ -178,6 +178,8 @@ class ReverseObjectRelationSaveTest extends ModelTestCase
         $class->setFieldDefinitions(['nonowner' => $custom] + $original);
 
         try {
+            // as if the field was read in this request, the validation skips a relation that was not loaded
+            $target->markLazyKeyAsLoaded('nonowner');
             $target->setInput('changed');
             $target->save();
             $this->assertCount($expectedSaveReads, $this->callsFromTheCode($reads), 'getter calls while saving');

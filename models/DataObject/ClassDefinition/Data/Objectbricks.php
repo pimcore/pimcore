@@ -19,6 +19,8 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -428,6 +430,21 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                             continue;
                         }
 
+                        if ($fd instanceof AbstractRelations && $this->isUnloadedRelation($item, $fd)) {
+                            $relationDependencies = UnloadedRelation::resolveDependencies(
+                                $fd,
+                                $item,
+                                [],
+                                DataObject::doGetInheritedValues($item->getObject()),
+                                false
+                            );
+                            if ($relationDependencies !== null) {
+                                $dependencies = array_merge($dependencies, $relationDependencies);
+
+                                continue;
+                            }
+                        }
+
                         $key = $fd->getName();
                         $getter = 'get' . ucfirst($key);
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
@@ -547,6 +564,22 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                 // that reason. Calling the getter here would run the calculator
                                 // only to discard the result. Fieldcollections::checkValidity()
                                 // has skipped calculated values the same way since #3962.
+                                continue;
+                            }
+
+                            if ($fd instanceof AbstractRelations
+                                && $this->isUnloadedRelation($item, $fd)
+                                && UnloadedRelation::isValid(
+                                    $fd,
+                                    $item,
+                                    [],
+                                    $fd->getMandatory(),
+                                    DataObject::doGetInheritedValues($item->getObject()),
+                                    false
+                                )) {
+                                // a lazy loaded relation that was not read in this request cannot have been changed
+                                // by it (a setter marks it as loaded) and is not written either, see
+                                // Concrete::updateObject()
                                 continue;
                             }
 
@@ -912,5 +945,20 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public function getFieldType(): string
     {
         return 'objectbricks';
+    }
+
+    /**
+     * Whether the getter of the brick would load the relation from the relation rows stored for the brick, see
+     * Objectbrick::loadLazyField(). It does so for the brick of its container only, a brick to delete is left out.
+     */
+    private function isUnloadedRelation(DataObject\Objectbrick\Data\AbstractData $item, AbstractRelations $fd): bool
+    {
+        if ($item->getDoDelete() || $item->isLazyKeyLoaded($fd->getName())) {
+            return false;
+        }
+
+        $container = $item->getObject()?->getObjectVar($item->getFieldname());
+
+        return $container instanceof Objectbrick && $container->getObjectVar($item->getType()) === $item;
     }
 }
