@@ -92,12 +92,38 @@ final class StoreConfig extends Model\AbstractModel
         }
     }
 
+    /**
+     * Creates a store on the engine a store that is being created is put on
+     * ({@see EngineResolver::getPreferredEngine()}), this being the one path in core that creates
+     * one. A configuration built with `new` and saved writes no engine and means the default one,
+     * so that an empty column keeps its meaning for every row that is written rather than created.
+     */
     public static function create(): StoreConfig
     {
         $config = new self();
+        $config->setEngineOfANewStore();
         $config->save();
 
         return $config;
+    }
+
+    /**
+     * Writes the engine a store being created is put on, and nothing on an installation that cannot
+     * be asked or has none registered - the store then means the default engine, as every store did
+     * before the column existed.
+     */
+    private function setEngineOfANewStore(): void
+    {
+        if (!Pimcore::hasContainer()) {
+            return;
+        }
+
+        $resolver = Pimcore::getContainer()->get(EngineResolver::class);
+        $engine = $resolver->getPreferredEngine();
+
+        if ($engine !== null) {
+            $this->setEngine($resolver->nameEngine($engine));
+        }
     }
 
     public function setName(string $name): static

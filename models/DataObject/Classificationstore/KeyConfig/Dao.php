@@ -152,6 +152,46 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * The field type and the decoded definition blob of the stored row, for the refusal that has to
+     * tell a configuration introducing an engine capability requirement from one whose row already
+     * carries it ({@see Model\DataObject\Classificationstore\KeyConfig::save()}).
+     *
+     * `[null, null]` for a key with no row yet and for a row that is gone; the definition alone is
+     * null for a blob that does not decode to an array, and the empty array for the `[]` a key
+     * carries until a definition is set on it - neither names a declaration.
+     *
+     * The whole blob rather than one member of it, unlike {@see self::fetchStoredTypes()}: which
+     * members a declaration is read from is the type's business
+     * ({@see Model\DataObject\Classificationstore\KeyTypeSupport::requiredEngineFeatures()}), and
+     * naming them in SQL here would put that knowledge in a second place.
+     *
+     * @return array{0: ?string, 1: ?array<string, mixed>}
+     */
+    public function fetchStoredDeclaration(): array
+    {
+        $id = $this->model->getId();
+        if ($id === null) {
+            return [null, null];
+        }
+
+        $row = $this->db->fetchAssociative(
+            'SELECT `type`, `definition` FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?',
+            [$id]
+        );
+
+        if ($row === false) {
+            return [null, null];
+        }
+
+        $definition = is_string($row['definition']) ? json_decode($row['definition'], true) : null;
+
+        return [
+            is_string($row['type']) && $row['type'] !== '' ? $row['type'] : null,
+            is_array($definition) ? $definition : null,
+        ];
+    }
+
+    /**
      * @throws Exception
      */
     public function save(): void

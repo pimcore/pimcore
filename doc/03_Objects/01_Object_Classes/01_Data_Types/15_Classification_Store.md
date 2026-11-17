@@ -54,6 +54,17 @@ value is. `calculatedValue` is the one that refuses nothing, as a delegate no mo
 | `eav` (default, also `NULL`, and what every store uses until it is flipped) | a type whose value fits the two value columns `value` and `value2` (both `LONGTEXT`): every type that normalizes to a scalar - input, textarea, wysiwyg, numeric, slider, checkbox, date, datetime, time, select, country, language, user and so on - plus the types that ship a Classification Store marshaller packing the value into the two columns: `booleanSelect`, `countrymultiselect`, `encryptedField`, `image`, `inputQuantityValue`, `inputQuantityValueRange`, `languagemultiselect`, `multiselect`, `quantityValue`, `quantityValueRange`, `rgbaColor` and `table`. The authoritative list of those marshallers is the `# classification store` section of `bundles/CoreBundle/config/marshaller.yaml`. |
 | `document` | every accepted type. A document holds whatever the field definition's `normalize()` returns, so no marshaller is needed and there is no column to pack into - `consent`, `dateRange`, `externalImage`, `geobounds`, `geopoint`, `geopolygon`, `geopolyline`, `hotspotimage`, `imageGallery`, `link`, `numericRange`, `structuredTable` and `video` are storable there and are refused on an `eav` store. |
 
+A second question is asked beside that one, about what a key's declaration promises rather than
+about what its value is: a `multiValue` key addresses its value under qualifiers
+([MultiValue](#multivalue)), and only an engine that can address them may be given one. The `eav`
+engine cannot, so defining a `multiValue` key on an `eav` store is refused with
+`Pimcore\Model\DataObject\Exception\UndeclarableEngineFeatureException` (a subclass of the exception
+below). The refusal is about the configuration being written: a key an installation already carries
+on such a store keeps loading and stays saveable, so it can be renamed, disabled and deleted, and
+only a configuration that introduces the need - a new key, a key being turned into one, or a stored
+one being given its first variant - is refused. Flip the store to the `document` engine to define
+them.
+
 Defining a key of a type the engine of its store cannot hold is refused with
 `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException`, and nothing is written. The
 same exception is raised, instead of a value written into a column that cannot hold it, if such a
@@ -305,7 +316,9 @@ back unchanged.
 > The default `eav` engine does not: the primary key of its value table has room for the language and
 > for nothing else, so a write or a read it cannot address raises
 > `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException` rather than writing a variant
-> into the slot of another. An unqualified value works on both engines, on a key that permits one.
+> into the slot of another. A `multiValue` key is therefore not definable on an `eav` store at all
+> ([What each engine can hold](#what-each-engine-can-hold)); the unqualified slot of a key an
+> installation already carries there keeps reading and writing.
 > A store that is not attached to an object yet cannot resolve its engine, so a write to one is
 > accepted and the same exception is raised when it is saved — the save fails rather than storing
 > part of the value.

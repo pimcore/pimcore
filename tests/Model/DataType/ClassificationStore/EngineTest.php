@@ -44,6 +44,7 @@ use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
+use Pimcore\Model\DataObject\Exception\UndeclarableEngineFeatureException;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
@@ -112,6 +113,11 @@ class EngineTest extends ModelTestCase
      * than the declaration's.
      */
     private const VARIANT = 'metric';
+
+    /** The type a key the engine can no longer be given is saved as before its row gets the real one. */
+    private const CARRIED_OVER_PLACEHOLDER_TYPE = 'input';
+
+    private const KEYS_TABLE = 'classificationstore_keys';
 
     private const SECRET = 'an-eav-secret-nobody-may-read';
 
@@ -637,6 +643,41 @@ class EngineTest extends ModelTestCase
             1,
             (int) $db->fetchOne('SELECT COUNT(*) FROM classificationstore_stores WHERE id = ?', [$storeId])
         );
+    }
+
+    /**
+     * The one path in core that creates a store puts it on the preferred engine; the control is a
+     * configuration built with `new` and saved, which writes no engine and means the default one.
+     */
+    public function testACreatedStoreIsPutOnThePreferredEngine(): void
+    {
+        $created = StoreConfig::create();
+        $createdId = (int) $created->getId();
+        $this->storeIds[] = $createdId;
+
+        $this->assertSame(self::DOCUMENT_ENGINE, $created->getEngine());
+        $this->assertSame(self::DOCUMENT_ENGINE, $this->storedEngine($createdId));
+
+        $this->assertNull($this->storedEngine($this->createStore()));
+    }
+
+    /**
+     * Nothing is written where the preferred engine is not registered, so the store means the
+     * default engine the way every store did before the column existed.
+     */
+    public function testACreatedStoreCarriesNoEngineWhereThePreferredOneIsNotRegistered(): void
+    {
+        $this->rememberRegisteredEngines();
+        $engines = $this->registeredEngines ?? [];
+        unset($engines[self::DOCUMENT_ENGINE]);
+        $this->setRegisteredEngines($engines);
+
+        $created = StoreConfig::create();
+        $createdId = (int) $created->getId();
+        $this->storeIds[] = $createdId;
+
+        $this->assertNull($created->getEngine());
+        $this->assertNull($this->storedEngine($createdId));
     }
 
     /**
@@ -1428,7 +1469,8 @@ class EngineTest extends ModelTestCase
         $keyConfig->setEnabled(true);
         $keyConfig->setType($definition->getFieldType());
         $keyConfig->setDefinition((string) json_encode($definition));
-        $keyConfig->save();
+
+        $this->saveOrCarryOver($keyConfig, $definition);
 
         $this->keyIds[] = (int) $keyConfig->getId();
 
@@ -1445,4 +1487,34 @@ class EngineTest extends ModelTestCase
         return (int) $keyConfig->getId();
     }
 
+    /**
+     * Saves the key, or - where the engine of its store cannot be given such a key any more - writes
+     * the row the way an installation that defined one before that refusal existed carries it: saved
+     * as an `input` and then given its real type and definition.
+     *
+     * The `multiValue` keys of the EAV fixtures below are exactly that state. What they are about is
+     * what the ENGINE does with such a key - which slot it writes, which it refuses, what a read
+     * gives back - and that behaviour is unchanged by the key no longer being definable there. A
+     * fixture that could only be built on the document engine would test a different thing.
+     */
+    private function saveOrCarryOver(Classificationstore\KeyConfig $keyConfig, Data $definition): void
+    {
+        try {
+            $keyConfig->save();
+
+            return;
+        } catch (UndeclarableEngineFeatureException) {
+            // below
+        }
+
+        $keyConfig->setType(self::CARRIED_OVER_PLACEHOLDER_TYPE);
+        $keyConfig->setDefinition((string) json_encode(new Input()));
+        $keyConfig->save();
+
+        Db::get()->update(
+            self::KEYS_TABLE,
+            ['type' => $definition->getFieldType(), 'definition' => (string) json_encode($definition)],
+            ['id' => $keyConfig->getId()]
+        );
+    }
 }

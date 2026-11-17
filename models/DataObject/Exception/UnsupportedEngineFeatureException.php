@@ -53,17 +53,21 @@ class UnsupportedEngineFeatureException extends Exception
      * @param int|string           $keyId   the key needing the capability, or the name of the engine
      *                                      that cannot hold the type
      * @param string|null          $type    the field type of that key, for the feature shape
+     * @param string|null          $message the sentence of a subclass saying something neither shape
+     *                                      says, {@see UndeclarableEngineFeatureException}; trailing
+     *                                      and optional, so no existing call changes
      */
     public function __construct(
         EngineFeature|string $feature,
         int $groupId,
         int|string $keyId,
-        ?string $type = null
+        ?string $type = null,
+        ?string $message = null
     ) {
         parent::__construct(
-            $feature instanceof EngineFeature
+            $message ?? ($feature instanceof EngineFeature
                 ? self::describeMissingFeature($feature, $groupId, (int) $keyId, (string) $type)
-                : self::describeUnholdableType($feature, $groupId, (string) $keyId)
+                : self::describeUnholdableType($feature, $groupId, (string) $keyId))
         );
     }
 
