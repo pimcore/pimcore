@@ -34,8 +34,25 @@ class FakeVideoConverter extends Ffmpeg
 
     public string $outcome = self::OUTCOME_SUCCESS;
 
+    /**
+     * Arguments of the last save(); the converter used by the job only exists in the TmpStore.
+     *
+     * @var string[]
+     */
+    public static array $lastArguments = [];
+
+    /**
+     * Video filters of the last save().
+     *
+     * @var string[]
+     */
+    public static array $lastVideoFilter = [];
+
     public function save(): bool
     {
+        self::$lastArguments = $this->getArguments();
+        self::$lastVideoFilter = $this->videoFilter;
+
         file_put_contents($this->getDestinationFile(), self::CONTENT);
 
         if ($this->outcome === self::OUTCOME_EXCEPTION) {
