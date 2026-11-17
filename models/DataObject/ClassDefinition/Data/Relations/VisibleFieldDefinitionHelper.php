@@ -85,7 +85,8 @@ final class VisibleFieldDefinitionHelper
 
     /**
      * Describes a visible field that does not (or no longer) resolve to a known field, so the UI
-     * can still render a plain read-only column for it.
+     * can still render a plain input column for it. Exactly the shape the object relation types
+     * always produced for such a name: no `noteditable` flag, unlike resolved fields.
      *
      * @return array<string, mixed>
      */
@@ -95,7 +96,6 @@ final class VisibleFieldDefinitionHelper
             'name' => $name,
             'title' => Pimcore::getContainer()->get('translator')->trans($name, [], 'admin'),
             'fieldtype' => 'input',
-            'noteditable' => true,
         ];
     }
 }

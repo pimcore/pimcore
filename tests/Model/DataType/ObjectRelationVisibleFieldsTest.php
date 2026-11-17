@@ -13,18 +13,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\VisibleFieldDefinitionHelper;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
- * Covers the visible-field definitions built for the object relation types: top-level and localized
- * fields are described the same way, unresolved names fall back to a read-only input, the
- * advanced type resolves its class through allowedClassId and subclasses change the lookup through
+ * Covers the visible-field definitions built for the object relation types: the output of the previous
+ * implementations is reproduced exactly, top-level and localized fields are described the same way,
+ * unresolved names fall back to a plain input, the advanced type resolves its class through
+ * allowedClassId, and subclasses keep working whether they override enrichLayoutDefinition() or
  * getVisibleFieldsClassIdentifier().
  *
  * @group dataTypeLocal
@@ -165,7 +169,92 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
         $this->assertSame(['plainInput', 'linput'], array_keys($advanced->visibleFieldDefinitions));
     }
 
-    public function testUnresolvedFieldFallsBackToReadOnlyInput(): void
+    public function testOutputIsIdenticalToThePreviousImplementations(): void
+    {
+        $class = $this->testClass();
+        $input = $class->getFieldDefinition('plainInput');
+        $bool = $class->getFieldDefinition('plainBool');
+        $select = $class->getFieldDefinition('plainSelect');
+        $this->assertInstanceOf(Input::class, $input);
+        $this->assertInstanceOf(BooleanSelect::class, $bool);
+        $this->assertInstanceOf(Select::class, $select);
+
+        // the arrays the two implementations replaced by the helper produced, key order included:
+        // resolved fields are read-only, selects carry their options provider before the options, boolean
+        // selects only the options, and an unresolved name is a plain input without a noteditable flag
+        $expected = [
+            'plainInput' => ['name' => 'plainInput', 'title' => $input->getTitle(), 'fieldtype' => 'input', 'noteditable' => true],
+            'plainBool' => ['name' => 'plainBool', 'title' => $bool->getTitle(), 'fieldtype' => 'booleanSelect', 'noteditable' => true, 'options' => $bool->getOptions()],
+            'plainSelect' => ['name' => 'plainSelect', 'title' => $select->getTitle(), 'fieldtype' => 'select', 'noteditable' => true, 'optionsProviderClass' => $select->getOptionsProviderClass(), 'options' => $select->getOptions()],
+            'doesNotExist' => ['name' => 'doesNotExist', 'title' => Pimcore::getContainer()->get('translator')->trans('doesNotExist', [], 'admin'), 'fieldtype' => 'input'],
+        ];
+
+        $fd = new ManyToManyObjectRelation();
+        $fd->setClasses([['classes' => self::CLASS_NAME]]);
+        $fd->setVisibleFields('plainInput,plainBool,plainSelect,doesNotExist');
+        $fd->enrichLayoutDefinition(null);
+        $this->assertSame($expected, $fd->visibleFieldDefinitions);
+
+        $advanced = new AdvancedManyToManyObjectRelation();
+        $advanced->setAllowedClassId(self::CLASS_NAME);
+        $advanced->setVisibleFields('plainInput,plainBool,plainSelect,doesNotExist');
+        $advanced->enrichLayoutDefinition(null);
+        $this->assertSame($expected, $advanced->visibleFieldDefinitions);
+    }
+
+    public function testSubclassesOverridingEnrichLayoutDefinitionKeepWorking(): void
+    {
+        // an override in the style projects wrote against the previous implementations: call the parent, then
+        // post-process the definitions
+        $decorate = static function (array &$definitions): void {
+            foreach ($definitions as &$definition) {
+                $definition['custom'] = true;
+            }
+        };
+
+        $fd = new class($decorate) extends ManyToManyObjectRelation {
+            /** @param callable $decorate */
+            public function __construct(private $decorate)
+            {
+            }
+
+            public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
+            {
+                parent::enrichLayoutDefinition($object, $context);
+                ($this->decorate)($this->visibleFieldDefinitions);
+
+                return $this;
+            }
+        };
+        $fd->setClasses([['classes' => self::CLASS_NAME]]);
+        $fd->setVisibleFields('plainInput,linput');
+        $fd->enrichLayoutDefinition(null);
+        $this->assertSame(['plainInput', 'linput'], array_keys($fd->visibleFieldDefinitions));
+        $this->assertTrue($fd->visibleFieldDefinitions['plainInput']['custom']);
+        $this->assertTrue($fd->visibleFieldDefinitions['linput']['noteditable']);
+
+        $advanced = new class($decorate) extends AdvancedManyToManyObjectRelation {
+            /** @param callable $decorate */
+            public function __construct(private $decorate)
+            {
+            }
+
+            public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
+            {
+                parent::enrichLayoutDefinition($object, $context);
+                ($this->decorate)($this->visibleFieldDefinitions);
+
+                return $this;
+            }
+        };
+        $advanced->setAllowedClassId(self::CLASS_NAME);
+        $advanced->setVisibleFields('plainInput,linput');
+        $advanced->enrichLayoutDefinition(null);
+        $this->assertSame(['plainInput', 'linput'], array_keys($advanced->visibleFieldDefinitions));
+        $this->assertTrue($advanced->visibleFieldDefinitions['linput']['custom']);
+    }
+
+    public function testUnresolvedFieldFallsBackToPlainInput(): void
     {
         $fd = new ManyToManyObjectRelation();
         $fd->setClasses([['classes' => self::CLASS_NAME]]);
@@ -176,8 +265,8 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
         $definition = $fd->visibleFieldDefinitions['doesNotExist'];
         $this->assertSame('doesNotExist', $definition['name']);
         $this->assertSame('input', $definition['fieldtype']);
-        $this->assertTrue($definition['noteditable']);
         $this->assertIsString($definition['title']);
+        $this->assertArrayNotHasKey('noteditable', $definition, 'unresolved names never carried the flag');
         $this->assertArrayNotHasKey('options', $definition);
     }
 
@@ -230,8 +319,8 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
         );
 
         $fallback = VisibleFieldDefinitionHelper::buildFallbackDefinition('unknown');
+        $this->assertSame(['name', 'title', 'fieldtype'], array_keys($fallback));
         $this->assertSame('unknown', $fallback['name']);
         $this->assertSame('input', $fallback['fieldtype']);
-        $this->assertTrue($fallback['noteditable']);
     }
 }

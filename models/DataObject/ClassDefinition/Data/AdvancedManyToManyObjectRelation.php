@@ -652,6 +652,15 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
+    /**
+     * The base implementation already covers this type through getVisibleFieldsClassIdentifier(); the method is
+     * still declared here so that this class keeps providing it to subclasses exactly as before.
+     */
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
+    {
+        return parent::enrichLayoutDefinition($object, $context);
+    }
+
     protected function getVisibleFieldsClassIdentifier(): ?string
     {
         return $this->getAllowedClassId();
