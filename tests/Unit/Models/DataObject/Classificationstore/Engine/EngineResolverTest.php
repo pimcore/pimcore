@@ -93,6 +93,34 @@ class EngineResolverTest extends TestCase
     }
 
     /**
+     * The engine a store being created is put on, and the one thing that must stay true of it: it
+     * is NOT the engine an empty column means. A caller writing the preferred engine onto an
+     * existing row would re-point every upgraded store at storage holding none of its values.
+     */
+    public function testThePreferredEngineOfANewStoreIsTheDocumentEngineAndNotTheDefaultOne(): void
+    {
+        $eavEngine = $this->createMock(EngineInterface::class);
+        $documentEngine = $this->createMock(EngineInterface::class);
+        $resolver = new EngineResolver(['eav' => $eavEngine, 'document' => $documentEngine]);
+
+        $this->assertSame($documentEngine, $resolver->getPreferredEngine());
+        $this->assertSame('document', $resolver->nameEngine($documentEngine));
+        $this->assertSame($eavEngine, $resolver->getDefaultEngine());
+    }
+
+    /**
+     * An installation whose core registers no document engine answers null rather than throwing, so
+     * a caller creating a store writes no engine and the store means the default one - which is
+     * what every store meant before the column existed.
+     */
+    public function testThePreferredEngineIsNullWhereItIsNotRegistered(): void
+    {
+        $resolver = new EngineResolver(['eav' => $this->createMock(EngineInterface::class)]);
+
+        $this->assertNull($resolver->getPreferredEngine());
+    }
+
+    /**
      * Nothing is held back any more, so {@see ClassificationStoreEngineNotAvailableException} is
      * unreachable from the default configuration. The class stays - it carries no `@internal`, so
      * catching it is legal - and this pins that re-filling the list is a deliberate act.

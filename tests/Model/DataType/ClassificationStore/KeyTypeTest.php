@@ -31,6 +31,7 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
 use Pimcore\Model\DataObject\Data\EncryptedField as EncryptedFieldValue;
 use Pimcore\Model\DataObject\Data\GeoCoordinates;
+use Pimcore\Model\DataObject\Exception\UndeclarableEngineFeatureException;
 use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
 use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
@@ -68,6 +69,15 @@ class KeyTypeTest extends AbstractClassificationStoreTest
 
     private const MULTI_VALUE_TYPE = 'multiValue';
 
+    /** The two variants the `multiValue` fixtures of this class declare. */
+    private const VARIANT_NAMES = ['Metric', 'Imperial'];
+
+    private const DOCUMENT_STORE_NAME = 'cs-key-type-documentstore';
+
+    private const DOCUMENT_ENGINE = 'document';
+
+    private const STORES_TABLE = 'classificationstore_stores';
+
     /** One of the three types withdrawn as key types, and the only one core ships itself. */
     private const WITHDRAWN_TYPE = 'consent';
 
@@ -87,6 +97,11 @@ class KeyTypeTest extends AbstractClassificationStoreTest
      * @var Classificationstore\KeyConfig[]
      */
     private array $createdKeys = [];
+
+    /**
+     * @var Classificationstore\StoreConfig[]
+     */
+    private array $createdStores = [];
 
     /**
      * @var array<array{string, callable}>
@@ -112,6 +127,11 @@ class KeyTypeTest extends AbstractClassificationStoreTest
             Db::get()->delete(self::KEYS_TABLE, ['id' => $key->getId()]);
         }
         $this->createdKeys = [];
+
+        foreach ($this->createdStores as $store) {
+            Db::get()->delete(self::STORES_TABLE, ['id' => $store->getId()]);
+        }
+        $this->createdStores = [];
 
         $this->clearDefinitionCaches();
 
@@ -277,6 +297,141 @@ class KeyTypeTest extends AbstractClassificationStoreTest
 
         $this->expectException(UnsupportedEngineFeatureException::class);
         $keyConfig->save();
+    }
+
+    /**
+     * The declaration gate, and the half that refuses. A `multiValue` is held in the two value
+     * columns whenever its inner type is - an `input` is - so the holdability check above says yes
+     * about it. What an EAV row has no column for is the qualifier that says which slot a value
+     * belongs to, which is what the type exists for.
+     */
+    public function testDefiningAMultiValueKeyOnAnEavStoreIsRefusedAndWritesNothing(): void
+    {
+        $store = $this->getStore();
+        $name = self::KEY_PREFIX . 'multiValueNew';
+
+        $keyConfig = $this->newMultiValueKey($store->getId(), $name, self::VARIANT_NAMES);
+
+        try {
+            $keyConfig->save();
+            $this->fail('a multiValue key on an EAV store has to be refused');
+        } catch (UndeclarableEngineFeatureException $exception) {
+            $this->assertStringContainsString(self::MULTI_VALUE_TYPE, $exception->getMessage());
+            $this->assertStringContainsString('"eav"', $exception->getMessage());
+            $this->assertStringContainsString('store ' . $store->getId(), $exception->getMessage());
+        }
+
+        $this->assertNull($keyConfig->getId(), 'no row was inserted');
+        $this->assertNull($keyConfig->getIdentifier(), 'the identifier of a refused key is not consumed');
+        $this->assertSame(0, $this->countKeyRows($name, $store->getId()), 'no key row for the refused name');
+    }
+
+    /**
+     * A declaration naming no variant is refused the same way: the type itself is the qualified
+     * addressing, and the unqualified slot that happens to read and write today is the half that
+     * made the key look as if it worked.
+     */
+    public function testAMultiValueKeyNamingNoVariantIsRefusedOnAnEavStoreToo(): void
+    {
+        $keyConfig = $this->newMultiValueKey(
+            $this->getStore()->getId(),
+            self::KEY_PREFIX . 'multiValuePlain',
+            []
+        );
+
+        $this->expectException(UndeclarableEngineFeatureException::class);
+        $keyConfig->save();
+    }
+
+    /**
+     * The control without which the test above proves nothing: a gate refusing every type would
+     * pass it. The document engine offers the capability, so the very same declaration is accepted.
+     */
+    public function testTheSameMultiValueKeyIsDefinableOnADocumentStore(): void
+    {
+        $store = $this->createDocumentStore();
+
+        $keyConfig = $this->newMultiValueKey(
+            $store->getId(),
+            self::KEY_PREFIX . 'multiValueDocument',
+            self::VARIANT_NAMES
+        );
+        $keyConfig->save();
+        $this->createdKeys[] = $keyConfig;
+
+        $this->assertNotNull($keyConfig->getId());
+        $this->assertSame(self::MULTI_VALUE_TYPE, $this->readKeyType((int) $keyConfig->getId()));
+    }
+
+    /**
+     * The other control, and the reason the refusal is not blanket: an installation that defined
+     * such a key while nothing refused it has to keep being able to save it, or renaming, disabling
+     * and deleting it through the editor all fail and the only way out of the key is deleting its
+     * row by hand. demo-26 carries five of these on its two EAV stores.
+     */
+    public function testAStoredMultiValueKeyOnAnEavStoreIsStillSaveable(): void
+    {
+        $store = $this->getStore();
+        $keyConfig = $this->smuggleMultiValueKey('multiValueStored', self::VARIANT_NAMES);
+
+        $keyConfig->setDescription('renamed by the editor');
+        $keyConfig->save();
+
+        $this->assertSame(
+            self::MULTI_VALUE_TYPE,
+            $this->readKeyType((int) $keyConfig->getId()),
+            'the stored key keeps its type'
+        );
+        $this->assertSame(
+            1,
+            $this->countKeyRows(self::KEY_PREFIX . 'multiValueStored', $store->getId()),
+            'the row is still there'
+        );
+    }
+
+    /**
+     * Widening counts as introducing, because the requirement is read per capability: a stored
+     * `multiValue` that named no variant needs `Variants` for the first time when it is given one.
+     */
+    public function testGivingAStoredMultiValueKeyItsFirstVariantIsRefusedOnAnEavStore(): void
+    {
+        $keyConfig = $this->smuggleMultiValueKey('multiValueWidened', []);
+
+        $definition = new MultiValue();
+        $definition->setDelegateDatatype(self::INPUT_TYPE);
+        $definition->setDelegate(new Input());
+        $definition->setVariants(self::VARIANT_NAMES);
+        $keyConfig->setDefinition($this->encodeDefinition($definition));
+
+        $this->expectException(UndeclarableEngineFeatureException::class);
+
+        try {
+            $keyConfig->save();
+        } finally {
+            $this->assertSame(
+                [],
+                $this->readKeyVariants((int) $keyConfig->getId()),
+                'the stored definition names no variant still'
+            );
+        }
+    }
+
+    /**
+     * And the key that already names them keeps naming them: the capability its row carries is
+     * already the one that is missing, so nothing is introduced and the save goes through.
+     */
+    public function testAStoredMultiValueKeyKeepsItsVariantsOnAnEavStore(): void
+    {
+        $keyConfig = $this->smuggleMultiValueKey('multiValueKeptVariants', self::VARIANT_NAMES);
+
+        $keyConfig->setDescription('edited while the variants stay');
+        $keyConfig->save();
+
+        $this->assertSame(
+            self::VARIANT_NAMES,
+            $this->readKeyVariants((int) $keyConfig->getId()),
+            'the declared variants are unchanged'
+        );
     }
 
     public function testAnEncryptedFieldWithAScalarDelegateIsStillDefinableOnAnEavStore(): void
@@ -548,6 +703,89 @@ class KeyTypeTest extends AbstractClassificationStoreTest
 
         Pimcore::getEventDispatcher()->addListener($eventName, $listener);
         $this->listeners[] = [$eventName, $listener];
+    }
+
+    /**
+     * An unsaved `multiValue` key wrapping an `input`, which is the case the holdability check
+     * answers with "yes" and the declaration check has to answer on its own.
+     *
+     * @param string[] $variants
+     */
+    private function newMultiValueKey(int $storeId, string $name, array $variants): Classificationstore\KeyConfig
+    {
+        $definition = new MultiValue();
+        $definition->setDelegateDatatype(self::INPUT_TYPE);
+        $definition->setDelegate(new Input());
+        $definition->setVariants($variants);
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($storeId);
+        $keyConfig->setName($name);
+        $keyConfig->setType(self::MULTI_VALUE_TYPE);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setDefinition($this->encodeDefinition($definition));
+
+        return $keyConfig;
+    }
+
+    /**
+     * A `multiValue` key row on the EAV store, written the way an installation that defined one
+     * before this refusal existed carries it: saved as an `input` and then given its real type and
+     * definition by SQL, because `save()` is now the thing refusing it.
+     *
+     * @param string[] $variants
+     */
+    private function smuggleMultiValueKey(string $suffix, array $variants): Classificationstore\KeyConfig
+    {
+        $keyConfig = $this->createInputKey($suffix);
+
+        $definition = new MultiValue();
+        $definition->setDelegateDatatype(self::INPUT_TYPE);
+        $definition->setDelegate(new Input());
+        $definition->setVariants($variants);
+
+        Db::get()->update(
+            self::KEYS_TABLE,
+            ['type' => self::MULTI_VALUE_TYPE, 'definition' => $this->encodeDefinition($definition)],
+            ['id' => $keyConfig->getId()]
+        );
+        $this->clearDefinitionCaches();
+
+        return Classificationstore\KeyConfig::getById((int) $keyConfig->getId(), true)
+            ?? $this->fail('the smuggled key row could not be read back');
+    }
+
+    /**
+     * A store on the engine that offers the capability, so that the refusal can be shown to be
+     * about the engine rather than about the type.
+     */
+    private function createDocumentStore(): Classificationstore\StoreConfig
+    {
+        $store = Classificationstore\StoreConfig::getByName(self::DOCUMENT_STORE_NAME);
+
+        if ($store === null) {
+            $store = new Classificationstore\StoreConfig();
+            $store->setName(self::DOCUMENT_STORE_NAME);
+            $store->setEngine(self::DOCUMENT_ENGINE);
+            $store->save();
+        }
+
+        $this->createdStores[] = $store;
+
+        return $store;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function readKeyVariants(int $keyId): array
+    {
+        $definition = json_decode(
+            (string) Db::get()->fetchOne('SELECT definition FROM ' . self::KEYS_TABLE . ' WHERE id = ?', [$keyId]),
+            true
+        );
+
+        return array_column(is_array($definition) ? ($definition['variants'] ?? []) : [], 'name');
     }
 
     private function createInputKey(string $suffix): Classificationstore\KeyConfig

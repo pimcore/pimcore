@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore;
 
 use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Model\DataObject\Concrete;
@@ -241,6 +242,62 @@ class KeyTypeSupportTest extends TestCase
 
         // no inner type configured normalizes the plain value unchanged, which the column takes
         $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE));
+    }
+
+    /**
+     * The declaration question, which is the other half and is deliberately not answered through
+     * the one above: a `multiValue` wrapping an `input` IS held in the value columns - each of its
+     * slots holds an input - and the thing an EAV row has no room for is the qualifier that says
+     * WHICH slot. So the two answers disagree about the same key, as they must.
+     */
+    public function testAMultiValueKeyNeedsTheMultiValueCapabilityWhateverItWraps(): void
+    {
+        $support = $this->support();
+
+        $this->assertSame([EngineFeature::MultiValue], $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE));
+        $this->assertSame(
+            [EngineFeature::MultiValue],
+            $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE, ['delegateDatatype' => 'input'])
+        );
+
+        // and the type is held in the value columns all the same, which is why one answer is not the other
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'input'));
+    }
+
+    public function testADeclarationNamingVariantsNeedsTheVariantsCapabilityOnTop(): void
+    {
+        $support = $this->support();
+
+        $this->assertSame(
+            [EngineFeature::MultiValue, EngineFeature::Variants],
+            $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE, [
+                'delegateDatatype' => 'numeric',
+                'variants' => [['name' => 'Metric'], ['name' => 'Imperial']],
+            ])
+        );
+
+        // an empty list and an absent member are the same declaration: no variant is named
+        $this->assertSame(
+            [EngineFeature::MultiValue],
+            $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE, ['variants' => []])
+        );
+    }
+
+    /**
+     * The control the refusal needs: a predicate that answered every type would refuse everything
+     * and pass a test that only ever asks about `multiValue`.
+     */
+    public function testEveryOtherTypeNeedsNoCapabilityForItsDeclaration(): void
+    {
+        $support = $this->support();
+
+        foreach (['input', 'numeric', 'image', 'geopoint', self::ENCRYPTED_FIELD_TYPE, self::CONSENT_TYPE] as $type) {
+            $this->assertSame(
+                [],
+                $support->requiredEngineFeatures($type, ['variants' => [['name' => 'Metric']]]),
+                $type . ' declares nothing an engine has to be able to address'
+            );
+        }
     }
 
     /**

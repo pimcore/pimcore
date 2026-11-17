@@ -49,10 +49,17 @@ final class KeyTypeSupport
     private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
 
     /**
+     * The one type whose value is addressed under qualifiers of its own rather than by the key
+     * alone, which is what {@see self::requiredEngineFeatures()} is about.
+     */
+    private const MULTI_VALUE_TYPE = 'multiValue';
+
+    /**
      * The types whose value is the value of another type: a wrapper declares how the value is stored
-     * ({@see self::ENCRYPTED_FIELD_TYPE}) or which qualifiers it may carry (`multiValue`), and the
-     * value itself is the inner type's. So what a wrapper can be held in is what its delegate can be
-     * held in, and the marshaller of either wrapper packs what the delegate's marshaller packed.
+     * ({@see self::ENCRYPTED_FIELD_TYPE}) or which qualifiers it may carry
+     * ({@see self::MULTI_VALUE_TYPE}), and the value itself is the inner type's. So what a wrapper
+     * can be held in is what its delegate can be held in, and the marshaller of either wrapper
+     * packs what the delegate's marshaller packed.
      *
      * Both of them, because each one carries its inner type as `delegateDatatype` and each one would
      * otherwise be answered on the strength of having a marshaller of its own - which is to say on
@@ -60,7 +67,7 @@ final class KeyTypeSupport
      *
      * @var string[]
      */
-    private const WRAPPER_TYPES = [self::ENCRYPTED_FIELD_TYPE, 'multiValue'];
+    private const WRAPPER_TYPES = [self::ENCRYPTED_FIELD_TYPE, self::MULTI_VALUE_TYPE];
 
     /**
      * The field types a classification store key is never defined with because of what their value
@@ -249,6 +256,56 @@ final class KeyTypeSupport
         }
 
         return $this->normalizesToScalar($type);
+    }
+
+    /**
+     * The engine capabilities the DECLARATION of a key needs, which is a different question from the
+     * one {@see self::isHeldInValueColumns()} answers and is asked beside it rather than through it.
+     *
+     * That method asks what a value is and whether two columns can hold it, and it answers a wrapper
+     * with its delegate - so a `multiValue` wrapping an `input` is "held", because one of its slots
+     * is an input and an input fits. This method asks the other half: a `multiValue` does not address
+     * its value by the key and the language alone, it addresses it under qualifiers, and an engine
+     * whose value row has room for neither cannot store what the declaration promises. Nothing is
+     * moved into or out of {@see self::isHeldInValueColumns()} for it, because
+     * {@see self::isAcceptedDelegateType()} and the lists behind it are what data-hub-simple-rest
+     * publishes a key on.
+     *
+     * {@see Engine\EngineFeature::MultiValue} is required by the type itself: a `multiValue` key is
+     * qualified addressing and nothing else, so an engine that does not offer it cannot hold such a
+     * key at all - not even in the unqualified slot, which is the half that works today and is the
+     * confusing half. {@see Engine\EngineFeature::Variants} is required on top of it by a
+     * declaration that names variants, so that an engine offering positions but no names is
+     * answered about the part it lacks.
+     *
+     * $definition is the decoded definition blob of the key. Null, or one carrying no `variants`
+     * member, is a declaration that names no variant - which is what a stored key written before
+     * the member existed, and an import that left it out, both come back as.
+     *
+     * {@see KeyConfig::save()} is where this is enforced, and it refuses only a configuration that
+     * introduces a requirement the stored row does not already carry. The Studio key picker mirrors
+     * the rule, from a map of its own in studio-ui-bundle
+     * `.../dynamic-types/utils/classification-store-key-types.ts`; nothing couples the two, so
+     * `WithdrawnKeyTypePickerAgreementTest` pins this answer together with the withdrawn names.
+     *
+     * @param array<string, mixed>|null $definition
+     *
+     * @return Engine\EngineFeature[]
+     */
+    public function requiredEngineFeatures(string $type, ?array $definition = null): array
+    {
+        if ($type !== self::MULTI_VALUE_TYPE) {
+            return [];
+        }
+
+        $required = [Engine\EngineFeature::MultiValue];
+
+        $variants = $definition['variants'] ?? null;
+        if (is_array($variants) && $variants !== []) {
+            $required[] = Engine\EngineFeature::Variants;
+        }
+
+        return $required;
     }
 
     /**

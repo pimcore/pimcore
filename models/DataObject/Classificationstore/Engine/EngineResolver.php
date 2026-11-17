@@ -36,6 +36,12 @@ final class EngineResolver implements ResetInterface
     private const DEFAULT_ENGINE = 'eav';
 
     /**
+     * The engine a classification store that is being CREATED is put on,
+     * {@see self::getPreferredEngine()}.
+     */
+    private const PREFERRED_ENGINE = 'document';
+
+    /**
      * Engine names this release knows about but does not ship yet. Empty since `document` ships, so
      * {@see ClassificationStoreEngineNotAvailableException} is no longer raised from the default
      * configuration - the class is kept, as it carries no `@internal` and catching it is legal.
@@ -76,6 +82,23 @@ final class EngineResolver implements ResetInterface
     public function getDefaultEngine(): EngineInterface
     {
         return $this->getEngines()[self::DEFAULT_ENGINE];
+    }
+
+    /**
+     * The engine a store that is being created is put on, or null on an installation where it is not
+     * registered - a caller then writes no engine and the store means the default one, as every
+     * store did before this answer existed.
+     *
+     * Deliberately not {@see self::getDefaultEngine()}, and this is the whole reason the two are
+     * separate: {@see self::DEFAULT_ENGINE} is what an EMPTY engine column means, which is every
+     * store an installation upgraded with, and re-pointing those at storage that holds none of their
+     * values is the loss `pimcore:classificationstore:flip` exists to avoid. A store being created
+     * holds nothing yet, so it is the one case that can be given the engine that can hold
+     * everything.
+     */
+    public function getPreferredEngine(): ?EngineInterface
+    {
+        return $this->getEngines()[self::PREFERRED_ENGINE] ?? null;
     }
 
     /**

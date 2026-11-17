@@ -249,6 +249,7 @@ final class KeyConfig extends Model\AbstractModel
      *
      * @throws Model\Exception\InvalidConfigException
      * @throws Model\DataObject\Exception\UnsupportedEngineFeatureException
+     * @throws Model\DataObject\Exception\UndeclarableEngineFeatureException
      */
     public function save(): void
     {
@@ -256,6 +257,7 @@ final class KeyConfig extends Model\AbstractModel
         $this->assertTheTypeIsNotWithdrawn();
         $this->assertTheDelegateMayBeAKeyType();
         $this->assertTypeFitsTheStoreEngine();
+        $this->assertDeclarationFitsTheStoreEngine();
 
         if ($this->getId() === null) {
             $this->generateIdentifier();
@@ -285,6 +287,7 @@ final class KeyConfig extends Model\AbstractModel
         $this->assertTheTypeIsNotWithdrawn();
         $this->assertTheDelegateMayBeAKeyType();
         $this->assertTypeFitsTheStoreEngine();
+        $this->assertDeclarationFitsTheStoreEngine();
 
         $this->getDao()->save();
 
@@ -561,6 +564,69 @@ final class KeyConfig extends Model\AbstractModel
     }
 
     /**
+     * Refuses a key whose DECLARATION needs an engine capability the engine of its store does not
+     * offer - a `multiValue` key, which addresses its value under qualifiers an EAV value row has no
+     * column for, {@see KeyTypeSupport::requiredEngineFeatures()}.
+     *
+     * A second question from the one {@see self::assertTypeFitsTheStoreEngine()} asks, and it has to
+     * be asked separately: a `multiValue` wrapping an `input` IS held in the value columns, because
+     * each of its slots holds an input, and that answer is about the value rather than about how
+     * many of them there are and how each is addressed.
+     *
+     * Only a configuration that INTRODUCES the need is refused, the way
+     * {@see self::assertTheTypeIsNotWithdrawn()} refuses only a configuration that puts a withdrawn
+     * name there - and for the same reason: an installation that defined such a key while nothing
+     * refused it has to keep being able to rename it, disable it and delete it, or the only way out
+     * of one is deleting its row by hand. Widening counts as introducing, because the requirement is
+     * read per capability: a stored `multiValue` that declared no variant and is being given one
+     * needs `Variants` for the first time and is refused, while the same key keeping the variants it
+     * has is not.
+     *
+     * The stored row is read only once something is actually missing, so an ordinary key costs no
+     * statement for this.
+     *
+     * @throws Model\DataObject\Exception\UndeclarableEngineFeatureException
+     */
+    private function assertDeclarationFitsTheStoreEngine(): void
+    {
+        // the property carries no default, and a key saved to take an id carries no type yet
+        $type = $this->getObjectVars()['type'] ?? null;
+        if (!is_string($type) || $type === '') {
+            return;
+        }
+
+        $typeSupport = Pimcore::getContainer()->get(KeyTypeSupport::class);
+        $required = $typeSupport->requiredEngineFeatures($type, $this->getDecodedDefinition());
+        if ($required === []) {
+            return;
+        }
+
+        $engineResolver = Pimcore::getContainer()->get(EngineResolver::class);
+        $engine = $engineResolver->resolveForStore($this->storeId);
+
+        $missing = array_filter($required, static fn (EngineFeature $feature): bool => !$engine->supports($feature));
+        if ($missing === []) {
+            return;
+        }
+
+        [$storedType, $storedDefinition] = $this->getDao()->fetchStoredDeclaration();
+        $carried = $storedType === null
+            ? []
+            : $typeSupport->requiredEngineFeatures($storedType, $storedDefinition);
+
+        foreach ($missing as $feature) {
+            if (!in_array($feature, $carried, true)) {
+                throw Model\DataObject\Exception\UndeclarableEngineFeatureException::forUndeclarableFeature(
+                    $feature,
+                    $type,
+                    $this->storeId,
+                    $engineResolver->nameEngine($engine)
+                );
+            }
+        }
+    }
+
+    /**
      * The delegate type a wrapper key carries in its definition, which is what decides what such a
      * key stores. Both wrappers carry it under that name - an `encryptedField` and a `multiValue` -
      * so a definition carrying one is a wrapper key whatever else it says. Absent for every other
@@ -568,10 +634,22 @@ final class KeyConfig extends Model\AbstractModel
      */
     private function getDelegateType(): ?string
     {
-        $definition = json_decode($this->definition, true);
-        $delegateType = is_array($definition) ? ($definition['delegateDatatype'] ?? null) : null;
+        $delegateType = $this->getDecodedDefinition()['delegateDatatype'] ?? null;
 
         return is_string($delegateType) && $delegateType !== '' ? $delegateType : null;
+    }
+
+    /**
+     * The definition blob of the key as an array, or null for a blob that does not decode to one.
+     * The `'[]'` default decodes to the empty array, which names no member and no declaration.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function getDecodedDefinition(): ?array
+    {
+        $definition = json_decode($this->definition, true);
+
+        return is_array($definition) ? $definition : null;
     }
 
     /**

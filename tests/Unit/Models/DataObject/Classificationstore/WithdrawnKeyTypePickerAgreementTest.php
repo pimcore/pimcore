@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore;
 
 use Pimcore;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionClass;
@@ -34,6 +35,12 @@ use ReflectionClass;
  * That is a convention held by two tests, not one source of truth. The source of truth is the
  * follow-up: the backend publishes the withdrawn list and the picker reads it, at which point this
  * test and its counterpart are replaced by the contract test of that endpoint.
+ *
+ * The same convention now carries a second rule, pinned here for the same reason and in the same
+ * file because it is the same two lists coming apart: which engine capability a key TYPE needs
+ * before it may be defined at all. Core answers it in {@see KeyTypeSupport::requiredEngineFeatures()}
+ * and refuses in `KeyConfig::save()`; the picker reads `KEY_TYPE_REQUIRED_CAPABILITIES` in the same
+ * counterpart file and never offers a type the store's engine cannot hold.
  */
 class WithdrawnKeyTypePickerAgreementTest extends TestCase
 {
@@ -43,6 +50,9 @@ class WithdrawnKeyTypePickerAgreementTest extends TestCase
         'permissionManyToManyRelation',
         'permissionManyToOneRelation',
     ];
+
+    /** The one key type whose declaration needs an engine capability of its own. */
+    private const MULTI_VALUE_TYPE = 'multiValue';
 
     private const STUDIO_UI_COUNTERPART = 'studio-ui-bundle assets/js/src/core/modules/field-definitions'
         . '/dynamic-types/utils/classification-store-key-types.ts';
@@ -79,10 +89,44 @@ class WithdrawnKeyTypePickerAgreementTest extends TestCase
 
         // the neighbours a withdrawal is most likely to be widened over by accident: the two core
         // relation types the permission ones extend, and the two wrappers the refusal follows into
-        foreach (['manyToOneRelation', 'manyToManyRelation', 'encryptedField', 'multiValue'] as $type) {
+        foreach (['manyToOneRelation', 'manyToManyRelation', 'encryptedField', self::MULTI_VALUE_TYPE] as $type) {
             $this->assertFalse(
                 $support->isWithdrawnKeyType($type),
                 $type . ' is not withdrawn and ' . self::STUDIO_UI_COUNTERPART . ' still offers it'
+            );
+        }
+    }
+
+    /**
+     * The second agreement: `multiValue` is the one key type that needs an engine capability
+     * because of what its declaration is rather than because of what its value is, so the picker's
+     * `KEY_TYPE_REQUIRED_CAPABILITIES` carries `multiValue: ['MultiValue']` and nothing else of the
+     * sort. The capability is named by the enum case name, which is the spelling the store response
+     * reports and the spelling the picker compares against.
+     *
+     * The control is the second half: a type that needs nothing here must keep needing nothing in
+     * the picker, or the map disables types core happily saves.
+     */
+    public function testTheMultiValueTypeNeedsTheCapabilityThePickerAlsoRequires(): void
+    {
+        $support = Pimcore::getContainer()->get(KeyTypeSupport::class);
+
+        $this->assertSame(
+            [EngineFeature::MultiValue->name],
+            array_map(
+                static fn (EngineFeature $feature): string => $feature->name,
+                $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE)
+            ),
+            'the capability a multiValue key type needs changed; ' . self::STUDIO_UI_COUNTERPART
+            . ' carries it as KEY_TYPE_REQUIRED_CAPABILITIES.multiValue and has to be changed with it'
+        );
+
+        foreach (['input', 'numeric', 'image', 'geopoint', 'encryptedField'] as $type) {
+            $this->assertSame(
+                [],
+                $support->requiredEngineFeatures($type),
+                $type . ' needs no capability for its declaration and ' . self::STUDIO_UI_COUNTERPART
+                . ' must not require one for it'
             );
         }
     }
