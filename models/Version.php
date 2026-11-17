@@ -19,13 +19,16 @@ use LogicException;
 use Pimcore;
 use Pimcore\Config;
 use Pimcore\Event\Model\VersionEvent;
+use Pimcore\Event\SystemEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -201,13 +204,18 @@ final class Version extends AbstractModel
         // if necessary convert the data to save it to filesystem
         if (is_object($data) || is_array($data)) {
             // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
-            if ($data instanceof Element\ElementInterface) {
+            $unloadedRelations = [];
+            if ($data instanceof Concrete) {
+                // relations that were not loaded are stored from their relation rows, see marshalData()
+                $unloadedRelations = $this->describeUnloadedRelations($data);
+                DataObjectService::loadAllObjectFieldsExcept($data, array_keys($unloadedRelations));
+            } elseif ($data instanceof Element\ElementInterface) {
                 Element\Service::loadAllFields($data);
             }
 
             $this->setSerialized(true);
 
-            $condensedData = $this->marshalData($data);
+            $condensedData = $this->marshalData($data, $unloadedRelations);
 
             $dataString = Serialize::serialize($condensedData);
 
@@ -267,7 +275,27 @@ final class Version extends AbstractModel
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
-    private function marshalData(ElementInterface $data): mixed
+    /**
+     * The relations of the object that were not loaded and are stored without loading them, see
+     * Concrete::describeUnloadedRelationsForVersion().
+     *
+     * @return array<string, list<ElementDescriptor>>
+     */
+    private function describeUnloadedRelations(Concrete $object): array
+    {
+        if (Pimcore::getEventDispatcher()->hasListeners(SystemEvents::SERVICE_PRE_GET_DEEP_COPY)) {
+            // a listener may change how the related elements are copied, it gets them loaded like before
+            return [];
+        }
+
+        return $object->describeUnloadedRelationsForVersion();
+    }
+
+    /**
+     * @param array<string, list<ElementDescriptor>> $unloadedRelations the values to store for relations that were
+     *                                                                  not loaded, keyed by field name
+     */
+    private function marshalData(ElementInterface $data, array $unloadedRelations): mixed
     {
         $context = [
             'source' => __METHOD__,
@@ -313,6 +341,14 @@ final class Version extends AbstractModel
                 // that too, so enabling the option later never captures into this version when it is written again
                 $this->rememberCalculatedValueSnapshot(null);
                 $newData->__setCalculatedValueSnapshot(null);
+            }
+        }
+
+        if ($newData instanceof Concrete) {
+            // stored like the loaded relations, whose related elements are replaced by their descriptors
+            foreach ($unloadedRelations as $fieldName => $descriptors) {
+                $newData->setObjectVar($fieldName, $descriptors);
+                $newData->markLazyKeyAsLoaded($fieldName);
             }
         }
 

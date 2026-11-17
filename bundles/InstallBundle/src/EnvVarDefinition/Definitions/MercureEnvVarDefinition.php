@@ -47,7 +47,7 @@ final readonly class MercureEnvVarDefinition implements EnvVarDefinitionInterfac
                 'MERCURE_JWT_KEY',
                 'Mercure JWT Key',
                 ParameterType::Secret,
-                description: 'Hex-encoded secret key for Mercure JWT tokens',
+                description: 'Shared secret signing Mercure JWT tokens (at least 32 characters)',
             ),
             new ConfigParameter(
                 'MERCURE_URL',

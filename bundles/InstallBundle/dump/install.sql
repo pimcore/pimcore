@@ -490,6 +490,16 @@ CREATE TABLE `users_permission_definitions` (
   PRIMARY KEY (`key`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
+DROP TABLE IF EXISTS `users_responsibles`;
+CREATE TABLE `users_responsibles` (
+  `serviceUserId` int(11) unsigned NOT NULL,
+  `principalType` enum('user','role') NOT NULL,
+  `principalId` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`serviceUserId`,`principalType`,`principalId`),
+  KEY `principal` (`principalType`,`principalId`),
+  CONSTRAINT `fk_users_responsibles_users` FOREIGN KEY (`serviceUserId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',

@@ -168,6 +168,17 @@ class Dao extends Model\Dao\AbstractDao
         $userId = $this->model->getId();
         Logger::debug('delete user with ID: ' . $userId);
 
+        // responsible users: rows of a service user, and rows naming a deleted person or role
+        $this->db->delete('users_responsibles', ['serviceUserId' => $userId]);
+        $principalType = match ($this->model->getType()) {
+            'user' => 'user',
+            'role' => 'role',
+            default => null,
+        };
+        if ($principalType !== null) {
+            $this->db->delete('users_responsibles', ['principalType' => $principalType, 'principalId' => $userId]);
+        }
+
         $this->db->delete('users', ['id' => $userId]);
     }
 
