@@ -217,6 +217,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         if (array_key_exists('document', $idMapping) && array_key_exists($id, $idMapping['document'])) {
             $this->id = $idMapping['document'][$id];
             $this->snippet = null;
+            // getDataEditmode() and frontend() read the loaded snippet directly
+            $this->load();
         }
     }
 

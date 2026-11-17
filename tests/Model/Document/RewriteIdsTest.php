@@ -38,6 +38,11 @@ class RewriteIdsTest extends ModelTestCase
             $editable->rewriteIds(['document' => [$old->getId() => $new->getId()]]);
 
             $this->assertSame($new->getId(), $editable->getId());
+            // editmode reads the loaded snippet directly, so it has to be the new one right after the rewrite
+            $this->assertSame(
+                ['id' => $new->getId(), 'path' => $new->getRealFullPath()],
+                $editable->getDataEditmode()
+            );
             $this->assertSame(['document_' . $new->getId()], array_keys($editable->resolveDependencies()));
             $this->assertSame($new->getId(), $editable->getSnippet()?->getId());
         } finally {
