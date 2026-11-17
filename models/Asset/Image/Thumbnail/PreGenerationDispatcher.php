@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
+use Exception;
 use Pimcore\Messenger\GenerateImageThumbnailsMessage;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Throwable;
 use function sprintf;
 
 /**
@@ -49,9 +49,10 @@ class PreGenerationDispatcher
                 $this->messageBus->dispatch(
                     new GenerateImageThumbnailsMessage((int) $image->getId(), $thumbnailName)
                 );
-            } catch (Throwable $e) {
+            } catch (Exception $e) {
                 // pre-generation is an optimization: the image is saved already and its thumbnails
-                // are generated on request, so a failing dispatch must not fail the save
+                // are generated on request, so a failing dispatch (e.g. the transport is down) must
+                // not fail the save. Errors are not caught: they are defects and have to surface
                 $this->logger->warning(sprintf(
                     'Could not queue the pre-generation of thumbnail "%s" for image %s: %s',
                     $thumbnailName,

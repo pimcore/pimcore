@@ -22,6 +22,7 @@ use Psr\Log\NullLogger;
 use RuntimeException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use TypeError;
 
 /**
  * @internal
@@ -83,6 +84,22 @@ class PreGenerationDispatcherTest extends TestCase
         (new PreGenerationDispatcher($messageBus, $logger, ['hero', 'card']))->dispatch($this->createImage());
 
         self::assertSame(['card'], $dispatched);
+    }
+
+    /**
+     * A PHP error is a defect (e.g. a broken message contract), not an unavailable transport.
+     */
+    public function testErrorsAreNotSwallowed(): void
+    {
+        $messageBus = $this->createMock(MessageBusInterface::class);
+        $messageBus->method('dispatch')->willThrowException(new TypeError('broken contract'));
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())->method('warning');
+
+        $this->expectException(TypeError::class);
+
+        (new PreGenerationDispatcher($messageBus, $logger, ['hero']))->dispatch($this->createImage());
     }
 
     private function createImage(): Asset\Image
