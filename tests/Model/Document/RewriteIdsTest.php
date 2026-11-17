@@ -97,6 +97,34 @@ class RewriteIdsTest extends ModelTestCase
         }
     }
 
+    public function testLinkFullPathIsRepairedInEditmode(): void
+    {
+        $old = TestHelper::createEmptyDocumentPage();
+        $new = TestHelper::createEmptyDocumentPage();
+
+        try {
+            // a link copied before the fix: internalId already points to the copy, fullPath is still the old one
+            $editable = new Link();
+            $editable->setName('link');
+            $editable->setDataFromResource(serialize([
+                'linktype' => 'internal',
+                'internal' => true,
+                'internalType' => 'document',
+                'internalId' => $new->getId(),
+                'path' => $old->getRealFullPath(),
+                'fullPath' => $old->getRealFullPath(),
+            ]));
+
+            $data = $editable->getDataEditmode();
+
+            $this->assertSame($new->getId(), $data['internalId']);
+            $this->assertSame($new->getRealFullPath(), $data['fullPath']);
+        } finally {
+            $old->delete();
+            $new->delete();
+        }
+    }
+
     public function testContentMainDocumentFollowsRewrittenId(): void
     {
         $oldMain = TestHelper::createEmptyDocumentPage();
@@ -113,6 +141,27 @@ class RewriteIdsTest extends ModelTestCase
             $page->delete();
             $oldMain->delete();
             $newMain->delete();
+        }
+    }
+
+    public function testContentMainDocumentIsKeptWhenCopyInheritsFromItsSource(): void
+    {
+        $source = TestHelper::createEmptyDocumentPage();
+        $copy = TestHelper::createEmptyDocumentPage();
+
+        try {
+            // an inheritance paste: the copy inherits from its source and the mapping is source => copy
+            $copy->setContentMainDocumentId($source->getId());
+            $copy->setProperty('target', 'document', $source);
+
+            Document\Service::rewriteIds($copy, ['document' => [$source->getId() => $copy->getId()]]);
+
+            $this->assertSame($source->getId(), $copy->getContentMainDocumentId());
+            // the rewrite must not abort, properties are still rewritten
+            $this->assertSame($copy->getId(), $copy->getProperty('target')?->getId());
+        } finally {
+            $copy->delete();
+            $source->delete();
         }
     }
 
