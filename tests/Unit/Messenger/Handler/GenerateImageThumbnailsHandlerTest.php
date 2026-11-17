@@ -38,8 +38,6 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
 
     private const THUMBNAIL_NAME = 'pre_generate_unittest';
 
-    private const CHECKSUM = 'abc123';
-
     private LongRunningHelper $longRunningHelper;
 
     protected function setUp(): void
@@ -68,7 +66,7 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
 
     public function testEveryVariantIsGeneratedWithoutDeferring(): void
     {
-        $image = $this->createImage(self::CHECKSUM);
+        $image = $this->createImage();
 
         $options = [];
         $thumbnail = $this->createMock(ThumbnailInterface::class);
@@ -95,28 +93,12 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
 
     public function testVariantsBeyondTheLimitAreLeftToTheRequest(): void
     {
-        $image = $this->createImage(self::CHECKSUM);
+        $image = $this->createImage();
         $image->expects(self::exactly(3))
             ->method('getThumbnail')
             ->willReturn($this->createMock(ThumbnailInterface::class));
 
         $this->handle(maxVariantsPerConfig: 3);
-    }
-
-    public function testStaleMessageIsIgnored(): void
-    {
-        $image = $this->createImage('checksum-of-a-newer-binary');
-        $image->expects(self::never())->method('getThumbnail');
-
-        $this->handle();
-    }
-
-    public function testImageWithoutChecksumIsIgnored(): void
-    {
-        $image = $this->createImage(null);
-        $image->expects(self::never())->method('getThumbnail');
-
-        $this->handle();
     }
 
     public function testMissingImageIsIgnored(): void
@@ -135,7 +117,7 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
 
     public function testMissingThumbnailConfigurationIsIgnored(): void
     {
-        $image = $this->createImage(self::CHECKSUM);
+        $image = $this->createImage();
         $image->expects(self::never())->method('getThumbnail');
 
         $this->handle(thumbnailName: self::THUMBNAIL_NAME . '_missing');
@@ -143,7 +125,7 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
 
     public function testUnsupportedVariantDoesNotStopTheOthers(): void
     {
-        $image = $this->createImage(self::CHECKSUM);
+        $image = $this->createImage();
 
         $failing = $this->createMock(ThumbnailInterface::class);
         $failing->method('getPath')->willThrowException(new ThumbnailFormatNotSupportedException());
@@ -158,7 +140,7 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
 
     public function testTemporaryFilesAreRemovedWhenGenerationFails(): void
     {
-        $image = $this->createImage(self::CHECKSUM);
+        $image = $this->createImage();
 
         $thumbnail = $this->createMock(ThumbnailInterface::class);
         $thumbnail->method('getPath')->willThrowException(new RuntimeException('storage unavailable'));
@@ -181,17 +163,13 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
     /**
      * @return Asset\Image&MockObject
      */
-    private function createImage(?string $checksum): Asset\Image
+    private function createImage(): Asset\Image
     {
         $image = $this->getMockBuilder(Asset\Image::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId', 'getThumbnail'])
             ->getMock();
         $image->method('getId')->willReturn(self::ASSET_ID);
-
-        if ($checksum !== null) {
-            $image->setCustomSetting('checksum', $checksum);
-        }
 
         RuntimeCache::set($this->assetCacheKey(), $image);
 
@@ -206,7 +184,7 @@ class GenerateImageThumbnailsHandlerTest extends TestCase
             new VariantResolver(),
             $maxVariantsPerConfig
         );
-        $handler(new GenerateImageThumbnailsMessage(self::ASSET_ID, $thumbnailName, self::CHECKSUM));
+        $handler(new GenerateImageThumbnailsMessage(self::ASSET_ID, $thumbnailName));
     }
 
     private function assetCacheKey(): string

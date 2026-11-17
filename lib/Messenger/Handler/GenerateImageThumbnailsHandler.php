@@ -46,17 +46,8 @@ class GenerateImageThumbnailsHandler
             return;
         }
 
-        if ($image->getCustomSetting('checksum') !== $message->getChecksum()) {
-            // the binary was replaced after this message was queued, that change queued its own message
-            $this->logger->debug(sprintf(
-                'Skipping stale pre-generation of thumbnail "%s" for image %s',
-                $message->getThumbnailName(),
-                $image->getId()
-            ));
-
-            return;
-        }
-
+        // always generated for the binary the image has now: a message queued for an older binary
+        // warms the current one, and the message of the newer upload then finds the files in place
         $config = Config::getByName($message->getThumbnailName());
         if (!$config) {
             $this->logger->warning(sprintf(

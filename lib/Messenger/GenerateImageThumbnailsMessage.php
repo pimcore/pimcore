@@ -15,8 +15,9 @@ namespace Pimcore\Messenger;
 
 /**
  * Asks a worker to generate the variants of one named thumbnail configuration for one image.
- * The checksum identifies the binary the message was queued for, so that a message consumed
- * after the binary was replaced again is a no-op.
+ * It deliberately does not identify the binary it was queued for: the worker generates for the
+ * binary the image has when the message is consumed, so a replacement that did not get an update
+ * task of its own (the per-asset update queue lock was still held) is covered as well.
  *
  * @internal
  */
@@ -24,8 +25,7 @@ class GenerateImageThumbnailsMessage
 {
     public function __construct(
         protected int $id,
-        protected string $thumbnailName,
-        protected string $checksum
+        protected string $thumbnailName
     ) {
     }
 
@@ -37,10 +37,5 @@ class GenerateImageThumbnailsMessage
     public function getThumbnailName(): string
     {
         return $this->thumbnailName;
-    }
-
-    public function getChecksum(): string
-    {
-        return $this->checksum;
     }
 }

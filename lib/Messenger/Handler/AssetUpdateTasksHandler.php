@@ -23,7 +23,6 @@ use Pimcore\Video as VideoAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
-use function is_string;
 use function sprintf;
 
 /**
@@ -58,7 +57,7 @@ class AssetUpdateTasksHandler
 
         try {
             if ($asset instanceof Asset\Image) {
-                $this->processImage($asset);
+                $this->processImage($asset, $message->isDataChanged());
             } elseif ($asset instanceof Asset\Document) {
                 $this->processDocument($asset, $hadProcessingFailure);
             } elseif ($asset instanceof Asset\Video) {
@@ -170,7 +169,7 @@ class AssetUpdateTasksHandler
         }
     }
 
-    private function processImage(Asset\Image $image): void
+    private function processImage(Asset\Image $image, bool $dataChanged = false): void
     {
         // getDimensions() might fail, so assume `false` first
         $imageDimensionsCalculated = false;
@@ -203,7 +202,11 @@ class AssetUpdateTasksHandler
             $this->logger->warning($e->getMessage());
         }
 
-        $this->dispatchThumbnailPreGeneration($image);
+        // a task that was re-queued for an unchanged image (pimcore:assets:add-to-update-task-queue)
+        // must not warm thumbnails for the whole catalog
+        if ($dataChanged) {
+            $this->dispatchThumbnailPreGeneration($image);
+        }
     }
 
     /**
@@ -216,18 +219,9 @@ class AssetUpdateTasksHandler
             return;
         }
 
-        // only the checksum persisted with the binary is used: without one a worker could not tell
-        // a stale message from a current one, and calculating it here would read the source again
-        $checksum = $image->getCustomSetting('checksum');
-        if (!is_string($checksum) || $checksum === '') {
-            $this->logger->debug(sprintf('Image %s has no checksum, skipping thumbnail pre-generation', $image->getId()));
-
-            return;
-        }
-
         foreach (array_unique($this->preGenerateThumbnails) as $thumbnailName) {
             $this->messageBus->dispatch(
-                new GenerateImageThumbnailsMessage((int) $image->getId(), $thumbnailName, $checksum)
+                new GenerateImageThumbnailsMessage((int) $image->getId(), $thumbnailName)
             );
         }
     }

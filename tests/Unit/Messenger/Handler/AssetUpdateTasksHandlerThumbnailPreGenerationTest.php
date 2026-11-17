@@ -30,6 +30,9 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\InMemoryStore;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use function sprintf;
+use function strlen;
+use function unserialize;
 
 /**
  * @internal
@@ -61,7 +64,7 @@ class AssetUpdateTasksHandlerThumbnailPreGenerationTest extends TestCase
 
     public function testNothingIsDispatchedByDefault(): void
     {
-        $this->createImage('abc123');
+        $this->createImage();
 
         $this->handle([]);
 
@@ -70,7 +73,7 @@ class AssetUpdateTasksHandlerThumbnailPreGenerationTest extends TestCase
 
     public function testOneMessagePerConfiguredThumbnailIsDispatchedAfterTheImageWasSaved(): void
     {
-        $image = $this->createImage('abc123');
+        $image = $this->createImage();
 
         $saved = false;
         $image->expects(self::once())->method('save')->willReturnCallback(function () use (&$saved, $image) {
@@ -84,27 +87,41 @@ class AssetUpdateTasksHandlerThumbnailPreGenerationTest extends TestCase
 
         self::assertTrue($saved);
         self::assertSame(
-            [[self::ASSET_ID, 'hero', 'abc123'], [self::ASSET_ID, 'card', 'abc123']],
+            [[self::ASSET_ID, 'hero'], [self::ASSET_ID, 'card']],
             array_map(
-                static fn (GenerateImageThumbnailsMessage $message) => [$message->getId(), $message->getThumbnailName(), $message->getChecksum()],
+                static fn (GenerateImageThumbnailsMessage $message) => [$message->getId(), $message->getThumbnailName()],
                 $this->dispatched
             )
         );
     }
 
-    public function testNothingIsDispatchedWithoutPersistedChecksum(): void
+    /**
+     * `pimcore:assets:add-to-update-task-queue` re-queues the update tasks of images whose binary
+     * did not change, that must not warm the configured thumbnails for the whole catalog.
+     */
+    public function testNothingIsDispatchedForARequeuedUnchangedImage(): void
     {
-        $this->createImage(null);
+        $this->createImage();
 
-        $this->handle(['hero']);
+        $this->handle(['hero'], dataChanged: false);
 
         self::assertSame([], $this->dispatched);
+    }
+
+    public function testMessageSerializedBeforeTheMarkerExistedIsNotABinaryChange(): void
+    {
+        $legacyPayload = sprintf('O:%d:"%s":1:{s:5:"%sid";i:%d;}', strlen(AssetUpdateTasksMessage::class), AssetUpdateTasksMessage::class, "\0*\0", self::ASSET_ID);
+        $message = unserialize($legacyPayload);
+
+        self::assertInstanceOf(AssetUpdateTasksMessage::class, $message);
+        self::assertSame(self::ASSET_ID, $message->getId());
+        self::assertFalse($message->isDataChanged());
     }
 
     /**
      * @return Asset\Image&MockObject
      */
-    private function createImage(?string $checksum): Asset\Image
+    private function createImage(): Asset\Image
     {
         $image = $this->getMockBuilder(Asset\Image::class)
             ->disableOriginalConstructor()
@@ -125,10 +142,6 @@ class AssetUpdateTasksHandlerThumbnailPreGenerationTest extends TestCase
         $image->method('getDimensions')->willReturn(['width' => 800, 'height' => 600]);
         $image->method('getThumbnail')->willReturn($this->createMock(ThumbnailInterface::class));
 
-        if ($checksum !== null) {
-            $image->setCustomSetting('checksum', $checksum);
-        }
-
         RuntimeCache::set($this->assetCacheKey(), $image);
 
         return $image;
@@ -137,7 +150,7 @@ class AssetUpdateTasksHandlerThumbnailPreGenerationTest extends TestCase
     /**
      * @param string[] $preGenerateThumbnails
      */
-    private function handle(array $preGenerateThumbnails): void
+    private function handle(array $preGenerateThumbnails, bool $dataChanged = true): void
     {
         $messageBus = $this->createMock(MessageBusInterface::class);
         $messageBus->method('dispatch')->willReturnCallback(function (object $message) {
@@ -153,7 +166,7 @@ class AssetUpdateTasksHandlerThumbnailPreGenerationTest extends TestCase
             $messageBus,
             $preGenerateThumbnails
         );
-        $handler(new AssetUpdateTasksMessage(self::ASSET_ID));
+        $handler(new AssetUpdateTasksMessage(self::ASSET_ID, $dataChanged));
     }
 
     private function assetCacheKey(): string

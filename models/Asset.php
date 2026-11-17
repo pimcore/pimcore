@@ -660,7 +660,7 @@ class Asset extends Element\AbstractElement
                 if ($this->getDataChanged()) {
                     $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
                     if (in_array($this->getType(), ['image', 'video', 'document'])) {
-                        $this->addToUpdateTaskQueue();
+                        $this->addToUpdateTaskQueue(true);
                     }
                 }
 
@@ -2301,24 +2301,28 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      * public because it's also used by pimcore/admin-ui-classic-bundle
+     *
+     * @param bool $dataChanged whether the binary of the asset changed, see AssetUpdateTasksMessage
      */
-    public function addToUpdateTaskQueue(): void
+    public function addToUpdateTaskQueue(bool $dataChanged = false): void
     {
         if (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
-            $this->triggerUpdateTask();
+            $this->triggerUpdateTask($dataChanged);
         }
     }
 
     /**
      * @internal
+     *
+     * @param bool $dataChanged whether the binary of the asset changed, see AssetUpdateTasksMessage
      */
-    public function triggerUpdateTask(): void
+    public function triggerUpdateTask(bool $dataChanged = false): void
     {
         /** @var LockInterface $lock */
         $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
         if ($lock->acquire()) {
             $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
-            $message = new AssetUpdateTasksMessage($this->getId());
+            $message = new AssetUpdateTasksMessage($this->getId(), $dataChanged);
 
             $bus->dispatch($message);
         }

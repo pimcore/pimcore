@@ -562,7 +562,7 @@ final class Configuration implements ConfigurationInterface
                                         ->children()
                                             ->arrayNode('definitions')
                                                 ->info('Names of the thumbnail configurations to generate. Every listed configuration is generated for every uploaded or replaced image, so list only those most images are actually requested with.')
-                                                ->scalarPrototype()->cannotBeEmpty()->end()
+                                                ->stringPrototype()->cannotBeEmpty()->end()
                                                 ->defaultValue([])
                                             ->end()
                                             ->integerNode('max_variants_per_config')
