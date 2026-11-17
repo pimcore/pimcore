@@ -14,12 +14,18 @@ services:
             - '@logger'
             - '@Pimcore\Helper\LongRunningHelper'
             - '@lock.factory'
-            - '@messenger.bus.pimcore-core'
-            - '%pimcore.assets.image.thumbnails.pre_generate.definitions%'
         tags:
             - { name: messenger.message_handler }
 
     Pimcore\Model\Asset\Image\Thumbnail\VariantResolver: ~
+
+    # public: fetched from the container by Asset::save()
+    Pimcore\Model\Asset\Image\Thumbnail\PreGenerationDispatcher:
+        public: true
+        arguments:
+            - '@messenger.bus.pimcore-core'
+            - '@logger'
+            - '%pimcore.assets.image.thumbnails.pre_generate.definitions%'
 
     Pimcore\Messenger\Handler\GenerateImageThumbnailsHandler:
         arguments:

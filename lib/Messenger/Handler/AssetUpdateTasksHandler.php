@@ -16,13 +16,11 @@ namespace Pimcore\Messenger\Handler;
 use Exception;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
-use Pimcore\Messenger\GenerateImageThumbnailsMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Pimcore\Video as VideoAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Messenger\MessageBusInterface;
 use function sprintf;
 
 /**
@@ -33,10 +31,7 @@ class AssetUpdateTasksHandler
     public function __construct(
         protected LoggerInterface $logger,
         protected LongRunningHelper $longRunningHelper,
-        protected LockFactory $lockFactory,
-        protected ?MessageBusInterface $messageBus = null,
-        /** @var string[] */
-        protected array $preGenerateThumbnails = []
+        protected LockFactory $lockFactory
     ) {
     }
 
@@ -57,7 +52,7 @@ class AssetUpdateTasksHandler
 
         try {
             if ($asset instanceof Asset\Image) {
-                $this->processImage($asset, $message->isDataChanged());
+                $this->processImage($asset);
             } elseif ($asset instanceof Asset\Document) {
                 $this->processDocument($asset, $hadProcessingFailure);
             } elseif ($asset instanceof Asset\Video) {
@@ -169,7 +164,7 @@ class AssetUpdateTasksHandler
         }
     }
 
-    private function processImage(Asset\Image $image, bool $dataChanged = false): void
+    private function processImage(Asset\Image $image): void
     {
         // getDimensions() might fail, so assume `false` first
         $imageDimensionsCalculated = false;
@@ -200,29 +195,6 @@ class AssetUpdateTasksHandler
             $image->generateLowQualityPreview();
         } catch (Exception $e) {
             $this->logger->warning($e->getMessage());
-        }
-
-        // a task that was re-queued for an unchanged image (pimcore:assets:add-to-update-task-queue)
-        // must not warm thumbnails for the whole catalog
-        if ($dataChanged) {
-            $this->dispatchThumbnailPreGeneration($image);
-        }
-    }
-
-    /**
-     * Queues the configured named thumbnails (`pimcore.assets.image.thumbnails.pre_generate`) of an
-     * image whose binary just changed. Runs after the image was saved for the reason given above.
-     */
-    private function dispatchThumbnailPreGeneration(Asset\Image $image): void
-    {
-        if (!$this->messageBus || !$this->preGenerateThumbnails) {
-            return;
-        }
-
-        foreach (array_unique($this->preGenerateThumbnails) as $thumbnailName) {
-            $this->messageBus->dispatch(
-                new GenerateImageThumbnailsMessage((int) $image->getId(), $thumbnailName)
-            );
         }
     }
 }

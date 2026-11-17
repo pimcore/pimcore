@@ -16,8 +16,8 @@ namespace Pimcore\Messenger;
 /**
  * Asks a worker to generate the variants of one named thumbnail configuration for one image.
  * It deliberately does not identify the binary it was queued for: the worker generates for the
- * binary the image has when the message is consumed, so a replacement that did not get an update
- * task of its own (the per-asset update queue lock was still held) is covered as well.
+ * binary the image has when the message is consumed, and the message of a newer upload then finds
+ * the files in place.
  *
  * @internal
  */

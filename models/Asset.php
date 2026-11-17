@@ -39,6 +39,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\Asset\Folder;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
+use Pimcore\Model\Asset\Image\Thumbnail\PreGenerationDispatcher;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
@@ -660,7 +661,13 @@ class Asset extends Element\AbstractElement
                 if ($this->getDataChanged()) {
                     $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
                     if (in_array($this->getType(), ['image', 'video', 'document'])) {
-                        $this->addToUpdateTaskQueue(true);
+                        $this->addToUpdateTaskQueue();
+                    }
+
+                    // not left to the update task: that one is not queued while another task of this
+                    // asset is pending, and it is re-queued for unchanged binaries as well
+                    if ($this instanceof Asset\Image) {
+                        Pimcore::getContainer()->get(PreGenerationDispatcher::class)->dispatch($this);
                     }
                 }
 
@@ -2301,28 +2308,24 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      * public because it's also used by pimcore/admin-ui-classic-bundle
-     *
-     * @param bool $dataChanged whether the binary of the asset changed, see AssetUpdateTasksMessage
      */
-    public function addToUpdateTaskQueue(bool $dataChanged = false): void
+    public function addToUpdateTaskQueue(): void
     {
         if (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
-            $this->triggerUpdateTask($dataChanged);
+            $this->triggerUpdateTask();
         }
     }
 
     /**
      * @internal
-     *
-     * @param bool $dataChanged whether the binary of the asset changed, see AssetUpdateTasksMessage
      */
-    public function triggerUpdateTask(bool $dataChanged = false): void
+    public function triggerUpdateTask(): void
     {
         /** @var LockInterface $lock */
         $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
         if ($lock->acquire()) {
             $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
-            $message = new AssetUpdateTasksMessage($this->getId(), $dataChanged);
+            $message = new AssetUpdateTasksMessage($this->getId());
 
             $bus->dispatch($message);
         }

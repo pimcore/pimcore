@@ -18,28 +18,12 @@ namespace Pimcore\Messenger;
  */
 class AssetUpdateTasksMessage
 {
-    /**
-     * Not a promoted property on purpose: a message serialized before this property existed
-     * has to fall back to the default when it is consumed after an update.
-     */
-    protected bool $dataChanged = false;
-
-    /**
-     * @param bool $dataChanged whether the task was queued because the binary of the asset changed
-     *                          (as opposed to re-queueing an unchanged asset)
-     */
-    public function __construct(protected int $id, bool $dataChanged = false)
+    public function __construct(protected int $id)
     {
-        $this->dataChanged = $dataChanged;
     }
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function isDataChanged(): bool
-    {
-        return $this->dataChanged;
     }
 }

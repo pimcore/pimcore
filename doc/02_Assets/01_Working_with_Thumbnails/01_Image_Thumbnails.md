@@ -369,7 +369,7 @@ pimcore:
 ```
 
 Whenever the binary of an image is uploaded or replaced, one `Pimcore\Messenger\GenerateImageThumbnailsMessage`
-per listed configuration is dispatched, after the regular asset update tasks of the image are done.
+per listed configuration is dispatched as soon as the image is saved.
 A worker then generates the same files `bin/console pimcore:thumbnails:image` generates for the
 configuration: the configuration itself, its media queries, the DPI factors up to
 `max_srcset_dpi_factor` and the enabled automatic formats (AVIF, WebP). Files that already exist
