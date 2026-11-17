@@ -95,6 +95,9 @@ final class EngineResolver implements ResetInterface
      * values is the loss `pimcore:classificationstore:flip` exists to avoid. A store being created
      * holds nothing yet, so it is the one case that can be given the engine that can hold
      * everything.
+     *
+     * {@see StoreConfig::create()} is the caller in core; a bundle offering store creation of its
+     * own writes the engine onto the configuration it is about to insert the same way.
      */
     public function getPreferredEngine(): ?EngineInterface
     {

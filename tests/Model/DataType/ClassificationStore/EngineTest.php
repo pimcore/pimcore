@@ -646,6 +646,41 @@ class EngineTest extends ModelTestCase
     }
 
     /**
+     * The one path in core that creates a store puts it on the preferred engine; the control is a
+     * configuration built with `new` and saved, which writes no engine and means the default one.
+     */
+    public function testACreatedStoreIsPutOnThePreferredEngine(): void
+    {
+        $created = StoreConfig::create();
+        $createdId = (int) $created->getId();
+        $this->storeIds[] = $createdId;
+
+        $this->assertSame(self::DOCUMENT_ENGINE, $created->getEngine());
+        $this->assertSame(self::DOCUMENT_ENGINE, $this->storedEngine($createdId));
+
+        $this->assertNull($this->storedEngine($this->createStore()));
+    }
+
+    /**
+     * Nothing is written where the preferred engine is not registered, so the store means the
+     * default engine the way every store did before the column existed.
+     */
+    public function testACreatedStoreCarriesNoEngineWhereThePreferredOneIsNotRegistered(): void
+    {
+        $this->rememberRegisteredEngines();
+        $engines = $this->registeredEngines ?? [];
+        unset($engines[self::DOCUMENT_ENGINE]);
+        $this->setRegisteredEngines($engines);
+
+        $created = StoreConfig::create();
+        $createdId = (int) $created->getId();
+        $this->storeIds[] = $createdId;
+
+        $this->assertNull($created->getEngine());
+        $this->assertNull($this->storedEngine($createdId));
+    }
+
+    /**
      * The EAV storage addresses a value by (group, key, language) and holds it in two value
      * columns: a relation's element descriptors have nowhere to go there, so the write is refused
      * rather than normalized into the value column.
