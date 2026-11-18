@@ -18,14 +18,29 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue as MultiValueMarshaller;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Date;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\NumericRange;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Table;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Video;
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 use Pimcore\Model\DataObject\Classificationstore\Service;
@@ -816,5 +831,200 @@ class ServiceTest extends TestCase
         $this->assertInstanceOf(MultiValue::class, $declined);
         $this->assertFalse($declined->permitsUnqualifiedValue());
         $this->assertNull($declined->getDelegate());
+    }
+
+    /**
+     * A key whose TYPE was changed over data already stored for it. The declaration is rewritten and
+     * the stored value is left where it is, so what the type in force reads is of a shape it has no
+     * reading for - and the type reads it as if it had written it itself. The relation list of a key
+     * switched to `input` reached `strlen((string) $data)`
+     * ({@see \Pimcore\Model\DataObject\ClassDefinition\Data\Extension\Text::isEmpty()}), which
+     * in dev is an `ErrorException` and made the object unopenable.
+     *
+     * Asked here rather than of one field type: a `multiValue` key is where the report came from and
+     * not what the question is about, and changing the type of a plain key does exactly the same.
+     *
+     * @dataProvider unreadableStoredValueProvider
+     */
+    public function testAStoredValueOfTheWrongShapeIsNotReadByTheTypeInForce(
+        callable $build,
+        mixed $storedValue,
+        string $message
+    ): void {
+        $this->assertFalse(Service::canReadStoredValue($build(), $storedValue), $message);
+    }
+
+    /**
+     * @return array<string, array{0: callable, 1: mixed, 2: string}>
+     */
+    public static function unreadableStoredValueProvider(): array
+    {
+        $descriptors = [['type' => 'object', 'id' => 4]];
+
+        $cases = [
+            // a value in front of a type that reads a scalar, which is the reported direction
+            'a relation list in front of an input' => [fn () => new Input(), $descriptors],
+            'a relation list in front of a select' => [fn () => new Select(), $descriptors],
+            'a list in front of a checkbox' => [fn () => new Checkbox(), ['a', 'b']],
+            // and in front of a relation, which is the opposite one
+            'a list of strings in front of a relation' => [fn () => new ManyToManyObjectRelation(), ['a', 'b']],
+            'a scalar in front of a relation' => [fn () => new ManyToManyObjectRelation(), 'hello'],
+            'an entry naming no id' => [fn () => new ManyToManyObjectRelation(), [['type' => 'object']]],
+            'an entry whose type is not one' => [
+                fn () => new ManyToManyObjectRelation(),
+                [['type' => ['object'], 'id' => 4]],
+            ],
+            // a to-one relation reads ONE descriptor and a to-many reads a list of them, so each
+            // one refuses the other's shape rather than reading the first member it finds
+            'a list in front of a to-one relation' => [fn () => new ManyToOneRelation(), $descriptors],
+            'one descriptor in front of a to-many relation' => [
+                fn () => new ManyToManyObjectRelation(),
+                ['type' => 'object', 'id' => 4],
+            ],
+            // an advanced relation reads per-entry metadata beside the target
+            'the entries of a plain relation in front of an advanced one' => [
+                fn () => new AdvancedManyToManyObjectRelation(),
+                $descriptors,
+            ],
+            // the structured types, each one reading members it does not check for
+            'a foreign array in front of a consent' => [fn () => new Consent(), ['a', 'b']],
+            'a half consent' => [fn () => new Consent(), ['consent' => true]],
+            'a foreign array in front of a geopoint' => [fn () => new Geopoint(), ['a', 'b']],
+            'a scalar in front of a geopoint' => [fn () => new Geopoint(), '48.2'],
+            'a foreign array in front of a numericRange' => [fn () => new NumericRange(), ['a', 'b']],
+            'a foreign array in front of an rgbaColor' => [fn () => new RgbaColor(), ['r' => 1, 'g' => 2]],
+            'a foreign array in front of a video' => [fn () => new Video(), ['url' => 'x']],
+            'a foreign array in front of a hotspotimage' => [
+                fn () => new Hotspotimage(),
+                ['hotspots' => [], 'marker' => []],
+            ],
+            // and the list-of-structures ones, whose entries reach another type's reading
+            'a list of strings in front of a geopolygon' => [fn () => new Geopolygon(), ['a', 'b']],
+            'points missing a member' => [fn () => new Geopolygon(), [['latitude' => 48.2]]],
+            'a list of foreign structures in front of an imageGallery' => [
+                fn () => new ImageGallery(),
+                [['url' => 'x']],
+            ],
+            // the two types stored as a timestamp, whose value object says nothing about that
+            'a list in front of a date' => [fn () => new Date(), ['a', 'b']],
+            'the bool a checkbox left behind in front of a date' => [fn () => new Date(), true],
+        ];
+
+        $provided = [];
+        foreach ($cases as $message => [$build, $storedValue]) {
+            $provided[$message] = [$build, $storedValue, $message . ' is not read'];
+        }
+
+        return $provided;
+    }
+
+    /**
+     * And a value of the shape the type in force does store is read, so that the check refuses what
+     * is positively wrong rather than everything it has no reading for: emptying the keys of an
+     * installation would be the same bug with a quieter symptom.
+     *
+     * @dataProvider readableStoredValueProvider
+     */
+    public function testAStoredValueOfTheShapeTheTypeStoresIsRead(
+        callable $build,
+        mixed $storedValue,
+        string $message
+    ): void {
+        $this->assertTrue(Service::canReadStoredValue($build(), $storedValue), $message);
+    }
+
+    /**
+     * @return array<string, array{0: callable, 1: mixed, 2: string}>
+     */
+    public static function readableStoredValueProvider(): array
+    {
+        $descriptors = [['type' => 'object', 'id' => 4]];
+        $advanced = [[
+            'element' => ['type' => 'object', 'id' => 4],
+            'fieldname' => 'wrapped',
+            'columns' => ['role'],
+            'data' => ['role' => 'lead'],
+        ]];
+
+        $cases = [
+            'nothing stored' => [fn () => new Input(), null],
+            'the scalar an input stores' => [fn () => new Input(), 'plain'],
+            'the empty string' => [fn () => new Input(), ''],
+            'the false a checkbox stores' => [fn () => new Checkbox(), false],
+            'the timestamp a date stores' => [fn () => new Date(), 1699999999],
+            'the string an EAV column hands a date back as' => [fn () => new Date(), '1699999999'],
+            'the descriptors of a to-many relation' => [fn () => new ManyToManyObjectRelation(), $descriptors],
+            'a relation holding nothing' => [fn () => new ManyToManyObjectRelation(), []],
+            'the single descriptor of a to-one relation' => [
+                fn () => new ManyToOneRelation(),
+                ['type' => 'object', 'id' => 4],
+            ],
+            'the entries of an advanced relation' => [fn () => new AdvancedManyToManyObjectRelation(), $advanced],
+            'the structure a consent stores' => [fn () => new Consent(), ['consent' => true, 'noteId' => 11]],
+            'a consent with no note' => [fn () => new Consent(), ['consent' => false, 'noteId' => null]],
+            'the structure a geopoint stores' => [fn () => new Geopoint(), ['latitude' => 48.2, 'longitude' => 16.37]],
+            'the structure a numericRange stores' => [fn () => new NumericRange(), ['minimum' => 1, 'maximum' => 2]],
+            'the structure an rgbaColor stores' => [
+                fn () => new RgbaColor(),
+                ['r' => 1, 'g' => 2, 'b' => 3, 'a' => 4],
+            ],
+            'the structure a video stores' => [fn () => new Video(), ['type' => 'asset', 'data' => null]],
+            'the structure a hotspotimage stores' => [
+                fn () => new Hotspotimage(),
+                ['hotspots' => [], 'marker' => [], 'crop' => []],
+            ],
+            'the points a geopolygon stores' => [
+                fn () => new Geopolygon(),
+                [['latitude' => 48.2, 'longitude' => 16.37]],
+            ],
+            'a geopolygon holding nothing' => [fn () => new Geopolygon(), []],
+            // the types that hold a list or a structure of their own, which nothing here knows the
+            // members of and which must therefore be handed on whatever they carry
+            'the list a multiselect stores' => [fn () => new Multiselect(), ['a', 'b']],
+            'the rows a table stores' => [fn () => new Table(), [['a', 'b'], ['c', 'd']]],
+        ];
+
+        $provided = [];
+        foreach ($cases as $message => [$build, $storedValue]) {
+            $provided[$message] = [$build, $storedValue, $message . ' is read'];
+        }
+
+        return $provided;
+    }
+
+    /**
+     * A `multiValue` key is answered by its INNER type, through the boundary that resolves which
+     * definition answers for the value: the engines hand this check the key's own definition, so a
+     * wrapper asked as it stands would be answered about the wrapper - which is a relation of no
+     * kind and declares no value type of its own, and therefore refuses nothing.
+     */
+    public function testAMultiValueKeyIsAnsweredByItsInnerType(): void
+    {
+        $descriptors = [['type' => 'object', 'id' => 4]];
+
+        $wrapping = static function (Data $inner): MultiValue {
+            $wrapper = new MultiValue();
+            $wrapper->setDelegateDatatype($inner->getFieldType());
+            $wrapper->setDelegate($inner);
+
+            return $wrapper;
+        };
+
+        $this->assertFalse(
+            Service::canReadStoredValue($wrapping(new Input()), $descriptors),
+            'the inner type reads a scalar, so the relation list left behind is not read'
+        );
+        $this->assertFalse(
+            Service::canReadStoredValue($wrapping($wrapping(new Consent())), ['a', 'b']),
+            'and a chain of wrappers is answered by the type at the end of it'
+        );
+        $this->assertTrue(
+            Service::canReadStoredValue($wrapping(new Input()), 'plain'),
+            'while the value that inner type does store is read'
+        );
+        $this->assertTrue(
+            Service::canReadStoredValue(new MultiValue(), ['a', 'b']),
+            'a wrapper naming no inner type normalizes the plain value unchanged and refuses nothing'
+        );
     }
 }

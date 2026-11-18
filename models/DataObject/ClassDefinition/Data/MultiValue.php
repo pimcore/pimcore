@@ -44,8 +44,7 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  *  - the value itself: `normalize()`, `denormalize()`, `getDataForEditmode()`,
  *    `getDataFromEditmode()`, `getVersionPreview()`, `isEmpty()`, `getPhpdocInputType()`,
- *    `getPhpdocReturnType()` - with the one value that is NOT handed on being a stored one the inner
- *    type in force cannot read, which `denormalize()` reads as the key's empty value instead
+ *    `getPhpdocReturnType()`
  *  - validation: `checkValidity()`, after the wrapper's own mandatory check - the key's assignment to
  *    a group sets that flag on THIS definition, so delegating alone would never consult it. That
  *    check asks the inner type whether the value is empty, so the wrapper refuses as mandatory
@@ -373,25 +372,17 @@ class MultiValue extends Data implements
      * The value read back out of its stored form, the other half of {@see self::normalize()} and
      * delegate-less for the same reason.
      *
-     * A stored value the inner type IN FORCE cannot read is read as the key's empty value rather
-     * than handed to it, {@see DataObject\Classificationstore\Service::canReadStoredValue()}.
-     * Changing a key's inner type rewrites the declaration and leaves the data stored under the old
-     * one where it is, so what the type reads may be of a shape it has no reading for - which is
-     * raised from wherever the value is first touched rather than here: the relation list of a key
-     * switched to `input` reached `strlen((string) $data)` and the object could not be opened.
-     *
-     * This is the one place a stored value reaches the inner type through - on either engine and in
-     * the normalized tree {@see DataObject\ClassDefinition\Data\Classificationstore::denormalize()}
-     * builds a store from - and the one place that knows both the value and the inner type.
+     * Whether the inner type can read what is stored is NOT asked here. Changing the inner type over
+     * data already stored for a key leaves a value of one shape in front of a type that reads
+     * another, and that is not a property of this wrapper: changing the type of a PLAIN key does
+     * exactly the same, so the question is put at the places a stored value meets the definition in
+     * force - both engines and the relation resolver,
+     * {@see DataObject\Classificationstore\Service::canReadStoredValue()} - and a value refused
+     * there never reaches this method at all.
      */
     public function denormalize(mixed $value, array $params = []): mixed
     {
         $fd = $this->getDelegate();
-
-        if (!DataObject\Classificationstore\Service::canReadStoredValue($fd, $value)) {
-            // left where it is and not interpreted: a type change preserves nothing
-            return null;
-        }
 
         return $fd instanceof NormalizerInterface ? $fd->denormalize($value, $params) : $value;
     }

@@ -247,76 +247,40 @@ class MultiValueTest extends TestCase
     }
 
     /**
-     * A key whose inner type was CHANGED over data already stored for it. The declaration is
-     * rewritten and the stored value is left where it is, so what the type in force reads is of a
-     * shape it has no reading for - and every reader of the key then touches it: the relation list
-     * of a key switched to `input` reached `strlen((string) $data)`
-     * ({@see Data\Extension\Text::isEmpty()}), which in dev is an `ErrorException` and made the
-     * object unopenable.
+     * The wrapper does NOT judge what it is handed. A key whose inner type was changed over data
+     * already stored for it holds a value of one shape in front of a type that reads another, and
+     * that is not a property of this wrapper - changing the type of a PLAIN key does exactly the
+     * same. So the question is put where a stored value meets the definition in force, both engines
+     * and the relation resolver ({@see Service::canReadStoredValue()}), a value refused there never
+     * reaches this method, and the wrapper keeps forwarding whatever it is given.
      *
-     * It is read as the key's empty value instead. Nothing migrates or rewrites the leftovers: a
-     * type change preserves nothing, so they are simply not interpreted.
+     * Pinned because the obvious place to put the check is here, it was here, and a check here
+     * covers `multiValue` keys alone while firing a second time on every read that is already
+     * answered.
      */
-    public function testAStoredStructureIsNotReadByAScalarInnerType(): void
+    public function testTheWrapperForwardsAStoredValueWithoutJudgingItsShape(): void
     {
-        $wrapper = $this->wrapping($this->input());
-
-        // what a manyToManyObjectRelation inner type stored before the type was switched
         $stored = [['type' => 'object', 'id' => 4]];
 
-        $this->assertNull($wrapper->denormalize($stored), 'the relation list is not read as an input');
-        $this->assertTrue(
-            $wrapper->isEmpty($wrapper->denormalize($stored)),
-            'and the value the read answers with is the key holding nothing, which is what raised'
-        );
-
-        foreach ([new Checkbox(), new Data\Select(), new Data\Numeric()] as $inner) {
-            $inner->setName('wrapped');
-
-            $this->assertNull(
-                $this->wrapping($inner)->denormalize($stored),
-                'every inner type whose value is a scalar answers the same'
-            );
-        }
-    }
-
-    /**
-     * And the opposite direction, which is the same change the other way round: a value that is not
-     * a list of relation descriptors in front of a RELATION inner type. Every relation type reads
-     * `$elementData['type']` off each entry without asking whether it is there
-     * ({@see ManyToManyObjectRelation::denormalize()}), so a list of plain strings raised a
-     * `TypeError` and a list of foreign structures an undefined-key warning.
-     */
-    public function testAStoredValueThatNamesNoTargetIsNotReadByARelationInnerType(): void
-    {
-        $wrapper = $this->wrapping($this->relation());
-
-        $unreadable = [
-            'a list a multiselect stored' => ['a', 'b'],
-            'a list of foreign structures' => [['latitude' => 1.0, 'longitude' => 2.0]],
-            'a scalar an input stored' => 'hello',
-            'an entry naming no id' => [['type' => 'object']],
-            'an entry whose type is not one' => [['type' => ['object'], 'id' => 4]],
-        ];
-
-        foreach ($unreadable as $case => $stored) {
-            $this->assertNull($wrapper->denormalize($stored), $case . ' is not read as a relation');
-        }
-
         $this->assertSame(
-            [],
-            $wrapper->denormalize([]),
-            'an empty list is a relation holding nothing and is read, not refused'
+            $stored,
+            $this->wrapping($this->input())->denormalize($stored),
+            'an input forwards what it is given, and the store is what decides whether it may be'
+        );
+
+        $this->assertFalse(
+            Service::canReadStoredValue($this->wrapping($this->input()), $stored),
+            'and the check that refuses it is answered by the inner type, off the wrapper'
         );
     }
 
     /**
-     * And a value of the shape the inner type in force does store round-trips untouched, so the
-     * guard is "refuse what is positively wrong" rather than "refuse what is not a scalar": a
-     * `multiselect` holds a list of its own and a `geopoint` a structure of its own, and refusing
-     * those would drop the values those keys actually hold.
+     * The stored form of a value round-trips through the wrapper to the inner type that wrote it,
+     * whatever shape that type's own stored form has: a relation's descriptors, the list a
+     * `multiselect` holds, the structure a `geopoint` holds and the scalar an `input` holds all
+     * reach the inner type unchanged.
      */
-    public function testACorrectlyShapedStoredValueStillRoundTripsUnchanged(): void
+    public function testAStoredValueRoundTripsThroughTheWrapperToTheInnerType(): void
     {
         $descriptors = [['type' => 'object', 'id' => 4]];
 
@@ -346,16 +310,15 @@ class MultiValueTest extends TestCase
         $this->assertSame(
             'plain',
             $this->wrapping($this->input())->denormalize('plain'),
-            'and the scalar an input stores is read as it stands'
+            'and the scalar an input stores reaches it as it stands'
         );
     }
 
     /**
-     * A to-ONE relation normalizes to a single descriptor rather than to a list of them, which the
-     * check has to read as the value it is: refusing it would empty every `multiValue<manyToOneRelation>`
-     * key in the installation.
+     * Including the single descriptor a to-ONE relation normalizes to, which is one value rather
+     * than a list of them - the wrapper hands on what it is given either way.
      */
-    public function testTheSingleDescriptorOfAToOneRelationIsRead(): void
+    public function testTheSingleDescriptorOfAToOneRelationIsForwardedAsTheValueItIs(): void
     {
         $descriptor = ['type' => 'object', 'id' => 4];
 

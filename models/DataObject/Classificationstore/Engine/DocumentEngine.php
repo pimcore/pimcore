@@ -1828,6 +1828,15 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
+     * A value the key's type cannot read is read as the key's empty value rather than handed to it,
+     * {@see Service::canReadStoredValue()}: changing a key's type leaves the data stored under the
+     * old one where it is, and the type in force then reads a shape it has no reading for.
+     *
+     * Asked of the value AFTER the marshaller, which is the value `denormalize()` is about to be
+     * given and the only form the question can be put about. Before it, the value of the one type
+     * that reaches a marshaller here is ciphertext - a string whatever the delegate holds - so the
+     * check would be answered about the envelope rather than about the value inside it.
+     *
      * @param bool $enveloped what the entry's {@see self::ENVELOPE_QUALIFIER} said about its value
      */
     private function decodeValue(Data $fd, mixed $value, bool $enveloped, ?Concrete $object): mixed
@@ -1845,6 +1854,11 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             if ($enveloped) {
                 $value = $this->openAJsonEnvelope($value);
             }
+        }
+
+        if (!Service::canReadStoredValue($fd, $value)) {
+            // written by a type this key no longer has, and left where it is rather than interpreted
+            return null;
         }
 
         return $fd->denormalize($value, ['object' => $object, 'fieldDefinition' => $fd]);

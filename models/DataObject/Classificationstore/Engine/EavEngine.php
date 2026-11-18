@@ -359,10 +359,20 @@ final class EavEngine extends AbstractDao implements EngineInterface
                     $value = $value['value'];
                 }
 
-                $value = $fd->denormalize($value, [
-                    'object' => $object,
-                    'fieldDefinition' => $fd,
-                ]);
+                // a value the key's type cannot read is read as the key's empty value rather than
+                // handed to it, {@see Service::canReadStoredValue()}: changing a key's type leaves
+                // the data stored under the old one in the row, and the type in force then reads a
+                // shape it has no reading for. Asked of the value AFTER the marshaller, which is the
+                // value `denormalize()` is about to be given - before it the value is still the two
+                // columns of the row, in which every value looks like an array
+                if (!Service::canReadStoredValue($fd, $value)) {
+                    $value = null;
+                } else {
+                    $value = $fd->denormalize($value, [
+                        'object' => $object,
+                        'fieldDefinition' => $fd,
+                    ]);
+                }
             }
 
             $language = $item['language'];

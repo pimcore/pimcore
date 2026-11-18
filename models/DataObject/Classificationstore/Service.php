@@ -45,6 +45,71 @@ class Service
     private const SCALAR_VALUE_DECLARATIONS = ['string', 'int', 'float', 'bool'];
 
     /**
+     * The members of a stored value that the `denormalize()` of a field type reads WITHOUT asking
+     * whether they are there, by field type - `$value['consent']` after an `is_array()` and nothing
+     * else ({@see DataObject\ClassDefinition\Data\Consent::denormalize()}). A stored value that does
+     * not carry them is not a value of that type, {@see self::canReadStoredValue()}.
+     *
+     * Every entry was read off the type's own `normalize()` beside its `denormalize()`, so that the
+     * members required here are the ones that type writes: `quantityValue` and `numericRange`
+     * normalize through a `toArray()` of their value object rather than inline, and `video` writes
+     * only `type` unconditionally - its other members are read with a `??` and are not required.
+     *
+     * A list rather than something derived, and it has to be: which members a `denormalize()` reads
+     * unguarded is a property of that method's body, and nothing about a field type declares it.
+     * A type that is not named here is not refused, {@see self::canReadStoredValue()}.
+     *
+     * @var array<string, string[]>
+     */
+    private const MEMBERS_READ_BY_TYPE = [
+        'consent' => ['consent', 'noteId'],
+        'externalImage' => ['url'],
+        'geobounds' => ['northEast', 'southWest'],
+        'geopoint' => ['latitude', 'longitude'],
+        'hotspotimage' => ['hotspots', 'marker', 'crop'],
+        'inputQuantityValue' => ['value', 'unitId'],
+        'numericRange' => ['minimum', 'maximum'],
+        'quantityValue' => ['value', 'unitId'],
+        'quantityValueRange' => ['minimum', 'maximum', 'unitId'],
+        'rgbaColor' => ['r', 'g', 'b', 'a'],
+        'video' => ['type'],
+    ];
+
+    /**
+     * The field types whose stored value is a LIST of what another type stores one of, each entry of
+     * which is handed to that type's `denormalize()` and read the way it reads its own value
+     * ({@see DataObject\ClassDefinition\Data\Geopolygon::denormalize()}).
+     *
+     * @var array<string, string>
+     */
+    private const LIST_ENTRY_TYPE = [
+        'geopolygon' => 'geopoint',
+        'geopolyline' => 'geopoint',
+        'imageGallery' => 'hotspotimage',
+    ];
+
+    /**
+     * What an ADVANCED relation reads off every entry of a stored value beside the target itself
+     * ({@see DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::denormalize()}), which is
+     * what tells its stored form from a plain relation's: both are a list of entries naming a
+     * target, and an entry of a plain one carries none of these.
+     *
+     * @var string[]
+     */
+    private const ADVANCED_RELATION_MEMBERS = ['element', 'fieldname', 'columns', 'data'];
+
+    /**
+     * The field types whose stored form is a timestamp although the value they hold is an object, so
+     * that the declaration {@see self::SCALAR_VALUE_DECLARATIONS} reads says nothing about it: both
+     * hand the stored value to a helper declaring `float|int|string`
+     * ({@see DataObject\ClassDefinition\Data\Date::denormalize()}), which raises a `TypeError` for
+     * an array as well as for the `bool` a `checkbox` leaves behind.
+     *
+     * @var string[]
+     */
+    private const TYPES_STORED_AS_A_TIMESTAMP = ['date', 'datetime'];
+
+    /**
      * @var array Used for storing definitions
      */
     protected static array $definitionsCache = [];
@@ -216,11 +281,11 @@ class Service
     /**
      * Whether the definition that answers for the VALUE of a key can read this stored value at all.
      *
-     * Changing the inner type of a `multiValue` key rewrites the key's DECLARATION and leaves the
-     * data stored under the old one where it is - nothing migrates it, because the product's
-     * position is that a type change preserves nothing. What is left is a stored value of one shape
-     * in front of a type that reads another, and every reader of such a key then reads it as if the
-     * new type had written it: a relation list reached `strlen((string) $data)`
+     * Changing the type of a key - or the inner type of a `multiValue` key - rewrites the key's
+     * DECLARATION and leaves the data stored under the old one where it is. Nothing migrates it,
+     * because the product's position is that a type change preserves nothing. What is left is a
+     * stored value of one shape in front of a type that reads another, and the type then reads it as
+     * if it had written it itself: a relation list reached `strlen((string) $data)`
      * ({@see DataObject\ClassDefinition\Data\Extension\Text::isEmpty()}) and an ordinary list
      * reached `$elementData['type']`
      * ({@see DataObject\ClassDefinition\Data\ManyToManyObjectRelation::denormalize()}). In dev the
@@ -228,26 +293,32 @@ class Service
      * the object itself is fine, reading the key is what raises.
      *
      * So the leftovers are simply not interpreted: a value this answers false for is read as the
-     * key's empty value, {@see DataObject\ClassDefinition\Data\MultiValue::denormalize()}, which is
-     * the one place that knows both the stored value and the inner type, and the one place a stored
-     * value reaches the inner type through on either engine as well as in the normalized tree
-     * {@see DataObject\ClassDefinition\Data\Classificationstore::denormalize()} builds a store from.
+     * key's empty value. It is asked at the three places a STORED value meets the definition in
+     * force, which is where the question belongs rather than in any one field type:
+     * {@see Engine\DocumentEngine::decodeValue()} and {@see Engine\EavEngine::load()} for a value
+     * the engine reads back itself, and {@see RelationResolver::resolve()} for the descriptors of a
+     * relation-typed key, which the document engine leaves wrapped until the key is read.
      *
-     * Two shapes are refused, which are the two directions a type change goes in:
+     * What is refused, each arm being the precondition of code that reads the value without
+     * checking it:
      *
-     *  - a value of any other shape in front of a RELATION inner type. Its stored form is the
-     *    descriptors its own `normalize()` produced, and the entry shape is asked of the one place
-     *    that knows it, {@see RelationDescriptor::describeOne()} - a scalar is refused for not being
-     *    a list, and a list of anything else for not naming targets. An empty list is a relation
-     *    holding nothing and is read
-     *  - an ARRAY in front of an inner type whose value is a scalar, read off the type declaration
-     *    of the value it holds the way {@see KeyTypeSupport::isHeldInValueColumns()} reads what it
-     *    normalizes to. `input`, `select`, `numeric` and `checkbox` are among the types that declare
-     *    one, and every reader of such a value casts it
+     *  - for a RELATION inner type, anything that does not name targets the way that relation
+     *    normalizes them: a list of descriptors, the single descriptor a to-one normalizes to, or
+     *    the per-entry metadata an advanced relation also reads,
+     *    {@see self::ADVANCED_RELATION_MEMBERS}. The entry shape is asked of the one place that
+     *    knows it, {@see RelationDescriptor::describeOne()}. An empty list is a relation holding
+     *    nothing and is read
+     *  - for a type whose stored value is a STRUCTURE, an array that does not carry the members that
+     *    type reads off it, {@see self::MEMBERS_READ_BY_TYPE} - and a list whose entries do not,
+     *    where the stored value is a list of them, {@see self::LIST_ENTRY_TYPE}
+     *  - for a type whose value is a SCALAR, an array, read off the type declaration of the value it
+     *    holds the way {@see KeyTypeSupport::isHeldInValueColumns()} reads what it normalizes to;
+     *    and for the two types stored as a timestamp, anything that is not one,
+     *    {@see self::TYPES_STORED_AS_A_TIMESTAMP}
      *
      * Nothing else is refused, and a value whose shape is not positively wrong is handed on
-     * unchanged: a `multiselect` and a `table` hold a list of their own, a `geopoint` and a `consent`
-     * hold a structure of their own, and a guard that refused a structure it had no reading for
+     * unchanged: a `multiselect` and a `table` hold a list of their own and a `structuredTable` a
+     * structure whose members it does not read, and a guard refusing a shape it has no reading for
      * would drop the values those keys actually hold. Nor is a `Throwable` caught anywhere on the
      * way - a swallowed exception here would hide the bugs this check is not about.
      */
@@ -258,34 +329,98 @@ class Service
         $definition = self::getValueDefinition($definition);
 
         if ($definition === null || $storedValue === null) {
-            // no inner type reads the plain value unchanged, and nothing stored is nothing to read
+            // a wrapper naming no inner type reads the plain value unchanged, and nothing stored is
+            // nothing to read
             return true;
         }
 
         if ($definition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-            return self::namesRelationTargetsOnly($storedValue);
+            return self::namesRelationTargets($definition, $storedValue);
+        }
+
+        $type = $definition->getFieldType();
+
+        if (isset(self::LIST_ENTRY_TYPE[$type])) {
+            return self::isAListCarrying($storedValue, self::MEMBERS_READ_BY_TYPE[self::LIST_ENTRY_TYPE[$type]]);
+        }
+
+        if (isset(self::MEMBERS_READ_BY_TYPE[$type])) {
+            return is_array($storedValue) && self::carries($storedValue, self::MEMBERS_READ_BY_TYPE[$type]);
+        }
+
+        if (in_array($type, self::TYPES_STORED_AS_A_TIMESTAMP, true)) {
+            return is_int($storedValue) || is_float($storedValue) || is_string($storedValue);
         }
 
         return !is_array($storedValue) || !self::declaresAScalarValue($definition);
     }
 
     /**
-     * Whether every entry of this stored value names a relation target, which is what the stored
-     * form of a relation-typed key is.
+     * Whether this stored value names the targets of this relation the way the relation itself
+     * normalizes them, which is what its `denormalize()` reads off every entry unchecked.
      */
-    private static function namesRelationTargetsOnly(mixed $storedValue): bool
+    private static function namesRelationTargets(
+        DataObject\ClassDefinition\Data\Relations\AbstractRelations $definition,
+        mixed $storedValue
+    ): bool {
+        if (!is_array($storedValue)) {
+            return false;
+        }
+
+        if ($definition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
+            // a to-one relation normalizes to ONE descriptor; handed the list a to-many one left
+            // behind it reads `$value['type']` off the list itself
+            return RelationDescriptor::describeOne($storedValue) !== null;
+        }
+
+        $entryMembers = $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
+            || $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+                ? self::ADVANCED_RELATION_MEMBERS
+                : [];
+
+        foreach ($storedValue as $entry) {
+            if (!is_array($entry)
+                || RelationDescriptor::describeOne($entry) === null
+                || !self::carries($entry, $entryMembers)
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether this stored value is a list of structures every one of which carries these members.
+     *
+     * @param string[] $members
+     */
+    private static function isAListCarrying(mixed $storedValue, array $members): bool
     {
         if (!is_array($storedValue)) {
             return false;
         }
 
-        if (RelationDescriptor::describeOne($storedValue) !== null) {
-            // the single descriptor a to-one relation normalizes to, rather than a list of them
-            return true;
+        foreach ($storedValue as $entry) {
+            if (!is_array($entry) || !self::carries($entry, $members)) {
+                return false;
+            }
         }
 
-        foreach ($storedValue as $entry) {
-            if (!is_array($entry) || RelationDescriptor::describeOne($entry) === null) {
+        return true;
+    }
+
+    /**
+     * Asked with `array_key_exists()` rather than `isset()`: a member whose value is null is one the
+     * type wrote - a `consent` carries `noteId` with no note - and a reader indexes it either way.
+     *
+     * @param array<array-key, mixed> $value
+     * @param string[] $members
+     */
+    private static function carries(array $value, array $members): bool
+    {
+        foreach ($members as $member) {
+            if (!array_key_exists($member, $value)) {
                 return false;
             }
         }

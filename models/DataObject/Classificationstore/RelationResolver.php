@@ -813,6 +813,16 @@ final class RelationResolver
             return new ResolvedRelation(null, false);
         }
 
+        if (!Service::canReadStoredValue($fieldDefinition, $normalizedValue)) {
+            // the stored value does not name targets the way this relation normalizes them, so it
+            // was written by a type the key no longer has: read as the key holding nothing rather
+            // than handed to a `denormalize()` that reads `$elementData['type']` off every entry,
+            // {@see Service::canReadStoredValue()}. This is where the question is put for a
+            // relation-typed key: the document engine leaves its value wrapped as a descriptor and
+            // never reaches `DocumentEngine::decodeValue()` for one
+            return new ResolvedRelation(null, false);
+        }
+
         $data = $fieldDefinition->denormalize($normalizedValue, [
             'object' => $object,
             'fieldDefinition' => $fieldDefinition,
