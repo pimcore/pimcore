@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\Document;
 
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Model\Document\Link;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -28,6 +29,13 @@ use Pimcore\Tests\Support\Test\TestCase;
  */
 class LinkTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        AttributeSanitizer::setInstance(null);
+
+        parent::tearDown();
+    }
+
     /**
      * @param array<string, string> $values keyed by property name, e.g. 'navigation_target'
      */
@@ -114,5 +122,70 @@ class LinkTest extends TestCase
             . 'title="Visit Example" rel="noopener">Example</a>',
             $html
         );
+    }
+
+    /**
+     * Escaping alone does not neutralize a script-executing URL scheme in an editor-controlled
+     * "direct" link, so the strict link sanitizer policy has to reject it.
+     *
+     * @dataProvider scriptExecutingUrlProvider
+     */
+    public function testGetHtmlRendersEmptyHrefForScriptExecutingUrlUnderStrictPolicy(string $url): void
+    {
+        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+
+        $link = new Link();
+        $link->setLinktype('direct');
+        $link->setDirect($url);
+
+        $this->setDocumentProperties($link, [
+            'navigation_name' => 'poc link',
+        ]);
+
+        $this->assertSame('<a href="" >poc link</a>', $link->getHtml());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function scriptExecutingUrlProvider(): array
+    {
+        return [
+            'javascript' => ['javascript:alert(document.domain)'],
+            'mixed case with whitespace' => [" JaVa\tScRiPt:alert(document.domain)"],
+            'vbscript' => ['vbscript:msgbox(1)'],
+            'html data uri' => ['data:text/html,<script>alert(document.domain)</script>'],
+        ];
+    }
+
+    public function testGetHtmlKeepsRegularUrlUnderStrictPolicy(): void
+    {
+        AttributeSanitizer::setInstance(AttributeSanitizer::strict());
+
+        $link = new Link();
+        $link->setLinktype('direct');
+        $link->setDirect('https://example.com/path?a=1');
+
+        $this->setDocumentProperties($link, [
+            'navigation_name' => 'Example',
+        ]);
+
+        $this->assertSame('<a href="https://example.com/path?a=1" >Example</a>', $link->getHtml());
+    }
+
+    /**
+     * The permissive default policy rejects no URL scheme, so the href is kept (escaped) as before.
+     */
+    public function testGetHtmlKeepsUrlSchemeUnderPermissiveDefaultPolicy(): void
+    {
+        $link = new Link();
+        $link->setLinktype('direct');
+        $link->setDirect('javascript:void(0)');
+
+        $this->setDocumentProperties($link, [
+            'navigation_name' => 'noop',
+        ]);
+
+        $this->assertSame('<a href="javascript:void(0)" >noop</a>', $link->getHtml());
     }
 }
