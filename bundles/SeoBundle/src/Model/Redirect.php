@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\SeoBundle\Model;
 
 use Exception;
 use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
