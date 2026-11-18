@@ -23,12 +23,14 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
+use Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface;
 use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
 use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
+use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -224,27 +226,45 @@ class Manager
     ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
-        // Only snapshot when we are going to save: rolling back is the sole
-        // consumer, and reading the marking can hit the database (e.g. the
-        // state_table store).
         $markingStore = $workflow->getMarkingStore();
+        $changePublishedState = null;
+        $keepMarkingPending = false;
         $previousMarking = null;
+        $previousPendingMarking = null;
         $previousPublishedState = null;
-        if ($saveSubject) {
-            $previousMarking = $markingStore->getMarking($subject);
-            if ($subject instanceof Concrete || $subject instanceof PageSnippet) {
-                $previousPublishedState = $subject->isPublished();
-            }
-        }
 
         try {
-            $marking = $workflow->apply($subject, $transition, $additionalData);
+            $transitionObject = $this->getTransitionByName($workflow->getName(), $transition);
+            $changePublishedState = $transitionObject instanceof Transition ? $transitionObject->getChangePublishedState() : null;
+
+            // The context key that keeps a marking pending is reserved for the manager:
+            // a caller must not be able to leave a place pending that nothing is going to flush.
+            $context = $additionalData;
+            unset($context[PendingMarkingStoreInterface::CONTEXT_SAVE_VERSION]);
+
+            $keepMarkingPending = $saveSubject && $changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION;
+            if ($keepMarkingPending) {
+                // The subject is only saved as a version (draft) after the transition.
+                // Marking stores that persist independently of the subject (such as
+                // the state_table store) keep the new place pending on the subject,
+                // so that it is published or discarded together with the draft.
+                $context[PendingMarkingStoreInterface::CONTEXT_SAVE_VERSION] = true;
+            }
+
+            // Only snapshot when we are going to save: rolling back is the sole
+            // consumer, and reading the marking can hit the database (e.g. the
+            // state_table store).
+            if ($saveSubject) {
+                [$previousMarking, $previousPendingMarking] = $this->snapshotMarking($markingStore, $subject);
+                if ($subject instanceof Concrete || $subject instanceof PageSnippet) {
+                    $previousPublishedState = $subject->isPublished();
+                }
+            }
+
+            $marking = $workflow->apply($subject, $transition, $context);
         } finally {
             $this->notesSubscriber->setAdditionalData([]);
         }
-
-        $transition = $this->getTransitionByName($workflow->getName(), $transition);
-        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
         if ($saveSubject) {
             try {
@@ -259,7 +279,7 @@ class Manager
                 // validation error on a force_published transition). Otherwise
                 // marking stores that persist immediately (such as the
                 // state_table store) leave the subject in an inconsistent state.
-                $markingStore->setMarking($subject, $previousMarking);
+                $this->restoreMarking($markingStore, $subject, $previousMarking, $previousPendingMarking, $keepMarkingPending);
                 if ($previousPublishedState !== null) {
                     $subject->setPublished($previousPublishedState);
                 }
@@ -269,6 +289,50 @@ class Manager
         }
 
         return $marking;
+    }
+
+    /**
+     * Snapshot of the marking before a transition, for rolling back when the subsequent save fails.
+     *
+     * A store that can keep a marking pending on the subject reports the two separately: the marking
+     * it persisted and the marking pending on the subject (an earlier draft's place, if any). Reading
+     * the effective marking alone would mistake a pending draft place for the persisted one.
+     *
+     * @return array{Marking, ?Marking}
+     */
+    private function snapshotMarking(MarkingStoreInterface $markingStore, ElementInterface $subject): array
+    {
+        if ($markingStore instanceof PendingMarkingStoreInterface) {
+            return [$markingStore->getPersistedMarking($subject), $markingStore->getPendingMarking($subject)];
+        }
+
+        return [$markingStore->getMarking($subject), null];
+    }
+
+    /**
+     * Restore a snapshot taken with snapshotMarking().
+     *
+     * @param bool $storeUntouched true if the new marking was only kept pending on the subject, so the
+     *                             store itself was not written and must not be written now either
+     */
+    private function restoreMarking(
+        MarkingStoreInterface $markingStore,
+        ElementInterface $subject,
+        Marking $previousMarking,
+        ?Marking $previousPendingMarking,
+        bool $storeUntouched
+    ): void {
+        if (!$markingStore instanceof PendingMarkingStoreInterface) {
+            $markingStore->setMarking($subject, $previousMarking);
+
+            return;
+        }
+
+        if (!$storeUntouched) {
+            $markingStore->setMarking($subject, $previousMarking);
+        }
+
+        $markingStore->setPendingMarking($subject, $previousPendingMarking);
     }
 
     /**
@@ -299,9 +363,11 @@ class Manager
         $markingStore = $workflow->getMarkingStore();
         // Only snapshot when the save below can actually run and fail, so that
         // read-only global actions do not pay for an extra marking-store read.
-        $previousMarking = ($saveSubject && $subject instanceof ElementInterface)
-            ? $markingStore->getMarking($subject)
-            : null;
+        $previousMarking = null;
+        $previousPendingMarking = null;
+        if ($saveSubject && $subject instanceof ElementInterface) {
+            [$previousMarking, $previousPendingMarking] = $this->snapshotMarking($markingStore, $subject);
+        }
 
         if (!empty($globalActionObj->getTos())) {
             $places = [];
@@ -323,7 +389,13 @@ class Manager
                 // stores that persist immediately do not leave the subject in
                 // an inconsistent state (see pimcore/pimcore#18178).
                 if ($previousMarking !== null) {
-                    $markingStore->setMarking($subject, $previousMarking);
+                    $this->restoreMarking(
+                        $markingStore,
+                        $subject,
+                        $previousMarking,
+                        $previousPendingMarking,
+                        empty($globalActionObj->getTos())
+                    );
                 }
 
                 throw $e;
