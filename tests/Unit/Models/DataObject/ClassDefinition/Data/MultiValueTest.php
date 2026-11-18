@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Doctrine\DBAL\Connection;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
@@ -246,6 +247,128 @@ class MultiValueTest extends TestCase
     }
 
     /**
+     * A key whose inner type was CHANGED over data already stored for it. The declaration is
+     * rewritten and the stored value is left where it is, so what the type in force reads is of a
+     * shape it has no reading for - and every reader of the key then touches it: the relation list
+     * of a key switched to `input` reached `strlen((string) $data)`
+     * ({@see Data\Extension\Text::isEmpty()}), which in dev is an `ErrorException` and made the
+     * object unopenable.
+     *
+     * It is read as the key's empty value instead. Nothing migrates or rewrites the leftovers: a
+     * type change preserves nothing, so they are simply not interpreted.
+     */
+    public function testAStoredStructureIsNotReadByAScalarInnerType(): void
+    {
+        $wrapper = $this->wrapping($this->input());
+
+        // what a manyToManyObjectRelation inner type stored before the type was switched
+        $stored = [['type' => 'object', 'id' => 4]];
+
+        $this->assertNull($wrapper->denormalize($stored), 'the relation list is not read as an input');
+        $this->assertTrue(
+            $wrapper->isEmpty($wrapper->denormalize($stored)),
+            'and the value the read answers with is the key holding nothing, which is what raised'
+        );
+
+        foreach ([new Checkbox(), new Data\Select(), new Data\Numeric()] as $inner) {
+            $inner->setName('wrapped');
+
+            $this->assertNull(
+                $this->wrapping($inner)->denormalize($stored),
+                'every inner type whose value is a scalar answers the same'
+            );
+        }
+    }
+
+    /**
+     * And the opposite direction, which is the same change the other way round: a value that is not
+     * a list of relation descriptors in front of a RELATION inner type. Every relation type reads
+     * `$elementData['type']` off each entry without asking whether it is there
+     * ({@see ManyToManyObjectRelation::denormalize()}), so a list of plain strings raised a
+     * `TypeError` and a list of foreign structures an undefined-key warning.
+     */
+    public function testAStoredValueThatNamesNoTargetIsNotReadByARelationInnerType(): void
+    {
+        $wrapper = $this->wrapping($this->relation());
+
+        $unreadable = [
+            'a list a multiselect stored' => ['a', 'b'],
+            'a list of foreign structures' => [['latitude' => 1.0, 'longitude' => 2.0]],
+            'a scalar an input stored' => 'hello',
+            'an entry naming no id' => [['type' => 'object']],
+            'an entry whose type is not one' => [['type' => ['object'], 'id' => 4]],
+        ];
+
+        foreach ($unreadable as $case => $stored) {
+            $this->assertNull($wrapper->denormalize($stored), $case . ' is not read as a relation');
+        }
+
+        $this->assertSame(
+            [],
+            $wrapper->denormalize([]),
+            'an empty list is a relation holding nothing and is read, not refused'
+        );
+    }
+
+    /**
+     * And a value of the shape the inner type in force does store round-trips untouched, so the
+     * guard is "refuse what is positively wrong" rather than "refuse what is not a scalar": a
+     * `multiselect` holds a list of its own and a `geopoint` a structure of its own, and refusing
+     * those would drop the values those keys actually hold.
+     */
+    public function testACorrectlyShapedStoredValueStillRoundTripsUnchanged(): void
+    {
+        $descriptors = [['type' => 'object', 'id' => 4]];
+
+        $relation = $this->createMock(ManyToManyObjectRelation::class);
+        $relation->expects($this->once())
+            ->method('denormalize')
+            ->with($descriptors)
+            ->willReturn(['the element']);
+
+        $this->assertSame(
+            ['the element'],
+            $this->wrapping($relation)->denormalize($descriptors),
+            'the descriptors reach the relation type that stored them'
+        );
+
+        $this->assertSame(
+            ['a', 'b'],
+            $this->wrapping($this->named(new Data\Multiselect()))->denormalize(['a', 'b']),
+            'a list a multiselect stored is its own value'
+        );
+
+        $coordinates = $this->wrapping($this->named(new Data\Geopoint()))
+            ->denormalize(['latitude' => 1.0, 'longitude' => 2.0]);
+        $this->assertInstanceOf(DataObject\Data\GeoCoordinates::class, $coordinates);
+        $this->assertSame(1.0, $coordinates->getLatitude());
+
+        $this->assertSame(
+            'plain',
+            $this->wrapping($this->input())->denormalize('plain'),
+            'and the scalar an input stores is read as it stands'
+        );
+    }
+
+    /**
+     * A to-ONE relation normalizes to a single descriptor rather than to a list of them, which the
+     * check has to read as the value it is: refusing it would empty every `multiValue<manyToOneRelation>`
+     * key in the installation.
+     */
+    public function testTheSingleDescriptorOfAToOneRelationIsRead(): void
+    {
+        $descriptor = ['type' => 'object', 'id' => 4];
+
+        $target = new Concrete();
+        $target->setId(4);
+
+        $relation = $this->createMock(Data\ManyToOneRelation::class);
+        $relation->expects($this->once())->method('denormalize')->with($descriptor)->willReturn($target);
+
+        $this->assertSame($target, $this->wrapping($relation)->denormalize($descriptor));
+    }
+
+    /**
      * The engine refusal, which is the same boundary read from the outside: a wrapped FORWARD
      * relation is refused by an engine that cannot hold relations, exactly as the unwrapped one is.
      *
@@ -400,5 +523,12 @@ class MultiValueTest extends TestCase
         $input->setName('wrapped');
 
         return $input;
+    }
+
+    private function named(Data $definition): Data
+    {
+        $definition->setName('wrapped');
+
+        return $definition;
     }
 }

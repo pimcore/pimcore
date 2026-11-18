@@ -37,6 +37,14 @@ class Service
     private const MARSHALLER_FORMAT = 'classificationstore';
 
     /**
+     * The value type declarations of a field whose value is a scalar, which no structure can be read
+     * as, {@see self::canReadStoredValue()}. The nullable form of each one is the same declaration.
+     *
+     * @var string[]
+     */
+    private const SCALAR_VALUE_DECLARATIONS = ['string', 'int', 'float', 'bool'];
+
+    /**
      * @var array Used for storing definitions
      */
     protected static array $definitionsCache = [];
@@ -203,6 +211,98 @@ class Service
         }
 
         return $definition;
+    }
+
+    /**
+     * Whether the definition that answers for the VALUE of a key can read this stored value at all.
+     *
+     * Changing the inner type of a `multiValue` key rewrites the key's DECLARATION and leaves the
+     * data stored under the old one where it is - nothing migrates it, because the product's
+     * position is that a type change preserves nothing. What is left is a stored value of one shape
+     * in front of a type that reads another, and every reader of such a key then reads it as if the
+     * new type had written it: a relation list reached `strlen((string) $data)`
+     * ({@see DataObject\ClassDefinition\Data\Extension\Text::isEmpty()}) and an ordinary list
+     * reached `$elementData['type']`
+     * ({@see DataObject\ClassDefinition\Data\ManyToManyObjectRelation::denormalize()}). In dev the
+     * first is an `ErrorException` and the second a `TypeError`, so the object could not be opened -
+     * the object itself is fine, reading the key is what raises.
+     *
+     * So the leftovers are simply not interpreted: a value this answers false for is read as the
+     * key's empty value, {@see DataObject\ClassDefinition\Data\MultiValue::denormalize()}, which is
+     * the one place that knows both the stored value and the inner type, and the one place a stored
+     * value reaches the inner type through on either engine as well as in the normalized tree
+     * {@see DataObject\ClassDefinition\Data\Classificationstore::denormalize()} builds a store from.
+     *
+     * Two shapes are refused, which are the two directions a type change goes in:
+     *
+     *  - a value of any other shape in front of a RELATION inner type. Its stored form is the
+     *    descriptors its own `normalize()` produced, and the entry shape is asked of the one place
+     *    that knows it, {@see RelationDescriptor::describeOne()} - a scalar is refused for not being
+     *    a list, and a list of anything else for not naming targets. An empty list is a relation
+     *    holding nothing and is read
+     *  - an ARRAY in front of an inner type whose value is a scalar, read off the type declaration
+     *    of the value it holds the way {@see KeyTypeSupport::isHeldInValueColumns()} reads what it
+     *    normalizes to. `input`, `select`, `numeric` and `checkbox` are among the types that declare
+     *    one, and every reader of such a value casts it
+     *
+     * Nothing else is refused, and a value whose shape is not positively wrong is handed on
+     * unchanged: a `multiselect` and a `table` hold a list of their own, a `geopoint` and a `consent`
+     * hold a structure of their own, and a guard that refused a structure it had no reading for
+     * would drop the values those keys actually hold. Nor is a `Throwable` caught anywhere on the
+     * way - a swallowed exception here would hide the bugs this check is not about.
+     */
+    public static function canReadStoredValue(
+        ?DataObject\ClassDefinition\Data $definition,
+        mixed $storedValue
+    ): bool {
+        $definition = self::getValueDefinition($definition);
+
+        if ($definition === null || $storedValue === null) {
+            // no inner type reads the plain value unchanged, and nothing stored is nothing to read
+            return true;
+        }
+
+        if ($definition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+            return self::namesRelationTargetsOnly($storedValue);
+        }
+
+        return !is_array($storedValue) || !self::declaresAScalarValue($definition);
+    }
+
+    /**
+     * Whether every entry of this stored value names a relation target, which is what the stored
+     * form of a relation-typed key is.
+     */
+    private static function namesRelationTargetsOnly(mixed $storedValue): bool
+    {
+        if (!is_array($storedValue)) {
+            return false;
+        }
+
+        if (RelationDescriptor::describeOne($storedValue) !== null) {
+            // the single descriptor a to-one relation normalizes to, rather than a list of them
+            return true;
+        }
+
+        foreach ($storedValue as $entry) {
+            if (!is_array($entry) || RelationDescriptor::describeOne($entry) === null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether the value this definition holds is a scalar, read off the declaration the generated
+     * setter of such a field carries.
+     */
+    private static function declaresAScalarValue(DataObject\ClassDefinition\Data $definition): bool
+    {
+        $declaration = $definition->getParameterTypeDeclaration();
+
+        return $declaration !== null
+            && in_array(ltrim($declaration, '?'), self::SCALAR_VALUE_DECLARATIONS, true);
     }
 
     /**
