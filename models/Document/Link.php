@@ -334,11 +334,20 @@ class Link extends Model\Document
             $key = is_numeric($key) ? $name : $key;
             $value = $this->getProperty('navigation_' . $name);
             if ($value) {
-                $attribs[] = $key . '="' . htmlspecialchars((string) $value) . '"';
+                $attribs[] = $key . '="' . self::escapeDoubleQuotes((string) $value) . '"';
             }
         }
 
-        return '<a href="' . htmlspecialchars($link) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+        return '<a href="' . self::escapeDoubleQuotes($link) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+    }
+
+    /**
+     * Escapes only the character that can end a double-quoted attribute value, so the value cannot
+     * break out of its attribute while every input that was safe before renders byte-identically.
+     */
+    private static function escapeDoubleQuotes(string $value): string
+    {
+        return str_replace('"', '&quot;', $value);
     }
 
     protected function update(array $params = []): void

@@ -125,6 +125,27 @@ class LinkTest extends TestCase
     }
 
     /**
+     * Only the double quote is escaped, so values that were safe before the fix - including ones
+     * that already carry character references or a raw ampersand - render byte-identically.
+     */
+    public function testGetHtmlKeepsAmpersandsAndCharacterReferencesUnchanged(): void
+    {
+        $link = new Link();
+        $link->setLinktype('direct');
+        $link->setDirect('https://example.com/?a=1&b=2&amp;c=3');
+
+        $this->setDocumentProperties($link, [
+            'navigation_title' => 'M&uuml;ller & S&ouml;hne <new>',
+            'navigation_name' => 'Example',
+        ]);
+
+        $this->assertSame(
+            '<a href="https://example.com/?a=1&b=2&amp;c=3" title="M&uuml;ller & S&ouml;hne <new>">Example</a>',
+            $link->getHtml()
+        );
+    }
+
+    /**
      * Escaping alone does not neutralize a script-executing URL scheme in an editor-controlled
      * "direct" link, so the strict link sanitizer policy has to reject it.
      *
@@ -154,6 +175,8 @@ class LinkTest extends TestCase
             'javascript' => ['javascript:alert(document.domain)'],
             'mixed case with whitespace' => [" JaVa\tScRiPt:alert(document.domain)"],
             'vbscript' => ['vbscript:msgbox(1)'],
+            'character reference in scheme' => ['javascript&#58;alert(document.domain)'],
+            'named character reference in scheme' => ['javascript&colon;alert(document.domain)'],
             'html data uri' => ['data:text/html,<script>alert(document.domain)</script>'],
         ];
     }
