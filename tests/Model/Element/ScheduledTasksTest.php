@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Element;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
@@ -241,6 +242,10 @@ class ScheduledTasksTest extends ModelTestCase
      * The cleanup must be a current read: a task committed by another transaction after this transaction
      * took its snapshot is removed as well, as it was with the previous DELETE.
      *
+     * MariaDB >= 11.6.2 enables innodb_snapshot_isolation by default. A locking read of a row that was committed
+     * by another transaction after the snapshot is rejected there (error 1020, a retryable DeadlockException)
+     * instead of returning the row. The cleanup must then leave that task alone and must not fail otherwise.
+     *
      * @dataProvider elementTypeProvider
      */
     public function testCleanupRemovesTasksCommittedByAnotherTransactionAfterTheSnapshot(string $type): void
@@ -248,6 +253,7 @@ class ScheduledTasksTest extends ModelTestCase
         $element = $this->createFreshElement($type);
         $connection = Db::get();
         $otherConnection = $this->openSecondConnection();
+        $snapshotIsolation = $this->isSnapshotIsolationEnforced($connection);
 
         $connection->beginTransaction();
 
@@ -265,9 +271,18 @@ class ScheduledTasksTest extends ModelTestCase
             $this->assertSame(1, $this->countTasks($element, $otherConnection));
             $this->assertSame(0, $this->countTasks($element, $connection));
 
-            $element->getDao()->deleteAllTasks();
+            if ($snapshotIsolation) {
+                try {
+                    $element->getDao()->deleteAllTasks();
+                    $this->fail('The locking read was expected to be rejected by innodb_snapshot_isolation.');
+                } catch (DeadlockException) {
+                    // expected: the transaction is rolled back below
+                }
+            } else {
+                $element->getDao()->deleteAllTasks();
 
-            $connection->commit();
+                $connection->commit();
+            }
         } finally {
             if ($connection->isTransactionActive()) {
                 $connection->rollBack();
@@ -275,7 +290,8 @@ class ScheduledTasksTest extends ModelTestCase
             $otherConnection->close();
         }
 
-        $this->assertSame(0, $this->countTasks($element));
+        // the task of the other transaction is only removed where the locking read is a current read
+        $this->assertSame($snapshotIsolation ? 1 : 0, $this->countTasks($element));
     }
 
     public function testScheduleTasksTableHasOnlyTheCompositeCidCtypeIndex(): void
@@ -339,6 +355,16 @@ class ScheduledTasksTest extends ModelTestCase
     private function openSecondConnection(): Connection
     {
         return DriverManager::getConnection(Db::get()->getParams());
+    }
+
+    /**
+     * MariaDB >= 11.6.2 enables innodb_snapshot_isolation by default; MySQL does not have the variable at all.
+     */
+    private function isSnapshotIsolationEnforced(Connection $connection): bool
+    {
+        $variable = $connection->fetchAssociative("SHOW VARIABLES LIKE 'innodb\_snapshot\_isolation'");
+
+        return $variable !== false && in_array(strtolower((string) $variable['Value']), ['on', '1'], true);
     }
 
     /**
