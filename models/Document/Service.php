@@ -381,7 +381,7 @@ class Service extends Model\Element\Service
                 // a copy inheriting from its own source is mapped to itself and keeps its source
                 $contentMainId = $document->getContentMainDocumentId();
                 $newContentMainId = $contentMainId ? ($rewriteConfig['document'][$contentMainId] ?? null) : null;
-                if ($newContentMainId && (int) $newContentMainId !== $document->getId()) {
+                if ($newContentMainId && self::canInheritFrom($document, (int) $newContentMainId)) {
                     $document->setContentMainDocumentId($newContentMainId);
                 }
             }
@@ -405,6 +405,29 @@ class Service extends Model\Element\Service
         $document->setProperties($properties);
 
         return $document;
+    }
+
+    /**
+     * The new content main document has to be a page or snippet whose own chain of content main
+     * documents does not lead back to the document.
+     */
+    private static function canInheritFrom(Document\PageSnippet $document, int $contentMainId): bool
+    {
+        $contentMain = Document\PageSnippet::getById($contentMainId);
+        if (!$contentMain instanceof Document\PageSnippet) {
+            return false;
+        }
+
+        $maxDepth = 20;
+        do {
+            if ($contentMain->getId() === $document->getId()) {
+                return false;
+            }
+            $contentMain = $contentMain->getContentMainDocument();
+        } while ($contentMain instanceof Document\PageSnippet && $maxDepth-- > 0);
+
+        // a chain that does not end within the depth limit is a loop
+        return !$contentMain instanceof Document\PageSnippet;
     }
 
     /**

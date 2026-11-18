@@ -185,6 +185,66 @@ class RewriteIdsTest extends ModelTestCase
         }
     }
 
+    /**
+     * "Replace assignments" only requires source and target to be documents, so the target
+     * does not have to be a page or snippet.
+     */
+    public function testContentMainDocumentIsKeptWhenTargetCannotBeInheritedFrom(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $target = TestHelper::createDocumentFolder();
+        $page = TestHelper::createEmptyDocumentPage();
+
+        try {
+            $page->setContentMainDocumentId($main->getId());
+            $page->setProperty('target', 'document', $main);
+
+            Document\Service::rewriteIds($page, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($main->getId(), $page->getContentMainDocumentId());
+            // the rest of the rewrite still runs
+            $this->assertSame($target->getId(), $page->getProperty('target')?->getId());
+        } finally {
+            $page->delete();
+            $main->delete();
+            $target->delete();
+        }
+    }
+
+    public function testContentMainDocumentIsKeptWhenTargetInheritsFromTheDocument(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $between = TestHelper::createEmptyDocumentPage();
+        $target = TestHelper::createEmptyDocumentPage();
+        $page = TestHelper::createEmptyDocumentPage();
+
+        try {
+            // target -> between -> page: switching page to target would close the chain
+            $page->setContentMainDocumentId($main->getId());
+            $page->setProperty('target', 'document', $main);
+            $page->save();
+            $between->setContentMainDocumentId($page->getId());
+            $between->save();
+            $target->setContentMainDocumentId($between->getId());
+            $target->save();
+
+            Document\Service::rewriteIds($page, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($main->getId(), $page->getContentMainDocumentId());
+            // the rest of the rewrite still runs
+            $this->assertSame($target->getId(), $page->getProperty('target')?->getId());
+        } finally {
+            foreach ([$target, $between, $page] as $document) {
+                $document->setContentMainDocumentId(null);
+                $document->save();
+            }
+            $target->delete();
+            $between->delete();
+            $page->delete();
+            $main->delete();
+        }
+    }
+
     private function createSnippet(): Document\Snippet
     {
         /** @var Document\Snippet $snippet */
