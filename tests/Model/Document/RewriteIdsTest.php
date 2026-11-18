@@ -245,6 +245,38 @@ class RewriteIdsTest extends ModelTestCase
         }
     }
 
+    public function testContentMainDocumentFollowsRewrittenIdForALongInheritanceChain(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $page = TestHelper::createEmptyDocumentPage();
+        /** @var Document\Page[] $chain */
+        $chain = [];
+
+        try {
+            // target -> ... -> end of the chain, 25 documents that never lead back to the page
+            for ($i = 0; $i < 25; $i++) {
+                $link = TestHelper::createEmptyDocumentPage();
+                if ($chain) {
+                    $link->setContentMainDocumentId(end($chain)->getId());
+                    $link->save();
+                }
+                $chain[] = $link;
+            }
+            $target = end($chain);
+            $page->setContentMainDocumentId($main->getId());
+
+            Document\Service::rewriteIds($page, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($target->getId(), $page->getContentMainDocumentId());
+        } finally {
+            $page->delete();
+            $main->delete();
+            foreach (array_reverse($chain) as $link) {
+                $link->delete();
+            }
+        }
+    }
+
     private function createSnippet(): Document\Snippet
     {
         /** @var Document\Snippet $snippet */

@@ -418,16 +418,17 @@ class Service extends Model\Element\Service
             return false;
         }
 
-        $maxDepth = 20;
-        do {
-            if ($contentMain->getId() === $document->getId()) {
+        // the chain must neither reach the document nor loop in itself
+        $visitedIds = [$document->getId() => true];
+        while ($contentMain instanceof Document\PageSnippet) {
+            if (isset($visitedIds[$contentMain->getId()])) {
                 return false;
             }
+            $visitedIds[$contentMain->getId()] = true;
             $contentMain = $contentMain->getContentMainDocument();
-        } while ($contentMain instanceof Document\PageSnippet && $maxDepth-- > 0);
+        }
 
-        // a chain that does not end within the depth limit is a loop
-        return !$contentMain instanceof Document\PageSnippet;
+        return true;
     }
 
     /**
