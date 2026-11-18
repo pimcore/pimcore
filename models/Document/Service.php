@@ -408,11 +408,15 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * The new content main document has to be a page or snippet whose own chain of content main
-     * documents does not lead back to the document.
+     * The document has to support a content main document, and the new one has to be a page or
+     * snippet whose own chain of content main documents does not lead back to the document.
      */
     private static function canInheritFrom(Document\PageSnippet $document, int $contentMainId): bool
     {
+        if (!$document->supportsContentMain()) {
+            return false;
+        }
+
         $contentMain = Document\PageSnippet::getById($contentMainId);
         if (!$contentMain instanceof Document\PageSnippet) {
             return false;

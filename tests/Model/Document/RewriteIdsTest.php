@@ -245,6 +245,30 @@ class RewriteIdsTest extends ModelTestCase
         }
     }
 
+    /**
+     * Emails do not inherit from a content main document (supportsContentMain() is false),
+     * same condition as for the inheritance copy.
+     */
+    public function testContentMainDocumentIsKeptWhenTheDocumentDoesNotSupportIt(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $target = TestHelper::createEmptyDocumentPage();
+        /** @var Document\Email $email */
+        $email = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Email');
+
+        try {
+            $email->setContentMainDocumentId($main->getId());
+
+            Document\Service::rewriteIds($email, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($main->getId(), $email->getContentMainDocumentId());
+        } finally {
+            $email->delete();
+            $main->delete();
+            $target->delete();
+        }
+    }
+
     public function testContentMainDocumentFollowsRewrittenIdForALongInheritanceChain(): void
     {
         $main = TestHelper::createEmptyDocumentPage();
