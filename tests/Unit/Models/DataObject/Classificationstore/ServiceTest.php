@@ -881,10 +881,24 @@ class ServiceTest extends TestCase
                 fn () => new ManyToManyObjectRelation(),
                 ['type' => 'object', 'id' => 4],
             ],
-            // an advanced relation reads per-entry metadata beside the target
+            // an advanced relation reads per-entry metadata beside the target, and a plain one
+            // reads the target off the entry itself - so each refuses the other's entry shape
             'the entries of a plain relation in front of an advanced one' => [
                 fn () => new AdvancedManyToManyObjectRelation(),
                 $descriptors,
+            ],
+            'the entries of an advanced relation in front of a plain one' => [
+                fn () => new ManyToManyObjectRelation(),
+                [[
+                    'element' => ['type' => 'object', 'id' => 4],
+                    'fieldname' => 'wrapped',
+                    'columns' => ['role'],
+                    'data' => ['role' => 'lead'],
+                ]],
+            ],
+            'a nested target in front of a to-one relation' => [
+                fn () => new ManyToOneRelation(),
+                ['element' => ['type' => 'object', 'id' => 4]],
             ],
             // the structured types, each one reading members it does not check for
             'a foreign array in front of a consent' => [fn () => new Consent(), ['a', 'b']],

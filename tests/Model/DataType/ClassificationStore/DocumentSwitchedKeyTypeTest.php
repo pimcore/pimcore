@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
+use Pimcore\Db;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Date;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
@@ -117,5 +120,90 @@ class DocumentSwitchedKeyTypeTest extends SwitchedKeyTypeTest
         $this->switchKeyTo($keyId, new Date());
 
         $this->assertNull($this->readKey($objectId, $groupId, $keyId));
+    }
+
+    /**
+     * The REVERSE of the switch above: an advanced relation key changed to a plain one. The two
+     * write a different entry - an advanced one nests its target under `element` and carries the
+     * per-relation members beside it, a plain one names the target in the entry itself - and each
+     * reads only its own. Handed an advanced entry, a plain relation reads `$elementData['type']`
+     * where there is none ({@see ManyToManyObjectRelation::denormalize()}).
+     *
+     * The target of such an entry is still found by the one place that knows the shape
+     * ({@see Classificationstore\RelationDescriptor::describeOne()}), because the dependency walks
+     * and the edit mode rendering run over the stored values of plain and advanced keys alike - so
+     * the plain/advanced distinction is taken where the READABILITY question is asked instead.
+     */
+    public function testTheEntriesOfAnAdvancedRelationAreNotReadByAPlainOne(): void
+    {
+        [$groupId, $keyId, $objectId] = $this->storeAList('advancedToPlain');
+
+        // what an advancedManyToManyObjectRelation key stored for the key, naming a target that
+        // exists so that nothing but the entry's shape can be what stops the read
+        $this->writeStoredValue($objectId, $groupId, $keyId, [[
+            'element' => ['type' => 'object', 'id' => $objectId],
+            'fieldname' => 'keyDefinition',
+            'columns' => ['quantity'],
+            'data' => ['quantity' => 3],
+        ]]);
+
+        $this->switchKeyTo($keyId, new ManyToManyObjectRelation());
+
+        $this->assertSame([], $this->readKey($objectId, $groupId, $keyId));
+    }
+
+    /**
+     * And an advanced key reading its OWN entries is untouched by that distinction, so the fix is
+     * "each shape belongs to one side" rather than "nested entries are refused".
+     */
+    public function testAnAdvancedRelationStillReadsItsOwnEntries(): void
+    {
+        [$groupId, $keyId, $objectId] = $this->storeAList('advancedKeepsItsOwn');
+
+        $this->writeStoredValue($objectId, $groupId, $keyId, [[
+            'element' => ['type' => 'object', 'id' => $objectId],
+            'fieldname' => 'keyDefinition',
+            'columns' => ['quantity'],
+            'data' => ['quantity' => 3],
+        ]]);
+
+        $this->switchKeyTo($keyId, new AdvancedManyToManyObjectRelation());
+
+        $items = $this->readKey($objectId, $groupId, $keyId);
+
+        $this->assertIsArray($items);
+        $this->assertCount(1, $items, 'the entry the advanced relation wrote is the one it reads');
+    }
+
+    /**
+     * Rewrites the stored value of one key in the document, which is how a value written under
+     * another type reaches a read: the entry is the one the engine wrote, with its `d` member
+     * replaced.
+     */
+    private function writeStoredValue(int $objectId, int $groupId, int $keyId, mixed $value): void
+    {
+        $class = ClassDefinition::getByName('csstore');
+        $this->assertNotNull($class);
+
+        $table = 'object_classificationstore_doc_' . $class->getId();
+
+        $stored = (string) Db::get()->fetchOne(
+            'SELECT `values` FROM ' . $table . ' WHERE id = ? AND fieldname = ? AND groupId = ?',
+            [$objectId, 'csstore', $groupId]
+        );
+
+        $document = json_decode($stored, true);
+        $this->assertIsArray($document);
+
+        $document['k'][$keyId] = [['d' => $value]];
+
+        // `values` is a reserved word, so the column is named in a statement of its own rather than
+        // through the query builder's unquoted update
+        Db::get()->executeStatement(
+            'UPDATE ' . $table . ' SET `values` = ? WHERE id = ? AND fieldname = ? AND groupId = ?',
+            [json_encode($document, JSON_THROW_ON_ERROR), $objectId, 'csstore', $groupId]
+        );
+
+        $this->clearDefinitionCaches();
     }
 }

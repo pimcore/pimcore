@@ -370,19 +370,27 @@ class Service
         if ($definition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
             // a to-one relation normalizes to ONE descriptor; handed the list a to-many one left
             // behind it reads `$value['type']` off the list itself
-            return RelationDescriptor::describeOne($storedValue) !== null;
+            return !RelationDescriptor::nestsItsTarget($storedValue)
+                && RelationDescriptor::describeOne($storedValue) !== null;
         }
 
-        $entryMembers = $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
-            || $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
-                ? self::ADVANCED_RELATION_MEMBERS
-                : [];
+        $advanced = $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
+            || $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 
         foreach ($storedValue as $entry) {
-            if (!is_array($entry)
-                || RelationDescriptor::describeOne($entry) === null
-                || !self::carries($entry, $entryMembers)
-            ) {
+            if (!is_array($entry) || RelationDescriptor::describeOne($entry) === null) {
+                return false;
+            }
+
+            // each one reads the target off the place its OWN normalize() writes it, and neither
+            // reads the other's: a plain relation reads `$elementData['type']` off the entry and an
+            // advanced one `$elementMetadata['element']` plus the three members beside it, so an
+            // entry of the other shape is the fatal this check exists to stop either way round
+            $readable = $advanced
+                ? self::carries($entry, self::ADVANCED_RELATION_MEMBERS)
+                : !RelationDescriptor::nestsItsTarget($entry);
+
+            if (!$readable) {
                 return false;
             }
         }

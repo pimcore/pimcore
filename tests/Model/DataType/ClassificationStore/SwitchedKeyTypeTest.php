@@ -18,10 +18,14 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue as QuantityValueDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Csstore;
+use Pimcore\Model\DataObject\Data\EncryptedField;
+use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
@@ -57,6 +61,9 @@ class SwitchedKeyTypeTest extends AbstractClassificationStoreTest
 
     /** What a `multiselect` key holds, and what every switched key below has stored for it. */
     private const STORED_LIST = ['a', 'b'];
+
+    /** The plain value of the `encryptedField` fixture, which no read may hand back encrypted. */
+    private const THE_SECRET = 'the secret';
 
     /**
      * @var Classificationstore\KeyConfig[]
@@ -168,6 +175,65 @@ class SwitchedKeyTypeTest extends AbstractClassificationStoreTest
     }
 
     /**
+     * A key switched AWAY from `encryptedField`. Whether a value is decrypted on the way out is
+     * decided from the type in force, so nothing decrypts for the new type - and what it is handed
+     * is the encrypted form. That is not a crash but the worse outcome: the ciphertext was read back
+     * as the value of the field, and a type that holds a list of its own
+     * ({@see Multiselect::denormalize()}) hands it straight on.
+     *
+     * Measured on a demo store before the fix, a `multiselect` key reading an encrypted value back
+     * as `['value' => 'def50200…', 'value2' => null]`.
+     */
+    public function testAnEncryptedValueIsNotReadByAKeyWhoseTypeIsNoLongerEncrypted(): void
+    {
+        [$groupId, $keyId, $objectId] = $this->storeAnEncryptedValue('decrypting');
+
+        $this->switchKeyTo($keyId, new Multiselect());
+
+        $value = $this->readKey($objectId, $groupId, $keyId);
+
+        $this->assertNull($value, 'the encrypted form is not interpreted by the type in force');
+        $this->assertStringNotContainsString(
+            'def',
+            json_encode($value) ?: '',
+            'and no part of the stored ciphertext reaches the reader'
+        );
+    }
+
+    /**
+     * And the inverse: a key switched TO `encryptedField` over data that was never encrypted. The
+     * decryption is handed a value it cannot read and raises from inside the marshaller
+     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::decrypt()}),
+     * which is an uncaught error while the object is being hydrated.
+     *
+     * It is refused rather than caught: the same call raises for a misconfigured encryption secret,
+     * and swallowing that would read every correctly encrypted key in the installation as empty.
+     */
+    public function testAPlainValueIsNotDecryptedByAKeyWhoseTypeIsNowEncrypted(): void
+    {
+        [$groupId, $keyId, $objectId] = $this->storeAQuantity('encrypting');
+
+        $this->switchKeyTo($keyId, $this->encryptedInputDefinition());
+
+        $this->assertNull($this->readKey($objectId, $groupId, $keyId));
+    }
+
+    /**
+     * An `encryptedField` key that was NOT switched still round-trips its secret, which is what the
+     * check above must not cost: the form a correctly encrypted value is stored in has to keep being
+     * read as the one the type in force wrote.
+     */
+    public function testAnEncryptedKeyThatWasNotSwitchedStillRoundTripsItsSecret(): void
+    {
+        [$groupId, $keyId, $objectId] = $this->storeAnEncryptedValue('untouchedSecret');
+
+        $value = $this->readKey($objectId, $groupId, $keyId);
+
+        $this->assertInstanceOf(EncryptedField::class, $value);
+        $this->assertSame(self::THE_SECRET, $value->getPlain());
+    }
+
+    /**
      * A group of its own holding one `multiselect` key, with the list stored for it on an object.
      *
      * `multiselect` because it is the one type holding a LIST that both engines can hold: an EAV row
@@ -258,6 +324,56 @@ class SwitchedKeyTypeTest extends AbstractClassificationStoreTest
         return (int) $keyConfig->getId();
     }
 
+    /**
+     * An `encryptedField` key delegating to an `input`, with the secret stored for it on an object.
+     *
+     * @return array{int, int, int} the group id, the key id and the object id
+     */
+    protected function storeAnEncryptedValue(string $suffix): array
+    {
+        $group = $this->group();
+        $keyId = $this->createKey($suffix, $this->encryptedInputDefinition());
+
+        $object = $this->createObject($suffix);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue(
+            $group->getId(),
+            $keyId,
+            new EncryptedField(new Input(), self::THE_SECRET)
+        );
+        $object->save();
+
+        return [(int) $group->getId(), $keyId, (int) $object->getId()];
+    }
+
+    /**
+     * A `quantityValue` key with a quantity stored for it, which is a value both engines hold and
+     * which was never encrypted.
+     *
+     * @return array{int, int, int} the group id, the key id and the object id
+     */
+    protected function storeAQuantity(string $suffix): array
+    {
+        $group = $this->group();
+        $keyId = $this->createKey($suffix, new QuantityValueDefinition());
+
+        $object = $this->createObject($suffix);
+        $object->getCsstore()->setActiveGroups([$group->getId() => true]);
+        $object->getCsstore()->setLocalizedKeyValue($group->getId(), $keyId, new QuantityValue(42, null));
+        $object->save();
+
+        return [(int) $group->getId(), $keyId, (int) $object->getId()];
+    }
+
+    protected function encryptedInputDefinition(): EncryptedFieldDefinition
+    {
+        $definition = new EncryptedFieldDefinition();
+        $definition->setDelegateDatatype('input');
+        $definition->setDelegate(new Input());
+
+        return $definition;
+    }
+
     protected function clearDefinitionCaches(): void
     {
         Classificationstore\DefinitionCache::clear(null);
@@ -272,7 +388,7 @@ class SwitchedKeyTypeTest extends AbstractClassificationStoreTest
         return $this->createKey($suffix, new Multiselect());
     }
 
-    private function createObject(string $suffix): Csstore
+    protected function createObject(string $suffix): Csstore
     {
         $object = new Csstore();
         $object->setParentId(1);

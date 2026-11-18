@@ -56,6 +56,24 @@ final class RelationDescriptor
      *
      * @return array{type: string, id: int}|null
      */
+    /**
+     * Whether this entry carries its target under a member of its own rather than in the entry
+     * itself, which is what an ADVANCED relation writes and what tells its stored form from a plain
+     * relation's.
+     *
+     * Asked beside {@see self::describeOne()} rather than inside it: that one answers "which target"
+     * for an entry of either shape, which is what its callers need - the dependency and cache-tag
+     * walks, the target-existence lookups and the edit mode rendering all run over the stored values
+     * of plain and advanced keys alike. Whether the SHAPE is the one the definition in force reads is
+     * a different question, and only {@see Service::canReadStoredValue()} asks it.
+     *
+     * @param array<array-key, mixed> $entry
+     */
+    public static function nestsItsTarget(array $entry): bool
+    {
+        return array_key_exists(self::ELEMENT_MEMBER, $entry);
+    }
+
     public static function describeOne(array $entry): ?array
     {
         $element = $entry[self::ELEMENT_MEMBER] ?? $entry;
