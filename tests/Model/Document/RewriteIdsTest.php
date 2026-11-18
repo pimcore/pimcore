@@ -185,6 +185,122 @@ class RewriteIdsTest extends ModelTestCase
         }
     }
 
+    /**
+     * "Replace assignments" only requires source and target to be documents, so the target
+     * does not have to be a page or snippet.
+     */
+    public function testContentMainDocumentIsKeptWhenTargetCannotBeInheritedFrom(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $target = TestHelper::createDocumentFolder();
+        $page = TestHelper::createEmptyDocumentPage();
+
+        try {
+            $page->setContentMainDocumentId($main->getId());
+            $page->setProperty('target', 'document', $main);
+
+            Document\Service::rewriteIds($page, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($main->getId(), $page->getContentMainDocumentId());
+            // the rest of the rewrite still runs
+            $this->assertSame($target->getId(), $page->getProperty('target')?->getId());
+        } finally {
+            $page->delete();
+            $main->delete();
+            $target->delete();
+        }
+    }
+
+    public function testContentMainDocumentIsKeptWhenTargetInheritsFromTheDocument(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $between = TestHelper::createEmptyDocumentPage();
+        $target = TestHelper::createEmptyDocumentPage();
+        $page = TestHelper::createEmptyDocumentPage();
+
+        try {
+            // target -> between -> page: switching page to target would close the chain
+            $page->setContentMainDocumentId($main->getId());
+            $page->setProperty('target', 'document', $main);
+            $page->save();
+            $between->setContentMainDocumentId($page->getId());
+            $between->save();
+            $target->setContentMainDocumentId($between->getId());
+            $target->save();
+
+            Document\Service::rewriteIds($page, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($main->getId(), $page->getContentMainDocumentId());
+            // the rest of the rewrite still runs
+            $this->assertSame($target->getId(), $page->getProperty('target')?->getId());
+        } finally {
+            foreach ([$target, $between, $page] as $document) {
+                $document->setContentMainDocumentId(null);
+                $document->save();
+            }
+            $target->delete();
+            $between->delete();
+            $page->delete();
+            $main->delete();
+        }
+    }
+
+    /**
+     * Emails do not inherit from a content main document (supportsContentMain() is false),
+     * same condition as for the inheritance copy.
+     */
+    public function testContentMainDocumentIsKeptWhenTheDocumentDoesNotSupportIt(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $target = TestHelper::createEmptyDocumentPage();
+        /** @var Document\Email $email */
+        $email = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Email');
+
+        try {
+            $email->setContentMainDocumentId($main->getId());
+
+            Document\Service::rewriteIds($email, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($main->getId(), $email->getContentMainDocumentId());
+        } finally {
+            $email->delete();
+            $main->delete();
+            $target->delete();
+        }
+    }
+
+    public function testContentMainDocumentFollowsRewrittenIdForALongInheritanceChain(): void
+    {
+        $main = TestHelper::createEmptyDocumentPage();
+        $page = TestHelper::createEmptyDocumentPage();
+        /** @var Document\Page[] $chain */
+        $chain = [];
+
+        try {
+            // target -> ... -> end of the chain, 25 documents that never lead back to the page
+            for ($i = 0; $i < 25; $i++) {
+                $link = TestHelper::createEmptyDocumentPage();
+                if ($chain) {
+                    $link->setContentMainDocumentId(end($chain)->getId());
+                    $link->save();
+                }
+                $chain[] = $link;
+            }
+            $target = end($chain);
+            $page->setContentMainDocumentId($main->getId());
+
+            Document\Service::rewriteIds($page, ['document' => [$main->getId() => $target->getId()]]);
+
+            $this->assertSame($target->getId(), $page->getContentMainDocumentId());
+        } finally {
+            $page->delete();
+            $main->delete();
+            foreach (array_reverse($chain) as $link) {
+                $link->delete();
+            }
+        }
+    }
+
     private function createSnippet(): Document\Snippet
     {
         /** @var Document\Snippet $snippet */
