@@ -176,7 +176,15 @@ doctrine:
                   # reports - the blast radius of flipping this extends well past this codebase, and
                   # third-party GROUP BY usage can't be audited or fixed the way the two core
                   # queries above were. Do not remove without a dedicated, broadly-tested initiative.
-                  !php/const PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode = '';"
+                  #
+                  # MariaDB >= 11.6.2 (11.8, 12.3) enables innodb_snapshot_isolation by default: a locking read
+                  # (SELECT ... FOR UPDATE, DELETE) of a row that another transaction committed after the snapshot of
+                  # the current transaction is rejected with error 1020 and the transaction is rolled back, instead
+                  # of reading the row as MySQL and MariaDB <= 11.4 do. Pimcore is built for the latter (e.g. the
+                  # cleanup of scheduled tasks while saving an element inside a transaction of the caller), so the
+                  # session switches it off. `/*M!110602 ... */` is only executed by MariaDB >= 11.6.2 and is a
+                  # comment for MySQL and older MariaDB versions, which do not have (or do not enable) the variable.
+                  !php/const PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode = ''/*M!110602 , innodb_snapshot_isolation = OFF */;"
                 default_table_options:
                     charset: UTF8MB4
                     engine: InnoDB
