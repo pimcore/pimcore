@@ -31,6 +31,7 @@ jobs:
     codeception-tests:
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-public.yaml@main
         strategy:
+            fail-fast: false
             matrix:
                 include:
                     - { php-version: 8.4, database: "mariadb:12.3", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
