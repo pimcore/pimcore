@@ -376,6 +376,14 @@ class Service extends Model\Element\Service
                         $editable->rewriteIds($rewriteConfig);
                     }
                 }
+
+                // a copied document inheriting from a copied document has to inherit from the copy;
+                // a copy inheriting from its own source is mapped to itself and keeps its source
+                $contentMainId = $document->getContentMainDocumentId();
+                $newContentMainId = $contentMainId ? ($rewriteConfig['document'][$contentMainId] ?? null) : null;
+                if ($newContentMainId && (int) $newContentMainId !== $document->getId()) {
+                    $document->setContentMainDocumentId($newContentMainId);
+                }
             }
 
             $document->setEditables($editables);
