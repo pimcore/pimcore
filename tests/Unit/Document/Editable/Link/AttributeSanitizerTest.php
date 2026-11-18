@@ -152,10 +152,11 @@ class AttributeSanitizerTest extends TestCase
         }
     }
 
-    public function testOnlyStrictOmitsInternalDataAttributes(): void
+    public function testInternalDataAttributesAreOmittedUnlessOptedOut(): void
     {
-        $this->assertFalse((new AttributeSanitizer())->omitsInternalDataAttributes());
+        $this->assertTrue((new AttributeSanitizer())->omitsInternalDataAttributes());
         $this->assertTrue(AttributeSanitizer::strict()->omitsInternalDataAttributes());
+        $this->assertFalse((new AttributeSanitizer(omitInternalDataAttributes: false))->omitsInternalDataAttributes());
     }
 
     public function testBlockedUrlSchemesIsConfigurable(): void

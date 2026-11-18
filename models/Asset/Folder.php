@@ -75,6 +75,18 @@ class Folder extends Model\Asset
     }
 
     /**
+     * A folder has no binary in the asset storage, so there is nothing to ask the storage for.
+     */
+    public function getFileSize(bool $formatted = false, int $precision = 2): int|string
+    {
+        if ($formatted) {
+            return formatBytes(0, $precision);
+        }
+
+        return 0;
+    }
+
+    /**
      * @internal
      *
      * @return resource|null

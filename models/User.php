@@ -13,17 +13,58 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Exception;
+use InvalidArgumentException;
+use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\User\Exception\DuplicateUserNameException;
+use Pimcore\Model\User\Exception\InvalidServiceUserException;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
 
+use function array_key_exists;
+use function array_keys;
+use function array_map;
+use function array_values;
+use function bin2hex;
+use function ctype_digit;
+use function implode;
+use function is_array;
+use function is_int;
+use function is_string;
+use function random_bytes;
+use function sprintf;
+use function strcasecmp;
+
 /**
+ * A user of Pimcore: a person (type `user`) or a service user (type `serviceuser`, see isServiceUser()), a
+ * machine identity for integrations, agents and pipelines. Both are rows of the `users` table and share this
+ * class; a service user is authorized like a person (permissions, roles, workspaces, class and document type
+ * restrictions) but never logs in interactively: it keeps an unusable random password, is never an administrator
+ * and has no two-factor authentication. User::getByName() and \Pimcore\Model\User\Listing return persons only;
+ * service users are found with User::getServiceUserByName() and \Pimcore\Model\User\ServiceUser\Listing, and
+ * User::getById() returns either kind. Names are unique across persons and service users, and the type of a
+ * saved user never changes.
+ *
  * @method User\Dao getDao()
  */
 final class User extends User\UserRole implements UserInterface
 {
     use TemporaryFileHelperTrait;
+
+    private const TYPE_SERVICE_USER = 'serviceuser';
+
+    private const TWO_FACTOR_DEFAULTS = [
+        'required' => false,
+        'enabled' => false,
+        'secret' => '',
+        'type' => '',
+    ];
+
+    private const UNUSABLE_PASSWORD_PREFIX = '!serviceuser-';
 
     protected string $type = 'user';
 
@@ -95,16 +136,333 @@ final class User extends User\UserRole implements UserInterface
      */
     protected ?string $provider = null;
 
+    /**
+     * Ids of the users who answer for this service user (service users only, see users_responsibles).
+     *
+     * @var int[]
+     */
+    protected array $responsibleUsers = [];
+
+    /**
+     * Ids of the roles whose members answer for this service user (service users only).
+     *
+     * @var int[]
+     */
+    protected array $responsibleRoles = [];
+
+    /**
+     * Whether this is a service user (type `serviceuser`): a machine identity that never logs in interactively.
+     */
+    public function isServiceUser(): bool
+    {
+        return $this->type === self::TYPE_SERVICE_USER;
+    }
+
+    /**
+     * @param array<int|numeric-string> $userIds
+     *
+     * @return $this
+     *
+     * @throws InvalidArgumentException if an entry is not a positive integer id
+     */
+    public function setResponsibleUsers(array $userIds): static
+    {
+        $this->responsibleUsers = self::normalizeIds($userIds);
+
+        return $this;
+    }
+
+    /**
+     * The people (user ids) who answer for this service user.
+     *
+     * @return int[]
+     */
+    public function getResponsibleUsers(): array
+    {
+        return $this->responsibleUsers;
+    }
+
+    /**
+     * @param array<int|numeric-string> $roleIds
+     *
+     * @return $this
+     *
+     * @throws InvalidArgumentException if an entry is not a positive integer id
+     */
+    public function setResponsibleRoles(array $roleIds): static
+    {
+        $this->responsibleRoles = self::normalizeIds($roleIds);
+
+        return $this;
+    }
+
+    /**
+     * The roles (role ids) whose members answer for this service user.
+     *
+     * @return int[]
+     */
+    public function getResponsibleRoles(): array
+    {
+        return $this->responsibleRoles;
+    }
+
+    /**
+     * @param mixed[] $ids
+     *
+     * @return int[]
+     */
+    private static function normalizeIds(array $ids): array
+    {
+        $normalized = [];
+        foreach ($ids as $id) {
+            if (is_string($id) && ctype_digit($id)) {
+                $id = (int) $id;
+            }
+            if (!is_int($id) || $id < 1) {
+                throw new InvalidArgumentException('Responsible user and role ids must be positive integers.');
+            }
+            $normalized[$id] = $id;
+        }
+
+        return array_values($normalized);
+    }
+
+    /**
+     * The active people who answer for this service user: the responsible users, plus the members of the
+     * responsible roles. Service users and inactive users are never part of the result.
+     *
+     * @return User[]
+     *
+     * @throws Exception
+     */
+    public function resolveResponsibleUsers(): array
+    {
+        if (!$this->isServiceUser()) {
+            return [];
+        }
+
+        $people = [];
+        foreach ($this->responsibleUsers as $userId) {
+            $user = self::getById($userId);
+            if ($user !== null) {
+                $people[$user->getId()] = $user;
+            }
+        }
+
+        if ($this->responsibleRoles !== []) {
+            $conditions = [];
+            foreach ($this->responsibleRoles as $ignored) {
+                $conditions[] = 'FIND_IN_SET(?, `roles`)';
+            }
+            // User\Listing lists people only, never service users
+            $members = new User\Listing();
+            $members->setCondition('(' . implode(' OR ', $conditions) . ')', $this->responsibleRoles);
+            foreach ($members->load() as $member) {
+                $people[$member->getId()] = $member;
+            }
+        }
+
+        $result = [];
+        foreach ($people as $person) {
+            if ($person->isActive() && !$person->isServiceUser()) {
+                $result[] = $person;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * The ids of the service users the person answers for: directly, or through one of the person's roles.
+     *
+     * @return int[]
+     *
+     * @throws Exception
+     */
+    public static function getResponsibleForServiceUserIds(User $person): array
+    {
+        $personId = $person->getId();
+        if ($personId === null || $person->isServiceUser()) {
+            return [];
+        }
+
+        // the join skips rows whose principal no longer exists with the stored type
+        $sql = 'SELECT DISTINCT r.`serviceUserId` FROM `users_responsibles` r'
+            . ' INNER JOIN `users` p ON p.`id` = r.`principalId` AND p.`type` = r.`principalType`'
+            . ' WHERE ((r.`principalType` = :user AND r.`principalId` = :userId)';
+        $params = ['user' => 'user', 'userId' => $personId];
+        $types = [];
+
+        if ($person->getRoles() !== []) {
+            $sql .= ' OR (r.`principalType` = :role AND r.`principalId` IN (:roleIds))';
+            $params['role'] = 'role';
+            $params['roleIds'] = $person->getRoles();
+            $types['roleIds'] = ArrayParameterType::INTEGER;
+        }
+
+        $ids = Db::get()->fetchFirstColumn($sql . ') ORDER BY r.`serviceUserId`', $params, $types);
+
+        return array_map('intval', $ids);
+    }
+
+    /**
+     * An unsaved service user; set its values and save() it.
+     */
+    public static function newServiceUser(): self
+    {
+        $serviceUser = new self();
+        $serviceUser->setType(self::TYPE_SERVICE_USER);
+
+        return $serviceUser;
+    }
+
+    /**
+     * Creates and saves a service user with the values, like create() does for a person. A `type` in the values is
+     * ignored, and a `password` is replaced by the unusable value save() stores anyway.
+     *
+     * @param array<string, mixed> $values
+     *
+     * @throws DuplicateUserNameException if a person or service user already has the name
+     * @throws InvalidServiceUserException if the values give it administrator rights or two-factor data
+     * @throws Exception if the values carry an `id`
+     */
+    public static function createServiceUser(array $values = []): self
+    {
+        $values = self::withoutTypeKeys($values);
+        self::checkCreateData($values);
+
+        $serviceUser = self::newServiceUser();
+        $serviceUser->setValues($values);
+        // no value may have changed the kind on the way; save() then refuses administrator rights and two-factor data
+        $serviceUser->setType(self::TYPE_SERVICE_USER);
+        $serviceUser->save();
+
+        return $serviceUser;
+    }
+
+    /**
+     * The service user with this name, or null. getByName() finds persons only.
+     */
+    public static function getServiceUserByName(string $name): ?self
+    {
+        $serviceUser = self::newServiceUser();
+
+        try {
+            $serviceUser->getDao()->getByName($name);
+        } catch (NotFoundException) {
+            return null;
+        }
+
+        return $serviceUser;
+    }
+
+    /**
+     * @param array<array-key, mixed> $values
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function withoutTypeKeys(array $values): array
+    {
+        foreach (array_keys($values) as $key) {
+            if (is_string($key) && strcasecmp($key, 'type') === 0) {
+                unset($values[$key]);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Applies the type first, so the other values are validated for the right kind of user, and keeps the
+     * stored password of a service user as it is: a loaded service user passes the same validity check
+     * (active, saved, with a password) as a person, and save() replaces the value with a new unusable one anyway.
+     */
+    public function setValues(array $data = [], bool $ignoreEmptyValues = false): static
+    {
+        // setters are dispatched case-insensitively (setValue()), so `Type` or `TYPE` set the type as well
+        foreach ($data as $key => $value) {
+            if (is_string($key) && strcasecmp($key, 'type') === 0) {
+                if (is_string($value)) {
+                    $this->setType($value);
+                }
+                unset($data[$key]);
+            }
+        }
+
+        if ($this->isServiceUser() && array_key_exists('password', $data)) {
+            $password = $data['password'];
+            unset($data['password']);
+            $this->password = is_string($password) && $password !== '' ? $password : null;
+        }
+
+        return parent::setValues($data, $ignoreEmptyValues);
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws DuplicateUserNameException if a person or service user of the other kind already has the name
+     * @throws InvalidServiceUserException if the type of a saved user is changed, a service user has
+     *     administrator rights or two-factor data, a person has responsible users or roles, or a responsible
+     *     id is not an existing user or role (both checked inside the save transaction, after the pre-save
+     *     events, so a value set by a listener is checked as well)
+     * @throws Exception
+     */
+    public function save(array $parameters = []): static
+    {
+        if ($this->getId() !== null) {
+            $storedType = $this->getDao()->getStoredType();
+            if ($storedType !== null && $storedType !== $this->getType()) {
+                throw new InvalidServiceUserException(
+                    'The type of a saved user never changes: a person does not become a service user, nor the reverse.'
+                );
+            }
+        }
+
+        if ($this->isServiceUser()) {
+            if ($this->admin || $this->hasTwoFactorData()) {
+                throw new InvalidServiceUserException(
+                    'A service user cannot have administrator rights or two-factor authentication.'
+                );
+            }
+
+            // never a usable password: not a password hash, so no password ever verifies against it
+            $this->password = self::UNUSABLE_PASSWORD_PREFIX . bin2hex(random_bytes(32));
+        }
+
+        $name = $this->getName();
+        if ($name !== null && $this->getDao()->isNameTakenByOtherUserType()) {
+            throw new DuplicateUserNameException(
+                sprintf('The name "%s" is already used by another user or service user.', $name)
+            );
+        }
+
+        return parent::save($parameters);
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
     /**
+     * A service user never gets a password from a caller: save() stores an unusable value instead, and passing
+     * null keeps it.
+     *
      * @return $this
+     *
+     * @throws InvalidServiceUserException when a service user is given a password
      */
     public function setPassword(?string $password): static
     {
+        if ($this->isServiceUser()) {
+            if ($password !== null) {
+                throw new InvalidServiceUserException('A service user cannot have a password.');
+            }
+
+            return $this;
+        }
+
         if (strlen((string) $password) > 4) {
             $this->password = $password;
         }
@@ -227,16 +585,25 @@ final class User extends User\UserRole implements UserInterface
         return $this->getAdmin();
     }
 
+    /**
+     * A service user is never an administrator.
+     */
     public function getAdmin(): bool
     {
-        return $this->admin;
+        return $this->admin && !$this->isServiceUser();
     }
 
     /**
      * @return $this
+     *
+     * @throws InvalidServiceUserException when a service user is given administrator rights
      */
     public function setAdmin(bool $admin): static
     {
+        if ($admin && $this->isServiceUser()) {
+            throw new InvalidServiceUserException('A service user cannot be an administrator.');
+        }
+
         $this->admin = $admin;
 
         return $this;
@@ -669,8 +1036,19 @@ final class User extends User\UserRole implements UserInterface
         $this->keyBindings = $keyBindings;
     }
 
+    /**
+     * A service user has no two-factor authentication; for it this always returns the disabled defaults.
+     */
     public function getTwoFactorAuthentication(?string $key = null): mixed
     {
+        if ($this->isServiceUser()) {
+            if ($key) {
+                return self::TWO_FACTOR_DEFAULTS[$key] ?? null;
+            }
+
+            return self::TWO_FACTOR_DEFAULTS;
+        }
+
         if ($this->twoFactorAuthentication === null) {
             // set defaults if no data is present
             $this->twoFactorAuthentication = [
@@ -689,9 +1067,12 @@ final class User extends User\UserRole implements UserInterface
     }
 
     /**
-     * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument
+     * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument.
+     * A service user accepts only data that leaves two-factor authentication disabled and without a secret.
      *
      * @param array<string, mixed>|string $key
+     *
+     * @throws InvalidServiceUserException when the data enables two-factor authentication for a service user
      */
     public function setTwoFactorAuthentication(array|string $key, mixed $value = null): void
     {
@@ -702,11 +1083,32 @@ final class User extends User\UserRole implements UserInterface
         } else {
             if ($this->twoFactorAuthentication === null) {
                 // load defaults
-                $this->getTwoFactorAuthentication();
+                $this->twoFactorAuthentication = self::TWO_FACTOR_DEFAULTS;
             }
 
             $this->twoFactorAuthentication[$key] = $value;
         }
+
+        if ($this->isServiceUser() && $this->hasTwoFactorData()) {
+            $this->twoFactorAuthentication = null;
+
+            throw new InvalidServiceUserException('A service user cannot use two-factor authentication.');
+        }
+    }
+
+    private function hasTwoFactorData(): bool
+    {
+        $data = $this->twoFactorAuthentication;
+        if (!is_array($data)) {
+            return false;
+        }
+
+        // the flags are read by PHP truthiness (see \Pimcore\Security\User\User::isGoogleAuthenticatorEnabled()),
+        // so any truthy value (1, '1', 'true', even 'false') enables two-factor authentication just like true does
+        return (bool) ($data['enabled'] ?? false)
+            || (bool) ($data['required'] ?? false)
+            || (string) ($data['secret'] ?? '') !== ''
+            || (string) ($data['type'] ?? '') !== '';
     }
 
     public function getProvider(): ?string

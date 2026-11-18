@@ -13,6 +13,8 @@
 namespace Pimcore\Model\User\AbstractUser;
 
 use DateTime;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -30,7 +32,14 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById(int $id): void
     {
-        if ($this->model->getType()) {
+        if ($this->model->getType() === 'user') {
+            // a service user is a user, too (same class, type 'serviceuser')
+            $data = $this->db->fetchAssociative(
+                'SELECT * FROM users WHERE `type` IN (?) AND id = ?',
+                [['user', 'serviceuser'], $id],
+                [ArrayParameterType::STRING, ParameterType::INTEGER]
+            );
+        } elseif ($this->model->getType()) {
             $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND id = ?', [$this->model->getType(), $id]);
         } else {
             $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `id` = ?', [$id]);
@@ -158,6 +167,17 @@ class Dao extends Model\Dao\AbstractDao
     {
         $userId = $this->model->getId();
         Logger::debug('delete user with ID: ' . $userId);
+
+        // responsible users: rows of a service user, and rows naming a deleted person or role
+        $this->db->delete('users_responsibles', ['serviceUserId' => $userId]);
+        $principalType = match ($this->model->getType()) {
+            'user' => 'user',
+            'role' => 'role',
+            default => null,
+        };
+        if ($principalType !== null) {
+            $this->db->delete('users_responsibles', ['principalType' => $principalType, 'principalId' => $userId]);
+        }
 
         $this->db->delete('users', ['id' => $userId]);
     }

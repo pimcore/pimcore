@@ -16,6 +16,7 @@ namespace Pimcore\Model\Element;
 use Closure;
 use Doctrine\DBAL\Exception\RetryableException;
 use Exception;
+use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -243,14 +244,44 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->properties = $properties;
         }
 
-        $properties = $this->properties;
-        if (!static::getGetInheritedProperties()) {
-            $properties = array_filter($properties, static function (Model\Property $property) {
-                return !$property->isInherited();
-            });
+        return $this->filterInheritedProperties($this->properties);
+    }
+
+    /**
+     * Drops the inherited properties when the inheritance of properties is switched off
+     * (see Service::useInheritedProperties()). Only the returned list is filtered, never the stored one.
+     *
+     * @param array<string, Model\Property> $properties
+     *
+     * @return array<string, Model\Property>
+     */
+    protected function filterInheritedProperties(array $properties): array
+    {
+        if (static::getGetInheritedProperties()) {
+            return $properties;
         }
 
-        return $properties;
+        return array_filter($properties, static function (Model\Property $property) {
+            return !$property->isInherited();
+        });
+    }
+
+    /**
+     * The properties including the inherited ones, independent of the inheritance setting. Used wherever the list is
+     * changed and written back, so that switching the inheritance off cannot drop inherited properties for good.
+     *
+     * @return array<string, Model\Property>
+     */
+    private function getPropertiesIncludingInherited(): array
+    {
+        $backup = static::getGetInheritedProperties();
+        static::setGetInheritedProperties(true);
+
+        try {
+            return $this->getProperties();
+        } finally {
+            static::setGetInheritedProperties($backup);
+        }
     }
 
     public function setProperties(?array $properties): static
@@ -268,7 +299,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         bool $inherited = false,
         bool $inheritable = false
     ): static {
-        $properties = $this->getProperties();
+        $properties = $this->getPropertiesIncludingInherited();
 
         $id = $this->getId();
         $property = new Model\Property();
@@ -364,7 +395,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function removeProperty(string $name): void
     {
-        $properties = $this->getProperties();
+        $properties = $this->getPropertiesIncludingInherited();
         unset($properties[$name]);
         $this->setProperties($properties);
     }
@@ -615,18 +646,22 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     *
+     * Writes a version of the element. With $existingVersion the version data is written into that version
+     * instead of a new one (e.g. when a prepared version is published); it must belong to this element.
      *
      * @throws Exception
      *
      * @internal
      *
      */
-    protected function doSaveVersion(?string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
+    protected function doSaveVersion(?string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false, ?Model\Version $existingVersion = null): Model\Version
     {
         $version = null;
 
-        if ($isAutoSave) {
+        if ($existingVersion instanceof Model\Version) {
+            $this->assertVersionBelongsToElement($existingVersion);
+            $version = $existingVersion;
+        } elseif ($isAutoSave) {
             $list = new Model\Version\Listing();
             $list->setLoadAutoSave(true);
             $list->setCondition('autoSave = 1 AND cid = ? AND cType = ? AND userId = ? ', [$this->getId(), Service::getElementType($this), $this->getUserModification()]);
@@ -641,7 +676,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setCid($this->getId());
         $version->setCtype(Service::getElementType($this));
         $version->setDate($this->getModificationDate());
-        $version->setUserId($this->getUserModification());
+        // a version that is written into (e.g. when it is published) keeps its author
+        if (!$existingVersion instanceof Model\Version) {
+            $version->setUserId($this->getUserModification());
+        }
         $version->setData($this);
         if ($versionNote !== null) {
             $version->setNote($versionNote);
@@ -660,6 +698,59 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->save();
 
         return $version;
+    }
+
+    /**
+     * Resolves the `existingVersion` save parameter: the version the saved state is written into instead of a new one,
+     * it must belong to this element and must not be an auto-save version
+     *
+     * @throws InvalidArgumentException
+     *
+     * @internal
+     */
+    protected function resolveExistingVersionParameter(array $parameters): ?Model\Version
+    {
+        $existingVersion = $parameters['existingVersion'] ?? null;
+        if ($existingVersion !== null && !$existingVersion instanceof Model\Version) {
+            throw new InvalidArgumentException(sprintf(
+                'The "existingVersion" parameter must be an instance of %s, %s given',
+                Model\Version::class,
+                get_debug_type($existingVersion)
+            ));
+        }
+
+        if ($existingVersion !== null) {
+            $this->assertVersionBelongsToElement($existingVersion);
+
+            // auto-save versions are rewritten by the editor of their user at any time, writing into them would race
+            // with that, so they are saved as a new version
+            if ($existingVersion->isAutoSave()) {
+                throw new InvalidArgumentException(sprintf(
+                    'Version %d is an auto-save version and cannot be written into, save it as a new version instead',
+                    $existingVersion->getId()
+                ));
+            }
+        }
+
+        return $existingVersion;
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function assertVersionBelongsToElement(Model\Version $version): void
+    {
+        $elementType = Service::getElementType($this);
+        if ($version->getCid() !== $this->getId() || $version->getCtype() !== $elementType) {
+            throw new InvalidArgumentException(sprintf(
+                'Version %d belongs to %s %d and cannot be written for %s %d',
+                $version->getId(),
+                $version->getCtype(),
+                $version->getCid(),
+                $elementType,
+                $this->getId()
+            ));
+        }
     }
 
     public function getDependencies(): Model\Dependency

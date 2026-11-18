@@ -38,6 +38,35 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_metadata_' . $object->getClassId();
     }
 
+    /**
+     * Removes the stored rows of the given columns, a column saved without a value keeps no previous value.
+     *
+     * @param array<string, mixed> $keyData the unique key values without `column`
+     * @param string[] $columns
+     */
+    protected function deleteColumnRows(string $table, array $keyData, array $columns): void
+    {
+        if (!$columns) {
+            return;
+        }
+
+        $conditions = [];
+        $params = [];
+        foreach (self::UNIQUE_COLUMNS as $key) {
+            if ($key === 'column') {
+                continue;
+            }
+            $conditions[] = $this->db->quoteIdentifier($key) . ' = ?';
+            $params[] = $keyData[$key];
+        }
+
+        $conditions[] = $this->db->quoteIdentifier('column') . ' IN (' . implode(',', array_fill(0, count($columns), '?')) . ')';
+        $this->db->executeStatement(
+            'DELETE FROM ' . $this->db->quoteIdentifier($table) . ' WHERE ' . implode(' AND ', $conditions),
+            array_merge($params, array_values($columns))
+        );
+    }
+
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?Model\AbstractModel
     {
         throw new Exception('Needs to be implemented by child class');

@@ -35,6 +35,14 @@ services:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolygon, key: 'block_geopolygon' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolyline, key: 'block_geopolyline' }
 
+    Pimcore\DataObject\BlockDataMarshaller\Hotspotimage:
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_hotspotimage, key: 'block_hotspotimage' }
+
+    Pimcore\DataObject\BlockDataMarshaller\ImageGallery:
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_imageGallery, key: 'block_imageGallery' }
+
     Pimcore\DataObject\BlockDataMarshaller\Localizedfields:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_localizedfields, key: 'block_localizedfields' }

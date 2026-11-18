@@ -66,7 +66,9 @@ services:
 
     Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask:
         arguments:
-            - '@doctrine.dbal.default_connection'
+            $db: '@doctrine.dbal.default_connection'
+            # only for tests; autowiring must not inject a project-level filesystem here
+            $storage: null
         tags:
             - { name: pimcore.maintenance.task, type: archiveLogEntries }
 

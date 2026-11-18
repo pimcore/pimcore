@@ -14,14 +14,20 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 use stdClass;
@@ -261,8 +267,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $getter = 'get' . ucfirst($collectionRaw['type']);
                 $brick = $container->$getter();
                 if (empty($brick)) {
+                    $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
                     $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($collectionRaw['type']);
-                    $brick = new $brickClass($object);
+                    $brick = $modelFactory->build($brickClass, [$object]);
                 }
 
                 $brick->setFieldname($this->getName());
@@ -415,6 +422,29 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                 if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            // a calculated value cannot own a dependency: it is computed on read and
+                            // CalculatedValue does not override Data::resolveDependencies(), which
+                            // returns an empty array. Calling the getter would run the calculator
+                            // for nothing.
+                            continue;
+                        }
+
+                        if ($fd instanceof AbstractRelations && $this->isUnloadedRelation($item, $fd)) {
+                            $relationDependencies = UnloadedRelation::resolveDependencies(
+                                $fd,
+                                $item,
+                                [],
+                                DataObject::doGetInheritedValues($item->getObject()),
+                                false
+                            );
+                            if ($relationDependencies !== null) {
+                                $dependencies = array_merge($dependencies, $relationDependencies);
+
+                                continue;
+                            }
+                        }
+
                         $key = $fd->getName();
                         $getter = 'get' . ucfirst($key);
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
@@ -495,6 +525,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         if ($data instanceof DataObject\Objectbrick) {
             $validationExceptions = [];
+            $violations = [];
 
             $itemCount = 0;
             $allowedTypes = $this->getAllowedTypes();
@@ -515,7 +546,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     //max limit check should be performed irrespective of omitMandatory check
                     if (!empty($this->maxItems) && $itemCount > $this->maxItems) {
-                        throw new Model\Element\ValidationException('Maximum limit reached for items in brick: ' . $this->getName());
+                        throw (new StructuredValidationException(
+                            'Maximum limit reached for items in brick: ' . $this->getName()
+                        ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->maxItems]);
                     }
 
                     //needed when new brick is added but not saved yet - then validity check fails.
@@ -525,6 +558,31 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            if ($fd instanceof CalculatedValue) {
+                                // a calculated value is computed on read and never persisted from
+                                // user input, and CalculatedValue::checkValidity() is a no-op for
+                                // that reason. Calling the getter here would run the calculator
+                                // only to discard the result. Fieldcollections::checkValidity()
+                                // has skipped calculated values the same way since #3962.
+                                continue;
+                            }
+
+                            if ($fd instanceof AbstractRelations
+                                && $this->isUnloadedRelation($item, $fd)
+                                && UnloadedRelation::isValid(
+                                    $fd,
+                                    $item,
+                                    [],
+                                    $fd->getMandatory(),
+                                    DataObject::doGetInheritedValues($item->getObject()),
+                                    false
+                                )) {
+                                // a lazy loaded relation that was not read in this request cannot have been changed
+                                // by it (a setter marks it as loaded) and is not written either, see
+                                // Concrete::updateObject()
+                                continue;
+                            }
+
                             $key = $fd->getName();
                             $getter = 'get' . ucfirst($key);
 
@@ -542,11 +600,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }
-                                        $e->addContext($this->getName());
+                                        $violations[] = $this->addBrickContext($e, $fd, $collectionDef);
                                         $validationExceptions[] = $e;
                                     }
                                 } else {
-                                    $ve->addContext($this->getName());
+                                    $violations[] = $this->addBrickContext($ve, $fd, $collectionDef);
                                     $validationExceptions[] = $ve;
                                 }
                             }
@@ -557,15 +615,36 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
             if ($validationExceptions) {
                 $errors = [];
+                // the original exceptions, so a custom getAggregatedMessage() keeps its text
                 /** @var Model\Element\ValidationException $e */
                 foreach ($validationExceptions as $e) {
                     $errors[] = $e->getAggregatedMessage();
                 }
                 $message = implode(' / ', $errors);
 
-                throw new Model\Element\ValidationException('invalid brick ' . $this->getName().': '.$message);
+                throw (new StructuredValidationException('invalid brick ' . $this->getName().': '.$message))
+                    ->addViolations(...$violations);
             }
         }
+    }
+
+    private function addBrickContext(
+        Model\Element\ValidationException $exception,
+        Data $fieldDefinition,
+        DataObject\Objectbrick\Definition $brickDefinition
+    ): StructuredValidationException {
+        $exception->addContext($this->getName());
+        $title = $this->getTitle();
+        $brickTitle = $brickDefinition->getTitle();
+
+        return StructuredValidationException::from($exception)
+            ->setField($fieldDefinition->getName(), $fieldDefinition->getTitle())
+            ->addPathSegment(new ValidationPathSegment(
+                field: $this->getName(),
+                title: $title !== '' ? $title : null,
+                type: $brickDefinition->getKey(),
+                typeTitle: $brickTitle !== null && $brickTitle !== '' ? $brickTitle : null
+            ));
     }
 
     /**
@@ -685,8 +764,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $brick = $brickdata->$getter();
             if (!$brick) {
                 // brick must be added to object
+                $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
                 $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickname);
-                $brick = new $brickClass($object);
+                $brick = $modelFactory->build($brickClass, [$object]);
             }
 
             $fieldname = $subdata['name'];
@@ -865,5 +945,20 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public function getFieldType(): string
     {
         return 'objectbricks';
+    }
+
+    /**
+     * Whether the getter of the brick would load the relation from the relation rows stored for the brick, see
+     * Objectbrick::loadLazyField(). It does so for the brick of its container only, a brick to delete is left out.
+     */
+    private function isUnloadedRelation(DataObject\Objectbrick\Data\AbstractData $item, AbstractRelations $fd): bool
+    {
+        if ($item->getDoDelete() || $item->isLazyKeyLoaded($fd->getName())) {
+            return false;
+        }
+
+        $container = $item->getObject()?->getObjectVar($item->getFieldname());
+
+        return $container instanceof Objectbrick && $container->getObjectVar($item->getType()) === $item;
     }
 }

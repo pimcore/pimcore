@@ -34,6 +34,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerP
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
 use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
+use Pimcore\Model\DataObject\HydrationLock;
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -76,6 +77,14 @@ class PimcoreCoreBundle extends Bundle
     {
         $this->bootDocumentLinkSanitizer();
         $this->bootDataObjectLinkSanitizer();
+        $this->bootHydrationLock();
+    }
+
+    private function bootHydrationLock(): void
+    {
+        foreach ($this->container->getParameter('pimcore.objects.hydration_lock.disabled_for') as $className) {
+            HydrationLock::disable($className);
+        }
     }
 
     private function bootDocumentLinkSanitizer(): void

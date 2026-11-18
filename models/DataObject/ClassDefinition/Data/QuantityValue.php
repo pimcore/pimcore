@@ -19,6 +19,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue\FilterValueFormatter;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Model\Exception\NotFoundException;
 
 class QuantityValue extends AbstractQuantityValue
@@ -282,11 +284,15 @@ class QuantityValue extends AbstractQuantityValue
             && $this->getMandatory()
             && ($data === null || $data->getValue() === null || $data->getUnitId() === null)
         ) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ '.$this->getName().' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
 
         if ($data !== null && !$this->isEmpty($data->getValue()) && !is_numeric($data->getValue())) {
-            throw new Model\Element\ValidationException('field ['.$this->getName().' ] - invalid numeric data [' . $data->getValue() . '] ');
+            throw (new StructuredValidationException(
+                'field ['.$this->getName().' ] - invalid numeric data [' . $data->getValue() . '] '
+            ))
+                ->setTranslation(ValidationMessageKey::NOT_NUMERIC, ['value' => $data->getValue()]);
         }
 
         if (!empty($data) && !$omitMandatoryCheck) {
@@ -304,19 +310,41 @@ class QuantityValue extends AbstractQuantityValue
             }
 
             if ($this->getInteger() && str_contains((string)$value, '.')) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
+                throw (new StructuredValidationException('Value in field [ '.$this->getName().' ] is not an integer'))
+                    ->setTranslation(ValidationMessageKey::NOT_INTEGER, ['value' => $data->getValue()]);
             }
 
             if ($this->getMinValue() !== null && $this->getMinValue() > $value) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
+                throw (new StructuredValidationException(
+                    'Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue()
+                ))
+                    ->setTranslation(
+                        ValidationMessageKey::MIN_VALUE,
+                        [
+                            'min' => $this->getMinValue(),
+                            'value' => $data->getValue(),
+                        ],
+                    );
             }
 
             if ($this->getMaxValue() !== null && $value > $this->getMaxValue()) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is bigger than ' . $this->getMaxValue());
+                throw (new StructuredValidationException(
+                    'Value in field [ '.$this->getName().' ] is bigger than ' . $this->getMaxValue()
+                ))
+                    ->setTranslation(
+                        ValidationMessageKey::MAX_VALUE,
+                        [
+                            'max' => $this->getMaxValue(),
+                            'value' => $data->getValue(),
+                        ],
+                    );
             }
 
             if ($this->getUnsigned() && $value < 0) {
-                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not unsigned (bigger than 0)');
+                throw (new StructuredValidationException(
+                    'Value in field [ '.$this->getName().' ] is not unsigned (bigger than 0)'
+                ))
+                    ->setTranslation(ValidationMessageKey::NOT_UNSIGNED, ['value' => $data->getValue()]);
             }
         }
     }

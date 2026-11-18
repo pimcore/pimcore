@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Http;
 
+use Pimcore;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +28,20 @@ use Symfony\Component\Routing\RequestContext;
  */
 class RequestHelperTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Pimcore::unsetAdminMode();
+    }
+
+    protected function tearDown(): void
+    {
+        Pimcore::unsetAdminMode();
+
+        parent::tearDown();
+    }
+
     private function buildRequestHelper(): RequestHelper
     {
         return new RequestHelper(new RequestStack(), new RequestContext());
@@ -83,5 +99,107 @@ class RequestHelperTest extends TestCase
 
         $this->assertFalse($requestHelper->isFrontendRequestByAdmin($request));
         $this->assertFalse($requestHelper->isAuthenticatedFrontendRequestByAdmin($request));
+    }
+
+    public function testIsFrontendRequestIsTrueForAPlainFrontendRequest(): void
+    {
+        $request = Request::create('http://example.com/some/page');
+
+        $this->assertTrue($this->buildRequestHelper()->isFrontendRequest($request));
+    }
+
+    public function testIsFrontendRequestIsTrueForTheDefaultContext(): void
+    {
+        $request = Request::create('http://example.com/some/page');
+        $request->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, PimcoreContextResolver::CONTEXT_DEFAULT);
+
+        $this->assertTrue($this->buildRequestHelper()->isFrontendRequest($request));
+    }
+
+    public function testIsFrontendRequestIsFalseForTheAdminPath(): void
+    {
+        $request = Request::create('http://example.com/admin/some/route');
+
+        $this->assertFalse($this->buildRequestHelper()->isFrontendRequest($request));
+    }
+
+    public function testIsFrontendRequestIsFalseInAdminMode(): void
+    {
+        Pimcore::setAdminMode();
+        $request = Request::create('http://example.com/some/route');
+
+        $this->assertFalse($this->buildRequestHelper()->isFrontendRequest($request));
+    }
+
+    /**
+     * Studio requests are backend requests, just like the ones below /admin.
+     *
+     * @dataProvider backendContextProvider
+     */
+    public function testIsFrontendRequestIsFalseForBackendContexts(string $context): void
+    {
+        $request = Request::create('http://example.com/pimcore-studio/');
+        $request->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, $context);
+
+        $this->assertFalse($this->buildRequestHelper()->isFrontendRequest($request));
+    }
+
+    /**
+     * @dataProvider backendContextProvider
+     */
+    public function testIsFrontendRequestFollowsTheContextOfTheMainRequest(string $context): void
+    {
+        $mainRequest = Request::create('http://example.com/pimcore-studio/');
+        $mainRequest->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, $context);
+        $subRequest = Request::create('http://example.com/_fragment');
+
+        $requestStack = new RequestStack();
+        $requestStack->push($mainRequest);
+        $requestStack->push($subRequest);
+
+        $this->assertFalse((new RequestHelper($requestStack, new RequestContext()))->isFrontendRequest($subRequest));
+    }
+
+    /**
+     * Resolving the context of a fragment (e.g. in BlockStateListener) stamps "default" on it.
+     *
+     * @dataProvider backendContextProvider
+     */
+    public function testIsFrontendRequestFollowsTheMainRequestForSubRequestsWithAResolvedDefaultContext(string $context): void
+    {
+        $mainRequest = Request::create('http://example.com/pimcore-studio/');
+        $mainRequest->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, $context);
+        $subRequest = Request::create('http://example.com/_fragment');
+        $subRequest->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, PimcoreContextResolver::CONTEXT_DEFAULT);
+
+        $requestStack = new RequestStack();
+        $requestStack->push($mainRequest);
+        $requestStack->push($subRequest);
+
+        $this->assertFalse((new RequestHelper($requestStack, new RequestContext()))->isFrontendRequest($subRequest));
+    }
+
+    public function testIsFrontendRequestIgnoresAnUnrelatedMainRequestContext(): void
+    {
+        $mainRequest = Request::create('http://example.com/some/page');
+        $mainRequest->attributes->set(PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT, PimcoreContextResolver::CONTEXT_DEFAULT);
+        $subRequest = Request::create('http://example.com/_fragment');
+
+        $requestStack = new RequestStack();
+        $requestStack->push($mainRequest);
+        $requestStack->push($subRequest);
+
+        $this->assertTrue((new RequestHelper($requestStack, new RequestContext()))->isFrontendRequest($subRequest));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function backendContextProvider(): array
+    {
+        return [
+            'admin' => [PimcoreContextResolver::CONTEXT_ADMIN],
+            'studio' => [PimcoreContextResolver::CONTEXT_STUDIO],
+        ];
     }
 }

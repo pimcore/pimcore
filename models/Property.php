@@ -155,7 +155,7 @@ final class Property extends AbstractModel
     }
 
     /**
-     * enum('text','document','asset','object','bool','select')
+     * enum('text','document','asset','object','bool','select','date')
      */
     public function getType(): ?string
     {
@@ -211,7 +211,7 @@ final class Property extends AbstractModel
     }
 
     /**
-     * enum('text','document','asset','object','bool','select')
+     * enum('text','document','asset','object','bool','select','date')
      *
      *
      * @return $this

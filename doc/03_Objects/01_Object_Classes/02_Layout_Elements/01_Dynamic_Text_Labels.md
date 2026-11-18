@@ -13,6 +13,12 @@ This is an alternative to the static text defined in the class definition.
 
 The preview tab shows a preview of the generated content. If your content uses object context, drag and drop an object onto the "Drag Object for Preview" field to check the output in the preview tab.
 
+:::info Rendering only
+Dynamic Text Labels are rendered on the fly whenever the object editor is displayed.
+The generated text is never saved to the database or anywhere else and is not part of
+the object's data. If you need a computed value that is persisted, queryable, and
+exportable, use a [Calculated Value](../01_Data_Types/10_Calculated_Value_Type.md) instead.
+:::
 
 ## Custom Renderer Class
 

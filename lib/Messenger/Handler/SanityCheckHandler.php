@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
+use Pimcore\Db;
 use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
@@ -67,6 +69,13 @@ class SanityCheckHandler implements BatchHandlerInterface
         if (!$element instanceof PageSnippet && !$element instanceof Concrete && !$element instanceof Asset) {
             return;
         }
+
+        // the element or its parent may have been deleted since the message was queued (bulk deletions
+        // delete the related elements one after another); saving would re-insert the row as an orphan
+        if (!$this->isStillPresent($element)) {
+            return;
+        }
+
         $latestNotPublishedVersion = null;
 
         if ($latestVersion = $element->getLatestVersion()) {
@@ -86,5 +95,27 @@ class SanityCheckHandler implements BatchHandlerInterface
             $latestNotPublishedVersion->setNote('Sanity Check');
             $latestNotPublishedVersion->save();
         }
+    }
+
+    /**
+     * Whether the element and its parent still exist in the database (a deleted element would be
+     * re-inserted by save(), see Helper::updateOrInsert()).
+     */
+    private function isStillPresent(ElementInterface $element): bool
+    {
+        $table = match (true) {
+            $element instanceof Asset => 'assets',
+            $element instanceof PageSnippet => 'documents',
+            default => 'objects',
+        };
+
+        $ids = array_unique(array_filter([$element->getId(), $element->getParentId()]));
+        $found = Db::get()->fetchFirstColumn(
+            'SELECT id FROM ' . $table . ' WHERE id IN (?)',
+            [$ids],
+            [ArrayParameterType::INTEGER]
+        );
+
+        return count($found) === count($ids);
     }
 }

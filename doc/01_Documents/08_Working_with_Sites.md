@@ -64,6 +64,10 @@ document.getFullPath()  {# returns the path relative to the site-root #}
 ```
 </div>
 
+Outside of a site (e.g. on the main domain), `getFullPath()` returns an absolute URL with the main domain of the site
+(`https://site.example.com/page`) for documents which belong to a site, as the real path of such a document does not
+resolve there. Documents which don't belong to a site keep returning their path.
+
 #### Getting the root-document of the current site
 
 <div class="code-section">

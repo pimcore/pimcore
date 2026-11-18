@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use ReflectionMethod;
 
 abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface, JsonSerializable
@@ -123,7 +125,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+            throw (new StructuredValidationException('Empty mandatory field [ ' . $this->getName() . ' ]'))
+                ->setTranslation(ValidationMessageKey::MANDATORY);
         }
     }
 
@@ -470,11 +473,29 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return '';
     }
 
+    private function allowsNullReturn(): bool
+    {
+        $type = $this->getReturnTypeDeclaration();
+        if ($type === null || $type === '' || $type === 'mixed' || str_starts_with($type, '?')) {
+            return true;
+        }
+
+        return in_array('null', array_map('strtolower', explode('|', $type)), true);
+    }
+
     protected function getPreGetValueHookCode(string $key): string
     {
         $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
         $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . "\n";
-        $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
+        if ($this->allowsNullReturn()) {
+            $code .= "\t\t" . 'if ($preValue === \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
+            $code .= "\t\t\t" . 'return null;' . "\n";
+            $code .= "\t\t" . '}' . "\n";
+            $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
+        } else {
+            // the getter cannot return null (e.g. "array" getters): the sentinel is ignored and the stored value is used
+            $code .= "\t\t" . 'if ($preValue !== null && $preValue !== \\Pimcore\\Model\\DataObject\\PreGetValueHookResult::ReturnNull) {' . "\n";
+        }
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n\n";

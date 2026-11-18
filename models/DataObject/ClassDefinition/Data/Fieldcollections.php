@@ -19,9 +19,14 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
@@ -329,6 +334,23 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            // a calculated value cannot own a dependency: it is computed on read and
+                            // CalculatedValue does not override Data::resolveDependencies(), which
+                            // returns an empty array. Calling the getter would run the calculator
+                            // for nothing.
+                            continue;
+                        }
+
+                        if ($fd instanceof AbstractRelations && $this->isUnloadedRelation($item, $fd)) {
+                            $relationDependencies = UnloadedRelation::resolveDependencies($fd, $item, [], false, false);
+                            if ($relationDependencies !== null) {
+                                $dependencies = array_merge($dependencies, $relationDependencies);
+
+                                continue;
+                            }
+                        }
+
                         $getter = 'get' . ucfirst($fd->getName());
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
                     }
@@ -363,6 +385,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         if ($data instanceof DataObject\Fieldcollection) {
             $validationExceptions = [];
+            $violations = [];
+            $keepsStoredRelations = $this->keepsStoredRelations($data);
 
             $idx = -1;
             foreach ($data as $item) {
@@ -373,12 +397,24 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 //max limit check should be performed irrespective of omitMandatory check
                 if (!empty($this->maxItems) && $idx + 1 > $this->maxItems) {
-                    throw new Model\Element\ValidationException('Maximum limit reached for items in field collection: ' . $this->getName());
+                    throw (new StructuredValidationException(
+                        'Maximum limit reached for items in field collection: ' . $this->getName()
+                    ))->setTranslation(ValidationMessageKey::MAX_ITEMS, ['max' => $this->maxItems]);
                 }
 
                 if (!$omitMandatoryCheck) {
                     if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            if ($keepsStoredRelations
+                                && $fd instanceof AbstractRelations
+                                && $this->isUnloadedRelation($item, $fd)
+                                && UnloadedRelation::isValid($fd, $item, [], $fd->getMandatory(), false, false)) {
+                                // a lazy loaded relation that was not read in this request cannot have been changed
+                                // by it (a setter marks it as loaded) and is not written either, see
+                                // Concrete::updateObject()
+                                continue;
+                            }
+
                             try {
                                 $getter = 'get' . ucfirst($fd->getName());
                                 if (!$fd instanceof CalculatedValue) {
@@ -387,6 +423,15 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             } catch (Model\Element\ValidationException $ve) {
                                 $ve->addContext($this->getName() . '-' . $idx);
                                 $validationExceptions[] = $ve;
+                                $violations[] = StructuredValidationException::from($ve)
+                                    ->setField($fd->getName(), $fd->getTitle())
+                                    ->addPathSegment(new ValidationPathSegment(
+                                        field: $this->getName(),
+                                        title: $this->getTitle() !== '' ? $this->getTitle() : null,
+                                        index: $idx,
+                                        type: $item->getType(),
+                                        typeTitle: $collectionDef->getTitle() !== '' ? $collectionDef->getTitle() : null
+                                    ));
                             }
                         }
                     }
@@ -395,13 +440,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
             if ($validationExceptions) {
                 $errors = [];
+                // the original exceptions, so a custom getAggregatedMessage() keeps its text
                 /** @var Model\Element\ValidationException $e */
                 foreach ($validationExceptions as $e) {
                     $errors[] = $e->getAggregatedMessage();
                 }
                 $message = implode(' / ', $errors);
 
-                throw new Model\Element\ValidationException($message);
+                throw (new StructuredValidationException($message))->addViolations(...$violations);
             }
         }
     }
@@ -816,5 +862,51 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getFieldType(): string
     {
         return 'fieldcollections';
+    }
+
+    /**
+     * Whether saving the field collection leaves the relation rows of its items as they are. Otherwise it deletes
+     * them and writes them again from the loaded values, see Fieldcollection\Dao::delete(), so a relation that was
+     * not loaded has to be loaded before.
+     */
+    private function keepsStoredRelations(DataObject\Fieldcollection $data): bool
+    {
+        if (DataObject::isDirtyDetectionDisabled() || $data->isFieldDirty('_self')) {
+            return false;
+        }
+
+        foreach ($data->getItems() as $item) {
+            if ($item->hasDirtyFields()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether the getter of the item would load the relation from the relation rows stored for the item, see
+     * Fieldcollection::loadLazyField(). A field collection does not inherit, so the rows tell the value.
+     */
+    private function isUnloadedRelation(AbstractData $item, AbstractRelations $fd): bool
+    {
+        if ($item->isLazyKeyLoaded($fd->getName())) {
+            return false;
+        }
+
+        $container = $item->getObject()?->getObjectVar($item->getFieldname());
+        if (!$container instanceof DataObject\Fieldcollection) {
+            // without a stored field collection, the getter marks the relation as loaded instead
+            return false;
+        }
+
+        // the getter loads the relation into the first item with the same index only
+        foreach ($container->getItems() as $storedItem) {
+            if ($storedItem->getIndex() === $item->getIndex()) {
+                return $storedItem === $item;
+            }
+        }
+
+        return false;
     }
 }

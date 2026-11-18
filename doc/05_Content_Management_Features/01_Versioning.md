@@ -97,6 +97,24 @@ Notes:
 - The configured retention policy still applies: with `steps` or `days` set to `0` (keep no versions), the lazy version
   of the persisted state is not created either.
 
+### Calculated Values in Object Versions
+
+By default, calculated fields of data objects are not part of a version: version previews and comparisons compute
+them at view time against the current data and calculator. Enable `calculated_value_snapshot` to store their values
+in the version when it is created, so a version shows the values as of that point in time:
+
+```yaml
+pimcore:
+    objects:
+        versions:
+            calculated_value_snapshot: true
+```
+
+Calculators then run on every version creation except auto-saves (manual drafts included), which costs time and
+queries proportional to the number of calculated fields. See
+[Calculated Value Type](../03_Objects/01_Object_Classes/01_Data_Types/10_Calculated_Value_Type.md#versioning) for the
+details and limitations.
+
 ## Version Storage
 
 Every version stores metadata and, if present, binary data. Since version data can grow quickly,

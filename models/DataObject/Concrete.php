@@ -23,11 +23,20 @@ use Pimcore\Logger;
 use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\SystemSettingsConfig;
+use SplObjectStorage;
 
 /**
  * @method Model\DataObject\Concrete\Dao getDao()
@@ -90,6 +99,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected bool $allLazyKeysMarkedAsLoaded = false;
 
     /**
+     * Values of calculated fields as of the time this instance was serialized into a version
+     * snapshot, keyed by DataObject\Service::getCalculatedValueSnapshotKey(). Only populated
+     * on instances restored from a version, never on live objects.
+     *
+     * @internal
+     *
+     * @var array<string, scalar|array|null>|null
+     */
+    protected ?array $__calculatedValueSnapshot = null;
+
+    /**
      * returns the class ID of the current object class
      *
      */
@@ -102,14 +122,50 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     protected function update(?bool $isUpdate = null, array $params = []): void
     {
+        // the field getters used for the validation and by the dao must not reduce wysiwyg links to unpublished
+        // elements, whichever request or process saves the object
+        WysiwygPersistingScope::run(fn () => $this->updateObject($isUpdate, $params));
+    }
+
+    private function updateObject(?bool $isUpdate, array $params): void
+    {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
+        /** @var SplObjectStorage<Model\Element\ValidationException, ClassDefinition\Data> $failedFields */
+        $failedFields = new SplObjectStorage();
 
         foreach ($fieldDefinitions as $fd) {
             try {
                 if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $this->__objectAwareFields['localizedfields'] = true;
+                }
+
+                if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    // a calculated value is computed on read and never persisted from user input,
+                    // and CalculatedValue::checkValidity() is a no-op for that reason - including
+                    // for the mandatory check. Calling the getter here would run the calculator
+                    // for every calculated field on every save, only to discard the result.
+                    continue;
+                }
+
+                if ($fd instanceof DataObject\ClassDefinition\Data\DerivedValueInterface
+                    && $fd->isValueDerived()
+                    && (!$fd->getMandatory() || $this->getOmitMandatoryCheck())) {
+                    // a derived value (e.g. a reverse relation, the read-only mirror of a relation stored on
+                    // the owning objects) is not stored on this object; reading it can load every owning
+                    // object, only to validate objects that are not part of this save. Only a mandatory one
+                    // that is checked needs its value.
+                    continue;
+                }
+
+                if ($fd instanceof AbstractRelations
+                    && !$this->isLazyKeyLoaded($fd->getName())
+                    && $this->isUnloadedRelationValid($fd)) {
+                    // a lazy loaded relation that was not read in this request cannot have been changed by it (a
+                    // setter marks it as loaded) and is not written by the dao either. Reading it would load every
+                    // related element, only to validate elements that were validated when they were stored.
+                    continue;
                 }
 
                 $getter = 'get' . ucfirst($fd->getName());
@@ -149,8 +205,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
-                                $exceptionClass = get_class($e);
-                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException = StructuredValidationException::copyWithMessage(
+                                    $e,
+                                    $e->getMessage() . ' fieldname=' . $fd->getName()
+                                );
                                 $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;
@@ -161,6 +219,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     }
                 }
             } catch (Model\Element\ValidationException $ve) {
+                $failedFields[$ve] = $fd;
                 $validationExceptions[] = $ve;
             }
         }
@@ -183,7 +242,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
             $message .= implode($preUpdateEvent->getArgument('separator'), $errors);
 
-            throw new Model\Element\ValidationException($message);
+            throw $this->createAggregatedValidationException($message, $validationExceptions, $failedFields);
         }
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
@@ -203,11 +262,169 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, $params['versionNote'] ?? null);
+            // only `existingVersion` is passed on, the versioning events keep their arguments
+            $this->saveVersion(false, false, $params['versionNote'] ?? null, false, array_intersect_key($params, ['existingVersion' => true]));
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
+    }
+
+    /**
+     * Builds the exception thrown by update() from the (possibly listener-modified) list of validation exceptions.
+     * Each one becomes a violation, named after the field it was caught for. An exception a listener added or
+     * replaced was not caught for a field, so its violation has none.
+     *
+     * @param Model\Element\ValidationException[] $validationExceptions
+     * @param SplObjectStorage<Model\Element\ValidationException, ClassDefinition\Data> $failedFields
+     */
+    private function createAggregatedValidationException(
+        string $message,
+        array $validationExceptions,
+        SplObjectStorage $failedFields
+    ): StructuredValidationException {
+        $aggregatedException = new StructuredValidationException($message);
+
+        foreach ($validationExceptions as $validationException) {
+            $violation = StructuredValidationException::from($validationException);
+            if ($failedFields->contains($validationException)) {
+                $fieldDefinition = $failedFields[$validationException];
+                $violation->setField($fieldDefinition->getName(), $fieldDefinition->getTitle());
+            }
+            $aggregatedException->addViolations($violation);
+        }
+
+        return $aggregatedException;
+    }
+
+    /**
+     * Whether a relation that was not loaded passes the checks of checkValidity() that do not need the related
+     * elements themselves (mandatory, max. items), judged by the elements its stored relation rows refer to. If
+     * they are not conclusive, the relation has to be loaded and validated as usual.
+     */
+    private function isUnloadedRelationValid(AbstractRelations $fd): bool
+    {
+        return $this->canShortcutUnloadedRelation($fd) && UnloadedRelation::isValid(
+            $fd,
+            $this,
+            [],
+            $fd->getMandatory() && !$this->getOmitMandatoryCheck(),
+            DataObject::doGetInheritedValues($this),
+            false
+        );
+    }
+
+    /**
+     * Whether the shortcuts for an unloaded relation apply: the field is one of the relation types of the core (a
+     * custom type or a subclass may validate a relation or resolve its dependencies differently), and no pre get
+     * value hook can replace the stored value, like it does in the getter outside of the admin.
+     */
+    private function canShortcutUnloadedRelation(AbstractRelations $field): bool
+    {
+        if ($this instanceof PreGetValueHookInterface && !Pimcore::inAdmin()) {
+            return false;
+        }
+
+        return UnloadedRelation::isCoreRelationType($field);
+    }
+
+    /**
+     * The values a version stores for the lazy loaded relations that were not loaded, keyed by field name: the types
+     * and ids of the related elements, which is what the loaded relation is stored as (see
+     * Element\Service::getDeepCopyInstance()). They are read from the stored relation rows instead of loading every
+     * related element. A relation the rows cannot tell this for is not listed, it has to be loaded to be stored.
+     *
+     * @internal
+     *
+     * @return array<string, list<ElementDescriptor>>
+     */
+    public function describeUnloadedRelationsForVersion(): array
+    {
+        $relations = [];
+        foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            // the advanced relations store the ids of the related elements already, they do not load them
+            if ((!$field instanceof ManyToManyRelation && !$field instanceof ManyToManyObjectRelation)
+                || $field instanceof AdvancedManyToManyRelation
+                || $field instanceof AdvancedManyToManyObjectRelation
+                || $this->isLazyKeyLoaded($field->getName())
+                || !$this->canShortcutUnloadedRelation($field)) {
+                continue;
+            }
+
+            $descriptors = $this->describeStoredRelationForVersion($field);
+            if ($descriptors !== null) {
+                $relations[$field->getName()] = $descriptors;
+            }
+        }
+
+        return $relations;
+    }
+
+    /**
+     * The elements a relation that was not loaded would be stored with in a version, see
+     * describeUnloadedRelationsForVersion(). Null if they may differ from the ones loading the relation returns.
+     *
+     * @return list<ElementDescriptor>|null
+     */
+    private function describeStoredRelationForVersion(ManyToManyRelation|ManyToManyObjectRelation $field): ?array
+    {
+        $rows = $this->retrieveRelationData(['fieldname' => $field->getName(), 'ownertype' => 'object']);
+
+        // the loaded relation keeps unpublished elements, only its getter leaves them out
+        $hideUnpublished = DataObject::getHideUnpublished();
+        DataObject::setHideUnpublished(false);
+
+        try {
+            $summaries = $field->loadRelationSummaries($this);
+        } finally {
+            DataObject::setHideUnpublished($hideUnpublished);
+        }
+
+        if (count($summaries) !== count($rows)) {
+            // a related element does not exist anymore, loading the relation leaves it out and marks the field dirty
+            return null;
+        }
+
+        $descriptors = [];
+        foreach ($summaries as $summary) {
+            if ($summary['type'] !== 'object') {
+                if ($field instanceof ManyToManyObjectRelation) {
+                    // an object relation loads the object with the id of a relation of any type
+                    return null;
+                }
+            } elseif (!$this->isLoadableRelatedObject($field, $summary)) {
+                return null;
+            }
+
+            $descriptors[] = new ElementDescriptor($summary['type'], $summary['id']);
+        }
+
+        return $descriptors;
+    }
+
+    /**
+     * Whether loading the relation returns the related object the summary describes, as an element that a version
+     * stores as a descriptor.
+     *
+     * @param array{id: int, subtype: string, className: string|null} $summary
+     */
+    private function isLoadableRelatedObject(
+        ManyToManyRelation|ManyToManyObjectRelation $field,
+        array $summary
+    ): bool {
+        if ($summary['id'] === $this->getId()) {
+            // a relation to the object itself is stored as the object, not as a descriptor
+            return false;
+        }
+
+        if ($summary['subtype'] === DataObject::OBJECT_TYPE_FOLDER) {
+            // an object relation leaves a folder out
+            return !$field instanceof ManyToManyObjectRelation;
+        }
+
+        // an object of an unknown type is not loaded, one of a class that does not exist cannot be
+        return in_array($summary['subtype'], DataObject::$types, true)
+            && class_exists('Pimcore\\Model\\DataObject\\' . ucfirst((string) $summary['className']));
     }
 
     private function saveChildData(): void
@@ -219,9 +436,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     protected function doDelete(): void
     {
-        // Dispatch Symfony Message Bus to delete versions
+        // Dispatch Symfony Message Bus to delete versions, bounded to the currently existing ones
         Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
+            new VersionDeleteMessage(
+                Model\Element\Service::getElementType($this),
+                $this->getId(),
+                Model\Version::getHighestIdForElement(Model\Element\Service::getElementType($this), $this->getId(), true) ?? 0
+            )
         );
 
         $this->getDao()->deleteAllTasks();
@@ -234,6 +455,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * it is false when the method is called by $this->update()
      *
      * @param string|null $versionNote version note
+     * @param array $parameters custom arguments passed on to the versioning events; `existingVersion` (Model\Version, internal)
+     *                          writes the version data into that version instead of creating a new one
      *
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false, array $parameters = []): ?Model\Version
@@ -243,6 +466,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             'isAutoSave' => $isAutoSave,
         ];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             if ($setModificationDate) {
@@ -263,13 +487,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
+            // with an existing version that version is written into, no version is added
             $objectsConfig = SystemSettingsConfig::get()['objects'];
             if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
                 || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
-                || $setModificationDate) {
+                || $setModificationDate
+                || $existingVersion !== null) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -311,6 +537,30 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
+    /**
+     * @internal
+     *
+     * @return array<string, scalar|array|null>|null
+     */
+    public function __getCalculatedValueSnapshot(): ?array
+    {
+        return $this->__calculatedValueSnapshot;
+    }
+
+    /**
+     * @internal
+     *
+     * @param array<string, scalar|array|null>|null $calculatedValueSnapshot
+     *
+     * @return $this
+     */
+    public function __setCalculatedValueSnapshot(?array $calculatedValueSnapshot): static
+    {
+        $this->__calculatedValueSnapshot = $calculatedValueSnapshot;
+
+        return $this;
+    }
+
     public function getValueForFieldName(string $key): mixed
     {
         if (isset($this->$key)) {
@@ -348,12 +598,52 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                // a calculated value cannot own a dependency: it is computed on read and
+                // CalculatedValue does not override Data::resolveDependencies(), which returns
+                // an empty array. Calling the getter would run the calculator for nothing.
+                continue;
+            }
+
+            if ($field instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                // a reverse relation cannot own a dependency either - the relation is recorded
+                // on the owning object - and ReverseObjectRelation::resolveDependencies() says so
+                // by returning an empty array. Its getter is never memoised, so calling it here
+                // would query the relation table and load every owning object for nothing.
+                continue;
+            }
+
             $key = $field->getName();
+
+            if ($field instanceof AbstractRelations && !$this->isLazyKeyLoaded($key)) {
+                $relationDependencies = $this->resolveDependenciesOfUnloadedRelation($field);
+                if ($relationDependencies !== null) {
+                    $dependencies[] = $relationDependencies;
+
+                    continue;
+                }
+            }
+
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());
         }
 
         return array_merge(...$dependencies);
+    }
+
+    /**
+     * The dependencies of a relation that was not loaded, read from its stored relation rows instead of loading
+     * every related element. Returns null if the rows cannot tell, then the relation has to be loaded.
+     *
+     * @return array<string, array{id: int, type: string}>|null
+     */
+    private function resolveDependenciesOfUnloadedRelation(AbstractRelations $field): ?array
+    {
+        if (!$this->canShortcutUnloadedRelation($field)) {
+            return null;
+        }
+
+        return UnloadedRelation::resolveDependencies($field, $this, [], DataObject::doGetInheritedValues($this), false);
     }
 
     /**
@@ -618,6 +908,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function save(array $parameters = []): static
     {
+        // an object restored from a version becomes a live object again when it is saved, so calculated fields
+        // have to be computed freshly from now on - before the pre-save events, so listeners already see that
+        $this->__calculatedValueSnapshot = null;
+
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
         // if the class is newer then better disable the dirty detection. This should fix issues with the query table if

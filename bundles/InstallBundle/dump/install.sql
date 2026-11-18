@@ -284,6 +284,7 @@ CREATE TABLE `objects` (
   `childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
   `childrenSortOrder` ENUM('ASC','DESC') NULL DEFAULT NULL,
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
+  `changeToken` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   PRIMARY KEY (`id`),
   UNIQUE KEY `fullpath` (`path`,`key`),
   KEY `key` (`key`),
@@ -302,7 +303,7 @@ CREATE TABLE `properties` (
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
   `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL, /* verified to fit within the 3072-byte InnoDB index-prefix limit for `getall` (cpath+ctype+inheritable) at 4 bytes/char */
   `name` varchar(190) NOT NULL DEFAULT '',
-  `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
+  `type` enum('text','document','asset','object','bool','select','date') DEFAULT NULL,
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
@@ -333,8 +334,7 @@ CREATE TABLE `schedule_tasks` (
   `active` tinyint(1) unsigned DEFAULT '0',
   `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
+  KEY `cid_ctype` (`cid`,`ctype`),
   KEY `active` (`active`),
   KEY `version` (`version`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
@@ -445,7 +445,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('user','userfolder','role','rolefolder') NOT NULL DEFAULT 'user',
+  `type` enum('user','userfolder','role','rolefolder','serviceuser') NOT NULL DEFAULT 'user',
   `name` varchar(50) DEFAULT NULL,
   `uniqueName` varchar(64) GENERATED ALWAYS AS (IF(`type` IN ('userfolder','rolefolder'), CONCAT(IFNULL(`parentId`, 0), '/', `name`), `name`)) STORED,
   `password` varchar(190) DEFAULT NULL,
@@ -488,6 +488,16 @@ CREATE TABLE `users_permission_definitions` (
   `key` varchar(50) NOT NULL DEFAULT '',
   `category` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`key`)
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+DROP TABLE IF EXISTS `users_responsibles`;
+CREATE TABLE `users_responsibles` (
+  `serviceUserId` int(11) unsigned NOT NULL,
+  `principalType` enum('user','role') NOT NULL,
+  `principalId` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`serviceUserId`,`principalType`,`principalId`),
+  KEY `principal` (`principalType`,`principalId`),
+  CONSTRAINT `fk_users_responsibles_users` FOREIGN KEY (`serviceUserId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `users_workspaces_asset`;

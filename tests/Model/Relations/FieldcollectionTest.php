@@ -169,6 +169,58 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals(false, isset($rel[0]));
     }
 
+    public function testClearingAdvancedRelationMetadataKeepsOtherFieldCollectionItems(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $targets = [];
+        foreach ([1, 2] as $i) {
+            $target = new Asset();
+            $target->setParent(Asset::getByPath('/'));
+            $target->setKey('metadatatarget' . $i);
+            $target->save();
+            $targets[] = $target;
+        }
+
+        $items = new Fieldcollection();
+        foreach (['first', 'second'] as $value) {
+            $item = new FieldCollection\Data\Unittestfieldcollection();
+            $relations = [];
+            foreach ($targets as $target) {
+                $metadata = new ElementMetadata('advancedFieldRelation', ['metadataUpper'], $target);
+                $metadata->setMetadataUpper($value);
+                $relations[] = $metadata;
+            }
+            $item->setAdvancedFieldRelation($relations);
+            $items->add($item);
+        }
+        $object->setFieldcollection($items);
+        $object->save();
+
+        // clear the value of the first relation of the first item only
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        $first = $object->getFieldcollection()->get(0);
+        $cleared = new ElementMetadata('advancedFieldRelation', ['metadataUpper'], $targets[0]);
+        $kept = new ElementMetadata('advancedFieldRelation', ['metadataUpper'], $targets[1]);
+        $kept->setMetadataUpper('first');
+        $first->setAdvancedFieldRelation([$cleared, $kept]);
+        $object->save();
+
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        $first = $object->getFieldcollection()->get(0)->getAdvancedFieldRelation();
+        $second = $object->getFieldcollection()->get(1)->getAdvancedFieldRelation();
+        $this->assertNull($first[0]->getMetadataUpper());
+        $this->assertSame('first', $first[1]->getMetadataUpper());
+        $this->assertSame('second', $second[0]->getMetadataUpper());
+        $this->assertSame('second', $second[1]->getMetadataUpper());
+
+        $rows = (int) \Pimcore\Db::get()->fetchOne(
+            'SELECT COUNT(*) FROM object_metadata_' . $object->getClassId() . " WHERE id = ? AND ownertype = 'fieldcollection'",
+            [$object->getId()]
+        );
+        $this->assertSame(3, $rows, 'Only the cleared row is gone.');
+    }
+
     public function testLocalizedFieldInsideFieldCollection(): void
     {
         $target1 = new RelationTest();

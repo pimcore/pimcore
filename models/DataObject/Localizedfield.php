@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
+use WeakMap;
 
 /**
  * @method Localizedfield\Dao getDao()
@@ -83,6 +84,16 @@ final class Localizedfield extends Model\AbstractModel implements
     protected ?int $objectId = null;
 
     private static bool $strictMode = false;
+
+    /**
+     * Field definitions enriched while Localizedfield\Dao::load() sets the stored values, per
+     * instance. Loading does not use the enriched options (no validation), so each field is enriched
+     * once per object instead of once per language and value. The entry only exists during the load;
+     * a WeakMap keeps it out of serialization and deep copies.
+     *
+     * @var WeakMap<self, array<string, mixed>>
+     */
+    private static WeakMap $fieldDefinitionsForLoad;
 
     /**
      * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
@@ -413,9 +424,18 @@ final class Localizedfield extends Model\AbstractModel implements
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\DataObject\Data\CalculatedValue($fieldDefinition->getName());
             $valueData->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $fieldDefinition);
-            $data = Service::getCalculatedFieldValue($this->getObject(), $valueData);
+            $object = $this->getObject();
 
-            return $data;
+            if ($object instanceof Concrete && isset($context['containerType']) && $context['containerType'] !== 'object') {
+                // localized field of a field collection item, object brick or block: the version snapshot of the
+                // object only holds its own localized fields, which may share the name, so compute without it
+                return Service::computeWithoutCalculatedValueSnapshot(
+                    $object,
+                    static fn () => Service::getCalculatedFieldValue($object, $valueData)
+                );
+            }
+
+            return Service::getCalculatedFieldValue($object, $valueData);
         }
 
         if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading() && !$this->_loadedAllLazyData) {
@@ -554,7 +574,9 @@ final class Localizedfield extends Model\AbstractModel implements
 
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
-            $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
+            $fieldDefinition = !$markFieldAsDirty && $this->isLoadingStoredValues()
+                ? $this->getFieldDefinitionForLoad($localizedFieldDefinition, $name)
+                : $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
         }
 
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
@@ -617,6 +639,47 @@ final class Localizedfield extends Model\AbstractModel implements
         }
 
         return true;
+    }
+
+    /**
+     * @internal Called by Localizedfield\Dao::load() before it sets the stored values.
+     */
+    public function startLoadingStoredValues(): void
+    {
+        self::$fieldDefinitionsForLoad ??= new WeakMap();
+        self::$fieldDefinitionsForLoad->offsetSet($this, []);
+    }
+
+    /**
+     * @internal Called by Localizedfield\Dao::load() once the stored values are set.
+     */
+    public function finishLoadingStoredValues(): void
+    {
+        if (isset(self::$fieldDefinitionsForLoad)) {
+            self::$fieldDefinitionsForLoad->offsetUnset($this);
+        }
+    }
+
+    private function isLoadingStoredValues(): bool
+    {
+        return isset(self::$fieldDefinitionsForLoad) && self::$fieldDefinitionsForLoad->offsetExists($this);
+    }
+
+    private function getFieldDefinitionForLoad(
+        ClassDefinition\Data\Localizedfields $localizedFieldDefinition,
+        string $name
+    ): ?ClassDefinition\Data {
+        $fieldDefinitions = self::$fieldDefinitionsForLoad[$this] ?? [];
+
+        if (!array_key_exists($name, $fieldDefinitions)) {
+            $fieldDefinitions[$name] = $localizedFieldDefinition->getFieldDefinition(
+                $name,
+                ['object' => $this->getObject()]
+            );
+            self::$fieldDefinitionsForLoad->offsetSet($this, $fieldDefinitions);
+        }
+
+        return $fieldDefinitions[$name];
     }
 
     public function __sleep(): array

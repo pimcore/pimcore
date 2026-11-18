@@ -60,7 +60,14 @@ trait ScheduledTasksTrait
 
     public function saveScheduledTasks(): void
     {
+        $scheduledTasksWereSet = $this->scheduledTasks !== null;
         $scheduledTasks = $this->getScheduledTasks();
+
+        if (!$scheduledTasksWereSet && $scheduledTasks === []) {
+            // nothing was set on the element and nothing is stored for it, so there is nothing to save or delete
+            return;
+        }
+
         $ignoreIds = [];
         $ctype = Service::getElementType($this);
         foreach ($scheduledTasks as $task) {

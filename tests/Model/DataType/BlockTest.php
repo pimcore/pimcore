@@ -18,7 +18,10 @@ use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use DatePeriod;
 use Exception;
+use Pimcore;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
@@ -27,14 +30,17 @@ use Pimcore\Model\DataObject\Data\ExternalImage;
 use Pimcore\Model\DataObject\Data\Geobounds;
 use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
+use Pimcore\Model\DataObject\Data\ImageGallery;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Element\Data\MarkerHotspotItem;
+use Pimcore\Tests\Support\Helper\DataType\CustomValueObject;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool\Serialize;
 
 /**
  * Class BlockTest
@@ -361,18 +367,308 @@ class BlockTest extends ModelTestCase
     }
 
     /**
+     * Hotspot/marker metadata of type asset/document/object holds the referenced element itself
+     * (see Hotspotimage::getDataFromEditmode()). Inside a block that element must not be serialized
+     * into the resource blob, because Block::getDataFromResource() only allows a fixed set of value
+     * object classes on unserialize() (GHSA-6324-x2cv-h975); the block marshaller stores a
+     * type/id reference instead and resolves it again on load.
+     *
+     * @throws Exception
+     */
+    public function testHotspotImageElementMetaDataInsideBlock(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $linkedAsset = TestHelper::createImageAsset('', null, true);
+        $linkedObject = TestHelper::createEmptyObject();
+
+        $hotspotImage = $this->createHotspotImageWithElementMetaData($image, $linkedAsset, $linkedObject);
+        $this->assertInstanceOf(Asset::class, $hotspotImage->getHotspots()[0]['data'][0]->getValue());
+
+        $object = $this->createBlockObject();
+        $blockData = [
+            [
+                'blockhotspotimage' => new BlockElement('blockhotspotimage', 'hotspotimage', $hotspotImage),
+            ],
+        ];
+        $object->setTestblock($blockData);
+
+        /** @var DataObject\ClassDefinition\Data\Block $blockDefinition */
+        $blockDefinition = $object->getClass()->getFieldDefinition('testblock');
+        $resourceData = $blockDefinition->getDataForResource($blockData, $object, ['owner' => $object, 'fieldname' => 'testblock']);
+        $this->assertFalse(
+            str_contains($resourceData, $this->serializedObjectHeader($linkedAsset)),
+            'the referenced asset must be stored by id, not as a serialized object'
+        );
+        $this->assertFalse(
+            str_contains($resourceData, $this->serializedObjectHeader($linkedObject)),
+            'the referenced object must be stored by id, not as a serialized object'
+        );
+        $this->assertFalse(
+            str_contains($resourceData, $this->serializedObjectHeader(new MarkerHotspotItem([]))),
+            'hotspot metadata must be stored as plain arrays'
+        );
+
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockhotspotimage']->getData();
+        $this->assertInstanceOf(Hotspotimage::class, $loaded);
+        $this->assertSame($image->getId(), $loaded->getImage()->getId());
+        $this->assertElementMetaDataResolved($loaded, $linkedAsset, $linkedObject);
+    }
+
+    /**
+     * Same as testHotspotImageElementMetaDataInsideBlock() for an image gallery, whose items are
+     * hotspot images.
+     *
+     * @throws Exception
+     */
+    public function testImageGalleryElementMetaDataInsideBlock(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $linkedAsset = TestHelper::createImageAsset('', null, true);
+        $linkedObject = TestHelper::createEmptyObject();
+
+        $gallery = new ImageGallery([
+            $this->createHotspotImageWithElementMetaData($image, $linkedAsset, $linkedObject),
+        ]);
+
+        $object = $this->createBlockObject();
+        $blockData = [
+            [
+                'blockimagegallery' => new BlockElement('blockimagegallery', 'imageGallery', $gallery),
+            ],
+        ];
+        $object->setTestblock($blockData);
+
+        /** @var DataObject\ClassDefinition\Data\Block $blockDefinition */
+        $blockDefinition = $object->getClass()->getFieldDefinition('testblock');
+        $resourceData = $blockDefinition->getDataForResource($blockData, $object, ['owner' => $object, 'fieldname' => 'testblock']);
+        $this->assertFalse(
+            str_contains($resourceData, $this->serializedObjectHeader($linkedAsset)),
+            'the referenced asset must be stored by id, not as a serialized object'
+        );
+
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockimagegallery']->getData();
+        $this->assertInstanceOf(ImageGallery::class, $loaded);
+        $this->assertCount(1, $loaded->getItems());
+        $this->assertElementMetaDataResolved($loaded->getItems()[0], $linkedAsset, $linkedObject);
+    }
+
+    /**
+     * Blocks saved before the hotspotimage block marshaller existed carry the referenced element
+     * objects inside the serialized blob. unserialize() now turns those into __PHP_Incomplete_Class,
+     * and the marshaller must resolve them back to the element by the class name and id they carry
+     * instead of leaving an unusable stub (or null) in the hotspot metadata.
+     *
+     * @throws Exception
+     */
+    public function testLegacyBlockBlobWithElementObjectsInHotspotMetaData(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $linkedAsset = TestHelper::createImageAsset('', null, true);
+        $linkedObject = TestHelper::createEmptyObject();
+
+        $object = $this->createBlockObject();
+        /** @var DataObject\ClassDefinition\Data\Block $blockDefinition */
+        $blockDefinition = $object->getClass()->getFieldDefinition('testblock');
+
+        // Exactly what Block::getDataForResource() wrote before: raw Hotspotimage::normalize() output,
+        // with the loaded elements sitting inside the MarkerHotspotItem values.
+        $legacyBlob = Serialize::serialize([
+            [
+                'blockhotspotimage' => [
+                    'name' => 'blockhotspotimage',
+                    'type' => 'hotspotimage',
+                    'data' => [
+                        'hotspots' => [
+                            [
+                                'name' => 'hotspot1',
+                                'width' => 10,
+                                'height' => 20,
+                                'top' => 30,
+                                'left' => 40,
+                                'data' => [
+                                    new MarkerHotspotItem(['name' => 'linkedAsset', 'type' => 'asset', 'value' => $linkedAsset]),
+                                ],
+                            ],
+                        ],
+                        'marker' => [
+                            [
+                                'name' => 'marker1',
+                                'top' => 50,
+                                'left' => 60,
+                                'data' => [
+                                    new MarkerHotspotItem(['name' => 'linkedObject', 'type' => 'object', 'value' => $linkedObject]),
+                                ],
+                            ],
+                        ],
+                        'crop' => [],
+                        'image' => ['type' => 'asset', 'id' => $image->getId()],
+                    ],
+                ],
+            ],
+        ]);
+        $this->assertTrue(str_contains($legacyBlob, $this->serializedObjectHeader($linkedAsset)));
+
+        $loaded = $blockDefinition->getDataFromResource($legacyBlob, $object, ['owner' => $object, 'fieldname' => 'testblock']);
+
+        $hotspotImage = $loaded[0]['blockhotspotimage']->getData();
+        $this->assertInstanceOf(Hotspotimage::class, $hotspotImage);
+        $this->assertSame($image->getId(), $hotspotImage->getImage()->getId());
+        $this->assertElementMetaDataResolved($hotspotImage, $linkedAsset, $linkedObject);
+    }
+
+    private function createHotspotImageWithElementMetaData(Image $image, Asset $linkedAsset, DataObject\Concrete $linkedObject): Hotspotimage
+    {
+        // Built through the PHP API: MarkerHotspotItem accepts the referenced element itself as
+        // value (constructor / setValue()), unlike the editmode path, which stores the element's id.
+        return new Hotspotimage(
+            $image,
+            [
+                [
+                    'name' => 'hotspot1',
+                    'width' => 10,
+                    'height' => 20,
+                    'top' => 30,
+                    'left' => 40,
+                    'data' => [
+                        new MarkerHotspotItem(['name' => 'linkedAsset', 'type' => 'asset', 'value' => $linkedAsset]),
+                        new MarkerHotspotItem(['name' => 'plainText', 'type' => 'text', 'value' => 'metaValue']),
+                    ],
+                ],
+            ],
+            [
+                [
+                    'name' => 'marker1',
+                    'top' => 50,
+                    'left' => 60,
+                    'data' => [
+                        new MarkerHotspotItem(['name' => 'linkedObject', 'type' => 'object', 'value' => $linkedObject]),
+                    ],
+                ],
+            ]
+        );
+    }
+
+    private function serializedObjectHeader(object $object): string
+    {
+        return 'O:' . strlen(get_class($object)) . ':"' . get_class($object) . '"';
+    }
+
+    private function assertElementMetaDataResolved(Hotspotimage $hotspotImage, Asset $linkedAsset, DataObject\Concrete $linkedObject): void
+    {
+        $hotspotMetaData = $hotspotImage->getHotspots()[0]['data'];
+        $this->assertInstanceOf(MarkerHotspotItem::class, $hotspotMetaData[0]);
+        $this->assertSame('asset', $hotspotMetaData[0]['type']);
+        $this->assertInstanceOf(Asset::class, $hotspotMetaData[0]['value']);
+        $this->assertSame($linkedAsset->getId(), $hotspotMetaData[0]['value']->getId());
+        $this->assertSame($linkedAsset->getId(), $hotspotMetaData[0]->getValue(), 'the element is stored by id, as the editmode does');
+        if (isset($hotspotMetaData[1])) {
+            $this->assertSame('metaValue', $hotspotMetaData[1]['value']);
+        }
+
+        $markerMetaData = $hotspotImage->getMarker()[0]['data'];
+        $this->assertInstanceOf(MarkerHotspotItem::class, $markerMetaData[0]);
+        $this->assertSame('object', $markerMetaData[0]['type']);
+        $this->assertInstanceOf(DataObject\Concrete::class, $markerMetaData[0]['value']);
+        $this->assertSame($linkedObject->getId(), $markerMetaData[0]['value']->getId());
+        $this->assertSame($linkedObject->getId(), $markerMetaData[0]->getValue(), 'the element is stored by id, as the editmode does');
+    }
+
+    /**
+     * A project may register its own block marshaller (tag pimcore.dataobject.fielddefinition.marshaller,
+     * key block_<fieldtype>) that stores a value object of its own into the block's resource blob,
+     * exactly like the core Consent / ExternalImage marshallers do. Block::getDataFromResource()'s
+     * fixed allowlist would reduce that object to __PHP_Incomplete_Class - and because the Dao reads
+     * the written value straight back into the model after save(), the field would be emptied on a
+     * regular save. `pimcore.objects.block.unserialize_allowed_classes` is the trusted, server-side
+     * way to allow such classes; the test container registers CustomValueObject through it.
+     *
+     * @throws Exception
+     */
+    public function testCustomMarshallerValueObjectInsideBlock(): void
+    {
+        $this->assertContains(
+            CustomValueObject::class,
+            Pimcore::getContainer()->getParameter('pimcore.objects.block.unserialize_allowed_classes'),
+            'precondition: the test config registers the value object class'
+        );
+
+        $object = $this->createBlockObject();
+        $blockData = [
+            [
+                'blockcustomvalueobject' => new BlockElement('blockcustomvalueobject', 'customValueObject', new CustomValueObject('custom text')),
+            ],
+        ];
+        $object->setTestblock($blockData);
+
+        /** @var DataObject\ClassDefinition\Data\Block $blockDefinition */
+        $blockDefinition = $object->getClass()->getFieldDefinition('testblock');
+        $resourceData = $blockDefinition->getDataForResource($blockData, $object, ['owner' => $object, 'fieldname' => 'testblock']);
+        $this->assertTrue(
+            str_contains($resourceData, $this->serializedObjectHeader(new CustomValueObject(''))),
+            'precondition: the custom marshaller stores its value object in the blob'
+        );
+
+        $object->save();
+
+        // the Dao replaces the in-memory value with getDataFromResource() output right after writing it
+        $afterSave = $object->getTestblock()[0]['blockcustomvalueobject']->getData();
+        $this->assertInstanceOf(CustomValueObject::class, $afterSave);
+        $this->assertSame('custom text', $afterSave->getText());
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockcustomvalueobject']->getData();
+        $this->assertInstanceOf(CustomValueObject::class, $loaded);
+        $this->assertSame('custom text', $loaded->getText());
+    }
+
+    /**
+     * Regression test for GHSA-6324-x2cv-h975.
+     *
+     * Block::getDataFromResource() used to unserialize a block's resource blob with every class
+     * allowed. Since this blob can be request-controlled wherever getDataFromResource() is
+     * reachable (e.g. through the denylist-mode Twig sandbox, which permits calling it), a forged
+     * resource string could instantiate arbitrary PHP objects and run POP-chain gadgets via
+     * __wakeup()/__destruct(). Only the value object classes getDataForResource() can actually
+     * produce (see Block::ALLOWED_RESOURCE_CLASSES) may now be reconstructed; everything else must
+     * come back as __PHP_Incomplete_Class, which never has __wakeup() called on it.
+     *
+     * @throws Exception
+     */
+    public function testForgedResourceDataCannotWakeUpArbitraryObjects(): void
+    {
+        UnserializeWakeupProbe::$wokeUp = false;
+
+        $forged = Serialize::serialize([
+            [
+                'forgedElement' => [
+                    'name' => 'forgedElement',
+                    'type' => 'input',
+                    'data' => new UnserializeWakeupProbe(),
+                ],
+            ],
+        ]);
+
+        (new DataObject\ClassDefinition\Data\Block())->getDataFromResource($forged);
+
+        $this->assertFalse(
+            UnserializeWakeupProbe::$wokeUp,
+            'Block::getDataFromResource() must not invoke __wakeup() on a class outside its resource allowlist'
+        );
+    }
+
+    /**
      * Verifies that references are saved and fetched properly inside Block
      *
      * @throws Exception
      */
     public function testReferencesInsideBlock(): void
     {
-        $cacheEnabled = Cache::isEnabled();
-        if (!$cacheEnabled) {
-            Cache::enable();
-            Cache::getHandler()->setHandleCli(true);
-        }
-
         $targetDocument = TestHelper::createEmptyDocumentPage();
         $asset = TestHelper::createImageAsset('', null, true);
 
@@ -388,28 +684,26 @@ class BlockTest extends ModelTestCase
         $object->setTestblock([$data]);
         $object->save();
 
-        Cache\RuntimeCache::clear();
+        $assertReferences = function (unittestBlock $loaded) use ($targetDocument, $asset): void {
+            $loadedData = $loaded->getTestblock();
 
-        //reload from cache and save again
-        $objectRef = DataObject::getById($object->getId());
-        $objectRef->save(); //block data should retain here
+            /** @var Link $loadedLink */
+            $loadedLink = $loadedData[0]['blocklink']->getData();
+            $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
-        //reload from db
-        $object = DataObject::getById($objectRef->getId(), ['force' => true]);
+            $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
+            $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
+        };
 
-        $loadedData = $object->getTestblock();
+        $this->forceSavingAndLoadingFromCache($object, function (unittestBlock $objectCache) use ($assertReferences) {
+            //save the untouched cached object first, its block data should retain here
+            $objectCache->save();
 
-        /** @var Link $loadedLink */
-        $loadedLink = $loadedData[0]['blocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
+            $assertReferences($objectCache);
 
-        $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
-        $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
-
-        if (!$cacheEnabled) {
-            Cache::disable();
-            Cache::getHandler()->setHandleCli(false);
-        }
+            //reload from db
+            $assertReferences(DataObject::getById($objectCache->getId(), ['force' => true]));
+        });
     }
 
     /**
@@ -419,12 +713,6 @@ class BlockTest extends ModelTestCase
      */
     public function testReferencesInsideLocalizedBlock(): void
     {
-        $cacheEnabled = Cache::isEnabled();
-        if (!$cacheEnabled) {
-            Cache::enable();
-            Cache::getHandler()->setHandleCli(true);
-        }
-
         $targetDocument = TestHelper::createEmptyDocumentPage();
         $asset = TestHelper::createImageAsset('', null, true);
 
@@ -440,27 +728,26 @@ class BlockTest extends ModelTestCase
         $object->setLtestblock([$data], 'de');
         $object->save();
 
-        Cache\RuntimeCache::clear();
+        $assertReferences = function (unittestBlock $loaded) use ($targetDocument, $asset): void {
+            $loadedData = $loaded->getLtestblock('de');
 
-        //reload from cache and save again
-        $objectRef = DataObject::getById($object->getId());
-        $objectRef->save(); //block data should retain here
+            /** @var Link $loadedLink */
+            $loadedLink = $loadedData[0]['lblocklink']->getData();
+            $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
-        //reload from db
-        $object = DataObject::getById($objectRef->getId(), ['force' => true]);
-        $loadedData = $object->getLtestblock('de');
+            $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
+            $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
+        };
 
-        /** @var Link $loadedLink */
-        $loadedLink = $loadedData[0]['lblocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
+        $this->forceSavingAndLoadingFromCache($object, function (unittestBlock $objectCache) use ($assertReferences) {
+            //save the untouched cached object first, its block data should retain here
+            $objectCache->save();
 
-        $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
-        $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
+            $assertReferences($objectCache);
 
-        if (!$cacheEnabled) {
-            Cache::disable();
-            Cache::getHandler()->setHandleCli(false);
-        }
+            //reload from db
+            $assertReferences(DataObject::getById($objectCache->getId(), ['force' => true]));
+        });
     }
 
     /**
@@ -470,12 +757,6 @@ class BlockTest extends ModelTestCase
      */
     public function testBlockDataFromReferences(): void
     {
-        $cacheEnabled = Cache::isEnabled();
-        if (!$cacheEnabled) {
-            Cache::enable();
-            Cache::getHandler()->setHandleCli(true);
-        }
-
         $reference = TestHelper::createEmptyObject();
         $source = $this->createBlockObject();
         $data = [
@@ -494,18 +775,29 @@ class BlockTest extends ModelTestCase
         $source->getLtestblock('de')[0]['lblockadvancedRelations']->setData([new DataObject\Data\ElementMetadata('lblockadvancedRelations', [], $referenceNew)]);
         $source->save();
 
-        //reload target and fetch source
-        $target = DataObject::getById($target->getId(), ['force' => true]);
-        $sourceFromRef = $target->getHref();
+        $assertReference = function (unittestBlock $loaded) use ($referenceNew): void {
+            $loadedReference = $loaded->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
 
-        $loadedReference = $sourceFromRef->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
+            $this->assertEquals($referenceNew->getId(), $loadedReference[0]->getElement()->getId());
+        };
 
-        $this->assertEquals($referenceNew->getId(), $loadedReference[0]->getElement()->getId());
+        $this->forceSavingAndLoadingFromCache($source, function (unittestBlock $sourceCache) use (
+            $target,
+            $assertReference
+        ) {
+            $assertReference($sourceCache);
 
-        if (!$cacheEnabled) {
-            Cache::disable();
-            Cache::getHandler()->setHandleCli(false);
-        }
+            //the source must be in the persistent cache, otherwise the check below silently reads the database
+            $this->assertNotFalse(
+                Cache::load(Service::getElementCacheTag('object', $sourceCache->getId())),
+                'Source must be stored in the persistent cache.'
+            );
+
+            //reload target and fetch source (runtime cache cleared, so the source comes from the persistent cache)
+            RuntimeCache::clear();
+            $reloadedTarget = DataObject::getById($target->getId(), ['force' => true]);
+            $assertReference($reloadedTarget->getHref());
+        });
     }
 
     /**

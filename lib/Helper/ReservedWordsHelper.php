@@ -51,10 +51,10 @@ class ReservedWordsHelper
      */
     private const PIMCORE_DATA_OBJECT_CLASSES = [
         'abstractobject', 'classdefinition', 'classdefinitioninterface', 'classificationstore',
-        'definitionmodifier', 'fieldcollection', 'importdataserviceinterface',
+        'definitionmodifier', 'fieldcollection', 'hydrationlock', 'importdataserviceinterface',
         'lazyloadedfieldsinterface', 'listing', 'localizedfield', 'objectawarefieldinterface',
         'objectbrick', 'ownerawarefieldinterface', 'pregetvaluehookinterface',
-        'selectoptionsinterface', 'service',
+        'pregetvaluehookresult', 'selectoptionsinterface', 'service',
     ];
 
     /**

@@ -375,6 +375,14 @@ pimcore:
                     - Symfony\Component\DependencyInjection\ContainerInterface
                     - Symfony\Component\Process\Process
                     - Pimcore\Model\User
+                    # the request (server variables incl. the environment, headers, cookies, session)
+                    # and the global `app` variable that gives access to it
+                    - Symfony\Bridge\Twig\AppVariable
+                    - Symfony\Component\HttpFoundation\RequestStack
+                    - Symfony\Component\HttpFoundation\Request
+                    - Symfony\Component\HttpFoundation\ParameterBag
+                    - Symfony\Component\HttpFoundation\HeaderBag
+                    - Symfony\Component\HttpFoundation\Session\SessionInterface
                 allowed_classes: []
                 blocked_functions:
                     # - pimcore_asset
@@ -394,6 +402,7 @@ pimcore:
                     - pimcore_file_exists
                     - pimcore_asset_version_preview
                     - pimcore_image_version_preview
+                    - pimcore_dump
                 hard_blocked_methods:
                     Pimcore\Model\User:
                         - getPassword

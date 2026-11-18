@@ -45,8 +45,9 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
-use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
@@ -329,85 +330,90 @@ class Asset extends Element\AbstractElement
         // (tree) is generated immediately after creating an image
         $type = 'unknown';
         $tmpFile = null;
-        if (
-            array_key_exists('filename', $data) &&
-            (
-                array_key_exists('data', $data) ||
-                array_key_exists('sourcePath', $data) ||
-                array_key_exists('stream', $data)
-            )
-        ) {
-            $mimeTypeHelper = new MimeTypeHelper();
-            $mimeType = 'directory';
-            $mimeTypeGuessData = null;
-            if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . pathinfo($data['filename'], PATHINFO_EXTENSION);
-                $mimeTypeGuessData = $tmpFile;
 
-                if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
-                    throw new InvalidArgumentException('Invalid filename');
-                }
+        try {
+            if (
+                array_key_exists('filename', $data) &&
+                (
+                    array_key_exists('data', $data) ||
+                    array_key_exists('sourcePath', $data) ||
+                    array_key_exists('stream', $data)
+                )
+            ) {
+                $mimeTypeHelper = new MimeTypeHelper();
+                $mimeType = 'directory';
+                $mimeTypeGuessData = null;
+                if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
+                    $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . pathinfo($data['filename'], PATHINFO_EXTENSION);
+                    $mimeTypeGuessData = $tmpFile;
 
-                if (array_key_exists('data', $data)) {
-                    $filesystem = new Filesystem();
-                    $filesystem->dumpFile($tmpFile, $data['data']);
-                } else {
-                    // guess mime type from stream directly
-                    $mimeTypeGuessData = $data['stream'];
-                }
-
-                $mimeType = $mimeTypeHelper->guessMimeType(
-                    $mimeTypeGuessData
-                );
-            } else {
-                if (!is_dir($data['sourcePath'])) {
-                    $mimeTypeGuessData = $data['sourcePath'];
-                    if (is_file($data['sourcePath'])) {
-                        $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                    if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
+                        throw new InvalidArgumentException('Invalid filename');
                     }
-                    $mimeType = $mimeTypeHelper->guessMimeType($mimeTypeGuessData);
+
+                    if (array_key_exists('data', $data)) {
+                        $filesystem = new Filesystem();
+                        $filesystem->dumpFile($tmpFile, $data['data']);
+                    } else {
+                        // guess mime type from stream directly
+                        $mimeTypeGuessData = $data['stream'];
+                    }
+
+                    $mimeType = $mimeTypeHelper->guessMimeType(
+                        $mimeTypeGuessData
+                    );
+                } else {
+                    if (!is_dir($data['sourcePath'])) {
+                        $mimeTypeGuessData = $data['sourcePath'];
+                        if (is_file($data['sourcePath'])) {
+                            $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                        }
+                        $mimeType = $mimeTypeHelper->guessMimeType($mimeTypeGuessData);
+                    }
+                    unset($data['sourcePath']);
                 }
-                unset($data['sourcePath']);
-            }
 
-            $mimeType ??= 'application/octet-stream';
-            $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
-            $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
-            Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
-            $mimeType = $mimeTypeEvent->getMimeType();
+                $mimeType ??= 'application/octet-stream';
+                $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
+                $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
+                Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+                $mimeType = $mimeTypeEvent->getMimeType();
 
-            $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
-            // only check maxpixels if it is an image
-            if ($type === 'image' && $mimeTypeGuessData) {
-                self::checkMaxPixels($mimeTypeGuessData, $data);
-            }
+                $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
+                // only check maxpixels if it is an image
+                if ($type === 'image' && $mimeTypeGuessData) {
+                    self::checkMaxPixels($mimeTypeGuessData, $data);
+                }
 
-            if (array_key_exists('type', $data)) {
+                if (array_key_exists('type', $data)) {
+                    unset($data['type']);
+                }
+            } elseif (array_key_exists('type', $data)) {
+                $type = $data['type'];
                 unset($data['type']);
             }
-        } elseif (array_key_exists('type', $data)) {
-            $type = $data['type'];
-            unset($data['type']);
+
+            $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type)
+                ?? throw new InvalidArgumentException('Invalid asset type provided');
+
+            /** @var Asset $asset */
+            $asset = self::getModelFactory()->build($className);
+            $asset->setParentId($parentId);
+            self::checkCreateData($data);
+            $asset->setValues($data);
+
+            if ($save) {
+                $asset->save();
+            }
+
+            return $asset;
+        } finally {
+            // remove the mime-detection temp file on every exit path - a throwing
+            // validation, type resolution or save previously leaked one per failed create
+            if ($tmpFile !== null && file_exists($tmpFile)) {
+                unlink($tmpFile);
+            }
         }
-
-        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type)
-            ?? throw new InvalidArgumentException('Invalid asset type provided');
-
-        /** @var Asset $asset */
-        $asset = self::getModelFactory()->build($className);
-        $asset->setParentId($parentId);
-        self::checkCreateData($data);
-        $asset->setValues($data);
-
-        if ($save) {
-            $asset->save();
-        }
-
-        if ($tmpFile !== null && file_exists($tmpFile)) {
-            unlink($tmpFile);
-        }
-
-        return $asset;
     }
 
     private static function getImageSizeFromStream(mixed $stream): array
@@ -444,9 +450,19 @@ class Asset extends Element\AbstractElement
 
                 $mp = $maxPixels / 1_000_000;
 
-                throw new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
+                throw (new StructuredValidationException(
+                    "<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
 <p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>
-<p>Suggestion: resize to <code>{$suggestion_0}&times;{$suggestion_1}</code> pixels or smaller.</p>");
+<p>Suggestion: resize to <code>{$suggestion_0}&times;{$suggestion_1}</code> pixels or smaller.</p>"))
+                    ->setTranslation(
+                        ValidationMessageKey::IMAGE_TOO_LARGE,
+                        [
+                            'filename' => $data['filename'],
+                            'max_megapixels' => $mp,
+                            'suggested_width' => $suggestion_0,
+                            'suggested_height' => $suggestion_1,
+                        ],
+                    );
             }
         }
     }
@@ -546,6 +562,8 @@ class Asset extends Element\AbstractElement
 
                 $parameters = $preEvent->getArguments();
 
+                $this->assertExistingVersionCanBeWritten($parameters);
+
                 $this->correctPath();
 
                 // need for $this->update() for certain types (image, video, document)
@@ -610,7 +628,8 @@ class Asset extends Element\AbstractElement
                     // an asset which is modified already got a version of its persisted state before this transaction
                     /** @var bool $isUpdate assigned by reference in beforeRetryables */
                     if ($isUpdate || !self::isInitialVersionSkipped()) {
-                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                        // only `existingVersion` is passed on, the versioning events keep their arguments
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null, array_intersect_key($parameters, ['existingVersion' => true]));
                     } else {
                         // scheduled tasks are saved always, they are not versioned (see saveVersion())
                         $this->saveScheduledTasks();
@@ -1010,7 +1029,14 @@ class Asset extends Element\AbstractElement
         }
 
         $persisted = new Asset();
-        $persisted->getDao()->getById($this->getId());
+
+        try {
+            $persisted->getDao()->getById($this->getId());
+        } catch (NotFoundException) {
+            // the id is set, but no asset is persisted under it (Asset\WebDAV\Tree::move() re-uses the id of a just
+            // deleted asset for the destination it rebuilds), so there is no persisted state that could be versioned
+            return null;
+        }
 
         if ($persisted->getType() === 'folder') {
             return null;
@@ -1117,8 +1143,39 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * The binary data is written to the storage before the version is saved and the storage isn't transactional,
+     * so the `existingVersion` save parameter is validated before anything is changed: the version must belong to
+     * this asset and keep its binary data (see Version::save())
+     *
+     * @throws InvalidArgumentException
+     */
+    private function assertExistingVersionCanBeWritten(array $parameters): void
+    {
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
+        if ($existingVersion === null || $this->getType() === 'folder') {
+            return;
+        }
+
+        $binaryFileHash = $existingVersion->getBinaryFileHash();
+        if ($binaryFileHash === null) {
+            return;
+        }
+
+        $ctx = hash_init('sha3-512');
+        hash_update_stream($ctx, $this->getStream());
+        if (!hash_equals($binaryFileHash, hash_final($ctx))) {
+            throw new InvalidArgumentException(sprintf(
+                'The binary data of asset %d differs from the one of version %d, it can only be saved as a new version',
+                $this->getId(),
+                $existingVersion->getId()
+            ));
+        }
+    }
+
+    /**
      * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
-     * with custom arguments that are passed on to the versioning events. It will become a regular
+     * with custom arguments that are passed on to the versioning events; `existingVersion` (Version, internal)
+     * writes the version data into that version instead of creating a new one. It will become a regular
      * method parameter in the next major version.
      *
      * @param string|null $versionNote version note
@@ -1134,6 +1191,7 @@ class Asset extends Element\AbstractElement
         }
         $coreParameters = ['saveVersionOnly' => true];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             // hook should be also called if "save only new version" is selected
@@ -1162,10 +1220,11 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            if (self::isVersionCreationEnabledByConfig() || $setModificationDate) {
+            // with an existing version that version is written into, no version is added
+            if (self::isVersionCreationEnabledByConfig() || $setModificationDate || $existingVersion !== null) {
                 $assetsConfig = SystemSettingsConfig::get()['assets'];
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, false, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -1306,9 +1365,17 @@ class Asset extends Element\AbstractElement
                     }
                 }
 
-                // Dispatch Symfony Message Bus to delete versions
+                // Dispatch Symfony Message Bus to delete versions - bounded to the versions
+                // existing right now, so a later re-use of this id (WebDAV delete-log restore)
+                // does not lose versions created after the restore. The bound is captured FOR
+                // UPDATE inside this delete transaction, so a concurrent saveVersion() cannot
+                // slip a version above the bound before the delete commits
                 Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                    new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+                    new VersionDeleteMessage(
+                        Service::getElementType($this),
+                        $this->getId(),
+                        Version::getHighestIdForElement(Service::getElementType($this), $this->getId(), true) ?? 0
+                    )
                 );
 
                 // remove all properties
@@ -1846,6 +1913,11 @@ class Asset extends Element\AbstractElement
     {
         $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         $transformedData = $metaData['data'];
+
+        // rows with an empty type (e.g. an out-of-enum value stored as '') have no data type to transform with
+        if (empty($metaData['type'])) {
+            return $transformedData;
+        }
 
         try {
             /** @var Data $instance */

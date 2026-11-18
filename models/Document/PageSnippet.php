@@ -24,7 +24,10 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
 use Pimcore\SystemSettingsConfig;
+use TypeError;
 
 /**
  * @method Model\Document\PageSnippet\Dao getDao()
@@ -127,7 +130,9 @@ abstract class PageSnippet extends Model\Document
         // before the database transaction, see also https://github.com/pimcore/pimcore/issues/8992
         $this->checkMissingRequiredEditable();
         if ($this->getMissingRequiredEditable() && $this->getPublished()) {
-            throw new Model\Element\ValidationException('Prevented publishing document - missing values for required editables');
+            throw (new StructuredValidationException(
+                'Prevented publishing document - missing values for required editables'
+            ))->setTranslation(ValidationMessageKey::MISSING_REQUIRED_EDITABLES);
         }
 
         return parent::save($parameters);
@@ -150,24 +155,36 @@ abstract class PageSnippet extends Model\Document
         }
 
         // scheduled tasks are saved in $this->saveVersion();
-        // save version if needed
-        $this->saveVersion(false, false, $params['versionNote'] ?? null);
+        // save version if needed, only `existingVersion` is passed on, the versioning events keep their arguments
+        $this->saveVersion(false, false, $params['versionNote'] ?? null, false, array_intersect_key($params, ['existingVersion' => true]));
     }
 
     /**
-     *
+     * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
+     * with custom arguments that are passed on to the versioning events; `existingVersion` (Model\Version, internal)
+     * writes the version data into that version instead of creating a new one. It will become a regular
+     * method parameter in the next major version.
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false): ?Model\Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false /* , array $parameters = [] */): ?Model\Version
     {
+        // TODO: promote $parameters to a regular signature parameter in the next major version (2027.1)
+        $parameters = 5 <= func_num_args() ? func_get_arg(4) : [];
+        if (!is_array($parameters)) {
+            throw new TypeError(sprintf('%s(): Argument #5 ($parameters) must be of type array, %s given', __METHOD__, get_debug_type($parameters)));
+        }
+        $coreParameters = [
+            'saveVersionOnly' => true,
+            'isAutoSave' => $isAutoSave,
+        ];
+        $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
+
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $preUpdateEvent = new DocumentEvent($this, [
-                    'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave,
-                ]);
+                $preUpdateEvent = new DocumentEvent($this, $eventParameters);
                 Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
             }
 
@@ -184,31 +201,28 @@ abstract class PageSnippet extends Model\Document
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
+            // with an existing version that version is written into, no version is added
             $documentsConfig = SystemSettingsConfig::get()['documents'];
             if ((is_null($documentsConfig['versions']['days'] ?? null) && is_null($documentsConfig['versions']['steps'] ?? null))
                 || (!empty($documentsConfig['versions']['steps']))
                 || !empty($documentsConfig['versions']['days'])
-                || $setModificationDate) {
+                || $setModificationDate
+                || $existingVersion !== null) {
                 $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $postUpdateEvent = new DocumentEvent($this, [
-                    'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave,
-                ]);
+                $postUpdateEvent = new DocumentEvent($this, $eventParameters);
                 Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $postUpdateFailureEvent = new DocumentEvent($this, [
-                'saveVersionOnly' => true,
+            $postUpdateFailureEvent = new DocumentEvent($this, array_merge($eventParameters, [
                 'exception' => $e,
-                'isAutoSave' => $isAutoSave,
-            ]);
+            ]));
             Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
 
             throw $e;
@@ -217,9 +231,13 @@ abstract class PageSnippet extends Model\Document
 
     protected function doDelete(): void
     {
-        // Dispatch Symfony Message Bus to delete versions
+        // Dispatch Symfony Message Bus to delete versions, bounded to the currently existing ones
         Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+            new VersionDeleteMessage(
+                Service::getElementType($this),
+                $this->getId(),
+                Model\Version::getHighestIdForElement(Service::getElementType($this), $this->getId(), true) ?? 0
+            )
         );
 
         // remove all tasks

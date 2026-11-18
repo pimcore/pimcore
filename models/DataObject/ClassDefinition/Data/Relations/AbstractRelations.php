@@ -290,7 +290,25 @@ abstract class AbstractRelations extends Data implements
 
     public function load(Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): mixed
     {
-        $data = null;
+        $relations = $this->loadRelationRows($object, $params);
+
+        $data = $this->loadData($relations, $object, $params);
+        if ($data['dirty']) {
+            $object->markFieldDirty($this->getName());
+        }
+
+        return $data['data'];
+    }
+
+    /**
+     * Reads the raw relation rows of this field for the given container, ordered by their position.
+     *
+     * @internal
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function loadRelationRows(Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
+    {
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
@@ -316,12 +334,7 @@ abstract class AbstractRelations extends Data implements
         // sensitive and Types add a slight overhead.
         usort($relations, static fn ($a, $b) => $a['index'] <=> $b['index']);
 
-        $data = $this->loadData($relations, $object, $params);
-        if ($data['dirty']) {
-            $object->markFieldDirty($this->getName());
-        }
-
-        return $data['data'];
+        return $relations;
     }
 
     /**

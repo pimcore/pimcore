@@ -48,6 +48,14 @@ class UserProvider implements UserProviderInterface
             );
         }
 
+        if ($refreshedPimcoreUser->isServiceUser()) {
+            // a service user never logs in interactively, so a session must not carry one
+            throw $this->createSessionInvalidatingException(
+                $user,
+                sprintf('User with ID %s is a service user and cannot hold a session', $user->getId())
+            );
+        }
+
         if ($user->getLastPasswordReset() !== $refreshedPimcoreUser->getLastPasswordReset()) {
             // password was changed since the session was created, so we invalidate the session
             throw $this->createSessionInvalidatingException(

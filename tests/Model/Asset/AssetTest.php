@@ -17,7 +17,9 @@ use Exception;
 use Imagick;
 use ImagickPixel;
 use League\Flysystem\UnableToMoveFile;
+use Monolog\Handler\TestHandler;
 use Normalizer;
+use Pimcore;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
@@ -792,6 +794,28 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(
             $reloaded->isStreamPlaceholder(),
             'an empty file that exists in storage must not be reported as a placeholder'
+        );
+    }
+
+    public function testFolderFileSizeDoesNotLogAMissingBinary(): void
+    {
+        $folder = TestHelper::createAssetFolder();
+
+        /** @var \Monolog\Logger $logger */
+        $logger = Pimcore::getContainer()->get('monolog.logger.pimcore');
+        $handler = new TestHandler();
+        $logger->pushHandler($handler);
+
+        try {
+            $this->assertSame(0, $folder->getFileSize());
+            $this->assertSame('0 B', $folder->getFileSize(true));
+        } finally {
+            $logger->popHandler();
+        }
+
+        $this->assertFalse(
+            $handler->hasErrorRecords(),
+            'a folder has no binary in storage, so its file size must not be logged as an error'
         );
     }
 

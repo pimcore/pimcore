@@ -18,6 +18,7 @@ use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Recyclebin;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Schedule\Task\Listing;
@@ -65,10 +66,11 @@ class ScheduledTasksTask implements TaskInterface
                     if ($document instanceof Document) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $document->isAllowed('publish', $taskUser) && $document->isAllowed('versions', $taskUser)) {
                             if ($version = $this->getOwnedVersion($task)) {
+                                $saveParameters = $this->getSaveParameters($version, $document);
                                 $document = $version->getData();
                                 if ($document instanceof Document) {
                                     $document->setPublished(true);
-                                    $document->save();
+                                    $document->save($saveParameters);
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore document from version data.');
                                 }
@@ -90,9 +92,10 @@ class ScheduledTasksTask implements TaskInterface
                     if ($asset instanceof Asset) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $asset->isAllowed('publish', $taskUser) && $asset->isAllowed('versions', $taskUser)) {
                             if ($version = $this->getOwnedVersion($task)) {
+                                $saveParameters = $this->getSaveParameters($version, $asset);
                                 $asset = $version->getData();
                                 if ($asset instanceof Asset) {
-                                    $asset->save();
+                                    $asset->save($saveParameters);
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore asset from version data.');
                                 }
@@ -108,10 +111,11 @@ class ScheduledTasksTask implements TaskInterface
                     if ($object instanceof DataObject\Concrete) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $object->isAllowed('publish', $taskUser) && $object->isAllowed('versions', $taskUser)) {
                             if ($version = $this->getOwnedVersion($task)) {
+                                $saveParameters = $this->getSaveParameters($version, $object);
                                 $object = $version->getData();
                                 if ($object instanceof DataObject\Concrete) {
                                     $object->setPublished(true);
-                                    $object->save();
+                                    $object->save($saveParameters);
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore object from version data.');
                                 }
@@ -136,6 +140,24 @@ class ScheduledTasksTask implements TaskInterface
                 $this->logger->error((string) $e);
             }
         }
+    }
+
+    /**
+     * A version prepared for the element (newer than its persisted state, see getLatestVersion()) is published in
+     * place, no new version is created. An older version (a rollback) is published as a new version, so the history
+     * keeps it as it was, and so is an auto-save version: it is rewritten by the editor of its user at any time
+     */
+    private function getSaveParameters(Version $version, ElementInterface $element): array
+    {
+        if ($version->isAutoSave()) {
+            return [];
+        }
+
+        if ($version->getVersionCount() <= $element->getVersionCount() && $version->getDate() <= (int) $element->getModificationDate()) {
+            return [];
+        }
+
+        return ['existingVersion' => $version];
     }
 
     /**

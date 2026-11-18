@@ -713,47 +713,53 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->_setOwnerFieldname('localizedfields');
         $this->model->_setOwnerLanguage(null);
 
-        foreach ($data as $row) {
-            /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
-            $localizedfields = $container->getFieldDefinition('localizedfields');
-            foreach ($localizedfields->getFieldDefinitions(
-                ['object' => $object, 'suppressEnrichment' => true]
-            ) as $key => $fd) {
-                if ($fd instanceof CustomResourcePersistingInterface) {
-                    // datafield has it's own loader
-                    $params['language'] = $row['language'];
-                    $params['object'] = $object;
-                    if (!isset($params['context'])) {
-                        $params['context'] = [];
-                    }
-                    $params['context']['object'] = $object;
+        $this->model->startLoadingStoredValues();
 
-                    if (
-                        $fd instanceof LazyLoadingSupportInterface &&
-                        $fd->getLazyLoading()
-                    ) {
-                        $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
-                    } else {
-                        $value = $fd->load($this->model, $params);
-                        if ($value === 0 || !empty($value)) {
+        try {
+            foreach ($data as $row) {
+                /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
+                $localizedfields = $container->getFieldDefinition('localizedfields');
+                foreach ($localizedfields->getFieldDefinitions(
+                    ['object' => $object, 'suppressEnrichment' => true]
+                ) as $key => $fd) {
+                    if ($fd instanceof CustomResourcePersistingInterface) {
+                        // datafield has it's own loader
+                        $params['language'] = $row['language'];
+                        $params['object'] = $object;
+                        if (!isset($params['context'])) {
+                            $params['context'] = [];
+                        }
+                        $params['context']['object'] = $object;
+
+                        if (
+                            $fd instanceof LazyLoadingSupportInterface &&
+                            $fd->getLazyLoading()
+                        ) {
+                            $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
+                        } else {
+                            $value = $fd->load($this->model, $params);
+                            if ($value === 0 || !empty($value)) {
+                                $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                            }
+                        }
+                    }
+                    if ($fd instanceof ResourcePersistenceAwareInterface) {
+                        if (is_array($fd->getColumnType())) {
+                            $multidata = [];
+                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
+                                $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
+                            }
+                            $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                        } else {
+                            $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
                     }
                 }
-                if ($fd instanceof ResourcePersistenceAwareInterface) {
-                    if (is_array($fd->getColumnType())) {
-                        $multidata = [];
-                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                            $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
-                        }
-                        $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
-                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                    } else {
-                        $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
-                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                    }
-                }
             }
+        } finally {
+            $this->model->finishLoadingStoredValues();
         }
     }
 
@@ -770,25 +776,26 @@ class Dao extends Model\Dao\AbstractDao
          *
          * @param string $field
          * @param array $languages
+         * @param bool $isTemporal temporal columns cannot hold an empty string, comparing them with one fails in MySQL 8
          *
          * @return string
          */
-        $getFallbackValue = function (string $field, array $languages) use (&$getFallbackValue, $db) {
+        $getFallbackValue = function (string $field, array $languages, bool $isTemporal = false) use (&$getFallbackValue, $db) {
             // init
             $lang = array_shift($languages);
 
             // get fallback for current language
             $fallback = count($languages) > 0
-                ? $getFallbackValue($field, $languages)
+                ? $getFallbackValue($field, $languages, $isTemporal)
                 : 'null';
 
             // create query
+            $emptyCheck = $isTemporal ? '' : sprintf(' OR STRCMP(`%s`.`%s`, "") = 0', $lang, $field);
             $sql = sprintf(
-                'IF(`%s`.`%s` IS NULL OR STRCMP(`%s`.`%s`, "") = 0, %s, `%s`.`%s`)',
+                'IF(`%s`.`%s` IS NULL%s, %s, `%s`.`%s`)',
                 $lang,
                 $field,
-                $lang,
-                $field,
+                $emptyCheck,
                 $fallback,
                 $lang,
                 $field
@@ -803,17 +810,19 @@ class Dao extends Model\Dao\AbstractDao
             try {
                 $tablename = $this->getQueryTableName().'_'.$language;
 
-                // get available columns
-                $viewColumns = array_merge(
-                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$defaultTable.'`'),
-                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `objects`')
-                );
                 $localizedColumns = $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$tablename.'`');
 
-                // get view fields
+                // get view fields, qualified by their table, without the internal change token of the objects table:
+                // a field named changeToken would collide with it, and a view referencing it would break when the
+                // column is dropped again
                 $viewFields = [];
-                foreach ($viewColumns as $row) {
-                    $viewFields[] = $this->db->quoteIdentifier($row['Field']);
+                foreach ($this->db->fetchFirstColumn('SHOW COLUMNS FROM `'.$defaultTable.'`') as $column) {
+                    $viewFields[] = $this->db->quoteIdentifier($defaultTable).'.'.$this->db->quoteIdentifier($column);
+                }
+                foreach ($this->db->fetchFirstColumn('SHOW COLUMNS FROM `objects`') as $column) {
+                    if ($column !== 'changeToken') {
+                        $viewFields[] = '`objects`.'.$this->db->quoteIdentifier($column);
+                    }
                 }
 
                 // create fallback select
@@ -824,7 +833,8 @@ class Dao extends Model\Dao\AbstractDao
                     if ($row['Field'] == 'language' || $row['Field'] == 'ooo_id') {
                         $localizedFields[] = $db->quoteIdentifier($language).'.'.$db->quoteIdentifier($row['Field']);
                     } else {
-                        $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages).sprintf(
+                        $isTemporal = (bool) preg_match('/^(date|datetime|timestamp|time)\b/i', (string) $row['Type']);
+                        $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages, $isTemporal).sprintf(
                             ' as "%s"',
                             $row['Field']
                         );

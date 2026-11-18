@@ -15,7 +15,10 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
+use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\HydrationLock;
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -44,6 +47,7 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
     {
         AttributeSanitizer::setInstance(null);
         SanitizerPolicy::setInstance(null);
+        HydrationLock::reset();
         parent::tearDown();
     }
 
@@ -151,10 +155,26 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
             'pimcore.objects.link_sanitizer.strict' => false,
             'pimcore.objects.link_sanitizer.blocked_url_schemes' => AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES,
             'pimcore.objects.link_sanitizer.block_unsafe_data_urls' => true,
+            'pimcore.objects.hydration_lock.disabled_for' => [],
         ])));
         $bundle->boot();
 
         return $bundle;
+    }
+
+    public function testBootDisablesTheHydrationLockForConfiguredClasses(): void
+    {
+        $this->bootWithParameters(['pimcore.objects.hydration_lock.disabled_for' => [Folder::class]]);
+
+        $this->assertTrue(HydrationLock::isDisabledFor(Folder::class));
+        $this->assertFalse(HydrationLock::isDisabledFor(Concrete::class));
+    }
+
+    public function testBootKeepsTheHydrationLockByDefault(): void
+    {
+        $this->bootWithParameters([]);
+
+        $this->assertFalse(HydrationLock::isDisabledFor(Folder::class));
     }
 
     // ---- DataObject Link policy (pimcore.objects.link_sanitizer.*, GHSA-h78x-47qg-qjmq) ----

@@ -408,13 +408,60 @@ class Manager
         return $definition->getInitialPlaces();
     }
 
+    /**
+     * Returns whether the element's workflows deny the given permission type.
+     *
+     * A permission is denied only when a matching place config sets it to false; a type no place
+     * config mentions is not denied. The rule is defined once, in getDeniedActionsInWorkflow().
+     */
     public function isDeniedInWorkflow(ElementInterface $element, string $permissionType): bool
     {
-        $userPermissions = $this->getWorkflowUserPermissions($element);
-
-        return ($userPermissions[$permissionType] ?? null) === false;
+        return $this->getDeniedActionsInWorkflow($element, [$permissionType])[$permissionType];
     }
 
+    /**
+     * Returns, for each requested permission type, whether the element's workflows deny it.
+     *
+     * Equivalent to calling isDeniedInWorkflow() once per type, but resolves the element's
+     * workflow permissions only once. That resolution walks every registered workflow, resolves
+     * each marking - a database read under StateTableMarkingStore - and evaluates the ordered
+     * place configs, so asking for n types one at a time costs n full scans. Callers that need
+     * several permission types for the same element should use this instead.
+     *
+     * A type is denied only when a matching place config sets it to false; a type no place config
+     * mentions is reported as not denied. This is the only public view of the workflow permissions;
+     * the merged raw map stays internal.
+     *
+     * @param string[] $permissionTypes
+     *
+     * @return array<string, bool> permission type => whether it is denied
+     */
+    public function getDeniedActionsInWorkflow(ElementInterface $element, array $permissionTypes): array
+    {
+        if ($permissionTypes === []) {
+            // nothing to answer, so don't pay for resolving the markings
+            return [];
+        }
+
+        $userPermissions = $this->getWorkflowUserPermissions($element);
+
+        $deniedActions = [];
+        foreach ($permissionTypes as $permissionType) {
+            $deniedActions[$permissionType] = ($userPermissions[$permissionType] ?? null) === false;
+        }
+
+        return $deniedActions;
+    }
+
+    /**
+     * Returns the merged workflow user permissions for an element.
+     *
+     * Deliberately private: the values are heterogeneous - bool for the element permissions, a
+     * comma-joined string for lEdit/lView - and absence means "not denied", so the map is not a
+     * shape to expose. Callers go through isDeniedInWorkflow() or getDeniedActionsInWorkflow().
+     *
+     * @return array<string, mixed>
+     */
     private function getWorkflowUserPermissions(ElementInterface $element): array
     {
         $userPermissions = [];

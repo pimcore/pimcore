@@ -152,6 +152,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MyAssetController extends FrontendController
 {
@@ -171,11 +172,22 @@ class MyAssetController extends FrontendController
             }, 200, [
                 'Content-Type' => $asset->getMimeType(),
             ]);
-        } else {
-            return Asset\Service::getStreamedResponseByUri($pathInfo);
         }
 
-        throw new AccessDeniedHttpException('Access denied.');
+        // throws when the uri is not a thumbnail uri at all (it cannot be parsed), and returns
+        // null when the thumbnail cannot be resolved or when the thumbnail storage cannot serve
+        // it (e.g. an I/O problem) - deliver your own 404 or placeholder in both cases
+        try {
+            $response = Asset\Service::getStreamedResponseByUri($pathInfo);
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException('Asset not found.', $e);
+        }
+
+        if ($response) {
+            return $response;
+        }
+
+        throw new NotFoundHttpException('Asset not found.');
     }
 }
 ```

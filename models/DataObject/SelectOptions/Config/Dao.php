@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\SelectOptions\Config;
 
 use InvalidArgumentException;
 use Pimcore\Config;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use RuntimeException;
 
@@ -27,17 +28,52 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     private const CONFIG_KEY = 'select_options';
 
+    private bool $readsContainerConfigOnly = false;
+
     public function configure(): void
     {
         $config = Config::getSystemConfiguration();
 
-        $storageConfig = $config['config_location'][self::CONFIG_KEY];
+        $configuredStorageConfig = $config['config_location'][self::CONFIG_KEY];
+        $this->readsContainerConfigOnly = ($configuredStorageConfig[LocationAwareConfigRepository::READ_TARGET][LocationAwareConfigRepository::TYPE] ?? null) === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG;
+        $storageConfig = self::resolveStorageConfig($configuredStorageConfig);
 
         parent::configure([
             'containerConfig' => $config['objects']['select_options']['definitions'],
             'settingsStoreScope' => 'pimcore_select_options',
             'storageConfig' => $storageConfig,
         ]);
+    }
+
+    /**
+     * The default read target (symfony-config) would hide every definition saved to the settings store. With the
+     * settings store as write target the definitions are therefore read from the container config first and from
+     * the settings store second (an explicit symfony-config read target is treated the same way).
+     */
+    public static function resolveStorageConfig(array $storageConfig): array
+    {
+        if (
+            ($storageConfig[LocationAwareConfigRepository::WRITE_TARGET][LocationAwareConfigRepository::TYPE] ?? null) === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE
+            && ($storageConfig[LocationAwareConfigRepository::READ_TARGET][LocationAwareConfigRepository::TYPE] ?? null) === LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG
+        ) {
+            $storageConfig[LocationAwareConfigRepository::READ_TARGET][LocationAwareConfigRepository::TYPE] = null;
+        }
+
+        return $storageConfig;
+    }
+
+    /**
+     * The ids of the container config, without any access to the settings store (and therefore the database).
+     * Only available when the configured read target is symfony-config, see Listing::setContainerConfigOnly().
+     */
+    protected function loadContainerConfigIds(): array
+    {
+        return array_keys(Config::getSystemConfiguration()['objects']['select_options']['definitions']);
+    }
+
+    protected function isContainerConfigReadTarget(): bool
+    {
+        return $this->readsContainerConfigOnly;
     }
 
     public function getById(?string $id = null): void

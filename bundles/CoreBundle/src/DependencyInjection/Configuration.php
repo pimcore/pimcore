@@ -454,6 +454,15 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                    ->arrayNode('webdav')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->booleanNode('browser_plugin')
+                                ->info('Registers the Sabre HTML browser plugin on /asset/webdav, which renders a directory listing (and a POST-based file/folder creation form) when the endpoint is opened in a regular web browser. Disabled by default: the form posts carry no CSRF protection under the HTTP Basic authentication of the endpoint. Enable it only if you rely on browsing assets that way.')
+                                ->defaultFalse()
+                            ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('frontend_prefixes')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -834,6 +843,34 @@ final class Configuration implements ConfigurationInterface
                             .'setting. Defaults to false to preserve existing behavior; the permissive default is deprecated '
                             .'since 2026.3 and will be removed in 2027.1. See Pimcore\\Model\\DataObject\\Data\\Link\\SanitizerPolicy.'
                         ))
+                        ->arrayNode('hydration_lock')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('disabled_for')
+                                    ->info('Data object classes (FQCN, subclasses included) loaded without the FOR UPDATE row '
+                                        .'lock. Their saves are checked against the change token of the object and throw a '
+                                        .'Pimcore\\Model\\Exception\\StaleDataException on outdated data. Use '
+                                        .'Pimcore\\Model\\DataObject\\Concrete for all classes. See '
+                                        .'Pimcore\\Model\\DataObject\\HydrationLock.')
+                                    ->scalarPrototype()->cannotBeEmpty()->end()
+                                    ->defaultValue([])
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('block')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('unserialize_allowed_classes')
+                                    ->info('Additional PHP classes to allow when unserializing the stored data of a Block field, on top of '
+                                        .'the value object classes the core block marshallers write. Register the classes a custom block '
+                                        .'marshaller (tag pimcore.dataobject.fielddefinition.marshaller, key block_<fieldtype>) or a custom '
+                                        .'field definition\'s normalize() places into a block; every other class in the stored data is '
+                                        .'reduced to __PHP_Incomplete_Class (see GHSA-6324-x2cv-h975).')
+                                    ->scalarPrototype()->end()
+                                    ->defaultValue([])
+                                ->end()
+                            ->end()
+                        ->end()
                         ->booleanNode('ignore_localized_query_fallback')
                             ->beforeNormalization()
                             ->ifString()
@@ -850,11 +887,22 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue(60)
                         ->end()
                         ->arrayNode('versions')
+                            ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('days')->defaultNull()->end()
                                 ->scalarNode('steps')->defaultNull()->end()
                                 ->booleanNode('disable_events')->defaultFalse()->end()
                                 ->booleanNode('disable_stack_trace')
+                                    ->beforeNormalization()
+                                    ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                ->end()
+                                ->booleanNode('calculated_value_snapshot')
+                                    ->info('Compute the values of calculated fields (object level and localized fields) when a version of a data object is created and store them in the version. Version previews/comparisons and objects restored from a version then return the value as of the snapshot instead of recomputing it. Calculators are then invoked on every version creation except auto-saves (manual drafts included), which costs time and database queries proportional to the number of calculated fields.')
                                     ->beforeNormalization()
                                     ->ifString()
                                         ->then(function ($v) {
@@ -1007,6 +1055,7 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('versions')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('days')
                             ->defaultNull()
@@ -1082,6 +1131,14 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('unserialize_allowed_classes')
+                            ->info('Additional PHP classes to allow when unserializing the stored data of a '
+                                .'document editable, on top of the classes the core editables write. Register the '
+                                .'classes a custom editable\'s getDataForResource() places into its data; every other '
+                                .'class in the stored data is reduced to __PHP_Incomplete_Class.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
                         ->end()
                         ->append($this->createLinkSanitizerNode(
                             'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
@@ -1688,7 +1745,7 @@ final class Configuration implements ConfigurationInterface
                                         'type' => 'expression',
                                         'arguments' => [
                                             '\Pimcore\Model\DataObject\Product',
-                                            'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles',
+                                            'subject.getProductType() == "article"',
                                         ],
                                     ])
                                 ->end()
@@ -1754,7 +1811,7 @@ final class Configuration implements ConfigurationInterface
                                                 'label' => 'close product',
                                                 'permissions' => [
                                                     [
-                                                        'condition' => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles",
+                                                        'condition' => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in role_names",
                                                         'modify' => false,
                                                     ],
                                                     [
@@ -2247,7 +2304,7 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('blocked_classes')
                                 ->info('FQCNs that must not be traversable (method calls or property access) from
                                 sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
-                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                infrastructure layer, `Pimcore\Model\User`, the request and the `app` variable) - a site can append further FQCNs on
                                 top of that default. Ignored when `allowed_classes` is non-empty.')
                                 ->scalarPrototype()->end()
                             ->end()
@@ -2263,10 +2320,10 @@ final class Configuration implements ConfigurationInterface
                                 ->info('`pimcore_*` function names that must not be covered by the blanket
                                 `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
                                 functions that look up and return a live model instance by id/path, expose a
-                                filesystem/state oracle (e.g. `pimcore_file_exists`), or read and delete an
+                                filesystem/state oracle (e.g. `pimcore_file_exists`), read and delete an
                                 arbitrary file (`pimcore_asset_version_preview`,
-                                `pimcore_image_version_preview`) - a site can append further function names on
-                                top of that default.')
+                                `pimcore_image_version_preview`) or dump arbitrary objects (`pimcore_dump`) - a
+                                site can append further function names on top of that default.')
                                 ->scalarPrototype()->end()
                             ->end()
                             ->arrayNode('hard_blocked_methods')

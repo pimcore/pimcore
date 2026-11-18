@@ -1,5 +1,107 @@
 # Upgrade Notes
 
+## Pimcore 2026.4.0
+
+### [DataObjects] Change token and opting out of the hydration row lock
+
+The `objects` table has a new column `changeToken` (`DATETIME(6)`, migration `Version20261109120000`). The database
+sets a new value on every `UPDATE` that changes the row, and every save of a data object renews it. On save, the token
+an object was loaded with is compared against the row:
+
+- By default nothing changes: data objects are still loaded with `FOR UPDATE`, and a save based on outdated data
+  still overwrites the concurrent change. Pimcore now logs a warning when this happens.
+- For classes opted out of the row lock with `Pimcore\Model\DataObject\HydrationLock::disable()` or the config
+  `pimcore.objects.hydration_lock.disabled_for`, objects are loaded without `FOR UPDATE`, and a save based on
+  outdated data throws `Pimcore\Model\Exception\StaleDataException` instead of overwriting the concurrent change.
+- `getById()` and `getByPath()` accept `['lock' => false]` to load a single object without the row lock.
+
+Objects that were cached before the migration, or restored from a version, carry no token and are not checked.
+Plain SQL writes to `object_store_*`, relation, localized field, brick or field collection tables do not change the
+token. See [Working with Objects via PHP API](../../03_Objects/02_Working_with_Objects_via_PHP_API.md#disable-row-locking-on-load).
+
+### [DataObjects] Structured, translatable validation errors
+
+The new `Pimcore\Model\Element\StructuredValidationException` extends `Pimcore\Model\Element\ValidationException`
+and carries structured data next to its message, so that clients such as Pimcore Studio can show validation errors
+in the language of the user and point to the failed field:
+
+- `setTranslation()`, `getTranslationKey()`, `getTranslationParameters()`: a translation key (a fixed string or a
+  case of the `Pimcore\Model\Element\ValidationMessageKey` enum) with scalar parameters.
+- `setField()`, `getFieldName()`, `getFieldTitle()`: the field that failed.
+- `addPathSegment()`, `getPath()`: the location of the error as a list of
+  `Pimcore\Model\Element\ValidationPathSegment` objects (localized field language, object brick, field
+  collection or block item, classification store and its group), innermost first.
+- `addViolations()`, `getViolations()`: the leaf errors collected by an aggregate exception.
+- `removeTranslation()`: removes key and parameters again, so clients show the plain message.
+- `withMessage()`: creates an exception of the same class with a new message and the structured data of the
+  original one.
+- `from()`: converts a plain `ValidationException` into a structured one with the same message, code, context
+  stack and sub items, and the original exception as previous exception.
+
+The built-in data types, the containers, `Concrete::save()`, `PageSnippet` and the image size check of `Asset` throw
+`StructuredValidationException`. Containers convert a plain `ValidationException` of a child field with `from()`,
+so it becomes a violation with field and path as well. `ValidationException` itself is unchanged, and so are the
+messages and the aggregated messages. Listeners of `DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION` receive the
+exceptions as thrown by the data types.
+
+Code that compares the exact class, for example `$e::class === ValidationException::class` or
+`get_class($e) === ValidationException::class`, sees `StructuredValidationException` for these errors.
+`catch (ValidationException $e)` and `instanceof ValidationException` keep working.
+
+The `value` of an encrypted field is never a translation parameter. If a validation error of its delegate data type
+has to drop a parameter for that reason, the translation of this error is removed as well, so the plain message is
+shown instead of a text with a missing `{{value}}`.
+
+`StructuredValidationException` can be extended. `withMessage()` creates the copy with the constructor signature
+of `Exception` (message, code, previous), so subclasses must keep it.
+
+## Pimcore 2026.3.4
+
+### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
+
+A WYSIWYG field (data object field and Document editable) no longer reduces `<a pimcore_id=... pimcore_type=...>` links
+to unpublished elements, or to objects whose class has no link generator, to their text when it is saved. Only the
+frontend rendering still reduces them.
+
+To make this work for every kind of save (Studio editor, batch edit, scheduled publishing, imports, copy and "update
+references"), the field getters keep these anchors in the following contexts:
+
+- while an object is saved, copied or has its references updated: validation, version and dao reads, and save
+  listeners calling the getters (a listener running outside this scope is not affected),
+- in the admin getters, in versions and in exports,
+- in the query columns, through `getDataForQueryResource()`.
+
+If your own code renders the value of such a getter publicly in one of these contexts (for example a listener that
+outputs getter content during a save, or an integration that publishes the query column), apply
+`Pimcore\Tool\Text::wysiwygText()` to it explicitly. Its signature is unchanged; the variant that keeps the anchors is
+the new `Text::wysiwygTextKeepingLinks()`.
+
+Known limit: custom code that reads a block field outside a save and then saves the object itself still writes the
+reduced text back.
+
+## Pimcore 2026.3.3
+
+### [Core] `schedule_tasks` indexes: the migration waits for open transactions
+
+Migration `Version20261015100000` replaces the single-column `cid` and `ctype` indexes on `schedule_tasks` with a
+composite `(cid, ctype)` index. It does this in a single `ALTER TABLE` statement, so the table is never without an
+index for lookups by element while the migration runs, and InnoDB performs the change in place without rebuilding
+the table.
+
+The statement does need a metadata lock on `schedule_tasks`. It **waits for every open transaction that has used
+the table**, and every element save (asset, document, data object) holds such a transaction until it commits.
+While the migration waits, new statements on `schedule_tasks`, and with them new element saves, queue behind it.
+On an installation with continuous saves (imports, API clients, messenger workers) run the migration while those
+are paused, or expect a short stall of element saves until the open transactions have committed. The change itself
+takes well under a second once the lock is granted.
+
+If your own code queries `schedule_tasks` by `ctype` alone, note that this index no longer exists; the composite
+index serves lookups by `cid` and by `cid` and `ctype`.
+
+Saving an element whose scheduled tasks were neither loaded nor set no longer deletes and rewrites its rows in
+`schedule_tasks`. A save that sets the scheduled tasks explicitly, and deleting an element, still remove the
+element's rows, including rows another transaction committed in the meantime.
+
 ## Pimcore 2026.3.0
 
 ### [Maintenance]

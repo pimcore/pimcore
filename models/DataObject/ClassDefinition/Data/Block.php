@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Error;
 use Exception;
+use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Element\MarshallerService;
@@ -27,6 +30,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\StructuredValidationException;
+use Pimcore\Model\Element\ValidationMessageKey;
+use Pimcore\Model\Element\ValidationPathSegment;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -93,6 +99,30 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     protected array $referencedFields = [];
 
     /**
+     * Concrete classes a block's resource blob may legitimately contain. Child values are written
+     * by getDataForResource() through the per-fieldtype block marshallers, several of which
+     * rebuild one of these value objects before serializing (externalImage, consent, date/datetime,
+     * structuredTable), while types without a marshaller store their raw normalize() output, which
+     * can keep objects too (dateRange -> Carbon, or CarbonImmutable for a period built from
+     * immutable dates). MarkerHotspotItem is only found in blobs written before the hotspotimage /
+     * imageGallery block marshallers existed, which now store the metadata as plain arrays.
+     * Passed to Serialize::unserialize() in getDataFromResource() so that known value objects are
+     * reconstructed while every other class name in the input is refused. Projects whose own block
+     * marshallers or field definitions store further classes register them server-side through
+     * `pimcore.objects.block.unserialize_allowed_classes` (see getAllowedResourceClasses()).
+     *
+     * @internal
+     */
+    private const ALLOWED_RESOURCE_CLASSES = [
+        DataObject\Data\Consent::class,
+        DataObject\Data\ExternalImage::class,
+        DataObject\Data\StructuredTable::class,
+        Element\Data\MarkerHotspotItem::class,
+        Carbon::class,
+        CarbonImmutable::class,
+    ];
+
+    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      *
@@ -153,6 +183,30 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * The built-in allowlist merged with the classes configured in
+     * `pimcore.objects.block.unserialize_allowed_classes`. Mirrors the tmp_store / session token
+     * allowlists: the configuration is trusted server-side input, never request data.
+     *
+     * @return list<class-string>
+     */
+    private function getAllowedResourceClasses(): array
+    {
+        $extraAllowedClasses = [];
+        if (Pimcore::hasContainer()) {
+            try {
+                $extraAllowedClasses = (array) Pimcore::getContainer()->getParameter('pimcore.objects.block.unserialize_allowed_classes');
+            } catch (InvalidArgumentException) {
+                // parameter not configured
+            }
+        }
+
+        return array_values(array_unique(array_merge(
+            self::ALLOWED_RESOURCE_CLASSES,
+            array_filter($extraAllowedClasses, 'is_string')
+        )));
+    }
+
+    /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      *
@@ -170,18 +224,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }, $data);
             }
 
-            // A block's resource blob legitimately contains PHP objects, so object deserialization
-            // must stay enabled here. Child values are written by getDataForResource() through the
-            // per-fieldtype block marshallers, several of which rebuild a value object before
-            // serializing (externalImage, consent, date/datetime, structuredTable), while types
-            // without a marshaller store their raw normalize() output, which can keep objects too
-            // (hotspotimage/imageGallery -> MarkerHotspotItem, dateRange -> Carbon). The set is not
-            // enumerable: bundles may register further block marshallers and field definitions.
-            // Restricting this to `false` silently dropped those values to null and corrupted
-            // hotspot metadata - see pimcore/platform-version#262.
-            // Tightening this is tracked in pimcore/internal-improvements#24 and needs the write
-            // side to stop storing live objects first.
-            $unserializedData = Serialize::unserialize($data, true);
+            // A block's resource blob legitimately contains PHP objects (see
+            // self::ALLOWED_RESOURCE_CLASSES), so object deserialization must stay enabled here,
+            // but only for those known value object classes. Restricting this to `false` silently
+            // dropped those values to null and corrupted hotspot metadata - see
+            // pimcore/platform-version#262. Allowing every class (the previous `true`) let a
+            // forged resource string reach arbitrary PHP object graphs, including POP-chain
+            // gadgets, since this data can be request-controlled wherever getDataFromResource()
+            // is reachable - see GHSA-6324-x2cv-h975.
+            $unserializedData = Serialize::unserialize($data, $this->getAllowedResourceClasses());
             $result = [];
 
             foreach ($unserializedData as $blockElements) {
@@ -340,6 +391,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $elementData,
                         $object,
                         [
+                            // keep the language of an enclosing localized field
+                            ...(isset($params['language']) ? ['language' => $params['language']] : []),
                             'context' => [
                                 'containerType' => 'block',
                                 'fieldname' => $this->getName(),
@@ -801,8 +854,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         } elseif ($object instanceof DataObject\Localizedfield) {
 
-            $context = $params['context'];
-            $object = $context['object'];
+            $context = $params['context'] ?? $object->getContext();
+            $object = $context['object'] ?? $object->getObject();
             $containerType = $context['containerType'] ?? null;
 
             if ($containerType === 'fieldcollection') {
@@ -987,6 +1040,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $blockDefinitions = $this->getFieldDefinitions();
 
                 $validationExceptions = [];
+                $violations = [];
 
                 $idx = -1;
                 foreach ($data as $item) {
@@ -1000,7 +1054,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $blockElement = $item[$fd->getName()] ?? null;
                             if (!$blockElement) {
                                 if ($fd->getMandatory()) {
-                                    throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
+                                    throw (new StructuredValidationException(
+                                        'Block element empty [ ' . $fd->getName() . ' ]'
+                                    ))->setTranslation(ValidationMessageKey::MANDATORY);
                                 } else {
                                     continue;
                                 }
@@ -1030,19 +1086,27 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
                             $validationExceptions[] = $ve;
+                            $violations[] = StructuredValidationException::from($ve)
+                                ->setField($fd->getName(), $fd->getTitle())
+                                ->addPathSegment(new ValidationPathSegment(
+                                    field: $this->getName(),
+                                    title: $this->getTitle() !== '' ? $this->getTitle() : null,
+                                    index: $idx
+                                ));
                         }
                     }
                 }
 
                 if ($validationExceptions) {
                     $errors = [];
-                    /** @var Element\ValidationException $e */
+                    // the original exceptions, so a custom getAggregatedMessage() keeps its text
+                    /** @var Model\Element\ValidationException $e */
                     foreach ($validationExceptions as $e) {
                         $errors[] = $e->getAggregatedMessage();
                     }
                     $message = implode(' / ', $errors);
 
-                    throw new Model\Element\ValidationException($message);
+                    throw (new StructuredValidationException($message))->addViolations(...$violations);
                 }
             }
         }
