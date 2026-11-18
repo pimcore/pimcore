@@ -33,11 +33,11 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php-version: 8.4, database: "mariadb:11.2", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.4, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.4, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.5, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.5, database: "mariadb:10.11", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mariadb:12.3", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mysql:9.7", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mariadb:10.11", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.5, database: "mariadb:11.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.5, database: "mariadb:11.8", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
                     - { php-version: 8.5, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
         with:
             php-version: ${{ matrix.php-version }}
