@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
     schedule:
         -   cron: '0 3 * * *'
-    pull_request_target:
+    pull_request:
         branches:
             - "2026.*"
         paths-ignore:
@@ -52,14 +52,7 @@ jobs:
                     - { php-version: "8.5", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
         steps:
-            - name: Checkout PR head (only for pull_request_target)
-              if: github.event_name == 'pull_request_target'
-              uses: "actions/checkout@v5.0.1"
-              with:
-                ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
-
-            - name: Checkout PR head (for push or other events)
-              if: github.event_name != 'pull_request_target'
+            - name: "Checkout code"
               uses: "actions/checkout@v5.0.1"
 
             - name: "Install PHP"
