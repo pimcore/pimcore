@@ -54,6 +54,11 @@ final class EavEngine extends AbstractDao implements EngineInterface
      */
     private const ENGINE_NAME = 'eav';
 
+    /**
+     * The one type whose value reaches the two columns encrypted, {@see self::encryptionDisagreesWithTheRow()}.
+     */
+    private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
+
     private const DATA_TABLE_PREFIX = 'object_classificationstore_data_';
 
     private const GROUPS_TABLE_PREFIX = 'object_classificationstore_groups_';
@@ -350,6 +355,12 @@ final class EavEngine extends AbstractDao implements EngineInterface
                 continue;
             }
 
+            if ($this->encryptionDisagreesWithTheRow($item, $fd)) {
+                // the row was written through the encryption marshaller and the type in force does
+                // not read it that way, or the other way round, {@see self::encryptionDisagreesWithTheRow()}
+                continue;
+            }
+
             if ($fd instanceof NormalizerInterface) {
                 if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                     $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
@@ -359,10 +370,20 @@ final class EavEngine extends AbstractDao implements EngineInterface
                     $value = $value['value'];
                 }
 
-                $value = $fd->denormalize($value, [
-                    'object' => $object,
-                    'fieldDefinition' => $fd,
-                ]);
+                // a value the key's type cannot read is read as the key's empty value rather than
+                // handed to it, {@see Service::canReadStoredValue()}: changing a key's type leaves
+                // the data stored under the old one in the row, and the type in force then reads a
+                // shape it has no reading for. Asked of the value AFTER the marshaller, which is the
+                // value `denormalize()` is about to be given - before it the value is still the two
+                // columns of the row, in which every value looks like an array
+                if (!Service::canReadStoredValue($fd, $value)) {
+                    $value = null;
+                } else {
+                    $value = $fd->denormalize($value, [
+                        'object' => $object,
+                        'fieldDefinition' => $fd,
+                    ]);
+                }
             }
 
             $language = $item['language'];
@@ -485,6 +506,43 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
             throw UnsupportedEngineFeatureException::forUnholdableType($type, $storeId, self::ENGINE_NAME);
         }
+    }
+
+    /**
+     * Whether this row was written through the ENCRYPTION marshaller and the type in force does not
+     * read it that way, or the other way round.
+     *
+     * Changing a key's type leaves the value rows where they are, and whether a value is encrypted
+     * is decided from the type in force on both sides: a key switched AWAY from `encryptedField`
+     * decrypts nothing and handed the ciphertext column back as the value - which an `input` reads
+     * as its own string, so the ciphertext was shown as the value of the field. The inverse hands a
+     * value that was never encrypted to `Crypto::decrypt()`, which raises from inside the marshaller
+     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::decrypt()}).
+     *
+     * Answered from the `type` column, which records the type of the key that WROTE the row - the
+     * one thing here that the declaration in force cannot contradict. It is compared only for this
+     * one type: whether a row's other leftovers can be read is a question about their shape, which
+     * {@see Service::canReadStoredValue()} answers, and a type change this column merely disagrees
+     * about is not by itself a reason to drop a row.
+     *
+     * A row carrying no recorded type at all is left alone: nothing says how it was written, and
+     * refusing it would read a correctly encrypted key written before the column was filled as
+     * empty. A `multiValue` key records `multiValue` whatever it wraps, so a wrapped
+     * `encryptedField` is not told apart here - such a key cannot be defined on this engine at all
+     * ({@see KeyTypeSupport::requiredEngineFeatures()}), so only a row predating that gate has one.
+     *
+     * @param array<string, mixed> $item one row of the value table
+     */
+    private function encryptionDisagreesWithTheRow(array $item, ?Data $fd): bool
+    {
+        $storedType = (string) ($item['type'] ?? '');
+        $currentType = $fd?->getFieldType() ?? '';
+
+        if ($storedType === '' || $storedType === $currentType) {
+            return false;
+        }
+
+        return $storedType === self::ENCRYPTED_FIELD_TYPE || $currentType === self::ENCRYPTED_FIELD_TYPE;
     }
 
     /**

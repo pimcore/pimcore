@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
 use Doctrine\DBAL\Connection;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
@@ -246,6 +247,91 @@ class MultiValueTest extends TestCase
     }
 
     /**
+     * The wrapper does NOT judge what it is handed. A key whose inner type was changed over data
+     * already stored for it holds a value of one shape in front of a type that reads another, and
+     * that is not a property of this wrapper - changing the type of a PLAIN key does exactly the
+     * same. So the question is put where a stored value meets the definition in force, both engines
+     * and the relation resolver ({@see Service::canReadStoredValue()}), a value refused there never
+     * reaches this method, and the wrapper keeps forwarding whatever it is given.
+     *
+     * Pinned because the obvious place to put the check is here, it was here, and a check here
+     * covers `multiValue` keys alone while firing a second time on every read that is already
+     * answered.
+     */
+    public function testTheWrapperForwardsAStoredValueWithoutJudgingItsShape(): void
+    {
+        $stored = [['type' => 'object', 'id' => 4]];
+
+        $this->assertSame(
+            $stored,
+            $this->wrapping($this->input())->denormalize($stored),
+            'an input forwards what it is given, and the store is what decides whether it may be'
+        );
+
+        $this->assertFalse(
+            Service::canReadStoredValue($this->wrapping($this->input()), $stored),
+            'and the check that refuses it is answered by the inner type, off the wrapper'
+        );
+    }
+
+    /**
+     * The stored form of a value round-trips through the wrapper to the inner type that wrote it,
+     * whatever shape that type's own stored form has: a relation's descriptors, the list a
+     * `multiselect` holds, the structure a `geopoint` holds and the scalar an `input` holds all
+     * reach the inner type unchanged.
+     */
+    public function testAStoredValueRoundTripsThroughTheWrapperToTheInnerType(): void
+    {
+        $descriptors = [['type' => 'object', 'id' => 4]];
+
+        $relation = $this->createMock(ManyToManyObjectRelation::class);
+        $relation->expects($this->once())
+            ->method('denormalize')
+            ->with($descriptors)
+            ->willReturn(['the element']);
+
+        $this->assertSame(
+            ['the element'],
+            $this->wrapping($relation)->denormalize($descriptors),
+            'the descriptors reach the relation type that stored them'
+        );
+
+        $this->assertSame(
+            ['a', 'b'],
+            $this->wrapping($this->named(new Data\Multiselect()))->denormalize(['a', 'b']),
+            'a list a multiselect stored is its own value'
+        );
+
+        $coordinates = $this->wrapping($this->named(new Data\Geopoint()))
+            ->denormalize(['latitude' => 1.0, 'longitude' => 2.0]);
+        $this->assertInstanceOf(DataObject\Data\GeoCoordinates::class, $coordinates);
+        $this->assertSame(1.0, $coordinates->getLatitude());
+
+        $this->assertSame(
+            'plain',
+            $this->wrapping($this->input())->denormalize('plain'),
+            'and the scalar an input stores reaches it as it stands'
+        );
+    }
+
+    /**
+     * Including the single descriptor a to-ONE relation normalizes to, which is one value rather
+     * than a list of them - the wrapper hands on what it is given either way.
+     */
+    public function testTheSingleDescriptorOfAToOneRelationIsForwardedAsTheValueItIs(): void
+    {
+        $descriptor = ['type' => 'object', 'id' => 4];
+
+        $target = new Concrete();
+        $target->setId(4);
+
+        $relation = $this->createMock(Data\ManyToOneRelation::class);
+        $relation->expects($this->once())->method('denormalize')->with($descriptor)->willReturn($target);
+
+        $this->assertSame($target, $this->wrapping($relation)->denormalize($descriptor));
+    }
+
+    /**
      * The engine refusal, which is the same boundary read from the outside: a wrapped FORWARD
      * relation is refused by an engine that cannot hold relations, exactly as the unwrapped one is.
      *
@@ -400,5 +486,12 @@ class MultiValueTest extends TestCase
         $input->setName('wrapped');
 
         return $input;
+    }
+
+    private function named(Data $definition): Data
+    {
+        $definition->setName('wrapped');
+
+        return $definition;
     }
 }

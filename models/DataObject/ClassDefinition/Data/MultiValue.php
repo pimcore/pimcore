@@ -371,6 +371,14 @@ class MultiValue extends Data implements
     /**
      * The value read back out of its stored form, the other half of {@see self::normalize()} and
      * delegate-less for the same reason.
+     *
+     * Whether the inner type can read what is stored is NOT asked here. Changing the inner type over
+     * data already stored for a key leaves a value of one shape in front of a type that reads
+     * another, and that is not a property of this wrapper: changing the type of a PLAIN key does
+     * exactly the same, so the question is put at the places a stored value meets the definition in
+     * force - both engines and the relation resolver,
+     * {@see DataObject\Classificationstore\Service::canReadStoredValue()} - and a value refused
+     * there never reaches this method at all.
      */
     public function denormalize(mixed $value, array $params = []): mixed
     {

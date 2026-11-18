@@ -169,6 +169,14 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     private const ENVELOPE_MEMBER = '_csJson';
 
     /**
+     * The two members a classificationstore marshaller packs a value into, which in a document only
+     * the encryption marshaller writes, {@see self::wasEncrypted()}.
+     */
+    private const COLUMN_MEMBER = 'value';
+
+    private const SECOND_COLUMN_MEMBER = 'value2';
+
+    /**
      * Whether the value of this entry is a JSON envelope of {@see self::ENVELOPE_MEMBER} rather than
      * the value itself.
      *
@@ -1828,11 +1836,27 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
     }
 
     /**
+     * A value the key's type cannot read is read as the key's empty value rather than handed to it,
+     * {@see Service::canReadStoredValue()}: changing a key's type leaves the data stored under the
+     * old one where it is, and the type in force then reads a shape it has no reading for.
+     *
+     * Asked of the value AFTER the marshaller, which is the value `denormalize()` is about to be
+     * given and the only form the question can be put about. Before it, the value of the one type
+     * that reaches a marshaller here is ciphertext - a string whatever the delegate holds - so the
+     * check would be answered about the envelope rather than about the value inside it.
+     *
      * @param bool $enveloped what the entry's {@see self::ENVELOPE_QUALIFIER} said about its value
      */
     private function decodeValue(Data $fd, mixed $value, bool $enveloped, ?Concrete $object): mixed
     {
         if (!$fd instanceof NormalizerInterface) {
+            return null;
+        }
+
+        if ($this->encodesThroughItsMarshaller($fd) !== $this->wasEncrypted($value, $enveloped)) {
+            // the entry was not written the way the definition in force reads it, so it is not
+            // interpreted: the half that matters is a key switched AWAY from `encryptedField`, where
+            // nothing decrypts and the two columns of ciphertext were handed back as the value
             return null;
         }
 
@@ -1847,7 +1871,61 @@ final class DocumentEngine extends AbstractDao implements EngineInterface
             }
         }
 
+        if (!Service::canReadStoredValue($fd, $value)) {
+            // written by a type this key no longer has, and left where it is rather than interpreted
+            return null;
+        }
+
         return $fd->denormalize($value, ['object' => $object, 'fieldDefinition' => $fd]);
+    }
+
+    /**
+     * Whether this stored entry was written through the ENCRYPTION marshaller, which is the one
+     * marshaller a value reaches this document through, {@see self::encodesThroughItsMarshaller()}.
+     *
+     * Read off the entry rather than off the definition, because the definition in force may not be
+     * the one that wrote it: a key switched away from `encryptedField` decrypts nothing - the check
+     * above asks the CURRENT type - and the two columns of ciphertext were then handed to that
+     * type's `denormalize()`. For an `input` that is refused as a structure in front of a scalar
+     * ({@see Service::canReadStoredValue()}), but `multiselect` and `table` hold a list of their own
+     * and read it unchanged: the ciphertext was shown as the value of the field. Measured on a store
+     * holding one such key, which is why this is asked before anything is decoded.
+     *
+     * Two signals, and the second one is needed because the first is only written for part of the
+     * set: the envelope qualifier is written by that marshaller alone
+     * ({@see self::needsAJsonEnvelope()}) but only for a value it had to make scalar first, so a
+     * delegate holding a scalar carries none. What every value of such a key does carry is the pair
+     * of columns the marshaller packs into, both of them a string or null
+     * ({@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::marshal()}) - and
+     * no other value in a document is a pair at all, because no other type's value is marshalled
+     * here. Of the field types a key can be defined with, none normalizes to a flat map of exactly
+     * these two member names, so nothing a document legitimately holds is read as one.
+     *
+     * The inverse is the same comparison: a key switched TO `encryptedField` over data that was
+     * never encrypted hands a value the decryption cannot read to `Crypto::decrypt()`, which raises
+     * from inside the marshaller rather than returning. That is refused here instead of being caught:
+     * a misconfigured `pimcore.encryption.secret` raises in the same place, and swallowing it would
+     * read every correctly encrypted key in the installation as empty.
+     */
+    private function wasEncrypted(mixed $value, bool $enveloped): bool
+    {
+        if ($enveloped) {
+            return true;
+        }
+
+        if (!is_array($value) || count($value) !== 2) {
+            return false;
+        }
+
+        foreach ([self::COLUMN_MEMBER, self::SECOND_COLUMN_MEMBER] as $member) {
+            if (!array_key_exists($member, $value)
+                || !(is_string($value[$member]) || $value[$member] === null)
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

@@ -112,8 +112,6 @@ final class RelationResolver
             . ' NULL AS `className`, `published`, `creationDate`, `modificationDate` FROM `documents`',
     ];
 
-    private const ELEMENT_MEMBER = 'element';
-
     /**
      * Between the type and the id of a descriptor, in the key the lookups are held under.
      */
@@ -683,21 +681,14 @@ final class RelationResolver
      * The descriptor one entry of a normalized value carries, and null for an entry that carries
      * none - which is how a caller tells a to-one value, a single descriptor, from a to-many one.
      *
+     * The shape itself lives with the stored value it describes, {@see RelationDescriptor::describeOne()},
+     * so that this resolver and the readability check of a key whose inner type changed answer alike.
+     *
      * @return array{type: string, id: int}|null
      */
     public function describeOne(array $entry): ?array
     {
-        $element = $entry[self::ELEMENT_MEMBER] ?? $entry;
-
-        if (!is_array($element) || !isset($element['type'], $element['id'])) {
-            return null;
-        }
-
-        if (!is_string($element['type']) || !is_scalar($element['id'])) {
-            return null;
-        }
-
-        return ['type' => $element['type'], 'id' => (int) $element['id']];
+        return RelationDescriptor::describeOne($entry);
     }
 
     /**
@@ -819,6 +810,16 @@ final class RelationResolver
     ): ResolvedRelation {
         if (!$fieldDefinition instanceof NormalizerInterface) {
             // nothing wrote a descriptor for such a key, and nothing can read one back
+            return new ResolvedRelation(null, false);
+        }
+
+        if (!Service::canReadStoredValue($fieldDefinition, $normalizedValue)) {
+            // the stored value does not name targets the way this relation normalizes them, so it
+            // was written by a type the key no longer has: read as the key holding nothing rather
+            // than handed to a `denormalize()` that reads `$elementData['type']` off every entry,
+            // {@see Service::canReadStoredValue()}. This is where the question is put for a
+            // relation-typed key: the document engine leaves its value wrapped as a descriptor and
+            // never reaches `DocumentEngine::decodeValue()` for one
             return new ResolvedRelation(null, false);
         }
 
