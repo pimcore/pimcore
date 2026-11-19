@@ -49,38 +49,53 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     public function setClassDefinitions(array $classDefinitions): static
     {
-        // classname/fieldname are emitted verbatim into generated PHP container classes and
-        // into container-class file paths (dumpContainerClasses(), cleanupOldFiles()), so they
-        // must be valid identifiers. This is the central write path (JSON import/programmatic
-        // set) and, via VarExport::__set_state() -> setValues(), also covers hydration from the
-        // persisted definition file.
+        $this->validateClassDefinitions($classDefinitions, true);
+
+        $this->classDefinitions = $classDefinitions;
+
+        return $this;
+    }
+
+    /**
+     * The classname and fieldname of a class definition entry are used to build generated class files and the paths
+     * they are written to, so both have to be plain identifiers. Besides setClassDefinitions() (which also covers
+     * hydration from the definition file via setValues()), this is checked right before saving, because
+     * $classDefinitions is a public property. Empty values are tolerated while setting (like in
+     * ClassDefinition\Data::setName()), but not when saving, as such an entry cannot be resolved to a field.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function validateClassDefinitions(array $classDefinitions, bool $allowEmpty): void
+    {
+        $patterns = [
+            'classname' => '/^[a-zA-Z0-9_]+\z/',
+            'fieldname' => '/^[a-zA-Z_][a-zA-Z0-9_]{0,62}\z/',
+        ];
+
         foreach ($classDefinitions as $cl) {
             if (!is_array($cl)) {
                 throw new InvalidArgumentException('Invalid classDefinitions entry: expected array');
             }
 
-            $classname = $cl['classname'] ?? '';
-            $fieldname = $cl['fieldname'] ?? '';
+            foreach ($patterns as $name => $pattern) {
+                if (!array_key_exists($name, $cl)) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Missing %s in Objectbrick classDefinitions entry',
+                        $name
+                    ));
+                }
 
-            if (!is_string($classname) || ($classname !== '' && !preg_match('/^[a-zA-Z0-9_]+\z/', $classname))) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid classname "%s" in Objectbrick classDefinitions',
-                    is_scalar($classname) ? (string) $classname : gettype($classname)
-                ));
-            }
+                $value = $cl[$name];
 
-            $fieldnamePattern = '/^[a-zA-Z_][a-zA-Z0-9_]{0,62}\z/';
-            if (!is_string($fieldname) || ($fieldname !== '' && !preg_match($fieldnamePattern, $fieldname))) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid fieldname "%s" in Objectbrick classDefinitions',
-                    is_scalar($fieldname) ? (string) $fieldname : gettype($fieldname)
-                ));
+                if (!is_string($value) || ($value === '' ? !$allowEmpty : !preg_match($pattern, $value))) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Invalid %s "%s" in Objectbrick classDefinitions',
+                        $name,
+                        is_scalar($value) ? (string) $value : gettype($value)
+                    ));
+                }
             }
         }
-
-        $this->classDefinitions = $classDefinitions;
-
-        return $this;
     }
 
     public function getClassDefinitions(): array
@@ -547,6 +562,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
                 $this->getParentClass()));
         }
+
+        $this->validateClassDefinitions($this->classDefinitions, false);
 
         $this->checkTablenames();
         $this->checkContainerRestrictions();
