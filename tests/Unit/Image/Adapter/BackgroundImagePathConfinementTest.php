@@ -48,6 +48,14 @@ final class BackgroundImagePathConfinementTest extends TestCase
         if (!extension_loaded('gd')) {
             $this->markTestSkipped('The gd extension is not available.');
         }
+
+        // PIMCORE_WEB_ROOT (the "public" directory) is gitignored and only materialized by an
+        // asset-install step that some CI jobs skip; the confinement check needs it to actually
+        // exist to resolve a real path via realpath(), so create it here if it is missing.
+        if (!is_dir(PIMCORE_WEB_ROOT)) {
+            mkdir(PIMCORE_WEB_ROOT, 0775, true);
+            $this->cleanupDirs[] = PIMCORE_WEB_ROOT;
+        }
     }
 
     protected function tearDown(): void
