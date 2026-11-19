@@ -34,6 +34,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerP
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
 use Pimcore\Model\DataObject\Data\Link\SanitizerPolicy;
+use Pimcore\Model\Document\Editable\Embed\UrlSanitizer;
 use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -76,6 +77,7 @@ class PimcoreCoreBundle extends Bundle
     {
         $this->bootDocumentLinkSanitizer();
         $this->bootDataObjectLinkSanitizer();
+        $this->bootDocumentEmbedSanitizer();
     }
 
     private function bootDocumentLinkSanitizer(): void
@@ -131,6 +133,26 @@ class PimcoreCoreBundle extends Bundle
         ));
     }
 
+    /**
+     * Same as bootDocumentLinkSanitizer(), for the independent policy of the Embed editable
+     * (pimcore.documents.editables.embed_sanitizer.*, GHSA-v3fp-8x27-9g8f).
+     */
+    private function bootDocumentEmbedSanitizer(): void
+    {
+        if (UrlSanitizer::isConfigured()) {
+            // an application bundle already installed an explicit policy via UrlSanitizer::setInstance()
+            return;
+        }
+
+        if (!$this->container->getParameter('pimcore.documents.editables.embed_sanitizer.strict')) {
+            UrlSanitizer::setInstance(null);
+
+            return;
+        }
+
+        UrlSanitizer::setInstance(UrlSanitizer::strict());
+    }
+
     public function shutdown(): void
     {
         // Pimcore's own test suite boots multiple kernels/containers within the same PHP process
@@ -141,6 +163,7 @@ class PimcoreCoreBundle extends Bundle
         // lifecycle starts from a clean slate.
         AttributeSanitizer::setInstance(null);
         SanitizerPolicy::setInstance(null);
+        UrlSanitizer::setInstance(null);
     }
 
     public function getPath(): string
