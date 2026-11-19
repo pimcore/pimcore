@@ -60,6 +60,11 @@
 ### [Security]
 - [2FA] When `pimcore.general.domain` is configured, it is now used as the default `scheb_two_factor.google.server_name`, so new Google Authenticator enrolments show the account as `<username>@<domain>` instead of just the username. The issuer is not changed. Existing enrolments keep working, as the shared secret is unchanged and only the label of new QR codes is affected. An explicitly configured `scheb_two_factor.google.server_name` still takes precedence. Without a configured domain nothing changes.
 
+## Pimcore 2026.3.7
+
+### [Assets]
+- [Security] [Thumbnails] `Asset\Service::getStreamedResponseForThumbnail()` (and with it the public helper `Asset\Service::getStreamedResponseByUri()`) now rejects a thumbnail URI whose decoded storage path contains a NUL byte or a `.`/`..` segment. It returns `null` without reading the thumbnail storage and without generating a thumbnail, so the delivery ends in the usual 404/placeholder path. Custom thumbnail delivery integrations that call these methods with such URIs therefore receive `null` instead of a response; regular thumbnail URIs are unaffected.
+
 ## Pimcore 2026.3.5
 
 ### [Documents]
