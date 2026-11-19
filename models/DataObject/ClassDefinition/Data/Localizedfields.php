@@ -996,7 +996,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
             $itemdata = $item['data'];
 
-            if ($itemdata) {
+            // a strict null check, not truthiness: a legitimate falsey value (e.g. the string "0",
+            // or false) must still be assigned below, not treated the same as "nothing submitted"
+            if ($itemdata !== null) {
                 $values[] = $itemdata;
             }
 

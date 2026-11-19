@@ -581,6 +581,30 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         if ($data instanceof DataObject\Fieldcollection) {
             $fieldname = $this->getName();
+
+            // an empty collection contributes no per-item rows below, which would otherwise be
+            // indistinguishable from "this field isn't part of the diff at all" - emit an explicit
+            // marker (oIndex null) so taking this field over from an empty side can be told apart
+            // from "nothing submitted" and actually clears the other side's items (see
+            // getDiffDataFromEditmode() below)
+            if ($data->isEmpty()) {
+                $result[] = [
+                    'field' => $fieldname,
+                    'key' => $fieldname . '~empty',
+                    'type' => $this->getFieldType(),
+                    'value' => null,
+                    'disabled' => false,
+                    'title' => $fieldname,
+                    'data' => [
+                        'oIndex' => null,
+                        'type' => null,
+                        'name' => null,
+                    ],
+                ];
+
+                return $result;
+            }
+
             $idx = -1;
             foreach ($data as $item) {
                 $idx++;
@@ -661,6 +685,18 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         if (!$container instanceof DataObject\Fieldcollection) {
             $container = new DataObject\Fieldcollection([], $fieldname);
+        }
+
+        // the explicit "empty collection" marker from getDiffDataForEditMode() above: taking this
+        // field over from a side that had zero items must clear the other side's items too, rather
+        // than leaving them untouched because there's nothing else in $data to act on
+        foreach ($data as $entry) {
+            $subdata = $entry['data'] ?? null;
+            if (is_array($subdata) && array_key_exists('oIndex', $subdata) && $subdata['oIndex'] === null) {
+                $container->setItems([]);
+
+                return $container;
+            }
         }
 
         $items = $container->getItems();

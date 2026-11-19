@@ -520,6 +520,88 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals('targetText', $result->get(0)->getLinput('en'));
     }
 
+    /**
+     * Copilot review finding for PEES-2055: an empty source collection contributes zero diff rows,
+     * which getDiffDataFromEditmode() could not tell apart from "this field wasn't part of the diff
+     * at all" - so taking the field over from an empty side silently left the other side's items
+     * untouched instead of clearing them.
+     */
+    public function testDiffDataFromEditmodeClearsItemsWhenTakingOverAnEmptyCollection(): void
+    {
+        $relation = new RelationTest();
+        $relation->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $relation->setKey('peesrelationemptytakeover');
+        $relation->setPublished(true);
+        $relation->save();
+
+        $targetObject = $this->createUnittestfieldcollectionObject('target plain', 'targetText', $relation);
+
+        $sourceObject = TestHelper::createEmptyObject();
+        $sourceObject->setFieldcollection(new Fieldcollection([], 'fieldcollection'));
+        $sourceObject->save();
+        $sourceObject = DataObject::getById($sourceObject->getId(), ['force' => true]);
+
+        $fd = $targetObject->getClass()->getFieldDefinition('fieldcollection');
+        $this->assertInstanceOf(Fieldcollections::class, $fd);
+
+        // simulate taking the whole field over from source, the way a "take all from this side"
+        // merger action would: render source's own diff and decode it directly against the target
+        $sourceDiff = $fd->getDiffDataForEditMode($sourceObject->getFieldcollection(), $sourceObject);
+        $this->assertNotEmpty($sourceDiff, 'An empty collection must still contribute an explicit marker row');
+
+        $result = $fd->getDiffDataFromEditmode($sourceDiff, $targetObject);
+
+        $this->assertInstanceOf(Fieldcollection::class, $result);
+        $this->assertSame(0, $result->getCount(), 'Taking over an empty collection must clear the other side\'s items, not leave them untouched');
+    }
+
+    /**
+     * Copilot review finding for PEES-2055: Localizedfields::getDiffDataFromEditmode() tested a
+     * submitted value by truthiness, so a legitimate falsey value (e.g. the string "0") was treated
+     * the same as "nothing submitted" and dropped instead of being assigned.
+     */
+    public function testDiffDataRoundTripPreservesFalseyLocalizedValue(): void
+    {
+        $relation = new RelationTest();
+        $relation->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $relation->setKey('peesrelationfalsey');
+        $relation->setPublished(true);
+        $relation->save();
+
+        $sourceObject = $this->createUnittestfieldcollectionObject('source plain', '0', $relation);
+        $targetObject = $this->createUnittestfieldcollectionObject('target plain', 'targetText', $relation);
+
+        $fd = $targetObject->getClass()->getFieldDefinition('fieldcollection');
+        $this->assertInstanceOf(Fieldcollections::class, $fd);
+
+        $targetDiff = $fd->getDiffDataForEditMode($targetObject->getFieldcollection(), $targetObject);
+        $sourceDiff = $fd->getDiffDataForEditMode($sourceObject->getFieldcollection(), $sourceObject);
+
+        $sourceEntriesByKey = [];
+        foreach ($sourceDiff as $entry) {
+            $sourceEntriesByKey[$entry['key']] = $entry;
+        }
+
+        // take over only the "linput" entry from source, same as the round-trip test above does for
+        // "lrelation"
+        $merged = $targetDiff;
+        foreach ($merged as $i => $entry) {
+            $innerFieldName = $entry['data']['subdata']['extData']['fieldname'] ?? null;
+            if ($innerFieldName === 'linput' && isset($sourceEntriesByKey[$entry['key']])) {
+                $merged[$i] = $sourceEntriesByKey[$entry['key']];
+            }
+        }
+
+        $result = $fd->getDiffDataFromEditmode($merged, $targetObject);
+
+        $this->assertInstanceOf(Fieldcollection::class, $result);
+        $this->assertSame(
+            '0',
+            $result->get(0)->getLinput('en'),
+            'A legitimate falsey localized value ("0") must round-trip, not be dropped as if nothing was submitted'
+        );
+    }
+
     private function createUnittestfieldcollectionObject(string $plainValue, string $localizedValue, RelationTest $relation): DataObject\Concrete
     {
         $object = TestHelper::createEmptyObject();
