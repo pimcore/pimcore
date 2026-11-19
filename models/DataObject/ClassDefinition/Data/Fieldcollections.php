@@ -578,33 +578,35 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
+        $fieldname = $this->getName();
+
+        // load() (see below) deliberately returns null rather than an empty Fieldcollection once a
+        // collection has zero items, so a reloaded object with no items here arrives as $data ===
+        // null, not as an empty Fieldcollection instance - treat both the same. Without this, an
+        // empty collection contributes no per-item rows below, which would otherwise be
+        // indistinguishable from "this field isn't part of the diff at all" - emit an explicit
+        // marker (oIndex null) so taking this field over from an empty side can be told apart from
+        // "nothing submitted" and actually clears the other side's items (see
+        // getDiffDataFromEditmode() below)
+        if ($data === null || ($data instanceof DataObject\Fieldcollection && $data->isEmpty())) {
+            $result[] = [
+                'field' => $fieldname,
+                'key' => $fieldname . '~empty',
+                'type' => $this->getFieldType(),
+                'value' => null,
+                'disabled' => false,
+                'title' => $fieldname,
+                'data' => [
+                    'oIndex' => null,
+                    'type' => null,
+                    'name' => null,
+                ],
+            ];
+
+            return $result;
+        }
 
         if ($data instanceof DataObject\Fieldcollection) {
-            $fieldname = $this->getName();
-
-            // an empty collection contributes no per-item rows below, which would otherwise be
-            // indistinguishable from "this field isn't part of the diff at all" - emit an explicit
-            // marker (oIndex null) so taking this field over from an empty side can be told apart
-            // from "nothing submitted" and actually clears the other side's items (see
-            // getDiffDataFromEditmode() below)
-            if ($data->isEmpty()) {
-                $result[] = [
-                    'field' => $fieldname,
-                    'key' => $fieldname . '~empty',
-                    'type' => $this->getFieldType(),
-                    'value' => null,
-                    'disabled' => false,
-                    'title' => $fieldname,
-                    'data' => [
-                        'oIndex' => null,
-                        'type' => null,
-                        'name' => null,
-                    ],
-                ];
-
-                return $result;
-            }
-
             $idx = -1;
             foreach ($data as $item) {
                 $idx++;

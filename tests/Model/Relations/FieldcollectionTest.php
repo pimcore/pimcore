@@ -536,10 +536,14 @@ class FieldcollectionTest extends ModelTestCase
 
         $targetObject = $this->createUnittestfieldcollectionObject('target plain', 'targetText', $relation);
 
+        // never setting the field at all, then reloading, is how a genuinely empty collection
+        // actually arrives in practice: Fieldcollections::load() returns null rather than an empty
+        // Fieldcollection instance once there are zero items, so getFieldcollection() here is null,
+        // not an empty Fieldcollection
         $sourceObject = TestHelper::createEmptyObject();
-        $sourceObject->setFieldcollection(new Fieldcollection([], 'fieldcollection'));
         $sourceObject->save();
         $sourceObject = DataObject::getById($sourceObject->getId(), ['force' => true]);
+        $this->assertNull($sourceObject->getFieldcollection(), 'A never-populated fieldcollection must load back as null, not an empty collection');
 
         $fd = $targetObject->getClass()->getFieldDefinition('fieldcollection');
         $this->assertInstanceOf(Fieldcollections::class, $fd);
@@ -547,7 +551,7 @@ class FieldcollectionTest extends ModelTestCase
         // simulate taking the whole field over from source, the way a "take all from this side"
         // merger action would: render source's own diff and decode it directly against the target
         $sourceDiff = $fd->getDiffDataForEditMode($sourceObject->getFieldcollection(), $sourceObject);
-        $this->assertNotEmpty($sourceDiff, 'An empty collection must still contribute an explicit marker row');
+        $this->assertNotEmpty($sourceDiff, 'An empty/null collection must still contribute an explicit marker row');
 
         $result = $fd->getDiffDataFromEditmode($sourceDiff, $targetObject);
 
