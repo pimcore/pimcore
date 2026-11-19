@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\SystemSettingsConfig;
+use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
@@ -37,9 +38,11 @@ class StaticPageGenerator
     public function getStoragePath(Document\PageSnippet $document): string
     {
         $path = $document->getRealFullPath();
+        $isPrettyUrl = false;
 
         if ($document instanceof Document\Page && $document->getPrettyUrl()) {
             $path = $document->getPrettyUrl();
+            $isPrettyUrl = true;
         } elseif ($path === '/') {
             $path = '/%home';
         }
@@ -68,6 +71,15 @@ class StaticPageGenerator
             }
 
             return $mainDomain . $returnPath . '.html';
+        }
+
+        // pretty URLs are site-relative, so two sites can share the same one. Without a
+        // site-specific prefix, the static pages generated for each would overwrite each other.
+        if ($isPrettyUrl) {
+            $site = Frontend::getSiteForDocument($document);
+            if ($site instanceof Site && $site->getId()) {
+                $path = '/%site_' . $site->getId() . $path;
+            }
         }
 
         return $path . '.html';
