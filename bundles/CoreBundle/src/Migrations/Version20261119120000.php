@@ -20,7 +20,7 @@ use Pimcore\Cache\RuntimeCache;
 
 final class Version20261119120000 extends AbstractMigration
 {
-    const CACHEKEY = 'system_resource_columns_';
+    private const CACHEKEY = 'system_resource_columns_';
 
     public function getDescription(): string
     {
@@ -30,20 +30,31 @@ final class Version20261119120000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('users')->hasColumn('welcomeScreenTarget')) {
-            $this->addSql('ALTER TABLE `users` ADD COLUMN `welcomeScreenTarget` varchar(255) DEFAULT NULL AFTER `welcomescreen`;');
-            $this->resetValidTableColumnsCache('users');
+            $this->addSql(
+                'ALTER TABLE `users` ADD COLUMN `welcomeScreenTarget` varchar(255) DEFAULT NULL ' .
+                'AFTER `welcomescreen`'
+            );
         }
+    }
+
+    public function postUp(Schema $schema): void
+    {
+        $this->resetValidTableColumnsCache('users');
     }
 
     public function down(Schema $schema): void
     {
         if ($schema->getTable('users')->hasColumn('welcomeScreenTarget')) {
-            $this->addSql('ALTER TABLE `users` DROP COLUMN `welcomeScreenTarget`;');
-            $this->resetValidTableColumnsCache('users');
+            $this->addSql('ALTER TABLE `users` DROP COLUMN `welcomeScreenTarget`');
         }
     }
 
-    public function resetValidTableColumnsCache(string $table): void
+    public function postDown(Schema $schema): void
+    {
+        $this->resetValidTableColumnsCache('users');
+    }
+
+    private function resetValidTableColumnsCache(string $table): void
     {
         $cacheKey = self::CACHEKEY . $table;
         if (RuntimeCache::isRegistered($cacheKey)) {

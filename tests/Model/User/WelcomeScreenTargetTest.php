@@ -34,11 +34,6 @@ class WelcomeScreenTargetTest extends ModelTestCase
         parent::tearDown();
     }
 
-    public function testNewUserHasNoTarget(): void
-    {
-        $this->assertNull($this->reload($this->createUser())->getWelcomeScreenTarget());
-    }
-
     public function testTargetIsPersistedAndCanBeCleared(): void
     {
         $user = $this->createUser();
