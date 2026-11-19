@@ -15,6 +15,9 @@ namespace Pimcore\Contracts\ChangeControl;
 
 /**
  * Where in a data object a value goes.
+ *
+ * More kinds may follow in a minor release: an implementation refuses one it does not know with
+ * `InvalidChangeException`.
  */
 enum FieldKind: string
 {

@@ -27,7 +27,8 @@ final readonly class MergeProblem
      * @param string|null $field the value it concerns, when it is about one, e.g. `name` or `localizedfields.en.title`
      * @param string $reason the implementation's own words, which may hold an exception's text: a consumer
      *                       shows its users its own wording of `$code`
-     * @param bool $conflict the object changed this value too, under `ConflictPolicy::Stop`
+     * @param bool $conflict the object changed this value too, under `ConflictPolicy::Stop`; one found only
+     *                       while writing may come as `WriteFailed` or `Other` without it
      * @param MergeProblemCode|null $code its kind; null for `Conflict` on a conflict and `Other` otherwise
      */
     public function __construct(
