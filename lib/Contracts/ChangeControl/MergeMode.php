@@ -17,6 +17,9 @@ namespace Pimcore\Contracts\ChangeControl;
  * How a merge writes the objects. Publish writes and publishes; Draft keeps the result as an
  * unpublished version; Save writes and leaves the published flag as it was, so a new object stays
  * unpublished; SaveAndPublishNew saves what exists and publishes what the merge creates.
+ *
+ * For a new object an implementation may refuse Draft, with a problem of `NotAllowed`, or create the
+ * object unpublished.
  */
 enum MergeMode: string
 {

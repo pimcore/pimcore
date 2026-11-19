@@ -36,6 +36,6 @@ class Dao extends Config\Dao
 
     public function getTotalCount(): int
     {
-        return count($this->loadIdList());
+        return count($this->loadIdListWithoutEntries());
     }
 }

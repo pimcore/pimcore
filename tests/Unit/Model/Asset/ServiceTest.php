@@ -192,6 +192,60 @@ class ServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider traversalUriProvider
+     */
+    public function testGetStreamedResponseForThumbnailRejectsTraversalPaths(string $uri): void
+    {
+        $storageMock = $this->createMock(FilesystemOperator::class);
+        $storageMock->expects($this->never())->method('readStream');
+        $storageMock->expects($this->never())->method('fileSize');
+        $storageMock->expects($this->never())->method('mimeType');
+
+        $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseForThumbnail([
+            'type' => 'video',
+            'asset' => null,
+        ], $uri));
+
+        $this->assertNull($response);
+    }
+
+    public static function traversalUriProvider(): array
+    {
+        return [
+            'encoded slashes' => ['/image-thumb__1__thumb/base..%2F..%2F..%2F..%2Fconfig%2Fsystem.yml'],
+            'encoded dot segments' => ['/image-thumb__1__thumb/%2e%2e/%2e%2e/config/system.yml'],
+            'literal dot segments' => ['/image-thumb__1__thumb/../../../config/system.yml'],
+            'backslash segments' => ['/image-thumb__1__thumb/..%5C..%5Cconfig%5Csystem.yml'],
+            'nul byte' => ['/image-thumb__1__thumb/foo.jpg%00.png'],
+        ];
+    }
+
+    public function testGetStreamedResponseForThumbnailStillStreamsEncodedFilename(): void
+    {
+        $prefix = (string) Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
+        $path = '/1/image-thumb__1__thumb/my file ä.jpg';
+        $uri = $prefix . implode('/', array_map('rawurlencode', explode('/', $path)));
+
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, 'content');
+        rewind($stream);
+
+        $storageMock = $this->createMock(FilesystemOperator::class);
+        $storageMock->expects($this->once())->method('readStream')
+            ->with($path)->willReturn($stream);
+        $storageMock->method('fileSize')->willReturn(7);
+        $storageMock->method('mimeType')->willReturn('image/jpeg');
+
+        $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseForThumbnail([
+            'type' => 'video',
+            'asset' => null,
+        ], $uri));
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    /**
      * Runs $callback with the thumbnail storage replaced by $storage.
      *
      * Pimcore\Tool\Storage resolves each storage from a tagged service locator, so the whole

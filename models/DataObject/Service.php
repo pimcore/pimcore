@@ -724,14 +724,30 @@ class Service extends Model\Element\Service
      */
     public static function loadAllObjectFields(AbstractObject $object): void
     {
+        self::loadAllObjectFieldsExcept($object, []);
+    }
+
+    /**
+     * Loads all fields of the object like loadAllObjectFields(), except for the given ones, which are left as they are.
+     *
+     * @internal
+     *
+     * @param list<string> $skippedFieldNames
+     */
+    public static function loadAllObjectFieldsExcept(AbstractObject $object, array $skippedFieldNames): void
+    {
         $object->getProperties();
 
         if ($object instanceof Concrete) {
             // the values read here are copied and stored, wysiwyg links to unpublished elements must survive that
-            WysiwygPersistingScope::run(static function () use ($object): void {
+            WysiwygPersistingScope::run(static function () use ($object, $skippedFieldNames): void {
                 //load all in case of lazy loading fields
                 $fd = $object->getClass()->getFieldDefinitions();
                 foreach ($fd as $def) {
+                    if (in_array($def->getName(), $skippedFieldNames, true)) {
+                        continue;
+                    }
+
                     if ($def instanceof ClassDefinition\Data\DerivedValueInterface && $def->isValueDerived()) {
                         // a derived value (e.g. the owning objects of a reverse relation) is not kept on the object,
                         // so there is nothing to lazy load; the getter would load it only to discard it

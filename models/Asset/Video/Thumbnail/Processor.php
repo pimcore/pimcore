@@ -117,8 +117,6 @@ class Processor
             $tmpPath = File::getLocalTempFilePath($format, true);
 
             if ($converter = \Pimcore\Video::newInstance()) {
-                $converter->setAudioBitrate($config->getAudioBitrate());
-                $converter->setVideoBitrate($config->getVideoBitrate());
                 $converter->setFormat($format);
                 $converter->setDestinationFile($tmpPath);
                 $converter->setStorageFile($storagePath);
@@ -135,9 +133,6 @@ class Processor
                     }
                     $converter->setMedias($medias);
                 }
-
-                $transformations = $config->getItems();
-                self::applyTransformations($converter, $transformations);
 
                 $instance->queue[] = $converter;
             }
@@ -163,6 +158,13 @@ class Processor
         );
 
         return $instance;
+    }
+
+    private static function applyConfig(AdapterInterface $converter, Config $config): void
+    {
+        $converter->setAudioBitrate($config->getAudioBitrate());
+        $converter->setVideoBitrate($config->getVideoBitrate());
+        self::applyTransformations($converter, $config->getItems());
     }
 
     private static function applyTransformations(AdapterInterface $converter, array $transformations): void
@@ -237,6 +239,8 @@ class Processor
         foreach ($instance->queue as $converter) {
             try {
                 $converter->load($workerSourceFile, ['asset' => $asset]);
+                // load() resets arguments and filters of the adapter, so the thumbnail config can only be applied after it
+                self::applyConfig($converter, $instance->getConfig());
 
                 Logger::info('start video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
                 $success = $converter->save();
