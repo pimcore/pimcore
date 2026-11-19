@@ -108,6 +108,31 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected ?int $parentId = null;
 
+    /**
+     * Workflow markings that a marking store has set on this element but not persisted yet,
+     * keyed by workflow name. They are part of a version dump (so a draft carries them and
+     * discarding the draft drops them) but never part of the cache, and get persisted once
+     * the element is fully saved (see Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface).
+     *
+     * @var array<string, string[]>
+     *
+     * @internal
+     */
+    protected array $__pendingWorkflowMarkings = [];
+
+    /**
+     * For each pending workflow marking, the places that were persisted for the element when the
+     * marking was first kept pending, keyed by workflow name. A pending marking is only persisted
+     * while the element is still in those places, so that publishing a draft cannot overwrite a
+     * place the element has been moved to in the meantime. Dumped and blocked like
+     * $__pendingWorkflowMarkings.
+     *
+     * @var array<string, string[]>
+     *
+     * @internal
+     */
+    protected array $__pendingWorkflowMarkingBases = [];
+
     private static bool $getInheritedProperties = true;
 
     public function getPath(): ?string
@@ -133,6 +158,63 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->parent = null;
 
         return $this;
+    }
+
+    /**
+     * Places of a workflow marking that was set on this element but not persisted yet,
+     * or null if there is no pending marking for the given workflow.
+     *
+     * @return string[]|null
+     *
+     * @internal
+     */
+    public function __getPendingWorkflowMarking(string $workflowName): ?array
+    {
+        return $this->__pendingWorkflowMarkings[$workflowName] ?? null;
+    }
+
+    /**
+     * @param string[]|null $places null removes the pending marking (and its base) for the given workflow
+     * @param string[]|null $basePlaces the persisted places the marking is based on; null keeps the recorded ones
+     *
+     * @internal
+     */
+    public function __setPendingWorkflowMarking(string $workflowName, ?array $places, ?array $basePlaces = null): void
+    {
+        if ($places === null) {
+            unset($this->__pendingWorkflowMarkings[$workflowName], $this->__pendingWorkflowMarkingBases[$workflowName]);
+
+            return;
+        }
+
+        $this->__pendingWorkflowMarkings[$workflowName] = array_values($places);
+
+        if ($basePlaces !== null) {
+            $this->__pendingWorkflowMarkingBases[$workflowName] = array_values($basePlaces);
+        }
+    }
+
+    /**
+     * The places persisted for the element when the pending marking of the given workflow was first
+     * kept pending, or null if that is not known.
+     *
+     * @return string[]|null
+     *
+     * @internal
+     */
+    public function __getPendingWorkflowMarkingBase(string $workflowName): ?array
+    {
+        return $this->__pendingWorkflowMarkingBases[$workflowName] ?? null;
+    }
+
+    /**
+     * @return array<string, string[]> pending workflow markings keyed by workflow name
+     *
+     * @internal
+     */
+    public function __getPendingWorkflowMarkings(): array
+    {
+        return $this->__pendingWorkflowMarkings;
     }
 
     public function getUserModification(): ?int
@@ -779,7 +861,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected function getBlockedVars(): array
     {
-        return ['dependencies', 'parent'];
+        $blockedVars = ['dependencies', 'parent'];
+
+        if (!$this->isInDumpState()) {
+            // pending workflow markings belong to the draft (version dump) and must never leak into the cache
+            $blockedVars[] = '__pendingWorkflowMarkings';
+            $blockedVars[] = '__pendingWorkflowMarkingBases';
+        }
+
+        return $blockedVars;
     }
 
     public function __sleep(): array
