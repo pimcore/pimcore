@@ -229,10 +229,9 @@ class GD extends Adapter
     {
         $this->preModify();
 
-        $image = ltrim($image, '/');
-        $image = PIMCORE_WEB_ROOT . '/' . $image;
+        $image = $this->resolveWebRootConfinedPath($image);
 
-        if (is_file($image)) {
+        if ($image !== null && is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
             [$backgroundImageWidth, $backgroundImageHeight] = getimagesize($image);
 
