@@ -39,6 +39,14 @@ pimcore:
         block:
             unserialize_allowed_classes:
                 - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
+    documents:
+        editables:
+            unserialize_allowed_classes:
+                - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
+    tmp_store:
+        unserialize_allowed_classes:
+            # converter queued by VideoThumbnailProcessorTest
+            - Pimcore\Tests\Support\Util\FakeVideoConverter
 
 
 parameters:

@@ -1094,6 +1094,14 @@ final class Configuration implements ConfigurationInterface
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
                         ->end()
+                        ->arrayNode('unserialize_allowed_classes')
+                            ->info('Additional PHP classes to allow when unserializing the stored data of a '
+                                .'document editable, on top of the classes the core editables write. Register the '
+                                .'classes a custom editable\'s getDataForResource() places into its data; every other '
+                                .'class in the stored data is reduced to __PHP_Incomplete_Class.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
                         ->append($this->createLinkSanitizerNode(
                             'Reject javascript:/vbscript:/script-executing data: URL schemes and editor-supplied '
                             .'event-handler attributes (e.g. onclick) in the Link editable, closing GHSA-9g27-c28m-8xg5, '
