@@ -493,11 +493,23 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals('insertedText', $insertedResultItem->getLinput('en'));
 
         // a source-only item whose own diff never carried a value for "linput" must fall back to the
-        // field's own configured default ('1234', same as testInputFieldWithNullAndThenDefaultValue()'s
-        // "newly added with no values" case below) - not to the target's row 0 value ("targetText"),
-        // confirming it isn't seeded from an unrelated existing item via an out-of-range index
+        // field's own configured default - not to the target's row 0 value ("targetText"), confirming
+        // it isn't seeded from an unrelated existing item via an out-of-range index. Read the default
+        // from the definition itself rather than hardcoding it: other tests in this class (e.g.
+        // testInputFieldWithNullAndThenDefaultValue()) persist a default onto this same shared
+        // "unittestfieldcollection" definition as a side effect, so the value in force here depends on
+        // what ran before this test - asserting against the live definition keeps this test correct
+        // regardless of suite/test order.
+        $linputDefault = null;
+        foreach (Definition::getByKey('unittestfieldcollection')->getFieldDefinitions()['localizedfields']->getChildren() as $child) {
+            if ($child->getName() === 'linput') {
+                $linputDefault = $child->getDefaultValue();
+
+                break;
+            }
+        }
         $this->assertEquals(
-            '1234',
+            $linputDefault,
             $result->get(2)->getLinput('en'),
             'An inserted item must never inherit a localized value from an unrelated existing item'
         );
