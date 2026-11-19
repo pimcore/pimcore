@@ -945,7 +945,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             foreach ($this->getFieldDefinitions() as $fd) {
                 $fieldname = $fd->getName();
 
-                $subdata = $fd->getDiffDataForEditmode($values[$fieldname], $object, $params);
+                // a field that was never set for this language simply has no key here (internal
+                // data is not pre-filled per field definition) - treat it as unset rather than
+                // raising an undefined-key warning/error
+                $subdata = $fd->getDiffDataForEditmode($values[$fieldname] ?? null, $object, $params);
 
                 foreach ($subdata as $item) {
                     $diffdata['field'] = $this->getName();
@@ -1015,6 +1018,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         $localizedFields = new Localizedfield($localData);
         $localizedFields->setObject($object);
+
+        // $localData is already fully resolved above (including any lazy-loaded field, e.g. a
+        // relation) - without this, the next read of such a field (e.g. via its generated getter)
+        // would trigger a real lazy load from storage and silently overwrite the resolved value
+        $localizedFields->setLoadedAllLazyData();
 
         return $localizedFields;
     }

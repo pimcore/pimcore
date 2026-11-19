@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Relations;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
@@ -334,5 +335,192 @@ class FieldcollectionTest extends ModelTestCase
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $linput = $loadedFieldcollectionItem->getLinput('en');
         $this->assertEquals('1234', $linput);
+    }
+
+    /**
+     * Regression test for PEES-2055: the Object Merger bundle calls
+     * Data::getDiffDataForEditMode()/getDiffDataFromEditmode() on the "fieldcollection" field definition.
+     * Before the fix, Fieldcollections had no override for these methods and fell back to the default
+     * implementation, which round-trips through its own plain getDataForEditmode()/getDataFromEditmode().
+     * For a Localizedfields child, that round trip is not symmetric (getDataForEditmode() wraps the data
+     * in 'data'/'metaData'/'inherited', but getDataFromEditmode() expects the languages directly), which
+     * fataled with "Call to a member function getDataFromEditmode() on null".
+     *
+     * Builds two objects (source/target) and simulates the merger taking over just the localized
+     * "lrelation" entry from source into target - not merely feeding an object's own diff payload back
+     * into itself, which would pass even if getDiffDataFromEditmode() silently ignored the submitted
+     * data and kept the target's existing value. Also covers that an entry left untouched (fieldinput1
+     * at the top level, linput inside localizedfields - both left as the target's own default value in
+     * the merged payload, the same way panel.js does for anything not explicitly taken over) correctly
+     * carries over unchanged rather than being dropped or corrupted.
+     */
+    public function testDiffDataRoundTripWithLocalizedFieldInsideFieldCollection(): void
+    {
+        $relationSource = new RelationTest();
+        $relationSource->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $relationSource->setKey('peesrelationsource');
+        $relationSource->setPublished(true);
+        $relationSource->save();
+
+        $relationTarget = new RelationTest();
+        $relationTarget->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $relationTarget->setKey('peesrelationtarget');
+        $relationTarget->setPublished(true);
+        $relationTarget->save();
+
+        $sourceObject = $this->createUnittestfieldcollectionObject('source plain', 'sourceText', $relationSource);
+        $targetObject = $this->createUnittestfieldcollectionObject('target plain', 'targetText', $relationTarget);
+
+        $fd = $targetObject->getClass()->getFieldDefinition('fieldcollection');
+        $this->assertInstanceOf(Fieldcollections::class, $fd);
+
+        // Simulate what object-merger's AdminController does: render the diff payload for both
+        // sides of the comparison.
+        $targetDiff = $fd->getDiffDataForEditMode($targetObject->getFieldcollection(), $targetObject);
+        $sourceDiff = $fd->getDiffDataForEditMode($sourceObject->getFieldcollection(), $sourceObject);
+        $this->assertNotEmpty($targetDiff, 'Expected at least one diff entry for the target fieldcollection');
+        $this->assertNotEmpty($sourceDiff, 'Expected at least one diff entry for the source fieldcollection');
+
+        $sourceEntriesByKey = [];
+        foreach ($sourceDiff as $entry) {
+            $sourceEntriesByKey[$entry['key']] = $entry;
+        }
+
+        // panel.js always resends every entry, defaulting to the target's own value - only the
+        // "lrelation" entry is actually taken over from the source here.
+        $merged = $targetDiff;
+        foreach ($merged as $i => $entry) {
+            $innerFieldName = $entry['data']['subdata']['extData']['fieldname'] ?? null;
+            if ($innerFieldName === 'lrelation' && isset($sourceEntriesByKey[$entry['key']])) {
+                $merged[$i] = $sourceEntriesByKey[$entry['key']];
+            }
+        }
+
+        $result = $fd->getDiffDataFromEditmode($merged, $targetObject);
+
+        $this->assertInstanceOf(Fieldcollection::class, $result);
+        $resultItem = $result->get(0);
+
+        $this->assertSame(
+            $relationSource->getId(),
+            $resultItem->getLrelation('en')?->getId(),
+            'Taking over the relation entry from the source object must actually apply its value, not just preserve the target\'s'
+        );
+        $this->assertEquals(
+            'targetText',
+            $resultItem->getLinput('en'),
+            'A localized entry left untouched in the merged payload must keep the target\'s existing value'
+        );
+        $this->assertEquals(
+            'target plain',
+            $resultItem->getFieldinput1(),
+            'A top-level entry left untouched in the merged payload must keep the target\'s existing value'
+        );
+    }
+
+    /**
+     * Regression test for a structural gap found while reviewing PEES-2055: getDiffDataFromEditmode()
+     * used to only ever mutate an item that already existed at the same position and type, so a
+     * source-only item (present only on the other side of the comparison) had no matching position on
+     * the target and was silently dropped instead of being inserted.
+     */
+    public function testDiffDataFromEditmodeInsertsItemPresentOnlyOnSourceSide(): void
+    {
+        $relation = new RelationTest();
+        $relation->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $relation->setKey('peesrelationinserted');
+        $relation->setPublished(true);
+        $relation->save();
+
+        $targetObject = $this->createUnittestfieldcollectionObject('target plain', 'targetText', $relation);
+
+        // the source has a second item that the target doesn't have at all
+        $sourceObject = TestHelper::createEmptyObject();
+        $sourceItems = new Fieldcollection();
+
+        $firstItem = new FieldCollection\Data\Unittestfieldcollection();
+        $firstItem->setFieldinput1('target plain');
+        $firstItem->setLinput('targetText', 'en');
+        $firstItem->setLrelation($relation, 'en');
+        $sourceItems->add($firstItem);
+
+        $insertedItem = new FieldCollection\Data\Unittestfieldcollection();
+        $insertedItem->setFieldinput1('inserted plain');
+        $insertedItem->setLinput('insertedText', 'en');
+        $insertedItem->setLrelation($relation, 'en');
+        $sourceItems->add($insertedItem);
+
+        // a third, also source-only item that deliberately never sets "linput" at all - its diff
+        // entry for that field carries null data, so the inserted item must end up with null too,
+        // not with the target's row 0 value for "linput" ("targetText")
+        $insertedItemWithoutLinput = new FieldCollection\Data\Unittestfieldcollection();
+        $insertedItemWithoutLinput->setFieldinput1('inserted plain 2');
+        $insertedItemWithoutLinput->setLrelation($relation, 'en');
+        $sourceItems->add($insertedItemWithoutLinput);
+
+        $sourceObject->setFieldcollection($sourceItems);
+        $sourceObject->save();
+        $sourceObject = DataObject::getById($sourceObject->getId(), ['force' => true]);
+
+        $fd = $targetObject->getClass()->getFieldDefinition('fieldcollection');
+        $this->assertInstanceOf(Fieldcollections::class, $fd);
+
+        $targetDiff = $fd->getDiffDataForEditMode($targetObject->getFieldcollection(), $targetObject);
+        $sourceDiff = $fd->getDiffDataForEditMode($sourceObject->getFieldcollection(), $sourceObject);
+
+        // simulate the merger exposing the source-only items (oIndex 1 and 2) as extra rows that the
+        // user takes over in full, on top of the target's own unchanged row (oIndex 0)
+        $insertedEntries = array_values(array_filter(
+            $sourceDiff,
+            static fn (array $entry): bool => in_array($entry['data']['oIndex'] ?? null, [1, 2], true)
+        ));
+        $this->assertNotEmpty($insertedEntries, 'Expected diff entries for the source-only items');
+
+        $merged = array_merge($targetDiff, $insertedEntries);
+
+        $result = $fd->getDiffDataFromEditmode($merged, $targetObject);
+
+        $this->assertInstanceOf(Fieldcollection::class, $result);
+        $this->assertSame(3, $result->getCount(), 'Taking over source-only items must insert them rather than silently drop them');
+
+        $insertedResultItem = $result->get(1);
+        $this->assertSame(
+            $relation->getId(),
+            $insertedResultItem->getLrelation('en')?->getId(),
+            'The inserted item must carry over its relation field'
+        );
+        $this->assertEquals('inserted plain', $insertedResultItem->getFieldinput1());
+        $this->assertEquals('insertedText', $insertedResultItem->getLinput('en'));
+
+        // a source-only item whose own diff never carried a value for "linput" must fall back to the
+        // field's own configured default ('1234', same as testInputFieldWithNullAndThenDefaultValue()'s
+        // "newly added with no values" case below) - not to the target's row 0 value ("targetText"),
+        // confirming it isn't seeded from an unrelated existing item via an out-of-range index
+        $this->assertEquals(
+            '1234',
+            $result->get(2)->getLinput('en'),
+            'An inserted item must never inherit a localized value from an unrelated existing item'
+        );
+        $this->assertEquals('inserted plain 2', $result->get(2)->getFieldinput1());
+
+        // the pre-existing item at position 0 must be untouched
+        $this->assertEquals('target plain', $result->get(0)->getFieldinput1());
+        $this->assertEquals('targetText', $result->get(0)->getLinput('en'));
+    }
+
+    private function createUnittestfieldcollectionObject(string $plainValue, string $localizedValue, RelationTest $relation): DataObject\Concrete
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $items = new Fieldcollection();
+        $item = new FieldCollection\Data\Unittestfieldcollection();
+        $item->setFieldinput1($plainValue);
+        $item->setLinput($localizedValue, 'en');
+        $item->setLrelation($relation, 'en');
+        $items->add($item);
+        $object->setFieldcollection($items);
+        $object->save();
+
+        return DataObject::getById($object->getId(), ['force' => true]);
     }
 }
