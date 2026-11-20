@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
+use Pimcore\Model\Document\Editable\Embed\UrlSanitizer;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -52,6 +53,28 @@ class Embed extends Model\Document\Editable
     public function frontend()
     {
         if ($this->url) {
+            $sanitizer = UrlSanitizer::getInstance();
+
+            if (!$sanitizer->isUrlAllowed($this->url)) {
+                // not a well-formed http(s) URL - Embera would otherwise return it unchanged
+                // (GHSA-v3fp-8x27-9g8f), so render nothing rather than pass it through
+                return '';
+            }
+
+            // only the unconfigured permissive default is deprecated - an application that
+            // installed its own policy via setInstance() has opted out on purpose
+            if (!UrlSanitizer::isConfigured() && !UrlSanitizer::strict()->isUrlAllowed($this->url)) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '2026.3',
+                    'Rendering an Embed editable URL ("%s") that is not a well-formed http(s) URL, which the'
+                    .' stricter policy closing GHSA-v3fp-8x27-9g8f would reject. The permissive Embed sanitizer'
+                    .' default is deprecated and will be removed in 2027.1; set'
+                    .' "pimcore.documents.editables.embed_sanitizer.strict: true" to reject it now.',
+                    $this->url
+                );
+            }
+
             $config = $this->getConfig();
             if (!isset($config['params'])) {
                 $config['params'] = [];

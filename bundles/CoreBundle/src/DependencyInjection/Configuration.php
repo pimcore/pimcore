@@ -1109,6 +1109,7 @@ final class Configuration implements ConfigurationInterface
                             .'Defaults to false to preserve existing behavior; the permissive default is deprecated since '
                             .'2026.3 and will be removed in 2027.1. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
                         ))
+                        ->append($this->createEmbedSanitizerNode())
                     ->end()
                 ->end()
                 ->arrayNode('areas')
@@ -1225,6 +1226,39 @@ final class Configuration implements ConfigurationInterface
                         'Also reject script-executing data: URLs when "strict" is true (data:image/* other than '
                         .'data:image/svg+xml stays allowed, e.g. for a downloadable data-uri image). '
                         .'Has no effect while "strict" is false.'
+                    )
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    /**
+     * Builds the "embed_sanitizer" node (pimcore.documents.editables.embed_sanitizer) governing
+     * \Pimcore\Model\Document\Editable\Embed\UrlSanitizer.
+     */
+    private function createEmbedSanitizerNode(): ArrayNodeDefinition
+    {
+        $node = new ArrayNodeDefinition('embed_sanitizer');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('strict')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                            return $parsed ?? $v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                    ->info(
+                        'Require the Embed editable\'s URL to be a well-formed http(s) URL with a host before '
+                        .'handing it to Embera, closing GHSA-v3fp-8x27-9g8f (stored XSS when no oEmbed provider '
+                        .'matches and Embera returns the value unchanged). Defaults to false to preserve existing '
+                        .'behavior; the permissive default is deprecated since 2026.3 and will be removed in 2027.1. '
+                        .'See Pimcore\Model\Document\Editable\Embed\UrlSanitizer.'
                     )
                 ->end()
             ->end();
