@@ -1045,4 +1045,17 @@ final class SecurityPolicyTest extends TestCase
         $this->expectException(SecurityNotAllowedFunctionError::class);
         $policy->checkSecurity([], [], ['pimcore_website_config']);
     }
+
+    public function testPimcoreWebsiteConfigIsNotAutoAllowedByDefault(): void
+    {
+        // GHSA-fq3q-7w2w-8q9f: WebsiteConfigExtension::getWebsiteConfig() returns the
+        // complete website configuration - including secrets such as the private
+        // reCAPTCHA key - for a null key, and a single secret value for an explicit key
+        // such as `recaptchaPrivate`. Neither call must be reachable from a sandboxed
+        // Email/Dynamic Text template.
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_website_config']);
+    }
 }
