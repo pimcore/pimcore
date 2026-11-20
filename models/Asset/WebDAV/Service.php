@@ -16,12 +16,12 @@ namespace Pimcore\Model\Asset\WebDAV;
 use PDO;
 use Pimcore;
 use Pimcore\Db;
-use Pimcore\Event\AssetEvents;
-use Pimcore\Event\Model\AssetEvent;
+use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 use Sabre\DAV\Browser\Plugin as BrowserPlugin;
+use Sabre\DAV\Exception\Conflict;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Locks\Backend\PDO as LocksPDO;
 use Sabre\DAV\Locks\Plugin as LocksPlugin;
@@ -191,57 +191,59 @@ class Service
     }
 
     /**
-     * Asset::delete() removes an entire subtree recursively without checking each descendant's own
-     * workspace permissions, so a deeper, more specific denial would otherwise be bypassed by
-     * deleting an ancestor folder. Every WebDAV operation that deletes an asset has to verify the
-     * whole subtree with this method, before anything is changed.
+     * Deletes the asset together with its descendants, requiring the "delete" permission on every asset that
+     * is removed - the way the Studio API deletes elements.
+     *
+     * Asset::delete() removes a whole subtree recursively and never looks at the workspace permissions of the
+     * descendants, so a deeper, more specific denial would be bypassed by deleting an ancestor folder. The
+     * descendants are therefore deleted one by one, deepest first, each after its own permission check; the
+     * asset itself comes last. When an asset cannot be deleted, that asset and all of its ancestors are kept,
+     * while the assets that were processed before it (deeper in the tree) are already gone. A folder is only
+     * deleted while it has no children left, so an asset that appeared in it in the meantime is never removed
+     * without a check.
      *
      * @throws Forbidden
-     */
-    public static function assertSubtreeIsDeletable(Asset $asset, ?User $user = null): void
-    {
-        if (!$asset->hasChildren()) {
-            return;
-        }
-
-        foreach ($asset->getChildren() as $child) {
-            if (!$child->isAllowed('delete', $user)) {
-                throw new Forbidden('Missing "delete" permission');
-            }
-
-            self::assertSubtreeIsDeletable($child, $user);
-        }
-    }
-
-    /**
-     * Deletes the asset together with its subtree, requiring the "delete" permission on every asset
-     * that is removed. The subtree is verified up front, so that nothing is changed when a descendant
-     * denies the deletion. In addition, the permission is enforced again for each asset right before
-     * Asset::delete() removes it. That way the set of assets that is authorized is exactly the set
-     * that is deleted, even if the subtree changed after the up-front check (an asset created or moved
-     * into it in the meantime): the deletion is rolled back with its transaction instead of removing an
-     * asset that was never checked.
-     *
-     * @throws Forbidden
+     * @throws Conflict
      */
     public static function deleteAsset(Asset $asset, ?User $user = null): void
     {
-        self::assertSubtreeIsDeletable($asset, $user);
-
-        $guard = static function (AssetEvent $event) use ($user): void {
-            if (!$event->getAsset()->isAllowed('delete', $user)) {
-                throw new Forbidden('Missing "delete" permission');
-            }
-        };
-
-        $dispatcher = Pimcore::getEventDispatcher();
-        // runs before any other PRE_DELETE listener, so that those never see a denied deletion
-        $dispatcher->addListener(AssetEvents::PRE_DELETE, $guard, PHP_INT_MAX);
-
-        try {
-            $asset->delete();
-        } finally {
-            $dispatcher->removeListener(AssetEvents::PRE_DELETE, $guard);
+        // nothing is deleted at all when the asset itself cannot be deleted
+        if (!$asset->isAllowed('delete', $user)) {
+            throw new Forbidden('Missing "delete" permission');
         }
+
+        if ($asset->hasChildren()) {
+            $descendants = new Asset\Listing();
+            $descendants->setCondition('`path` LIKE ?', [Helper::escapeLike($asset->getRealFullPath()) . '/%']);
+            $descendants->setOrderKey('LENGTH(`path`)', false);
+            $descendants->setOrder('DESC');
+
+            foreach ($descendants->loadIdList() as $descendantId) {
+                $descendant = Asset::getById($descendantId);
+                if ($descendant instanceof Asset) {
+                    self::deleteChildlessAsset($descendant, $user);
+                }
+            }
+        }
+
+        self::deleteChildlessAsset($asset, $user);
+    }
+
+    /**
+     * @throws Forbidden
+     * @throws Conflict
+     */
+    private static function deleteChildlessAsset(Asset $asset, ?User $user): void
+    {
+        if (!$asset->isAllowed('delete', $user)) {
+            throw new Forbidden('Missing "delete" permission');
+        }
+
+        // Asset::delete() would remove an unexpected child recursively, without any permission check
+        if ($asset->hasChildren()) {
+            throw new Conflict(sprintf('Asset %d changed while it was deleted: it has children that were not checked', $asset->getId()));
+        }
+
+        $asset->delete();
     }
 }

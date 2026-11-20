@@ -139,15 +139,10 @@ class Tree extends DAV\Tree
                 throw new Forbidden('No delete permission on source');
             }
 
-            if (isset($sourceAsset)) {
-                // the source is deleted below, which also removes all of its descendants
-                Service::assertSubtreeIsDeletable($sourceAsset, $user);
-            }
-
             $asset->setUserModification($user->getId());
 
             // A folder has no data that has to end up in the destination, so it is deleted first: if the
-            // deletion is refused after all (an asset that was not checked showed up in the subtree), the
+            // deletion is refused (a descendant may not be deleted, or the folder changed meanwhile), the
             // destination has not been modified yet. A file is deleted after the destination was saved, so
             // that its data is not lost when saving fails; it has no descendants that could refuse.
             if (isset($sourceAsset) && $sourceAsset instanceof Asset\Folder) {

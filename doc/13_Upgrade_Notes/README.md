@@ -3,6 +3,7 @@
 ## Pimcore 2026.3.7
 
 ### [Assets]
+- [Security] [WebDAV] Deleting a folder via WebDAV (`DELETE`, and the overwrite of an existing folder by `MOVE`) now requires the "delete" permission on every asset of its subtree. Only the folder itself was checked before, so the whole subtree was removed even when a deeper workspace entry denied the deletion. The assets are now deleted one by one, deepest first, each after its own permission check, like in the Studio API. When an asset cannot be deleted, the request is rejected with `403 Forbidden`; that asset and all of its parent folders are kept, while the assets of the subtree that were processed before it have been deleted. A folder that gained a child while it was deleted is kept as well (`409 Conflict`).
 - [Security] [Thumbnails] `Asset\Service::getStreamedResponseForThumbnail()` (and with it the public helper `Asset\Service::getStreamedResponseByUri()`) now rejects a thumbnail URI whose decoded storage path contains a NUL byte or a `.`/`..` segment. It returns `null` without reading the thumbnail storage and without generating a thumbnail, so the delivery ends in the usual 404/placeholder path. Custom thumbnail delivery integrations that call these methods with such URIs therefore receive `null` instead of a response; regular thumbnail URIs are unaffected.
 
 ## Pimcore 2026.3.5
