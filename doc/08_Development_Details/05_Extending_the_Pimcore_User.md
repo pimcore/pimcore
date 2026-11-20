@@ -152,3 +152,73 @@ Two lookups cover the consumers:
   of the responsible roles. Inactive users and service users are left out.
 
 Deleting the service user, a responsible user or a responsible role removes the matching rows.
+
+## Listing Users, Roles, and Folders
+
+Users and roles each have their own listing class. Each listing returns **only**
+its declared type — folders are no longer mixed into user/role results.
+
+| Class                                       | Returns                | Convenience accessor |
+|---------------------------------------------|------------------------|----------------------|
+| `\Pimcore\Model\User\Listing`               | `User[]`               | `getUsers()`         |
+| `\Pimcore\Model\User\Folder\Listing`        | `User\Folder[]`        | `getFolders()`       |
+| `\Pimcore\Model\User\Role\Listing`          | `User\Role[]`          | `getRoles()`         |
+| `\Pimcore\Model\User\Role\Folder\Listing`   | `User\Role\Folder[]`   | `getFolders()`       |
+
+### Examples
+
+List all users (no folders):
+
+```php
+use Pimcore\Model\User;
+
+$listing = new User\Listing();
+$listing->setCondition('active = ?', [1]);
+$listing->setOrderKey('name');
+
+$users = $listing->getUsers(); // User[]
+```
+
+List user folders only:
+
+```php
+use Pimcore\Model\User;
+
+$folders = (new User\Folder\Listing())->load(); // User\Folder[]
+```
+
+List all roles (no folders):
+
+```php
+use Pimcore\Model\User\Role;
+
+$roles = (new Role\Listing())->getRoles(); // Role[]
+```
+
+### Building a tree view
+
+If you need both users and their child folders (e.g. to render the admin tree),
+combine the two listings explicitly:
+
+```php
+use Pimcore\Model\User;
+
+$folderList = new User\Folder\Listing();
+$folderList->setCondition('parentId = ?', [$parentId]);
+
+$userList = new User\Listing();
+$userList->setCondition('parentId = ?', [$parentId]);
+
+$children = array_merge($folderList->load(), $userList->load());
+```
+
+This is exactly what `User\Folder::getChildren()` and
+`User\UserRole\Folder::getChildren()` do internally.
+
+### Migration note
+
+Previously `User\Listing` and `User\Role\Listing` silently returned a mix of
+the primary type **and** the matching folder type (e.g. `user` + `userfolder`).
+Code that iterated the result as `User` instances will now get a clean
+collection. If you relied on the combined result, switch to the explicit
+two-listing pattern shown above.

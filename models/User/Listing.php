@@ -16,8 +16,12 @@ namespace Pimcore\Model\User;
 use Pimcore\Model\User;
 
 /**
+ * Lists Pimcore users (type "user") only.
+ *
+ * For user folders use {@see User\Folder\Listing}.
+ *
  * @method \Pimcore\Model\User\Listing\Dao getDao()
- * @method User[]|User\Folder[] load()
+ * @method User[] load()
  */
 class Listing extends Listing\AbstractListing
 {
