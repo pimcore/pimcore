@@ -21,6 +21,11 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201008082752 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->hasTable('tracking_events')) {

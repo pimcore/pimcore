@@ -24,6 +24,11 @@ final class Version20221222181745 extends AbstractMigration
         return 'Add CONSTRAINT of classificationstore_groups in object_classificationstore_groups';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $tableList = $this->connection->fetchAllAssociative("show tables like 'object_classificationstore_groups_%'");

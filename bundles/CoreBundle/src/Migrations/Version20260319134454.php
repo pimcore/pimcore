@@ -24,6 +24,11 @@ final class Version20260319134454 extends AbstractMigration
         return 'Remove http_error_log (irreversible; table must be recreated manually if needed)';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->hasTable('http_error_log')) {

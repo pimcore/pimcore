@@ -27,6 +27,11 @@ final class Version20220502104200 extends AbstractMigration
         return 'Change targetGroupIds field to NOT NULL DEFAULT \'\'';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `documents_page` CHANGE `targetGroupIds` `targetGroupIds` varchar(255) NOT NULL DEFAULT \'\';');

@@ -24,6 +24,11 @@ final class Version20220614115124 extends AbstractMigration
         return 'Add filesize, width and height to assets_image_thumbnail_cache';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         // Delete old Version Name

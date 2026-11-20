@@ -32,6 +32,11 @@ final class Version20260918090000 extends AbstractMigration
         return 'Add copy_options column to the asset storage operation queue table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->hasTable(self::TABLE)) {

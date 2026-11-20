@@ -24,6 +24,11 @@ final class Version20240229152000 extends AbstractMigration
         return 'Add language default value on users table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql(

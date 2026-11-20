@@ -22,6 +22,11 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201201084201 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         foreach (['cache', 'cache_tags'] as $tableName) {

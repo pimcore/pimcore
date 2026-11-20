@@ -26,6 +26,11 @@ final class Version20240708083500 extends AbstractMigration
         return 'Rebuild classes, object-bricks, field-collection and custom layouts';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     /**
      * @throws DefinitionWriteException
      */
