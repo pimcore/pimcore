@@ -139,11 +139,20 @@ class Tree extends DAV\Tree
                 throw new Forbidden('No delete permission on source');
             }
 
+            // A folder has no data that could end up in the destination: overwriting with a folder only removes
+            // the source. Nothing is saved afterwards that could fail once the deletion is irreversible, and a
+            // refused deletion leaves the destination unmodified.
+            if (isset($sourceAsset) && $sourceAsset instanceof Asset\Folder) {
+                Service::deleteAsset($sourceAsset, $user);
+
+                return;
+            }
+
             $asset->setUserModification($user->getId());
             $asset->save();
 
             if (isset($sourceAsset)) {
-                $sourceAsset->delete();
+                Service::deleteAsset($sourceAsset, $user);
             }
         } catch (Forbidden $e) {
             throw $e;

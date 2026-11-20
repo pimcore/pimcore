@@ -209,11 +209,12 @@ class Folder extends DAV\Collection
      */
     public function delete(): void
     {
-        if ($this->asset->isAllowed('delete')) {
-            $this->asset->delete();
-        } else {
+        if (!$this->asset->isAllowed('delete')) {
             throw new DAV\Exception\Forbidden('Missing "delete" permission');
         }
+
+        // Asset::delete() does not check the permissions of the descendants it removes
+        Service::deleteAsset($this->asset);
     }
 
     /**
