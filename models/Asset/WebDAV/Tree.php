@@ -142,6 +142,16 @@ class Tree extends DAV\Tree
             }
 
             $asset->setUserModification($user->getId());
+
+            // A folder has no data that has to end up in the destination, so it is deleted first: if the
+            // deletion is refused after all (an asset that was not checked showed up in the subtree), the
+            // destination has not been modified yet. A file is deleted after the destination was saved, so
+            // that its data is not lost when saving fails; it has no descendants that could refuse.
+            if (isset($sourceAsset) && $sourceAsset instanceof Asset\Folder) {
+                Service::deleteAsset($sourceAsset, $user);
+                $sourceAsset = null;
+            }
+
             $asset->save();
 
             if (isset($sourceAsset)) {

@@ -231,6 +231,63 @@ class FolderDeleteAuthorizationTest extends ModelTestCase
         $this->assertNotNull(Asset::getById($destination->getId()));
     }
 
+    public function testMoveOverwriteLeavesTheDestinationUntouchedWhenADeniedDescendantAppearsAfterTheSubtreeCheck(): void
+    {
+        $parent = TestHelper::createAssetFolder('webdav-move-parent-');
+        $source = $this->createFolder($parent, 'source-' . uniqid());
+        $destination = $this->createFolder($parent, 'destination-' . uniqid());
+
+        $user = $this->createUserWithWorkspaces([
+            ['asset' => $parent, 'delete' => true, 'publish' => true],
+        ]);
+        $this->loginAs($user);
+
+        $modifiedByBefore = Asset::getById($destination->getId(), ['force' => true])->getUserModification();
+        $this->assertNotSame($user->getId(), $modifiedByBefore);
+
+        $dispatcher = Pimcore::getEventDispatcher();
+
+        $deny = static function (ElementEvent $event): void {
+            if (str_starts_with($event->getElement()->getKey(), 'late-')) {
+                $event->setArgument('isAllowed', false);
+            }
+        };
+
+        // runs inside Asset::delete(), i.e. after the subtree check has passed
+        $lateAssetId = null;
+        $addDeniedDescendant = function (AssetEvent $event) use ($source, &$lateAssetId): void {
+            if ($lateAssetId !== null || $event->getAsset()->getId() !== $source->getId()) {
+                return;
+            }
+
+            $late = $this->createFolder($source, 'late-' . uniqid());
+            $lateAssetId = $late->getId();
+            $event->getAsset()->setChildren(null);
+        };
+
+        $dispatcher->addListener(ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED, $deny);
+        $dispatcher->addListener(AssetEvents::PRE_DELETE, $addDeniedDescendant);
+
+        try {
+            $this->moveOver($source, $destination);
+            $this->fail('Expected a Forbidden exception because a descendant that was added after the check denies delete permission.');
+        } catch (Forbidden $e) {
+            // expected
+        } finally {
+            $dispatcher->removeListener(AssetEvents::PRE_DELETE, $addDeniedDescendant);
+            $dispatcher->removeListener(ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED, $deny);
+        }
+
+        $this->assertNotNull($lateAssetId);
+        $this->assertNotNull(Asset::getById($source->getId(), ['force' => true]));
+        $this->assertNotNull(Asset::getById($lateAssetId, ['force' => true]));
+        $this->assertSame(
+            $modifiedByBefore,
+            Asset::getById($destination->getId(), ['force' => true])->getUserModification(),
+            'The destination must not be modified when the source deletion is refused'
+        );
+    }
+
     public function testMoveOverwriteSucceedsWhenTheEntireSourceSubtreeIsDeletable(): void
     {
         $parent = TestHelper::createAssetFolder('webdav-move-parent-');
