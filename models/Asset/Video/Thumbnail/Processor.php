@@ -111,11 +111,12 @@ class Processor
             $thumbDir = $asset->getRealPath().'/'.$asset->getId().'/video-thumb__'.$asset->getId().'__'.$config->getName();
             $filename = preg_replace("/\." . preg_quote(pathinfo($asset->getFilename(), PATHINFO_EXTENSION), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
-            $tmpPath = File::getLocalTempFilePath($format);
+            // The file is written by the VideoConvertMessage handler in a messenger worker, not by the current
+            // process. Without $keep, the current process (e.g. the web request rendering the video) deletes
+            // the file on shutdown, which can happen while ffmpeg is still writing it. execute() removes it.
+            $tmpPath = File::getLocalTempFilePath($format, true);
 
             if ($converter = \Pimcore\Video::newInstance()) {
-                $converter->setAudioBitrate($config->getAudioBitrate());
-                $converter->setVideoBitrate($config->getVideoBitrate());
                 $converter->setFormat($format);
                 $converter->setDestinationFile($tmpPath);
                 $converter->setStorageFile($storagePath);
@@ -132,9 +133,6 @@ class Processor
                     }
                     $converter->setMedias($medias);
                 }
-
-                $transformations = $config->getItems();
-                self::applyTransformations($converter, $transformations);
 
                 $instance->queue[] = $converter;
             }
@@ -160,6 +158,13 @@ class Processor
         );
 
         return $instance;
+    }
+
+    private static function applyConfig(AdapterInterface $converter, Config $config): void
+    {
+        $converter->setAudioBitrate($config->getAudioBitrate());
+        $converter->setVideoBitrate($config->getVideoBitrate());
+        self::applyTransformations($converter, $config->getItems());
     }
 
     private static function applyTransformations(AdapterInterface $converter, array $transformations): void
@@ -234,6 +239,8 @@ class Processor
         foreach ($instance->queue as $converter) {
             try {
                 $converter->load($workerSourceFile, ['asset' => $asset]);
+                // load() resets arguments and filters of the adapter, so the thumbnail config can only be applied after it
+                self::applyConfig($converter, $instance->getConfig());
 
                 Logger::info('start video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
                 $success = $converter->save();
@@ -285,6 +292,11 @@ class Processor
                 $converter->destroy();
             } catch (Exception $e) {
                 Logger::error((string) $e);
+            } finally {
+                // the destination file is created with $keep = true, so it has to be cleaned up here in any case
+                if (is_file($converter->getDestinationFile())) {
+                    @unlink($converter->getDestinationFile());
+                }
             }
         }
 

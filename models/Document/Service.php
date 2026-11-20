@@ -376,6 +376,14 @@ class Service extends Model\Element\Service
                         $editable->rewriteIds($rewriteConfig);
                     }
                 }
+
+                // a copied document inheriting from a copied document has to inherit from the copy;
+                // a copy inheriting from its own source is mapped to itself and keeps its source
+                $contentMainId = $document->getContentMainDocumentId();
+                $newContentMainId = $contentMainId ? ($rewriteConfig['document'][$contentMainId] ?? null) : null;
+                if ($newContentMainId && self::canInheritFrom($document, (int) $newContentMainId)) {
+                    $document->setContentMainDocumentId($newContentMainId);
+                }
             }
 
             $document->setEditables($editables);
@@ -397,6 +405,34 @@ class Service extends Model\Element\Service
         $document->setProperties($properties);
 
         return $document;
+    }
+
+    /**
+     * The document has to support a content main document, and the new one has to be a page or
+     * snippet whose own chain of content main documents does not lead back to the document.
+     */
+    private static function canInheritFrom(Document\PageSnippet $document, int $contentMainId): bool
+    {
+        if (!$document->supportsContentMain()) {
+            return false;
+        }
+
+        $contentMain = Document\PageSnippet::getById($contentMainId);
+        if (!$contentMain instanceof Document\PageSnippet) {
+            return false;
+        }
+
+        // the chain must neither reach the document nor loop in itself
+        $visitedIds = [$document->getId() => true];
+        while ($contentMain instanceof Document\PageSnippet) {
+            if (isset($visitedIds[$contentMain->getId()])) {
+                return false;
+            }
+            $visitedIds[$contentMain->getId()] = true;
+            $contentMain = $contentMain->getContentMainDocument();
+        }
+
+        return true;
     }
 
     /**

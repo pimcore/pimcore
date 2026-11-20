@@ -108,7 +108,7 @@ final class LongRunningHelper
 
     public function removePimcoreRuntimeCacheProtectedItems(array $items): void
     {
-        foreach ($this->pimcoreRuntimeCacheProtectedItems as $item) {
+        foreach ($items as $item) {
             $key = array_search($item, $this->pimcoreRuntimeCacheProtectedItems);
             if ($key !== false) {
                 unset($this->pimcoreRuntimeCacheProtectedItems[$key]);

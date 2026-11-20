@@ -410,3 +410,9 @@ services:
         public: true
         arguments:
             - !tagged_iterator pimcore.calculated_value.expression_language_provider
+            - !tagged_iterator pimcore.expression.read_only_value_adapter
+
+    Pimcore\Helper\SymfonyExpression\ReadOnlyExpressionLanguage:
+        public: true
+        arguments:
+            $valueAdapters: !tagged_iterator pimcore.expression.read_only_value_adapter

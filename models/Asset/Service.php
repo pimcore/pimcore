@@ -636,6 +636,15 @@ class Service extends Model\Element\Service
             $storagePath = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $storagePath);
         }
 
+        // Defence in depth: a canonical thumbnail path never contains NUL bytes or dot segments.
+        // Such paths are rejected before the storage is touched and must not fall back to thumbnail
+        // generation either, so the caller answers with its usual not-found handling.
+        if (!self::isSafeThumbnailStoragePath($storagePath)) {
+            Logger::debug('Rejected non-canonical thumbnail storage path ' . $storagePath);
+
+            return null;
+        }
+
         // Attempt to stream the cached thumbnail directly. On remote storage adapters (e.g. S3),
         // this avoids the extra HEAD request that a preceding fileExists() check would issue.
         // Paths without a filename component are skipped: unlike fileExists(), the local adapter's
@@ -678,6 +687,21 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    private static function isSafeThumbnailStoragePath(string $storagePath): bool
+    {
+        if (str_contains($storagePath, "\0")) {
+            return false;
+        }
+
+        foreach (preg_split('#[/\\\\]#', $storagePath) as $segment) {
+            if ($segment === '.' || $segment === '..') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
