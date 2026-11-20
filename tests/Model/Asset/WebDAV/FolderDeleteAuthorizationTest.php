@@ -14,6 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset\WebDAV;
 
 use Pimcore;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\ElementEvents;
+use Pimcore\Event\Model\AssetEvent;
+use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\WebDAV\Folder;
 use Pimcore\Model\Asset\WebDAV\Tree;
@@ -150,6 +154,57 @@ class FolderDeleteAuthorizationTest extends ModelTestCase
         $this->assertNotNull(Asset::getById($child->getId()));
         $this->assertNotNull(Asset::getById($grandchild->getId()));
         $this->assertNotNull(Asset::getById($nestedFile->getId()));
+    }
+
+    public function testDeletionIsRolledBackWhenADeniedDescendantAppearsAfterTheSubtreeCheck(): void
+    {
+        $parent = TestHelper::createAssetFolder('webdav-delete-parent-');
+        $child = $this->createFolder($parent, 'child-' . uniqid());
+
+        $this->loginAs($this->createUserWithWorkspaces([
+            ['asset' => $parent, 'delete' => true],
+            ['asset' => $child, 'delete' => true],
+        ]));
+
+        $dispatcher = Pimcore::getEventDispatcher();
+
+        // an asset that is denied by "late-" key stands in for a descendant the user may not delete
+        $deny = static function (ElementEvent $event): void {
+            if (str_starts_with($event->getElement()->getKey(), 'late-')) {
+                $event->setArgument('isAllowed', false);
+            }
+        };
+
+        // runs inside Asset::delete(), i.e. after the subtree check has passed: a denied descendant
+        // shows up and the folder has to reload its children, like after a concurrent create or move
+        $lateAssetId = null;
+        $addDeniedDescendant = function (AssetEvent $event) use ($parent, &$lateAssetId): void {
+            if ($lateAssetId !== null || $event->getAsset()->getId() !== $parent->getId()) {
+                return;
+            }
+
+            $late = $this->createFolder($parent, 'late-' . uniqid());
+            $lateAssetId = $late->getId();
+            $parent->setChildren(null);
+        };
+
+        $dispatcher->addListener(ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED, $deny);
+        $dispatcher->addListener(AssetEvents::PRE_DELETE, $addDeniedDescendant);
+
+        try {
+            $this->resolveNode($parent)->delete();
+            $this->fail('Expected a Forbidden exception because a descendant that was added after the check denies delete permission.');
+        } catch (Forbidden $e) {
+            // expected
+        } finally {
+            $dispatcher->removeListener(AssetEvents::PRE_DELETE, $addDeniedDescendant);
+            $dispatcher->removeListener(ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED, $deny);
+        }
+
+        $this->assertNotNull($lateAssetId);
+        $this->assertNotNull(Asset::getById($parent->getId(), ['force' => true]));
+        $this->assertNotNull(Asset::getById($child->getId(), ['force' => true]));
+        $this->assertNotNull(Asset::getById($lateAssetId, ['force' => true]));
     }
 
     public function testMoveOverwriteIsForbiddenWhenTheSourceHasADeniedDescendant(): void

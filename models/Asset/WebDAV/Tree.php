@@ -145,7 +145,7 @@ class Tree extends DAV\Tree
             $asset->save();
 
             if (isset($sourceAsset)) {
-                $sourceAsset->delete();
+                Service::deleteAsset($sourceAsset, $user);
             }
         } catch (Forbidden $e) {
             throw $e;

@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\WebDAV;
 
 use PDO;
+use Pimcore;
 use Pimcore\Db;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Model\Asset;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
@@ -130,7 +133,7 @@ class Service
      * Asset::delete() removes an entire subtree recursively without checking each descendant's own
      * workspace permissions, so a deeper, more specific denial would otherwise be bypassed by
      * deleting an ancestor folder. Every WebDAV operation that deletes an asset has to verify the
-     * whole subtree with this method, before anything is deleted.
+     * whole subtree with this method, before anything is changed.
      *
      * @throws Forbidden
      */
@@ -146,6 +149,38 @@ class Service
             }
 
             self::assertSubtreeIsDeletable($child, $user);
+        }
+    }
+
+    /**
+     * Deletes the asset together with its subtree, requiring the "delete" permission on every asset
+     * that is removed. The subtree is verified up front, so that nothing is changed when a descendant
+     * denies the deletion. In addition, the permission is enforced again for each asset right before
+     * Asset::delete() removes it. That way the set of assets that is authorized is exactly the set
+     * that is deleted, even if the subtree changed after the up-front check (an asset created or moved
+     * into it in the meantime): the deletion is rolled back with its transaction instead of removing an
+     * asset that was never checked.
+     *
+     * @throws Forbidden
+     */
+    public static function deleteAsset(Asset $asset, ?User $user = null): void
+    {
+        self::assertSubtreeIsDeletable($asset, $user);
+
+        $guard = static function (AssetEvent $event) use ($user): void {
+            if (!$event->getAsset()->isAllowed('delete', $user)) {
+                throw new Forbidden('Missing "delete" permission');
+            }
+        };
+
+        $dispatcher = Pimcore::getEventDispatcher();
+        // runs before any other PRE_DELETE listener, so that those never see a denied deletion
+        $dispatcher->addListener(AssetEvents::PRE_DELETE, $guard, PHP_INT_MAX);
+
+        try {
+            $asset->delete();
+        } finally {
+            $dispatcher->removeListener(AssetEvents::PRE_DELETE, $guard);
         }
     }
 }

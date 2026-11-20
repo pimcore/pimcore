@@ -214,9 +214,7 @@ class Folder extends DAV\Collection
         }
 
         // Asset::delete() does not check the permissions of the descendants it removes
-        Service::assertSubtreeIsDeletable($this->asset);
-
-        $this->asset->delete();
+        Service::deleteAsset($this->asset);
     }
 
     /**
