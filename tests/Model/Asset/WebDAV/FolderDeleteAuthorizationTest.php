@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset\WebDAV;
 
 use Pimcore;
+use Pimcore\Event\AssetEvents;
 use Pimcore\Event\ElementEvents;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\WebDAV\Folder;
@@ -212,6 +214,59 @@ class FolderDeleteAuthorizationTest extends ModelTestCase
 
         $this->assertNotNull($this->lateAssetId);
         $this->assertNull(Asset::getById($childId, ['force' => true]));
+        $this->assertNotNull(Asset::getById($parent->getId(), ['force' => true]));
+        $this->assertNotNull(Asset::getById($this->lateAssetId, ['force' => true]));
+    }
+
+    public function testTheRootAssetIsRejectedBeforeAnythingIsDeleted(): void
+    {
+        $asset = TestHelper::createAssetFolder('webdav-delete-root-');
+        $root = Asset::getById(1);
+
+        $this->loginAs($this->createUserWithWorkspaces([
+            ['asset' => $root, 'delete' => true],
+        ]));
+
+        try {
+            (new Folder($root))->delete();
+            $this->fail('Expected a Forbidden exception because the root asset cannot be deleted.');
+        } catch (Forbidden $e) {
+            // expected
+        }
+
+        $this->assertNotNull(Asset::getById($asset->getId(), ['force' => true]));
+    }
+
+    public function testChildThatAppearsWhileTheFolderIsBeingDeletedIsNotRemoved(): void
+    {
+        $parent = TestHelper::createAssetFolder('webdav-delete-parent-');
+
+        $this->loginAs($this->createUserWithWorkspaces([
+            ['asset' => $parent, 'delete' => true],
+        ]));
+
+        // the folder has no children when it is checked; one appears while Asset::delete() starts
+        $dispatcher = Pimcore::getEventDispatcher();
+        $addChild = function (AssetEvent $event) use ($parent): void {
+            if ($this->lateAssetId !== null || $event->getAsset()->getId() !== $parent->getId()) {
+                return;
+            }
+
+            $this->lateAssetId = $this->createFolder($parent, 'late-' . uniqid())->getId();
+            $event->getAsset()->setChildren(null);
+        };
+        $dispatcher->addListener(AssetEvents::PRE_DELETE, $addChild);
+
+        try {
+            $this->resolveNode($parent)->delete();
+            $this->fail('Expected a Conflict exception because a child appeared that was not checked.');
+        } catch (Conflict $e) {
+            // expected
+        } finally {
+            $dispatcher->removeListener(AssetEvents::PRE_DELETE, $addChild);
+        }
+
+        $this->assertNotNull($this->lateAssetId);
         $this->assertNotNull(Asset::getById($parent->getId(), ['force' => true]));
         $this->assertNotNull(Asset::getById($this->lateAssetId, ['force' => true]));
     }

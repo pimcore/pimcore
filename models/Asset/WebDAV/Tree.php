@@ -139,17 +139,16 @@ class Tree extends DAV\Tree
                 throw new Forbidden('No delete permission on source');
             }
 
-            $asset->setUserModification($user->getId());
-
-            // A folder has no data that has to end up in the destination, so it is deleted first: if the
-            // deletion is refused (a descendant may not be deleted, or the folder changed meanwhile), the
-            // destination has not been modified yet. A file is deleted after the destination was saved, so
-            // that its data is not lost when saving fails; it has no descendants that could refuse.
+            // A folder has no data that could end up in the destination: overwriting with a folder only removes
+            // the source. Nothing is saved afterwards that could fail once the deletion is irreversible, and a
+            // refused deletion leaves the destination unmodified.
             if (isset($sourceAsset) && $sourceAsset instanceof Asset\Folder) {
                 Service::deleteAsset($sourceAsset, $user);
-                $sourceAsset = null;
+
+                return;
             }
 
+            $asset->setUserModification($user->getId());
             $asset->save();
 
             if (isset($sourceAsset)) {
