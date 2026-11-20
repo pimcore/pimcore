@@ -30,6 +30,54 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 final class Requirements
 {
+    private const MINIMUM_MARIADB_VERSION = '10.11';
+
+    private const MINIMUM_MYSQL_VERSION = '8.4';
+
+    /**
+     * Reports a warning (never an error) for a database server below the minimum supported version, so that
+     * existing installations on an older server are not blocked.
+     */
+    private static function checkServerVersion(Connection $db): Check
+    {
+        $name = 'Database Server Version (MariaDB >= ' . self::MINIMUM_MARIADB_VERSION
+            . ' / MySQL >= ' . self::MINIMUM_MYSQL_VERSION . ')';
+
+        $serverVersion = (string) $db->fetchOne('SELECT VERSION()');
+        $isMariaDb = stripos($serverVersion, 'mariadb') !== false;
+
+        // MariaDB may prefix its version with "5.5.5-" (replication compatibility), e.g. "5.5.5-10.11.6-MariaDB"
+        $versionString = $isMariaDb ? (string) preg_replace('/^5\.5\.5-/', '', $serverVersion) : $serverVersion;
+
+        if (preg_match('/^\d+(?:\.\d+)*/', $versionString, $matches) !== 1) {
+            return new Check([
+                'name' => $name,
+                'state' => Check::STATE_WARNING,
+                'message' => 'The database server version could not be determined ("' . $serverVersion . '").',
+            ]);
+        }
+
+        $minimum = $isMariaDb ? self::MINIMUM_MARIADB_VERSION : self::MINIMUM_MYSQL_VERSION;
+
+        if (version_compare($matches[0], $minimum, '>=')) {
+            return new Check([
+                'name' => $name,
+                'state' => Check::STATE_OK,
+            ]);
+        }
+
+        return new Check([
+            'name' => $name,
+            'state' => Check::STATE_WARNING,
+            'message' => sprintf(
+                '%s %s is older than the minimum supported version %s.',
+                $isMariaDb ? 'MariaDB' : 'MySQL',
+                $matches[0],
+                $minimum
+            ),
+        ]);
+    }
+
     /**
      * @return Check[]
      */
@@ -78,6 +126,8 @@ final class Requirements
     public static function checkMysql(Connection $db): array
     {
         $checks = [];
+
+        $checks[] = self::checkServerVersion($db);
 
         // storage engines
         $engines = $db->fetchFirstColumn(
