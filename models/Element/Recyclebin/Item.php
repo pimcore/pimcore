@@ -15,6 +15,7 @@ namespace Pimcore\Model\Element\Recyclebin;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Exception;
+use JsonException;
 use League\Flysystem\StorageAttributes;
 use Pimcore;
 use Pimcore\Cache;
@@ -33,7 +34,6 @@ use Pimcore\Model\Element\PermissionCache;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
-use Throwable;
 
 /**
  * @internal
@@ -147,6 +147,10 @@ class Item extends Model\AbstractModel
         $this->delete();
     }
 
+    /**
+     * @throws JsonException
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function save(?Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
@@ -189,7 +193,7 @@ class Item extends Model\AbstractModel
 
         // the workspace rows are removed with the element (ON DELETE CASCADE on cid)
         $workspaces = $this->getDao()->getWorkspaces();
-        if ($workspaces) {
+        if ($workspaces !== []) {
             $storage->write($this->getStorageFileWorkspaces(), json_encode($workspaces, JSON_THROW_ON_ERROR));
         }
     }
@@ -208,7 +212,7 @@ class Item extends Model\AbstractModel
             if (is_array($workspaces)) {
                 $this->getDao()->restoreWorkspaces($workspaces);
             }
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             Logger::error('Could not restore workspace permissions of recycle bin item ' . $this->getId() . ': ' . $e);
         } finally {
             Pimcore::getContainer()->get(PermissionCache::class)->reset();
