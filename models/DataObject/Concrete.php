@@ -23,11 +23,17 @@ use Pimcore\Logger;
 use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnloadedRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\SystemSettingsConfig;
 
 /**
@@ -138,6 +144,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     continue;
                 }
 
+                if ($fd instanceof AbstractRelations
+                    && !$this->isLazyKeyLoaded($fd->getName())
+                    && $this->isUnloadedRelationValid($fd)) {
+                    // a lazy loaded relation that was not read in this request cannot have been changed by it (a
+                    // setter marks it as loaded) and is not written by the dao either. Reading it would load every
+                    // related element, only to validate elements that were validated when they were stored.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -229,11 +244,142 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, $params['versionNote'] ?? null);
+            // only `existingVersion` is passed on, the versioning events keep their arguments
+            $this->saveVersion(false, false, $params['versionNote'] ?? null, false, array_intersect_key($params, ['existingVersion' => true]));
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
+    }
+
+    /**
+     * Whether a relation that was not loaded passes the checks of checkValidity() that do not need the related
+     * elements themselves (mandatory, max. items), judged by the elements its stored relation rows refer to. If
+     * they are not conclusive, the relation has to be loaded and validated as usual.
+     */
+    private function isUnloadedRelationValid(AbstractRelations $fd): bool
+    {
+        return $this->canShortcutUnloadedRelation($fd) && UnloadedRelation::isValid(
+            $fd,
+            $this,
+            [],
+            $fd->getMandatory() && !$this->getOmitMandatoryCheck(),
+            DataObject::doGetInheritedValues($this),
+            false
+        );
+    }
+
+    /**
+     * Whether the shortcuts for an unloaded relation apply: the field is one of the relation types of the core (a
+     * custom type or a subclass may validate a relation or resolve its dependencies differently), and no pre get
+     * value hook can replace the stored value, like it does in the getter outside of the admin.
+     */
+    private function canShortcutUnloadedRelation(AbstractRelations $field): bool
+    {
+        if ($this instanceof PreGetValueHookInterface && !Pimcore::inAdmin()) {
+            return false;
+        }
+
+        return UnloadedRelation::isCoreRelationType($field);
+    }
+
+    /**
+     * The values a version stores for the lazy loaded relations that were not loaded, keyed by field name: the types
+     * and ids of the related elements, which is what the loaded relation is stored as (see
+     * Element\Service::getDeepCopyInstance()). They are read from the stored relation rows instead of loading every
+     * related element. A relation the rows cannot tell this for is not listed, it has to be loaded to be stored.
+     *
+     * @internal
+     *
+     * @return array<string, list<ElementDescriptor>>
+     */
+    public function describeUnloadedRelationsForVersion(): array
+    {
+        $relations = [];
+        foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            // the advanced relations store the ids of the related elements already, they do not load them
+            if ((!$field instanceof ManyToManyRelation && !$field instanceof ManyToManyObjectRelation)
+                || $field instanceof AdvancedManyToManyRelation
+                || $field instanceof AdvancedManyToManyObjectRelation
+                || $this->isLazyKeyLoaded($field->getName())
+                || !$this->canShortcutUnloadedRelation($field)) {
+                continue;
+            }
+
+            $descriptors = $this->describeStoredRelationForVersion($field);
+            if ($descriptors !== null) {
+                $relations[$field->getName()] = $descriptors;
+            }
+        }
+
+        return $relations;
+    }
+
+    /**
+     * The elements a relation that was not loaded would be stored with in a version, see
+     * describeUnloadedRelationsForVersion(). Null if they may differ from the ones loading the relation returns.
+     *
+     * @return list<ElementDescriptor>|null
+     */
+    private function describeStoredRelationForVersion(ManyToManyRelation|ManyToManyObjectRelation $field): ?array
+    {
+        $rows = $this->retrieveRelationData(['fieldname' => $field->getName(), 'ownertype' => 'object']);
+
+        // the loaded relation keeps unpublished elements, only its getter leaves them out
+        $hideUnpublished = DataObject::getHideUnpublished();
+        DataObject::setHideUnpublished(false);
+
+        try {
+            $summaries = $field->loadRelationSummaries($this);
+        } finally {
+            DataObject::setHideUnpublished($hideUnpublished);
+        }
+
+        if (count($summaries) !== count($rows)) {
+            // a related element does not exist anymore, loading the relation leaves it out and marks the field dirty
+            return null;
+        }
+
+        $descriptors = [];
+        foreach ($summaries as $summary) {
+            if ($summary['type'] !== 'object') {
+                if ($field instanceof ManyToManyObjectRelation) {
+                    // an object relation loads the object with the id of a relation of any type
+                    return null;
+                }
+            } elseif (!$this->isLoadableRelatedObject($field, $summary)) {
+                return null;
+            }
+
+            $descriptors[] = new ElementDescriptor($summary['type'], $summary['id']);
+        }
+
+        return $descriptors;
+    }
+
+    /**
+     * Whether loading the relation returns the related object the summary describes, as an element that a version
+     * stores as a descriptor.
+     *
+     * @param array{id: int, subtype: string, className: string|null} $summary
+     */
+    private function isLoadableRelatedObject(
+        ManyToManyRelation|ManyToManyObjectRelation $field,
+        array $summary
+    ): bool {
+        if ($summary['id'] === $this->getId()) {
+            // a relation to the object itself is stored as the object, not as a descriptor
+            return false;
+        }
+
+        if ($summary['subtype'] === DataObject::OBJECT_TYPE_FOLDER) {
+            // an object relation leaves a folder out
+            return !$field instanceof ManyToManyObjectRelation;
+        }
+
+        // an object of an unknown type is not loaded, one of a class that does not exist cannot be
+        return in_array($summary['subtype'], DataObject::$types, true)
+            && class_exists('Pimcore\\Model\\DataObject\\' . ucfirst((string) $summary['className']));
     }
 
     private function saveChildData(): void
@@ -260,6 +406,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * it is false when the method is called by $this->update()
      *
      * @param string|null $versionNote version note
+     * @param array $parameters custom arguments passed on to the versioning events; `existingVersion` (Model\Version, internal)
+     *                          writes the version data into that version instead of creating a new one
      *
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false, array $parameters = []): ?Model\Version
@@ -269,6 +417,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             'isAutoSave' => $isAutoSave,
         ];
         $eventParameters = array_merge($parameters, $coreParameters);
+        $existingVersion = $this->resolveExistingVersionParameter($parameters);
 
         try {
             if ($setModificationDate) {
@@ -289,13 +438,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
+            // with an existing version that version is written into, no version is added
             $objectsConfig = SystemSettingsConfig::get()['objects'];
             if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
                 || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
-                || $setModificationDate) {
+                || $setModificationDate
+                || $existingVersion !== null) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave, $existingVersion);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -390,11 +541,36 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
 
             $key = $field->getName();
+
+            if ($field instanceof AbstractRelations && !$this->isLazyKeyLoaded($key)) {
+                $relationDependencies = $this->resolveDependenciesOfUnloadedRelation($field);
+                if ($relationDependencies !== null) {
+                    $dependencies[] = $relationDependencies;
+
+                    continue;
+                }
+            }
+
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());
         }
 
         return array_merge(...$dependencies);
+    }
+
+    /**
+     * The dependencies of a relation that was not loaded, read from its stored relation rows instead of loading
+     * every related element. Returns null if the rows cannot tell, then the relation has to be loaded.
+     *
+     * @return array<string, array{id: int, type: string}>|null
+     */
+    private function resolveDependenciesOfUnloadedRelation(AbstractRelations $field): ?array
+    {
+        if (!$this->canShortcutUnloadedRelation($field)) {
+            return null;
+        }
+
+        return UnloadedRelation::resolveDependencies($field, $this, [], DataObject::doGetInheritedValues($this), false);
     }
 
     /**

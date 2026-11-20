@@ -44,6 +44,12 @@ possibilities.
 - DataObject itself as `object`.  
 - Context information as `data` (details see Context Information for Calculation below).
 
+Both are read-only: an expression can call the getters of the object's fields (also of related elements, object bricks,
+field collections, localized fields and classification stores), the common element getters such as `getId()`,
+`getKey()`, `getFullPath()` or `getParent()`, and the getters of the stored field values (e.g.
+`object.getPrice().getUnit().getAbbreviation()`). Dates are `DateTimeImmutable` copies. Any other method call is rejected
+and the field shows the error message. Use a calculator class or a custom expression function for anything else.
+
 ##### Simple examples
 ```twig
 # print ID of data object

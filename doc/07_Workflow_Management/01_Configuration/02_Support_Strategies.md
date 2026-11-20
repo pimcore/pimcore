@@ -29,6 +29,10 @@ Use `supports` to define a single entity class name or an array of entity class 
 The expression support strategy applies a workflow to an entity only under certain circumstances.
 Define a Symfony expression - the workflow applies only when the expression evaluates to true.
 
+A blank expression (empty or whitespace only) is not evaluated: the workflow then applies to every entity of the
+configured class name(s). Make sure an expression that is built from a parameter or environment variable
+is not blank unintentionally, otherwise the workflow applies to all entities of the class.
+
 ##### Configuration Example
 
 In the following example, the workflow applies to products where the attribute "productType" equals "article".
