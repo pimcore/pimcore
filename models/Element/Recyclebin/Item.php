@@ -15,6 +15,7 @@ namespace Pimcore\Model\Element\Recyclebin;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Exception;
+use JsonException;
 use League\Flysystem\StorageAttributes;
 use Pimcore;
 use Pimcore\Cache;
@@ -29,6 +30,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\PermissionCache;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
@@ -140,9 +142,15 @@ class Item extends Model\AbstractModel
             throw $e;
         }
 
+        $this->restoreWorkspaces();
+
         $this->delete();
     }
 
+    /**
+     * @throws JsonException
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function save(?Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
@@ -182,6 +190,33 @@ class Item extends Model\AbstractModel
         };
 
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
+
+        // the workspace rows are removed with the element (ON DELETE CASCADE on cid)
+        $workspaces = $this->getDao()->getWorkspaces();
+        if ($workspaces !== []) {
+            $storage->write($this->getStorageFileWorkspaces(), json_encode($workspaces, JSON_THROW_ON_ERROR));
+        }
+    }
+
+    private function restoreWorkspaces(): void
+    {
+        $storage = Storage::get('recycle_bin');
+        $file = $this->getStorageFileWorkspaces();
+
+        if (!$storage->fileExists($file)) {
+            return;
+        }
+
+        try {
+            $workspaces = json_decode($storage->read($file), true, 512, JSON_THROW_ON_ERROR);
+            if (is_array($workspaces)) {
+                $this->getDao()->restoreWorkspaces($workspaces);
+            }
+        } catch (Exception $e) {
+            Logger::error('Could not restore workspace permissions of recycle bin item ' . $this->getId() . ': ' . $e);
+        } finally {
+            Pimcore::getContainer()->get(PermissionCache::class)->reset();
+        }
     }
 
     public function delete(): void
@@ -359,6 +394,11 @@ class Item extends Model\AbstractModel
     public function getStoreageFile(): string
     {
         return $this->getStorageFile();
+    }
+
+    private function getStorageFileWorkspaces(): string
+    {
+        return sprintf('%s/%s_workspaces.json', $this->getType(), $this->getId());
     }
 
     protected function getStorageFileBinary(Element\ElementInterface $element): string
