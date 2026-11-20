@@ -76,6 +76,30 @@ abstract class Adapter implements AdapterInterface
     }
 
     /**
+     * Resolves a caller-supplied path (e.g. a thumbnail transformation argument) to an absolute,
+     * canonical path confined to the public web root, rejecting any path that traverses outside
+     * of it. Returns null if the path cannot be resolved or escapes the web root.
+     */
+    protected function resolveWebRootConfinedPath(string $path): ?string
+    {
+        $webRoot = realpath(PIMCORE_WEB_ROOT);
+        if ($webRoot === false) {
+            return null;
+        }
+
+        $resolved = realpath($webRoot . '/' . ltrim($path, '/'));
+        if ($resolved === false) {
+            return null;
+        }
+
+        if ($resolved !== $webRoot && !str_starts_with($resolved, $webRoot . DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        return $resolved;
+    }
+
+    /**
      * @todo: duplication found? (pimcore/lib/Pimcore/Document/Adapter.php::removeTmpFiles)
      */
     protected function removeTmpFiles(): void

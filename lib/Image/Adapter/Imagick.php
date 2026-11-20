@@ -871,10 +871,9 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $image = ltrim($image, '/');
-        $image = PIMCORE_WEB_ROOT . '/' . $image;
+        $image = $this->resolveWebRootConfinedPath($image);
 
-        if (is_file($image)) {
+        if ($image !== null && is_file($image)) {
             $newImage = new \Imagick();
 
             if ($mode == 'asTexture') {
