@@ -15,11 +15,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Exception;
-use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Model\Document;
-use Pimcore\Tool;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -97,10 +95,8 @@ class GeneratePagePreviews extends AbstractCommand
     {
         $hostUrl = $input->getOption('urlPrefix');
         if (!$hostUrl) {
-            $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'] ?? null;
-        }
-        if (!$hostUrl) {
-            $hostUrl = Tool::getHostUrl();
+            // never falls back to the host of a current request
+            $hostUrl = Document\Service::resolveTrustedPreviewOrigin();
         }
 
         if (!$hostUrl) {
