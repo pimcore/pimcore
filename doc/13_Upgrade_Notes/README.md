@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.7
+
+### [Documents]
+- [Page previews] The tree preview image of a document page (Gotenberg) is no longer generated for the host of the HTTP request that saved the page. A request `Host` header could otherwise choose the network origin the renderer connects to (SSRF). The origin is now taken from `pimcore.documents.preview_url_prefix`, or else from the main domain of the system settings (`http://<domain>`), and the host URL carried by a `GeneratePagePreviewMessage` is ignored by its handler. If neither is configured, no preview is generated. Set `preview_url_prefix` (e.g. `https://example.com`) if the preview has to be rendered via HTTPS or on a port, or if no main domain is configured.
+
 ## Pimcore 2026.3.5
 
 ### [Assets]
