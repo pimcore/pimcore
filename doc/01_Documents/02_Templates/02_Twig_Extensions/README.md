@@ -111,6 +111,7 @@ The following table gives an overview of all available tests:
 | `pimcore_asset_audio`                  | Checks if object is instanceof Asset\Audio                          |
 | `pimcore_asset_document`               | Checks if object is instanceof Asset\Document                       |
 | `pimcore_asset_folder`                 | Checks if object is instanceof Asset\Folder                         |
+| `pimcore_asset_font`                   | Checks if object is instanceof Asset\Font                           |
 | `pimcore_asset_image`                  | Checks if object is instanceof Asset\Image                          |
 | `pimcore_asset_text`                   | Checks if object is instanceof Asset\Text                           |
 | `pimcore_asset_unknown`                | Checks if object is instanceof Asset\Unknown                        |

@@ -90,8 +90,11 @@ class RewriteMimeTypeCommand extends AbstractCommand
                     }
                 }
 
-                if ($asset->getMimeType() === $mimeType) {
-                    $output->writeln($asset->getFullPath() . ' - MIME type is already correct, skipping');
+                // the type is checked as well, so that assets get the right type after the type mapping changed
+                // (e.g. new asset types like "font", which were stored as "unknown" before)
+                $type = Asset::getTypeFromMimeMapping($mimeType, $asset->getFilename());
+                if ($asset->getMimeType() === $mimeType && $type === $asset->getType()) {
+                    $output->writeln($asset->getFullPath() . ' - MIME type and type are already correct, skipping');
 
                     continue;
                 }
@@ -99,7 +102,6 @@ class RewriteMimeTypeCommand extends AbstractCommand
                 $asset->setMimeType($mimeType);
 
                 // set type
-                $type = Asset::getTypeFromMimeMapping($mimeType, $asset->getFilename());
                 if ($type !== $asset->getType()) {
                     $asset->setType($type);
                     $typeChanged = true;

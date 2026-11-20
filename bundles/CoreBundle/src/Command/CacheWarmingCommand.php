@@ -48,6 +48,7 @@ class CacheWarmingCommand extends AbstractCommand
         'audio',
         'document',
         'folder',
+        'font',
         'image',
         'text',
         'unknown',

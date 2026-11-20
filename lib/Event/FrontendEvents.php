@@ -76,6 +76,21 @@ final class FrontendEvents
     const ASSET_DOCUMENT_IMAGE_THUMBNAIL = 'pimcore.frontend.path.asset.document.image-thumbnail';
 
     /**
+     * Allows to rewrite the frontend path of an image thumbnail of a font asset
+     * Overwrite the argument "frontendPath" to do so
+     *
+     * Subject: 	Pimcore\Model\Asset\Font\ImageThumbnail
+     * Arguments:
+     *  - pathReference | array | Path reference of the thumbnail
+     *  - frontendPath | string | Web-path, relative
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_FONT_IMAGE_THUMBNAIL = 'pimcore.frontend.path.asset.font.image-thumbnail';
+
+    /**
      * Allows to rewrite the frontend path of an asset (no matter which type)
      * Overwrite the argument "frontendPath" to do so
      *

@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class AddToUpdateTaskQueueCommand extends AbstractCommand
 {
-    protected array $types = ['image', 'video', 'document'];
+    protected array $types = ['image', 'video', 'document', 'font'];
 
     protected function configure(): void
     {

@@ -175,6 +175,19 @@ final class AssetEvents
     const DOCUMENT_IMAGE_THUMBNAIL = 'pimcore.asset.document.image-thumbnail';
 
     /**
+     * Fires after the image thumbnail of a font asset was created
+     *
+     * Arguments:
+     *  - deferred | bool | Whether the thumbnail should be generated on demand or not
+     *  - generated | bool | Whether a new thumbnail file was actually generated or not (from cache)
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const FONT_IMAGE_THUMBNAIL = 'pimcore.asset.font.image-thumbnail';
+
+    /**
      * Fires before an asset upload created
      *
      * @Event("Pimcore\Event\Model\Asset\ResolveUploadTargetEvent")

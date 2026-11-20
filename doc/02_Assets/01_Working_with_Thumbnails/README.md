@@ -1,6 +1,6 @@
 ---
 title: Working with Thumbnails
-description: Generating optimized image, video, and document thumbnails from Pimcore assets.
+description: Generating optimized image, video, document, and font thumbnails from Pimcore assets.
 ---
 
 # Working with Thumbnails
@@ -44,5 +44,7 @@ pimcore:
 - [Video Thumbnails](./02_Video_Thumbnails.md) - transcoding and preview image extraction
 - [Asset Document Thumbnails](./03_Asset_Document_Thumbnails.md) - preview images for PDFs,
   Office documents, and other formats
+- [Asset Font Thumbnails](./05_Asset_Font_Thumbnails.md) - sample text previews for TTF, OTF, WOFF
+  and other font files
 - [Advanced Image Thumbnail Features](./04_Advanced_Image_Thumbnails.md) - high-resolution support,
   media queries, focal points, auto format, ICC profiles, and more

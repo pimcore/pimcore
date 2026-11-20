@@ -387,7 +387,7 @@ class Service extends Model\Element\Service
     /**
      * @throws Exception
      */
-    public static function getImageThumbnailByArrayConfig(array $config): null|ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|array
+    public static function getImageThumbnailByArrayConfig(array $config): null|ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|Asset\Font\ImageThumbnailInterface|array
     {
         $asset = Asset::getById($config['asset_id']);
 
@@ -460,6 +460,8 @@ class Service extends Model\Element\Service
                 $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
                 return $asset->getImageThumbnail($thumbnailConfig, $page);
+            } elseif ($asset instanceof Asset\Font) {
+                return $asset->getImageThumbnail($thumbnailConfig);
             } elseif ($asset instanceof Asset\Image) {
                 // Throw exception if the requested thumbnail format is disabled from the config
                 $thumbnailFormats = ThumbnailConfig::getAutoFormats();
@@ -505,7 +507,7 @@ class Service extends Model\Element\Service
      * @throws \League\Flysystem\FilesystemException
      */
     public static function getStreamedResponseFromImageThumbnail(
-        ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|array $thumbnail,
+        ThumbnailInterface|Asset\Video\ImageThumbnailInterface|Asset\Document\ImageThumbnailInterface|Asset\Font\ImageThumbnailInterface|array $thumbnail,
         array $config
     ): ?StreamedResponse {
         $thumbnailStream = null;
