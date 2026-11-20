@@ -39,6 +39,7 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\Asset\Folder;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
+use Pimcore\Model\Asset\Image\Thumbnail\PreGenerationDispatcher;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
@@ -661,6 +662,12 @@ class Asset extends Element\AbstractElement
                     $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
                     if (in_array($this->getType(), ['image', 'video', 'document'])) {
                         $this->addToUpdateTaskQueue();
+                    }
+
+                    // not left to the update task: that one is not queued while another task of this
+                    // asset is pending, and it is re-queued for unchanged binaries as well
+                    if ($this instanceof Asset\Image) {
+                        Pimcore::getContainer()->get(PreGenerationDispatcher::class)->dispatch($this);
                     }
                 }
 

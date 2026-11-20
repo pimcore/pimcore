@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Configuration;
 use Pimcore\Tests\Support\Test\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 use Symfony\Component\Config\Definition\Processor;
 
@@ -105,5 +106,38 @@ final class ConfigurationTest extends TestCase
 
         $this->assertTrue($config['assets']['storage_operation_queue']['enabled']);
         $this->assertFalse($config['assets']['storage_operation_queue']['resolve_frontend_paths']);
+    }
+
+    public function testThumbnailPreGenerationIsDisabledByDefault(): void
+    {
+        $config = $this->process([[]]);
+
+        $this->assertSame([], $config['assets']['image']['thumbnails']['pre_generate']['definitions']);
+    }
+
+    /**
+     * The names end up in the `string` constructor argument of GenerateImageThumbnailsMessage.
+     *
+     * @dataProvider invalidThumbnailPreGenerationDefinitionProvider
+     */
+    public function testThumbnailPreGenerationDefinitionsMustBeNonEmptyStrings(mixed $definition): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->process([[
+            'assets' => ['image' => ['thumbnails' => ['pre_generate' => ['definitions' => ['hero', $definition]]]]],
+        ]]);
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidThumbnailPreGenerationDefinitionProvider(): array
+    {
+        return [
+            'integer' => [123],
+            'boolean' => [true],
+            'empty string' => [''],
+        ];
     }
 }
