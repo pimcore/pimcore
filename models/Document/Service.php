@@ -568,11 +568,17 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * The origin of the preview URL is never taken from a request: an explicit $hostUrl (CLI option) wins,
+     * otherwise it is resolved by resolveTrustedPreviewOrigin().
+     *
+     * @param Request|null $request Unused. Kept only so that the positions of the other parameters do not
+     *                              change for callers; the request host must never select the preview origin.
+     *
      * @throws Exception
      *
      * @internal
      */
-    public static function generatePagePreview(int $id, ?string $hostUrl = null): bool
+    public static function generatePagePreview(int $id, ?Request $request = null, ?string $hostUrl = null): bool
     {
         $filesystem = new Filesystem();
         $doc = Document\Page::getById($id);
