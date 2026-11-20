@@ -382,6 +382,33 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
+     * getImageTransformInstance() hands back the global image adapter (Pimcore\Image\Adapter),
+     * which is not a Pimcore model: once returned, none of the other denylists apply to it, so
+     * its own methods (load/getResource/save) would otherwise be freely callable from a template.
+     */
+    public function testImageGetImageTransformInstanceIsHardBlockedByDefault(): void
+    {
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Image(), 'getImageTransformInstance');
+    }
+
+    public function testImageGetImageTransformInstanceSurvivesAllowlistMode(): void
+    {
+        $policy = new SecurityPolicy(
+            allowedClasses: [Image::class],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Image(), 'getImageTransformInstance');
+    }
+
+    /**
      * PHP method names are case-insensitive, so the exact-name hard blocks must be too.
      *
      * @return iterable<string, array{object, string}>
@@ -390,6 +417,8 @@ final class SecurityPolicyTest extends TestCase
     {
         yield 'Image::GETDIMENSIONS' => [new Image(), 'GETDIMENSIONS'];
         yield 'Image::getdimensions' => [new Image(), 'getdimensions'];
+        yield 'Image::GETIMAGETRANSFORMINSTANCE' => [new Image(), 'GETIMAGETRANSFORMINSTANCE'];
+        yield 'Image::getimagetransforminstance' => [new Image(), 'getimagetransforminstance'];
         yield 'Asset::GetData' => [new Asset(), 'GetData'];
         yield 'Asset::GETLOCALFILE' => [new Asset(), 'GETLOCALFILE'];
         yield 'User::GETPASSWORD' => [new User(), 'GETPASSWORD'];
@@ -670,8 +699,9 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
-     * The two `get*` methods that persist as a side effect must be blocked for consumers that
-     * build their own policy and pass nothing, in default and allowlist mode.
+     * The `get*` methods that persist as a side effect, or hand back a non-model object whose own
+     * methods are otherwise unrestricted, must be blocked for consumers that build their own
+     * policy and pass nothing, in default and allowlist mode.
      *
      * @return iterable<string, array{object, string}>
      */
@@ -679,6 +709,8 @@ final class SecurityPolicyTest extends TestCase
     {
         yield 'Image::getDimensions' => [new Image(), 'getDimensions'];
         yield 'Image::GETDIMENSIONS' => [new Image(), 'GETDIMENSIONS'];
+        yield 'Image::getImageTransformInstance' => [new Image(), 'getImageTransformInstance'];
+        yield 'Image::GETIMAGETRANSFORMINSTANCE' => [new Image(), 'GETIMAGETRANSFORMINSTANCE'];
         yield 'UrlSlug::getAction' => [new UrlSlug('x'), 'getAction'];
         yield 'UrlSlug::GETACTION' => [new UrlSlug('x'), 'GETACTION'];
     }
