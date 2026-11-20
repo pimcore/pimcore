@@ -121,6 +121,15 @@ class Tree extends DAV\Tree
                 $asset = Asset::getByPath('/' . $sourcePath);
                 $parent = Asset::getByPath('/' . dirname($destinationPath));
 
+                // Authorize against the source's original parent chain before it is mutated below:
+                // a cross-directory move both removes the asset from its source folder (delete) and
+                // would let a subsequent WebDAV GET read it back under the destination's permissions
+                // (view), so both must be granted on the source side independently of the
+                // destination's create/publish checks that follow.
+                if (!$asset->isAllowed('view', $user) || !$asset->isAllowed('delete', $user)) {
+                    throw new Forbidden('No permission to move asset out of source folder');
+                }
+
                 $asset->setPath($parent->getRealFullPath() . '/');
                 $asset->setParentId($parent->getId());
             }
