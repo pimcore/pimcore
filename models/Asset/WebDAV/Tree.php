@@ -136,6 +136,11 @@ class Tree extends DAV\Tree
                 throw new Forbidden('No delete permission on source');
             }
 
+            if (isset($sourceAsset)) {
+                // the source is deleted below, which also removes all of its descendants
+                Service::assertSubtreeIsDeletable($sourceAsset, $user);
+            }
+
             $asset->setUserModification($user->getId());
             $asset->save();
 

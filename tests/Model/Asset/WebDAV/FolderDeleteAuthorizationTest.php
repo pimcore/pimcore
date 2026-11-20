@@ -152,6 +152,58 @@ class FolderDeleteAuthorizationTest extends ModelTestCase
         $this->assertNotNull(Asset::getById($nestedFile->getId()));
     }
 
+    public function testMoveOverwriteIsForbiddenWhenTheSourceHasADeniedDescendant(): void
+    {
+        $parent = TestHelper::createAssetFolder('webdav-move-parent-');
+        $source = $this->createFolder($parent, 'source-' . uniqid());
+        $denied = $this->createFolder($source, 'denied-' . uniqid());
+        $destination = $this->createFolder($parent, 'destination-' . uniqid());
+
+        $this->loginAs($this->createUserWithWorkspaces([
+            ['asset' => $parent, 'delete' => true, 'publish' => true],
+            ['asset' => $denied, 'delete' => false, 'publish' => true],
+        ]));
+
+        try {
+            $this->moveOver($source, $destination);
+            $this->fail('Expected a Forbidden exception because a descendant of the moved source denies delete permission.');
+        } catch (Forbidden $e) {
+            // expected
+        }
+
+        $this->assertNotNull(Asset::getById($source->getId()));
+        $this->assertNotNull(Asset::getById($denied->getId()));
+        $this->assertNotNull(Asset::getById($destination->getId()));
+    }
+
+    public function testMoveOverwriteSucceedsWhenTheEntireSourceSubtreeIsDeletable(): void
+    {
+        $parent = TestHelper::createAssetFolder('webdav-move-parent-');
+        $source = $this->createFolder($parent, 'source-' . uniqid());
+        $child = $this->createFolder($source, 'child-' . uniqid());
+        $destination = $this->createFolder($parent, 'destination-' . uniqid());
+
+        $this->loginAs($this->createUserWithWorkspaces([
+            ['asset' => $parent, 'delete' => true, 'publish' => true],
+            ['asset' => $child, 'delete' => true, 'publish' => true],
+        ]));
+
+        $sourceId = $source->getId();
+        $childId = $child->getId();
+
+        $this->moveOver($source, $destination);
+
+        $this->assertNull(Asset::getById($sourceId));
+        $this->assertNull(Asset::getById($childId));
+        $this->assertNotNull(Asset::getById($destination->getId()));
+    }
+
+    private function moveOver(Asset $source, Asset $destination): void
+    {
+        $tree = new Tree(new Folder(Asset::getById(1)));
+        $tree->move(ltrim($source->getRealFullPath(), '/'), ltrim($destination->getRealFullPath(), '/'));
+    }
+
     private function createFolder(Asset $parent, string $filename): Asset\Folder
     {
         $folder = new Asset\Folder();
@@ -174,7 +226,7 @@ class FolderDeleteAuthorizationTest extends ModelTestCase
     }
 
     /**
-     * @param array<int, array{asset: Asset, delete: bool}> $workspaceSpecs
+     * @param array<int, array{asset: Asset, delete: bool, publish?: bool}> $workspaceSpecs
      */
     private function createUserWithWorkspaces(array $workspaceSpecs): User
     {
@@ -186,6 +238,7 @@ class FolderDeleteAuthorizationTest extends ModelTestCase
             $workspace->setList(true);
             $workspace->setView(true);
             $workspace->setDelete($spec['delete']);
+            $workspace->setPublish($spec['publish'] ?? false);
             $workspaces[] = $workspace;
         }
 

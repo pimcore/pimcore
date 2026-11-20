@@ -16,8 +16,10 @@ namespace Pimcore\Model\Asset\WebDAV;
 use PDO;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
+use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 use Sabre\DAV\Browser\Plugin as BrowserPlugin;
+use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Locks\Backend\PDO as LocksPDO;
 use Sabre\DAV\Locks\Plugin as LocksPlugin;
 use Sabre\DAV\Server;
@@ -122,5 +124,28 @@ class Service
 
         $filesystem = new Filesystem();
         $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+    }
+
+    /**
+     * Asset::delete() removes an entire subtree recursively without checking each descendant's own
+     * workspace permissions, so a deeper, more specific denial would otherwise be bypassed by
+     * deleting an ancestor folder. Every WebDAV operation that deletes an asset has to verify the
+     * whole subtree with this method, before anything is deleted.
+     *
+     * @throws Forbidden
+     */
+    public static function assertSubtreeIsDeletable(Asset $asset, ?User $user = null): void
+    {
+        if (!$asset->hasChildren()) {
+            return;
+        }
+
+        foreach ($asset->getChildren() as $child) {
+            if (!$child->isAllowed('delete', $user)) {
+                throw new Forbidden('Missing "delete" permission');
+            }
+
+            self::assertSubtreeIsDeletable($child, $user);
+        }
     }
 }

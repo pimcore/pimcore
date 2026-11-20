@@ -213,31 +213,10 @@ class Folder extends DAV\Collection
             throw new DAV\Exception\Forbidden('Missing "delete" permission');
         }
 
-        $this->assertSubtreeIsDeletable($this->asset);
+        // Asset::delete() does not check the permissions of the descendants it removes
+        Service::assertSubtreeIsDeletable($this->asset);
 
         $this->asset->delete();
-    }
-
-    /**
-     * Asset::delete() removes an entire subtree recursively without checking each descendant's
-     * own workspace permissions, so a deeper, more specific denial would otherwise be bypassed by
-     * deleting an ancestor folder. Verify every descendant here, before anything is deleted.
-     *
-     * @throws DAV\Exception\Forbidden
-     */
-    private function assertSubtreeIsDeletable(Asset $asset): void
-    {
-        if (!$asset->hasChildren()) {
-            return;
-        }
-
-        foreach ($asset->getChildren() as $child) {
-            if (!$child->isAllowed('delete')) {
-                throw new DAV\Exception\Forbidden('Missing "delete" permission');
-            }
-
-            $this->assertSubtreeIsDeletable($child);
-        }
     }
 
     /**
