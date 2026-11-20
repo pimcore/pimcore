@@ -1002,13 +1002,14 @@ class Asset extends Element\AbstractElement
         $versioningDisabled = !Version::isEnabled();
 
         // the same versioning policy applies as for regular saves, see saveVersion()
-        if (($versioningDisabled && !$this->getDataChanged()) || !$this->getId() || !self::isVersionCreationEnabledByConfig()) {
+        if (($versioningDisabled && !$this->getDataChanged()) || !$this->getId()) {
             return null;
         }
 
         // hasVersionsForUpdate() locks the asset row, so concurrent first modifications of the same asset are
-        // serialized here and exactly one of them creates the version of the persisted state
-        if ($this->getDao()->hasVersionsForUpdate()) {
+        // serialized here and exactly one of them creates the version of the persisted state. It has to be the first
+        // read of the transaction (see there), so the config, which may be read from the database, is checked after it
+        if ($this->getDao()->hasVersionsForUpdate() || !self::isVersionCreationEnabledByConfig()) {
             return null;
         }
 

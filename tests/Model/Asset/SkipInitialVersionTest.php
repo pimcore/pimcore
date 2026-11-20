@@ -13,11 +13,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Exception;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Db;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
@@ -34,6 +38,7 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 use Psr\Container\ContainerInterface;
+use ReflectionMethod;
 use ReflectionProperty;
 use RuntimeException;
 use Throwable;
@@ -58,6 +63,8 @@ class SkipInitialVersionTest extends ModelTestCase
 
     private ?ContainerInterface $originalStorageLocator = null;
 
+    private ?LocationAwareConfigRepository $originalSystemSettingsRepository = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -73,6 +80,7 @@ class SkipInitialVersionTest extends ModelTestCase
     protected function tearDown(): void
     {
         $this->restoreStorage();
+        $this->restoreSystemSettingsRepository();
         Config::setSystemConfiguration($this->originalAssetsConfig, 'assets');
         $this->systemSettingsConfig->testSave($this->originalSystemSettings);
         Version::enable();
@@ -269,6 +277,99 @@ class SkipInitialVersionTest extends ModelTestCase
         $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
         $asset->save();
         $this->assertCount(4, $this->loadVersions($asset));
+    }
+
+    /**
+     * Regression test for the locking behaviour: the check for existing versions locked the gap in the index of the
+     * versions table, which assets with adjacent ids share as long as they have no versions, so concurrent first
+     * modifications of different assets waited for each other's check to insert their versions and deadlocked.
+     */
+    public function testFirstModificationOfOneAssetDoesNotWaitForAnOpenFirstModificationOfAnotherAsset(): void
+    {
+        $first = TestHelper::createImageAsset();
+        $second = TestHelper::createImageAsset();
+        $this->assertCount(0, $this->loadVersions($first));
+        $this->assertCount(0, $this->loadVersions($second));
+
+        $connection = Db::get();
+        $otherConnection = $this->openSecondConnection();
+        $otherConnection->executeStatement('SET SESSION innodb_lock_wait_timeout = 2');
+
+        $connection->beginTransaction();
+        $otherConnection->beginTransaction();
+
+        try {
+            // the check of the first modification of the first asset, whose transaction stays open
+            $this->assertFalse($first->getDao()->hasVersionsForUpdate());
+
+            // the first modification of the second asset checks for versions as well and creates one
+            $otherDao = new Asset\Dao();
+            $otherDao->setModel($second);
+            $otherDao->db = $otherConnection;
+            $this->assertFalse($otherDao->hasVersionsForUpdate());
+
+            try {
+                $this->insertVersionRow($otherConnection, $second);
+            } catch (LockWaitTimeoutException $e) {
+                $this->fail(
+                    'Versioning the first modification of one asset waited for the open first modification of another asset'
+                );
+            }
+        } finally {
+            $otherConnection->rollBack();
+            $otherConnection->close();
+            $connection->rollBack();
+        }
+    }
+
+    /**
+     * A concurrent first modification of the same asset either commits its version before the row lock of the asset is
+     * taken, then the version has to be seen, or it waits for the lock. Here it is tried while the system settings are
+     * read in a transaction: that read used to come before the row lock, and with a plain read of the versions, it took
+     * the snapshot in which the version of the concurrent modification is missing, so a second one was created. The
+     * settings are only read from the database if they aren't loaded for the request yet, e.g. on the first save of a
+     * process, so they are dropped before the save.
+     */
+    public function testConcurrentFirstModificationOfTheSameAssetIsVersionedOnlyOnce(): void
+    {
+        $asset = TestHelper::createImageAsset();
+
+        $otherConnection = $this->openSecondConnection();
+        $otherConnection->executeStatement('SET SESSION innodb_lock_wait_timeout = 1');
+
+        $attempted = false;
+        $concurrentVersionId = null;
+        $this->interceptSystemSettingsReads(function () use ($asset, $otherConnection, &$attempted, &$concurrentVersionId): void {
+            if ($attempted || !Db::get()->isTransactionActive()) {
+                return;
+            }
+            $attempted = true;
+
+            $otherConnection->beginTransaction();
+
+            try {
+                $otherConnection->fetchOne('SELECT id FROM assets WHERE id = ? FOR UPDATE', [$asset->getId()]);
+                $concurrentVersionId = $this->insertVersionRow($otherConnection, $asset);
+                $otherConnection->commit();
+            } catch (LockWaitTimeoutException $e) {
+                // the row lock is taken already, so the concurrent modification has to wait until the save is done
+                $otherConnection->rollBack();
+            }
+        });
+
+        try {
+            $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
+            SystemSettingsConfig::clearRuntimeCache();
+            $asset->save();
+
+            $this->assertTrue($attempted, 'The system settings were not read in a transaction of the save');
+            $this->assertCount(2, $this->loadVersions($asset), 'exactly one version precedes the version of the edit');
+        } finally {
+            if ($concurrentVersionId !== null) {
+                $otherConnection->delete('versions', ['id' => $concurrentVersionId]);
+            }
+            $otherConnection->close();
+        }
     }
 
     public function testMetadataOnlyChangeVersionsPersistedStateAndSharesBinaryData(): void
@@ -758,6 +859,76 @@ class SkipInitialVersionTest extends ModelTestCase
             $storage = Pimcore::getContainer()->get(Storage::class);
             (new ReflectionProperty(Storage::class, 'locator'))->setValue($storage, $this->originalStorageLocator);
             $this->originalStorageLocator = null;
+        }
+    }
+
+    private function openSecondConnection(): Connection
+    {
+        return DriverManager::getConnection(Db::get()->getParams());
+    }
+
+    /**
+     * Inserts the row of a version of the asset, as Version::save() does
+     */
+    private function insertVersionRow(Connection $connection, Asset $asset): int
+    {
+        $connection->insert('versions', [
+            'cid' => $asset->getId(),
+            'ctype' => 'asset',
+            'date' => time(),
+            'versionCount' => $asset->getVersionCount() + 1,
+            'storageType' => 'fs',
+        ]);
+
+        return (int) $connection->lastInsertId();
+    }
+
+    /**
+     * Calls the hook after each read of the system settings. The repository is held statically by
+     * SystemSettingsConfig, so it is swapped instead.
+     */
+    private function interceptSystemSettingsReads(callable $hook): void
+    {
+        SystemSettingsConfig::get(); // initializes the repository
+        $repositoryProperty = new ReflectionProperty(SystemSettingsConfig::class, 'locationAwareConfigRepository');
+        $repository = $repositoryProperty->getValue();
+        $this->originalSystemSettingsRepository = $repository;
+
+        $methods = array_filter(
+            get_class_methods($repository),
+            static fn (string $method): bool => !str_starts_with($method, '__')
+                && !(new ReflectionMethod($repository, $method))->isStatic()
+        );
+        $interceptingRepository = $this->getMockBuilder(LocationAwareConfigRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(array_values($methods))
+            ->getMock();
+        foreach ($methods as $method) {
+            if ($method === 'loadConfigByKey') {
+                continue;
+            }
+            $interceptingRepository->method($method)->willReturnCallback(
+                static fn (mixed ...$arguments): mixed => $repository->$method(...$arguments)
+            );
+        }
+        $interceptingRepository->method('loadConfigByKey')->willReturnCallback(
+            static function (string $key) use ($repository, $hook): array {
+                $result = $repository->loadConfigByKey($key);
+                $hook();
+
+                return $result;
+            }
+        );
+
+        $repositoryProperty->setValue(null, $interceptingRepository);
+    }
+
+    private function restoreSystemSettingsRepository(): void
+    {
+        if ($this->originalSystemSettingsRepository !== null) {
+            (new ReflectionProperty(SystemSettingsConfig::class, 'locationAwareConfigRepository'))
+                ->setValue(null, $this->originalSystemSettingsRepository);
+            $this->originalSystemSettingsRepository = null;
         }
     }
 }

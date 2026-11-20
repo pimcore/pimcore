@@ -303,8 +303,14 @@ class Dao extends Model\Element\Dao
      * Checks whether at least one version exists for this asset.
      *
      * Acquires the row lock of the asset first (like getVersionCountForUpdate()), so that concurrent saves of the
-     * same asset are serialized at this point, and uses a locking read, which returns the latest committed versions
-     * regardless of the transaction isolation level. Must be called inside a transaction to be effective.
+     * same asset are serialized at this point. Must be called inside a transaction to be effective.
+     *
+     * The versions are read without a lock: for an asset without versions, a locking read would lock the gap in the
+     * index of the versions table, which assets with adjacent ids share as long as they have no versions, so that
+     * concurrent first modifications of different assets would block each other's version inserts and deadlock. The
+     * row lock is enough, the other saves of the asset hold it until they commit. But a plain read only sees what was
+     * committed before the snapshot of the transaction was taken (with REPEATABLE READ: at its first plain read), so
+     * this has to be the first read of the transaction to see the versions of the previous holder of the row lock.
      *
      * @internal
      */
@@ -316,7 +322,7 @@ class Dao extends Model\Element\Dao
 
         $this->db->fetchOne('SELECT id FROM assets WHERE id = ? FOR UPDATE', [$this->model->getId()]);
 
-        return (bool) $this->db->fetchOne("SELECT 1 FROM versions WHERE cid = ? AND ctype = 'asset' LIMIT 1 FOR UPDATE", [$this->model->getId()]);
+        return (bool) $this->db->fetchOne("SELECT 1 FROM versions WHERE cid = ? AND ctype = 'asset' LIMIT 1", [$this->model->getId()]);
     }
 
     public function getVersionCountForUpdate(): int
