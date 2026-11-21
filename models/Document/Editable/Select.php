@@ -44,7 +44,14 @@ class Select extends Model\Document\Editable
 
     public function frontend()
     {
-        return $this->text;
+        $config = $this->getConfig();
+
+        $text = $this->text;
+        if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
+            $text = htmlspecialchars((string)$this->text);
+        }
+
+        return $text;
     }
 
     public function setDataFromResource(mixed $data): static
