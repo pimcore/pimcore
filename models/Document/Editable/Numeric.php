@@ -48,7 +48,14 @@ class Numeric extends Model\Document\Editable
 
     public function frontend()
     {
-        return $this->number;
+        $config = $this->getConfig();
+
+        $number = $this->number;
+        if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
+            $number = htmlspecialchars((string)$this->number);
+        }
+
+        return $number;
     }
 
     public function setDataFromResource(mixed $data): static
