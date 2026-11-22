@@ -39,6 +39,21 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
+    /**
+     * Sanitizing must not depend on the value having gone through a regular save: a draft version
+     * (saved via "version"/"autoSave" and never passed to {@see save()}) can still hold HTML a
+     * regular save would have stripped. Rendering sanitizes the value itself instead of relying on
+     * the persistence path it took.
+     */
+    private static function sanitize(?string $text): ?string
+    {
+        if ($text === null) {
+            return null;
+        }
+
+        return self::getWysiwygSanitizer()->sanitizeFor('body', $text);
+    }
+
     public function getType(): string
     {
         return 'wysiwyg';
@@ -58,7 +73,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     {
         $document = $this->getDocument();
 
-        return Text::wysiwygTextKeepingLinks($this->text, [
+        return Text::wysiwygTextKeepingLinks(self::sanitize($this->text), [
             'document' => $document,
             'context' => $this,
         ]);
@@ -68,7 +83,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     {
         $document = $this->getDocument();
 
-        return Text::wysiwygText($this->text, [
+        return Text::wysiwygText(self::sanitize($this->text), [
                 'document' => $document,
                 'context' => $this,
             ]);
@@ -135,10 +150,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function save(): void
     {
-        if (is_string($this->text)) {
-            $helper = self::getWysiwygSanitizer();
-            $this->text = $helper->sanitizeFor('body', $this->text);
-        }
+        $this->text = self::sanitize($this->text);
         $this->getDao()->save();
     }
 }
