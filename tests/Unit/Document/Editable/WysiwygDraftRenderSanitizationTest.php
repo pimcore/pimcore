@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Document\Editable;
 
 use Pimcore\Model\Document\Editable\Wysiwyg;
+use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -31,14 +32,23 @@ class WysiwygDraftRenderSanitizationTest extends TestCase
 {
     private const UNSAFE_HTML = '<p>ok</p><img src=x onerror=alert(1)><script>alert(2)</script>';
 
-    public function testFrontendSanitizesValueThatNeverWentThroughSave(): void
+    // frontend()/getDataEditmode() resolve the owning document for link rewriting; attach an
+    // in-memory, unsaved one so that lookup does not need the database.
+    private function createEditable(mixed $data): Wysiwyg
     {
         $editable = new Wysiwyg();
         $editable->setName('body');
+        $editable->setDocument(new Page());
+        $editable->setDataFromResource($data);
 
+        return $editable;
+    }
+
+    public function testFrontendSanitizesValueThatNeverWentThroughSave(): void
+    {
         // simulates a draft version loaded back without ever calling save(), e.g. a version
         // stored via the "version"/"autoSave" task
-        $editable->setDataFromResource(self::UNSAFE_HTML);
+        $editable = $this->createEditable(self::UNSAFE_HTML);
 
         $rendered = (string) $editable->frontend();
 
@@ -49,9 +59,7 @@ class WysiwygDraftRenderSanitizationTest extends TestCase
 
     public function testGetDataEditmodeSanitizesValueThatNeverWentThroughSave(): void
     {
-        $editable = new Wysiwyg();
-        $editable->setName('body');
-        $editable->setDataFromResource(self::UNSAFE_HTML);
+        $editable = $this->createEditable(self::UNSAFE_HTML);
 
         $editmodeData = (string) $editable->getDataEditmode();
 
@@ -62,9 +70,7 @@ class WysiwygDraftRenderSanitizationTest extends TestCase
 
     public function testFrontendStillRendersLegitimateMarkup(): void
     {
-        $editable = new Wysiwyg();
-        $editable->setName('body');
-        $editable->setDataFromResource('<p>Hello <b>world</b></p>');
+        $editable = $this->createEditable('<p>Hello <b>world</b></p>');
 
         $this->assertSame('<p>Hello <b>world</b></p>', (string) $editable->frontend());
     }
