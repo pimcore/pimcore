@@ -1087,13 +1087,14 @@ final class SecurityPolicyTest extends TestCase
 
     public function testBlockedFunctionsExtendsTheBuiltInDenylist(): void
     {
-        $policy = new SecurityPolicy(blockedFunctions: [
-            ...self::defaultSandboxSecurityPolicyConfig()['blocked_functions'],
-            'pimcore_website_config',
-        ]);
+        $defaultBlockedFunctions = self::defaultSandboxSecurityPolicyConfig()['blocked_functions'];
+        // a function the built-in denylist does not contain, so only the appended entry can block it
+        $this->assertNotContains('pimcore_url', $defaultBlockedFunctions);
+
+        $policy = new SecurityPolicy(blockedFunctions: [...$defaultBlockedFunctions, 'pimcore_url']);
 
         $this->expectException(SecurityNotAllowedFunctionError::class);
-        $policy->checkSecurity([], [], ['pimcore_website_config']);
+        $policy->checkSecurity([], [], ['pimcore_url']);
     }
 
     public function testPimcoreWebsiteConfigIsNotAutoAllowedByDefault(): void
