@@ -73,7 +73,10 @@ class Pimcore
     public static function isInstalled(): bool
     {
         try {
-            \Pimcore\Db::get()->fetchOne('SELECT id FROM assets LIMIT 1');
+            // Only whether the query fails matters, not whether a row comes back. A primary
+            // key lookup is a constant read; with "LIMIT 1" MySQL scans the first page of a
+            // secondary index instead, and this runs on every shutdown.
+            \Pimcore\Db::get()->fetchOne('SELECT id FROM assets WHERE id = 1');
 
             return true;
         } catch (\Exception $e) {
