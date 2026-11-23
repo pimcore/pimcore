@@ -62,14 +62,20 @@ class TreeMoveCrossDirectoryPermissionTest extends ModelTestCase
         parent::tearDown();
     }
 
-    public function testCrossDirectoryMoveIsForbiddenWhenSourceDeniesViewAndDelete(): void
+    /**
+     * Both view and delete on the source are independently required, so each denial is covered on
+     * its own: an implementation that checked only one of the two permissions must fail here.
+     *
+     * @dataProvider sourcePermissionDenialProvider
+     */
+    public function testCrossDirectoryMoveIsForbiddenWhenSourceDeniesPermission(bool $sourceView, bool $sourceDelete): void
     {
         $sourceFolder = $this->createFolder('cross-move-private-');
         $destinationFolder = $this->createFolder('cross-move-workspace-');
         $asset = $this->createFile($sourceFolder, 'secret.txt', 'confidential-bytes');
 
         $this->loginAs($this->createUserWithWorkspaces([
-            $this->workspace($sourceFolder, view: false, delete: false, publish: false),
+            $this->workspace($sourceFolder, view: $sourceView, delete: $sourceDelete, publish: false),
             $this->workspace($destinationFolder, create: true, view: true, publish: true),
         ]));
 
@@ -78,7 +84,7 @@ class TreeMoveCrossDirectoryPermissionTest extends ModelTestCase
                 ltrim($asset->getRealFullPath(), '/'),
                 ltrim($destinationFolder->getRealFullPath(), '/') . '/' . $asset->getFilename()
             );
-            $this->fail('Expected a Forbidden exception because the user lacks view/delete on the source folder.');
+            $this->fail('Expected a Forbidden exception because the user lacks view and/or delete on the source folder.');
         } catch (Forbidden $e) {
             // expected
         }
@@ -90,6 +96,18 @@ class TreeMoveCrossDirectoryPermissionTest extends ModelTestCase
             'the asset must stay in its original folder when the source-side permission check fails'
         );
         $this->assertSame('confidential-bytes', $reloaded->getData());
+    }
+
+    /**
+     * @return array<string, array{bool, bool}> [source view, source delete]
+     */
+    public static function sourcePermissionDenialProvider(): array
+    {
+        return [
+            'view and delete denied' => [false, false],
+            'only view denied' => [false, true],
+            'only delete denied' => [true, false],
+        ];
     }
 
     public function testCrossDirectoryMoveIsForbiddenWhenDestinationDeniesPublish(): void
