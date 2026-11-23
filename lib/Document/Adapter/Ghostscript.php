@@ -140,7 +140,8 @@ class Ghostscript extends Adapter
      */
     protected function buildPageCountCommand(): string
     {
-        $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
+        // Always run in SAFER mode: it is only the default as of Ghostscript 9.50.
+        $command = self::getGhostscriptCli() . ' -dSAFER -dNODISPLAY -q';
 
         // The local file path is interpolated into a PostScript string literal below, so it must never
         // carry a byte derived from the asset's (attacker-influenceable) filename - escapeshellarg() only
@@ -200,6 +201,7 @@ class Ghostscript extends Adapter
             $localFile = self::getLocalFileFromStream($this->getPdf());
             $cmd = [
                 static::getGhostscriptCli(),
+                '-dSAFER',
                 '-sDEVICE=pngalpha',
                 '-dFirstPage=' . $page,
                 '-dLastPage=' . $page,
@@ -281,7 +283,7 @@ class Ghostscript extends Adapter
         }
 
         // pure ghostscript way
-        $cmd = [self::getGhostscriptCli(), '-dBATCH', '-dNOPAUSE', '-sDEVICE=txtwrite'];
+        $cmd = [self::getGhostscriptCli(), '-dSAFER', '-dBATCH', '-dNOPAUSE', '-sDEVICE=txtwrite'];
         if ($page) {
             array_push($cmd, '-dFirstPage=' . $page, '-dLastPage=' . $page);
         }
