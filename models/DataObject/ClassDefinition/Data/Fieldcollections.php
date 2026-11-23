@@ -582,6 +582,224 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return true;
     }
 
+    /**
+     * See parent class. The default implementation inherited from Data is not sufficient here:
+     * it round-trips through this field's own getDataForEditmode()/getDataFromEditmode(), which in turn
+     * calls each nested field definition's plain (non-diff) editmode methods. For a nested field whose
+     * editmode data shape differs from what its getDataFromEditmode() expects (e.g. Localizedfields),
+     * that round-trip is not symmetric and breaks. Instead, flatten every (item, field) pair into its
+     * own diff entry and delegate to the nested field definition's own diff-aware methods, mirroring
+     * how Objectbricks already handles its nested fields.
+     */
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
+    {
+        $result = [];
+        $fieldname = $this->getName();
+
+        // load() (see below) deliberately returns null rather than an empty Fieldcollection once a
+        // collection has zero items, so a reloaded object with no items here arrives as $data ===
+        // null, not as an empty Fieldcollection instance - treat both the same. Without this, an
+        // empty collection contributes no per-item rows below, which would otherwise be
+        // indistinguishable from "this field isn't part of the diff at all" - emit an explicit
+        // marker (oIndex null) so taking this field over from an empty side can be told apart from
+        // "nothing submitted" and actually clears the other side's items (see
+        // getDiffDataFromEditmode() below)
+        if ($data === null || ($data instanceof DataObject\Fieldcollection && $data->isEmpty())) {
+            $result[] = [
+                'field' => $fieldname,
+                'key' => $fieldname . '~empty',
+                'type' => $this->getFieldType(),
+                'value' => null,
+                'disabled' => false,
+                'title' => $fieldname,
+                'data' => [
+                    'oIndex' => null,
+                    'type' => null,
+                    'name' => null,
+                ],
+            ];
+
+            return $result;
+        }
+
+        if ($data instanceof DataObject\Fieldcollection) {
+            $idx = -1;
+            foreach ($data as $item) {
+                $idx++;
+
+                if (!$collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    continue;
+                }
+
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    if ($fd instanceof CalculatedValue) {
+                        continue;
+                    }
+
+                    $value = $item->{'get' . ucfirst($fd->getName())}();
+
+                    // mirrors the context built by the plain getDataForEditmode()/getDataFromEditmode()
+                    // below, so a nested field that needs to resolve itself relative to the object
+                    // (e.g. for inheritance or lazy loading) sees the same information
+                    $fieldParams = $params;
+                    $fieldParams['context'] = [
+                        'containerType' => 'fieldcollection',
+                        'containerKey' => $item->getType(),
+                        'fieldname' => $fieldname,
+                        'index' => $idx,
+                        'oIndex' => $idx,
+                    ];
+
+                    $fielddata = $fd->getDiffDataForEditMode($value, $object, $fieldParams);
+                    if (!$fielddata) {
+                        continue;
+                    }
+
+                    // a nested field can contribute more than one diff entry (e.g. Localizedfields,
+                    // one per language) - keep every one of them as its own row instead of only the last
+                    foreach ($fielddata as $subdata) {
+                        $diffdata = [];
+                        $diffdata['field'] = $fieldname;
+                        $diffdata['key'] = $fieldname . '~' . $idx . '~' . $fd->getName() . '~' . ($subdata['key'] ?? '');
+                        $diffdata['type'] = $subdata['type'];
+                        $diffdata['value'] = $subdata['value'];
+                        $diffdata['disabled'] = $subdata['disabled'];
+                        $diffdata['title'] = $fieldname . ' / ' . $item->getType() . ' (' . ($idx + 1) . ') / ' . $subdata['title'];
+
+                        // already promoted to the top level above, not needed in the nested payload
+                        unset($subdata['type']);
+                        unset($subdata['value']);
+
+                        $diffdata['data'] = [
+                            'oIndex' => $idx,
+                            'type' => $item->getType(),
+                            'name' => $fd->getName(),
+                            'subdata' => $subdata,
+                        ];
+
+                        $result[] = $diffdata;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * See parent class. Mutates the object's existing Fieldcollection items in place where the
+     * submitted item's position and type already match one, and only applies fields whose own
+     * isDiffChangeAllowed() allows it - so a nested field that isn't individually diffable (e.g. a
+     * plain input) keeps its current value instead of being dropped. A position that doesn't match
+     * an existing item (an inserted item) or whose submitted type differs from what's currently
+     * there (a type change) gets a freshly built item instead of being silently dropped or having
+     * its fields applied onto a structurally unrelated item.
+     */
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): mixed
+    {
+        $fieldname = $this->getName();
+        $valueGetter = 'get' . ucfirst($fieldname);
+        $container = $object ? $object->$valueGetter() : null;
+
+        if (!$container instanceof DataObject\Fieldcollection) {
+            $container = new DataObject\Fieldcollection([], $fieldname);
+        }
+
+        // the explicit "empty collection" marker from getDiffDataForEditMode() above: taking this
+        // field over from a side that had zero items must clear the other side's items too, rather
+        // than leaving them untouched because there's nothing else in $data to act on
+        foreach ($data as $entry) {
+            $subdata = $entry['data'] ?? null;
+            if (is_array($subdata) && array_key_exists('oIndex', $subdata) && $subdata['oIndex'] === null) {
+                $container->setItems([]);
+
+                return $container;
+            }
+        }
+
+        $items = $container->getItems();
+
+        // group every entry by (oIndex, nested field name) first - a nested field can own more than
+        // one entry (e.g. Localizedfields, one per language) and needs all of them in a single call
+        // to rebuild its value correctly, the same way it would receive them as a top-level field
+        $grouped = [];
+        foreach ($data as $entry) {
+            $subdata = $entry['data'] ?? null;
+            if (!is_array($subdata) || !isset($subdata['oIndex'], $subdata['type'], $subdata['name'])) {
+                continue;
+            }
+
+            $oIndex = $subdata['oIndex'];
+            $grouped[$oIndex]['type'] = $subdata['type'];
+            $grouped[$oIndex]['fields'][$subdata['name']][] = $subdata['subdata'];
+        }
+
+        foreach ($grouped as $oIndex => $group) {
+            if (!$collectionDef = DataObject\Fieldcollection\Definition::getByKey($group['type'])) {
+                continue;
+            }
+
+            $item = $items[$oIndex] ?? null;
+            $isNewItem = !$item instanceof AbstractData || $item->getType() !== $group['type'];
+            if ($isNewItem) {
+                $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($group['type']);
+                /** @var AbstractData $item */
+                $item = Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
+                $item->setObject($object);
+                $item->setFieldname($fieldname);
+                $items[$oIndex] = $item;
+            }
+
+            foreach ($group['fields'] as $childFieldName => $subdataList) {
+                $fd = $collectionDef->getFieldDefinition($childFieldName);
+                if (!$fd || !$fd->isDiffChangeAllowed($object, $params)) {
+                    continue;
+                }
+
+                // mirrors the context built by the plain getDataForEditmode()/getDataFromEditmode()
+                // above, so a nested field resolves its existing value against the right object/item.
+                // For a newly built item, deliberately omit oIndex/index: Data::getDataFromObjectParam()
+                // uses oIndex to seed a nested field (e.g. Localizedfields) from the *existing* item at
+                // that position, and an out-of-range oIndex (always true for a brand-new item) falls
+                // back to an unrelated item via an off-by-one tolerance rather than finding nothing -
+                // there is nothing to seed from for a new item, so it must resolve to no existing value.
+                $fieldParams = $params;
+                $fieldParams['context'] = [
+                    'containerType' => 'fieldcollection',
+                    'containerKey' => $group['type'],
+                    'fieldname' => $fieldname,
+                ];
+                if (!$isNewItem) {
+                    $fieldParams['context']['index'] = $oIndex;
+                    $fieldParams['context']['oIndex'] = $oIndex;
+                }
+
+                $value = $fd->getDiffDataFromEditmode($subdataList, $object, $fieldParams);
+
+                // Localizedfields::getDiffDataFromEditmode() builds a fresh Localizedfield but never
+                // gives it a context (unlike its plain getDataFromEditmode()), so a nested instance
+                // would otherwise be unable to resolve its own field definitions afterwards (e.g. via
+                // getLinput()) - restore it here instead of relying on that method to carry it over
+                if ($value instanceof Localizedfield) {
+                    $value->setContext($fieldParams['context']);
+                    $value->setObject($object);
+                }
+
+                $item->{'set' . ucfirst($childFieldName)}($value);
+            }
+        }
+
+        // re-sequence: a newly inserted item may have been added under a non-contiguous oIndex key
+        ksort($items);
+        $orderedItems = array_values($items);
+        foreach ($orderedItems as $i => $orderedItem) {
+            $orderedItem->setIndex($i);
+        }
+        $container->setItems($orderedItems);
+
+        return $container;
+    }
+
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *

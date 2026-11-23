@@ -20,21 +20,73 @@ use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Authentication;
 use ReflectionMethod;
+use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Regression tests for GHSA-46p3-pxr2-m4j9 — Authentication::safelyUnserialize() must not
  * instantiate arbitrary classes when deserializing the pimcore_admin session token.
+ *
+ * Also covers the recognition of tokens that are still waiting for the second factor, which
+ * Authentication::authenticateSession() does not accept as a completed login.
  */
 class AuthenticationTest extends TestCase
 {
+    private const TWO_FACTOR_REQUIRED_TOKEN = 'Pimcore\\Bundle\\AdminBundle\\Security\\Authentication\\Token\\TwoFactorRequiredToken';
+
     private function safelyUnserialize(string $payload): mixed
     {
         $method = new ReflectionMethod(Authentication::class, 'safelyUnserialize');
         $method->setAccessible(true);
 
         return $method->invoke(null, $payload);
+    }
+
+    private function isPendingTwoFactorToken(TokenInterface $token): bool
+    {
+        $method = new ReflectionMethod(Authentication::class, 'isPendingTwoFactorToken');
+        $method->setAccessible(true);
+
+        return $method->invoke(null, $token);
+    }
+
+    public function testSchebPendingTwoFactorTokenIsRecognisedAsPending(): void
+    {
+        $pendingToken = $this->createStub(TwoFactorTokenInterface::class);
+
+        $this->assertTrue(
+            $this->isPendingTwoFactorToken($pendingToken),
+            'A scheb/2fa TwoFactorTokenInterface token (2FA step in progress) must be rejected as pending.'
+        );
+    }
+
+    public function testAdminUiClassicTwoFactorRequiredTokenIsRecognisedAsPending(): void
+    {
+        // admin-ui-classic-bundle is not a core dependency, so its TwoFactorRequiredToken class
+        // (a plain PostAuthenticationToken subclass issued while 2FA is pending) is not available
+        // here. Load a stand-in declared under the exact class name Authentication checks for.
+        if (!class_exists(self::TWO_FACTOR_REQUIRED_TOKEN, false)) {
+            require_once __DIR__ . '/../../Support/Fixtures/AdminUiClassic/TwoFactorRequiredToken.php';
+        }
+
+        $tokenClass = self::TWO_FACTOR_REQUIRED_TOKEN;
+        $token = new $tokenClass($this->createSecurityUser('admin'), 'pimcore_admin', []);
+
+        $this->assertTrue(
+            $this->isPendingTwoFactorToken($token),
+            'A TwoFactorRequiredToken (2FA pending on the classic admin-ui login) must be rejected as pending.'
+        );
+    }
+
+    public function testFullyAuthenticatedTokenIsNotRecognisedAsPending(): void
+    {
+        $token = new UsernamePasswordToken($this->createSecurityUser('admin'), 'pimcore_admin');
+
+        $this->assertFalse(
+            $this->isPendingTwoFactorToken($token),
+            'A fully authenticated control token must not be rejected as pending — legitimate logins must keep working.'
+        );
     }
 
     /**

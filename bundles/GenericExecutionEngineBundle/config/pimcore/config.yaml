@@ -13,6 +13,7 @@ framework:
             middleware:
               - 'Pimcore\Messenger\Middleware\CollectGarbageMiddleware'
               - 'Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware'
+              - 'Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\CoauthorMiddleware'
         enabled: true
         transports:
             pimcore_generic_execution_engine:

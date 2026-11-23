@@ -15,6 +15,9 @@ namespace Pimcore\Contracts\ChangeControl;
 
 /**
  * Where a merge stands. Running is under way; the others are final.
+ *
+ * The set is closed: no state is added in a minor release, so a consumer may match it exhaustively.
+ * A merge that ended is not resumed through this contract.
  */
 enum MergeState: string
 {
