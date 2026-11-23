@@ -35,6 +35,7 @@ use Pimcore\Model\DataObject\Listing as DataObjectListing;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
+use Pimcore\Model\Document\Email;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\Element\Recyclebin;
 use Pimcore\Model\Element\Tag;
@@ -226,6 +227,7 @@ final class SecurityPolicyTest extends TestCase
         yield 'getStream' => ['getStream'];
         yield 'getLocalFile' => ['getLocalFile'];
         yield 'getTemporaryFile' => ['getTemporaryFile'];
+        yield 'getText' => ['getText'];
     }
 
     /**
@@ -235,10 +237,38 @@ final class SecurityPolicyTest extends TestCase
     {
         // GHSA-7gfm-v2fx-xrxm: Asset stays reachable (needed for filename/thumbnail access
         // in templates), but its content-returning methods must never be callable.
+        // GHSA-mq5g-844p-6p8j: Asset\Document::getText() returns extracted document text
+        // and must be blocked the same way as the other content-returning getters.
         $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new Asset(), $method);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function emailHeaderMethodsProvider(): iterable
+    {
+        yield 'getSubject' => ['getSubject'];
+        yield 'getTo' => ['getTo'];
+        yield 'getFrom' => ['getFrom'];
+        yield 'getReplyTo' => ['getReplyTo'];
+        yield 'getCc' => ['getCc'];
+        yield 'getBcc' => ['getBcc'];
+    }
+
+    /**
+     * @dataProvider emailHeaderMethodsProvider
+     */
+    public function testEmailHeaderMethodsAreHardBlockedByDefault(string $method): void
+    {
+        // GHSA-mq5g-844p-6p8j: a Document\Email's headers can carry data from outside
+        // the viewer's document workspace and must never be sandbox-reachable.
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Email(), $method);
     }
 
     public function testAssetIsOtherwiseReachableByDefault(): void
