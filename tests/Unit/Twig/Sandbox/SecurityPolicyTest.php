@@ -432,9 +432,8 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
-     * getImageTransformInstance() hands back the global image adapter (Pimcore\Image\Adapter),
-     * which is not a Pimcore model: once returned, none of the other denylists apply to it, so
-     * its own methods (load/getResource/save) would otherwise be freely callable from a template.
+     * getImageTransformInstance() returns an object that is not a Pimcore model, so the other
+     * denylists do not apply to it once returned; the method itself has to be blocked.
      */
     public function testImageGetImageTransformInstanceIsHardBlockedByDefault(): void
     {

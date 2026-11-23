@@ -101,8 +101,8 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   blocked by exact name through `hard_blocked_method_patterns` (case-insensitive, and part of the
   built-in defaults): `Pimcore\Model\Asset\Image::getDimensions()`
   stores dimensions read from a caller-chosen file path (use `getWidth()` / `getHeight()` in
-  templates), `Pimcore\Model\Asset\Image::getImageTransformInstance()` hands back the global
-  image adapter (whose own methods perform local file I/O), and
+  templates), `Pimcore\Model\Asset\Image::getImageTransformInstance()` returns the global image
+  adapter, which is not a model and so is not covered by the rules above, and
   `Pimcore\Model\DataObject\Data\UrlSlug::getAction()` deletes the slug
   when its field definition no longer exists.
 
