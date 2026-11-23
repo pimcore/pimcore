@@ -64,6 +64,7 @@
 
 ### [Assets]
 - [Security] [Thumbnails] `Asset\Service::getStreamedResponseForThumbnail()` (and with it the public helper `Asset\Service::getStreamedResponseByUri()`) now rejects a thumbnail URI whose decoded storage path contains a NUL byte or a `.`/`..` segment. It returns `null` without reading the thumbnail storage and without generating a thumbnail, so the delivery ends in the usual 404/placeholder path. Custom thumbnail delivery integrations that call these methods with such URIs therefore receive `null` instead of a response; regular thumbnail URIs are unaffected.
+- [Security] [Thumbnails] Thumbnail responses created by `Asset\Service` (the public thumbnail route, `Asset\Service::getStreamedResponseByUri()` and `Asset\Service::getStreamedResponseFromImageThumbnail()`) now send `X-Content-Type-Options: nosniff`. Responses for SVG content (also XML/HTML content types and `.svg`/`.svgz` files) additionally send `Content-Security-Policy: default-src 'none'; img-src data:; style-src 'unsafe-inline'; font-src data:; sandbox`. Embedding these thumbnails via `<img>` or CSS is unaffected; an SVG thumbnail opened directly in the browser can no longer run scripts or load external resources. If your web server delivers SVG files from `/var/assets` or the thumbnail directory directly, configure the same header there.
 
 ## Pimcore 2026.3.5
 
