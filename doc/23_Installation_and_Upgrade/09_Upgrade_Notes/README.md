@@ -1,5 +1,15 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.7
+
+### [Assets] Ghostscript is always invoked with `-dSAFER`
+
+The Ghostscript document adapter (and the LibreOffice and Gotenberg adapters, which inherit from it) now always passes
+`-dSAFER` when rendering thumbnails, counting pages and extracting text, also on Ghostscript versions before 9.50,
+which do not enable it by default. PDFs that rely on external file references or other file access from within the
+document no longer resolve them. If your project has a custom adapter that overrides `saveImage()` or builds its own
+Ghostscript command, add `-dSAFER` there as well.
+
 ## Pimcore 2026.3.4
 
 ### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
