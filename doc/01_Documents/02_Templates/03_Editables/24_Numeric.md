@@ -18,6 +18,7 @@ The numeric editable is very similar to the [input editable](./16_Input.md), but
 | `class`        | string  | A CSS class that is added to the surrounding container of this element in editmode |
 | `defaultValue` | string  | A default value for the available options **as string**                            |
 | `required`     | boolean | set to true to make field value required for publish                               |
+| `htmlspecialchars` | boolean | (default: true) the value is HTML-escaped when rendered. Set to false only if the value is trusted and must be output as raw HTML. |
 
 ## Methods
 
