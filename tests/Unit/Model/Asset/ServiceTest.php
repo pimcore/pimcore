@@ -192,6 +192,90 @@ class ServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider svgThumbnailProvider
+     */
+    public function testImageThumbnailResponsesCarryRestrictiveHeadersOnlyForSvg(
+        string $src,
+        string $mime,
+        bool $hardened
+    ): void {
+        $thumbnail = $this->createMock(ThumbnailInterface::class);
+        $thumbnail->method('getPathReference')->willReturn(['type' => 'asset', 'src' => $src]);
+        $thumbnail->method('getStream')->willReturn(fopen('php://memory', 'r+'));
+        $thumbnail->method('getMimeType')->willReturn($mime);
+        $thumbnail->method('getFileSize')->willReturn(0);
+
+        $response = $this->withThumbnailStorage(
+            $this->createMock(FilesystemOperator::class),
+            fn () => Service::getStreamedResponseFromImageThumbnail($thumbnail, [
+                'type' => 'image',
+                'filename' => basename($src),
+            ])
+        );
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSameHardening($response, $mime, $hardened);
+    }
+
+    public static function svgThumbnailProvider(): array
+    {
+        return [
+            'svg' => ['/original-asset.svg', 'image/svg+xml', true],
+            'png' => ['/original-asset.png', 'image/png', false],
+        ];
+    }
+
+    /**
+     * @dataProvider svgCachedThumbnailProvider
+     */
+    public function testCachedThumbnailResponsesCarryRestrictiveHeadersOnlyForSvg(
+        string $path,
+        string $mime,
+        bool $hardened
+    ): void {
+        $prefix = (string) Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
+
+        $storageMock = $this->createMock(FilesystemOperator::class);
+        $storageMock->method('readStream')->willReturn(fopen('php://memory', 'r+'));
+        $storageMock->method('fileSize')->willReturn(0);
+        $storageMock->method('mimeType')->willReturn($mime);
+
+        $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseForThumbnail([
+            'type' => 'video',
+            'asset' => null,
+        ], $prefix . $path));
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSameHardening($response, $mime, $hardened);
+    }
+
+    public static function svgCachedThumbnailProvider(): array
+    {
+        return [
+            'svg' => ['/1/image-thumb__1__thumb/logo.svg', 'image/svg+xml', true],
+            'png' => ['/1/image-thumb__1__thumb/logo.png', 'image/png', false],
+        ];
+    }
+
+    private function assertSameHardening(StreamedResponse $response, string $mime, bool $hardened): void
+    {
+        $this->assertSame($mime, $response->headers->get('Content-Type'));
+        $this->assertTrue($response->headers->has('Cache-Control'));
+
+        if ($hardened) {
+            $csp = (string) $response->headers->get('Content-Security-Policy');
+            $this->assertStringContainsString('sandbox', $csp);
+            $this->assertStringContainsString("default-src 'none'", $csp);
+            $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+
+            return;
+        }
+
+        $this->assertFalse($response->headers->has('Content-Security-Policy'));
+        $this->assertFalse($response->headers->has('X-Content-Type-Options'));
+    }
+
+    /**
      * @dataProvider traversalUriProvider
      */
     public function testGetStreamedResponseForThumbnailRejectsTraversalPaths(string $uri): void
