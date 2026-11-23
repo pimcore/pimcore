@@ -135,7 +135,7 @@ class PimcoreCoreBundle extends Bundle
 
     /**
      * Same as bootDocumentLinkSanitizer(), for the independent policy of the Embed editable
-     * (pimcore.documents.editables.embed_sanitizer.*, GHSA-v3fp-8x27-9g8f).
+     * (pimcore.documents.editables.embed_sanitizer.*).
      */
     private function bootDocumentEmbedSanitizer(): void
     {
@@ -144,11 +144,7 @@ class PimcoreCoreBundle extends Bundle
             return;
         }
 
-        // hasParameter() guards containers that predate this parameter (e.g. hand-built test
-        // containers that only set the link_sanitizer/objects parameters) - PimcoreCoreExtension
-        // itself always sets it, defaulting to false, so real application containers are unaffected.
-        if (!$this->container->hasParameter('pimcore.documents.editables.embed_sanitizer.strict')
-            || !$this->container->getParameter('pimcore.documents.editables.embed_sanitizer.strict')) {
+        if (!$this->container->getParameter('pimcore.documents.editables.embed_sanitizer.strict')) {
             UrlSanitizer::setInstance(null);
 
             return;

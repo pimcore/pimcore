@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
  * "pimcore.documents.editables.embed_sanitizer.strict" config value (Configuration::createEmbedSanitizerNode())
  * resolves to, since that's the only place bridging the Symfony config value into the (non-DI-managed)
  * Embed editable's static sanitizer instance. Mirrors PimcoreCoreBundleLinkSanitizerTest for the
- * analogous Link editable wiring (GHSA-9g27-c28m-8xg5).
+ * analogous Link editable wiring.
  */
 class PimcoreCoreBundleEmbedSanitizerTest extends TestCase
 {
@@ -45,15 +45,15 @@ class PimcoreCoreBundleEmbedSanitizerTest extends TestCase
     {
         $this->bootWithParameter(true);
 
-        $this->assertFalse(UrlSanitizer::getInstance()->isUrlAllowed('<svg/onload=alert(1)>'));
-        $this->assertFalse(UrlSanitizer::getInstance()->isUrlAllowed('javascript:alert(1)'));
+        $this->assertFalse(UrlSanitizer::getInstance()->isUrlAllowed('<b>not-a-url</b>'));
+        $this->assertFalse(UrlSanitizer::getInstance()->isUrlAllowed('javascript:void(0)'));
     }
 
     public function testBootKeepsPermissivePolicyByDefault(): void
     {
         $this->bootWithParameter(false);
 
-        $this->assertTrue(UrlSanitizer::getInstance()->isUrlAllowed('<svg/onload=alert(1)>'));
+        $this->assertTrue(UrlSanitizer::getInstance()->isUrlAllowed('<b>not-a-url</b>'));
     }
 
     /**

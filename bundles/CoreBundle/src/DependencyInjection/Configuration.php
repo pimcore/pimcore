@@ -1254,9 +1254,9 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                     ->defaultFalse()
                     ->info(
-                        'Require the Embed editable\'s URL to be a well-formed http(s) URL with a host before '
-                        .'handing it to Embera, closing GHSA-v3fp-8x27-9g8f (stored XSS when no oEmbed provider '
-                        .'matches and Embera returns the value unchanged). Defaults to false to preserve existing '
+                        'Require the Embed editable\'s URL to be a well-formed http(s) URL with a host, free of '
+                        .'characters that are significant in HTML, before handing it to Embera (which returns '
+                        .'anything no oEmbed provider recognizes unchanged). Defaults to false to preserve existing '
                         .'behavior; the permissive default is deprecated since 2026.3 and will be removed in 2027.1. '
                         .'See Pimcore\Model\Document\Editable\Embed\UrlSanitizer.'
                     )

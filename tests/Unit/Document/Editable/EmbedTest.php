@@ -19,9 +19,10 @@ use Pimcore\Model\Document\Editable\Embed\UrlSanitizer;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * frontend() only reaches the mpratt/embera call after the sanitizer check passes, so every test
- * here exercises a value the strict() policy rejects - this proves the early return and never
- * requires the actual Embera library to be installed.
+ * The strict() policy tests exercise values the policy rejects: frontend() only reaches the
+ * mpratt/embera call after the sanitizer check passes, so they prove the early return without
+ * depending on any oEmbed provider (or the network). The default-policy tests use a value that
+ * contains no URL, so Embera has nothing to look up.
  */
 class EmbedTest extends TestCase
 {
@@ -38,34 +39,29 @@ class EmbedTest extends TestCase
         $this->assertSame('', $embed->frontend());
     }
 
-    public function testStrictPolicyRejectsSvgMarkupBeforeReachingEmbera(): void
+    /**
+     * @dataProvider strictRejectedValueProvider
+     */
+    public function testStrictPolicyRendersNothingForRejectedValues(string $value): void
     {
         UrlSanitizer::setInstance(UrlSanitizer::strict());
 
         $embed = new Embed();
-        $embed->setDataFromResource(['url' => '<svg/onload=alert(1)>']);
+        $embed->setDataFromEditmode(['url' => $value]);
 
         $this->assertSame('', $embed->frontend());
     }
 
-    public function testStrictPolicyRejectsJavascriptSchemeBeforeReachingEmbera(): void
+    public static function strictRejectedValueProvider(): array
     {
-        UrlSanitizer::setInstance(UrlSanitizer::strict());
-
-        $embed = new Embed();
-        $embed->setDataFromResource(['url' => 'javascript:alert(1)']);
-
-        $this->assertSame('', $embed->frontend());
-    }
-
-    public function testStrictPolicyRejectsDataSchemeBeforeReachingEmbera(): void
-    {
-        UrlSanitizer::setInstance(UrlSanitizer::strict());
-
-        $embed = new Embed();
-        $embed->setDataFromResource(['url' => 'data:text/html,<script>alert(1)</script>']);
-
-        $this->assertSame('', $embed->frontend());
+        return [
+            'markup' => ['<b>not-a-url</b>'],
+            'javascript scheme' => ['javascript:void(0)'],
+            'data scheme' => ['data:text/html,<b>x</b>'],
+            'url followed by markup' => ['https://example.com/"><b>x</b>'],
+            'provider url followed by markup' => ['https://www.youtube.com/watch?v=dQw4w9WgXcQ"><b>x</b>'],
+            'url with tag in the path' => ['https://example.com/<b>x</b>'],
+        ];
     }
 
     public function testStrictPolicyDoesNotTriggerTheDefaultDeprecation(): void
@@ -73,7 +69,33 @@ class EmbedTest extends TestCase
         UrlSanitizer::setInstance(UrlSanitizer::strict());
 
         $embed = new Embed();
-        $embed->setDataFromResource(['url' => '<svg/onload=alert(1)>']);
+        $embed->setDataFromResource(['url' => '<b>not-a-url</b>']);
+
+        $this->assertSame([], $this->captureDeprecations(fn () => $embed->frontend()));
+    }
+
+    public function testDefaultPolicyTriggersDeprecationForAValueTheStrictPolicyWouldReject(): void
+    {
+        UrlSanitizer::setInstance(null);
+
+        $embed = new Embed();
+        $embed->setDataFromResource(['url' => 'not a url at all']);
+
+        $deprecations = $this->captureDeprecations(fn () => $embed->frontend());
+
+        $this->assertCount(1, $deprecations);
+        $this->assertStringStartsWith('Since pimcore/pimcore 2026.3:', $deprecations[0]);
+        $this->assertStringContainsString('will be removed in 2027.1', $deprecations[0]);
+    }
+
+    public function testExplicitPermissivePolicyDoesNotTriggerTheDefaultDeprecation(): void
+    {
+        // an application deliberately allowing everything is an explicit opt-out, not the
+        // deprecated unconfigured default
+        UrlSanitizer::setInstance(new UrlSanitizer());
+
+        $embed = new Embed();
+        $embed->setDataFromResource(['url' => 'not a url at all']);
 
         $this->assertSame([], $this->captureDeprecations(fn () => $embed->frontend()));
     }

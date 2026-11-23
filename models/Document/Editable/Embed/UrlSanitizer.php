@@ -17,20 +17,30 @@ namespace Pimcore\Model\Document\Editable\Embed;
  * Governs which editmode-submitted values \Pimcore\Model\Document\Editable\Embed::frontend() hands
  * to Embera\Embera::autoEmbed().
  *
+ * Embera only replaces the URLs an oEmbed provider recognizes and returns every other part of its
+ * input unchanged, so a stored value that is not a plain URL (or that carries trailing text after
+ * a URL) ends up as raw markup in the rendered page.
+ *
  * The default instance (getInstance() with nothing configured) is fully permissive: any value is
- * passed straight through, matching this editable's behavior prior to GHSA-v3fp-8x27-9g8f. When no
- * registered oEmbed provider recognizes the value, Embera returns it unchanged - so a value that
- * isn't actually a URL (including raw markup such as "<svg/onload=alert(1)>") is emitted verbatim
- * into the public page. strict() closes that by requiring the value to be a well-formed http(s)
- * URL with a host before it reaches Embera at all.
+ * passed straight through, as it was before this policy existed. strict() requires the value to
+ * be a well-formed http(s) URL with a host that contains no characters with a meaning in HTML
+ * (see STRICT_FORBIDDEN_CHARACTERS_PATTERN) before it reaches Embera at all.
  *
  * To opt into the stricter policy, set the "pimcore.documents.editables.embed_sanitizer.strict"
  * config option to true - PimcoreCoreBundle::boot() reads it and installs a policy built from it.
  * For a fully custom policy, call setInstance() directly instead, from your own bundle's boot()
  * method.
  */
-final class UrlSanitizer
+class UrlSanitizer
 {
+    /**
+     * Characters strict() refuses anywhere in the value: ASCII control characters, whitespace,
+     * and the characters that open or close markup and attribute values. PHP's
+     * FILTER_VALIDATE_URL accepts several of them (e.g. "<", ">" and quotes in the path), so it is
+     * not sufficient on its own.
+     */
+    private const STRICT_FORBIDDEN_CHARACTERS_PATTERN = '/[\x00-\x20\x7f<>"\'`]/';
+
     private static ?self $instance = null;
 
     /**
@@ -78,8 +88,8 @@ final class UrlSanitizer
     }
 
     /**
-     * The policy that closes GHSA-v3fp-8x27-9g8f (stored XSS via the Embed editable). This is not
-     * the default - see the class docblock.
+     * The policy that only lets plain http(s) URLs through to Embera. This is not the default - see
+     * the class docblock.
      */
     public static function strict(): self
     {
@@ -96,6 +106,10 @@ final class UrlSanitizer
             return true;
         }
 
+        if (preg_match(self::STRICT_FORBIDDEN_CHARACTERS_PATTERN, $url) === 1) {
+            return false;
+        }
+
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             return false;
         }
@@ -103,6 +117,7 @@ final class UrlSanitizer
         $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
         $host = parse_url($url, PHP_URL_HOST);
 
-        return in_array($scheme, ['http', 'https'], true) && !empty($host);
+        // an explicit check instead of empty(): the valid host "0" is falsy
+        return in_array($scheme, ['http', 'https'], true) && is_string($host) && $host !== '';
     }
 }

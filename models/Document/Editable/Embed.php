@@ -56,8 +56,8 @@ class Embed extends Model\Document\Editable
             $sanitizer = UrlSanitizer::getInstance();
 
             if (!$sanitizer->isUrlAllowed($this->url)) {
-                // not a well-formed http(s) URL - Embera would otherwise return it unchanged
-                // (GHSA-v3fp-8x27-9g8f), so render nothing rather than pass it through
+                // not acceptable for the active policy - Embera would return anything it does not
+                // recognize unchanged, so render nothing rather than pass the value through
                 return '';
             }
 
@@ -67,9 +67,8 @@ class Embed extends Model\Document\Editable
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '2026.3',
-                    'Rendering an Embed editable URL ("%s") that is not a well-formed http(s) URL, which the'
-                    .' stricter policy closing GHSA-v3fp-8x27-9g8f would reject. The permissive Embed sanitizer'
-                    .' default is deprecated and will be removed in 2027.1; set'
+                    'Rendering an Embed editable URL ("%s") that the stricter Embed URL policy would reject.'
+                    .' The permissive Embed sanitizer default is deprecated and will be removed in 2027.1; set'
                     .' "pimcore.documents.editables.embed_sanitizer.strict: true" to reject it now.',
                     $this->url
                 );
