@@ -152,7 +152,11 @@ path reachable by the PHP process (GHSA-7m33-xgw9-j3g7), and
 `pimcore_asset_version_preview` / `pimcore_image_version_preview`, which read the
 contents of an arbitrary file (base64-encoded) and then delete it - letting a
 sandboxed template read and destroy any file reachable by the PHP process, e.g.
-`.env` or other configuration holding credentials (GHSA-f5q9-27jc-vxm9).
+`.env` or other configuration holding credentials (GHSA-f5q9-27jc-vxm9), and
+`pimcore_website_config`, which returns the complete website configuration -
+including secrets such as the private reCAPTCHA key - when called without a key,
+and a single configured value (potentially a secret) when called with one
+(GHSA-fq3q-7w2w-8q9f).
 
 All other `pimcore_*` functions - including the other id/path lookup functions,
 `pimcore_asset`, `pimcore_asset_by_path`, `pimcore_document`,
@@ -251,10 +255,10 @@ pimcore:
                 allowed_classes: []
                 # Defaults to the built-in pimcore_* function denylist - a site's own
                 # config is appended to it. Only pimcore_user, pimcore_dump, pimcore_file_exists,
-                # pimcore_asset_version_preview and pimcore_image_version_preview are
-                # blocked out of the box; the id/path lookup functions below are
-                # shipped commented out - uncomment them (or add the equivalent to a
-                # site's own config) for a high-security setup.
+                # pimcore_asset_version_preview, pimcore_image_version_preview and
+                # pimcore_website_config are blocked out of the box; the id/path lookup
+                # functions below are shipped commented out - uncomment them (or add the
+                # equivalent to a site's own config) for a high-security setup.
                 blocked_functions:
                     # - pimcore_asset
                     # - pimcore_asset_by_path
@@ -274,6 +278,7 @@ pimcore:
                     - pimcore_asset_version_preview
                     - pimcore_image_version_preview
                     - pimcore_dump
+                    - pimcore_website_config
                 # FQCN => method names that are never callable, regardless of
                 # blocked_classes/allowed_classes. Defaults to a small set of
                 # secret/content-returning getters - a site's own config is merged
