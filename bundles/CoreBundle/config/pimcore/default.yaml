@@ -413,6 +413,7 @@ pimcore:
                         - getStream
                         - getLocalFile
                         - getTemporaryFile
+                        - getText
                         - delete
                         - save
                         - saveVersion
@@ -425,6 +426,15 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
+                    # mail headers of an email document can carry data outside the viewer's
+                    # document workspace - keep them as unreachable as Asset content
+                    Pimcore\Model\Document\Email:
+                        - getSubject
+                        - getTo
+                        - getFrom
+                        - getReplyTo
+                        - getCc
+                        - getBcc
                 # Method families that cannot be enumerated by exact name: the dynamically
                 # generated `setXxx` setters and every other persistent mutator that writes
                 # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions, dumpClass,

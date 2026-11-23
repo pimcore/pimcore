@@ -192,6 +192,126 @@ class ServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider traversalUriProvider
+     */
+    public function testGetStreamedResponseForThumbnailRejectsTraversalPaths(string $uri): void
+    {
+        $storageMock = $this->createMock(FilesystemOperator::class);
+        $storageMock->expects($this->never())->method('readStream');
+        $storageMock->expects($this->never())->method('fileSize');
+        $storageMock->expects($this->never())->method('mimeType');
+
+        $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseForThumbnail([
+            'type' => 'video',
+            'asset' => null,
+        ], $uri));
+
+        $this->assertNull($response);
+    }
+
+    public static function traversalUriProvider(): array
+    {
+        return [
+            'encoded slashes' => ['/image-thumb__1__thumb/base..%2F..%2F..%2F..%2Fconfig%2Fsystem.yml'],
+            'encoded dot segments' => ['/image-thumb__1__thumb/%2e%2e/%2e%2e/config/system.yml'],
+            'literal dot segments' => ['/image-thumb__1__thumb/../../../config/system.yml'],
+            'backslash segments' => ['/image-thumb__1__thumb/..%5C..%5Cconfig%5Csystem.yml'],
+            'nul byte' => ['/image-thumb__1__thumb/foo.jpg%00.png'],
+        ];
+    }
+
+    public function testGetStreamedResponseForThumbnailStillStreamsEncodedFilename(): void
+    {
+        $prefix = (string) Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
+        $path = '/1/image-thumb__1__thumb/my file ä.jpg';
+        $uri = $prefix . implode('/', array_map('rawurlencode', explode('/', $path)));
+
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, 'content');
+        rewind($stream);
+
+        $storageMock = $this->createMock(FilesystemOperator::class);
+        $storageMock->expects($this->once())->method('readStream')
+            ->with($path)->willReturn($stream);
+        $storageMock->method('fileSize')->willReturn(7);
+        $storageMock->method('mimeType')->willReturn('image/jpeg');
+
+        $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseForThumbnail([
+            'type' => 'video',
+            'asset' => null,
+        ], $uri));
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    public function testSvgPassthroughResponseCarriesRestrictiveHeaders(): void
+    {
+        $thumbnail = $this->createMock(ThumbnailInterface::class);
+        $thumbnail->method('getPathReference')->willReturn(['type' => 'asset', 'src' => '/foo/bar.svg']);
+        $thumbnail->method('getStream')->willReturn(fopen('php://memory', 'r+'));
+        $thumbnail->method('getMimeType')->willReturn('image/svg+xml');
+        $thumbnail->method('getFileSize')->willReturn(0);
+
+        $response = Service::getStreamedResponseFromImageThumbnail($thumbnail, [
+            'type' => 'image',
+            'filename' => 'bar.svg',
+        ]);
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $csp = (string) $response->headers->get('Content-Security-Policy');
+        $this->assertStringContainsString('sandbox', $csp);
+        $this->assertStringContainsString("default-src 'none'", $csp);
+        $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+        $this->assertSame('image/svg+xml', $response->headers->get('Content-Type'));
+    }
+
+    public function testRasterThumbnailResponseGetsNosniffOnly(): void
+    {
+        $thumbnail = $this->createMock(ThumbnailInterface::class);
+        $thumbnail->method('getPathReference')->willReturn(['type' => 'asset', 'src' => '/foo/bar.jpg']);
+        $thumbnail->method('getStream')->willReturn(fopen('php://memory', 'r+'));
+        $thumbnail->method('getMimeType')->willReturn('image/jpeg');
+        $thumbnail->method('getFileSize')->willReturn(0);
+
+        $response = Service::getStreamedResponseFromImageThumbnail($thumbnail, [
+            'type' => 'image',
+            'filename' => 'bar.jpg',
+        ]);
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+        $this->assertSame('image/jpeg', $response->headers->get('Content-Type'));
+        $this->assertFalse($response->headers->has('Content-Disposition'));
+        $this->assertFalse($response->headers->has('Content-Security-Policy'));
+    }
+
+    public function testCachedSvgThumbnailFastPathCarriesRestrictiveHeaders(): void
+    {
+        foreach (['image/svg+xml', 'text/xml', 'text/plain'] as $mime) {
+            $prefix = (string) Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
+            $path = '/1/image-thumb__1__thumb/vector.svg';
+            $stream = fopen('php://memory', 'r+');
+            fwrite($stream, '<svg/>');
+            rewind($stream);
+
+            $storageMock = $this->createMock(FilesystemOperator::class);
+            $storageMock->method('readStream')->willReturn($stream);
+            $storageMock->method('fileSize')->willReturn(6);
+            $storageMock->method('mimeType')->willReturn($mime);
+
+            $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseForThumbnail([
+                'type' => 'video',
+                'asset' => null,
+            ], $prefix . $path));
+
+            $this->assertInstanceOf(StreamedResponse::class, $response);
+            $this->assertStringContainsString('sandbox', (string) $response->headers->get('Content-Security-Policy'));
+            $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+        }
+    }
+
+    /**
      * Runs $callback with the thumbnail storage replaced by $storage.
      *
      * Pimcore\Tool\Storage resolves each storage from a tagged service locator, so the whole
