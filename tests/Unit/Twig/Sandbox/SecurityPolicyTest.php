@@ -271,6 +271,26 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new Email(), $method);
     }
 
+    public function testDocumentAssetTextIsHardBlockedByDefault(): void
+    {
+        // GHSA-mq5g-844p-6p8j: getText() only exists on Asset\Document; the block is declared
+        // for the Asset base class, so check that it reaches the subclass that is affected.
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Asset\Document(), 'getText');
+    }
+
+    public function testDocumentAssetIsOtherwiseReachableByDefault(): void
+    {
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
+
+        // no exception expected: page count and filename of a document asset stay usable in templates
+        $policy->checkMethodAllowed(new Asset\Document(), 'getPageCount');
+        $policy->checkMethodAllowed(new Asset\Document(), 'getFilename');
+        $this->addToAssertionCount(2);
+    }
+
     public function testAssetIsOtherwiseReachableByDefault(): void
     {
         $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
