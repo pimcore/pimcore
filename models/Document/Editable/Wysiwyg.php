@@ -39,6 +39,29 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
+    /**
+     * Sanitizing must not depend on the value having gone through a regular save: a draft version
+     * (saved via "version"/"autoSave" and never passed to {@see save()}) can still hold HTML a
+     * regular save would have stripped. Rendering sanitizes the value itself instead of relying on
+     * the persistence path it took.
+     *
+     * A value stored by a regular save is therefore sanitized again when it is rendered, so the
+     * sanitizer has to return its own output unchanged. The shipped `pimcore.wysiwyg_sanitizer`
+     * configuration does that for the markup the editors produce, with three exceptions that do not
+     * change what a browser displays: text inside `<iframe>` is escaped once more, an attribute value
+     * containing a backtick gets one more trailing space, and a value consisting only of whitespace
+     * becomes an empty string. A project that replaces or decorates the sanitizer service has to keep
+     * its output stable in the same way.
+     */
+    private static function sanitize(?string $text): ?string
+    {
+        if ($text === null) {
+            return null;
+        }
+
+        return self::getWysiwygSanitizer()->sanitizeFor('body', $text);
+    }
+
     public function getType(): string
     {
         return 'wysiwyg';
@@ -58,7 +81,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     {
         $document = $this->getDocument();
 
-        return Text::wysiwygTextKeepingLinks($this->text, [
+        return Text::wysiwygTextKeepingLinks(self::sanitize($this->text), [
             'document' => $document,
             'context' => $this,
         ]);
@@ -68,7 +91,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     {
         $document = $this->getDocument();
 
-        return Text::wysiwygText($this->text, [
+        return Text::wysiwygText(self::sanitize($this->text), [
                 'document' => $document,
                 'context' => $this,
             ]);
@@ -135,10 +158,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function save(): void
     {
-        if (is_string($this->text)) {
-            $helper = self::getWysiwygSanitizer();
-            $this->text = $helper->sanitizeFor('body', $this->text);
-        }
+        $this->text = self::sanitize($this->text);
         $this->getDao()->save();
     }
 }
