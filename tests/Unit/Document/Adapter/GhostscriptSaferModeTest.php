@@ -161,6 +161,7 @@ class GhostscriptSaferModeTest extends TestCase
     public function testTextExtractionFallbackUsesSaferMode(): void
     {
         $adapter = $this->createAdapter();
+
         try {
             $adapter->text($this->directory . '/input.pdf');
         } catch (Exception $e) {
