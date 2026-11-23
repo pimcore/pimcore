@@ -18,12 +18,11 @@ use Pimcore\Model\Document\Editable\Numeric;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Regression test for GHSA-6x4h-x5fw-8w6h: a document-edit user could store arbitrary HTML/JS as
- * the editmode value, which was returned unescaped from frontend(), resulting in stored XSS.
+ * Covers the HTML escaping of the Numeric editable's frontend() output.
  */
 final class NumericTest extends TestCase
 {
-    private const XSS_PAYLOAD = '<svg onload="alert(document.domain)"></svg>';
+    private const MARKUP_VALUE = '<svg onload="alert(document.domain)"></svg>';
 
     protected function needsDb(): bool
     {
@@ -33,15 +32,28 @@ final class NumericTest extends TestCase
     public function testFrontendEscapesStoredValueByDefault(): void
     {
         $numeric = new Numeric();
-        $numeric->setDataFromEditmode(self::XSS_PAYLOAD);
+        $numeric->setDataFromEditmode(self::MARKUP_VALUE);
 
         $rendered = $numeric->frontend();
 
-        $this->assertStringNotContainsString('onload="alert(document.domain)"', $rendered);
-        $this->assertStringContainsString(
-            htmlspecialchars(self::XSS_PAYLOAD, ENT_QUOTES, 'UTF-8'),
-            $rendered
-        );
+        $this->assertStringNotContainsString('<svg', $rendered);
+        $this->assertSame(htmlspecialchars(self::MARKUP_VALUE, ENT_QUOTES, 'UTF-8'), $rendered);
+    }
+
+    public function testFrontendEscapesQuotesAndAmpersands(): void
+    {
+        $numeric = new Numeric();
+        $numeric->setDataFromEditmode('" a=\'b\' & c');
+
+        $this->assertSame('&quot; a=&#039;b&#039; &amp; c', $numeric->frontend());
+    }
+
+    public function testFrontendEscapesValueLoadedFromStorage(): void
+    {
+        $numeric = new Numeric();
+        $numeric->setDataFromResource(self::MARKUP_VALUE);
+
+        $this->assertStringNotContainsString('<svg', $numeric->frontend());
     }
 
     public function testFrontendStillRendersALegitimateValue(): void
@@ -56,15 +68,18 @@ final class NumericTest extends TestCase
     {
         $numeric = new Numeric();
         $numeric->setConfig(['htmlspecialchars' => false]);
-        $numeric->setDataFromEditmode(self::XSS_PAYLOAD);
+        $numeric->setDataFromEditmode(self::MARKUP_VALUE);
 
-        $this->assertSame(self::XSS_PAYLOAD, $numeric->frontend());
+        $this->assertSame(self::MARKUP_VALUE, $numeric->frontend());
     }
 
-    public function testEmptyNumericFrontendWithDefaultConfig(): void
+    public function testUnsetNumericFrontendStaysNull(): void
     {
         $numeric = new Numeric();
 
-        $this->assertSame('', $numeric->frontend());
+        $this->assertNull($numeric->frontend());
+
+        $numeric->setConfig(['htmlspecialchars' => false]);
+        $this->assertNull($numeric->frontend());
     }
 }

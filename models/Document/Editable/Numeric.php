@@ -51,8 +51,9 @@ class Numeric extends Model\Document\Editable
         $config = $this->getConfig();
 
         $number = $this->number;
-        if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
-            $number = htmlspecialchars((string)$this->number);
+        // an unset editable keeps returning null; only actual values are escaped
+        if ($number !== null && (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false)) {
+            $number = htmlspecialchars($number);
         }
 
         return $number;

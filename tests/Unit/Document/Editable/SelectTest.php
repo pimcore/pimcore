@@ -18,12 +18,11 @@ use Pimcore\Model\Document\Editable\Select;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Regression test for GHSA-6x4h-x5fw-8w6h: a document-edit user could store arbitrary HTML/JS as
- * the editmode value, which was returned unescaped from frontend(), resulting in stored XSS.
+ * Covers the HTML escaping of the Select editable's frontend() output.
  */
 final class SelectTest extends TestCase
 {
-    private const XSS_PAYLOAD = '<img src=x onerror="alert(document.domain)">';
+    private const MARKUP_VALUE = '<img src=x onerror="alert(document.domain)">';
 
     protected function needsDb(): bool
     {
@@ -33,15 +32,28 @@ final class SelectTest extends TestCase
     public function testFrontendEscapesStoredValueByDefault(): void
     {
         $select = new Select();
-        $select->setDataFromEditmode(self::XSS_PAYLOAD);
+        $select->setDataFromEditmode(self::MARKUP_VALUE);
 
         $rendered = $select->frontend();
 
-        $this->assertStringNotContainsString('onerror="alert(document.domain)"', $rendered);
-        $this->assertStringContainsString(
-            htmlspecialchars(self::XSS_PAYLOAD, ENT_QUOTES, 'UTF-8'),
-            $rendered
-        );
+        $this->assertStringNotContainsString('<img', $rendered);
+        $this->assertSame(htmlspecialchars(self::MARKUP_VALUE, ENT_QUOTES, 'UTF-8'), $rendered);
+    }
+
+    public function testFrontendEscapesQuotesAndAmpersands(): void
+    {
+        $select = new Select();
+        $select->setDataFromEditmode('" a=\'b\' & c');
+
+        $this->assertSame('&quot; a=&#039;b&#039; &amp; c', $select->frontend());
+    }
+
+    public function testFrontendEscapesValueLoadedFromStorage(): void
+    {
+        $select = new Select();
+        $select->setDataFromResource(self::MARKUP_VALUE);
+
+        $this->assertStringNotContainsString('<img', $select->frontend());
     }
 
     public function testFrontendStillRendersALegitimateValue(): void
@@ -56,15 +68,18 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         $select->setConfig(['htmlspecialchars' => false]);
-        $select->setDataFromEditmode(self::XSS_PAYLOAD);
+        $select->setDataFromEditmode(self::MARKUP_VALUE);
 
-        $this->assertSame(self::XSS_PAYLOAD, $select->frontend());
+        $this->assertSame(self::MARKUP_VALUE, $select->frontend());
     }
 
-    public function testEmptySelectFrontendWithDefaultConfig(): void
+    public function testUnsetSelectFrontendStaysNull(): void
     {
         $select = new Select();
 
-        $this->assertSame('', $select->frontend());
+        $this->assertNull($select->frontend());
+
+        $select->setConfig(['htmlspecialchars' => false]);
+        $this->assertNull($select->frontend());
     }
 }

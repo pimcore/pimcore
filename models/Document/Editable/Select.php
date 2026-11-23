@@ -47,8 +47,9 @@ class Select extends Model\Document\Editable
         $config = $this->getConfig();
 
         $text = $this->text;
-        if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
-            $text = htmlspecialchars((string)$this->text);
+        // an unset editable keeps returning null; only actual values are escaped
+        if ($text !== null && (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false)) {
+            $text = htmlspecialchars($text);
         }
 
         return $text;
