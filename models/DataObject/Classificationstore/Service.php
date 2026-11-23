@@ -22,12 +22,106 @@ use Pimcore\Model\DataObject;
 class Service
 {
     /**
+     * The name spaces a container key can come from, used to qualify a collected field identity.
+     * Object brick keys and field collection keys are unique within their own kind only, so the
+     * kind has to be part of the identity for the two to stay apart.
+     */
+    private const OBJECTBRICK_CONTAINER = 'objectbrick';
+
+    private const FIELDCOLLECTION_CONTAINER = 'fieldcollection';
+
+    /**
+     * The marshaller format the classification store packs its values with,
+     * {@see self::marshallerPacksIntoValueColumns()}.
+     */
+    private const MARSHALLER_FORMAT = 'classificationstore';
+
+    /**
+     * The value type declarations of a field whose value is a scalar, which no structure can be read
+     * as, {@see self::canReadStoredValue()}. The nullable form of each one is the same declaration.
+     *
+     * @var string[]
+     */
+    private const SCALAR_VALUE_DECLARATIONS = ['string', 'int', 'float', 'bool'];
+
+    /**
+     * The members of a stored value that the `denormalize()` of a field type reads WITHOUT asking
+     * whether they are there, by field type - `$value['consent']` after an `is_array()` and nothing
+     * else ({@see DataObject\ClassDefinition\Data\Consent::denormalize()}). A stored value that does
+     * not carry them is not a value of that type, {@see self::canReadStoredValue()}.
+     *
+     * Every entry was read off the type's own `normalize()` beside its `denormalize()`, so that the
+     * members required here are the ones that type writes: `quantityValue` and `numericRange`
+     * normalize through a `toArray()` of their value object rather than inline, and `video` writes
+     * only `type` unconditionally - its other members are read with a `??` and are not required.
+     *
+     * A list rather than something derived, and it has to be: which members a `denormalize()` reads
+     * unguarded is a property of that method's body, and nothing about a field type declares it.
+     * A type that is not named here is not refused, {@see self::canReadStoredValue()}.
+     *
+     * @var array<string, string[]>
+     */
+    private const MEMBERS_READ_BY_TYPE = [
+        'consent' => ['consent', 'noteId'],
+        'externalImage' => ['url'],
+        'geobounds' => ['northEast', 'southWest'],
+        'geopoint' => ['latitude', 'longitude'],
+        'hotspotimage' => ['hotspots', 'marker', 'crop'],
+        'inputQuantityValue' => ['value', 'unitId'],
+        'numericRange' => ['minimum', 'maximum'],
+        'quantityValue' => ['value', 'unitId'],
+        'quantityValueRange' => ['minimum', 'maximum', 'unitId'],
+        'rgbaColor' => ['r', 'g', 'b', 'a'],
+        'video' => ['type'],
+    ];
+
+    /**
+     * The field types whose stored value is a LIST of what another type stores one of, each entry of
+     * which is handed to that type's `denormalize()` and read the way it reads its own value
+     * ({@see DataObject\ClassDefinition\Data\Geopolygon::denormalize()}).
+     *
+     * @var array<string, string>
+     */
+    private const LIST_ENTRY_TYPE = [
+        'geopolygon' => 'geopoint',
+        'geopolyline' => 'geopoint',
+        'imageGallery' => 'hotspotimage',
+    ];
+
+    /**
+     * What an ADVANCED relation reads off every entry of a stored value beside the target itself
+     * ({@see DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::denormalize()}), which is
+     * what tells its stored form from a plain relation's: both are a list of entries naming a
+     * target, and an entry of a plain one carries none of these.
+     *
+     * @var string[]
+     */
+    private const ADVANCED_RELATION_MEMBERS = ['element', 'fieldname', 'columns', 'data'];
+
+    /**
+     * The field types whose stored form is a timestamp although the value they hold is an object, so
+     * that the declaration {@see self::SCALAR_VALUE_DECLARATIONS} reads says nothing about it: both
+     * hand the stored value to a helper declaring `float|int|string`
+     * ({@see DataObject\ClassDefinition\Data\Date::denormalize()}), which raises a `TypeError` for
+     * an array as well as for the `bool` a `checkbox` leaves behind.
+     *
+     * @var string[]
+     */
+    private const TYPES_STORED_AS_A_TIMESTAMP = ['date', 'datetime'];
+
+    /**
      * @var array Used for storing definitions
      */
     protected static array $definitionsCache = [];
 
     /**
-     * Clears the cache for the definitions
+     * Clears every definition this class memoizes - the ones held by key id for a {@see KeyConfig} as
+     * well as the ones held per (groupId, keyId) for a {@see KeyGroupRelation}. The definitions
+     * {@see KeyGroupRelationCache} holds of its own are cleared with that service.
+     *
+     * Called at the messenger message boundary by
+     * {@see \Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener}, so that a
+     * definition edited after the first read is not answered from the memo for the life of a worker.
      */
     public static function clearDefinitionsCache(): void
     {
@@ -36,23 +130,48 @@ class Service
 
     public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): ?DataObject\ClassDefinition\Data
     {
-        if ($keyConfig instanceof KeyConfig) {
-            $cacheId = $keyConfig->getId();
-        } else {
-            $cacheId = $keyConfig->getKeyId();
-        }
+        $cacheId = self::getDefinitionsCacheId($keyConfig);
 
-        if (array_key_exists($cacheId, self::$definitionsCache)) {
+        if ($cacheId !== null && array_key_exists($cacheId, self::$definitionsCache)) {
             return self::$definitionsCache[$cacheId];
         }
 
-        $definition = $keyConfig->getDefinition();
-        $definition = json_decode($definition, true);
+        $definition = $keyConfig instanceof KeyGroupRelation
+            ? $keyConfig->getEffectiveDefinitionData()
+            : json_decode($keyConfig->getDefinition(), true);
         $type = $keyConfig->getType();
         $fd = self::getFieldDefinitionFromJson($definition, $type);
-        self::$definitionsCache[$cacheId] = $fd;
+
+        if ($cacheId !== null) {
+            self::$definitionsCache[$cacheId] = $fd;
+        }
 
         return $fd;
+    }
+
+    /**
+     * The entry a definition is memoized under, or null when nothing identifies what it was built
+     * from: a key config that is not saved yet, whose {@see KeyConfig::getId()} is nullable and whose
+     * null id would become the '' entry every other unsaved key config shares, and a relation that
+     * does not answer both of the ids its own entry is made of.
+     *
+     * Those two ids are typed properties without a default, so a relation built with `new` carries
+     * neither until it is set and reading one raises an Error. They are read through getObjectVars()
+     * for that reason, the way {@see Dao} reads an uninitialised `fieldname`.
+     */
+    private static function getDefinitionsCacheId(KeyConfig|KeyGroupRelation $keyConfig): int|string|null
+    {
+        if ($keyConfig instanceof KeyConfig) {
+            return $keyConfig->getId();
+        }
+
+        $relationVars = $keyConfig->getObjectVars();
+        if (!isset($relationVars['groupId'], $relationVars['keyId'])) {
+            return null;
+        }
+
+        // non numeric on purpose: a numeric string entry would be coerced to an int key id
+        return 'group:' . $keyConfig->getGroupId() . ':key:' . $keyConfig->getKeyId();
     }
 
     public static function getFieldDefinitionFromJson(array $definition, string $type): ?DataObject\ClassDefinition\Data
@@ -87,13 +206,487 @@ class Service
             $dataDefinition->name = $name;
         }
 
-        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+        // __set_state() rebuilds the definition from its own properties, which leaves a wrapper's
+        // delegate as the raw array it was decoded from - it is rebuilt here, as the inner type,
+        // from exactly that array, so the inner definition keeps its own properties
+        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField
+            || $dataDefinition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
             $delegateDataType = $dataDefinition->getDelegateDatatype();
-            $delegateDefinition = self::getFieldDefinitionFromJson((array) $delegateDefinitionRaw, $delegateDataType);
+            // a blob naming no inner type leaves a delegate-less wrapper rather than the raw decoded
+            // array, which no reader of the delegate would recognise as a definition
+            $delegateDefinition = $delegateDataType === null
+                ? null
+                : self::getFieldDefinitionFromJson((array) $delegateDefinitionRaw, $delegateDataType);
             $dataDefinition->setDelegate($delegateDefinition);
         }
 
         return $dataDefinition;
+    }
+
+    /**
+     * The definition that answers for the VALUE of a key: the inner type of a `multiValue` wrapper,
+     * and the definition itself for every other key.
+     *
+     * The one boundary for that question, so that the paths asking it cannot come apart. A
+     * `multiValue` key declares the qualifiers its values may carry and nothing about the values
+     * themselves - what a slot holds is a value of the inner type, which is what stores it, reads it
+     * back, decides whether it is a relation and names its dependencies. A caller asking the wrapper
+     * instead is told "no" about every one of those, and the value then reaches storage unrefused,
+     * loses its dependency rows or is read without the hook its own type would have run.
+     *
+     * An `encryptedField` is NOT unwrapped here: that wrapper carries the stored form itself - it is
+     * the one that encrypts - so its own definition is the one that answers for the value. The walk
+     * below therefore stops ON one rather than going through it.
+     *
+     * CONSECUTIVE `multiValue` wrappers are unwrapped to the end. Nothing refuses a definition blob
+     * whose `delegateDatatype` is `multiValue` again - the delegate is accepted by
+     * {@see KeyTypeSupport::isAcceptedDelegateType()} and built by
+     * {@see self::getFieldDefinitionFromJson()}, which recurses - and resolving one layer alone
+     * answered this question with a wrapper: `multiValue<multiValue<encryptedField<input>>>`
+     * normalized its way down to the secret while the engine, asked whether the value reaches the
+     * document through its marshaller, was looking at a `multiValue` and stored the plaintext. One
+     * boundary that answers "the value's definition" has to answer it for a chain of any length.
+     *
+     * @see DataObject\ClassDefinition\Data\MultiValue for the behaviours the wrapper forwards itself
+     */
+    public static function getValueDefinition(
+        ?DataObject\ClassDefinition\Data $definition
+    ): ?DataObject\ClassDefinition\Data {
+        $seen = [];
+
+        while ($definition instanceof DataObject\ClassDefinition\Data\MultiValue) {
+            // a delegate that is its own ancestor can only be built by hand, and a walk that met one
+            // would not end: the chain stops at the wrapper it has already answered for
+            if (isset($seen[spl_object_id($definition)])) {
+                break;
+            }
+
+            $seen[spl_object_id($definition)] = true;
+
+            $delegate = $definition->getDelegate();
+            if (!$delegate instanceof DataObject\ClassDefinition\Data) {
+                // a wrapper naming no inner type answers itself: it normalizes the plain value
+                // unchanged, {@see DataObject\ClassDefinition\Data\MultiValue::normalize()}
+                break;
+            }
+
+            $definition = $delegate;
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Whether the definition that answers for the VALUE of a key can read this stored value at all.
+     *
+     * Changing the type of a key - or the inner type of a `multiValue` key - rewrites the key's
+     * DECLARATION and leaves the data stored under the old one where it is. Nothing migrates it,
+     * because the product's position is that a type change preserves nothing. What is left is a
+     * stored value of one shape in front of a type that reads another, and the type then reads it as
+     * if it had written it itself: a relation list reached `strlen((string) $data)`
+     * ({@see DataObject\ClassDefinition\Data\Extension\Text::isEmpty()}) and an ordinary list
+     * reached `$elementData['type']`
+     * ({@see DataObject\ClassDefinition\Data\ManyToManyObjectRelation::denormalize()}). In dev the
+     * first is an `ErrorException` and the second a `TypeError`, so the object could not be opened -
+     * the object itself is fine, reading the key is what raises.
+     *
+     * So the leftovers are simply not interpreted: a value this answers false for is read as the
+     * key's empty value. It is asked at the three places a STORED value meets the definition in
+     * force, which is where the question belongs rather than in any one field type:
+     * {@see Engine\DocumentEngine::decodeValue()} and {@see Engine\EavEngine::load()} for a value
+     * the engine reads back itself, and {@see RelationResolver::resolve()} for the descriptors of a
+     * relation-typed key, which the document engine leaves wrapped until the key is read.
+     *
+     * What is refused, each arm being the precondition of code that reads the value without
+     * checking it:
+     *
+     *  - for a RELATION inner type, anything that does not name targets the way that relation
+     *    normalizes them: a list of descriptors, the single descriptor a to-one normalizes to, or
+     *    the per-entry metadata an advanced relation also reads,
+     *    {@see self::ADVANCED_RELATION_MEMBERS}. The entry shape is asked of the one place that
+     *    knows it, {@see RelationDescriptor::describeOne()}. An empty list is a relation holding
+     *    nothing and is read
+     *  - for a type whose stored value is a STRUCTURE, an array that does not carry the members that
+     *    type reads off it, {@see self::MEMBERS_READ_BY_TYPE} - and a list whose entries do not,
+     *    where the stored value is a list of them, {@see self::LIST_ENTRY_TYPE}
+     *  - for a type whose value is a SCALAR, an array, read off the type declaration of the value it
+     *    holds the way {@see KeyTypeSupport::isHeldInValueColumns()} reads what it normalizes to;
+     *    and for the two types stored as a timestamp, anything that is not one,
+     *    {@see self::TYPES_STORED_AS_A_TIMESTAMP}
+     *
+     * Nothing else is refused, and a value whose shape is not positively wrong is handed on
+     * unchanged: a `multiselect` and a `table` hold a list of their own and a `structuredTable` a
+     * structure whose members it does not read, and a guard refusing a shape it has no reading for
+     * would drop the values those keys actually hold. Nor is a `Throwable` caught anywhere on the
+     * way - a swallowed exception here would hide the bugs this check is not about.
+     */
+    public static function canReadStoredValue(
+        ?DataObject\ClassDefinition\Data $definition,
+        mixed $storedValue
+    ): bool {
+        $definition = self::getValueDefinition($definition);
+
+        if ($definition === null || $storedValue === null) {
+            // a wrapper naming no inner type reads the plain value unchanged, and nothing stored is
+            // nothing to read
+            return true;
+        }
+
+        if ($definition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+            return self::namesRelationTargets($definition, $storedValue);
+        }
+
+        $type = $definition->getFieldType();
+
+        if (isset(self::LIST_ENTRY_TYPE[$type])) {
+            return self::isAListCarrying($storedValue, self::MEMBERS_READ_BY_TYPE[self::LIST_ENTRY_TYPE[$type]]);
+        }
+
+        if (isset(self::MEMBERS_READ_BY_TYPE[$type])) {
+            return is_array($storedValue) && self::carries($storedValue, self::MEMBERS_READ_BY_TYPE[$type]);
+        }
+
+        if (in_array($type, self::TYPES_STORED_AS_A_TIMESTAMP, true)) {
+            return is_int($storedValue) || is_float($storedValue) || is_string($storedValue);
+        }
+
+        return !is_array($storedValue) || !self::declaresAScalarValue($definition);
+    }
+
+    /**
+     * Whether this stored value names the targets of this relation the way the relation itself
+     * normalizes them, which is what its `denormalize()` reads off every entry unchecked.
+     */
+    private static function namesRelationTargets(
+        DataObject\ClassDefinition\Data\Relations\AbstractRelations $definition,
+        mixed $storedValue
+    ): bool {
+        if (!is_array($storedValue)) {
+            return false;
+        }
+
+        if ($definition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
+            // a to-one relation normalizes to ONE descriptor; handed the list a to-many one left
+            // behind it reads `$value['type']` off the list itself
+            return !RelationDescriptor::nestsItsTarget($storedValue)
+                && RelationDescriptor::describeOne($storedValue) !== null;
+        }
+
+        $advanced = $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
+            || $definition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
+
+        foreach ($storedValue as $entry) {
+            if (!is_array($entry) || RelationDescriptor::describeOne($entry) === null) {
+                return false;
+            }
+
+            // each one reads the target off the place its OWN normalize() writes it, and neither
+            // reads the other's: a plain relation reads `$elementData['type']` off the entry and an
+            // advanced one `$elementMetadata['element']` plus the three members beside it, so an
+            // entry of the other shape is the fatal this check exists to stop either way round
+            $readable = $advanced
+                ? self::carries($entry, self::ADVANCED_RELATION_MEMBERS)
+                : !RelationDescriptor::nestsItsTarget($entry);
+
+            if (!$readable) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether this stored value is a list of structures every one of which carries these members.
+     *
+     * @param string[] $members
+     */
+    private static function isAListCarrying(mixed $storedValue, array $members): bool
+    {
+        if (!is_array($storedValue)) {
+            return false;
+        }
+
+        foreach ($storedValue as $entry) {
+            if (!is_array($entry) || !self::carries($entry, $members)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Asked with `array_key_exists()` rather than `isset()`: a member whose value is null is one the
+     * type wrote - a `consent` carries `noteId` with no note - and a reader indexes it either way.
+     *
+     * @param array<array-key, mixed> $value
+     * @param string[] $members
+     */
+    private static function carries(array $value, array $members): bool
+    {
+        foreach ($members as $member) {
+            if (!array_key_exists($member, $value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether the value this definition holds is a scalar, read off the declaration the generated
+     * setter of such a field carries.
+     */
+    private static function declaresAScalarValue(DataObject\ClassDefinition\Data $definition): bool
+    {
+        $declaration = $definition->getParameterTypeDeclaration();
+
+        return $declaration !== null
+            && in_array(ltrim($declaration, '?'), self::SCALAR_VALUE_DECLARATIONS, true);
+    }
+
+    /**
+     * Whether a value of this definition is packed into the two scalar value columns by a
+     * classification store marshaller, rather than reaching one as the structure it normalizes to.
+     *
+     * The one boundary for that question, like {@see self::getValueDefinition()} is for "which
+     * definition answers for the value", and asked of the DELEGATE of an `encryptedField`: that
+     * marshaller encrypts a scalar and hands anything else to its delegate's marshaller to be packed
+     * first, so a delegate that packs nothing leaves a structured value with no scalar to encrypt.
+     *
+     * It is answered through the COMPLETE chain. A `multiValue` marshaller packs nothing itself -
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\MultiValue} hands the value to the
+     * marshaller of its own inner type - so its registration says nothing about the shape it
+     * produces, and a wrapper whose inner type has no marshaller returns the value in the `value`
+     * member unchanged. Asked one layer deep, `encryptedField<multiValue<geopoint>>` answered "the
+     * delegate has a marshaller, it packs" about a wrapper that handed the coordinates straight back
+     * as an array-valued column, which
+     * {@see \Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField::encrypt()} casts to
+     * the string `'Array'`. The coordinates were lost with no error, on the document engine for want
+     * of an envelope and on the EAV engine for want of a refusal.
+     *
+     * A chain ending in a wrapper that names no inner type does NOT pack: such a wrapper returns the
+     * value it was handed in the `value` member, which is the structure rather than a column.
+     */
+    public static function marshallerPacksIntoValueColumns(
+        ?DataObject\ClassDefinition\Data $definition,
+        Pimcore\Element\MarshallerService $marshallerService
+    ): bool {
+        $definition = self::getValueDefinition($definition);
+
+        if (!$definition instanceof DataObject\ClassDefinition\Data
+            || $definition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
+            return false;
+        }
+
+        return $marshallerService->supportsFielddefinition(
+            self::MARSHALLER_FORMAT,
+            $definition->getFieldType()
+        );
+    }
+
+    /**
+     * The inner type of a wrapper key, or null for a key that is not one - the two wrappers a
+     * classification store key can be defined with, {@see DataObject\ClassDefinition\Data\EncryptedField}
+     * and {@see DataObject\ClassDefinition\Data\MultiValue}.
+     */
+    private static function getDelegateDefinition(
+        DataObject\ClassDefinition\Data $definition
+    ): ?DataObject\ClassDefinition\Data {
+        if (!$definition instanceof DataObject\ClassDefinition\Data\EncryptedField
+            && !$definition instanceof DataObject\ClassDefinition\Data\MultiValue
+        ) {
+            return null;
+        }
+
+        $delegate = $definition->getDelegate();
+
+        return $delegate instanceof DataObject\ClassDefinition\Data ? $delegate : null;
+    }
+
+    /**
+     * Whether a value of a key defined with this field type may be inherited from an ancestor's
+     * store.
+     *
+     * The question is the key's and not the classification store field's, because one store holds
+     * keys of many types at once - so every path that reaches an ancestor's store asks this, and
+     * they have to agree: the per-key read ({@see DataObject\Classificationstore::getLocalizedKeyValue()}),
+     * the whole-store merge ({@see DataObject\Classificationstore::getItems()}) and both halves of
+     * the editmode payload's parent walk
+     * ({@see DataObject\ClassDefinition\Data\Classificationstore::doGetDataForEditMode()}). One
+     * answer in one place is what keeps them from coming apart.
+     *
+     * A WRAPPER is answered by its DELEGATE, both of them: an `encryptedField` and a `multiValue`
+     * key hold a value of the inner type, and whether that value may be read off an ancestor is the
+     * inner type's answer. A `multiValue` key declares qualifiers, which says nothing about it.
+     *
+     * An `encryptedField` is answered by its DELEGATE. The wrapper stores, reads, validates and
+     * renders whatever the delegate says - {@see DataObject\ClassDefinition\Data\EncryptedField}
+     * hands `getDataForEditmode()`, `checkValidity()`, `isEmpty()` and `normalize()` straight on -
+     * and it does not override `supportsInheritance()`, so it answers the base class's `true` for
+     * every delegate. A `consent` delegate says no for a reason that the encryption does not touch:
+     * a consent is the record of what one data subject agreed to, so a child reading its parent's
+     * grant - and the id of the audit note behind it - answers "has this one consented" with
+     * somebody else's answer, encrypted or not. The same holds for the other types that decline
+     * inheritance, `calculatedValue` and `urlSlug` among them.
+     *
+     * A key whose config has gone - deleted while values of it are still stored - and an
+     * `encryptedField` with no delegate configured are both answered the way they were answered
+     * before this check existed, because nothing is known about them to answer otherwise.
+     */
+    public static function supportsInheritance(?DataObject\ClassDefinition\Data $fieldDefinition): bool
+    {
+        if (!$fieldDefinition) {
+            return true;
+        }
+
+        $delegate = self::getDelegateDefinition($fieldDefinition);
+
+        if ($delegate !== null) {
+            return self::supportsInheritance($delegate);
+        }
+
+        return $fieldDefinition->supportsInheritance();
+    }
+
+    /**
+     * Collects every classification store field reachable from the given field definitions,
+     * including the ones nested in localized fields, object bricks and field collections -
+     * classSaved() reaches those as well.
+     *
+     * Two object bricks (or field collections) allowed on the same class may each define a
+     * classification store field under the same name, on different stores. The keys are therefore
+     * qualified by the container the field was found in - "objectbrick:brickKey.fieldName" - so that
+     * no definition is dropped and the error messages name the one that is at fault. Object bricks
+     * and field collections are keyed in separate name spaces, so the kind is part of the identity
+     * as well: both may be called "Shared" and both may contain a "cs".
+     *
+     * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
+     *
+     * @return array<string, DataObject\ClassDefinition\Data\Classificationstore>
+     *         container-qualified field identity => definition
+     */
+    public static function getClassificationStoreFieldDefinitions(array $fieldDefinitions): array
+    {
+        $classificationStoreFields = [];
+        self::collectClassificationStoreFieldDefinitions($fieldDefinitions, $classificationStoreFields);
+
+        return $classificationStoreFields;
+    }
+
+    /**
+     * Groups collected classification store fields by the field name they are stored under.
+     *
+     * The value tables key their rows by (object, fieldname), so every definition sharing a field
+     * name shares its rows - which is why they are resolved together rather than one at a time.
+     *
+     * @param array<string, DataObject\ClassDefinition\Data\Classificationstore> $classificationStoreFields
+     *
+     * @return array<string, array<string, int|null>> field name => (qualified identity => store id)
+     */
+    public static function groupStoreIdsByFieldName(array $classificationStoreFields): array
+    {
+        $storeIds = [];
+        foreach ($classificationStoreFields as $identity => $fieldDefinition) {
+            $storeIds[$fieldDefinition->getName()][$identity] = self::getConfiguredStoreId($fieldDefinition);
+        }
+
+        return $storeIds;
+    }
+
+    /**
+     * The store id of a classification store field, or null when the field carries none.
+     *
+     * The property is typed and has no default, so a class definition without the key leaves it
+     * uninitialized - reading it through the getter would raise an Error rather than return a default.
+     */
+    public static function getConfiguredStoreId(
+        DataObject\ClassDefinition\Data\Classificationstore $fieldDefinition
+    ): ?int {
+        return isset($fieldDefinition->storeId) ? $fieldDefinition->getStoreId() : null;
+    }
+
+    /**
+     * @param array<string, DataObject\ClassDefinition\Data> $fieldDefinitions
+     * @param array<string, DataObject\ClassDefinition\Data\Classificationstore> $classificationStoreFields
+     * @param string $prefix the container path the given field definitions were reached through
+     */
+    private static function collectClassificationStoreFieldDefinitions(
+        array $fieldDefinitions,
+        array &$classificationStoreFields,
+        string $prefix = ''
+    ): void {
+        foreach ($fieldDefinitions as $fieldDefinition) {
+            if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Classificationstore) {
+                $classificationStoreFields[$prefix . $fieldDefinition->getName()] = $fieldDefinition;
+
+                continue;
+            }
+
+            foreach (self::getNestedFieldDefinitions($fieldDefinition) as $nestedPrefix => $nestedFieldDefinitions) {
+                self::collectClassificationStoreFieldDefinitions(
+                    $nestedFieldDefinitions,
+                    $classificationStoreFields,
+                    $prefix . $nestedPrefix
+                );
+            }
+        }
+    }
+
+    /**
+     * @return array<string, array<string, DataObject\ClassDefinition\Data>> container prefix => field definitions
+     */
+    private static function getNestedFieldDefinitions(DataObject\ClassDefinition\Data $fieldDefinition): array
+    {
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+            // localized fields share the name space of the class they belong to, so they add no prefix
+            return ['' => $fieldDefinition->getFieldDefinitions()];
+        }
+
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+            return self::getContainerFieldDefinitions(
+                self::OBJECTBRICK_CONTAINER,
+                $fieldDefinition->getAllowedTypes(),
+                DataObject\Objectbrick\Definition::getByKey(...)
+            );
+        }
+
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+            return self::getContainerFieldDefinitions(
+                self::FIELDCOLLECTION_CONTAINER,
+                $fieldDefinition->getAllowedTypes(),
+                DataObject\Fieldcollection\Definition::getByKey(...)
+            );
+        }
+
+        return [];
+    }
+
+    /**
+     * @param string $containerKind the name space the allowed types are keyed in - an object brick and
+     *                              a field collection may carry the same key without being related
+     * @param string[] $allowedTypes
+     * @param callable(string): (DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition|null) $loadDefinition
+     *
+     * @return array<string, array<string, DataObject\ClassDefinition\Data>> container prefix => field definitions
+     */
+    private static function getContainerFieldDefinitions(
+        string $containerKind,
+        array $allowedTypes,
+        callable $loadDefinition
+    ): array {
+        $fieldDefinitions = [];
+        foreach ($allowedTypes as $allowedType) {
+            $definition = $loadDefinition($allowedType);
+            if ($definition !== null) {
+                $fieldDefinitions[$containerKind . ':' . $allowedType . '.'] = $definition->getFieldDefinitions();
+            }
+        }
+
+        return $fieldDefinitions;
     }
 }

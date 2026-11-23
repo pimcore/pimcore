@@ -1,0 +1,1520 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Model\DataType\ClassificationStore;
+
+use Pimcore\Model\DataObject\Data\MultiValue;
+use Pimcore\Model\DataObject\Data\EncryptedField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Exception;
+use Pimcore;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
+use Pimcore\Maintenance\Tasks\CleanupClassificationstoreTablesTask;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
+use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
+use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
+use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
+use Pimcore\Model\DataObject\Exception\UndeclarableEngineFeatureException;
+use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
+use Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException;
+use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
+use ReflectionProperty;
+use Stringable;
+use Symfony\Contracts\Service\ResetInterface;
+
+/**
+ * The engine behind the value tables: the published facade still creates them, a class whose store
+ * does not resolve is refused before anything is written, and a class deletion reaches every engine.
+ *
+ * @group model.datatype.classificationstore
+ */
+class EngineTest extends ModelTestCase
+{
+    private const DATA_TABLE_PREFIX = 'object_classificationstore_data_';
+
+    private const GROUPS_TABLE_PREFIX = 'object_classificationstore_groups_';
+
+    private const DOCUMENT_TABLE_PREFIX = 'object_classificationstore_doc_';
+
+    private const FACADE_CLASS_ID = 'CsEngineFacade';
+
+    private const DELETED_CLASS_ID = 'CsEngineDeleted';
+
+    private const REFUSED_CLASS_ID = 'CsEngineRefused';
+
+    private const ROUTED_CLASS_ID = 'CsEngineRouted';
+
+    private const CONFLICT_CLASS_ID = 'CsEngineConflict';
+
+    private const EAV_CLASS_ID = 'CsEngineEav';
+
+    private const DOCUMENT_CLASS_ID = 'CsEngineDocument';
+
+    private const NESTED_CLASS_ID = 'CsEngineNested';
+
+    private const COLLECTION_CLASS_ID = 'CsEngineCollection';
+
+    private const UNKNOWN_ENGINE = 'nosuchengine';
+
+    private const DOCUMENT_ENGINE = 'document';
+
+    private const FIRST_BRICK_KEY = 'csEngineFirstBrick';
+
+    private const SECOND_BRICK_KEY = 'csEngineSecondBrick';
+
+    private const COLLECTION_KEY = 'csEngineCollection';
+
+    private const NESTED_DOCUMENT_FIELD = 'csNestedDoc';
+
+    private const NESTED_EAV_FIELD = 'csNestedEav';
+
+    /**
+     * @see self::columnTypesOf()
+     */
+    private const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
+
+    /**
+     * The one variant the fixture key declares, so that a refusal is the storage's answer rather
+     * than the declaration's.
+     */
+    private const VARIANT = 'metric';
+
+    /** The type a key the engine can no longer be given is saved as before its row gets the real one. */
+    private const CARRIED_OVER_PLACEHOLDER_TYPE = 'input';
+
+    private const KEYS_TABLE = 'classificationstore_keys';
+
+    private const SECRET = 'an-eav-secret-nobody-may-read';
+
+    /**
+     * @var array<string, EngineInterface>|null
+     */
+    private ?array $registeredEngines = null;
+
+    /**
+     * @var int[]
+     */
+    private array $storeIds = [];
+
+    /**
+     * @var int[]
+     */
+    private array $groupIds = [];
+
+    /**
+     * @var int[]
+     */
+    private array $relationKeyIds = [];
+
+    private ?Concrete $anyObject = null;
+
+    /**
+     * @var int[]
+     */
+    private array $keyIds = [];
+
+    /**
+     * @var int[]
+     */
+    private array $objectIds = [];
+
+    protected function tearDown(): void
+    {
+        foreach ($this->relationKeyIds as $keyId) {
+            Classificationstore\KeyConfig::getById($keyId)?->delete();
+        }
+        $this->relationKeyIds = [];
+
+        $this->anyObject?->delete();
+        $this->anyObject = null;
+
+        if ($this->registeredEngines !== null) {
+            $this->setRegisteredEngines($this->registeredEngines);
+            $this->registeredEngines = null;
+        }
+
+        $db = Db::get();
+        $classIds = [
+            self::FACADE_CLASS_ID,
+            self::DELETED_CLASS_ID,
+            self::REFUSED_CLASS_ID,
+            self::ROUTED_CLASS_ID,
+            self::CONFLICT_CLASS_ID,
+            self::DOCUMENT_CLASS_ID,
+            self::NESTED_CLASS_ID,
+            self::COLLECTION_CLASS_ID,
+            self::EAV_CLASS_ID,
+        ];
+
+        foreach ($classIds as $classId) {
+            ClassDefinition::getById($classId, true)?->delete();
+        }
+
+        foreach ($classIds as $classId) {
+            $db->executeStatement('DROP TABLE IF EXISTS ' . $db->quoteIdentifier(self::DOCUMENT_TABLE_PREFIX . $classId));
+            $db->executeStatement('DROP TABLE IF EXISTS ' . $db->quoteIdentifier(self::DATA_TABLE_PREFIX . $classId));
+            $db->executeStatement('DROP TABLE IF EXISTS ' . $db->quoteIdentifier(self::GROUPS_TABLE_PREFIX . $classId));
+
+            // a class carrying a brick leaves the two tables of that brick behind as well
+            foreach ([self::FIRST_BRICK_KEY, self::SECOND_BRICK_KEY] as $brickKey) {
+                foreach (['object_brick_store_', 'object_brick_query_'] as $prefix) {
+                    $db->executeStatement(
+                        'DROP TABLE IF EXISTS ' . $db->quoteIdentifier($prefix . $brickKey . '_' . $classId)
+                    );
+                }
+            }
+
+            // and a class carrying a field collection leaves that collection's table behind
+            $db->executeStatement(
+                'DROP TABLE IF EXISTS '
+                . $db->quoteIdentifier('object_collection_' . self::COLLECTION_KEY . '_' . $classId)
+            );
+        }
+
+        // the objects the value rows point at go first, so that their rows cascade away before the
+        // configuration those rows name is removed
+        foreach ($this->objectIds as $objectId) {
+            Concrete::getById($objectId, ['force' => true])?->delete();
+        }
+        $this->objectIds = [];
+
+        // the keys and the groups go before the stores they belong to, which they carry a foreign
+        // key on
+        foreach ($this->keyIds as $keyId) {
+            $db->delete('classificationstore_relations', ['keyId' => $keyId]);
+            $db->delete('classificationstore_keys', ['id' => $keyId]);
+        }
+        $this->keyIds = [];
+
+        foreach ($this->groupIds as $groupId) {
+            $db->delete('classificationstore_groups', ['id' => $groupId]);
+        }
+        $this->groupIds = [];
+
+        foreach ($this->storeIds as $storeId) {
+            $db->delete('classificationstore_stores', ['id' => $storeId]);
+        }
+        $this->storeIds = [];
+
+        foreach ([self::FIRST_BRICK_KEY, self::SECOND_BRICK_KEY] as $brickKey) {
+            RuntimeCache::getInstance()->offsetUnset('objectbrick_' . $brickKey);
+        }
+
+        RuntimeCache::getInstance()->offsetUnset('fieldcollection_' . self::COLLECTION_KEY);
+
+        parent::tearDown();
+    }
+
+    /**
+     * The published no-argument facade is what classSaved() and third-party code both call, so it
+     * has to keep returning nothing and keep creating both tables.
+     */
+    public function testTheFacadeCreatesBothValueTablesAndReturnsNothing(): void
+    {
+        $class = $this->buildClass(self::FACADE_CLASS_ID, ['cs' => $this->storeField('cs', $this->createStore())]);
+
+        $classificationStore = new Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->setFieldname('cs');
+
+        $this->assertNull($classificationStore->createUpdateTable());
+
+        $this->assertTrue($this->tableExists(self::GROUPS_TABLE_PREFIX . self::FACADE_CLASS_ID));
+        $this->assertTrue($this->tableExists(self::DATA_TABLE_PREFIX . self::FACADE_CLASS_ID));
+    }
+
+    /**
+     * One combined message for every field that does not resolve, including the ones nested in a
+     * localized field, and nothing written before it is raised.
+     */
+    public function testAClassSaveIsRefusedForEveryUnresolvableStoreAtOnce(): void
+    {
+        $storeId = $this->createStore(self::UNKNOWN_ENGINE);
+
+        $localizedFields = new Localizedfields();
+        $localizedFields->setName('localizedfields');
+        $localizedFields->setChildren([$this->storeField('csLocalized', $storeId)]);
+
+        $class = $this->buildClass(self::REFUSED_CLASS_ID, [
+            'csTopLevel' => $this->storeField('csTopLevel', $storeId),
+            'localizedfields' => $localizedFields,
+        ]);
+
+        $message = null;
+
+        try {
+            $class->save();
+        } catch (Exception $exception) {
+            $message = $exception->getMessage();
+        }
+
+        $this->assertIsString($message, 'the save has to be refused');
+        $this->assertStringContainsString('csTopLevel', $message);
+        $this->assertStringContainsString('csLocalized', $message);
+        $this->assertStringContainsString(self::UNKNOWN_ENGINE, $message);
+
+        $this->assertFalse($this->tableExists(self::DATA_TABLE_PREFIX . self::REFUSED_CLASS_ID));
+        $this->assertFalse($this->tableExists(self::GROUPS_TABLE_PREFIX . self::REFUSED_CLASS_ID));
+        $this->assertSame(
+            0,
+            (int) Db::get()->fetchOne('SELECT COUNT(*) FROM classes WHERE id = ?', [self::REFUSED_CLASS_ID])
+        );
+        $this->assertFileDoesNotExist(
+            PIMCORE_CLASS_DEFINITION_DIRECTORY . '/definition_' . self::REFUSED_CLASS_ID . '.php'
+        );
+    }
+
+    /**
+     * A class may carry classification store fields on stores with different engines, so the
+     * deletion has to let every registered engine drop what it owns.
+     */
+    public function testClassDeletionDropsTheTablesOfEveryRegisteredEngine(): void
+    {
+        $class = $this->buildClass(self::DELETED_CLASS_ID, [
+            'cs' => $this->storeField('cs', $this->createStore()),
+            'csDoc' => $this->storeField('csDoc', $this->createStore(self::DOCUMENT_ENGINE)),
+        ]);
+        $class->save();
+
+        $this->assertTrue($this->tableExists(self::DATA_TABLE_PREFIX . self::DELETED_CLASS_ID));
+        $this->assertTrue($this->tableExists(self::GROUPS_TABLE_PREFIX . self::DELETED_CLASS_ID));
+        $this->assertTrue($this->tableExists(self::DOCUMENT_TABLE_PREFIX . self::DELETED_CLASS_ID));
+
+        $secondEngine = $this->createMock(EngineInterface::class);
+        $secondEngine->expects($this->once())->method('dropTables');
+
+        $this->registerSecondEngine($secondEngine);
+
+        $class->delete();
+
+        $this->assertFalse($this->tableExists(self::DATA_TABLE_PREFIX . self::DELETED_CLASS_ID));
+        $this->assertFalse($this->tableExists(self::GROUPS_TABLE_PREFIX . self::DELETED_CLASS_ID));
+        $this->assertFalse($this->tableExists(self::DOCUMENT_TABLE_PREFIX . self::DELETED_CLASS_ID));
+    }
+
+    /**
+     * Everything the model publishes has to reach the engine of the field's own store, with the
+     * model and the class it was called on - hard-coding any of these routes to the default engine
+     * would otherwise go unnoticed.
+     */
+    public function testTheDaoDelegatesEveryOperationToTheEngineOfItsStore(): void
+    {
+        $eavEngine = $this->createMock(EngineInterface::class);
+        $eavEngine->expects($this->never())->method($this->anything());
+
+        $secondEngine = $this->createMock(EngineInterface::class);
+        $this->replaceRegisteredEngines($eavEngine, $secondEngine);
+
+        $storeId = $this->createStore('second');
+        $class = $this->buildClass(self::ROUTED_CLASS_ID, ['cs' => $this->storeField('cs', $storeId)]);
+
+        $classificationStore = new Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->setFieldname('cs');
+
+        $secondEngine->expects($this->once())->method('load')->with($classificationStore);
+        $secondEngine->expects($this->once())->method('save')->with($classificationStore);
+        $secondEngine->expects($this->once())->method('delete')->with($classificationStore);
+        $secondEngine->expects($this->once())->method('createUpdateTables')->with($class, $storeId);
+
+        $classificationStore->load();
+        $classificationStore->save();
+        $classificationStore->delete();
+        $classificationStore->createUpdateTable();
+    }
+
+    /**
+     * An engine name no bundle registers has no values to read, so a load through the DAO has to
+     * fail rather than come back empty from the default engine.
+     */
+    public function testLoadingThroughTheDaoRejectsAnUnknownEngine(): void
+    {
+        $storeId = $this->createStore(self::UNKNOWN_ENGINE);
+        $class = $this->buildClass(self::ROUTED_CLASS_ID, ['cs' => $this->storeField('cs', $storeId)]);
+
+        $classificationStore = new Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->setFieldname('cs');
+
+        $this->expectException(UnknownClassificationStoreEngineException::class);
+
+        $classificationStore->load();
+    }
+
+    /**
+     * `document` used to be the engine this release knew about but did not ship. It is registered
+     * now, so a store carrying it resolves to the document engine instead of being refused.
+     */
+    public function testADocumentStoreResolvesToTheRegisteredDocumentEngine(): void
+    {
+        $resolver = Pimcore::getContainer()->get(EngineResolver::class);
+
+        $this->assertInstanceOf(DocumentEngine::class, $resolver->getEngines()[self::DOCUMENT_ENGINE] ?? null);
+        $this->assertInstanceOf(
+            DocumentEngine::class,
+            $resolver->resolveForStore($this->createStore(self::DOCUMENT_ENGINE))
+        );
+    }
+
+    /**
+     * The document engine owns one table per class and nothing else: it neither creates nor needs
+     * the two tables of the EAV engine, and creating it twice leaves it as it was.
+     */
+    public function testADocumentStoreCreatesOnlyItsOwnTableAndCreatesItIdempotently(): void
+    {
+        $class = $this->buildClass(
+            self::DOCUMENT_CLASS_ID,
+            ['cs' => $this->storeField('cs', $this->createStore(self::DOCUMENT_ENGINE))]
+        );
+        $class->save();
+
+        $table = self::DOCUMENT_TABLE_PREFIX . self::DOCUMENT_CLASS_ID;
+
+        $this->assertTrue($this->tableExists($table));
+        $this->assertFalse($this->tableExists(self::DATA_TABLE_PREFIX . self::DOCUMENT_CLASS_ID));
+        $this->assertFalse($this->tableExists(self::GROUPS_TABLE_PREFIX . self::DOCUMENT_CLASS_ID));
+
+        $this->assertSame(['id', 'fieldname', 'groupId'], $this->primaryKeyOf($table));
+        $this->assertSame(
+            ['classificationstore_groups' => 'CASCADE', 'objects' => 'CASCADE'],
+            $this->foreignKeysOf($table)
+        );
+
+        // checksum is stamped by every writer of a row and migratedAt by the drain alone
+        $this->assertSame(
+            [
+                'id' => 'int unsigned',
+                'fieldname' => 'varchar(70)',
+                'groupId' => 'int unsigned',
+                'collectionId' => 'bigint',
+                'values' => 'longtext',
+                'checksum' => 'char(40)',
+                'migratedAt' => 'int unsigned',
+            ],
+            $this->columnTypesOf($table)
+        );
+
+        $class->save();
+
+        $this->assertTrue($this->tableExists($table));
+        $this->assertSame(['id', 'fieldname', 'groupId'], $this->primaryKeyOf($table));
+    }
+
+    /**
+     * The resolver memoizes which engine a store uses, so flipping a store has to drop that entry -
+     * otherwise the rest of the request, or the rest of a worker's life, keeps the old engine.
+     */
+    public function testFlippingAStoreIsSeenAfterItHasAlreadyResolvedOnce(): void
+    {
+        $secondEngine = $this->createMock(EngineInterface::class);
+        $this->registerSecondEngine($secondEngine);
+
+        $resolver = Pimcore::getContainer()->get(EngineResolver::class);
+        $storeId = $this->createStore();
+
+        $this->assertNotSame($secondEngine, $resolver->resolveForStore($storeId));
+
+        $store = StoreConfig::getById($storeId);
+        $this->assertInstanceOf(StoreConfig::class, $store);
+        $store->setEngine('second');
+        $store->save();
+
+        $this->assertSame($secondEngine, $resolver->resolveForStore($storeId));
+    }
+
+    /**
+     * A worker keeps the same resolver across messages, so the memo is dropped at the message
+     * boundary as well - for the stores another process flipped.
+     */
+    public function testTheMemoIsDroppedAtTheRequestAndMessageBoundary(): void
+    {
+        $secondEngine = $this->createMock(EngineInterface::class);
+        $this->registerSecondEngine($secondEngine);
+
+        $resolver = Pimcore::getContainer()->get(EngineResolver::class);
+        $this->assertInstanceOf(ResetInterface::class, $resolver, 'the kernel.reset tag needs reset()');
+
+        $storeId = $this->createStore();
+        $this->assertNotSame($secondEngine, $resolver->resolveForStore($storeId));
+
+        // bypasses StoreConfig::save(), the way another process or a direct DDL change would
+        Db::get()->update('classificationstore_stores', ['engine' => 'second'], ['id' => $storeId]);
+
+        $resolver->reset();
+
+        $this->assertSame($secondEngine, $resolver->resolveForStore($storeId));
+    }
+
+    /**
+     * Two bricks allowed on the same class may define a classification store under the same name.
+     * The value tables key their rows by (object, fieldname), so those definitions share their rows
+     * and cannot sit on two engines - and the one that is not first must not be skipped.
+     */
+    public function testAClassSaveIsRefusedWhenOneFieldNameSitsOnTwoEngines(): void
+    {
+        $this->registerSecondEngine($this->createMock(EngineInterface::class));
+
+        $defaultStoreId = $this->createStore();
+        $secondStoreId = $this->createStore('second');
+
+        $this->registerBrick(self::FIRST_BRICK_KEY, $this->storeField('cs', $defaultStoreId));
+        $this->registerBrick(self::SECOND_BRICK_KEY, $this->storeField('cs', $secondStoreId));
+
+        $bricks = new Objectbricks();
+        $bricks->setName('bricks');
+        $bricks->setAllowedTypes([self::FIRST_BRICK_KEY, self::SECOND_BRICK_KEY]);
+
+        $message = null;
+
+        try {
+            $this->buildClass(self::CONFLICT_CLASS_ID, ['bricks' => $bricks])->save();
+        } catch (Exception $exception) {
+            $message = $exception->getMessage();
+        }
+
+        $this->assertIsString($message, 'the save has to be refused');
+        $this->assertStringContainsString('field "cs"', $message);
+        $this->assertStringContainsString('objectbrick:' . self::FIRST_BRICK_KEY . '.cs uses "eav"', $message);
+        $this->assertStringContainsString('objectbrick:' . self::SECOND_BRICK_KEY . '.cs uses "second"', $message);
+
+        $this->assertSame(
+            0,
+            (int) Db::get()->fetchOne('SELECT COUNT(*) FROM classes WHERE id = ?', [self::CONFLICT_CLASS_ID])
+        );
+    }
+
+    /**
+     * A classification store may be defined inside an object brick, and its values are stored under
+     * the field's own name in the table of the class the brick is allowed on - a name the class's
+     * own field definitions know nothing about. Cleanup deletes every row of a name it believes
+     * gone, so it has to reach into the containers before it believes that of one, and the
+     * maintenance task runs it over every table of every engine on every maintenance run.
+     */
+    public function testCleanupKeepsTheValuesOfAFieldDefinedOnlyInsideAnObjectBrick(): void
+    {
+        $documentStoreId = $this->createStore(self::DOCUMENT_ENGINE);
+        $eavStoreId = $this->createStore();
+
+        $this->registerBrick(
+            self::FIRST_BRICK_KEY,
+            $this->storeField(self::NESTED_DOCUMENT_FIELD, $documentStoreId),
+            $this->storeField(self::NESTED_EAV_FIELD, $eavStoreId)
+        );
+
+        $bricks = new Objectbricks();
+        $bricks->setName('bricks');
+        $bricks->setAllowedTypes([self::FIRST_BRICK_KEY]);
+
+        $this->buildClass(self::NESTED_CLASS_ID, ['bricks' => $bricks])->save();
+
+        $this->assertCleanupKeepsTheNestedFields(self::NESTED_CLASS_ID, $documentStoreId, $eavStoreId);
+    }
+
+    /**
+     * The field collection is the other container a classification store may hide in, and it is
+     * reached through a definition of its own in exactly the same way - so cleanup has to look
+     * into it too, and the two containers are pinned by the same assertions.
+     */
+    public function testCleanupKeepsTheValuesOfAFieldDefinedOnlyInsideAFieldCollection(): void
+    {
+        $documentStoreId = $this->createStore(self::DOCUMENT_ENGINE);
+        $eavStoreId = $this->createStore();
+
+        $this->registerFieldCollection(
+            self::COLLECTION_KEY,
+            $this->storeField(self::NESTED_DOCUMENT_FIELD, $documentStoreId),
+            $this->storeField(self::NESTED_EAV_FIELD, $eavStoreId)
+        );
+
+        $collections = new Fieldcollections();
+        $collections->setName('items');
+        $collections->setAllowedTypes([self::COLLECTION_KEY]);
+
+        $this->buildClass(self::COLLECTION_CLASS_ID, ['items' => $collections])->save();
+
+        $this->assertCleanupKeepsTheNestedFields(self::COLLECTION_CLASS_ID, $documentStoreId, $eavStoreId);
+    }
+
+    /**
+     * Writes a value row for a field name the class only carries inside a container, one for a name
+     * that really is gone, and runs the maintenance task over every engine.
+     */
+    private function assertCleanupKeepsTheNestedFields(
+        string $classId,
+        int $documentStoreId,
+        int $eavStoreId
+    ): void {
+        $documentTable = self::DOCUMENT_TABLE_PREFIX . $classId;
+        $groupsTable = self::GROUPS_TABLE_PREFIX . $classId;
+
+        $this->assertTrue($this->tableExists($documentTable), 'the nested document field needs its table');
+        $this->assertTrue($this->tableExists($groupsTable), 'the nested EAV field needs its table');
+
+        $objectId = $this->anyObjectId();
+        $db = Db::get();
+
+        // 'csRemoved' is the name of a field that really is gone, so that the test also fails when
+        // cleanup stops deleting anything at all
+        foreach ([self::NESTED_DOCUMENT_FIELD, 'csRemoved'] as $fieldName) {
+            // `values` is a reserved word, which Connection::insert() would leave unquoted
+            $db->executeStatement(
+                'INSERT INTO ' . $db->quoteIdentifier($documentTable)
+                . ' (`id`, `fieldname`, `groupId`, `values`) VALUES (?, ?, ?, ?)',
+                [$objectId, $fieldName, $this->createGroup($documentStoreId), '{}']
+            );
+        }
+
+        foreach ([self::NESTED_EAV_FIELD, 'csRemoved'] as $fieldName) {
+            $db->insert($groupsTable, [
+                'id' => $objectId,
+                'fieldname' => $fieldName,
+                'groupId' => $this->createGroup($eavStoreId),
+            ]);
+        }
+
+        (new CleanupClassificationstoreTablesTask(
+            Pimcore::getContainer()->get(EngineResolver::class)
+        ))->execute();
+
+        $this->assertSame([self::NESTED_DOCUMENT_FIELD], $this->fieldNamesIn($documentTable, $objectId));
+        $this->assertSame([self::NESTED_EAV_FIELD], $this->fieldNamesIn($groupsTable, $objectId));
+    }
+
+    /**
+     * The engine of a store is written only when it was loaded or explicitly set, so that a store
+     * config built with `new` to rename a store cannot reset a store that was flipped.
+     */
+    public function testTheEngineColumnIsWrittenOnlyWhenItWasSetOrLoaded(): void
+    {
+        $db = Db::get();
+        $storeId = $this->createStore(self::UNKNOWN_ENGINE);
+
+        $untouched = new StoreConfig();
+        $untouched->setId($storeId);
+        $untouched->setName('csEngineStore' . $storeId);
+        $untouched->save();
+
+        $this->assertSame(self::UNKNOWN_ENGINE, $this->storedEngine($storeId));
+
+        $loaded = StoreConfig::getById($storeId);
+        $this->assertInstanceOf(StoreConfig::class, $loaded);
+        $this->assertSame(self::UNKNOWN_ENGINE, $loaded->getEngine());
+
+        $loaded->setEngine(null);
+        $loaded->save();
+
+        $this->assertNull($this->storedEngine($storeId));
+        $this->assertSame(
+            1,
+            (int) $db->fetchOne('SELECT COUNT(*) FROM classificationstore_stores WHERE id = ?', [$storeId])
+        );
+    }
+
+    /**
+     * The one path in core that creates a store puts it on the preferred engine; the control is a
+     * configuration built with `new` and saved, which writes no engine and means the default one.
+     */
+    public function testACreatedStoreIsPutOnThePreferredEngine(): void
+    {
+        $created = StoreConfig::create();
+        $createdId = (int) $created->getId();
+        $this->storeIds[] = $createdId;
+
+        $this->assertSame(self::DOCUMENT_ENGINE, $created->getEngine());
+        $this->assertSame(self::DOCUMENT_ENGINE, $this->storedEngine($createdId));
+
+        $this->assertNull($this->storedEngine($this->createStore()));
+    }
+
+    /**
+     * Nothing is written where the preferred engine is not registered, so the store means the
+     * default engine the way every store did before the column existed.
+     */
+    public function testACreatedStoreCarriesNoEngineWhereThePreferredOneIsNotRegistered(): void
+    {
+        $this->rememberRegisteredEngines();
+        $engines = $this->registeredEngines ?? [];
+        unset($engines[self::DOCUMENT_ENGINE]);
+        $this->setRegisteredEngines($engines);
+
+        $created = StoreConfig::create();
+        $createdId = (int) $created->getId();
+        $this->storeIds[] = $createdId;
+
+        $this->assertNull($created->getEngine());
+        $this->assertNull($this->storedEngine($createdId));
+    }
+
+    /**
+     * The EAV storage addresses a value by (group, key, language) and holds it in two value
+     * columns: a relation's element descriptors have nowhere to go there, so the write is refused
+     * rather than normalized into the value column.
+     */
+    public function testAnEavStoreRefusesARelationKeyAndWritesNothing(): void
+    {
+        $storeId = $this->createStore();
+        $groupId = $this->createGroup($storeId);
+        $keyId = $this->createRelationKeyWrittenBeforeTheDefinitionGate($storeId, new ManyToManyObjectRelation());
+
+        $classificationStore = $this->buildStoreModelFor($storeId, self::ROUTED_CLASS_ID);
+        $classificationStore->setLocalizedKeyValue($groupId, $keyId, [$this->anyObject()]);
+
+        $message = null;
+
+        try {
+            $classificationStore->save();
+        } catch (UnsupportedEngineFeatureException $exception) {
+            $message = $exception->getMessage();
+        }
+
+        $this->assertIsString($message, 'the save has to be refused');
+        $this->assertStringContainsString('Relations', $message);
+        $this->assertStringContainsString((string) $keyId, $message);
+
+        $this->assertSame(
+            0,
+            (int) Db::get()->fetchOne(
+                'SELECT COUNT(*) FROM ' . Db::get()->quoteIdentifier(self::DATA_TABLE_PREFIX . self::ROUTED_CLASS_ID)
+                . ' WHERE groupId = ? AND keyId = ?',
+                [$groupId, $keyId]
+            )
+        );
+    }
+
+    /**
+     * A row written before that refusal existed, or by hand, must not take the whole load down with
+     * it - the treatment a descriptor whose target is gone gets.
+     */
+    public function testAnEavStoreToleratesAStoredRelationValueAndYieldsNothingForIt(): void
+    {
+        $storeId = $this->createStore();
+        $groupId = $this->createGroup($storeId);
+        $keyId = $this->createRelationKeyWrittenBeforeTheDefinitionGate($storeId, new ManyToManyObjectRelation());
+
+        $classificationStore = $this->buildStoreModelFor($storeId, self::ROUTED_CLASS_ID);
+        $objectId = $classificationStore->getObject()->getId();
+        $db = Db::get();
+
+        $db->insert(self::GROUPS_TABLE_PREFIX . self::ROUTED_CLASS_ID, [
+            'id' => $objectId,
+            'fieldname' => 'cs',
+            'groupId' => $groupId,
+        ]);
+        $db->insert(self::DATA_TABLE_PREFIX . self::ROUTED_CLASS_ID, [
+            'id' => $objectId,
+            'groupId' => $groupId,
+            'keyId' => $keyId,
+            'fieldname' => 'cs',
+            'language' => 'default',
+            'type' => 'manyToManyObjectRelation',
+            'value' => json_encode([['type' => 'object', 'id' => $objectId]]),
+        ]);
+
+        $logger = $this->collectingLogger();
+
+        (new EavEngine(
+            $logger,
+            Pimcore::getContainer()->get(KeyTypeSupport::class),
+            Pimcore::getContainer()->get(RelationResolver::class),
+            $db
+        ))->load($classificationStore);
+
+        // a to-many relation answers the empty list where a to-one answers null; either is "no value"
+        $this->assertEmpty($classificationStore->getLocalizedKeyValue($groupId, $keyId));
+        $this->assertNotEmpty($logger->records, 'the skipped value has to be reported');
+    }
+
+    /**
+     * A reverse relation computes its value from the objects pointing at the owner, so there is
+     * nothing for a store to write and a stored value would never be what a read answers. Both
+     * engines refuse it, keyed on DerivedValueInterface rather than on a list of type names.
+     */
+    public function testBothEnginesRefuseAKeyWhoseTypeComputesItsValue(): void
+    {
+        $perEngineClass = [
+            self::ROUTED_CLASS_ID => null,
+            self::DOCUMENT_CLASS_ID => self::DOCUMENT_ENGINE,
+        ];
+
+        foreach ($perEngineClass as $classId => $engine) {
+            $storeId = $this->createStore($engine);
+            $groupId = $this->createGroup($storeId);
+            $keyId = $this->createRelationKey($storeId, new ReverseObjectRelation());
+
+            $classificationStore = $this->buildStoreModelFor($storeId, $classId);
+            $classificationStore->setLocalizedKeyValue($groupId, $keyId, [$this->anyObject()]);
+
+            $message = null;
+
+            try {
+                $classificationStore->save();
+            } catch (DerivedValueNotStorableException $exception) {
+                $message = $exception->getMessage();
+            }
+
+            $this->assertIsString($message, 'the save has to be refused on ' . ($engine ?? 'eav'));
+            $this->assertStringContainsString('reverseObjectRelation', $message);
+        }
+    }
+
+    /**
+     * A store model wired to a saved class carrying one classification store field on the given
+     * store, which is what reaches the engine of that store.
+     */
+    private function buildStoreModelFor(int $storeId, string $classId): Classificationstore
+    {
+        $class = $this->buildClass($classId, ['cs' => $this->storeField('cs', $storeId)]);
+        $class->save();
+
+        $classificationStore = new Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->setFieldname('cs');
+        $classificationStore->setObject($this->anyObject());
+
+        return $classificationStore;
+    }
+
+    private function createRelationKey(int $storeId, ClassDefinition\Data $definition): int
+    {
+        $name = uniqid('csEngineRelationKey', false);
+        $definition->setName($name);
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($storeId);
+        $keyConfig->setName($name);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType($definition->getFieldType());
+        $keyConfig->setDefinition(json_encode($definition));
+        $keyConfig->save();
+
+        $this->relationKeyIds[] = (int) $keyConfig->getId();
+
+        return (int) $keyConfig->getId();
+    }
+
+    /**
+     * A relation-typed key row on a store whose engine cannot hold one.
+     *
+     * {@see Classificationstore\KeyConfig::save()} refuses such a key when it is defined, so this
+     * row is the one an installation holds from before that gate existed, or from a direct SQL
+     * edit - which is what the two EAV cases above are about. The store is put on the document
+     * engine for the key's own save alone and put straight back, so the row is written by the
+     * model rather than by a statement of its own.
+     */
+    private function createRelationKeyWrittenBeforeTheDefinitionGate(
+        int $storeId,
+        ClassDefinition\Data $definition
+    ): int {
+        $this->setStoreEngine($storeId, self::DOCUMENT_ENGINE);
+
+        try {
+            return $this->createRelationKey($storeId, $definition);
+        } finally {
+            $this->setStoreEngine($storeId, null);
+        }
+    }
+
+    private function setStoreEngine(int $storeId, ?string $engine): void
+    {
+        $store = StoreConfig::getById($storeId);
+        $this->assertInstanceOf(StoreConfig::class, $store);
+
+        $store->setEngine($engine);
+        $store->save();
+
+        // the resolver memoizes the engine per store, and the key gate asks it for this one
+        Pimcore::getContainer()->get(EngineResolver::class)->reset();
+    }
+
+    /**
+     * The value tables carry a foreign key on `objects`, and a relation value needs a target that
+     * resolves - one object row serves as both.
+     */
+    private function anyObject(): Concrete
+    {
+        $this->anyObject ??= TestHelper::createEmptyObject('csEngineRelationTarget');
+
+        return $this->anyObject;
+    }
+
+    /**
+     * @return LoggerInterface&object{records: string[]}
+     */
+    private function collectingLogger(): LoggerInterface
+    {
+        return new class extends AbstractLogger {
+            /**
+             * @var string[]
+             */
+            public array $records = [];
+
+            public function log(mixed $level, string|Stringable $message, array $context = []): void
+            {
+                $this->records[] = (string) $message;
+            }
+        };
+    }
+
+    private function storedEngine(int $storeId): ?string
+    {
+        $engine = Db::get()->fetchOne('SELECT engine FROM classificationstore_stores WHERE id = ?', [$storeId]);
+
+        return $engine === false || $engine === null ? null : (string) $engine;
+    }
+
+    /**
+     * Adds a second engine to the resolver the DAOs read from the container. The container refuses
+     * to replace an initialized service, so the registry of the instance it holds is what changes,
+     * and tearDown() puts the original one back.
+     */
+    private function registerSecondEngine(EngineInterface $engine): void
+    {
+        $this->rememberRegisteredEngines();
+
+        $this->setRegisteredEngines($this->registeredEngines + ['second' => $engine]);
+    }
+
+    /**
+     * Replaces the whole registry, so that a test can assert the default engine is never reached.
+     */
+    private function replaceRegisteredEngines(EngineInterface $eavEngine, EngineInterface $secondEngine): void
+    {
+        $this->rememberRegisteredEngines();
+
+        $this->setRegisteredEngines(['eav' => $eavEngine, 'second' => $secondEngine]);
+    }
+
+    private function rememberRegisteredEngines(): void
+    {
+        $this->registeredEngines ??= Pimcore::getContainer()->get(EngineResolver::class)->getEngines();
+    }
+
+    /**
+     * @param array<string, EngineInterface> $engines
+     */
+    private function setRegisteredEngines(array $engines): void
+    {
+        $resolver = Pimcore::getContainer()->get(EngineResolver::class);
+
+        $property = new ReflectionProperty(EngineResolver::class, 'registeredEngines');
+        $property->setValue($resolver, $engines);
+
+        // the per-store memo holds the engine instances that are being replaced
+        $resolver->reset();
+    }
+
+    private function createStore(?string $engine = null): int
+    {
+        $store = new StoreConfig();
+        $store->setName(uniqid('csEngineStore', false));
+        if ($engine !== null) {
+            $store->setEngine($engine);
+        }
+        $store->save();
+
+        $storeId = (int) $store->getId();
+        $this->storeIds[] = $storeId;
+
+        return $storeId;
+    }
+
+    /**
+     * Definition::getByKey() answers from the runtime cache before it looks for a definition file,
+     * so the brick can be built in memory - nothing on the paths under test reads it from disk.
+     */
+    private function registerBrick(string $key, ClassificationstoreField ...$fieldDefinitions): void
+    {
+        $brick = new Definition();
+        $brick->setKey($key);
+
+        $byName = [];
+        foreach ($fieldDefinitions as $fieldDefinition) {
+            $byName[$fieldDefinition->getName()] = $fieldDefinition;
+        }
+        $brick->setFieldDefinitions($byName);
+
+        RuntimeCache::set('objectbrick_' . $key, $brick);
+    }
+
+    /**
+     * Definition::getByKey() answers from the runtime cache the same way the object brick one does,
+     * so the field collection is built in memory as well.
+     */
+    private function registerFieldCollection(string $key, ClassificationstoreField ...$fieldDefinitions): void
+    {
+        $fieldCollection = new FieldcollectionDefinition();
+        $fieldCollection->setKey($key);
+
+        $byName = [];
+        foreach ($fieldDefinitions as $fieldDefinition) {
+            $byName[$fieldDefinition->getName()] = $fieldDefinition;
+        }
+        $fieldCollection->setFieldDefinitions($byName);
+
+        RuntimeCache::set('fieldcollection_' . $key, $fieldCollection);
+    }
+
+    /**
+     * The value tables carry a foreign key on `objects`, which any object row satisfies - the rows
+     * written here stand for values, and never for an object of the class under test.
+     */
+    private function anyObjectId(): int
+    {
+        $objectId = Db::get()->fetchOne('SELECT id FROM objects ORDER BY id LIMIT 1');
+        $this->assertNotFalse($objectId, 'the value tables need an object row to point at');
+
+        return (int) $objectId;
+    }
+
+    private function createGroup(int $storeId): int
+    {
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($storeId);
+        $group->setName(uniqid('csEngineGroup', false));
+        $group->save();
+
+        $groupId = (int) $group->getId();
+        $this->groupIds[] = $groupId;
+
+        return $groupId;
+    }
+
+    /**
+     * @return string[] the field names the table holds for one object, sorted
+     */
+    private function fieldNamesIn(string $table, int $objectId): array
+    {
+        $fieldNames = Db::get()->fetchFirstColumn(
+            'SELECT DISTINCT fieldname FROM ' . Db::get()->quoteIdentifier($table) . ' WHERE id = ?',
+            [$objectId]
+        );
+        $fieldNames = array_map(strval(...), $fieldNames);
+        sort($fieldNames);
+
+        return $fieldNames;
+    }
+
+    private function storeField(string $name, int $storeId): ClassificationstoreField
+    {
+        $fieldDefinition = new ClassificationstoreField();
+        $fieldDefinition->setName($name);
+        $fieldDefinition->setTitle($name);
+        $fieldDefinition->setStoreId($storeId);
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * The fields go in through the layout, because that is what a saved class is rebuilt from:
+     * a class whose field definitions are only set directly reloads without any of them.
+     *
+     * @param array<string, ClassDefinition\Data> $fieldDefinitions
+     */
+    private function buildClass(string $id, array $fieldDefinitions): ClassDefinition
+    {
+        $layout = new Panel();
+        $layout->setName('root');
+        $layout->setChildren(array_values($fieldDefinitions));
+
+        $class = new ClassDefinition();
+        $class->setId($id);
+        $class->setName(lcfirst($id));
+        $class->setLayoutDefinitions($layout);
+
+        return $class;
+    }
+
+    private function tableExists(string $table): bool
+    {
+        return Db::get()->fetchOne('SHOW TABLES LIKE ?', [$table]) !== false;
+    }
+
+    /**
+     * @return string[] the primary key columns, in their declared order
+     */
+    private function primaryKeyOf(string $table): array
+    {
+        return Db::get()->fetchFirstColumn(
+            'SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE'
+            . " WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY'"
+            . ' ORDER BY ORDINAL_POSITION',
+            [$table]
+        );
+    }
+
+    /**
+     * The integer display width is dropped: MariaDB reports `int(11) unsigned` where MySQL 8.0.19
+     * and later report `int unsigned`, and the width says nothing about what the column holds.
+     *
+     * @return array<string, string> column name => declared type, in their declared order
+     */
+    private function columnTypesOf(string $table): array
+    {
+        $rows = Db::get()->fetchAllAssociative(
+            'SELECT COLUMN_NAME AS name, DATA_TYPE AS dataType, COLUMN_TYPE AS columnType'
+            . ' FROM information_schema.COLUMNS'
+            . ' WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION',
+            [$table]
+        );
+
+        $columns = [];
+        foreach ($rows as $row) {
+            $type = (string) $row['columnType'];
+
+            if (in_array((string) $row['dataType'], self::INTEGER_TYPES, true)) {
+                $type = (string) preg_replace('/\(\d+\)/', '', $type);
+            }
+
+            $columns[(string) $row['name']] = $type;
+        }
+
+        return $columns;
+    }
+
+    /**
+     * @return array<string, string> referenced table => delete rule
+     */
+    private function foreignKeysOf(string $table): array
+    {
+        $rows = Db::get()->fetchAllAssociative(
+            'SELECT k.REFERENCED_TABLE_NAME AS referenced, r.DELETE_RULE AS deleteRule'
+            . ' FROM information_schema.KEY_COLUMN_USAGE k'
+            . ' JOIN information_schema.REFERENTIAL_CONSTRAINTS r ON r.CONSTRAINT_NAME = k.CONSTRAINT_NAME'
+            . ' AND r.CONSTRAINT_SCHEMA = k.CONSTRAINT_SCHEMA'
+            . ' WHERE k.TABLE_SCHEMA = DATABASE() AND k.TABLE_NAME = ? AND k.REFERENCED_TABLE_NAME IS NOT NULL',
+            [$table]
+        );
+
+        $foreignKeys = [];
+        foreach ($rows as $row) {
+            $foreignKeys[(string) $row['referenced']] = (string) $row['deleteRule'];
+        }
+
+        ksort($foreignKeys);
+
+        return $foreignKeys;
+    }
+    /**
+     * The EAV path marshals a wrapped value through the inner type as well, by way of the
+     * `classificationstore_multiValue` marshaller: a secret stored through a multi-value key is
+     * encrypted in the value column rather than written there as the normalized value.
+     */
+    /**
+     * What the two value columns cannot hold is refused before it is marshalled, for the inverse
+     * wrapper order too: `encryptedField<multiValue<geopoint>>`.
+     *
+     * The guard asked whether the delegate has a classification store marshaller, and a `multiValue`
+     * has one - so the coordinates were accepted, handed back by that marshaller as an array-valued
+     * column because a `geopoint` has no marshaller of its own, and cast to the string `'Array'` by
+     * the encryption. The column check that runs after marshalling cannot catch that: `'Array'` is a
+     * scalar. So the question is put to the whole delegate chain,
+     * {@see Classificationstore\Service::marshallerPacksIntoValueColumns()}, before anything is
+     * encrypted - and this engine's rule is that it refuses rather than loses a value.
+     */
+    public function testAnEavStoreRefusesAStructuredSecretBehindAMultiValueDelegate(): void
+    {
+        [$classificationStore, $groupId] = $this->eavStoreWithAMultiValueKey();
+        [$keyId, $innerWrapper] = $this->createMultiValueDelegatedEncryptedKey(
+            (int) $classificationStore->getClass()->getFieldDefinition('cs')->getStoreId(),
+            $groupId
+        );
+        $objectId = $classificationStore->getObject()->getId();
+
+        $classificationStore->setLocalizedKeyValue(
+            $groupId,
+            $keyId,
+            new EncryptedField($innerWrapper, new GeoCoordinates(48.208174, 16.373819))
+        );
+
+        $this->expectException(UnsupportedEngineFeatureException::class);
+
+        try {
+            $classificationStore->save();
+        } finally {
+            $this->assertSame(
+                0,
+                (int) Db::get()->fetchOne(
+                    'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                    . ' WHERE `id` = ? AND `keyId` = ?',
+                    [$objectId, $keyId]
+                ),
+                'the refused save wrote no row, rather than two null columns or the string "Array"'
+            );
+        }
+    }
+
+    public function testASecretWrappedInAMultiValueKeyIsEncryptedOnAnEavStore(): void
+    {
+        [$classificationStore, $groupId] = $this->eavStoreWithAMultiValueKey();
+        [$keyId, $delegate] = $this->createEncryptedMultiValueKey(
+            (int) $classificationStore->getClass()->getFieldDefinition('cs')->getStoreId(),
+            $groupId
+        );
+
+        $classificationStore->setKeyValues($groupId, $keyId, [
+            new MultiValue(new EncryptedField($delegate, self::SECRET)),
+        ]);
+        $classificationStore->save();
+
+        $row = Db::get()->fetchAssociative(
+            'SELECT `value`, `value2` FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+            . ' WHERE `id` = ? AND `keyId` = ?',
+            [$classificationStore->getObject()->getId(), $keyId]
+        );
+
+        $this->assertIsArray($row, 'the value landed in the EAV value table');
+        $this->assertNotNull($row['value']);
+        $this->assertStringNotContainsString(
+            self::SECRET,
+            (string) $row['value'],
+            'the cleartext of a wrapped secret must not be readable in the value column'
+        );
+
+        $reloaded = new Classificationstore();
+        $reloaded->setClass($classificationStore->getClass());
+        $reloaded->setFieldname('cs');
+        $reloaded->setObject($classificationStore->getObject());
+        $reloaded->load();
+
+        $this->assertSame(self::SECRET, $reloaded->getKeyValue($groupId, $keyId)->getPlain());
+    }
+
+    /**
+     * A store that has not learned its class yet has no store configuration to resolve an engine
+     * from, so the capability cannot be asked and the qualified write is accepted. It is asked again
+     * when the store is saved, where the value would otherwise be dropped: the EAV save builds its
+     * rows from the unqualified items alone, so without the second question the variant would
+     * silently never be stored.
+     */
+    public function testAStoreThatLearnedItsClassAfterTheWriteRefusesAtTheSave(): void
+    {
+        [$attached, $groupId, $keyId] = $this->eavStoreWithAMultiValueKey();
+        $objectId = $attached->getObject()->getId();
+
+        $detached = new Classificationstore();
+        $detached->setActiveGroups([$groupId => true]);
+        $detached->setKeyValues($groupId, $keyId, [new MultiValue('metric value', null, self::VARIANT)]);
+
+        $this->assertSame(
+            ['metric value'],
+            $detached->getKeyValues($groupId, $keyId, null, self::VARIANT),
+            'the write was accepted while there was no engine to ask'
+        );
+
+        $detached->setClass($attached->getClass());
+        $detached->setFieldname('cs');
+        $detached->setObject($attached->getObject());
+
+        $this->expectException(UnsupportedEngineFeatureException::class);
+
+        try {
+            $detached->save();
+        } finally {
+            $this->assertSame(
+                0,
+                (int) Db::get()->fetchOne(
+                    'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                    . ' WHERE `id` = ? AND `keyId` = ?',
+                    [$objectId, $keyId]
+                ),
+                'the refused save wrote no row'
+            );
+        }
+    }
+
+    /**
+     * What the EAV value table cannot address it refuses, rather than writing a variant into the
+     * slot of another: its primary key has room for the language and for nothing else.
+     *
+     * @dataProvider refusedEavCallProvider
+     */
+    public function testAnEavStoreRefusesWhatItCannotAddressAndWritesNothing(callable $call): void
+    {
+        [$classificationStore, $groupId, $keyId] = $this->eavStoreWithAMultiValueKey();
+        $objectId = $classificationStore->getObject()->getId();
+
+        $this->expectException(UnsupportedEngineFeatureException::class);
+
+        try {
+            $call($classificationStore, $groupId, $keyId);
+        } finally {
+            $classificationStore->save();
+
+            $this->assertSame(
+                0,
+                (int) Db::get()->fetchOne(
+                    'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                    . ' WHERE `id` = ? AND `keyId` = ?',
+                    [$objectId, $keyId]
+                ),
+                'a refused call wrote no row'
+            );
+        }
+    }
+
+    /**
+     * The ordinary path still works on an EAV store: an unqualified value is written and read as a
+     * one-element list, which is what every key held before the qualifiers existed.
+     */
+    public function testAnUnqualifiedValueStillWorksOnAnEavStore(): void
+    {
+        [$classificationStore, $groupId, $keyId] = $this->eavStoreWithAMultiValueKey();
+
+        $classificationStore->setKeyValues($groupId, $keyId, [new MultiValue('plain')]);
+        $classificationStore->save();
+
+        $this->assertSame(
+            1,
+            (int) Db::get()->fetchOne(
+                'SELECT COUNT(*) FROM ' . self::DATA_TABLE_PREFIX . self::EAV_CLASS_ID
+                . ' WHERE `id` = ? AND `keyId` = ?',
+                [$classificationStore->getObject()->getId(), $keyId]
+            ),
+            'the value landed in the EAV value table'
+        );
+
+        $this->assertSame(['plain'], $classificationStore->getKeyValues($groupId, $keyId));
+        $this->assertSame('plain', $classificationStore->getKeyValue($groupId, $keyId));
+    }
+
+    /**
+     * The value tables carry a foreign key on `objects`, and the capability tests need a real
+     * object row for their rows to point at - {@see TestHelper::createEmptyObject()} builds one of
+     * this class.
+     */
+    protected function setUpTestClasses(): void
+    {
+        $this->tester->setupPimcoreClass_Unittest();
+    }
+
+    /**
+     * @return array<string, array{callable}>
+     */
+    public static function refusedEavCallProvider(): array
+    {
+        return [
+            'a non-default variant on write' => [
+                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->setKeyValues(
+                    $groupId,
+                    $keyId,
+                    [new MultiValue('metric value', null, self::VARIANT)]
+                ),
+            ],
+            'a non-default variant on read' => [
+                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->getKeyValues(
+                    $groupId,
+                    $keyId,
+                    null,
+                    self::VARIANT
+                ),
+            ],
+            'a position other than 0 on read' => [
+                static fn (Classificationstore $store, int $groupId, int $keyId) => $store->getKeyValue(
+                    $groupId,
+                    $keyId,
+                    null,
+                    null,
+                    1
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * A class on an EAV store carrying one multi-value key, and a store model bound to an object
+     * row the value table can point at - the row stands for a value, never for an object of the
+     * class under test, the way {@see self::anyObjectId()} does.
+     *
+     * @return array{Classificationstore, int, int} the model, the group id and the key id
+     */
+    private function eavStoreWithAMultiValueKey(): array
+    {
+        $storeId = $this->createStore();
+        $this->buildClass(self::EAV_CLASS_ID, ['cs' => $this->storeField('cs', $storeId)])->save();
+
+        // a saved class is rebuilt from its layout, so the field definitions the engine routing
+        // reads are the ones of the reloaded definition
+        $class = ClassDefinition::getById(self::EAV_CLASS_ID, true);
+
+        $groupId = $this->createGroup($storeId);
+        $keyId = $this->createMultiValueKey($storeId, $groupId);
+
+        $object = TestHelper::createEmptyObject('cs-engine-eav-');
+        $this->objectIds[] = (int) $object->getId();
+
+        $classificationStore = new Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->setFieldname('cs');
+        $classificationStore->setObject($object);
+        $classificationStore->setActiveGroups([$groupId => true]);
+
+        return [$classificationStore, $groupId, $keyId];
+    }
+
+    /**
+     * A multi-value key whose inner type is an `encryptedField`, with the delegate of that inner
+     * type a value has to be built against.
+     *
+     * @return array{int, Input} the key id and the delegate of the inner type
+     */
+    private function createEncryptedMultiValueKey(int $storeId, int $groupId): array
+    {
+        $delegate = new Input();
+        $delegate->setName('mvSecret');
+
+        $inner = new EncryptedFieldDefinition();
+        $inner->setName('mvSecret');
+        $inner->setDelegateDatatype($delegate->getFieldType());
+        $inner->setDelegate($delegate);
+
+        $definition = new MultiValueField();
+        $definition->setName('mvSecretKey');
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        return [$this->storeKeyConfig($storeId, $groupId, $definition), $delegate];
+    }
+
+    /**
+     * The inverse wrapper order: an `encryptedField` whose delegate is a `multiValue` wrapping a
+     * `geopoint`. Its own type is `encryptedField`, so it holds one unqualified value and the
+     * qualifier features are not what decides its fate here.
+     *
+     * The definition-time check accepts it, and cannot do otherwise: it is answered from the
+     * `delegateDatatype` of the key, a type NAME, which for a nested wrapper cannot carry the type
+     * at the end of the chain ({@see Classificationstore\KeyTypeSupport::isHeldInValueColumns()}
+     * reads `encryptedField<multiValue>` and stops). The engine is the designed backstop for that.
+     *
+     * @return array{int, MultiValueField}
+     */
+    private function createMultiValueDelegatedEncryptedKey(int $storeId, int $groupId): array
+    {
+        $coordinates = new Geopoint();
+        $coordinates->setName('mvGeoSecret');
+
+        $innerWrapper = new MultiValueField();
+        $innerWrapper->setName('mvGeoSecret');
+        $innerWrapper->setDelegateDatatype($coordinates->getFieldType());
+        $innerWrapper->setDelegate($coordinates);
+
+        $definition = new EncryptedFieldDefinition();
+        $definition->setName('mvGeoSecretKey');
+        $definition->setDelegateDatatype($innerWrapper->getFieldType());
+        $definition->setDelegate($innerWrapper);
+
+        return [$this->storeKeyConfig($storeId, $groupId, $definition), $innerWrapper];
+    }
+
+    /**
+     * A key declaring a variant, so that what the EAV store refuses is the storage's answer
+     * and not the declaration's.
+     */
+    private function createMultiValueKey(int $storeId, int $groupId): int
+    {
+        $inner = new Input();
+        $inner->setName('mvInner');
+
+        $definition = new MultiValueField();
+        $definition->setName('mvKey');
+        $definition->setVariants([['name' => self::VARIANT]]);
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        return $this->storeKeyConfig($storeId, $groupId, $definition);
+    }
+
+    /**
+     * The key configuration of one definition, assigned to the given group.
+     */
+    private function storeKeyConfig(int $storeId, int $groupId, Data $definition): int
+    {
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($storeId);
+        $keyConfig->setName(uniqid('csEngineKey', false));
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType($definition->getFieldType());
+        $keyConfig->setDefinition((string) json_encode($definition));
+
+        $this->saveOrCarryOver($keyConfig, $definition);
+
+        $this->keyIds[] = (int) $keyConfig->getId();
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId($keyConfig->getId());
+        $relation->setGroupId($groupId);
+        $relation->setSorter(1);
+        $relation->save();
+
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+
+        return (int) $keyConfig->getId();
+    }
+
+    /**
+     * Saves the key, or - where the engine of its store cannot be given such a key any more - writes
+     * the row the way an installation that defined one before that refusal existed carries it: saved
+     * as an `input` and then given its real type and definition.
+     *
+     * The `multiValue` keys of the EAV fixtures below are exactly that state. What they are about is
+     * what the ENGINE does with such a key - which slot it writes, which it refuses, what a read
+     * gives back - and that behaviour is unchanged by the key no longer being definable there. A
+     * fixture that could only be built on the document engine would test a different thing.
+     */
+    private function saveOrCarryOver(Classificationstore\KeyConfig $keyConfig, Data $definition): void
+    {
+        try {
+            $keyConfig->save();
+
+            return;
+        } catch (UndeclarableEngineFeatureException) {
+            // below
+        }
+
+        $keyConfig->setType(self::CARRIED_OVER_PLACEHOLDER_TYPE);
+        $keyConfig->setDefinition((string) json_encode(new Input()));
+        $keyConfig->save();
+
+        Db::get()->update(
+            self::KEYS_TABLE,
+            ['type' => $definition->getFieldType(), 'definition' => (string) json_encode($definition)],
+            ['id' => $keyConfig->getId()]
+        );
+    }
+}

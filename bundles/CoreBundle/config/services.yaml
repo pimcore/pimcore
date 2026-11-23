@@ -108,6 +108,66 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
         public: true
 
+    # public: it is consumed from KeyConfig, which is not container-managed, and it is what the
+    # Studio key picker asks which types a store can offer.
+    # the loader is wired explicitly: it has no autowiring alias, and the asset metadata loader
+    # implements an interface of the same short name.
+    Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport:
+        public: true
+        arguments:
+            $dataLoader: '@pimcore.implementation_loader.object.data'
+
+    # turns the stored descriptors of a relation-typed classification store key into its elements.
+    # public, for the same reason the caches further down are: it is consumed from the
+    # classification store model and from the class definition data type, neither of which is
+    # container-managed.
+    Pimcore\Model\DataObject\Classificationstore\RelationResolver:
+        public: true
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
+    # renders the edit mode value of those keys from the same descriptors, without instantiating a
+    # target. public for the same reason as the resolver above.
+    Pimcore\Model\DataObject\Classificationstore\RelationEditModeResolver:
+        public: true
+
+    # Classification Store storage engines
+    Pimcore\Model\DataObject\Classificationstore\Engine\EavEngine:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.classificationstore.engine, key: eav }
+
+    # $eavEngine: the read-through of a store that was flipped but not drained yet, and the removal
+    # of the EAV rows of a pair this engine has just written, both reach the other engine.
+    Pimcore\Model\DataObject\Classificationstore\Engine\DocumentEngine:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.classificationstore.engine, key: document }
+
+    # drives the flip/drain/verify/cleanup route from EAV to the document engine, for the four
+    # commands of the same names
+    Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\DocumentEngineMigrationService:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
+    Pimcore\Bundle\CoreBundle\DataObject\Classificationstore\GridConfigReferenceTranslator:
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
+    # public: it is consumed from the classification store DAO and the class definition DAO,
+    # which are not container-managed.
+    # kernel.reset: the resolver memoizes which engine each store resolves to, and that memo has to
+    # be dropped per request and per messenger message so a store flipped to another engine is read
+    # back from its configuration - like the caches further down do.
+    Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver:
+        public: true
+        arguments:
+            $engines: !tagged_iterator { tag: pimcore.classificationstore.engine, index_by: key }
+        tags:
+            - { name: kernel.reset, method: reset }
+
     Pimcore\Mail\Plugins\RedirectingPlugin: ~
 
     # Decorates Symfony Mailer
@@ -240,6 +300,40 @@ services:
         public: true
         tags:
             - { name: kernel.reset, method: reset }
+
+    # process-scoped cache of the classification store key/group relations and their field
+    # definitions, cleared per request and per messenger message via the kernel.reset tag.
+    # public, for the same reason as the permission cache above: it is consumed from the
+    # classification store model and DAO, which are not container-managed.
+    Pimcore\Model\DataObject\Classificationstore\KeyGroupRelationCache:
+        public: true
+        tags:
+            - { name: kernel.reset, method: reset }
+
+    # request-scoped cache of the classification store labels, cleared per request and per
+    # messenger message via the kernel.reset tag. deliberately not folded into the relation cache
+    # above, which is keyed by (groupId, keyId) and answers one of the five labelled entity types.
+    # public, for the same reason as the caches above: it is consumed from the classification
+    # store model and DAO, which are not container-managed.
+    Pimcore\Model\DataObject\Classificationstore\LabelResolver:
+        public: true
+        tags:
+            - { name: kernel.reset, method: reset }
+
+    # answers which languages a classification store key is kept in, for the paths that enumerate
+    # them. public, for the same reason as the caches above: it is consumed from the classification
+    # store field definition and from the data object service, which are not container-managed.
+    Pimcore\Model\DataObject\Classificationstore\LocalizationResolver:
+        public: true
+        arguments:
+            $db: '@doctrine.dbal.default_connection'
+
+    # the supported contract the packages rendering a label bind to, so that none of them has to
+    # type-hint the implementation above, which stays internal.
+    Pimcore\Model\DataObject\Classificationstore\LabelResolverInterface:
+        public: true
+        alias: Pimcore\Model\DataObject\Classificationstore\LabelResolver
+
     #
     # SECURITY
     #

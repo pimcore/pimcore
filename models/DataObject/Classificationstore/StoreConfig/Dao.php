@@ -14,6 +14,10 @@ namespace Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 
 use Exception;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore\LabelEntityType;
+use Pimcore\Model\DataObject\Classificationstore\Traits\IdentifierDaoTrait;
+use Pimcore\Model\DataObject\Classificationstore\Traits\LabelCleanupDaoTrait;
+use Throwable;
 
 /**
  * @internal
@@ -22,6 +26,9 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use IdentifierDaoTrait;
+    use LabelCleanupDaoTrait;
+
     const TABLE_NAME_STORES = 'classificationstore_stores';
 
     /**
@@ -67,23 +74,62 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByIdentifier(string $identifier): void
+    {
+        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_STORES . ' WHERE identifier = ?', [$identifier]);
+
+        if ($data) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException(sprintf('Classification store config with identifier "%s" does not exist.', $identifier));
+        }
+    }
+
+    /**
+     * @throws Model\Exception\InvalidConfigException
+     */
+    public function assertIdentifierIsUnique(): void
+    {
+        $identifier = $this->model->getIdentifier();
+        if ($identifier === null) {
+            return;
+        }
+
+        $used = $this->db->fetchOne(
+            'SELECT id FROM ' . self::TABLE_NAME_STORES . ' WHERE identifier = ? AND id != ?',
+            [$identifier, $this->model->getId() ?? 0]
+        );
+
+        if ($used !== false) {
+            throw new Model\Exception\InvalidConfigException(sprintf('The identifier "%s" is already in use.', $identifier));
+        }
+    }
+
+    /**
      * @throws Exception
      */
     public function save(): void
     {
         if (!$this->model->getId()) {
-            $this->create();
+            $this->createAndUpdate();
+
+            return;
         }
 
         $this->update();
     }
 
     /**
-     * Deletes object from database
+     * Deletes object from database, together with this store's own labels
+     *
+     * @throws Throwable
      */
     public function delete(): void
     {
-        $this->db->delete(self::TABLE_NAME_STORES, ['id' => $this->model->getId()]);
+        $this->deleteWithLabels(self::TABLE_NAME_STORES, LabelEntityType::Store);
     }
 
     /**
@@ -91,23 +137,44 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update(): void
     {
-        $data = [];
-        $type = $this->model->getObjectVars();
+        // the row itself and the identifier are written as one unit
+        $this->writeAtomically(function (): void {
+            $id = $this->model->getId();
+            $identifier = $this->model->getIdentifier();
+            $identifierPending = $this->isIdentifierPending(self::TABLE_NAME_STORES, $id, $identifier);
 
-        foreach ($type as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_STORES))) {
-                if (is_bool($value)) {
-                    $value = (int) $value;
-                }
-                if (is_array($value) || is_object($value)) {
-                    $value = \Pimcore\Tool\Serialize::serialize($value);
+            $data = [];
+            $type = $this->model->getObjectVars();
+
+            foreach ($type as $key => $value) {
+                // a store config built with `new` carries no engine, and must not reset a flipped store
+                if ($key === 'engine' && !$this->model->isEngineInitialized()) {
+                    continue;
                 }
 
-                $data[$key] = $value;
+                // written by writeIdentifier(), which is the only place allowed to touch the column
+                if ($key === 'identifier') {
+                    continue;
+                }
+
+                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_STORES))) {
+                    if (is_bool($value)) {
+                        $value = (int) $value;
+                    }
+                    if (is_array($value) || is_object($value)) {
+                        $value = \Pimcore\Tool\Serialize::serialize($value);
+                    }
+
+                    $data[$key] = $value;
+                }
             }
-        }
 
-        $this->db->update(self::TABLE_NAME_STORES, $data, ['id' => $this->model->getId()]);
+            $this->db->update(self::TABLE_NAME_STORES, $data, ['id' => $this->model->getId()]);
+
+            if ($identifierPending) {
+                $this->writeIdentifier(self::TABLE_NAME_STORES, (int) $id, (string) $identifier);
+            }
+        });
     }
 
     public function create(): void

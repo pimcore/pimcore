@@ -1,0 +1,455 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Model\DataType\ClassificationStore;
+
+use Pimcore;
+use Pimcore\Db;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
+use Pimcore\Model\DataObject\ClassDefinition\Data\OptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Csstore;
+use Pimcore\Tests\Support\Util\OptionsProvider\DeprecatedListOptionsProvider;
+use Pimcore\Tests\Support\Util\OptionsProvider\DynamicListOptionsProvider;
+use Pimcore\Tests\Support\Util\OptionsProvider\StaticListOptionsProvider;
+use Symfony\Contracts\Service\ResetInterface;
+
+/**
+ * The enriched layout: what the batched relation lookup produces, and the field definition each
+ * group gets for a key it shares with another group.
+ *
+ * @group model.datatype.classificationstore
+ */
+class PerGroupDefinitionTest extends AbstractBatchedRelationTest
+{
+    private const GROUP_COUNT = 10;
+
+    private const OPTIONS = 'options';
+
+    private const CHANGED_TITLE = 'changed title';
+
+    private const STORED_SORTER = 7;
+
+    private const CHANGED_SORTER = 42;
+
+    public function testEnrichedLayoutKeepsGroupsKeyOrderAndSkipsDisabledKeys(): void
+    {
+        $expectedGroups = [];
+        $activeGroups = [];
+
+        for ($groupIndex = 0; $groupIndex < self::GROUP_COUNT; $groupIndex++) {
+            $group = $this->createGroup('ordered' . $groupIndex);
+            $activeGroups[$group->getId()] = true;
+
+            // assigned with a descending sorter, so that (sorter, id) is not the creation order
+            $keys = [];
+            foreach ([2, 1, 0] as $position => $sorter) {
+                $keyConfig = $this->createKey('ordered' . $groupIndex . '_' . $position);
+                $this->assignKey($group, $keyConfig, $sorter);
+                $keys[$sorter] = $keyConfig;
+            }
+
+            // a relation whose key is disabled is not part of the layout
+            $disabledKey = $this->createKey('disabled' . $groupIndex, false);
+            $this->assignKey($group, $disabledKey, 3);
+
+            ksort($keys);
+            $expectedGroups[$group->getId()] = [
+                'name' => $group->getName(),
+                'id' => $group->getId(),
+                'description' => $group->getDescription(),
+                'keys' => array_map(
+                    static fn (Classificationstore\KeyConfig $keyConfig) => [
+                        'id' => $keyConfig->getId(),
+                        'name' => $keyConfig->getName(),
+                        'description' => $keyConfig->getDescription(),
+                    ],
+                    array_values($keys)
+                ),
+            ];
+        }
+
+        $definitions = $this->enrich($this->createObject('ordered', $activeGroups));
+
+        $this->assertSame(array_keys($expectedGroups), array_keys($definitions));
+
+        foreach ($expectedGroups as $groupId => $expectedGroup) {
+            $this->assertSame($expectedGroup['name'], $definitions[$groupId]['name']);
+            $this->assertSame($expectedGroup['id'], $definitions[$groupId]['id']);
+            $this->assertSame($expectedGroup['description'], $definitions[$groupId]['description']);
+
+            $actualKeys = array_map(
+                static fn (array $key) => [
+                    'id' => $key['id'],
+                    'name' => $key['name'],
+                    'description' => $key['description'],
+                ],
+                $definitions[$groupId]['keys']
+            );
+
+            $this->assertSame($expectedGroup['keys'], $actualKeys, 'keys stay ordered by (sorter, id)');
+        }
+    }
+
+    public function testAKeyInTwoGroupsGetsItsOwnDefinitionPerGroup(): void
+    {
+        $groupA = $this->createGroup('mandatoryA');
+        $groupB = $this->createGroup('mandatoryB');
+        $keyConfig = $this->createKey('shared');
+
+        $this->assignKey($groupA, $keyConfig, 0, true);
+        $this->assignKey($groupB, $keyConfig, 0, false);
+
+        // the mandatory relation of group A is satisfied, so that the object itself still saves
+        $definitions = $this->enrich($this->createObject('shared', [
+            $groupA->getId() => true,
+            $groupB->getId() => true,
+        ], [[$groupA->getId(), $keyConfig->getId(), 'a value']]));
+
+        $definitionA = $definitions[$groupA->getId()]['keys'][0]['definition'];
+        $definitionB = $definitions[$groupB->getId()]['keys'][0]['definition'];
+
+        $this->assertNotSame($definitionA, $definitionB, 'each group gets a field definition of its own');
+        $this->assertTrue($definitionA->getMandatory(), 'the key is mandatory in the group that says so');
+        $this->assertFalse($definitionB->getMandatory(), 'and not in the group that does not');
+
+        // the description a tooltip falls back to is a property of the key, not of the assignment
+        $expectedTooltip = $keyConfig->getName() . ' - ' . $keyConfig->getDescription();
+        $this->assertSame($expectedTooltip, $definitionA->getTooltip());
+        $this->assertSame($expectedTooltip, $definitionB->getTooltip());
+    }
+
+    public function testTheCacheHandsBackTheOptionSubsetOfEachGroup(): void
+    {
+        $groupA = $this->createGroup('subsetA');
+        $groupB = $this->createGroup('subsetB');
+        $keyConfig = $this->createKey('subset', true, $this->selectWithOptions());
+
+        $this->assignKey($groupA, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($groupB, $keyConfig);
+
+        $cache = $this->getRelationCache();
+
+        $this->assertSame(
+            [['key' => 'Option A', 'value' => 'a']],
+            $cache->getFieldDefinition($groupA->getId(), $keyConfig->getId())->getOptions()
+        );
+        $this->assertCount(3, $cache->getFieldDefinition($groupB->getId(), $keyConfig->getId())->getOptions());
+    }
+
+    public function testTheEnrichedLayoutCarriesTheOptionsAndUnitsOfEachGroup(): void
+    {
+        $groupA = $this->createGroup('layoutA');
+        $groupB = $this->createGroup('layoutB');
+        $select = $this->createKey('layoutSelect', true, $this->selectWithOptions());
+        $quantity = $this->createKey('layoutQuantity', true, $this->quantityValue());
+
+        $this->assignKey($groupA, $select, 0, false, [self::OPTIONS => ['a', 'b']]);
+        $this->assignKey($groupB, $select, 0, false, [self::OPTIONS => ['c']]);
+        $this->assignKey($groupA, $quantity, 1, false, ['defaultUnit' => 'mm', 'validUnits' => ['mm']]);
+        $this->assignKey($groupB, $quantity, 1);
+
+        $definitions = $this->enrich($this->createObject('layout', [
+            $groupA->getId() => true,
+            $groupB->getId() => true,
+        ]));
+
+        $this->assertSame(
+            ['a', 'b'],
+            array_column($definitions[$groupA->getId()]['keys'][0]['definition']->getOptions(), 'value')
+        );
+        $this->assertSame(
+            ['c'],
+            array_column($definitions[$groupB->getId()]['keys'][0]['definition']->getOptions(), 'value')
+        );
+
+        $quantityA = $definitions[$groupA->getId()]['keys'][1]['definition'];
+        $quantityB = $definitions[$groupB->getId()]['keys'][1]['definition'];
+        $this->assertSame('mm', $quantityA->getDefaultUnit());
+        $this->assertSame(['mm'], $quantityA->getValidUnits());
+        $this->assertSame('cm', $quantityB->getDefaultUnit());
+        $this->assertSame(['cm', 'mm'], $quantityB->getValidUnits());
+    }
+
+    public function testAProviderListIsNarrowedByTheSubsetOfEachGroupWhenItIsStatic(): void
+    {
+        $groupA = $this->createGroup('providerA');
+        $groupB = $this->createGroup('providerB');
+        $keyConfig = $this->createKey('provider', true, $this->selectWithProvider(StaticListOptionsProvider::class));
+
+        $this->assignKey($groupA, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, [self::OPTIONS => ['b', 'c']]);
+
+        $definitions = $this->enrich($this->createObject('provider', [
+            $groupA->getId() => true,
+            $groupB->getId() => true,
+        ]));
+
+        $this->assertSame(['a'], array_column($definitions[$groupA->getId()]['keys'][0]['definition']->getOptions(), 'value'));
+        $this->assertSame(['b', 'c'], array_column($definitions[$groupB->getId()]['keys'][0]['definition']->getOptions(), 'value'));
+
+        // what the editor offers and what validation accepts are built from the same subset
+        foreach ([$groupA, $groupB] as $group) {
+            $this->assertSame(
+                $definitions[$group->getId()]['keys'][0]['definition']->getOptions(),
+                $this->getRelationCache()->getFieldDefinition($group->getId(), $keyConfig->getId())->getOptions()
+            );
+        }
+    }
+
+    public function testADynamicProviderListIsLeftUnfiltered(): void
+    {
+        $groupA = $this->createGroup('dynamicA');
+        $groupB = $this->createGroup('dynamicB');
+        $keyConfig = $this->createKey('dynamic', true, $this->selectWithProvider(DynamicListOptionsProvider::class));
+
+        $this->assignKey($groupA, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($groupB, $keyConfig, 0, false, [self::OPTIONS => ['b']]);
+
+        $definitions = $this->enrich($this->createObject('dynamic', [
+            $groupA->getId() => true,
+            $groupB->getId() => true,
+        ]));
+
+        foreach ([$groupA, $groupB] as $group) {
+            $this->assertCount(3, $definitions[$group->getId()]['keys'][0]['definition']->getOptions());
+        }
+    }
+
+    public function testASubsetOnAStaticProviderKeyIsAppliedToTheListTheProviderFills(): void
+    {
+        $group = $this->createGroup('validation');
+        $unmatched = $this->createGroup('unmatched');
+        $keyConfig = $this->createKey('validation', true, $this->selectWithProvider(StaticListOptionsProvider::class));
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+        $this->assignKey($unmatched, $keyConfig, 0, false, [self::OPTIONS => ['zz']]);
+
+        $cache = $this->getRelationCache();
+
+        $this->assertSame(
+            [['key' => 'Option A', 'value' => 'a']],
+            $cache->getMutableFieldDefinition($group->getId(), $keyConfig->getId())->getOptions()
+        );
+
+        // a subset matching nothing is the empty list it is, the same as the enriched layout carries:
+        // left unset, the provider's whole list would be what a save validates against
+        $this->assertSame(
+            [],
+            $cache->getMutableFieldDefinition($unmatched->getId(), $keyConfig->getId())->getOptions()
+        );
+    }
+
+    /**
+     * A provider implementing only the deprecated interface is what the multiselect mode resolves,
+     * so the enriched layout narrows its list - and the definition the validity walk gets has to
+     * narrow the same list, rather than leaving the unfiltered one for the save to accept.
+     */
+    public function testAProviderOfTheDeprecatedInterfaceIsNarrowedForTheEditorAndForValidation(): void
+    {
+        $group = $this->createGroup('deprecatedProvider');
+        $multiselect = new Multiselect();
+        $multiselect->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $multiselect->setOptionsProviderClass(DeprecatedListOptionsProvider::class);
+        $keyConfig = $this->createKey('deprecatedProvider', true, $multiselect);
+
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+
+        $definitions = $this->enrich($this->createObject('deprecated-provider', [$group->getId() => true]));
+
+        $this->assertSame(
+            ['a'],
+            array_column($definitions[$group->getId()]['keys'][0]['definition']->getOptions(), 'value')
+        );
+        $this->assertSame(
+            ['a'],
+            array_column(
+                $this->getRelationCache()->getFieldDefinition($group->getId(), $keyConfig->getId())->getOptions(),
+                'value'
+            )
+        );
+    }
+
+    /**
+     * A subset that filtered the key's OWN list to nothing - the key was edited after the assignment
+     * was made - leaves an empty list on both sides as well. What that empty list means for a save
+     * is {@see ValidityAndEditModeTest::testASubsetThatLeavesNoOptionOfTheKeyRefusesEveryValue()}.
+     */
+    public function testASubsetThatLeavesNoneOfTheKeysOwnOptionsLeavesAnEmptyList(): void
+    {
+        $group = $this->createGroup('emptySubset');
+        $keyConfig = $this->createKey('emptySubset', true, $this->selectWithOptions());
+
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['gone']]);
+
+        $definitions = $this->enrich($this->createObject('empty-subset', [$group->getId() => true]));
+
+        $this->assertSame([], $definitions[$group->getId()]['keys'][0]['definition']->getOptions());
+        $this->assertSame(
+            [],
+            $this->getRelationCache()->getFieldDefinition($group->getId(), $keyConfig->getId())->getOptions()
+        );
+    }
+
+    public function testASubsetOnADynamicProviderKeyLeavesTheOptionsForTheProviderToFill(): void
+    {
+        $group = $this->createGroup('validation');
+        $keyConfig = $this->createKey('validation', true, $this->selectWithProvider(DynamicListOptionsProvider::class));
+        $this->assignKey($group, $keyConfig, 0, false, [self::OPTIONS => ['a']]);
+
+        // null rather than [], which Select::checkValidity() reads as nothing to validate against
+        $this->assertNull($this->getRelationCache()->getMutableFieldDefinition($group->getId(), $keyConfig->getId())->getOptions());
+    }
+
+    private function selectWithOptions(): Select
+    {
+        $select = new Select();
+        $select->setOptions([
+            ['key' => 'Option A', 'value' => 'a'],
+            ['key' => 'Option B', 'value' => 'b'],
+            ['key' => 'Option C', 'value' => 'c'],
+        ]);
+
+        return $select;
+    }
+
+    private function selectWithProvider(string $providerClass): Select
+    {
+        $select = new Select();
+        $select->setOptionsProviderType(OptionsProviderInterface::TYPE_CLASS);
+        $select->setOptionsProviderClass($providerClass);
+
+        return $select;
+    }
+
+    private function quantityValue(): QuantityValue
+    {
+        $quantity = new QuantityValue();
+        $quantity->setDefaultUnit('cm');
+        $quantity->setValidUnits(['cm', 'mm']);
+
+        return $quantity;
+    }
+
+    /**
+     * Drives the real services_resetter rather than asserting the tag line in services.yaml: with
+     * `autoconfigure: true` the ResetInterface implementation is tagged either way, so the explicit
+     * tag - which mirrors the one on PermissionCache - is not what makes this pass.
+     */
+    public function testTheCacheIsClearedAtTheKernelResetBoundary(): void
+    {
+        $group = $this->createGroup('reset');
+        $keyConfig = $this->createKey('reset');
+        $this->assignKey($group, $keyConfig, self::STORED_SORTER);
+
+        $container = Pimcore::getContainer();
+
+        $this->assertTrue($container->has(Classificationstore\KeyGroupRelationCache::class));
+
+        $cache = $container->get(Classificationstore\KeyGroupRelationCache::class);
+        $this->assertInstanceOf(ResetInterface::class, $cache);
+
+        $cache->reset();
+        $this->assertSame(self::STORED_SORTER, $this->readSorter($cache, $group, $keyConfig));
+
+        // changed behind the cache's back, so that none of the invalidation hooks fires
+        Db::get()->executeStatement(
+            'UPDATE `' . Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . '` SET `sorter` = ? WHERE `groupId` = ? AND `keyId` = ?',
+            [self::CHANGED_SORTER, $group->getId(), $keyConfig->getId()]
+        );
+
+        $this->assertSame(
+            self::STORED_SORTER,
+            $this->readSorter($cache, $group, $keyConfig),
+            'precondition: the held relations answer without reading again'
+        );
+
+        $container->get('services_resetter')->reset();
+
+        $this->assertSame(
+            self::CHANGED_SORTER,
+            $this->readSorter($cache, $group, $keyConfig),
+            'the kernel.reset tag must empty the cache'
+        );
+    }
+
+    public function testAKeyConfigAndARelationSavedMidProcessAreReflected(): void
+    {
+        $group = $this->createGroup('invalidated');
+        $keyConfig = $this->createKey('invalidated');
+        $this->assignKey($group, $keyConfig);
+
+        $object = $this->createObject('invalidated', [$group->getId() => true]);
+
+        $definition = $this->enrich($object)[$group->getId()]['keys'][0]['definition'];
+        $this->assertFalse($definition->getMandatory());
+        $this->assertNotSame(self::CHANGED_TITLE, $definition->getTitle());
+
+        $changedDefinition = new Input();
+        $changedDefinition->setName($keyConfig->getName());
+        $changedDefinition->setTitle(self::CHANGED_TITLE);
+        $keyConfig->setDefinition(json_encode($changedDefinition));
+        $keyConfig->save();
+
+        $relation = Classificationstore\KeyGroupRelation::getByGroupAndKeyId($group->getId(), $keyConfig->getId());
+        $relation->setMandatory(true);
+        $relation->save();
+
+        $definition = $this->enrich($object)[$group->getId()]['keys'][0]['definition'];
+        $this->assertTrue($definition->getMandatory(), 'the re-saved relation is read again');
+        $this->assertSame(self::CHANGED_TITLE, $definition->getTitle(), 'the edited key config is read again');
+    }
+
+    /**
+     * @param array<int, bool> $activeGroups
+     * @param array<int, array{int, int, mixed}> $values [groupId, keyId, value] set before the save
+     */
+    private function createObject(string $key, array $activeGroups, array $values = []): Csstore
+    {
+        $object = new Csstore();
+        $object->setParentId(1);
+        $object->setKey($key);
+        $object->setPublished(true);
+        $object->getCsstore()->setActiveGroups($activeGroups);
+
+        foreach ($values as [$groupId, $keyId, $value]) {
+            $object->getCsstore()->setLocalizedKeyValue($groupId, $keyId, $value);
+        }
+
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function enrich(Csstore $object): array
+    {
+        $fieldDefinition = $object->getClass()->getFieldDefinition('csstore');
+        $fieldDefinition->enrichLayoutDefinition($object);
+
+        return $fieldDefinition->activeGroupDefinitions;
+    }
+
+    private function readSorter(
+        Classificationstore\KeyGroupRelationCache $cache,
+        Classificationstore\GroupConfig $group,
+        Classificationstore\KeyConfig $keyConfig
+    ): int {
+        return $cache->getRelation($group->getId(), $keyConfig->getId())->getSorter();
+    }
+}
