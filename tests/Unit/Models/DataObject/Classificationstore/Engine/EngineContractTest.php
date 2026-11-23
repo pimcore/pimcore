@@ -327,7 +327,4 @@ class EngineContractTest extends TestCase
 
         return $method->getReturnType() . ' ' . $method->getName() . '(' . implode(', ', $parameters) . ')';
     }
-
-
-
 }

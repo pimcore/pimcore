@@ -194,6 +194,7 @@ class ServiceRestoreClassificationstoreLanguagesTest extends TestCase
 
         return $store;
     }
+
     /**
      * A field every key of which is localized, which is what the language restriction is about:
      * {@see LocalizationResolver::isKeyLocalized()} falls back to the field's own flag for a key
@@ -206,5 +207,4 @@ class ServiceRestoreClassificationstoreLanguagesTest extends TestCase
 
         return $definition;
     }
-
 }

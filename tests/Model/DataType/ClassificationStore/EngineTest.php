@@ -13,24 +13,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
-use Pimcore\Model\DataObject\Data\MultiValue;
-use Pimcore\Model\DataObject\Data\EncryptedField;
-use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueField;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
-use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
-use Pimcore\Model\DataObject\Data\GeoCoordinates;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Maintenance\Tasks\CleanupClassificationstoreTablesTask;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationstoreField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField as EncryptedFieldDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue as MultiValueField;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Layout\Panel;
@@ -43,6 +40,9 @@ use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
 use Pimcore\Model\DataObject\Classificationstore\RelationResolver;
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\EncryptedField;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
+use Pimcore\Model\DataObject\Data\MultiValue;
 use Pimcore\Model\DataObject\Exception\DerivedValueNotStorableException;
 use Pimcore\Model\DataObject\Exception\UndeclarableEngineFeatureException;
 use Pimcore\Model\DataObject\Exception\UnknownClassificationStoreEngineException;
@@ -1129,6 +1129,7 @@ class EngineTest extends ModelTestCase
 
         return $foreignKeys;
     }
+
     /**
      * The EAV path marshals a wrapped value through the inner type as well, by way of the
      * `classificationstore_multiValue` marshaller: a secret stored through a multi-value key is
