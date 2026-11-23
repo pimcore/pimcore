@@ -245,6 +245,72 @@ class ServiceTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
+    public function testSvgPassthroughResponseCarriesRestrictiveHeaders(): void
+    {
+        $thumbnail = $this->createMock(ThumbnailInterface::class);
+        $thumbnail->method('getPathReference')->willReturn(['type' => 'asset', 'src' => '/foo/bar.svg']);
+        $thumbnail->method('getStream')->willReturn(fopen('php://memory', 'r+'));
+        $thumbnail->method('getMimeType')->willReturn('image/svg+xml');
+        $thumbnail->method('getFileSize')->willReturn(0);
+
+        $response = Service::getStreamedResponseFromImageThumbnail($thumbnail, [
+            'type' => 'image',
+            'filename' => 'bar.svg',
+        ]);
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $csp = (string) $response->headers->get('Content-Security-Policy');
+        $this->assertStringContainsString('sandbox', $csp);
+        $this->assertStringContainsString("default-src 'none'", $csp);
+        $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+        $this->assertSame('image/svg+xml', $response->headers->get('Content-Type'));
+    }
+
+    public function testRasterThumbnailResponseGetsNosniffOnly(): void
+    {
+        $thumbnail = $this->createMock(ThumbnailInterface::class);
+        $thumbnail->method('getPathReference')->willReturn(['type' => 'asset', 'src' => '/foo/bar.jpg']);
+        $thumbnail->method('getStream')->willReturn(fopen('php://memory', 'r+'));
+        $thumbnail->method('getMimeType')->willReturn('image/jpeg');
+        $thumbnail->method('getFileSize')->willReturn(0);
+
+        $response = Service::getStreamedResponseFromImageThumbnail($thumbnail, [
+            'type' => 'image',
+            'filename' => 'bar.jpg',
+        ]);
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+        $this->assertSame('image/jpeg', $response->headers->get('Content-Type'));
+        $this->assertFalse($response->headers->has('Content-Disposition'));
+        $this->assertFalse($response->headers->has('Content-Security-Policy'));
+    }
+
+    public function testCachedSvgThumbnailFastPathCarriesRestrictiveHeaders(): void
+    {
+        foreach (['image/svg+xml', 'text/xml'] as $mime) {
+            $prefix = (string) Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
+            $path = '/1/image-thumb__1__thumb/vector.svg';
+            $stream = fopen('php://memory', 'r+');
+            fwrite($stream, '<svg/>');
+            rewind($stream);
+
+            $storageMock = $this->createMock(FilesystemOperator::class);
+            $storageMock->method('readStream')->willReturn($stream);
+            $storageMock->method('fileSize')->willReturn(6);
+            $storageMock->method('mimeType')->willReturn($mime);
+
+            $response = $this->withThumbnailStorage($storageMock, fn () => Service::getStreamedResponseForThumbnail([
+                'type' => 'video',
+                'asset' => null,
+            ], $prefix . $path));
+
+            $this->assertInstanceOf(StreamedResponse::class, $response);
+            $this->assertStringContainsString('sandbox', (string) $response->headers->get('Content-Security-Policy'));
+            $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+        }
+    }
+
     /**
      * Runs $callback with the thumbnail storage replaced by $storage.
      *
