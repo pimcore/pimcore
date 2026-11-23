@@ -404,6 +404,7 @@ pimcore:
                     - pimcore_asset_version_preview
                     - pimcore_image_version_preview
                     - pimcore_dump
+                    - pimcore_website_config
                 hard_blocked_methods:
                     Pimcore\Model\User:
                         - getPassword
