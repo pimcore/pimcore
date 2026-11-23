@@ -47,10 +47,20 @@ class StaticPageGenerator
             $path = '/%home';
         }
 
+        // pretty URLs are site-relative: two sites can share the same one, so they need the owning site
+        $owningSite = $isPrettyUrl ? Frontend::getSiteForDocument($document) : null;
+
         $useMainDomain = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['use_main_domain'];
         if ($useMainDomain) {
             $systemConfig = $this->settingsConfig->getSystemSettingsConfig();
             $mainDomain = '/' . $systemConfig['general']['domain'];
+
+            // a pretty URL is not a position in the document tree, so the walk below cannot find
+            // the owning site: use its main domain directly
+            if ($owningSite instanceof Site && $owningSite->getMainDomain()) {
+                return '/' . $owningSite->getMainDomain() . $path . '.html';
+            }
+
             $returnPath = '';
             $pathInfo = pathinfo($path);
             if ($pathInfo['dirname'] != '') {
@@ -73,13 +83,10 @@ class StaticPageGenerator
             return $mainDomain . $returnPath . '.html';
         }
 
-        // pretty URLs are site-relative, so two sites can share the same one. Without a
-        // site-specific prefix, the static pages generated for each would overwrite each other.
-        if ($isPrettyUrl) {
-            $site = Frontend::getSiteForDocument($document);
-            if ($site instanceof Site && $site->getId()) {
-                $path = '/%site_' . $site->getId() . $path;
-            }
+        // without a site-specific prefix, the static pages generated for two sites sharing
+        // a pretty URL would overwrite each other
+        if ($owningSite instanceof Site && $owningSite->getId()) {
+            $path = '/%site_' . $owningSite->getId() . $path;
         }
 
         return $path . '.html';
