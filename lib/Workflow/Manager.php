@@ -435,14 +435,21 @@ class Manager
                 continue;
             }
 
+            $workflowPermissions = [];
             foreach ($this->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
                 if (!empty($placeConfig->getPermissions($workflow, $element))) {
-                    $userPermissions = array_merge(
-                        $userPermissions,
+                    $workflowPermissions = array_merge(
+                        $workflowPermissions,
                         $placeConfig->getUserPermissions($workflow, $element)
                     );
                 }
             }
+
+            // getAllWorkflows() returns workflows ordered from highest to lowest
+            // priority, so a permission already set by a higher-priority workflow
+            // must win; the `+` operator keeps existing keys instead of
+            // overwriting them like array_merge() would.
+            $userPermissions += $workflowPermissions;
         }
 
         return $userPermissions;

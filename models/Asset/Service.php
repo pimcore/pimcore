@@ -529,6 +529,7 @@ class Service extends Model\Element\Service
 
             $mime = $thumbnail->getMimeType();
             $fileSize = $thumbnail->getFileSize();
+            $servedPath = (string) ($pathReference['src'] ?? '');
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
             if ($actualFileExtension !== $config['file_extension']
@@ -569,6 +570,7 @@ class Service extends Model\Element\Service
             }
             $mime = $storage->mimeType($storagePath);
             $fileSize = $storage->fileSize($storagePath);
+            $servedPath = $storagePath;
         } else {
             throw new Exception('Cannot determine mime type and file size of ' . $config['type'] . ' thumbnail, see logs for details.');
         }
@@ -582,6 +584,12 @@ class Service extends Model\Element\Service
             'Content-Type' => $mime,
             'Content-Length' => $fileSize,
         ];
+
+        $headers = self::addThumbnailSecurityHeaders(
+            $headers,
+            $mime,
+            [$servedPath, (string) ($config['filename'] ?? '')]
+        );
 
         $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
@@ -636,6 +644,15 @@ class Service extends Model\Element\Service
             $storagePath = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $storagePath);
         }
 
+        // Defence in depth: a canonical thumbnail path never contains NUL bytes or dot segments.
+        // Such paths are rejected before the storage is touched and must not fall back to thumbnail
+        // generation either, so the caller answers with its usual not-found handling.
+        if (!self::isSafeThumbnailStoragePath($storagePath)) {
+            Logger::debug('Rejected non-canonical thumbnail storage path ' . $storagePath);
+
+            return null;
+        }
+
         // Attempt to stream the cached thumbnail directly. On remote storage adapters (e.g. S3),
         // this avoids the extra HEAD request that a preceding fileExists() check would issue.
         // Paths without a filename component are skipped: unlike fileExists(), the local adapter's
@@ -656,6 +673,7 @@ class Service extends Model\Element\Service
         if ($stream !== null) {
             $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
             $fileSize = $storage->fileSize($storagePath);
+            $mime = $storage->mimeType($storagePath);
 
             // what was read from the stream to register the thumbnail is sent before the rest of it
             $head = self::addThumbnailOnStorageToStatusCache($config, $storagePath, $stream, $fileSize);
@@ -663,13 +681,13 @@ class Service extends Model\Element\Service
             return new StreamedResponse(function () use ($stream, $head) {
                 echo $head;
                 fpassthru($stream);
-            }, 200, [
+            }, 200, self::addThumbnailSecurityHeaders([
                 'Cache-Control' => 'public, max-age=' . $lifetime,
                 'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                'Content-Type' => $storage->mimeType($storagePath),
+                'Content-Type' => $mime,
                 'Content-Length' => $fileSize,
                 AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
-            ]);
+            ], $mime, [$storagePath]));
         }
 
         $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
@@ -678,6 +696,55 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    /**
+     * Adds the headers that keep a delivered thumbnail from being interpreted as an active document.
+     * Every response gets nosniff; responses whose content can carry scripts (SVG, XML, HTML) also get a
+     * restrictive Content-Security-Policy. The policy only applies when the file is opened as a document,
+     * embedding it via <img> or CSS is not affected.
+     *
+     * @param array<string, mixed> $headers
+     * @param string[] $paths
+     *
+     * @return array<string, mixed>
+     */
+    private static function addThumbnailSecurityHeaders(array $headers, ?string $mime, array $paths): array
+    {
+        $headers['X-Content-Type-Options'] = 'nosniff';
+
+        $isScriptable = $mime !== null && preg_match('/svg|xml|html/i', $mime) === 1;
+        if (!$isScriptable) {
+            foreach ($paths as $path) {
+                if (preg_match('/\.svgz?$/i', $path) === 1) {
+                    $isScriptable = true;
+
+                    break;
+                }
+            }
+        }
+
+        if ($isScriptable) {
+            $headers['Content-Security-Policy'] = "default-src 'none'; img-src data:; style-src 'unsafe-inline'; "
+                . 'font-src data:; sandbox';
+        }
+
+        return $headers;
+    }
+
+    private static function isSafeThumbnailStoragePath(string $storagePath): bool
+    {
+        if (str_contains($storagePath, "\0")) {
+            return false;
+        }
+
+        foreach (preg_split('#[/\\\\]#', $storagePath) as $segment) {
+            if ($segment === '.' || $segment === '..') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

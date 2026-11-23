@@ -26,8 +26,10 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
+use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\StateMachine;
+use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 
 class ManagerTest extends TestCase
 {
@@ -156,6 +158,126 @@ class ManagerTest extends TestCase
 
         $this->assertSame(['end' => 1], $store->persisted);
         $this->assertSame(['end' => 1], $marking->getPlaces());
+    }
+
+    /**
+     * Regression tests for the workflow permission-priority merge: when
+     * several supported workflows are active on the same element, a place
+     * permission configured on a higher-priority workflow must take
+     * precedence over a conflicting value configured on a lower-priority
+     * workflow, matching doc/07_Workflow_Management/01_Configuration/03_Permissions.md.
+     */
+    public function testHigherPriorityDenialIsNotOverriddenByLowerPriorityGrant(): void
+    {
+        $subject = $this->createMultiWorkflowSubject();
+        $subject->setHighState('review');
+        $subject->setLowState('allow');
+
+        $manager = $this->buildMultiWorkflowManager();
+
+        $this->assertTrue($manager->isDeniedInWorkflow($subject, 'publish'));
+    }
+
+    public function testHigherPriorityGrantIsNotOverriddenByLowerPriorityDenial(): void
+    {
+        $subject = $this->createMultiWorkflowSubject();
+        $subject->setHighState('approved');
+        $subject->setLowState('denyPlace');
+
+        $manager = $this->buildMultiWorkflowManager();
+
+        $this->assertFalse($manager->isDeniedInWorkflow($subject, 'publish'));
+    }
+
+    public function testLowerPriorityGrantAppliesWhenHigherPriorityPlaceHasNoOpinion(): void
+    {
+        $subject = $this->createMultiWorkflowSubject();
+        $subject->setHighState('noOpinion');
+        $subject->setLowState('allow');
+
+        $manager = $this->buildMultiWorkflowManager();
+
+        $this->assertFalse($manager->isDeniedInWorkflow($subject, 'publish'));
+    }
+
+    public function testLowerPriorityDenialAppliesWhenHigherPriorityPlaceHasNoOpinion(): void
+    {
+        $subject = $this->createMultiWorkflowSubject();
+        $subject->setHighState('noOpinion');
+        $subject->setLowState('denyPlace');
+
+        $manager = $this->buildMultiWorkflowManager();
+
+        $this->assertTrue($manager->isDeniedInWorkflow($subject, 'publish'));
+    }
+
+    private function createMultiWorkflowSubject(): Concrete
+    {
+        return new class() extends Concrete {
+            private ?string $highState = null;
+
+            private ?string $lowState = null;
+
+            public function getHighState(): ?string
+            {
+                return $this->highState;
+            }
+
+            public function setHighState(string|array|null $state = null, array $context = []): void
+            {
+                $this->highState = is_string($state) ? $state : null;
+            }
+
+            public function getLowState(): ?string
+            {
+                return $this->lowState;
+            }
+
+            public function setLowState(string|array|null $state = null, array $context = []): void
+            {
+                $this->lowState = is_string($state) ? $state : null;
+            }
+        };
+    }
+
+    private function buildMultiWorkflowManager(): Manager
+    {
+        $highWorkflow = new StateMachine(
+            new Definition(['review', 'approved', 'noOpinion'], []),
+            new MethodMarkingStore(true, 'highState'),
+            null,
+            'high'
+        );
+        $lowWorkflow = new StateMachine(
+            new Definition(['draft', 'allow', 'denyPlace'], []),
+            new MethodMarkingStore(true, 'lowState'),
+            null,
+            'low'
+        );
+
+        $registry = new Registry();
+        $registry->addWorkflow($highWorkflow, new InstanceOfSupportStrategy(Concrete::class));
+        $registry->addWorkflow($lowWorkflow, new InstanceOfSupportStrategy(Concrete::class));
+
+        $manager = new Manager(
+            $registry,
+            $this->createMock(NotesSubscriber::class),
+            $this->createMock(ExpressionService::class),
+            new EventDispatcher()
+        );
+        // Registered in ascending priority order on purpose: Manager must sort
+        // by descending priority itself rather than relying on call order.
+        $manager->registerWorkflow('low', ['priority' => 10, 'type' => 'state_machine']);
+        $manager->registerWorkflow('high', ['priority' => 100, 'type' => 'state_machine']);
+
+        $manager->addPlaceConfig('high', 'review', ['permissions' => [['publish' => false]]]);
+        $manager->addPlaceConfig('high', 'approved', ['permissions' => [['publish' => true]]]);
+        $manager->addPlaceConfig('high', 'noOpinion', []);
+        $manager->addPlaceConfig('low', 'allow', ['permissions' => [['publish' => true]]]);
+        $manager->addPlaceConfig('low', 'denyPlace', ['permissions' => [['publish' => false]]]);
+        $manager->addPlaceConfig('low', 'draft', []);
+
+        return $manager;
     }
 
     /**
