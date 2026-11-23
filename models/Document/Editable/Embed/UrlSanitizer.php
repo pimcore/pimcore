@@ -24,7 +24,8 @@ namespace Pimcore\Model\Document\Editable\Embed;
  * The default instance (getInstance() with nothing configured) is fully permissive: any value is
  * passed straight through, as it was before this policy existed. strict() requires the value to
  * be a well-formed http(s) URL with a host that contains no characters with a meaning in HTML
- * (see STRICT_FORBIDDEN_CHARACTERS_PATTERN) before it reaches Embera at all.
+ * (see STRICT_FORBIDDEN_CHARACTERS_PATTERN) before it reaches Embera at all; spaces and line
+ * breaks around the URL are ignored.
  *
  * To opt into the stricter policy, set the "pimcore.documents.editables.embed_sanitizer.strict"
  * config option to true - PimcoreCoreBundle::boot() reads it and installs a policy built from it.
@@ -40,6 +41,11 @@ class UrlSanitizer
      * not sufficient on its own.
      */
     private const STRICT_FORBIDDEN_CHARACTERS_PATTERN = '/[\x00-\x20\x7f<>"\'`]/';
+
+    /**
+     * Whitespace strict() ignores around the URL, before it applies the checks above to the rest.
+     */
+    private const STRICT_IGNORED_SURROUNDING_CHARACTERS = " \t\r\n";
 
     private static ?self $instance = null;
 
@@ -101,6 +107,10 @@ class UrlSanitizer
         if (!$this->requireHttpUrl) {
             return true;
         }
+
+        // editors routinely paste a URL with a trailing line break or space; the value handed to Embera
+        // stays as stored, and surrounding whitespace cannot carry markup, so only the URL itself is checked
+        $url = trim($url, self::STRICT_IGNORED_SURROUNDING_CHARACTERS);
 
         if ($url === '') {
             return true;

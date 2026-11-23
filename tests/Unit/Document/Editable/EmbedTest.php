@@ -61,7 +61,20 @@ class EmbedTest extends TestCase
             'url followed by markup' => ['https://example.com/"><b>x</b>'],
             'provider url followed by markup' => ['https://www.youtube.com/watch?v=dQw4w9WgXcQ"><b>x</b>'],
             'url with tag in the path' => ['https://example.com/<b>x</b>'],
+            'markup inside surrounding whitespace' => [" \n https://example.com/\"><b>x</b> \n "],
         ];
+    }
+
+    public function testStrictPolicyStillRendersAUrlWithSurroundingWhitespace(): void
+    {
+        UrlSanitizer::setInstance(UrlSanitizer::strict());
+
+        $embed = new Embed();
+        $embed->setDataFromEditmode(['url' => "  https://example.com/video\r\n"]);
+
+        // no oEmbed provider matches example.com, so Embera returns the stored value unchanged
+        $this->assertSame('https://example.com/video', trim($embed->frontend()));
+        $this->assertSame([], $this->captureDeprecations(fn () => $embed->frontend()));
     }
 
     public function testStrictPolicyDoesNotTriggerTheDefaultDeprecation(): void

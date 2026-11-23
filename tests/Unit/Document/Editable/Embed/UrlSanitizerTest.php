@@ -129,7 +129,15 @@ class UrlSanitizerTest extends TestCase
             'form feed' => ["https://example.com/\x0cx"],
             'NUL byte' => ["https://example.com/\0x"],
             'DEL character' => ["https://example.com/\x7fx"],
-            'trailing line feed' => ["https://example.com/\n"],
+            'whitespace between two urls' => ['https://example.com/a https://example.com/b'],
+            'markup after a trailing line break' => ["https://example.com/\n<b>x</b>"],
+            'markup after a trailing space' => ['https://example.com/ <b>x</b>'],
+            'markup inside surrounding whitespace' => [" \n https://example.com/\"><b>x</b> \n "],
+            'trailing NUL byte' => ["https://example.com/\0"],
+            'trailing form feed' => ["https://example.com/\x0c"],
+            'leading form feed' => ["\x0chttps://example.com/"],
+            'non-ASCII character in the path' => ['https://example.com/M' . "\xc3\xbc" . 'ller'],
+            'scheme-less host' => ['www.example.com/video'],
         ];
     }
 
@@ -152,6 +160,11 @@ class UrlSanitizerTest extends TestCase
             'upper case scheme and host' => ['HTTPS://EXAMPLE.COM/Path'],
             'url with port' => ['http://localhost:8080/video'],
             'host consisting of the digit zero' => ['http://0'],
+            'trailing line feed (copy and paste)' => ["https://example.com/video\n"],
+            'trailing carriage return and line feed' => ["https://example.com/video\r\n"],
+            'leading and trailing spaces' => ['  https://example.com/video  '],
+            'surrounding tabs and line breaks' => ["\t\n https://example.com/video \r\n"],
+            'only whitespace (nothing to embed)' => [" \n"],
             'empty value (nothing to embed)' => [''],
         ];
     }

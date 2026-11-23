@@ -54,7 +54,12 @@ pimcore:
 `PimcoreCoreBundle::boot()` reads this and installs the strict policy for you, which requires the
 value to be a well-formed http(s) URL with a host that contains no whitespace, control characters,
 quotes, backticks or angle brackets before it is handed to Embera; any other value renders nothing.
-If you need a
-fully custom policy instead of the boolean toggle, call
+Spaces and line breaks around the URL (e.g. from copy and paste) are ignored.
+
+Because of this, the strict policy does not accept URLs without a scheme or starting with `//`,
+several URLs in one value, or non-ASCII characters - percent-encode the path and use the punycode
+form of an internationalized host name.
+
+If you need a fully custom policy instead of the boolean toggle, call
 `\Pimcore\Model\Document\Editable\Embed\UrlSanitizer::setInstance(...)` directly from your own
 bundle's `boot()` method.
