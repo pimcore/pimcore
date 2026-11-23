@@ -1087,10 +1087,24 @@ final class SecurityPolicyTest extends TestCase
 
     public function testBlockedFunctionsExtendsTheBuiltInDenylist(): void
     {
-        $policy = new SecurityPolicy(blockedFunctions: [
-            ...self::defaultSandboxSecurityPolicyConfig()['blocked_functions'],
-            'pimcore_website_config',
-        ]);
+        $defaultBlockedFunctions = self::defaultSandboxSecurityPolicyConfig()['blocked_functions'];
+        // a function the built-in denylist does not contain, so only the appended entry can block it
+        $this->assertNotContains('pimcore_url', $defaultBlockedFunctions);
+
+        $policy = new SecurityPolicy(blockedFunctions: [...$defaultBlockedFunctions, 'pimcore_url']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_url']);
+    }
+
+    public function testPimcoreWebsiteConfigIsNotAutoAllowedByDefault(): void
+    {
+        // GHSA-fq3q-7w2w-8q9f: WebsiteConfigExtension::getWebsiteConfig() returns the
+        // complete website configuration - including secrets such as the private
+        // reCAPTCHA key - for a null key, and a single secret value for an explicit key
+        // such as `recaptchaPrivate`. Neither call must be reachable from a sandboxed
+        // Email/Dynamic Text template.
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
 
         $this->expectException(SecurityNotAllowedFunctionError::class);
         $policy->checkSecurity([], [], ['pimcore_website_config']);
