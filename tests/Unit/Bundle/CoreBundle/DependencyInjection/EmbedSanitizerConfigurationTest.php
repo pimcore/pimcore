@@ -1,0 +1,95 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Unit\Bundle\CoreBundle\DependencyInjection;
+
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Configuration;
+use Pimcore\Tests\Support\Test\TestCase;
+use Symfony\Component\Config\Definition\Processor;
+
+class EmbedSanitizerConfigurationTest extends TestCase
+{
+    private function process(array $configs): array
+    {
+        return (new Processor())->processConfiguration(new Configuration(), $configs);
+    }
+
+    public function testEmbedSanitizerStrictDefaultsToFalse(): void
+    {
+        $config = $this->process([[]]);
+
+        $this->assertFalse($config['documents']['editables']['embed_sanitizer']['strict']);
+    }
+
+    public function testEmbedSanitizerStrictAcceptsTrue(): void
+    {
+        $config = $this->process([[
+            'documents' => [
+                'editables' => [
+                    'embed_sanitizer' => [
+                        'strict' => true,
+                    ],
+                ],
+            ],
+        ]]);
+
+        $this->assertTrue($config['documents']['editables']['embed_sanitizer']['strict']);
+    }
+
+    /**
+     * @dataProvider quotedBooleanStringProvider
+     */
+    public function testEmbedSanitizerStrictParsesQuotedBooleanStrings(string $value, bool $expected): void
+    {
+        $config = $this->process([[
+            'documents' => [
+                'editables' => [
+                    'embed_sanitizer' => [
+                        'strict' => $value,
+                    ],
+                ],
+            ],
+        ]]);
+
+        $this->assertSame($expected, $config['documents']['editables']['embed_sanitizer']['strict']);
+    }
+
+    public static function quotedBooleanStringProvider(): array
+    {
+        return [
+            'quoted false' => ['false', false],
+            'quoted no' => ['no', false],
+            'quoted off' => ['off', false],
+            'quoted 0' => ['0', false],
+            'quoted true' => ['true', true],
+            'quoted yes' => ['yes', true],
+            'quoted on' => ['on', true],
+            'quoted 1' => ['1', true],
+        ];
+    }
+
+    public function testEmbedSanitizerIsIndependentOfTheLinkSanitizerSetting(): void
+    {
+        $config = $this->process([[
+            'documents' => [
+                'editables' => [
+                    'link_sanitizer' => ['strict' => true],
+                ],
+            ],
+        ]]);
+
+        $this->assertTrue($config['documents']['editables']['link_sanitizer']['strict']);
+        $this->assertFalse($config['documents']['editables']['embed_sanitizer']['strict']);
+    }
+}
