@@ -288,7 +288,7 @@ class ServiceTest extends TestCase
 
     public function testCachedSvgThumbnailFastPathCarriesRestrictiveHeaders(): void
     {
-        foreach (['image/svg+xml', 'text/xml'] as $mime) {
+        foreach (['image/svg+xml', 'text/xml', 'text/plain'] as $mime) {
             $prefix = (string) Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
             $path = '/1/image-thumb__1__thumb/vector.svg';
             $stream = fopen('php://memory', 'r+');
