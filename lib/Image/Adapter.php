@@ -76,27 +76,27 @@ abstract class Adapter implements AdapterInterface
     }
 
     /**
-     * Resolves a caller-supplied path (e.g. a thumbnail transformation argument) to an absolute,
-     * canonical path confined to the public web root, rejecting any path that traverses outside
-     * of it. Returns null if the path cannot be resolved or escapes the web root.
+     * Joins a caller-supplied relative file path (e.g. a thumbnail transformation argument) onto the
+     * given root directory. Returns null if the path contains a NUL byte or a parent-directory
+     * segment, so the result can never point outside of the root.
+     *
+     * The path is deliberately not canonicalized with realpath(): the public assets of bundles are
+     * usually symlinked into the web root (assets:install --symlink), and following such a link
+     * would move a legitimate file outside of the root.
      */
-    protected function resolveWebRootConfinedPath(string $path): ?string
+    protected function resolveConfinedPath(string $path, string $root): ?string
     {
-        $webRoot = realpath(PIMCORE_WEB_ROOT);
-        if ($webRoot === false) {
+        if (str_contains($path, "\0")) {
             return null;
         }
 
-        $resolved = realpath($webRoot . '/' . ltrim($path, '/'));
-        if ($resolved === false) {
-            return null;
+        foreach (preg_split('#[/\\\\]#', $path) ?: [] as $segment) {
+            if ($segment === '..') {
+                return null;
+            }
         }
 
-        if ($resolved !== $webRoot && !str_starts_with($resolved, $webRoot . DIRECTORY_SEPARATOR)) {
-            return null;
-        }
-
-        return $resolved;
+        return rtrim($root, '/') . '/' . ltrim($path, '/');
     }
 
     /**
