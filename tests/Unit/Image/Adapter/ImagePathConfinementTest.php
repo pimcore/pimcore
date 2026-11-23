@@ -22,9 +22,9 @@ use Pimcore\Image\Adapter\Imagick;
 
 /**
  * File-backed thumbnail transformations (background image, overlay, mask) take their path from the
- * thumbnail configuration. A path must resolve below its root directory, no matter how many parent
- * directory segments it contains, while paths that stay below the root - including files reached
- * through a symlinked directory, as used for bundle assets - must keep working.
+ * thumbnail configuration. The file has to be located in the public web root, no matter how many
+ * parent directory segments the path contains, while paths that stay inside it - including files
+ * reached through a symlinked directory, as used for bundle assets - must keep working.
  */
 final class ImagePathConfinementTest extends TestCase
 {
@@ -136,21 +136,21 @@ final class ImagePathConfinementTest extends TestCase
         }
     }
 
-    public function testOverlayWithParentDirectorySegmentsIsNotApplied(): void
+    public function testOverlayOutsideTheWebRootIsNotApplied(): void
     {
         $filename = $this->createFixture($this->siblingDir, self::OUTSIDE_COLOR);
-        $path = $this->pathWithParentSegment($this->siblingName . '/' . $filename);
-        $this->assertFileExists(PIMCORE_PROJECT_ROOT . '/' . $path);
 
-        foreach ($this->adapters() as $name => $class) {
-            $adapter = $this->createAdapter($class);
-            $adapter->addOverlay($path);
+        foreach ($this->pathsOutsideTheWebRoot($filename) as $path) {
+            foreach ($this->adapters() as $name => $class) {
+                $adapter = $this->createAdapter($class);
+                $adapter->addOverlay($path);
 
-            $this->assertColorNotPresent(self::OUTSIDE_COLOR, $this->saveAsPng($adapter), $name);
+                $this->assertColorNotPresent(self::OUTSIDE_COLOR, $this->saveAsPng($adapter), $name);
+            }
         }
     }
 
-    public function testOverlayInsideTheProjectIsApplied(): void
+    public function testOverlayInsideTheWebRootIsApplied(): void
     {
         $filename = $this->createFixture(PIMCORE_WEB_ROOT, self::INSIDE_COLOR);
         $path = basename(PIMCORE_WEB_ROOT) . '/' . $filename;
@@ -163,22 +163,21 @@ final class ImagePathConfinementTest extends TestCase
         }
     }
 
-    public function testFittedOverlayWithParentDirectorySegmentsIsNotApplied(): void
+    public function testFittedOverlayOutsideTheWebRootIsNotApplied(): void
     {
         $this->requireImagick();
 
         $filename = $this->createFixture($this->siblingDir, self::OUTSIDE_COLOR);
 
-        $path = $this->pathWithParentSegment($this->siblingName . '/' . $filename);
-        $this->assertFileExists(PIMCORE_PROJECT_ROOT . '/' . $path);
+        foreach ($this->pathsOutsideTheWebRoot($filename) as $path) {
+            $adapter = $this->createAdapter(Imagick::class);
+            $adapter->addOverlayFit($path);
 
-        $adapter = $this->createAdapter(Imagick::class);
-        $adapter->addOverlayFit($path);
-
-        $this->assertColorNotPresent(self::OUTSIDE_COLOR, $this->saveAsPng($adapter), 'Imagick');
+            $this->assertColorNotPresent(self::OUTSIDE_COLOR, $this->saveAsPng($adapter), 'Imagick');
+        }
     }
 
-    public function testFittedOverlayInsideTheProjectIsApplied(): void
+    public function testFittedOverlayInsideTheWebRootIsApplied(): void
     {
         $this->requireImagick();
 
@@ -190,7 +189,7 @@ final class ImagePathConfinementTest extends TestCase
         $this->assertColorPresent(self::INSIDE_COLOR, $this->saveAsPng($adapter), 'Imagick');
     }
 
-    public function testMaskWithParentDirectorySegmentsIsNotRead(): void
+    public function testMaskOutsideTheWebRootIsNotRead(): void
     {
         $this->requireImagick();
 
@@ -199,32 +198,31 @@ final class ImagePathConfinementTest extends TestCase
         file_put_contents($this->siblingDir . '/' . $filename, 'this is not an image');
         $this->cleanupFiles[] = $this->siblingDir . '/' . $filename;
 
-        $path = $this->pathWithParentSegment($this->siblingName . '/' . $filename);
-        $this->assertFileExists(PIMCORE_PROJECT_ROOT . '/' . $path);
+        foreach ($this->pathsOutsideTheWebRoot($filename) as $path) {
+            $adapter = $this->createAdapter(Imagick::class);
 
-        $adapter = $this->createAdapter(Imagick::class);
-
-        try {
-            $adapter->applyMask($path);
-        } catch (ImagickException) {
-            $this->fail('A mask path with a parent directory segment must not be read.');
+            try {
+                $adapter->applyMask($path);
+            } catch (ImagickException) {
+                $this->fail('A mask file outside of the web root must not be read.');
+            }
         }
 
         $this->addToAssertionCount(1);
     }
 
-    public function testMaskInsideTheProjectIsRead(): void
+    public function testMaskInsideTheWebRootIsRead(): void
     {
         $this->requireImagick();
 
         $filename = 'confinement-mask-' . uniqid() . '.dat';
-        file_put_contents($this->siblingDir . '/' . $filename, 'this is not an image');
-        $this->cleanupFiles[] = $this->siblingDir . '/' . $filename;
+        file_put_contents(PIMCORE_WEB_ROOT . '/' . $filename, 'this is not an image');
+        $this->cleanupFiles[] = PIMCORE_WEB_ROOT . '/' . $filename;
 
         $adapter = $this->createAdapter(Imagick::class);
 
         $this->expectException(ImagickException::class);
-        $adapter->applyMask($this->siblingName . '/' . $filename);
+        $adapter->applyMask(basename(PIMCORE_WEB_ROOT) . '/' . $filename);
     }
 
     /**
@@ -249,15 +247,26 @@ final class ImagePathConfinementTest extends TestCase
     }
 
     /**
-     * Builds a project-relative path that leaves the project directory and re-enters it, so it
-     * points at the very same file as the plain relative path would.
+     * Project-relative paths of a file in the sibling directory of the web root: the plain one, and
+     * one that leaves the project directory and re-enters it. Both point at the very same file.
+     *
+     * @return list<string>
      */
-    private function pathWithParentSegment(string $relativePath): string
+    private function pathsOutsideTheWebRoot(string $filename): array
     {
         $projectRoot = realpath(PIMCORE_PROJECT_ROOT);
         $this->assertNotFalse($projectRoot);
 
-        return '../' . basename($projectRoot) . '/' . $relativePath;
+        $paths = [
+            $this->siblingName . '/' . $filename,
+            '../' . basename($projectRoot) . '/' . $this->siblingName . '/' . $filename,
+        ];
+
+        foreach ($paths as $path) {
+            $this->assertFileExists(PIMCORE_PROJECT_ROOT . '/' . $path);
+        }
+
+        return $paths;
     }
 
     /**

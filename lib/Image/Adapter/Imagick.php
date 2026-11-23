@@ -927,7 +927,7 @@ class Imagick extends Adapter
                     'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
                 );
 
-                $image = $this->resolveConfinedPath($image, PIMCORE_PROJECT_ROOT);
+                $image = $this->resolvePublicFilePath($image);
             }
 
             if ($image !== null) {
@@ -974,7 +974,7 @@ class Imagick extends Adapter
                 'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
             );
 
-            $image = $this->resolveConfinedPath($image, PIMCORE_PROJECT_ROOT);
+            $image = $this->resolvePublicFilePath($image);
 
             if ($image === null) {
                 return $this;
@@ -993,7 +993,7 @@ class Imagick extends Adapter
     public function applyMask(string $image): static
     {
         $this->preModify();
-        $image = $this->resolveConfinedPath($image, PIMCORE_PROJECT_ROOT);
+        $image = $this->resolvePublicFilePath($image);
 
         if ($image !== null && is_file($image)) {
             $this->resource->setImageMatte(true);

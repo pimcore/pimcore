@@ -285,7 +285,7 @@ class GD extends Adapter
     {
         $this->preModify();
 
-        $image = $this->resolveConfinedPath($image, PIMCORE_PROJECT_ROOT);
+        $image = $this->resolvePublicFilePath($image);
 
         if ($image !== null && is_file($image)) {
             [$oWidth, $oHeight] = getimagesize($image);

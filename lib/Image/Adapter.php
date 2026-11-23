@@ -100,6 +100,23 @@ abstract class Adapter implements AdapterInterface
     }
 
     /**
+     * Resolves the path of an overlay or mask file. The path is relative to the project root, as
+     * before, but the file has to be located in the public web root: the result ends up in the
+     * (publicly served) thumbnail, so files outside of it, like the private storage, must not be
+     * readable through a thumbnail configuration. Returns null for any other path.
+     */
+    protected function resolvePublicFilePath(string $path): ?string
+    {
+        $resolved = $this->resolveConfinedPath($path, PIMCORE_PROJECT_ROOT);
+
+        if ($resolved === null || !str_starts_with($resolved, rtrim(PIMCORE_WEB_ROOT, '/') . '/')) {
+            return null;
+        }
+
+        return $resolved;
+    }
+
+    /**
      * @todo: duplication found? (pimcore/lib/Pimcore/Document/Adapter.php::removeTmpFiles)
      */
     protected function removeTmpFiles(): void
