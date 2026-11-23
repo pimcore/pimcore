@@ -585,6 +585,9 @@ class Service extends Model\Element\Service
 
         $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
+        $servedPath = $config['type'] === 'image' ? ($pathReference['src'] ?? '') : $storagePath;
+        $headers = self::addSvgSecurityHeaders($headers, $mime, (string) $servedPath);
+
         if ($thumbnailStream) {
             return new StreamedResponse(function () use ($thumbnailStream) {
                 fpassthru($thumbnailStream);
@@ -668,17 +671,18 @@ class Service extends Model\Element\Service
 
             // what was read from the stream to register the thumbnail is sent before the rest of it
             $head = self::addThumbnailOnStorageToStatusCache($config, $storagePath, $stream, $fileSize);
+            $mime = $storage->mimeType($storagePath);
 
             return new StreamedResponse(function () use ($stream, $head) {
                 echo $head;
                 fpassthru($stream);
-            }, 200, [
+            }, 200, self::addSvgSecurityHeaders([
                 'Cache-Control' => 'public, max-age=' . $lifetime,
                 'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                'Content-Type' => $storage->mimeType($storagePath),
+                'Content-Type' => $mime,
                 'Content-Length' => $fileSize,
                 AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
-            ]);
+            ], $mime, $storagePath));
         }
 
         $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
@@ -687,6 +691,27 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    /**
+     * SVG documents can contain active content. When one is opened directly in the browser, a
+     * restrictive Content-Security-Policy (including the sandbox directive) keeps it from running
+     * scripts or loading external resources; embedding via <img> or CSS is not affected.
+     */
+    private static function addSvgSecurityHeaders(array $headers, ?string $mime, string $path): array
+    {
+        $isSvg = ($mime !== null && stripos($mime, 'image/svg+xml') === 0)
+            || preg_match('/\.svgz?$/i', $path) === 1;
+
+        if (!$isSvg) {
+            return $headers;
+        }
+
+        $headers['Content-Security-Policy'] = "default-src 'none'; style-src 'unsafe-inline'; img-src data:; "
+            . 'font-src data:; sandbox';
+        $headers['X-Content-Type-Options'] = 'nosniff';
+
+        return $headers;
     }
 
     private static function isSafeThumbnailStoragePath(string $storagePath): bool

@@ -1,5 +1,15 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.7
+
+### [Assets] SVG thumbnail responses carry a restrictive Content-Security-Policy
+
+SVG thumbnails delivered by `Pimcore\Model\Asset\Service::getStreamedResponseFromImageThumbnail()` and
+`getStreamedResponseForThumbnail()` (and therefore by the public thumbnail route) now carry the headers
+`Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; sandbox` and
+`X-Content-Type-Options: nosniff`. SVGs embedded via `<img>` or CSS render as before. An SVG opened directly in the
+browser no longer runs scripts or loads external resources. Responses for other formats are unchanged.
+
 ## Pimcore 2026.3.4
 
 ### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
