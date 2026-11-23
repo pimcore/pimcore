@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Document\Editable;
 
+use Pimcore;
 use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tool\Text;
 
 /**
  * Regression test for GHSA-h5rr-9v6v-2r3p: the Wysiwyg editable only ran its HTML sanitizer in
@@ -73,5 +75,44 @@ class WysiwygDraftRenderSanitizationTest extends TestCase
         $editable = $this->createEditable('<p>Hello <b>world</b></p>');
 
         $this->assertSame('<p>Hello <b>world</b></p>', (string) $editable->frontend());
+    }
+
+    /**
+     * A value stored by a regular save() is sanitized once more when it is rendered, so the shipped
+     * sanitizer configuration has to return its own output unchanged - otherwise published content
+     * would render differently from what was saved.
+     *
+     * @dataProvider storedMarkupProvider
+     */
+    public function testRenderingDoesNotChangeAValueSanitizedOnSave(string $markup): void
+    {
+        $sanitizer = Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
+        $stored = $sanitizer->sanitizeFor('body', $markup);
+
+        $editable = $this->createEditable($stored);
+
+        $this->assertSame($stored, $sanitizer->sanitizeFor('body', $stored));
+        $this->assertSame($stored, (string) $editable->frontend());
+        $this->assertSame($stored, (string) $editable->getDataEditmode());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function storedMarkupProvider(): array
+    {
+        return [
+            'entities' => ['<p>Fish &amp; Chips&nbsp;&ndash; 5 &lt; 10 &gt; 3 &quot;q&quot; &euro; &copy; ä ö ü ß</p>'],
+            'links' => ['<p><a href="https://example.com/?a=1&amp;b=2" target="_blank" rel="noopener">ext</a> '
+                . '<a href="mailto:a@example.com">mail</a> <a href="/relative/path" title="t">rel</a></p>'],
+            'image' => ['<p><img src="/var/assets/a.jpg" alt="a &quot;b&quot;" style="width:100px" /></p>'],
+            'table' => ['<table border="1" cellpadding="2" style="width:100%"><thead><tr><th scope="col">h</th></tr>'
+                . '</thead><tbody><tr><td colspan="2" style="text-align:center">a<br />b</td></tr></tbody></table>'],
+            'lists and blocks' => ['<ul class="x"><li>one</li><li>two<ol><li>nested</li></ol></li></ul>'
+                . '<blockquote>q</blockquote><h2 id="anchor">H</h2><hr />'],
+            'inline formatting' => ['<p style="text-align:right" dir="rtl"><span class="a" style="color:#ff0000">c'
+                . '</span> <u>u</u> <s>s</s> <sub>1</sub> <sup>2</sup> <em>e</em> <strong>b</strong> <i>i</i></p>'],
+            'whitespace' => ["<p>line one</p>\n\n<p>line   two\twith tabs</p>\n"],
+        ];
     }
 }

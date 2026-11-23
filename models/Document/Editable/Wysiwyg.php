@@ -44,6 +44,11 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
      * (saved via "version"/"autoSave" and never passed to {@see save()}) can still hold HTML a
      * regular save would have stripped. Rendering sanitizes the value itself instead of relying on
      * the persistence path it took.
+     *
+     * A value stored by a regular save is therefore sanitized again when it is rendered. The
+     * sanitizer has to be idempotent for that: sanitizing its own output must return it unchanged.
+     * The shipped `pimcore.wysiwyg_sanitizer` configuration is; a project that replaces or decorates
+     * the sanitizer service has to keep that property.
      */
     private static function sanitize(?string $text): ?string
     {
