@@ -48,7 +48,15 @@ class Numeric extends Model\Document\Editable
 
     public function frontend()
     {
-        return $this->number;
+        $config = $this->getConfig();
+
+        $number = $this->number;
+        // an unset editable keeps returning null; only actual values are escaped
+        if ($number !== null && (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false)) {
+            $number = htmlspecialchars($number);
+        }
+
+        return $number;
     }
 
     public function setDataFromResource(mixed $data): static

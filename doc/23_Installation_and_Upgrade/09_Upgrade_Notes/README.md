@@ -1,5 +1,18 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.7
+
+### [Documents] Ghostscript is always run in SAFER mode
+
+The Ghostscript document adapter (and the LibreOffice and Gotenberg adapters, which inherit from it) now passes
+`-dSAFER` to every Ghostscript call that interprets a document: thumbnail rendering, page counting and the text
+extraction fallback.
+
+Ghostscript 9.50 and later already enable SAFER by default, so nothing changes there. Ghostscript versions older than
+9.50 do not, and they ran PDF content with unrestricted file and device access. With this change, PDFs that relied on
+that unrestricted access no longer render on those versions. Normal PDFs are unaffected, since output files given on
+the command line stay writable. Upgrade to Ghostscript 9.50 or later if you see documents that no longer render.
+
 ## Pimcore 2026.3.4
 
 ### [Data Objects] WYSIWYG: links to unpublished elements are kept in the editor and in the stored value
