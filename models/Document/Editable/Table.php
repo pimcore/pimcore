@@ -49,7 +49,7 @@ class Table extends Model\Document\Editable
                 $html .= '<tr>';
                 foreach ($row as $col) {
                     $html .= '<td>';
-                    $html .= $col;
+                    $html .= htmlspecialchars((string) $col, ENT_QUOTES, 'UTF-8');
                     $html .= '</td>';
                 }
                 $html .= '</tr>';
