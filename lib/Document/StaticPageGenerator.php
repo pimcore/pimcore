@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\SystemSettingsConfig;
+use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
@@ -37,17 +38,29 @@ class StaticPageGenerator
     public function getStoragePath(Document\PageSnippet $document): string
     {
         $path = $document->getRealFullPath();
+        $isPrettyUrl = false;
 
         if ($document instanceof Document\Page && $document->getPrettyUrl()) {
             $path = $document->getPrettyUrl();
+            $isPrettyUrl = true;
         } elseif ($path === '/') {
             $path = '/%home';
         }
+
+        // pretty URLs are site-relative: two sites can share the same one, so they need the owning site
+        $owningSite = $isPrettyUrl ? Frontend::getSiteForDocument($document) : null;
 
         $useMainDomain = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['use_main_domain'];
         if ($useMainDomain) {
             $systemConfig = $this->settingsConfig->getSystemSettingsConfig();
             $mainDomain = '/' . $systemConfig['general']['domain'];
+
+            // a pretty URL is not a position in the document tree, so the walk below cannot find
+            // the owning site: use its main domain directly
+            if ($owningSite instanceof Site && $owningSite->getMainDomain()) {
+                return '/' . $owningSite->getMainDomain() . $path . '.html';
+            }
+
             $returnPath = '';
             $pathInfo = pathinfo($path);
             if ($pathInfo['dirname'] != '') {
@@ -68,6 +81,12 @@ class StaticPageGenerator
             }
 
             return $mainDomain . $returnPath . '.html';
+        }
+
+        // without a site-specific prefix, the static pages generated for two sites sharing
+        // a pretty URL would overwrite each other
+        if ($owningSite instanceof Site && $owningSite->getId()) {
+            $path = '/%site_' . $owningSite->getId() . $path;
         }
 
         return $path . '.html';
