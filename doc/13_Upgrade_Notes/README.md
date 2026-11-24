@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.8
+
+### [Documents]
+- [Security] [Static Page Generator] Static pages of documents with a pretty URL are now stored per site. Pretty URLs are relative to the site, so two sites can use the same one, and their static pages used to share one path: generating or removing the page of one site overwrote or deleted the page of the other. `StaticPageGenerator::getStoragePath()` now returns `/%site_<site id>/<pretty URL>.html` for a document with a pretty URL that belongs to a site, or `/<main domain of the site>/<pretty URL>.html` with `static_page_generator.use_main_domain: true` (before: the system main domain for every site). Documents without a pretty URL and documents outside of any site keep their path, so only installations with several sites, pretty URLs and static pages are affected. After the update, delete the old static pages (`public/var/tmp/pages`, or the configured `document_static` storage) and regenerate them (`bin/console pimcore:documents:generate-static-pages`): Pimcore no longer touches the old files, so a web server that delivers static pages directly keeps serving them. The web server rules do not find the new paths until the site prefix is added, Pimcore serves those pages meanwhile, see [Static Page Generator](../01_Documents/12_Static_Page_Generator.md#sites-and-pretty-urls).
+
 ## Pimcore 2026.3.7
 
 ### [Documents]
