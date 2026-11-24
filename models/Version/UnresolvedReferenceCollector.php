@@ -79,20 +79,14 @@ final class UnresolvedReferenceCollector
      * of a relation list (saving the object fails on it), so it is removed from the relation lists of the
      * unmarshalled object; the unresolved references collected before still tell what was there.
      *
+     * The affected fields are marked dirty, so saving the object removes the stored relation rows of the
+     * elements that do not exist anymore. The dirty state is not part of the version data.
+     *
      * @param list<UnresolvedReference> $references
      */
     public function removeUnresolved(Concrete $object, array $references): void
     {
-        $class = ClassDefinition::getById($object->getClassId());
-        if ($class === null) {
-            return;
-        }
-
         foreach ($references as $reference) {
-            if ($reference->getIndex() === null) {
-                continue;
-            }
-
             $fieldName = $reference->getFieldName();
             $language = $reference->getLanguage();
 
@@ -101,6 +95,7 @@ final class UnresolvedReferenceCollector
                 if (is_array($value) && in_array(null, $value, true)) {
                     $object->setObjectVar($fieldName, $this->withoutNull($value), true);
                 }
+                $object->markFieldDirty($fieldName);
 
                 continue;
             }
@@ -116,6 +111,9 @@ final class UnresolvedReferenceCollector
                 $items[$language][$fieldName] = $this->withoutNull($value);
                 $localizedField->setItems($items);
             }
+            $localizedField->markFieldDirty('_self');
+            $localizedField->markLanguageAsDirty($language);
+            $object->markFieldDirty(self::LOCALIZED_FIELDS);
         }
     }
 

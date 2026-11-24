@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\LazyLoading;
 
 use Pimcore;
 use Pimcore\Cache;
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
@@ -113,6 +114,13 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
         } finally {
             DataObject::setHideUnpublished($hideUnpublished);
         }
+
+        $deletedIds = [$single->getId(), $deleted->getId(), $localized->getId()];
+        $staleRows = Db::get()->fetchOne(
+            'SELECT COUNT(*) FROM object_relations_' . $object->getClassId() . ' WHERE src_id = ? AND dest_id IN (' . implode(',', $deletedIds) . ')',
+            [$object->getId()]
+        );
+        $this->assertSame(0, (int) $staleRows, 'restoring the version must remove the relation rows of deleted elements');
 
         $restored = LazyLoading::getById($object->getId(), ['force' => true]);
         $this->assertNull($restored->getRelation());
