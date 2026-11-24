@@ -495,9 +495,6 @@ final class Version extends AbstractModel
     }
 
     /**
-     * @return $this
-     */
-    /**
      * Relations of the loaded version data whose related element does not exist anymore. They are missing in the
      * data returned by getData(), as the element can not be loaded.
      *
@@ -508,6 +505,9 @@ final class Version extends AbstractModel
         return $this->unresolvedReferences;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         $this->data = $data;
