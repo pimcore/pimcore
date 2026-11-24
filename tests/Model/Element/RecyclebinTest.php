@@ -225,6 +225,26 @@ class RecyclebinTest extends ModelTestCase
         $this->assertWorkspacesSurviveRecycleAndRestore('object', $parent, $child);
     }
 
+    public function testRestoreKeepsDenyBelowRemainingGrant(): void
+    {
+        $parent = TestHelper::createEmptyObject('ws-parent-');
+        $secret = TestHelper::createEmptyObject('ws-secret-', false);
+        $secret->setParentId($parent->getId());
+        $secret->save();
+        $user = $this->createUserWithRole('object', $this->createRoleWithWorkspaces('object', [$parent, $secret]));
+        $path = $secret->getRealFullPath();
+
+        Item::create($secret, $this->user);
+        $secret->delete();
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertFalse(
+            DataObject::getById($secret->getId(), ['force' => true])?->isAllowed('view', $user),
+            'the explicit deny applies again although the parent grants view'
+        );
+    }
+
     public function testRestoreKeepsWorkspacesOfUser(): void
     {
         $object = TestHelper::createEmptyObject('ws-user-');
@@ -336,14 +356,7 @@ class RecyclebinTest extends ModelTestCase
 
         $this->assertEquals($expected, $this->workspaceRows($type, $role->getId()));
 
-        $user = new User();
-        $user->setParentId(0);
-        $user->setName('recyclebin_ws_user_' . uniqid());
-        $user->setPermissions([$type . 's']);
-        $user->setRoles([$role->getId()]);
-        $user->save();
-        $this->restrictedUser = $user;
-
+        $user = $this->createUserWithRole($type, $role);
         $restoredParent = ElementService::getElementById($type, $parent->getId(), ['force' => true]);
         $restoredChild = ElementService::getElementById($type, $child->getId(), ['force' => true]);
         $this->assertTrue($restoredParent?->isAllowed('view', $user), 'the parent keeps its grant');
@@ -381,6 +394,19 @@ class RecyclebinTest extends ModelTestCase
         $this->restrictedRole = $role;
 
         return $role;
+    }
+
+    private function createUserWithRole(string $type, Role $role): User
+    {
+        $user = new User();
+        $user->setParentId(0);
+        $user->setName('recyclebin_ws_user_' . uniqid());
+        $user->setPermissions([$type . 's']);
+        $user->setRoles([$role->getId()]);
+        $user->save();
+        $this->restrictedUser = $user;
+
+        return $user;
     }
 
     /**
