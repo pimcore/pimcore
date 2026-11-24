@@ -1,0 +1,85 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Model\LazyLoading;
+
+use Pimcore;
+use Pimcore\Cache;
+use Pimcore\Model\DataObject\LazyLoading;
+use Pimcore\Model\DataObject\RelationTest;
+use Pimcore\Model\Version;
+use Pimcore\Model\Version\UnresolvedReference;
+
+/**
+ * A version keeps the relations of the moment it was saved. When a related element is deleted afterwards, the
+ * relation can not be restored, but the version must still tell which element it pointed to
+ * (pimcore/service-operations#1286).
+ */
+class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
+{
+    public function testVersionReportsRelationsToDeletedElements(): void
+    {
+        $targets = $this->loadRelations()->load();
+        [$single, $kept1, $deleted, $kept2, $localized] = $targets;
+
+        $object = $this->createDataObject();
+        $object->setRelation($single);
+        $object->setRelations([$kept1, $deleted, $kept2]);
+        $object->setLrelations([$localized], 'en');
+        $object->save();
+
+        $versionId = $object->getLatestVersion(null, true)?->getId();
+        $this->assertNotNull($versionId, 'saving the object must create a version');
+
+        foreach ([$single, $deleted, $localized] as $target) {
+            $target->delete();
+        }
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+
+        $version = Version::getById($versionId);
+        $versionData = $version->loadData();
+        $this->assertInstanceOf(LazyLoading::class, $versionData);
+
+        // the deleted elements can not be restored ...
+        $this->assertNull($versionData->getRelation());
+        $this->assertSame(
+            [$kept1->getId(), $kept2->getId()],
+            array_map(static fn (RelationTest $relation) => $relation->getId(), $versionData->getRelations())
+        );
+        $this->assertSame([], $versionData->getLrelations('en'));
+
+        // ... but the version still tells which elements it pointed to
+        $this->assertEquals(
+            [
+                new UnresolvedReference('relation', null, null, 'object', $single->getId()),
+                new UnresolvedReference('relations', null, 1, 'object', $deleted->getId()),
+                new UnresolvedReference('lrelations', 'en', 0, 'object', $localized->getId()),
+            ],
+            $version->getUnresolvedReferences()
+        );
+    }
+
+    public function testVersionWithoutDeletedElementsHasNoUnresolvedReferences(): void
+    {
+        $object = $this->createDataObject();
+        $object->setRelation($this->loadSingleRelation());
+        $object->save();
+
+        $version = Version::getById($object->getLatestVersion(null, true)?->getId());
+        $version->loadData();
+
+        $this->assertSame([], $version->getUnresolvedReferences());
+    }
+}
