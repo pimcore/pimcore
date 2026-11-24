@@ -138,13 +138,15 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function insertWorkspaces(array $rows, string $cpath): void
+    public function insertWorkspaces(array $rows, int $cid, string $cpath): void
     {
         $table = 'users_workspaces_' . $this->model->getType();
 
-        $this->db->transactional(function () use ($rows, $cpath, $table): void {
+        $this->db->transactional(function () use ($rows, $cid, $cpath, $table): void {
             foreach ($rows as $row) {
+                $row['cid'] = $cid;
                 $row['cpath'] = $cpath;
+                $row['userId'] = (int) $row['userId'];
                 $this->db->insert($table, Helper::quoteDataIdentifiers($this->db, $row));
             }
         });

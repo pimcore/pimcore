@@ -249,19 +249,7 @@ class RecyclebinTest extends ModelTestCase
     {
         $object = TestHelper::createEmptyObject('ws-user-');
         $path = $object->getRealFullPath();
-
-        $workspace = new DataObjectWorkspace();
-        $workspace->setCid($object->getId());
-        $workspace->setCpath($path);
-        $workspace->setList(true);
-        $workspace->setView(true);
-
-        $user = new User();
-        $user->setParentId(0);
-        $user->setName('recyclebin_ws_user_' . uniqid());
-        $user->setWorkspacesObject([$workspace]);
-        $user->save();
-        $this->restrictedUser = $user;
+        $user = $this->createUserWithObjectWorkspace($object);
 
         $expected = $this->workspaceRows('object', $user->getId());
         $this->assertCount(1, $expected);
@@ -305,6 +293,9 @@ class RecyclebinTest extends ModelTestCase
         $objectId = $object->getId();
         $path = $object->getRealFullPath();
         $role = $this->createRoleWithWorkspaces('object', [$object]);
+        $user = $this->createUserWithObjectWorkspace($object);
+        $expected = $this->workspaceRows('object', $user->getId());
+        $this->assertCount(1, $expected);
 
         Item::create($object, $this->user);
         $object->delete();
@@ -317,6 +308,11 @@ class RecyclebinTest extends ModelTestCase
 
         $this->assertIsObject(DataObject::getById($objectId, ['force' => true]));
         $this->assertSame([], $this->workspaceRows('object', $roleId));
+        $this->assertEquals(
+            $expected,
+            $this->workspaceRows('object', $user->getId()),
+            'the row of a deleted role must not stop the other rows of the element'
+        );
     }
 
     public function testDeletingItemRemovesWorkspaceSnapshot(): void
@@ -394,6 +390,24 @@ class RecyclebinTest extends ModelTestCase
         $this->restrictedRole = $role;
 
         return $role;
+    }
+
+    private function createUserWithObjectWorkspace(ElementInterface $object): User
+    {
+        $workspace = new DataObjectWorkspace();
+        $workspace->setCid($object->getId());
+        $workspace->setCpath($object->getRealFullPath());
+        $workspace->setList(true);
+        $workspace->setView(true);
+
+        $user = new User();
+        $user->setParentId(0);
+        $user->setName('recyclebin_ws_user_' . uniqid());
+        $user->setWorkspacesObject([$workspace]);
+        $user->save();
+        $this->restrictedUser = $user;
+
+        return $user;
     }
 
     private function createUserWithRole(string $type, Role $role): User

@@ -30,6 +30,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\PermissionCache;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
@@ -63,6 +64,10 @@ class Item extends Model\AbstractModel
      */
     private array $pendingWorkspaces = [];
 
+    /**
+     * @throws JsonException
+     * @throws \Doctrine\DBAL\Exception
+     */
     public static function create(Element\ElementInterface $element, ?Model\User $user = null): void
     {
         $item = new self();
@@ -230,7 +235,7 @@ class Item extends Model\AbstractModel
         }
     }
 
-    private function restoreWorkspacesOf(Element\ElementInterface $element): void
+    private function restoreWorkspacesOf(ElementInterface $element): void
     {
         $elementId = (int) $element->getId();
         $rows = $this->pendingWorkspaces[$elementId] ?? [];
@@ -241,7 +246,7 @@ class Item extends Model\AbstractModel
         unset($this->pendingWorkspaces[$elementId]);
 
         try {
-            $this->getDao()->insertWorkspaces($rows, $element->getRealFullPath());
+            $this->getDao()->insertWorkspaces($rows, $elementId, $element->getRealFullPath());
         } catch (Exception $e) {
             Logger::error(
                 'Could not restore workspace permissions of ' . $this->getType() . ' ' . $elementId
