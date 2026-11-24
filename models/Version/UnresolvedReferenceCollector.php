@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\Service;
+use function in_array;
 use function is_array;
 
 /**
@@ -32,6 +33,8 @@ use function is_array;
  */
 final class UnresolvedReferenceCollector
 {
+    private const LOCALIZED_FIELDS = 'localizedfields';
+
     /**
      * @return list<UnresolvedReference>
      */
@@ -69,6 +72,56 @@ final class UnresolvedReferenceCollector
         }
 
         return $references;
+    }
+
+    /**
+     * Unmarshalling leaves null in the place of an element that does not exist anymore. A null is no valid entry
+     * of a relation list (saving the object fails on it), so it is removed from the relation lists of the
+     * unmarshalled object; the unresolved references collected before still tell what was there.
+     *
+     * @param list<UnresolvedReference> $references
+     */
+    public function removeUnresolved(Concrete $object, array $references): void
+    {
+        $class = ClassDefinition::getById($object->getClassId());
+        if ($class === null) {
+            return;
+        }
+
+        foreach ($references as $reference) {
+            if ($reference->getIndex() === null) {
+                continue;
+            }
+
+            $fieldName = $reference->getFieldName();
+            $language = $reference->getLanguage();
+
+            if ($language === null) {
+                $value = $object->getObjectVar($fieldName);
+                if (is_array($value) && in_array(null, $value, true)) {
+                    $object->setObjectVar($fieldName, $this->withoutNull($value), true);
+                }
+
+                continue;
+            }
+
+            $localizedField = $object->getObjectVar(self::LOCALIZED_FIELDS);
+            if (!$localizedField instanceof Localizedfield) {
+                continue;
+            }
+
+            $items = $localizedField->getItems();
+            $value = $items[$language][$fieldName] ?? null;
+            if (is_array($value) && in_array(null, $value, true)) {
+                $items[$language][$fieldName] = $this->withoutNull($value);
+                $localizedField->setItems($items);
+            }
+        }
+    }
+
+    private function withoutNull(array $value): array
+    {
+        return array_values(array_filter($value, static fn (mixed $item) => $item !== null));
     }
 
     /**

@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\LazyLoading;
 
 use Pimcore;
 use Pimcore\Cache;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\Version;
@@ -68,6 +69,56 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
                 new UnresolvedReference('lrelations', 'en', 0, 'object', $localized->getId()),
             ],
             $version->getUnresolvedReferences()
+        );
+    }
+
+    /**
+     * Like in the admin, unpublished elements are not hidden, so the relations of the version must not keep a
+     * placeholder for the deleted elements, otherwise the version can not be published again.
+     */
+    public function testVersionWithDeletedElementsCanBeRestored(): void
+    {
+        $targets = $this->loadRelations()->load();
+        [$single, $kept1, $deleted, $kept2, $localized] = $targets;
+
+        $object = $this->createDataObject();
+        $object->setRelation($single);
+        $object->setRelations([$kept1, $deleted, $kept2]);
+        $object->setLobjects([$localized], 'en');
+        $object->save();
+
+        $versionId = $object->getLatestVersion(null, true)?->getId();
+        foreach ([$single, $deleted, $localized] as $target) {
+            $target->delete();
+        }
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+
+        $hideUnpublished = DataObject::doHideUnpublished();
+        DataObject::setHideUnpublished(false);
+
+        try {
+            $version = Version::getById($versionId);
+            $versionData = $version->loadData();
+
+            $this->assertSame(
+                [$kept1->getId(), $kept2->getId()],
+                array_map(static fn (RelationTest $relation) => $relation->getId(), $versionData->getRelations())
+            );
+            $this->assertSame([], $versionData->getLobjects('en'));
+            $this->assertCount(3, $version->getUnresolvedReferences());
+
+            $versionData->save();
+        } finally {
+            DataObject::setHideUnpublished($hideUnpublished);
+        }
+
+        $restored = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertNull($restored->getRelation());
+        $this->assertSame(
+            [$kept1->getId(), $kept2->getId()],
+            array_map(static fn (RelationTest $relation) => $relation->getId(), $restored->getRelations())
         );
     }
 

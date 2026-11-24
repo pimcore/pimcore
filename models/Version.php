@@ -367,11 +367,14 @@ final class Version extends AbstractModel
                 return null;
             }
 
-            $this->unresolvedReferences = $data instanceof Concrete
-                ? (new UnresolvedReferenceCollector())->collect($data)
-                : [];
+            $collector = new UnresolvedReferenceCollector();
+            $this->unresolvedReferences = $data instanceof Concrete ? $collector->collect($data) : [];
 
             $data = $this->unmarshalData($data);
+
+            if ($data instanceof Concrete && $this->unresolvedReferences !== []) {
+                $collector->removeUnresolved($data, $this->unresolvedReferences);
+            }
         }
 
         if ($data instanceof Concrete) {
