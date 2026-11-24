@@ -136,6 +136,54 @@ final class ImagePathConfinementTest extends TestCase
         }
     }
 
+    public function testBackgroundImageWithAParentSegmentThatStaysInsideTheWebRootIsApplied(): void
+    {
+        $filename = $this->createFixture(PIMCORE_WEB_ROOT, self::INSIDE_COLOR);
+
+        foreach ($this->adapters() as $name => $class) {
+            $adapter = $this->createAdapter($class);
+            $adapter->setBackgroundImage('/confinement-missing-dir/../' . $filename, 'cropTopLeft');
+
+            $this->assertColorPresent(self::INSIDE_COLOR, $this->saveAsPng($adapter), $name);
+        }
+    }
+
+    public function testParentSegmentAfterASymlinkedDirectoryDoesNotLeaveTheWebRoot(): void
+    {
+        // The file system would resolve ".." after the link against the link's target, i.e. in the
+        // project root, where this file is located.
+        $filename = $this->createFixture(PIMCORE_PROJECT_ROOT, self::OUTSIDE_COLOR);
+
+        $link = 'confinement-link-' . uniqid();
+        if (!@symlink('../' . $this->siblingName, PIMCORE_WEB_ROOT . '/' . $link)) {
+            $this->markTestSkipped('Symlinks are not available.');
+        }
+        $this->cleanupFiles[] = PIMCORE_WEB_ROOT . '/' . $link;
+
+        $path = '/' . $link . '/../' . $filename;
+        $this->assertFileExists(PIMCORE_WEB_ROOT . $path);
+
+        foreach ($this->adapters() as $name => $class) {
+            $adapter = $this->createAdapter($class);
+            $adapter->setBackgroundImage($path, 'cropTopLeft');
+
+            $this->assertColorNotPresent(self::OUTSIDE_COLOR, $this->saveAsPng($adapter), $name);
+        }
+    }
+
+    public function testOverlayWithAParentSegmentThatStaysInsideTheWebRootIsApplied(): void
+    {
+        $filename = $this->createFixture(PIMCORE_WEB_ROOT, self::INSIDE_COLOR);
+        $path = basename(PIMCORE_WEB_ROOT) . '/confinement-missing-dir/../' . $filename;
+
+        foreach ($this->adapters() as $name => $class) {
+            $adapter = $this->createAdapter($class);
+            $adapter->addOverlay($path);
+
+            $this->assertColorPresent(self::INSIDE_COLOR, $this->saveAsPng($adapter), $name);
+        }
+    }
+
     public function testOverlayOutsideTheWebRootIsNotApplied(): void
     {
         $filename = $this->createFixture($this->siblingDir, self::OUTSIDE_COLOR);
@@ -247,8 +295,9 @@ final class ImagePathConfinementTest extends TestCase
     }
 
     /**
-     * Project-relative paths of a file in the sibling directory of the web root: the plain one, and
-     * one that leaves the project directory and re-enters it. Both point at the very same file.
+     * Project-relative paths of a file in the sibling directory of the web root: the plain one, one
+     * that leaves the project directory and re-enters it, and one that goes through the web root.
+     * All of them point at the very same file.
      *
      * @return list<string>
      */
@@ -260,6 +309,7 @@ final class ImagePathConfinementTest extends TestCase
         $paths = [
             $this->siblingName . '/' . $filename,
             '../' . basename($projectRoot) . '/' . $this->siblingName . '/' . $filename,
+            basename(PIMCORE_WEB_ROOT) . '/../' . $this->siblingName . '/' . $filename,
         ];
 
         foreach ($paths as $path) {

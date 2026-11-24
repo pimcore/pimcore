@@ -77,12 +77,14 @@ abstract class Adapter implements AdapterInterface
 
     /**
      * Joins a caller-supplied relative file path (e.g. a thumbnail transformation argument) onto the
-     * given root directory. Returns null if the path contains a NUL byte or a parent-directory
-     * segment, so the result can never point outside of the root.
+     * given root directory. The path is normalized first ("a/../b" becomes "b"), so the result never
+     * contains a parent-directory segment. Returns null if the path contains a NUL byte or climbs
+     * above the root, so the result can never point outside of the root.
      *
-     * The path is deliberately not canonicalized with realpath(): the public assets of bundles are
-     * usually symlinked into the web root (assets:install --symlink), and following such a link
-     * would move a legitimate file outside of the root.
+     * The path is normalized lexically and not canonicalized with realpath(): the public assets of
+     * bundles are usually symlinked into the web root (assets:install --symlink), and following such
+     * a link would move a legitimate file outside of the root. For the same reason a ".." must not
+     * be left to the file system, which would resolve it against the target of a symlink.
      */
     protected function resolveConfinedPath(string $path, string $root): ?string
     {
@@ -90,13 +92,26 @@ abstract class Adapter implements AdapterInterface
             return null;
         }
 
+        $segments = [];
         foreach (preg_split('#[/\\\\]#', $path) ?: [] as $segment) {
-            if ($segment === '..') {
-                return null;
+            if ($segment === '' || $segment === '.') {
+                continue;
             }
+
+            if ($segment === '..') {
+                if ($segments === []) {
+                    return null;
+                }
+
+                array_pop($segments);
+
+                continue;
+            }
+
+            $segments[] = $segment;
         }
 
-        return rtrim($root, '/') . '/' . ltrim($path, '/');
+        return rtrim($root, '/') . '/' . implode('/', $segments);
     }
 
     /**
