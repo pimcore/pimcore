@@ -16,7 +16,7 @@
   - A path that climbs above its root is rejected, a `\` is treated like a `/`, and a `..` is collapsed before the path is used, so `/bundles/foo/../x.png` always means `/bundles/x.png`, also if `bundles/foo` is a symlink (the file system would have resolved the `..` against the symlink's target).
   - `Imagick::addOverlay()` and `Imagick::addOverlayFit()` used to throw an `ImagickException` for a relative file path that could not be opened. For a path outside of the web root the overlay is now skipped silently instead.
   - A project with a `PIMCORE_WEB_ROOT` outside of the project root can no longer use overlays and masks given as relative file paths.
-  - `Pimcore\Image\Adapter` has two new protected methods, `resolveConfinedPath()` and `resolvePublicFilePath()`; an own adapter subclass that declares methods with these names has to rename them. They are not part of the public API.
+  - `Pimcore\Image\Adapter` has two new protected methods, `resolveConfinedPath()` and `resolvePublicFilePath()`; both are marked `@internal`, but an own adapter subclass that already declares methods with these names has to rename them.
 
   Before upgrading, review the thumbnail configurations of your project (Studio: *Asset Management > Image Thumbnails*; stored in `var/config/image_thumbnails/` or the settings store) for overlays, masks and background images that point outside of the web root.
 

@@ -85,6 +85,8 @@ abstract class Adapter implements AdapterInterface
      * bundles are usually symlinked into the web root (assets:install --symlink), and following such
      * a link would move a legitimate file outside of the root. For the same reason a ".." must not
      * be left to the file system, which would resolve it against the target of a symlink.
+     *
+     * @internal
      */
     protected function resolveConfinedPath(string $path, string $root): ?string
     {
@@ -119,6 +121,8 @@ abstract class Adapter implements AdapterInterface
      * before, but the file has to be located in the public web root: the result ends up in the
      * (publicly served) thumbnail, so files outside of it, like the private storage, must not be
      * readable through a thumbnail configuration. Returns null for any other path.
+     *
+     * @internal
      */
     protected function resolvePublicFilePath(string $path): ?string
     {
