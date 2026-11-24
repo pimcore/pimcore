@@ -879,14 +879,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * Runs $retryableFunc in a database transaction and runs it again when it fails with a RetryableException
      * (e.g. a deadlock).
      *
-     * @param bool|null $retryAfterLostTransaction Only relevant when this runs inside a transaction that was opened
-     *      by somebody else (the caller, or an outer save) and the database server rolled that transaction back by
-     *      itself (deadlock victim, MariaDB >= 11.6.2 snapshot conflict, error 1020). The savepoint of this call is
-     *      gone then, and a retry would run outside of any transaction, writing data that nobody can roll back anymore.
-     *      false: no retry; DBAL's transaction nesting level is restored and the original exception is thrown, so that
-     *      the owner of the transaction can roll back and retry.
-     *      true or not passed (null): the previous behaviour, the call is retried. Not passing the argument is
-     *      deprecated since 2026.4: the behaviour of false will be the only one in 2027.1.
+     * @deprecated since Pimcore 2026.4, will be removed in 2027.1: use retryableTransaction(). When the database server
+     *      rolls back the transaction of the caller by itself (deadlock victim, MariaDB >= 11.6.2 snapshot conflict,
+     *      error 1020), this method retries the operation outside of any transaction: its writes cannot be rolled back
+     *      and the earlier writes of the caller are lost.
      */
     protected function retryableFunction(
         ?Closure $beforeRetryables = null,
@@ -895,7 +891,69 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         ?Closure $onBeforeRetry = null,
         ?Closure $onFailure = null,
         int $maxRetries = 5,
-        ?bool $retryAfterLostTransaction = null,
+    ): void {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '2026.4',
+            'AbstractElement::retryableFunction() is deprecated and will be removed in Pimcore 2027.1, use '
+            . 'retryableTransaction(): it does not retry the operation outside of any transaction when the database '
+            . 'server has rolled back the transaction of the caller.'
+        );
+
+        $this->runRetryableTransaction(
+            $beforeRetryables,
+            $retryableFunc,
+            $onCommit,
+            $onBeforeRetry,
+            $onFailure,
+            $maxRetries,
+            true
+        );
+    }
+
+    /**
+     * Runs $retryableFunc in a database transaction and runs it again when it fails with a RetryableException
+     * (e.g. a deadlock).
+     *
+     * When this runs inside a transaction that was opened by somebody else (the caller, or an outer save) and the
+     * database server rolls that transaction back by itself (deadlock victim, MariaDB >= 11.6.2 snapshot conflict,
+     * error 1020), the savepoint of this call is gone: nothing is retried then, DBAL's transaction nesting level is
+     * restored and the original exception is thrown, so that the owner of the transaction can roll back and retry.
+     * A failure while the transaction is alive is still rolled back to the savepoint and retried.
+     *
+     * @internal
+     */
+    protected function retryableTransaction(
+        ?Closure $beforeRetryables = null,
+        ?Closure $retryableFunc = null,
+        ?Closure $onCommit = null,
+        ?Closure $onBeforeRetry = null,
+        ?Closure $onFailure = null,
+        int $maxRetries = 5,
+    ): void {
+        $this->runRetryableTransaction(
+            $beforeRetryables,
+            $retryableFunc,
+            $onCommit,
+            $onBeforeRetry,
+            $onFailure,
+            $maxRetries,
+            false
+        );
+    }
+
+    /**
+     * @param bool $retryAfterLostTransaction true: the previous behaviour of retryableFunction(), a lost transaction
+     *      of the caller is retried (outside of any transaction); false: see retryableTransaction()
+     */
+    private function runRetryableTransaction(
+        ?Closure $beforeRetryables,
+        ?Closure $retryableFunc,
+        ?Closure $onCommit,
+        ?Closure $onBeforeRetry,
+        ?Closure $onFailure,
+        int $maxRetries,
+        bool $retryAfterLostTransaction,
     ): void {
         try {
             if ($beforeRetryables instanceof Closure) {
@@ -926,7 +984,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                     $transactionLost = $nested && $phase === 'commit'; // commit() releases the savepoint
 
                     // DBAL has already left the level of this call when commit() failed, there is nothing to roll back
-                    if (!$transactionLost || $retryAfterLostTransaction !== false) {
+                    if (!$transactionLost || $retryAfterLostTransaction) {
                         try {
                             $this->rollBack();
                         } catch (Exception $er) {
@@ -937,19 +995,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                         }
                     }
 
-                    if ($transactionLost) {
-                        if ($retryAfterLostTransaction === false) {
-                            $this->restoreTransactionNestingLevel($db, $levelAtEntry);
-                        } elseif ($retryAfterLostTransaction === null) {
-                            trigger_deprecation(
-                                'pimcore/pimcore',
-                                '2026.4',
-                                'The database server rolled back the transaction of the caller while an element was saved or deleted. '
-                                . 'A retryable error is retried outside of any transaction then. Pass retryAfterLostTransaction: false '
-                                . 'to AbstractElement::retryableFunction() to rethrow the original exception instead; '
-                                . 'that will be the only behaviour in Pimcore 2027.1.'
-                            );
-                        }
+                    if ($transactionLost && !$retryAfterLostTransaction) {
+                        $this->restoreTransactionNestingLevel($db, $levelAtEntry);
                     }
 
                     if ($onBeforeRetry instanceof Closure) {
@@ -959,7 +1006,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                     if (
                         $e instanceof RetryableException
                         && $retries < ($maxRetries - 1)
-                        && !($transactionLost && $retryAfterLostTransaction === false)
+                        && !($transactionLost && !$retryAfterLostTransaction)
                     ) {
                         $run = $retries + 1;
                         $waitTime = rand(1, 5) * 100000; // microseconds

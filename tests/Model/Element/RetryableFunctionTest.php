@@ -28,7 +28,8 @@ use RuntimeException;
 use Throwable;
 
 /**
- * AbstractElement::retryableFunction() inside a transaction that was opened by the caller.
+ * AbstractElement::retryableTransaction() (and the deprecated retryableFunction()) inside a transaction that was
+ * opened by the caller.
  *
  * When the database server rolls that transaction back by itself (deadlock victim, MariaDB >= 11.6.2 snapshot
  * conflict with error 1020), the savepoint of the nested call is gone: ROLLBACK TO SAVEPOINT fails, DBAL's nesting
@@ -83,7 +84,6 @@ final class RetryableFunctionTest extends ModelTestCase
 
                     throw $this->deadlock();
                 },
-                'retryAfterLostTransaction' => false,
             ]);
             $this->fail('The original exception has to be thrown');
         } catch (DeadlockException) {
@@ -112,7 +112,6 @@ final class RetryableFunctionTest extends ModelTestCase
                     // the savepoint is gone when the nested call tries to release it
                     $this->loseServerSideTransaction();
                 },
-                'retryAfterLostTransaction' => false,
             ]);
             $this->fail('Releasing a savepoint of a lost transaction has to fail');
         } catch (Exception) {
@@ -139,7 +138,6 @@ final class RetryableFunctionTest extends ModelTestCase
 
                     throw new RuntimeException('not retryable');
                 },
-                'retryAfterLostTransaction' => false,
             ]);
             $this->fail('The exception has to be thrown');
         } catch (RuntimeException) {
@@ -168,7 +166,6 @@ final class RetryableFunctionTest extends ModelTestCase
                     throw $this->deadlock();
                 }
             },
-            'retryAfterLostTransaction' => false,
         ]);
 
         $this->assertSame(2, $calls);
@@ -191,7 +188,6 @@ final class RetryableFunctionTest extends ModelTestCase
                     throw $this->deadlock();
                 }
             },
-            'retryAfterLostTransaction' => false,
         ]);
 
         $this->assertSame(2, $calls);
@@ -199,84 +195,51 @@ final class RetryableFunctionTest extends ModelTestCase
         $this->assertSame(1, $this->committedScratchRows());
     }
 
-    public function testLostTransactionIsStillRetriedWhenTheLegacyBehaviourIsRequested(): void
+    public function testDeprecatedRetryableFunctionStillRetriesALostTransaction(): void
     {
         $db = Db::get();
         $db->beginTransaction();
         $calls = 0;
 
-        try {
-            $this->retryable([
-                'retryableFunc' => function () use (&$calls): void {
-                    $calls++;
-                    $this->loseServerSideTransaction();
+        $this->collectDeprecations(function () use (&$calls): void {
+            try {
+                $this->retryable([
+                    'retryableFunc' => function () use (&$calls): void {
+                        $calls++;
+                        $this->loseServerSideTransaction();
 
-                    throw $this->deadlock();
-                },
-                'retryAfterLostTransaction' => true,
-                'maxRetries' => 2,
-            ]);
-        } catch (Throwable) {
-            // the retry runs outside of the lost transaction and its commit fails
-        }
-
-        $this->assertGreaterThan(1, $calls, 'true keeps the previous behaviour');
-    }
-
-    public function testOmittingTheArgumentIsDeprecatedWhenATransactionWasLost(): void
-    {
-        $db = Db::get();
-        $db->beginTransaction();
-        $deprecations = [];
-
-        set_error_handler(static function (int $level, string $message) use (&$deprecations): bool {
-            if ($level === E_USER_DEPRECATED) {
-                $deprecations[] = $message;
-
-                return true;
+                        throw $this->deadlock();
+                    },
+                    'maxRetries' => 2,
+                ], 'retryableFunction');
+            } catch (Throwable) {
+                // the retry runs outside of the lost transaction and its commit fails
             }
-
-            return false;
         });
 
-        try {
-            $this->retryable([
-                'retryableFunc' => function (): void {
-                    $this->loseServerSideTransaction();
+        $this->assertGreaterThan(1, $calls, 'The deprecated method keeps the previous behaviour');
+    }
 
-                    throw new RuntimeException('not retryable');
-                },
-            ]);
-        } catch (RuntimeException) {
-        } finally {
-            restore_error_handler();
-        }
+    public function testRetryableFunctionIsDeprecated(): void
+    {
+        $deprecations = $this->collectDeprecations(function (): void {
+            $this->retryable(['retryableFunc' => function (): void {
+                $this->insertScratchRow(Db::get());
+            }], 'retryableFunction');
+        });
 
         $this->assertCount(1, $deprecations);
-        $this->assertStringContainsString('retryAfterLostTransaction', $deprecations[0]);
+        $this->assertStringContainsString('retryableTransaction()', $deprecations[0]);
+        $this->assertSame(1, $this->committedScratchRows(), 'The deprecated method still works');
     }
 
-    public function testNoDeprecationWithoutLostTransaction(): void
+    public function testRetryableTransactionIsNotDeprecated(): void
     {
-        $deprecations = [];
-
-        set_error_handler(static function (int $level, string $message) use (&$deprecations): bool {
-            if ($level === E_USER_DEPRECATED) {
-                $deprecations[] = $message;
-
-                return true;
-            }
-
-            return false;
-        });
-
-        try {
+        $deprecations = $this->collectDeprecations(function (): void {
             $this->retryable(['retryableFunc' => function (): void {
                 $this->insertScratchRow(Db::get());
             }]);
-        } finally {
-            restore_error_handler();
-        }
+        });
 
         $this->assertSame([], $deprecations);
     }
@@ -307,7 +270,6 @@ final class RetryableFunctionTest extends ModelTestCase
                     $calls++;
                     Db::get()->fetchFirstColumn('SELECT id FROM schedule_tasks WHERE cid = ? FOR UPDATE', [self::SCRATCH_CID]);
                 },
-                'retryAfterLostTransaction' => false,
             ]);
             $this->fail('The locking read has to be rejected');
         } catch (Exception $e) {
@@ -320,11 +282,11 @@ final class RetryableFunctionTest extends ModelTestCase
     }
 
     /**
-     * @param array<string, mixed> $arguments named arguments of retryableFunction()
+     * @param array<string, mixed> $arguments named arguments of the method
      */
-    private function retryable(array $arguments): void
+    private function retryable(array $arguments, string $methodName = 'retryableTransaction'): void
     {
-        $method = new ReflectionMethod(AbstractElement::class, 'retryableFunction');
+        $method = new ReflectionMethod(AbstractElement::class, $methodName);
         $method->invokeArgs($this->element, $arguments);
     }
 
@@ -340,6 +302,32 @@ final class RetryableFunctionTest extends ModelTestCase
         }
 
         $this->assertSame(0, $db->getTransactionNestingLevel());
+    }
+
+    /**
+     * @return string[] the messages of the deprecations that were triggered while $callback ran
+     */
+    private function collectDeprecations(callable $callback): array
+    {
+        $deprecations = [];
+
+        set_error_handler(static function (int $level, string $message) use (&$deprecations): bool {
+            if ($level === E_USER_DEPRECATED) {
+                $deprecations[] = $message;
+
+                return true;
+            }
+
+            return false;
+        });
+
+        try {
+            $callback();
+        } finally {
+            restore_error_handler();
+        }
+
+        return $deprecations;
     }
 
     private function deadlock(): DeadlockException

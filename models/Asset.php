@@ -549,8 +549,7 @@ class Asset extends Element\AbstractElement
         $differentOldPath = null;
         $updatedChildren = [];
 
-        $this->retryableFunction(
-            retryAfterLostTransaction: false,
+        $this->retryableTransaction(
             beforeRetryables: function () use (&$parameters, &$isUpdate) {
                 $preEvent = new AssetEvent($this, $parameters);
 
@@ -965,8 +964,7 @@ class Asset extends Element\AbstractElement
         /** @var Version|null $version assigned by reference in the closures below */
         $version = null;
 
-        $this->retryableFunction(
-            retryAfterLostTransaction: false,
+        $this->retryableTransaction(
             retryableFunc: function () use (&$version): void {
                 $version = $this->saveVersionOfPersistedState();
             },
@@ -1353,8 +1351,7 @@ class Asset extends Element\AbstractElement
             throw new Exception('root-node cannot be deleted');
         }
 
-        $this->retryableFunction(
-            retryAfterLostTransaction: false,
+        $this->retryableTransaction(
             beforeRetryables: function () {
                 $this->dispatchEvent(new AssetEvent($this), AssetEvents::PRE_DELETE);
             },

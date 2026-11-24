@@ -303,8 +303,7 @@ class Document extends Element\AbstractElement
         $differentOldPath = null;
         $updatedChildren = [];
 
-        $this->retryableFunction(
-            retryAfterLostTransaction: false,
+        $this->retryableTransaction(
             beforeRetryables: function () use (&$isUpdate, &$parameters) {
                 $preEvent = new DocumentEvent($this, $parameters);
                 if ($this->getId()) {
@@ -633,8 +632,7 @@ class Document extends Element\AbstractElement
     public function delete(): void
     {
 
-        $this->retryableFunction(
-            retryAfterLostTransaction: false,
+        $this->retryableTransaction(
             beforeRetryables: function () {
                 $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
             },
