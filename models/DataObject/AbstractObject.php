@@ -479,6 +479,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function delete(): void
     {
         $this->retryableFunction(
+            retryAfterLostTransaction: false,
             beforeRetryables: function () {
                 $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
             },
@@ -526,6 +527,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         try {
             $this->retryableFunction(
+                retryAfterLostTransaction: false,
                 beforeRetryables: function () use (
                     &$isUpdate,
                     &$parameters,

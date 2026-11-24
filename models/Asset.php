@@ -550,6 +550,7 @@ class Asset extends Element\AbstractElement
         $updatedChildren = [];
 
         $this->retryableFunction(
+            retryAfterLostTransaction: false,
             beforeRetryables: function () use (&$parameters, &$isUpdate) {
                 $preEvent = new AssetEvent($this, $parameters);
 
@@ -965,6 +966,7 @@ class Asset extends Element\AbstractElement
         $version = null;
 
         $this->retryableFunction(
+            retryAfterLostTransaction: false,
             retryableFunc: function () use (&$version): void {
                 $version = $this->saveVersionOfPersistedState();
             },
@@ -1352,6 +1354,7 @@ class Asset extends Element\AbstractElement
         }
 
         $this->retryableFunction(
+            retryAfterLostTransaction: false,
             beforeRetryables: function () {
                 $this->dispatchEvent(new AssetEvent($this), AssetEvents::PRE_DELETE);
             },

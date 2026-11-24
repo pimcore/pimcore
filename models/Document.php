@@ -304,6 +304,7 @@ class Document extends Element\AbstractElement
         $updatedChildren = [];
 
         $this->retryableFunction(
+            retryAfterLostTransaction: false,
             beforeRetryables: function () use (&$isUpdate, &$parameters) {
                 $preEvent = new DocumentEvent($this, $parameters);
                 if ($this->getId()) {
@@ -633,6 +634,7 @@ class Document extends Element\AbstractElement
     {
 
         $this->retryableFunction(
+            retryAfterLostTransaction: false,
             beforeRetryables: function () {
                 $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
             },
