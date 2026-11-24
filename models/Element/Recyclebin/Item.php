@@ -58,6 +58,11 @@ class Item extends Model\AbstractModel
 
     protected string $deletedby = '';
 
+    /**
+     * @var array<int, list<array<string, mixed>>> keyed by element id
+     */
+    private array $pendingWorkspaces = [];
+
     public static function create(Element\ElementInterface $element, ?Model\User $user = null): void
     {
         $item = new self();
@@ -93,6 +98,8 @@ class Item extends Model\AbstractModel
             }
         }
 
+        $this->pendingWorkspaces = $this->loadWorkspaces();
+
         // check for element with the same name
         if ($element instanceof Document) {
             $indentElement = Document::getByPath($element->getRealFullPath());
@@ -124,6 +131,7 @@ class Item extends Model\AbstractModel
             }
             $dummy->save(['isRecycleBinRestore' => true]);
             Model\Version::enable();
+            $this->restoreWorkspacesOf($dummy);
         }
 
         try {
@@ -140,9 +148,10 @@ class Item extends Model\AbstractModel
             }
 
             throw $e;
+        } finally {
+            $this->pendingWorkspaces = [];
+            Pimcore::getContainer()->get(PermissionCache::class)->reset();
         }
-
-        $this->restoreWorkspaces();
 
         $this->delete();
     }
@@ -198,24 +207,46 @@ class Item extends Model\AbstractModel
         }
     }
 
-    private function restoreWorkspaces(): void
+    /**
+     * @return array<int, list<array<string, mixed>>> keyed by element id
+     */
+    private function loadWorkspaces(): array
     {
         $storage = Storage::get('recycle_bin');
         $file = $this->getStorageFileWorkspaces();
 
         if (!$storage->fileExists($file)) {
-            return;
+            return [];
         }
 
         try {
-            $workspaces = json_decode($storage->read($file), true, 512, JSON_THROW_ON_ERROR);
-            if (is_array($workspaces)) {
-                $this->getDao()->restoreWorkspaces($workspaces);
-            }
+            $rows = json_decode($storage->read($file), true, 512, JSON_THROW_ON_ERROR);
+
+            return is_array($rows) ? $this->getDao()->getRestorableWorkspaces($rows) : [];
         } catch (Exception $e) {
-            Logger::error('Could not restore workspace permissions of recycle bin item ' . $this->getId() . ': ' . $e);
-        } finally {
-            Pimcore::getContainer()->get(PermissionCache::class)->reset();
+            Logger::error('Could not read workspace permissions of recycle bin item ' . $this->getId() . ': ' . $e);
+
+            return [];
+        }
+    }
+
+    private function restoreWorkspacesOf(Element\ElementInterface $element): void
+    {
+        $elementId = (int) $element->getId();
+        $rows = $this->pendingWorkspaces[$elementId] ?? [];
+        if ($rows === []) {
+            return;
+        }
+
+        unset($this->pendingWorkspaces[$elementId]);
+
+        try {
+            $this->getDao()->insertWorkspaces($rows, $element->getRealFullPath());
+        } catch (Exception $e) {
+            Logger::error(
+                'Could not restore workspace permissions of ' . $this->getType() . ' ' . $elementId
+                . ' from recycle bin item ' . $this->getId() . ': ' . $e
+            );
         }
     }
 
@@ -294,6 +325,7 @@ class Item extends Model\AbstractModel
             $element->setOmitMandatoryCheck(true);
         }
         $element->save(['isRecycleBinRestore' => true]);
+        $this->restoreWorkspacesOf($element);
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {

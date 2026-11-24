@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\Element\Recyclebin\Item\Listing as ItemListing;
+use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Model\User;
 use Pimcore\Model\User\Role;
 use Pimcore\Model\User\Workspace\Asset as AssetWorkspace;
@@ -214,6 +215,16 @@ class RecyclebinTest extends ModelTestCase
         $this->assertWorkspacesSurviveRecycleAndRestore('document', $parent, $child);
     }
 
+    public function testRestoreKeepsWorkspacesBelowKeyWithBackslash(): void
+    {
+        $parent = TestHelper::createEmptyObject('ws\\back-');
+        $child = TestHelper::createEmptyObject('ws-child-', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('object', $parent, $child);
+    }
+
     public function testRestoreKeepsWorkspacesOfUser(): void
     {
         $object = TestHelper::createEmptyObject('ws-user-');
@@ -324,6 +335,19 @@ class RecyclebinTest extends ModelTestCase
         $this->recycledItem($path)->restore();
 
         $this->assertEquals($expected, $this->workspaceRows($type, $role->getId()));
+
+        $user = new User();
+        $user->setParentId(0);
+        $user->setName('recyclebin_ws_user_' . uniqid());
+        $user->setPermissions([$type . 's']);
+        $user->setRoles([$role->getId()]);
+        $user->save();
+        $this->restrictedUser = $user;
+
+        $restoredParent = ElementService::getElementById($type, $parent->getId(), ['force' => true]);
+        $restoredChild = ElementService::getElementById($type, $child->getId(), ['force' => true]);
+        $this->assertTrue($restoredParent?->isAllowed('view', $user), 'the parent keeps its grant');
+        $this->assertFalse($restoredChild?->isAllowed('view', $user), 'the child keeps its explicit deny');
     }
 
     /**

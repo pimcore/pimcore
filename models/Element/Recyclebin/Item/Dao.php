@@ -12,11 +12,11 @@
 
 namespace Pimcore\Model\Element\Recyclebin\Item;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Element\Service as ElementService;
 
 /**
  * @internal
@@ -85,47 +85,66 @@ class Dao extends Model\Dao\AbstractDao
     public function getWorkspaces(): array
     {
         $path = $this->model->getPath();
+        // backslashes are valid in object keys but are the LIKE escape character
+        $childPattern = Helper::escapeLike(str_replace('\\', '\\\\', $path)) . '/%';
 
         return $this->db->fetchAllAssociative(
             'SELECT * FROM users_workspaces_' . $this->model->getType() . ' WHERE cpath = ? OR cpath LIKE ?',
-            [$path, Helper::escapeLike($path) . '/%']
+            [$path, $childPattern]
         );
     }
 
     /**
-     * Re-inserts all rows or none.
+     * Rows of users and roles that still exist.
      *
      * @param array<mixed> $rows rows from getWorkspaces()
      *
+     * @return array<int, list<array<string, mixed>>> keyed by element id
+     *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function restoreWorkspaces(array $rows): void
+    public function getRestorableWorkspaces(array $rows): array
     {
-        $type = $this->model->getType();
-        $table = 'users_workspaces_' . $type;
-        $columns = array_flip($this->getValidTableColumns($table));
+        $rows = array_filter(
+            $rows,
+            static fn (mixed $row): bool => is_array($row) && isset($row['cid'], $row['userId'])
+        );
+        if ($rows === []) {
+            return [];
+        }
 
-        $this->db->transactional(function () use ($rows, $type, $table, $columns): void {
-            $paths = [];
+        $userIds = array_values(array_unique(array_map(static fn (array $row): int => (int) $row['userId'], $rows)));
+        $existingUserIds = array_flip(array_map('intval', $this->db->fetchFirstColumn(
+            'SELECT id FROM users WHERE id IN (?)',
+            [$userIds],
+            [ArrayParameterType::INTEGER]
+        )));
+        $columns = array_flip($this->getValidTableColumns('users_workspaces_' . $this->model->getType()));
 
+        $workspaces = [];
+        foreach ($rows as $row) {
+            if (isset($existingUserIds[(int) $row['userId']])) {
+                $workspaces[(int) $row['cid']][] = array_intersect_key($row, $columns);
+            }
+        }
+
+        return $workspaces;
+    }
+
+    /**
+     * Re-inserts the rows of one restored element, all or none.
+     *
+     * @param list<array<string, mixed>> $rows rows from getRestorableWorkspaces()
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function insertWorkspaces(array $rows, string $cpath): void
+    {
+        $table = 'users_workspaces_' . $this->model->getType();
+
+        $this->db->transactional(function () use ($rows, $cpath, $table): void {
             foreach ($rows as $row) {
-                if (!is_array($row) || !isset($row['cid'], $row['userId'])) {
-                    continue;
-                }
-
-                $cid = (int) $row['cid'];
-                if (!array_key_exists($cid, $paths)) {
-                    $paths[$cid] = ElementService::getElementById($type, $cid, ['force' => true])?->getRealFullPath();
-                }
-
-                $userId = $this->db->fetchOne('SELECT id FROM users WHERE id = ?', [(int) $row['userId']]);
-                if ($paths[$cid] === null || $userId === false) {
-                    continue;
-                }
-
-                $row = array_intersect_key($row, $columns);
-                $row['cpath'] = $paths[$cid];
-
+                $row['cpath'] = $cpath;
                 $this->db->insert($table, Helper::quoteDataIdentifiers($this->db, $row));
             }
         });
