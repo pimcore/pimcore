@@ -56,7 +56,8 @@ final class UnresolvedReferenceCollector
             }
 
             if ($fieldDefinition instanceof Localizedfields) {
-                $localizedField = $object->getObjectVar($name);
+                // the name of the localized fields is always "localizedfields", removeUnresolved() relies on it too
+                $localizedField = $object->getObjectVar(self::LOCALIZED_FIELDS);
                 if (!$localizedField instanceof Localizedfield) {
                     continue;
                 }

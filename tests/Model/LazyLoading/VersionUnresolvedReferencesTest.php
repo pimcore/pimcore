@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\LazyLoading;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Db;
@@ -89,6 +91,7 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
         $object->save();
 
         $versionId = $object->getLatestVersion(null, true)?->getId();
+        $this->assertNotNull($versionId, 'saving the object must create a version');
         foreach ([$single, $deleted, $localized] as $target) {
             $target->delete();
         }
@@ -117,8 +120,9 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
 
         $deletedIds = [$single->getId(), $deleted->getId(), $localized->getId()];
         $staleRows = Db::get()->fetchOne(
-            'SELECT COUNT(*) FROM object_relations_' . $object->getClassId() . ' WHERE src_id = ? AND dest_id IN (' . implode(',', $deletedIds) . ')',
-            [$object->getId()]
+            'SELECT COUNT(*) FROM object_relations_' . $object->getClassId() . ' WHERE src_id = ? AND dest_id IN (?)',
+            [$object->getId(), $deletedIds],
+            [ParameterType::INTEGER, ArrayParameterType::INTEGER]
         );
         $this->assertSame(0, (int) $staleRows, 'restoring the version must remove the relation rows of deleted elements');
 
@@ -136,7 +140,9 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
         $object->setRelation($this->loadSingleRelation());
         $object->save();
 
-        $version = Version::getById($object->getLatestVersion(null, true)?->getId());
+        $versionId = $object->getLatestVersion(null, true)?->getId();
+        $this->assertNotNull($versionId, 'saving the object must create a version');
+        $version = Version::getById($versionId);
         $version->loadData();
 
         $this->assertSame([], $version->getUnresolvedReferences());
