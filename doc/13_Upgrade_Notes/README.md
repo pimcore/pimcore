@@ -2,6 +2,24 @@
 
 ## Pimcore 2026.3.8
 
+### [Assets]
+- [Security] [Thumbnails] The file paths of the image thumbnail transformations `setBackgroundImage`, `addOverlay`, `addOverlayFit` and `applyMask` are now confined. Before, the adapters (`Pimcore\Image\Adapter\GD`, `Pimcore\Image\Adapter\Imagick`) read any file that the joined path pointed at, so a thumbnail configuration could draw a file from anywhere on the file system into the (publicly served) thumbnail. Now the file has to be located in the public web root (`PIMCORE_WEB_ROOT`, by default `public/`); anything else is ignored **without an error**, the transformation is skipped and the thumbnail is generated without it:
+
+  | Transformation | Path is relative to | Before | Now |
+  |----------------|---------------------|--------|-----|
+  | `setBackgroundImage` (GD, Imagick) | the web root | any file, also outside of the web root via `..` | only files in the web root |
+  | `addOverlay` (GD), `addOverlay` and `addOverlayFit` with a relative file path (Imagick), `applyMask` (Imagick) | the project root | any file, also outside of the project via `..` | only files in the web root (`public/...` keeps working) |
+  | `addOverlay` and `addOverlayFit` with an **asset path** or asset id (Imagick) | the asset tree | works | unchanged |
+
+  What stays the same: the notation of the paths, files below a symlinked directory in the web root (e.g. the bundle assets in `public/bundles/*` installed with `assets:install --symlink`), and a `..` that stays inside the web root (`/static/../img/a.png` is read as `/img/a.png`). The path is normalized before it is used; it is not resolved through symlinks. Details of the change:
+  - **Files outside of the web root**, e.g. an overlay or mask in `templates/`, `assets/` or on a file system mounted outside of the project, are no longer applied. Move them into the web root, make them reachable through a symlink in the web root, or - for overlays on Imagick - reference them as assets. GD overlays and masks have no asset alternative.
+  - A path that climbs above its root is rejected, a `\` is treated like a `/`, and a `..` is collapsed before the path is used, so `/bundles/foo/../x.png` always means `/bundles/x.png`, also if `bundles/foo` is a symlink (the file system would have resolved the `..` against the symlink's target).
+  - `Imagick::addOverlay()` and `Imagick::addOverlayFit()` used to throw an `ImagickException` for a relative file path that could not be opened. For a path outside of the web root the overlay is now skipped silently instead.
+  - A project with a `PIMCORE_WEB_ROOT` outside of the project root can no longer use overlays and masks given as relative file paths.
+  - `Pimcore\Image\Adapter` has two new protected methods, `resolveConfinedPath()` and `resolvePublicFilePath()`; both are marked `@internal`, but an own adapter subclass that already declares methods with these names has to rename them.
+
+  Before upgrading, review the thumbnail configurations of your project (Studio: *Asset Management > Image Thumbnails*; stored in `var/config/image_thumbnails/` or the settings store) for overlays, masks and background images that point outside of the web root.
+
 ### [Documents]
 - [Security] [Static Page Generator] Static pages of documents with a pretty URL are now stored per site. Pretty URLs are relative to the site, so two sites can use the same one, and their static pages used to share one path: generating or removing the page of one site overwrote or deleted the page of the other. `StaticPageGenerator::getStoragePath()` now returns `/%site_<site id>/<pretty URL>.html` for a document with a pretty URL that belongs to a site, or `/<main domain of the site>/<pretty URL>.html` with `static_page_generator.use_main_domain: true` (before: the system main domain for every site). Documents without a pretty URL and documents outside of any site keep their path, so only installations with several sites, pretty URLs and static pages are affected. After the update, delete the old static pages (`public/var/tmp/pages`, or the configured `document_static` storage) and regenerate them (`bin/console pimcore:documents:generate-static-pages`): Pimcore no longer touches the old files, so a web server that delivers static pages directly keeps serving them. The web server rules do not find the new paths until the site prefix is added, Pimcore serves those pages meanwhile, see [Static Page Generator](../01_Documents/12_Static_Page_Generator.md#sites-and-pretty-urls).
 

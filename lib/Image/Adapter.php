@@ -76,6 +76,66 @@ abstract class Adapter implements AdapterInterface
     }
 
     /**
+     * Joins a caller-supplied relative file path (e.g. a thumbnail transformation argument) onto the
+     * given root directory. The path is normalized first ("a/../b" becomes "b"), so the result never
+     * contains a parent-directory segment. Returns null if the path contains a NUL byte or climbs
+     * above the root, so the result can never point outside of the root.
+     *
+     * The path is normalized lexically and not canonicalized with realpath(): the public assets of
+     * bundles are usually symlinked into the web root (assets:install --symlink), and following such
+     * a link would move a legitimate file outside of the root. For the same reason a ".." must not
+     * be left to the file system, which would resolve it against the target of a symlink.
+     *
+     * @internal
+     */
+    protected function resolveConfinedPath(string $path, string $root): ?string
+    {
+        if (str_contains($path, "\0")) {
+            return null;
+        }
+
+        $segments = [];
+        foreach (preg_split('#[/\\\\]#', $path) ?: [] as $segment) {
+            if ($segment === '' || $segment === '.') {
+                continue;
+            }
+
+            if ($segment === '..') {
+                if ($segments === []) {
+                    return null;
+                }
+
+                array_pop($segments);
+
+                continue;
+            }
+
+            $segments[] = $segment;
+        }
+
+        return rtrim($root, '/') . '/' . implode('/', $segments);
+    }
+
+    /**
+     * Resolves the path of an overlay or mask file. The path is relative to the project root, as
+     * before, but the file has to be located in the public web root: the result ends up in the
+     * (publicly served) thumbnail, so files outside of it, like the private storage, must not be
+     * readable through a thumbnail configuration. Returns null for any other path.
+     *
+     * @internal
+     */
+    protected function resolvePublicFilePath(string $path): ?string
+    {
+        $resolved = $this->resolveConfinedPath($path, PIMCORE_PROJECT_ROOT);
+
+        if ($resolved === null || !str_starts_with($resolved, rtrim(PIMCORE_WEB_ROOT, '/') . '/')) {
+            return null;
+        }
+
+        return $resolved;
+    }
+
+    /**
      * @todo: duplication found? (pimcore/lib/Pimcore/Document/Adapter.php::removeTmpFiles)
      */
     protected function removeTmpFiles(): void
