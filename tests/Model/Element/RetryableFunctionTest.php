@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\Element;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
 use PDO;
@@ -23,6 +24,7 @@ use Pimcore\Db;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use PHPUnit\Framework\AssertionFailedError;
 use ReflectionMethod;
 use RuntimeException;
 use Throwable;
@@ -75,21 +77,18 @@ final class RetryableFunctionTest extends ModelTestCase
         $db->beginTransaction();
         $calls = 0;
 
-        try {
-            $this->retryable([
-                'retryableFunc' => function () use (&$calls): void {
-                    $calls++;
-                    $this->insertScratchRow(Db::get());
-                    $this->loseServerSideTransaction();
+        $thrown = $this->thrownBy(fn () => $this->retryable([
+            'retryableFunc' => function () use (&$calls): void {
+                $calls++;
+                $this->insertScratchRow(Db::get());
+                $this->loseServerSideTransaction();
 
-                    throw $this->deadlock();
-                },
-            ]);
-            $this->fail('The original exception has to be thrown');
-        } catch (DeadlockException) {
-            // expected: the owner of the transaction decides what to do
-        }
+                throw $this->deadlock();
+            },
+        ]));
 
+        // the owner of the transaction decides what to do
+        $this->assertInstanceOf(DeadlockException::class, $thrown, 'The original exception has to be thrown');
         $this->assertSame(1, $calls, 'The function must not run again outside of the lost transaction');
         $this->assertSame(1, $db->getTransactionNestingLevel(), 'DBAL must be back at the level of the caller');
 
@@ -104,20 +103,16 @@ final class RetryableFunctionTest extends ModelTestCase
         $db->beginTransaction();
         $calls = 0;
 
-        try {
-            $this->retryable([
-                'retryableFunc' => function () use (&$calls): void {
-                    $calls++;
-                    $this->insertScratchRow(Db::get());
-                    // the savepoint is gone when the nested call tries to release it
-                    $this->loseServerSideTransaction();
-                },
-            ]);
-            $this->fail('Releasing a savepoint of a lost transaction has to fail');
-        } catch (Exception) {
-            // expected
-        }
+        $thrown = $this->thrownBy(fn () => $this->retryable([
+            'retryableFunc' => function () use (&$calls): void {
+                $calls++;
+                $this->insertScratchRow(Db::get());
+                // the savepoint is gone when the nested call tries to release it
+                $this->loseServerSideTransaction();
+            },
+        ]));
 
+        $this->assertInstanceOf(DbalException::class, $thrown, 'Releasing a savepoint of a lost transaction has to fail');
         $this->assertSame(1, $calls);
         $this->assertSame(1, $db->getTransactionNestingLevel());
 
@@ -131,18 +126,16 @@ final class RetryableFunctionTest extends ModelTestCase
         $db->beginTransaction();
         $this->insertScratchRow($db); // written by the caller before
 
-        try {
-            $this->retryable([
-                'retryableFunc' => function (): void {
-                    $this->insertScratchRow(Db::get());
+        $thrown = $this->thrownBy(fn () => $this->retryable([
+            'retryableFunc' => function (): void {
+                $this->insertScratchRow(Db::get());
 
-                    throw new RuntimeException('not retryable');
-                },
-            ]);
-            $this->fail('The exception has to be thrown');
-        } catch (RuntimeException) {
-        }
+                throw new RuntimeException('not retryable');
+            },
+        ]));
 
+        $this->assertInstanceOf(RuntimeException::class, $thrown, 'The exception has to be thrown');
+        $this->assertSame('not retryable', $thrown->getMessage());
         $this->assertSame(1, $db->getTransactionNestingLevel());
         $this->assertSame(1, $this->scratchRows($db), 'Only the write of the failed nested call is rolled back');
 
@@ -202,19 +195,16 @@ final class RetryableFunctionTest extends ModelTestCase
         $calls = 0;
 
         $this->collectDeprecations(function () use (&$calls): void {
-            try {
-                $this->retryable([
-                    'retryableFunc' => function () use (&$calls): void {
-                        $calls++;
-                        $this->loseServerSideTransaction();
+            // the retry runs outside of the lost transaction and fails as well, the exception is not of interest here
+            $this->thrownBy(fn () => $this->retryable([
+                'retryableFunc' => function () use (&$calls): void {
+                    $calls++;
+                    $this->loseServerSideTransaction();
 
-                        throw $this->deadlock();
-                    },
-                    'maxRetries' => 2,
-                ], 'retryableFunction');
-            } catch (Throwable) {
-                // the retry runs outside of the lost transaction and its commit fails
-            }
+                    throw $this->deadlock();
+                },
+                'maxRetries' => 2,
+            ], 'retryableFunction'));
         });
 
         $this->assertGreaterThan(1, $calls, 'The deprecated method keeps the previous behaviour');
@@ -245,6 +235,53 @@ final class RetryableFunctionTest extends ModelTestCase
     }
 
     /**
+     * The save and delete of core must not use the deprecated method: every call site was moved to retryableTransaction().
+     */
+    public function testSavingAndDeletingElementsDoesNotTriggerTheRetryableFunctionDeprecation(): void
+    {
+        $deprecations = $this->collectDeprecations(function (): void {
+            TestHelper::createEmptyDocumentPage()->delete();
+            TestHelper::createImageAsset()->delete();
+            TestHelper::createEmptyObject()->delete();
+        });
+
+        $this->assertSame([], array_values(array_filter(
+            $deprecations,
+            static fn (string $message): bool => str_contains($message, 'retryableFunction')
+        )));
+    }
+
+    /**
+     * AbstractElement::restoreTransactionNestingLevel() relies on this bookkeeping of DBAL: rollBack() decrements the
+     * nesting level only after ROLLBACK TO SAVEPOINT succeeded, commit() decrements it in a finally block even though
+     * RELEASE SAVEPOINT fails. That is how DBAL 4.4 to 4.6 behave (the supported range is ^4.4). The lowest and the
+     * highest dependency jobs run this test, so a release that changes it fails here and not in production.
+     */
+    public function testDbalDecrementsTheNestingLevelWhenReleasingALostSavepointFails(): void
+    {
+        $db = Db::get();
+        $db->beginTransaction(); // the caller's transaction
+        $db->beginTransaction(); // a nested call: SAVEPOINT
+        $this->loseServerSideTransaction();
+
+        $this->assertInstanceOf(
+            DbalException::class,
+            $this->thrownBy(fn () => $db->rollBack()),
+            'ROLLBACK TO SAVEPOINT of a lost transaction has to fail'
+        );
+        $this->assertSame(2, $db->getTransactionNestingLevel(), 'rollBack() does not decrement after its SQL failed');
+
+        $this->assertInstanceOf(
+            DbalException::class,
+            $this->thrownBy(fn () => $db->commit()),
+            'RELEASE SAVEPOINT of a lost transaction has to fail'
+        );
+        $this->assertSame(1, $db->getTransactionNestingLevel(), 'commit() decrements in a finally block');
+
+        $this->rollBackTheCallersTransaction($db);
+    }
+
+    /**
      * The real thing on MariaDB >= 11.6.2: error 1020 of a locking read after a concurrent commit.
      */
     public function testSnapshotConflictInsideCallersTransaction(): void
@@ -264,18 +301,15 @@ final class RetryableFunctionTest extends ModelTestCase
         $this->insertScratchRow($this->observer()); // committed by another connection afterwards
         $calls = 0;
 
-        try {
-            $this->retryable([
-                'retryableFunc' => function () use (&$calls): void {
-                    $calls++;
-                    Db::get()->fetchFirstColumn('SELECT id FROM schedule_tasks WHERE cid = ? FOR UPDATE', [self::SCRATCH_CID]);
-                },
-            ]);
-            $this->fail('The locking read has to be rejected');
-        } catch (Exception $e) {
-            $this->assertStringContainsString('1020', $e->getMessage());
-        }
+        $thrown = $this->thrownBy(fn () => $this->retryable([
+            'retryableFunc' => function () use (&$calls): void {
+                $calls++;
+                Db::get()->fetchFirstColumn('SELECT id FROM schedule_tasks WHERE cid = ? FOR UPDATE', [self::SCRATCH_CID]);
+            },
+        ]));
 
+        $this->assertInstanceOf(DbalException::class, $thrown, 'The locking read has to be rejected');
+        $this->assertStringContainsString('1020', $thrown->getMessage());
         $this->assertSame(1, $calls);
         $this->assertSame(1, $db->getTransactionNestingLevel());
         $this->rollBackTheCallersTransaction($db);
@@ -296,10 +330,7 @@ final class RetryableFunctionTest extends ModelTestCase
      */
     private function rollBackTheCallersTransaction(Connection $db): void
     {
-        try {
-            $db->rollBack();
-        } catch (Exception) {
-        }
+        $this->thrownBy(fn () => $db->rollBack());
 
         $this->assertSame(0, $db->getTransactionNestingLevel());
     }
@@ -328,6 +359,23 @@ final class RetryableFunctionTest extends ModelTestCase
         }
 
         return $deprecations;
+    }
+
+    /**
+     * Runs the callback and returns what it threw. A failed assertion is never swallowed: PHPUnit's
+     * AssertionFailedError is a RuntimeException, so a catch block around a fail() call would hide it.
+     */
+    private function thrownBy(callable $callback): ?Throwable
+    {
+        try {
+            $callback();
+        } catch (AssertionFailedError $assertionFailed) {
+            throw $assertionFailed;
+        } catch (Throwable $thrown) {
+            return $thrown;
+        }
+
+        return null;
     }
 
     private function deadlock(): DeadlockException

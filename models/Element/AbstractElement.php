@@ -1042,6 +1042,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * rollBack() of the owner of the transaction fails. commit() decrements the level in a finally block also when
      * releasing the savepoint fails. It never reaches a real COMMIT here: the levels it works on are above the level
      * of the owner, which is at least 1.
+     *
+     * This is how every release of the supported doctrine/dbal range (^4.4) behaves, as far as 4.6.0 (checked in the
+     * source of 4.4.0 to 4.6.0). RetryableFunctionTest::testDbalDecrementsTheNestingLevelWhenReleasingALostSavepointFails()
+     * runs in the lowest and the highest dependency jobs and fails if a release changes it.
      */
     private function restoreTransactionNestingLevel(Connection $db, int $level): void
     {
@@ -1055,7 +1059,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             }
 
             if ($db->getTransactionNestingLevel() >= $before) {
-                break; // no progress, do not loop forever
+                // not expected (e.g. a transaction that was marked rollback-only makes commit() throw before it
+                // decrements): do not loop forever, and do not hide that the rollback of the owner may fail
+                Logger::warn(
+                    'The transaction nesting level could not be restored (' . $db->getTransactionNestingLevel()
+                    . ', expected ' . $level . '), the rollback of the transaction of the caller may fail.'
+                );
+
+                break;
             }
         }
     }
