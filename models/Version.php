@@ -498,6 +498,8 @@ final class Version extends AbstractModel
      * Relations of the loaded version data whose related element does not exist anymore. They are missing in the
      * data returned by getData(), as the element can not be loaded.
      *
+     * @internal
+     *
      * @return list<UnresolvedReference>
      */
     public function getUnresolvedReferences(): array

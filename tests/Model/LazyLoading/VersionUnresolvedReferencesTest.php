@@ -134,6 +134,53 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
         );
     }
 
+    /**
+     * Removing the deleted elements of one language must not keep the relation rows of another language.
+     */
+    public function testVersionWithDeletedElementsInSeveralLanguagesCanBeRestored(): void
+    {
+        [$keptEn, $deletedEn, $keptEn2, $keptDe, $deletedDe] = $this->loadRelations()->load();
+
+        $object = $this->createDataObject();
+        $object->setLrelations([$keptEn, $deletedEn, $keptEn2], 'en');
+        $object->setLrelations([$keptDe, $deletedDe], 'de');
+        $object->save();
+
+        $versionId = $object->getLatestVersion(null, true)?->getId();
+        $this->assertNotNull($versionId, 'saving the object must create a version');
+
+        $deletedEn->delete();
+        $deletedDe->delete();
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+
+        $hideUnpublished = DataObject::doHideUnpublished();
+        DataObject::setHideUnpublished(false);
+
+        try {
+            $version = Version::getById($versionId);
+            $version->loadData()->save();
+        } finally {
+            DataObject::setHideUnpublished($hideUnpublished);
+        }
+
+        $staleRows = Db::get()->fetchOne(
+            'SELECT COUNT(*) FROM object_relations_' . $object->getClassId() . ' WHERE src_id = ? AND dest_id IN (?)',
+            [$object->getId(), [$deletedEn->getId(), $deletedDe->getId()]],
+            [ParameterType::INTEGER, ArrayParameterType::INTEGER]
+        );
+        $this->assertSame(0, (int) $staleRows, 'restoring the version must remove the relation rows of all languages');
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+
+        $restored = LazyLoading::getById($object->getId(), ['force' => true]);
+        $ids = static fn (array $relations) => array_map(static fn (RelationTest $relation) => $relation->getId(), $relations);
+        $this->assertSame([$keptEn->getId(), $keptEn2->getId()], $ids($restored->getLrelations('en')));
+        $this->assertSame([$keptDe->getId()], $ids($restored->getLrelations('de')));
+    }
+
     public function testVersionWithoutDeletedElementsHasNoUnresolvedReferences(): void
     {
         $object = $this->createDataObject();

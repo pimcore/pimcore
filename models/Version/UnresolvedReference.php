@@ -16,6 +16,8 @@ namespace Pimcore\Model\Version;
 /**
  * A relation stored in a version whose related element does not exist anymore, so it can not be loaded with the
  * version data.
+ *
+ * @internal
  */
 final readonly class UnresolvedReference
 {

@@ -87,6 +87,9 @@ final class UnresolvedReferenceCollector
      */
     public function removeUnresolved(Concrete $object, array $references): void
     {
+        $localizedItems = null;
+        $localizedLanguages = [];
+
         foreach ($references as $reference) {
             $fieldName = $reference->getFieldName();
             $language = $reference->getLanguage();
@@ -106,16 +109,48 @@ final class UnresolvedReferenceCollector
                 continue;
             }
 
-            $items = $localizedField->getItems();
-            $value = $items[$language][$fieldName] ?? null;
+            $localizedItems ??= $localizedField->getItems();
+            $value = $localizedItems[$language][$fieldName] ?? null;
             if (is_array($value) && in_array(null, $value, true)) {
-                $items[$language][$fieldName] = $this->withoutNull($value);
-                $localizedField->setItems($items);
+                $localizedItems[$language][$fieldName] = $this->withoutNull($value);
             }
-            $localizedField->markFieldDirty('_self');
-            $localizedField->markLanguageAsDirty($language);
-            $object->markFieldDirty(self::LOCALIZED_FIELDS);
+            $localizedLanguages[$language] = true;
         }
+
+        if ($localizedLanguages !== []) {
+            $this->markLocalizedFieldsDirty($object, $localizedItems, array_keys($localizedLanguages));
+        }
+    }
+
+    /**
+     * Only the languages in the dirty language map are saved, and both setItems() and the first
+     * markLanguageAsDirty() replace that map. So the items are set once, and afterwards the map is set to the
+     * languages that were dirty before plus every affected language, otherwise only the last affected language
+     * would be saved and the relation rows of the others would stay.
+     *
+     * @param list<int|string> $languages
+     */
+    private function markLocalizedFieldsDirty(Concrete $object, ?array $items, array $languages): void
+    {
+        $localizedField = $object->getObjectVar(self::LOCALIZED_FIELDS);
+        if (!$localizedField instanceof Localizedfield) {
+            return;
+        }
+
+        $dirtyLanguages = $localizedField->getDirtyLanguages() ?? [];
+
+        if ($items !== null && $items !== $localizedField->getItems()) {
+            $localizedField->setItems($items);
+        }
+
+        $localizedField->resetLanguageDirtyMap();
+        $localizedField->markLanguagesAsDirty($dirtyLanguages);
+        foreach ($languages as $language) {
+            $localizedField->markLanguageAsDirty((string) $language);
+        }
+        $localizedField->markFieldDirty('_self');
+
+        $object->markFieldDirty(self::LOCALIZED_FIELDS);
     }
 
     private function withoutNull(array $value): array
