@@ -96,11 +96,14 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
 - On field definitions the admin-UI (de)serialisation methods (every method whose name
   contains `editmode`, e.g. `getDataFromEditmode`) are blocked too: they accept
   caller-supplied data and can persist (the `Consent` field definition writes a `Note`).
-- A few `get*` methods persist as a side effect and cannot be told apart by name. They are
+- A few `get*` methods persist as a side effect, or return an object whose own methods are not
+  model methods and therefore outside the rules above, and cannot be told apart by name. They are
   blocked by exact name through `hard_blocked_method_patterns` (case-insensitive, and part of the
   built-in defaults): `Pimcore\Model\Asset\Image::getDimensions()`
   stores dimensions read from a caller-chosen file path (use `getWidth()` / `getHeight()` in
-  templates), and `Pimcore\Model\DataObject\Data\UrlSlug::getAction()` deletes the slug
+  templates), `Pimcore\Model\Asset\Image::getImageTransformInstance()` returns the global image
+  adapter, which is not a model and so is not covered by the rules above, and
+  `Pimcore\Model\DataObject\Data\UrlSlug::getAction()` deletes the slug
   when its field definition no longer exists.
 
 Models additionally cannot be used to reach their DAO: `AbstractModel::__call()` forwards every
@@ -152,7 +155,11 @@ path reachable by the PHP process (GHSA-7m33-xgw9-j3g7), and
 `pimcore_asset_version_preview` / `pimcore_image_version_preview`, which read the
 contents of an arbitrary file (base64-encoded) and then delete it - letting a
 sandboxed template read and destroy any file reachable by the PHP process, e.g.
-`.env` or other configuration holding credentials (GHSA-f5q9-27jc-vxm9).
+`.env` or other configuration holding credentials (GHSA-f5q9-27jc-vxm9), and
+`pimcore_website_config`, which returns the complete website configuration -
+including secrets such as the private reCAPTCHA key - when called without a key,
+and a single configured value (potentially a secret) when called with one
+(GHSA-fq3q-7w2w-8q9f).
 
 All other `pimcore_*` functions - including the other id/path lookup functions,
 `pimcore_asset`, `pimcore_asset_by_path`, `pimcore_document`,
@@ -251,10 +258,10 @@ pimcore:
                 allowed_classes: []
                 # Defaults to the built-in pimcore_* function denylist - a site's own
                 # config is appended to it. Only pimcore_user, pimcore_dump, pimcore_file_exists,
-                # pimcore_asset_version_preview and pimcore_image_version_preview are
-                # blocked out of the box; the id/path lookup functions below are
-                # shipped commented out - uncomment them (or add the equivalent to a
-                # site's own config) for a high-security setup.
+                # pimcore_asset_version_preview, pimcore_image_version_preview and
+                # pimcore_website_config are blocked out of the box; the id/path lookup
+                # functions below are shipped commented out - uncomment them (or add the
+                # equivalent to a site's own config) for a high-security setup.
                 blocked_functions:
                     # - pimcore_asset
                     # - pimcore_asset_by_path
@@ -274,6 +281,7 @@ pimcore:
                     - pimcore_asset_version_preview
                     - pimcore_image_version_preview
                     - pimcore_dump
+                    - pimcore_website_config
                 # FQCN => method names that are never callable, regardless of
                 # blocked_classes/allowed_classes. Defaults to a small set of
                 # secret/content-returning getters - a site's own config is merged
@@ -309,7 +317,7 @@ pimcore:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i'
                         - '/editmode/i'
                     Pimcore\Model\Asset\Image:
-                        - '/^getDimensions$/iD'
+                        - '/^(getDimensions|getImageTransformInstance)$/iD'
                     Pimcore\Model\DataObject\Data\UrlSlug:
                         - '/^(set|save|delete|create|handle)/i'
                         - '/^getAction$/iD'

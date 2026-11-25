@@ -2318,7 +2318,8 @@ final class Configuration implements ConfigurationInterface
                                 functions that look up and return a live model instance by id/path, expose a
                                 filesystem/state oracle (e.g. `pimcore_file_exists`), read and delete an
                                 arbitrary file (`pimcore_asset_version_preview`,
-                                `pimcore_image_version_preview`) or dump arbitrary objects (`pimcore_dump`) - a
+                                `pimcore_image_version_preview`), dump arbitrary objects (`pimcore_dump`) or
+                                disclose private website settings (`pimcore_website_config`) - a
                                 site can append further function names on top of that default.')
                                 ->scalarPrototype()->end()
                             ->end()

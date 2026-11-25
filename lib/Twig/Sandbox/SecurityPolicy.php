@@ -39,7 +39,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
     private const DEFAULT_HARD_BLOCKED_METHOD_PATTERNS = [
         'Pimcore\\Model\\AbstractModel' => ['/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'],
         'Pimcore\\Model\\DataObject\\ClassDefinition\\Data' => ['/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i', '/editmode/i'],
-        'Pimcore\\Model\\Asset\\Image' => ['/^getDimensions$/iD'],
+        'Pimcore\\Model\\Asset\\Image' => ['/^(getDimensions|getImageTransformInstance)$/iD'],
         'Pimcore\\Model\\DataObject\\Data\\UrlSlug' => ['/^(set|save|delete|create|handle)/i', '/^getAction$/iD'],
     ];
 
