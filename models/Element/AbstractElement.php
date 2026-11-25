@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element;
 
 use Closure;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\RetryableException;
 use Exception;
 use InvalidArgumentException;
@@ -21,6 +22,7 @@ use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -873,6 +875,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
+    /**
+     * Runs $retryableFunc in a database transaction and runs it again when it fails with a RetryableException
+     * (e.g. a deadlock).
+     *
+     * @deprecated since Pimcore 2026.4, will be removed in 2027.1: use retryableTransaction(). When the database server
+     *      rolls back the transaction of the caller by itself (deadlock victim, MariaDB >= 11.6.2 snapshot conflict,
+     *      error 1020), this method retries the operation outside of any transaction: its writes cannot be rolled back
+     *      and the earlier writes of the caller are lost.
+     */
     protected function retryableFunction(
         ?Closure $beforeRetryables = null,
         ?Closure $retryableFunc = null,
@@ -881,37 +892,134 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         ?Closure $onFailure = null,
         int $maxRetries = 5,
     ): void {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '2026.4',
+            'AbstractElement::retryableFunction() is deprecated and will be removed in Pimcore 2027.1, use '
+            . 'retryableTransaction(): it does not retry the operation outside of any transaction when the database '
+            . 'server has rolled back the transaction of the caller.'
+        );
+
+        $this->runRetryableTransaction(
+            $beforeRetryables,
+            $retryableFunc,
+            $onCommit,
+            $onBeforeRetry,
+            $onFailure,
+            $maxRetries,
+            true
+        );
+    }
+
+    /**
+     * Runs $retryableFunc in a database transaction and runs it again when it fails with a RetryableException
+     * (e.g. a deadlock).
+     *
+     * When this runs inside a transaction that was opened by somebody else (the caller, or an outer save) and the
+     * database server rolls that transaction back by itself (deadlock victim, MariaDB >= 11.6.2 snapshot conflict,
+     * error 1020), the savepoint of this call is gone: nothing is retried then, DBAL's transaction nesting level is
+     * restored and the original exception is thrown, so that the owner of the transaction can roll back and retry.
+     * A failure while the transaction is alive is still rolled back to the savepoint and retried.
+     *
+     * @internal
+     */
+    protected function retryableTransaction(
+        ?Closure $beforeRetryables = null,
+        ?Closure $retryableFunc = null,
+        ?Closure $onCommit = null,
+        ?Closure $onBeforeRetry = null,
+        ?Closure $onFailure = null,
+        int $maxRetries = 5,
+    ): void {
+        $this->runRetryableTransaction(
+            $beforeRetryables,
+            $retryableFunc,
+            $onCommit,
+            $onBeforeRetry,
+            $onFailure,
+            $maxRetries,
+            false
+        );
+    }
+
+    /**
+     * @param bool $retryAfterLostTransaction true: the previous behaviour of retryableFunction(), a lost transaction
+     *      of the caller is retried (outside of any transaction); false: see retryableTransaction()
+     */
+    private function runRetryableTransaction(
+        ?Closure $beforeRetryables,
+        ?Closure $retryableFunc,
+        ?Closure $onCommit,
+        ?Closure $onBeforeRetry,
+        ?Closure $onFailure,
+        int $maxRetries,
+        bool $retryAfterLostTransaction,
+    ): void {
         try {
             if ($beforeRetryables instanceof Closure) {
                 $beforeRetryables();
             }
 
             for ($retries = 0; $retries < $maxRetries; $retries++) {
+                $db = Db::get();
+                $levelAtEntry = $db->getTransactionNestingLevel(); // > 0: a transaction of somebody else is open
                 $this->beginTransaction();
+                $phase = 'function';
 
                 try {
                     if ($retryableFunc instanceof Closure) {
                         $retryableFunc();
                     }
+                    $phase = 'commit';
                     $this->commit();
+                    $phase = 'committed';
                     if ($onCommit instanceof Closure) {
                         $onCommit();
                     }
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (Throwable $e) {
-                    try {
-                        $this->rollBack();
-                    } catch (Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::info((string)$er);
+                    $nested = $levelAtEntry > 0;
+                    $transactionLost = false;
+
+                    // commit() releases the savepoint and decrements DBAL's nesting level in a finally block: when the
+                    // level is back at the level of the owner, releasing the savepoint failed, the savepoint is gone and
+                    // there is nothing to roll back. When commit() threw before (e.g. a transaction that was marked
+                    // rollback-only), the level is still above and the savepoint is alive: it is rolled back like after
+                    // any other failure.
+                    $savepointAlreadyLeft = $nested && $phase === 'commit'
+                        && $db->getTransactionNestingLevel() <= $levelAtEntry;
+
+                    if ($savepointAlreadyLeft) {
+                        $transactionLost = true;
+                    }
+
+                    if (!$savepointAlreadyLeft || $retryAfterLostTransaction) {
+                        try {
+                            $this->rollBack();
+                        } catch (Exception $er) {
+                            // PDO adapter throws exceptions if rollback fails
+                            Logger::info((string)$er);
+                            // ROLLBACK TO SAVEPOINT failed: the server no longer has the savepoint. After the commit
+                            // ($phase === 'committed') this is the savepoint of the owner: the onCommit callback lost
+                            // the transaction of the caller, and running the committed function again would not help
+                            $transactionLost = $transactionLost || $nested;
+                        }
+                    }
+
+                    if ($transactionLost && !$retryAfterLostTransaction) {
+                        $this->restoreTransactionNestingLevel($db, $levelAtEntry);
                     }
 
                     if ($onBeforeRetry instanceof Closure) {
                         $onBeforeRetry($e);
                     }
 
-                    if ($e instanceof RetryableException && $retries < ($maxRetries - 1)) {
+                    if (
+                        $e instanceof RetryableException
+                        && $retries < ($maxRetries - 1)
+                        && !($transactionLost && !$retryAfterLostTransaction)
+                    ) {
                         $run = $retries + 1;
                         $waitTime = rand(1, 5) * 100000; // microseconds
                         Logger::warn(
@@ -937,6 +1045,41 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             Logger::crit((string)$e);
 
             throw $e;
+        }
+    }
+
+    /**
+     * DBAL decrements its transaction nesting level only after the statement that rolls back a savepoint succeeded.
+     * When the server has lost the transaction that statement fails and the level stays too high, so that even the
+     * rollBack() of the owner of the transaction fails. commit() decrements the level in a finally block also when
+     * releasing the savepoint fails. It never reaches a real COMMIT here: the levels it works on are above the level
+     * of the owner, which is at least 1.
+     *
+     * This is how every release of the supported doctrine/dbal range (^4.4) behaves, as far as 4.6.0 (checked in the
+     * source of 4.4.0 to 4.6.0). RetryableFunctionTest::testDbalDecrementsTheNestingLevelWhenReleasingALostSavepointFails()
+     * runs in the lowest and the highest dependency jobs and fails if a release changes it.
+     */
+    private function restoreTransactionNestingLevel(Connection $db, int $level): void
+    {
+        while ($db->getTransactionNestingLevel() > $level) {
+            $before = $db->getTransactionNestingLevel();
+
+            try {
+                $db->commit();
+            } catch (Exception) {
+                // expected, the savepoint does not exist anymore
+            }
+
+            if ($db->getTransactionNestingLevel() >= $before) {
+                // not expected (e.g. a transaction that was marked rollback-only makes commit() throw before it
+                // decrements): do not loop forever, and do not hide that the rollback of the owner may fail
+                Logger::warn(
+                    'The transaction nesting level could not be restored (' . $db->getTransactionNestingLevel()
+                    . ', expected ' . $level . '), the rollback of the transaction of the caller may fail.'
+                );
+
+                break;
+            }
         }
     }
 }
