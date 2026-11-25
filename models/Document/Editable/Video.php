@@ -581,7 +581,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
             return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-                <img src="https://img.youtube.com/vi/' . $youtubeId . '/0.jpg">
+                <img src="https://img.youtube.com/vi/' . htmlspecialchars($youtubeId, ENT_QUOTES, 'UTF-8') . '/0.jpg">
             </div>';
         }
 
@@ -767,7 +767,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         if ($dailymotionId) {
             if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
                 return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-                    <img src="https://www.dailymotion.com/thumbnail/video/' . $dailymotionId . '">
+                    <img src="https://www.dailymotion.com/thumbnail/video/' . htmlspecialchars((string) $dailymotionId, ENT_QUOTES, 'UTF-8') . '">
                 </div>';
             }
             $width = $config['width'] ?? '100%';
