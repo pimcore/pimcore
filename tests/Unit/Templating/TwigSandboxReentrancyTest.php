@@ -23,6 +23,7 @@ use Pimcore\Twig\Sandbox\SecurityPolicy;
 use Twig\Environment;
 use Twig\Extension\SandboxExtension;
 use Twig\Loader\ArrayLoader;
+use Twig\Sandbox\SecurityError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
 
 /**
@@ -30,12 +31,12 @@ use Twig\Sandbox\SecurityNotAllowedMethodError;
  */
 final class TwigSandboxReentrancyTest extends TestCase
 {
-    private function createEngine(): TwigDefaultDelegatingEngine
+    private function createEngine(?SecurityPolicy $policy = null): TwigDefaultDelegatingEngine
     {
         $twig = new Environment(new ArrayLoader([]));
-        $twig->addExtension(new SandboxExtension(new SecurityPolicy(), false));
+        $twig->addExtension(new SandboxExtension($policy ?? new SecurityPolicy(), false));
 
-        return new TwigDefaultDelegatingEngine($twig, $this->createStub(Config::class));
+        return new TwigDefaultDelegatingEngine($twig, new Config());
     }
 
     private function isSandboxed(TwigDefaultDelegatingEngine $engine): bool
@@ -77,11 +78,30 @@ final class TwigSandboxReentrancyTest extends TestCase
         $this->assertFalse($this->isSandboxed($engine));
     }
 
+    public function testOuterTemplateStaysRestrictedAfterNestedSandboxedRender(): void
+    {
+        $policy = new SecurityPolicy(allowedTags: ['set'], allowedClasses: [SandboxNestingProbe::class]);
+        $engine = $this->createEngine($policy);
+        $probe = new SandboxNestingProbe($engine);
+
+        $twig = $engine->getTwigEnvironment(true);
+
+        try {
+            $template = $twig->createTemplate('{% set inner = probe.renderNested() %}{{ target.reveal() }}');
+
+            $this->expectException(SecurityError::class);
+            $template->render(['probe' => $probe, 'target' => new SandboxProbeTarget()]);
+        } finally {
+            $engine->disableSandboxExtensionFromTwigEnvironment();
+        }
+    }
+
     public function testLayoutMutatorsAreBlockedByDefaultPatterns(): void
     {
         $policy = new SecurityPolicy();
 
-        foreach ([[new Text(), 'setHtml'], [new Text(), 'enrichLayoutDefinition'], [new Panel(), 'setTitle']] as [$obj, $method]) {
+        $cases = [[new Text(), 'setHtml'], [new Text(), 'enrichLayoutDefinition'], [new Panel(), 'setTitle']];
+        foreach ($cases as [$obj, $method]) {
             try {
                 $policy->checkMethodAllowed($obj, $method);
                 $this->fail($method . ' must be blocked');
@@ -98,5 +118,35 @@ final class TwigSandboxReentrancyTest extends TestCase
         $policy->checkMethodAllowed(new Text(), 'getName');
         $policy->checkMethodAllowed(new Text(), 'getHtml');
         $this->addToAssertionCount(1);
+    }
+}
+
+/**
+ * @internal
+ */
+final class SandboxNestingProbe
+{
+    public function __construct(private readonly TwigDefaultDelegatingEngine $engine)
+    {
+    }
+
+    public function renderNested(): string
+    {
+        try {
+            return $this->engine->getTwigEnvironment(true)->createTemplate('inner')->render([]);
+        } finally {
+            $this->engine->disableSandboxExtensionFromTwigEnvironment();
+        }
+    }
+}
+
+/**
+ * @internal
+ */
+final class SandboxProbeTarget
+{
+    public function reveal(): string
+    {
+        return 'unrestricted';
     }
 }
