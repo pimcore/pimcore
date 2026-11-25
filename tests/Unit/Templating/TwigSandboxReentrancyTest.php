@@ -23,7 +23,6 @@ use Pimcore\Twig\Sandbox\SecurityPolicy;
 use Twig\Environment;
 use Twig\Extension\SandboxExtension;
 use Twig\Loader\ArrayLoader;
-use Twig\Sandbox\SecurityError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
 
 /**
@@ -80,7 +79,13 @@ final class TwigSandboxReentrancyTest extends TestCase
 
     public function testOuterTemplateStaysRestrictedAfterNestedSandboxedRender(): void
     {
-        $policy = new SecurityPolicy(allowedTags: ['set'], allowedClasses: [SandboxNestingProbe::class]);
+        // 'escape' is allowed as in the default policy (default.yaml): autoescaping applies it to
+        // {{ }} output, and older Twig versions check that filter against the sandbox policy
+        $policy = new SecurityPolicy(
+            allowedTags: ['set'],
+            allowedFilters: ['escape'],
+            allowedClasses: [SandboxNestingProbe::class],
+        );
         $engine = $this->createEngine($policy);
         $probe = new SandboxNestingProbe($engine);
 
@@ -91,13 +96,13 @@ final class TwigSandboxReentrancyTest extends TestCase
         try {
             $template = $twig->createTemplate('{% set inner = probe.renderNested() %}{{ target.reveal() }}');
             $template->render(['probe' => $probe, 'target' => new SandboxProbeTarget()]);
-        } catch (SecurityError $e) {
+        } catch (SecurityNotAllowedMethodError $e) {
             $caught = $e;
         } finally {
             $engine->disableSandboxExtensionFromTwigEnvironment();
         }
 
-        $this->assertInstanceOf(SecurityError::class, $caught, 'Outer template must stay sandboxed');
+        $this->assertInstanceOf(SecurityNotAllowedMethodError::class, $caught, 'Outer template must stay sandboxed');
         $this->assertFalse($this->isSandboxed($engine), 'Sandbox must be disabled after the outermost render');
     }
 
