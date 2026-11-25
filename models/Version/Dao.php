@@ -12,6 +12,8 @@
 
 namespace Pimcore\Model\Version;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -25,6 +27,11 @@ use Pimcore\Model\Version;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    /**
+     * How many elements' versions maintenanceGetOutdatedVersions() ranks per query.
+     */
+    private const OUTDATED_VERSIONS_ELEMENTS_PER_QUERY = 1000;
+
     /**
      *
      * @throws NotFoundException
@@ -134,6 +141,17 @@ class Dao extends Model\Dao\AbstractDao
                 $versionIds = array_merge($versionIds, $tmpVersionIds);
             } else {
                 $countsPerCid = [];
+                $kept = $elementType['steps'] + 1;
+
+                // Only an element with more versions than are kept can have outdated ones. Finding those elements
+                // reads the (ctype, cid) index alone, so the ranking below numbers their versions instead of every
+                // version of the type. Counting all of an element's versions, not just the eligible ones, can only
+                // add elements, never miss one. The ranking gets the elements as a list, because MySQL drives a join
+                // or IN subquery from the versions table and so would still read all of it.
+                $cids = $this->db->fetchFirstColumn(
+                    'SELECT cid FROM versions WHERE ctype = ? GROUP BY cid HAVING COUNT(*) > ?',
+                    [$elementType['elementType'], $kept]
+                );
 
                 // ranked by the version count, the order the states were saved in: a version that is published in
                 // place (see AbstractElement::doSaveVersion()) keeps its id but takes the element's new version count,
@@ -144,7 +162,7 @@ class Dao extends Model\Dao\AbstractDao
                         SELECT id, cid, versions.`date`, versionCount,
                                ROW_NUMBER() OVER (PARTITION BY cid ORDER BY versionCount DESC, id DESC) AS rownumber
                         FROM versions
-                        WHERE ctype = ? AND public = 0 AND autosave = 0
+                        WHERE ctype = ? AND public = 0 AND autosave = 0 AND cid IN (?)
                     ) sub
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
@@ -152,21 +170,29 @@ class Dao extends Model\Dao\AbstractDao
                     AND NOT (sub.versionCount = element.versionCount AND sub.`date` = element.modificationDate)
                 ';
 
-                $iterator = $this->db->iterateAssociative(
-                    $sql,
-                    [
-                        $elementType['elementType'],
-                        $elementType['steps'] + 1,
-                    ]
-                );
+                foreach (array_chunk($cids, self::OUTDATED_VERSIONS_ELEMENTS_PER_QUERY) as $cidChunk) {
+                    $iterator = $this->db->iterateAssociative(
+                        $sql,
+                        [
+                            $elementType['elementType'],
+                            array_map('intval', $cidChunk),
+                            $kept,
+                        ],
+                        [
+                            ParameterType::STRING,
+                            ArrayParameterType::INTEGER,
+                            ParameterType::INTEGER,
+                        ]
+                    );
 
-                foreach ($iterator as $versionInfo) {
-                    $cid = $versionInfo['cid'];
-                    if (!isset($countsPerCid[$cid])) {
-                        $countsPerCid[$cid] = 0;
+                    foreach ($iterator as $versionInfo) {
+                        $cid = $versionInfo['cid'];
+                        if (!isset($countsPerCid[$cid])) {
+                            $countsPerCid[$cid] = 0;
+                        }
+                        $countsPerCid[$cid]++;
+                        $versionIds[] = $versionInfo['id'];
                     }
-                    $countsPerCid[$cid]++;
-                    $versionIds[] = $versionInfo['id'];
                 }
 
                 foreach ($countsPerCid as $cid => $countPerCid) {
@@ -191,12 +217,18 @@ class Dao extends Model\Dao\AbstractDao
             $table = $elementType['elementType'] . 's';
             $type = $elementType['elementType'];
 
+            // Two selects instead of one WHERE with OR: the OR kept MySQL from using any index, so every run read
+            // the whole versions table. Now the orphan check reads the (ctype, cid) index and the auto-save check
+            // the autoSave index. UNION removes duplicates, so the result is the same set as before.
             $sql = "
                 SELECT versions.id
                 FROM versions
                 LEFT JOIN {$table} AS element ON element.id = versions.cid
-                WHERE (element.id IS NULL AND versions.ctype = :ctype) OR
-                      (autoSave = 1 AND date < :autoSaveDateCleanup)
+                WHERE versions.ctype = :ctype AND element.id IS NULL
+                UNION
+                SELECT versions.id
+                FROM versions
+                WHERE autoSave = 1 AND date < :autoSaveDateCleanup
             ";
 
             $rows = $this->db->fetchAllAssociative(
