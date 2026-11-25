@@ -17,6 +17,7 @@ The Multiselect editable generates a **multiselect** box component in editmode.
 | `width`  | integer | Width of a generated block in editmode                                                                                              |
 | `height` | integer | **Deprecated since 2026.2.9, no longer has any effect.** Height of a generated block in editmode. Not interpreted by the Studio UI. |
 | `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode                                                  |
+| `htmlspecialchars` | boolean | (default: true) Each selected value is HTML-escaped when the editable is printed directly (`{{ pimcore_multiselect("name") }}`). Set to false only if the values are trusted and must be output as raw HTML. `getData()` always returns the raw values. |
 
 ## Methods
 
