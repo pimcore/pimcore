@@ -77,15 +77,17 @@ final class RetryableFunctionTest extends ModelTestCase
         $db->beginTransaction();
         $calls = 0;
 
-        $thrown = $this->thrownBy(fn () => $this->retryable([
-            'retryableFunc' => function () use (&$calls): void {
-                $calls++;
-                $this->insertScratchRow(Db::get());
-                $this->loseServerSideTransaction();
+        $thrown = $this->thrownBy(function () use (&$calls): void {
+            $this->retryable([
+                'retryableFunc' => function () use (&$calls): void {
+                    $calls++;
+                    $this->insertScratchRow(Db::get());
+                    $this->loseServerSideTransaction();
 
-                throw $this->deadlock();
-            },
-        ]));
+                    throw $this->deadlock();
+                },
+            ]);
+        });
 
         // the owner of the transaction decides what to do
         $this->assertInstanceOf(DeadlockException::class, $thrown, 'The original exception has to be thrown');
@@ -103,14 +105,16 @@ final class RetryableFunctionTest extends ModelTestCase
         $db->beginTransaction();
         $calls = 0;
 
-        $thrown = $this->thrownBy(fn () => $this->retryable([
-            'retryableFunc' => function () use (&$calls): void {
-                $calls++;
-                $this->insertScratchRow(Db::get());
-                // the savepoint is gone when the nested call tries to release it
-                $this->loseServerSideTransaction();
-            },
-        ]));
+        $thrown = $this->thrownBy(function () use (&$calls): void {
+            $this->retryable([
+                'retryableFunc' => function () use (&$calls): void {
+                    $calls++;
+                    $this->insertScratchRow(Db::get());
+                    // the savepoint is gone when the nested call tries to release it
+                    $this->loseServerSideTransaction();
+                },
+            ]);
+        });
 
         $this->assertInstanceOf(DbalException::class, $thrown, 'Releasing a savepoint of a lost transaction has to fail');
         $this->assertSame(1, $calls);
@@ -196,15 +200,17 @@ final class RetryableFunctionTest extends ModelTestCase
 
         $this->collectDeprecations(function () use (&$calls): void {
             // the retry runs outside of the lost transaction and fails as well, the exception is not of interest here
-            $this->thrownBy(fn () => $this->retryable([
-                'retryableFunc' => function () use (&$calls): void {
-                    $calls++;
-                    $this->loseServerSideTransaction();
+            $this->thrownBy(function () use (&$calls): void {
+                $this->retryable([
+                    'retryableFunc' => function () use (&$calls): void {
+                        $calls++;
+                        $this->loseServerSideTransaction();
 
-                    throw $this->deadlock();
-                },
-                'maxRetries' => 2,
-            ], 'retryableFunction'));
+                        throw $this->deadlock();
+                    },
+                    'maxRetries' => 2,
+                ], 'retryableFunction');
+            });
         });
 
         $this->assertGreaterThan(1, $calls, 'The deprecated method keeps the previous behaviour');
@@ -301,12 +307,14 @@ final class RetryableFunctionTest extends ModelTestCase
         $this->insertScratchRow($this->observer()); // committed by another connection afterwards
         $calls = 0;
 
-        $thrown = $this->thrownBy(fn () => $this->retryable([
-            'retryableFunc' => function () use (&$calls): void {
-                $calls++;
-                Db::get()->fetchFirstColumn('SELECT id FROM schedule_tasks WHERE cid = ? FOR UPDATE', [self::SCRATCH_CID]);
-            },
-        ]));
+        $thrown = $this->thrownBy(function () use (&$calls): void {
+            $this->retryable([
+                'retryableFunc' => function () use (&$calls): void {
+                    $calls++;
+                    Db::get()->fetchFirstColumn('SELECT id FROM schedule_tasks WHERE cid = ? FOR UPDATE', [self::SCRATCH_CID]);
+                },
+            ]);
+        });
 
         $this->assertInstanceOf(DbalException::class, $thrown, 'The locking read has to be rejected');
         $this->assertStringContainsString('1020', $thrown->getMessage());
