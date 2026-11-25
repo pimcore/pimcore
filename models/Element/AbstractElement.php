@@ -980,18 +980,30 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (Throwable $e) {
                     $nested = $levelAtEntry > 0;
-                    // the server no longer has the savepoint (and with it the transaction) of this call
-                    $transactionLost = $nested && $phase === 'commit'; // commit() releases the savepoint
+                    $transactionLost = false;
 
-                    // DBAL has already left the level of this call when commit() failed, there is nothing to roll back
-                    if (!$transactionLost || $retryAfterLostTransaction) {
+                    // commit() releases the savepoint and decrements DBAL's nesting level in a finally block: when the
+                    // level is back at the level of the owner, releasing the savepoint failed, the savepoint is gone and
+                    // there is nothing to roll back. When commit() threw before (e.g. a transaction that was marked
+                    // rollback-only), the level is still above and the savepoint is alive: it is rolled back like after
+                    // any other failure.
+                    $savepointAlreadyLeft = $nested && $phase === 'commit'
+                        && $db->getTransactionNestingLevel() <= $levelAtEntry;
+
+                    if ($savepointAlreadyLeft) {
+                        $transactionLost = true;
+                    }
+
+                    if (!$savepointAlreadyLeft || $retryAfterLostTransaction) {
                         try {
                             $this->rollBack();
                         } catch (Exception $er) {
                             // PDO adapter throws exceptions if rollback fails
                             Logger::info((string)$er);
-                            // ROLLBACK TO SAVEPOINT failed
-                            $transactionLost = $transactionLost || ($nested && $phase === 'function');
+                            // ROLLBACK TO SAVEPOINT failed: the server no longer has the savepoint. After the commit
+                            // ($phase === 'committed') this is the savepoint of the owner: the onCommit callback lost
+                            // the transaction of the caller, and running the committed function again would not help
+                            $transactionLost = $transactionLost || $nested;
                         }
                     }
 

@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception\CommitFailedRollbackOnly;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
 use PDO;
@@ -122,6 +123,63 @@ final class RetryableFunctionTest extends ModelTestCase
 
         $this->rollBackTheCallersTransaction($db);
         $this->assertSame(0, $this->committedScratchRows());
+    }
+
+    /**
+     * commit() throws before it releases the savepoint (and before it decrements DBAL's nesting level) when the
+     * transaction was marked rollback-only. The savepoint is alive then and has to be rolled back like after any other
+     * failure; treating the failed commit as a lost transaction would leave the nesting level too high.
+     */
+    public function testCommitThatFailsBeforeReleasingTheSavepointRollsBackTheLiveSavepoint(): void
+    {
+        $db = Db::get();
+        $db->beginTransaction();
+        $this->insertScratchRow($db); // written by the caller before
+        $db->setRollbackOnly();
+
+        $thrown = $this->thrownBy(function (): void {
+            $this->retryable([
+                'retryableFunc' => function (): void {
+                    $this->insertScratchRow(Db::get());
+                },
+            ]);
+        });
+
+        $this->assertInstanceOf(CommitFailedRollbackOnly::class, $thrown);
+        $this->assertSame(1, $db->getTransactionNestingLevel(), 'The live savepoint is rolled back, DBAL is at the level of the caller');
+        $this->assertSame(1, $this->scratchRows($db), 'Only the write of the nested call is rolled back');
+
+        $db->rollBack(); // also resets the rollback-only flag
+        $this->assertSame(0, $db->getTransactionNestingLevel());
+        $this->assertSame(0, $this->committedScratchRows());
+    }
+
+    /**
+     * The function is committed already when the onCommit callback fails. If that callback loses the transaction of the
+     * caller (it does its own database work), rolling back fails as well and the committed function must not run again.
+     */
+    public function testPostCommitFailureThatLosesTheCallersTransactionIsNotRetried(): void
+    {
+        $db = Db::get();
+        $db->beginTransaction(); // the caller's transaction
+        $db->beginTransaction(); // a savepoint of the caller: the nested call runs at level 3
+        $calls = 0;
+
+        $thrown = $this->thrownBy(function () use (&$calls): void {
+            $this->retryable([
+                'retryableFunc' => function () use (&$calls): void {
+                    $calls++;
+                },
+                'onCommit' => function (): void {
+                    $this->loseServerSideTransaction();
+
+                    throw $this->deadlock();
+                },
+            ]);
+        });
+
+        $this->assertInstanceOf(DeadlockException::class, $thrown, 'The original exception has to be thrown');
+        $this->assertSame(1, $calls, 'The committed function must not run again after the transaction of the caller was lost');
     }
 
     public function testFailureWithAliveTransactionRollsBackToTheSavepointOnly(): void
