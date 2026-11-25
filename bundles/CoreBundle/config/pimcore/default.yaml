@@ -457,6 +457,11 @@ pimcore:
                         # admin-UI (de)serialisation entry points: read-looking, but they take
                         # caller-supplied data and may persist (Consent writes Notes)
                         - '/editmode/i'
+                    # layout elements reachable via the Dynamic Text 'layout' variable or the class
+                    # layout tree: their setters change the template, enrichLayoutDefinition() and
+                    # renderLayoutText() start a nested render
+                    Pimcore\Model\DataObject\ClassDefinition\Layout:
+                        - '/^(set|enrich|render|add|remove|clear|delete|save|dump|update|create|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'
                     # getDimensions($path, true) persists dimensions read from a caller-chosen path;
                     # getImageTransformInstance() hands back the global image adapter, which is not
                     # itself a model and so is not covered by the other denylists once returned

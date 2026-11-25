@@ -92,7 +92,12 @@ delete, rename or overwrite elements it was handed (or looked up via `pimcore_ob
   `Pimcore\Model\DataObject\ClassDefinition\Data` (field definitions reachable through
   `getFieldDefinition()`, whose `save($object)`/`delete($object)` persist immediately), and the mutating methods of
   `Pimcore\Model\DataObject\Data\UrlSlug` (persisted URL slug values, which are not models)
-  are blocked as well.
+  are blocked as well. On `Pimcore\Model\DataObject\ClassDefinition\Layout` (layout elements,
+  reachable through the `layout` variable of the Dynamic Text layout or through the class layout
+  definitions) every method starting with `set`, `enrich`, `render`, `add`, `remove`, `clear`,
+  `delete`, `save`, `dump`, `update`, `create`, `trigger`, `rename`, `generate`, `rewrite`,
+  `enable`, `disable`, `batch`, `import`, `lock`, `restore` or `flush` is blocked (e.g. `setHtml()`,
+  `enrichLayoutDefinition()`); read-only getters such as `getName()` or `getHtml()` stay callable.
 - On field definitions the admin-UI (de)serialisation methods (every method whose name
   contains `editmode`, e.g. `getDataFromEditmode`) are blocked too: they accept
   caller-supplied data and can persist (the `Consent` field definition writes a `Note`).
@@ -316,6 +321,8 @@ pimcore:
                     Pimcore\Model\DataObject\ClassDefinition\Data:
                         - '/^(set|save|delete|dump|update|create|unlock|add|remove|clear|clean|correct|trigger|rename|generate|rewrite|enable|disable|class(saved|deleted)|verify|calculate)/i'
                         - '/editmode/i'
+                    Pimcore\Model\DataObject\ClassDefinition\Layout:
+                        - '/^(set|enrich|render|add|remove|clear|delete|save|dump|update|create|trigger|rename|generate|rewrite|enable|disable|batch|import|lock|restore|flush)/i'
                     Pimcore\Model\Asset\Image:
                         - '/^(getDimensions|getImageTransformInstance)$/iD'
                     Pimcore\Model\DataObject\Data\UrlSlug:
