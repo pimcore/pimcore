@@ -106,6 +106,28 @@ class ServerAuthenticationTest extends ModelTestCase
         $this->lock = null;
     }
 
+    public function testUnlockRequiresActiveUser(): void
+    {
+        $server = Service::createServer(self::BASE_URI);
+        $path = $this->lockAsset($server, 'inactive-unlock-target.txt');
+        $this->loginAs($this->createAuthenticatedUser(false));
+
+        $response = $this->dispatch($server, 'UNLOCK', $path, ['Lock-Token' => '<opaquelocktoken:' . $this->lock->token . '>']);
+
+        $this->assertAuthenticationChallenge($response);
+        $this->assertCount(1, $this->lockBackend($server)->getLocks($path, false), 'The lock must survive an UNLOCK by an inactive user.');
+    }
+
+    public function testPropfindRequiresActiveUser(): void
+    {
+        $server = Service::createServer(self::BASE_URI);
+        $this->loginAs($this->createAuthenticatedUser(false));
+
+        $response = $this->dispatch($server, 'PROPFIND', '', ['Depth' => '0']);
+
+        $this->assertAuthenticationChallenge($response);
+    }
+
     /**
      * Anonymous requests must be challenged, so that HTTP Basic clients resend them with credentials.
      */
@@ -166,12 +188,13 @@ class ServerAuthenticationTest extends ModelTestCase
         return (new ReflectionProperty(LocksPlugin::class, 'locksBackend'))->getValue($plugin);
     }
 
-    private function createAuthenticatedUser(): User
+    private function createAuthenticatedUser(bool $active = true): User
     {
         $user = new User();
         $user->setParentId(0);
         $user->setName('webdav_server_auth_user_' . uniqid());
-        $user->setActive(true);
+        $user->setActive($active);
+        $user->setPassword('hashed-password-placeholder');
         $user->setAdmin(true);
         $user->save();
         $this->createdUser = $user;
