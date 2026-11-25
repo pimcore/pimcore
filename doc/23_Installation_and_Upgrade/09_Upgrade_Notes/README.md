@@ -55,6 +55,12 @@ shown instead of a text with a missing `{{value}}`.
 `StructuredValidationException` can be extended. `withMessage()` creates the copy with the constructor signature
 of `Exception` (message, code, previous), so subclasses must keep it.
 
+### [Maintenance]
+
+-   The housekeeping maintenance task now removes empty directories under the system temp directory (`var/tmp`), not just files. Previously `rmdir()` was never reached for that tree, so every directory ever created below it survived indefinitely.
+-   Directories have a retention of their own, configured via the new `pimcore.maintenance.housekeeping.cleanup_tmp_directories_older_than` parameter (default 7 days), separate from `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` (which continues to govern files, default 1 day). A directory is removed once it is empty and had been untouched for that long when the run started, so a directory a request is still writing into is not pulled out from under it. A stale directory that the task itself empties is removed in the same run, so a stale empty tree is removed in one run. The profiler directory keeps its single retention (`cleanup_profiler_files_atime_older_than`) for both files and directories.
+-   This reaches long-lived directories that a tool manages for itself, not only transient scratch directories. LibreOffice keeps its user profile under `var/tmp/libreoffice`, and empty subdirectories in it that nothing touches are pruned once they pass the retention; LibreOffice rebuilds whatever is missing on its next run. Code that creates a stable directory under `var/tmp` should create it immediately before writing into it, rather than ahead of a long-running operation - otherwise the directory can be pruned in between.
+
 ## Pimcore 2026.3.7
 
 ### [Documents] Ghostscript is always run in SAFER mode
