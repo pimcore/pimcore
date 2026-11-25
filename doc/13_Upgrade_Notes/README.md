@@ -21,7 +21,7 @@
   Before upgrading, review the thumbnail configurations of your project (Studio: *Asset Management > Image Thumbnails*; stored in `var/config/image_thumbnails/` or the settings store) for overlays, masks and background images that point outside of the web root.
 
 ### [WebDAV]
-- [Security] Requests to `/asset/webdav` by a user that Pimcore does not consider valid (see `Pimcore\Tool\Authentication::isValidUser()`: the user has to be active and have an id and a password) are now rejected. The WebDAV server answers `401` with an HTTP Basic challenge, node lookups and moves fail with `403`. Before, only requests without any authenticated user were rejected, so deactivating a user did not revoke its WebDAV access. A custom firewall that authenticates users without a password for `/asset/webdav` no longer works.
+- [Security] Requests to `/asset/webdav` by a user whose active flag is false are now rejected. The WebDAV server answers `401` with an HTTP Basic challenge, node lookups and moves fail with `403`. Before, only requests without any authenticated user were rejected, so deactivating a user did not revoke its WebDAV access.
 - [Security] Add Pimcore's user checker to the `pimcore_webdav` firewall in your `config/packages/security.yaml`, so the active flag is also enforced during the HTTP Basic authentication itself (as the Studio firewall already does). With the user checker, WebDAV logins also update the user's last login date.
   ```yaml
   pimcore_webdav:

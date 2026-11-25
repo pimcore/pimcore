@@ -17,8 +17,8 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\User;
 use Pimcore\Tool\Admin;
-use Pimcore\Tool\Authentication;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
 
@@ -32,8 +32,8 @@ class Tree extends DAV\Tree
      * MOVE, ...). Anonymous requests never reach a node this way, so operations - like PROPFIND and
      * LOCK - that don't call any of the permission-gated Folder/File methods themselves can no longer
      * leak asset metadata or place locks without authentication. This is an authentication check
-     * only; it does not add per-asset "view" authorization to those operations. Inactive or otherwise
-     * invalid users (see Authentication::isValidUser()) are rejected like anonymous requests.
+     * only; it does not add per-asset "view" authorization to those operations. Inactive users
+     * are rejected like anonymous requests.
      *
      * Operations that never resolve a node (UNLOCK only talks to the lock backend) are guarded by
      * AuthenticationPlugin, which rejects anonymous requests before Sabre dispatches any method.
@@ -44,7 +44,7 @@ class Tree extends DAV\Tree
      */
     public function getNodeForPath($path): DAV\INode
     {
-        if (!Authentication::isValidUser(Admin::getCurrentUser())) {
+        if (!self::isActiveUser(Admin::getCurrentUser())) {
             throw new Forbidden('No valid authenticated user available');
         }
 
@@ -60,7 +60,7 @@ class Tree extends DAV\Tree
     public function move($sourcePath, $destinationPath): void
     {
         $user = Admin::getCurrentUser();
-        if (!Authentication::isValidUser($user)) {
+        if (!self::isActiveUser($user)) {
             throw new Forbidden('No valid authenticated user available');
         }
 
@@ -163,5 +163,10 @@ class Tree extends DAV\Tree
 
             throw $e;
         }
+    }
+
+    private static function isActiveUser(?User $user): bool
+    {
+        return $user instanceof User && $user->isActive();
     }
 }

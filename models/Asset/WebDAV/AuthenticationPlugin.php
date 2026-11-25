@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use Pimcore\Model\User;
 use Pimcore\Tool\Admin;
-use Pimcore\Tool\Authentication;
 use Sabre\DAV\Exception\NotAuthenticated;
 use Sabre\DAV\Server;
 use Sabre\DAV\ServerPlugin;
@@ -22,8 +22,8 @@ use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * Rejects every anonymous WebDAV request, and every request by an inactive or otherwise invalid user
- * (see Authentication::isValidUser()), before Sabre dispatches the method. Not all methods
+ * Rejects every anonymous WebDAV request, and every request by an inactive user
+ * (one whose active flag is false), before Sabre dispatches the method. Not all methods
  * resolve a node through Tree::getNodeForPath() - UNLOCK, for one, only talks to the lock backend -
  * so the check in the tree alone is not a sufficient authentication boundary.
  *
@@ -45,11 +45,16 @@ final class AuthenticationPlugin extends ServerPlugin
      */
     public function beforeMethod(RequestInterface $request, ResponseInterface $response): void
     {
-        if (!Authentication::isValidUser(Admin::getCurrentUser())) {
+        if (!self::isActiveUser(Admin::getCurrentUser())) {
             $response->addHeader('WWW-Authenticate', 'Basic realm="Pimcore WebDAV", charset="UTF-8"');
 
             throw new NotAuthenticated('No valid authenticated user available');
         }
+    }
+
+    private static function isActiveUser(?User $user): bool
+    {
+        return $user instanceof User && $user->isActive();
     }
 
     public function getPluginName(): string
