@@ -26,6 +26,7 @@ use Pimcore\Helper\SymfonyExpression\ReadOnlyValueAdapterInterface;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
+use Pimcore\Model\DataObject\Classificationstore\ReferenceTranslatorInterface;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
@@ -84,11 +85,13 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
+        $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_directories_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_directories_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.strict', $config['documents']['editables']['link_sanitizer']['strict']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.blocked_url_schemes', $config['documents']['editables']['link_sanitizer']['blocked_url_schemes']);
         $container->setParameter('pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls', $config['documents']['editables']['link_sanitizer']['block_unsafe_data_urls']);
+        $container->setParameter('pimcore.documents.editables.embed_sanitizer.strict', $config['documents']['editables']['embed_sanitizer']['strict']);
         $container->setParameter('pimcore.documents.editables.unserialize_allowed_classes', $config['documents']['editables']['unserialize_allowed_classes']);
         $container->setParameter('pimcore.objects.link_sanitizer.strict', $config['objects']['link_sanitizer']['strict']);
         $container->setParameter('pimcore.objects.link_sanitizer.blocked_url_schemes', $config['objects']['link_sanitizer']['blocked_url_schemes']);
@@ -139,6 +142,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             ->addTag('pimcore.telemetry.bundle_usage_provider');
         $container->registerForAutoconfiguration(ReadOnlyValueAdapterInterface::class)
             ->addTag('pimcore.expression.read_only_value_adapter');
+
+        $container->registerForAutoconfiguration(ReferenceTranslatorInterface::class)
+            ->addTag('pimcore.classificationstore.reference_translator');
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts

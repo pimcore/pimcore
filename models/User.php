@@ -97,6 +97,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected bool $welcomescreen = false;
 
+    protected ?string $welcomeScreenTarget = null;
+
     protected bool $closeWarning = true;
 
     protected bool $memorizeTabs = true;
@@ -730,6 +732,18 @@ final class User extends User\UserRole implements UserInterface
     public function getWelcomescreen(): bool
     {
         return $this->welcomescreen;
+    }
+
+    public function getWelcomeScreenTarget(): ?string
+    {
+        return $this->welcomeScreenTarget;
+    }
+
+    public function setWelcomeScreenTarget(?string $welcomeScreenTarget): static
+    {
+        $this->welcomeScreenTarget = $welcomeScreenTarget;
+
+        return $this;
     }
 
     /**

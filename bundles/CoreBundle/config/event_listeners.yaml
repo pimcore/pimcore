@@ -56,6 +56,9 @@ services:
     # invalidates the request-scoped element permission cache on user/role/workspace changes
     Pimcore\Bundle\CoreBundle\EventListener\PermissionCacheInvalidationListener: ~
 
+    # invalidates the process-scoped classification store relation cache on key/group config changes
+    Pimcore\Bundle\CoreBundle\EventListener\KeyGroupRelationCacheInvalidationListener: ~
+
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
         tags:
             - { name: kernel.event_subscriber }

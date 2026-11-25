@@ -152,6 +152,7 @@ class PimcoreCoreBundleLinkSanitizerTest extends TestCase
             'pimcore.documents.editables.link_sanitizer.strict' => false,
             'pimcore.documents.editables.link_sanitizer.blocked_url_schemes' => AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES,
             'pimcore.documents.editables.link_sanitizer.block_unsafe_data_urls' => true,
+            'pimcore.documents.editables.embed_sanitizer.strict' => false,
             'pimcore.objects.link_sanitizer.strict' => false,
             'pimcore.objects.link_sanitizer.blocked_url_schemes' => AttributeSanitizer::DEFAULT_BLOCKED_URL_SCHEMES,
             'pimcore.objects.link_sanitizer.block_unsafe_data_urls' => true,

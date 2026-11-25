@@ -13,54 +13,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Model\DataObject\ClassDefinition;
-use Psr\Log\LoggerInterface;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
 
 /**
  * @internal
  */
 class CleanupClassificationstoreTablesTask implements TaskInterface
 {
-    private LoggerInterface $logger;
+    private EngineResolver $engineResolver;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(EngineResolver $engineResolver)
     {
-        $this->logger = $logger;
+        $this->engineResolver = $engineResolver;
     }
 
     public function execute(): void
     {
-        $db = Db::get();
-        $tableTypes = ['object_classificationstore_data', 'object_classificationstore_groups'];
-        foreach ($tableTypes as $tableType) {
-            $prefix = $tableType . '_';
-            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
-
-            foreach ($tableNames as $tableName) {
-                $tableName = current($tableName);
-                $classId = substr($tableName, strlen($prefix));
-
-                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
-                if (!$classDefinition) {
-                    $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
-
-                    continue;
-                }
-
-                $fieldsQuery = 'SELECT DISTINCT fieldname FROM ' . $tableName;
-                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
-
-                foreach ($fieldNames as $fieldName) {
-                    $fieldDef = $classDefinition->getFieldDefinition($fieldName);
-
-                    if (!$fieldDef) {
-                        $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->delete($tableName, ['fieldname' => $fieldName]);
-                    }
-                }
-            }
+        // every engine sweeps the storage it owns
+        foreach ($this->engineResolver->getEngines() as $engine) {
+            $engine->cleanup();
         }
     }
 }

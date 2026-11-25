@@ -18,6 +18,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Link\AttributeSanitizer;
 use Pimcore\Model\Element;
 
 /**
@@ -302,6 +303,10 @@ class Link extends Model\Document
     /**
      * returns the ready-use html for this link
      *
+     * Whether a link with a script-executing URL scheme (javascript:, vbscript:, most data: URIs) is
+     * rendered with an empty href depends on the active
+     * \Pimcore\Model\Document\Editable\Link\AttributeSanitizer policy
+     * ("pimcore.documents.editables.link_sanitizer.strict") - see that class.
      */
     public function getHtml(): string
     {
@@ -317,16 +322,32 @@ class Link extends Model\Document
         $link = $this->getLink();
         $link .= $this->getProperty('navigation_parameters') . $this->getProperty('navigation_anchor');
 
+        // escaping keeps the value inside the href attribute, but it does not make the URL itself
+        // safe - a "direct" link is editor-controlled, so its scheme is subject to the same policy
+        // as the Link editable
+        if (!AttributeSanitizer::getInstance()->isUrlAllowed($link)) {
+            $link = '';
+        }
+
         $attribs = [];
         foreach ($attributes as $key => $name) {
             $key = is_numeric($key) ? $name : $key;
             $value = $this->getProperty('navigation_' . $name);
             if ($value) {
-                $attribs[] = $key . '="' . $value . '"';
+                $attribs[] = $key . '="' . self::escapeDoubleQuotes((string) $value) . '"';
             }
         }
 
-        return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+        return '<a href="' . self::escapeDoubleQuotes($link) . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+    }
+
+    /**
+     * Escapes only the character that can end a double-quoted attribute value, so the value cannot
+     * break out of its attribute while every input that was safe before renders byte-identically.
+     */
+    private static function escapeDoubleQuotes(string $value): string
+    {
+        return str_replace('"', '&quot;', $value);
     }
 
     protected function update(array $params = []): void

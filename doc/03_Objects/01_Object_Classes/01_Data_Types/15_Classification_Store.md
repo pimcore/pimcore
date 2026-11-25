@@ -16,15 +16,105 @@ key can only be added once to that object.
 * There can be multiple store with completely isolated feature sets.
 * Inheritance is supported.
 * An object can have more than one classification store.
-* Localization is supported (optionally, can be configured in the class definition).
+* Localization is supported and chosen per key; the class definition setting is the default for the keys that do not decide.
 * The classification store introduces the concept of a fallback language.
-* All simple data types (e.g. textarea, date, etc are supported). The store can be extended with custom data types.
+* Which data types a key can use depends on the store's [storage engine](#storage-engines) - every simple data type on both, the structured types that ship a Classification Store marshaller on the EAV engine, and whatever `normalize()` returns, relations included, on the document engine. See [Available Data Types](#available-data-types). The store can be extended with custom data types.
 * Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc).
 * Keys can be organized in groups.
 * A key can belong to several groups.
 * Individual keys currently cannot be added to the object. Instead, the corresponding groups added.
 * The allowed groups can be restricted via the class definition.
 
+
+## Available Data Types
+
+A key can use **any registered data type** except eight, and which of the accepted ones a given key
+can actually be defined with depends on the [storage engine](#storage-engines) of its store. The
+accepted set is not a list anywhere in core: it is every type the object data implementation loader
+resolves, minus the eight exclusions, so a type added by a later release or by a bundle is accepted
+without core being changed.
+
+### The eight exclusions
+
+Never accepted, on any engine - and, for the seven that are out because of what their value is, not
+as the delegate of an `encryptedField` either: encryption decides how a value is stored, not what the
+value is. `calculatedValue` is the one that refuses nothing, as a delegate no more than on its own.
+
+| type | why |
+|---|---|
+| `block`, `objectbricks`, `fieldcollections`, `localizedfields`, `classificationstore` | the five container types. Their value is the values of other field definitions, and a key is one leaf of such a tree rather than a place to hang one. |
+| `reverseObjectRelation` | computed from the owning side of a relation rather than stored, so a key has nothing to write. |
+| `urlSlug` | its value is a row of the route table `object_url_slugs`, keyed by (object, fieldname), which a key cannot occupy - storing the slug and site id alone registers no route. |
+| `calculatedValue` | not part of the set the `document` engine unlocks. Core's existing support for a `calculatedValue` key is untouched: such a key still computes on read and still appears in the object editor, and it is refused neither when it is defined nor when the object is saved. |
+
+### What each engine can hold
+
+| engine | what a key may be |
+|---|---|
+| `eav` (default, also `NULL`, and what every store uses until it is flipped) | a type whose value fits the two value columns `value` and `value2` (both `LONGTEXT`): every type that normalizes to a scalar - input, textarea, wysiwyg, numeric, slider, checkbox, date, datetime, time, select, country, language, user and so on - plus the types that ship a Classification Store marshaller packing the value into the two columns: `booleanSelect`, `countrymultiselect`, `encryptedField`, `image`, `inputQuantityValue`, `inputQuantityValueRange`, `languagemultiselect`, `multiselect`, `quantityValue`, `quantityValueRange`, `rgbaColor` and `table`. The authoritative list of those marshallers is the `# classification store` section of `bundles/CoreBundle/config/marshaller.yaml`. |
+| `document` | every accepted type. A document holds whatever the field definition's `normalize()` returns, so no marshaller is needed and there is no column to pack into - `consent`, `dateRange`, `externalImage`, `geobounds`, `geopoint`, `geopolygon`, `geopolyline`, `hotspotimage`, `imageGallery`, `link`, `numericRange`, `structuredTable` and `video` are storable there and are refused on an `eav` store. |
+
+A second question is asked beside that one, about what a key's declaration promises rather than
+about what its value is: a `multiValue` key addresses its value under qualifiers
+([MultiValue](#multivalue)), and only an engine that can address them may be given one. The `eav`
+engine cannot, so defining a `multiValue` key on an `eav` store is refused with
+`Pimcore\Model\DataObject\Exception\UndeclarableEngineFeatureException` (a subclass of the exception
+below). The refusal is about the configuration being written: a key an installation already carries
+on such a store keeps loading and stays saveable, so it can be renamed, disabled and deleted, and
+only a configuration that introduces the need - a new key, a key being turned into one, or a stored
+one being given its first variant - is refused. Flip the store to the `document` engine to define
+them.
+
+Defining a key of a type the engine of its store cannot hold is refused with
+`Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException`, and nothing is written. The
+same exception is raised, instead of a value written into a column that cannot hold it, if such a
+value reaches the EAV engine anyway - through a key row an upgrade or a direct SQL edit wrote. An
+`encryptedField` key is judged by its delegate: its own marshaller encrypts what the delegate's
+marshaller packed, so on an `eav` store a delegate with no marshaller leaves it nothing to encrypt
+and such a key is refused. On a `document` store the same key works - the value reaches the
+encryption as the JSON of what it normalizes to, so the cleartext is never in the document - and a
+delegate that normalizes to a scalar, or has a marshaller of its own, is stored exactly as before.
+
+Whether the delegate may be a key type at all is a separate question, and is asked first: a delegate
+that is one of the seven exclusions above is refused with
+`Pimcore\Model\Exception\InvalidConfigException` when the key is defined, on either engine. A
+`document` store holds the slug and the site id of a `urlSlug` perfectly well, and holding them
+registers no route - so the storage answer is "yes" about a key that does not work.
+
+A custom data type is added by registering the data type. On a `document` store that is all; on an
+`eav` store it also needs a marshaller under the key `classificationstore_<fieldtype>`, unless its
+value is a plain scalar the column already holds.
+
+Each data type also declares how a key of that type can be filtered, through
+`Pimcore\Model\DataObject\ClassDefinition\Data::getClassificationStoreKeyFilter()`, which answers a
+`Pimcore\Model\DataObject\Classificationstore\KeyFilter`. The declaration is additive - a type that
+does not override it declares `KeyFilter::None` - and core ships the declaration alone: it ships no
+grid filter and no index mapping for a Classification Store key, because such a value never reaches
+`object_query_<CLASS>`. Consuming the declaration is the index side's part.
+
+Relations are **not** supported on an `eav` store, and that is a structural limit rather than a
+missing feature: a relation is not stored in a value column at all, but as rows of
+`object_relations_*`, which address their owner by field name and owner type (`object`,
+`localizedfield`, `fieldcollection`, `objectbrick`). A Classification Store key is none of those -
+its values live in the store's own table, keyed by group, key and language - so there is no row a
+relation could be written to, and saving such a value is refused with
+`Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException`. Flip the store to the
+`document` engine, or use an [Object Brick](./60_Object_Bricks.md), when the attributes include
+relations.
+
+The `document` engine removes that structural limit, because a group's values are one JSON document
+and a value is whatever the data type's `normalize()` returns: `manyToOneRelation`,
+`manyToManyRelation`, `manyToManyObjectRelation`, `advancedManyToManyRelation` and
+`advancedManyToManyObjectRelation` store their element descriptors in the document and resolve them
+when the key is read; the per-relation column values of the advanced pair are held in the per-class
+table `object_classificationstore_meta_<CLASS>`. The elements are not loaded with the object - a key
+is resolved on first read, and a descriptor whose target has been deleted is left out of the value
+and taken out of the document on the next save of the object. The opt-in command
+`bin/console pimcore:classificationstore:purge-relations` reports such descriptors across an
+installation and, with `--force`, removes them.
+
+A `reverseObjectRelation` key is refused on both engines: its value is computed from the objects
+pointing at the owner rather than stored on it, so there is nothing for a store to hold.
 
 ## Configuration of Classification Stores
 
@@ -48,12 +138,34 @@ defined.
 ![Classification Store detailed config](../../../img/Objects_ClassificationStore_detailed_config.png)
 
 
+### Disabling a key
+Setting a key's `enabled` flag to `false` is not a soft delete. Note the following:
+
+* Disabling a key deletes every `classificationstore_relations` row for it: its group memberships, sort positions,
+  mandatory flags, per-assignment metadata, per-group definition overrides and the sub-group tag. This happens once,
+  on the transition to disabled; saving a key that is already disabled deletes nothing.
+* An assignment that is created while the key is disabled is kept (it is no longer removed by the next save of the
+  key), and it keeps its `mandatory` flag. Object validation does not skip disabled keys, so a mandatory assignment on
+  a disabled key still raises a mandatory violation when an object using that group is saved with no value for the
+  key, even though the object editor does not render a field for it.
+* Stored values are not deleted. The per-object value tables reference `objects` and `classificationstore_groups` and
+  carry no foreign key to the keys table, so the values are orphaned rather than lost and reappear if the assignments
+  are restored. Deleting a group, in contrast, cascades and destroys them.
+* The restore path is the store configuration export/import (as provided by Studio), which round-trips the flag, and
+  not the ordinary key update endpoint. Assignments return only if the exported artifact carries them.
+* `enabled` is not the `invisible` toggle, which is a property of the field definition inside the key's `definition`.
+* `bin/console pimcore:classificationstore:delete-store --inactive-only` hard-deletes every disabled key in every
+  store, ignoring its store argument.
+
+
 ### Group definition and key assignment
 * Use the group editor to define and organize keys into groups
 * Similar to keys a sort order can be specified
 * Groups with lower sort order are displayed first
 * A key can belong to more than one group
-* It is not necessary for the group name to be unique
+* It is not necessary for the group name to be unique. Note that two entities of the same kind sharing a name within
+  one store cannot both be resolved by the identifier backfill described under [Identifiers](#identifiers) - it leaves
+  both of them without an identifier and reports them for an operator to resolve
 * Use the grid on the right side to manage the keys belonging to the selected group
 * Configure sort order for the object editor, keys with lower values are listed first
 * Configure which keys should be mandatory in this group
@@ -70,7 +182,14 @@ defined.
 
 ## Class definition
 
-* Localization can be enabled, by default only the `default` language is available
+* Localization is chosen per key: a key's own `localized` flag decides
+  (`Pimcore\Model\DataObject\Classificationstore\KeyConfig::setLocalized()`), and the class definition setting
+  here is only the default for the keys that carry none (it is deprecated for that reason). By default no key
+  decides and the setting is off, so only the `default` language is available. Because the languages belong to
+  the key, the layout the object editor is handed carries each key's effective flag with it: every entry of
+  `activeGroupDefinitions[<groupId>]['keys']` has a `localized` boolean beside its `name`, `id`, `description`
+  and `definition`. It is answered for every enabled key of an active group, filled or empty, which is what
+  lets a client tell a localized key inside a non-localized field from its non-localized siblings
 * Allowed groups can be restricted by providing a comma-separated list of group ids
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first
@@ -132,6 +251,77 @@ $groups = $store->getActiveGroups();
 $allValues = $store->getItems();
    
 ```
+
+### Keys holding a value per variant
+
+A key of type `multiValue` wraps an inner type and declares which qualifiers it permits: the
+*variants* a value may be written under — `metric` and `imperial`, say — and whether the
+*unqualified* value, the one naming no variant, is permitted. A slot is one (language, variant) pair,
+and it holds one value of the inner type.
+
+```php
+use Pimcore\Model\DataObject\Data\MultiValue;
+
+$store = $object->getClassificationStore2();
+
+// write two variants of one key at once; an entry with no language is the default language
+$store->setKeyValues(1, 2, [
+    new MultiValue('1.80 m', null, 'metric'),
+    new MultiValue('5 ft 11 in', null, 'imperial'),
+]);
+
+// writing one variant leaves the other as it is
+$store->setKeyValues(1, 2, [new MultiValue('6 ft 0 in', null, 'imperial')]);
+
+// read one slot - as a list of at most one value - or its value; a slot holding nothing is [] or null
+$values = $store->getKeyValues(1, 2, null, 'metric');  // ['1.80 m']
+$value  = $store->getKeyValue(1, 2, null, 'imperial'); // '6 ft 0 in'
+```
+
+A `null` language means the default language and a `null` variant the default variant, which a key is
+addressable under unless it declines the unqualified value — the declared variants are additional
+slots beside it. A `multiValue` key declines it with `unqualifiedValue` off (on by default, with an
+optional `unqualifiedValueLabel` for that slot): `setKeyValues()` then refuses an entry that names no
+variant, or `default` explicitly, and `getKeyValues()`, `getKeyValue()` and the search index leave a
+value already stored there out — it stays stored and returns when the declaration is switched back
+on. `getLocalizedKeyValue()` and `Key::getValue()` are unchanged: they answer the value of the
+default variant whatever the key declares, so a key that declares no qualifier behaves exactly as it
+always has, on every path, and a stored unqualified value of a key that declines one stays readable
+and still saves.
+
+`getKeyValues()` and `getKeyValue()` address one slot exactly and apply **no language fallback**:
+they answer what that slot holds, which is what a save stores for it. `getLocalizedKeyValue()` is
+the resolving reader — it falls back through the fallback languages, then to the language-independent
+`default`, and takes an inherited value — so it is still the one to call for a resolved value, and
+replacing a call to it with `getKeyValue()` changes what a key answers for a language it holds no
+value of.
+
+An entry carrying no value — `null` or the empty string — clears the slot it addresses instead of
+storing an empty value there, and that is the rule in every slot alike, the default one included.
+A slot the write does not mention keeps what it holds, so clearing one variant is a write of that
+variant with no value.
+
+Two entries of one write whose qualifiers resolve to the same (language, variant) slot are refused,
+as is a variant the key does not declare and an entry carrying a position above 0; nothing is stored
+in that case.
+
+Narrowing a declaration hides values rather than deleting them. Removing a variant from a key or
+declining its unqualified value makes those values unreadable while an ordinary save keeps them
+stored — so widening the declaration again brings them back. A value an earlier version stored above
+position 0 is kept the same way: it is no longer read, validated or indexed, and a save writes it
+back unchanged.
+
+> **Holding a value per variant is a capability of the storage engine.** The `document` engine
+> supports variants, because a value there carries its qualifiers as part of its own stored entry.
+> The default `eav` engine does not: the primary key of its value table has room for the language and
+> for nothing else, so a write or a read it cannot address raises
+> `Pimcore\Model\DataObject\Exception\UnsupportedEngineFeatureException` rather than writing a variant
+> into the slot of another. A `multiValue` key is therefore not definable on an `eav` store at all
+> ([What each engine can hold](#what-each-engine-can-hold)); the unqualified slot of a key an
+> installation already carries there keeps reading and writing.
+> A store that is not attached to an object yet cannot resolve its engine, so a write to one is
+> accepted and the same exception is raised when it is saved — the save fails rather than storing
+> part of the value.
 
 ### Retrieving group and key data
 
@@ -218,3 +408,360 @@ $groupRel->setGroupId($groupConfig->getId());
 $groupRel->setColId($collectionConfig->getId());
 $groupRel->save();
 ```
+
+A key carries a title of its own, which the example above does not set: the `title` of the definition it is given
+seeds the column instead, as long as the key was neither loaded nor given a title explicitly. `setTitle()` takes
+precedence over it, and once a title was set or loaded the definition no longer feeds the column - editing the
+definition of a loaded key therefore leaves its title as it was. A save that has neither a loaded nor an explicit
+nor a seeded title leaves the stored one alone rather than clearing it, so a key built with `new` to update one
+other field does not drop its title.
+
+### Identifiers
+
+Stores, collections, groups and keys carry an `identifier` in addition to their auto increment id and their name.
+It is meant as the stable handle for an entity across environments, where the auto increment id is not comparable
+and the name is not unique.
+
+* It is **generated** when an entity is created and does not derive from the entity's name, so it stays stable when
+  the name is edited. Setting an identifier explicitly before the first `save()` keeps that value instead.
+* It is **opaque** - do not parse it, and do not expect it to be readable.
+* It is **immutable**: once an entity holds a non-null identifier, `setIdentifier()` refuses to change it and throws
+  `Pimcore\Model\Exception\InvalidConfigException`. Setting the same value again is a no-op. The null to value
+  transition is enforced in the database as well, so an instance loaded before another process assigned an identifier
+  neither clears it on save nor replaces it - the latter is refused with the same exception.
+* It is **unique per store** for collections, groups and keys, and unique overall for stores. A save that would write
+  an identifier which is already in use within that scope is refused with the same exception, and nothing is written -
+  the identifier is never disambiguated with a suffix.
+* Valid identifiers match `/\A[A-Za-z0-9][A-Za-z0-9_-]*\z/` and are at most 190 characters long. Anything else is
+  rejected by `setIdentifier()`.
+
+```php
+$keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByIdentifier($identifier, $storeId);
+$groupConfig = \Pimcore\Model\DataObject\Classificationstore\GroupConfig::getByIdentifier($identifier, $storeId);
+$collectionConfig = \Pimcore\Model\DataObject\Classificationstore\CollectionConfig::getByIdentifier($identifier, $storeId);
+$storeConfig = \Pimcore\Model\DataObject\Classificationstore\StoreConfig::getByIdentifier($identifier);
+```
+
+Each of them returns `null` when nothing matches.
+
+#### Backfilling existing rows
+
+Rows that already existed before the identifier was introduced have none. The console command
+
+```bash
+bin/console pimcore:classificationstore:backfill-identifiers
+```
+
+assigns a generated, opaque identifier to every row across the five tables (stores, collections, groups, sub groups and
+keys) whose identifier is still `NULL`, disabled keys included. The identifier does not derive from the name, so rows
+sharing a name, or with a name that has no usable characters, are backfilled like any other and no row is left without
+one. It writes the `identifier` column and nothing else - no title, modification date or definition is rewritten - and
+it is idempotent, so running it twice changes nothing. The same backfill runs once as a migration when you upgrade.
+
+Each write is guarded by `identifier IS NULL`, so a row that was given an identifier while the command was running
+keeps it; the command reports that row as unresolved rather than counting it as backfilled.
+
+#### Translating stored references to identifiers
+
+Saved grid configurations in the `gridconfigs` table, written by the classic admin grid, name a classification store
+column as `~classificationstore~<field>~<groupId>-<keyId>`. The console command
+
+```bash
+bin/console pimcore:classificationstore:translate-identifiers [--dry-run]
+```
+
+rewrites every such token, anywhere in the `config` of a `gridconfigs` row - a column as well as the saved sort - to the
+five segment form `~classificationstore~<field>~<groupIdentifier>~<keyIdentifier>`. The number of segments tells the two
+forms apart, because an identifier may itself contain a hyphen. Core reads and accepts both forms.
+
+A token is rewritten both where it is a value and where it is the name of a JSON object property, because the classic
+admin keys its saved column map by the column key itself - `columns[<column key>] = {name: <column key>, …}` - and reads
+that configuration back by the key alone. Rewriting only the values would leave the one string that identifies the
+column in the integer form.
+
+Pimcore Studio keeps its grid configurations in a table of its own and names a classification store column by a
+separate group id and key id rather than by this token, so it carries nothing for this command to translate.
+
+The command reports and never guesses. A token whose group or key does not exist, has no identifier, or whose halves
+are not both numeric ids is left as it is and listed with the row id and the token; the command still exits with `0`.
+It writes the `config` column of the rows it translated and nothing else, a token already in the identifier form is not
+touched, so it is safe to re-run, and `--dry-run` reports exactly what a real run would do and writes nothing. A token
+whose identifier form is already a key of the same JSON object is left as well, because rewriting it would drop one of
+the two entries, and a row whose `config` does not decode at all is reported as unresolved under the name `config` with
+the decoder's message rather than silently counted as a row carrying no token.
+
+An identifier is unique within its store only, and both readers resolve the two identifiers inside the store of the
+classification store field the token names. So the command resolves that store too - from the `classId` of the row and
+the field segment of the token - and refuses a token whose group or key belongs to a different store, as well as one
+whose field store does not resolve at all because the row names no class, the class is gone, or that field is not a
+classification store field. Both are listed with the row id, the token and the reason.
+
+Each write is guarded by the `config` the row was read with: the row is re-read under a `FOR UPDATE` lock in the same
+transaction as the write and compared in PHP, so a configuration saved between the read and the write is kept and the
+command then reports every token of that row as unresolved rather than counting it as translated. The comparison cannot
+be made in SQL, because `config` is a real JSON column on MySQL and text on MariaDB, and neither compares a bound
+string to the stored document the way a guard needs.
+
+The `importconfigs` table has the same shape and once held the same token - the classic admin's CSV import built its
+column mapping with the same dialog until that feature was removed in Pimcore 10 - but nothing has read or written
+those rows since, so they are deliberately not translated.
+
+Run it only once everything that reads these tokens - the classic admin grid that writes them, and any bundle storing
+its own references - can read identifiers. It does not check that.
+
+Core ships one translator, for grid configurations. A service implementing
+`Pimcore\Model\DataObject\Classificationstore\ReferenceTranslatorInterface` is tagged
+`pimcore.classificationstore.reference_translator` by autoconfiguration and executed by the same command, one report
+section per translator. No translator is registered yet for Data Hub Simple REST endpoint configurations or Data
+Importer mappings.
+
+GraphQL keeps addressing groups and keys by their integer ids. That is a published contract, this command deliberately
+does not touch it, and it decides no deprecation schedule for it.
+
+### Per assignment fields
+
+Assigning a key to a group is a row of its own, and that row can carry more than the sorter and the mandatory flag.
+`Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation` exposes three nullable per assignment fields, all of
+which default to "not set" and are written only when they were loaded or explicitly set - a relation built with `new`
+that carries just a group id and a key id therefore never clears a stored value.
+
+* `getMetadata()` / `setMetadata()` - an arbitrary JSON object, stored and returned verbatim. Nothing in core reads
+  it; the keys `indexed`, `externalCode` and `custom` are conventions for the packages and customer implementations
+  that do. The search index mapping, the editor layout and `checkValidity()` behave identically whether or not a
+  relation carries metadata.
+* `getDefinitionOverride()` / `setDefinitionOverride()` - a partial field definition, in the vocabulary of a key's own
+  settings, merged over the key's definition by `getEffectiveDefinition()`.
+* `getSubGroup()` / `setSubGroup()` - the sub group of this assignment, naming an entry of the sub group vocabulary
+  of the store its group belongs to. `null` means no sub group, and is what clears a stored tag. A save whose value
+  names no entry of that vocabulary is refused with `Pimcore\Model\Exception\InvalidConfigException` and writes
+  nothing; what is stored is the `identifier` of the entry it resolved to, not the spelling that was passed. The
+  vocabulary itself is `Pimcore\Model\DataObject\Classificationstore\SubGroupConfig`, one list per store.
+
+Both JSON fields take and return decoded arrays; the encoding happens in the DAO.
+
+#### Overriding a key's definition per group
+
+`getEffectiveDefinition()` returns the key's definition with the relation's `definitionOverride` merged over it, as
+the same JSON string `getDefinition()` returns. With no override stored it returns exactly that definition. Its base
+is `getDefinition()` as the instance carries it, which on a relation loaded through `KeyGroupRelation\Listing` already
+has the relation's `mandatory` flag folded in and on one loaded through `getByGroupAndKeyId()` does not - `mandatory`
+has a column of its own and is not part of an override.
+
+An override may carry `options`, `defaultUnit` and `validUnits`, and nothing else - the per group option subset and
+the unit. Any other property is refused by `setDefinitionOverride()` with
+`Pimcore\Model\Exception\InvalidConfigException`, and nothing is written. That includes `type` and `fieldtype`,
+because an assignment never changes what a key stores, and `title`, `tooltip` and `defaultValue`, which are a
+labelling question rather than a definition one.
+
+`options` **filters** rather than replaces: the merged definition keeps the key's own label/value pairs whose value
+appears in the override's list, in the key's order. That is what lets one key hold the full option list while each
+group uses its own subset of it. `null` means every option, an empty list means none - including for a key whose own
+`options` are `null`, where an empty subset still leaves no option at all.
+
+```php
+// the sub group has to exist in the vocabulary of the store the group belongs to before it can be named
+$subGroup = new \Pimcore\Model\DataObject\Classificationstore\SubGroupConfig();
+$subGroup->setStoreId($storeId);
+$subGroup->setName('Dimensions');
+$subGroup->save();
+
+$relation = \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation::getByGroupAndKeyId($groupId, $keyId);
+$relation->setDefinitionOverride(['options' => ['red', 'green']]);
+$relation->setSubGroup($subGroup->getIdentifier());
+$relation->save();
+
+$definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+    json_decode($relation->getEffectiveDefinition(), true),
+    $relation->getType()
+);
+```
+
+> **Note**: `definitionOverride` is read by core: `KeyGroupRelation::getEffectiveDefinitionData()` is the definition
+> the key resolves to within the group, and core's own resolution (`Service::getFieldDefinitionFromKeyConfig()`, the
+> key-group relation cache and so the validation of a save) reads it. A client that renders a key from
+> `KeyConfig::getDefinition()` instead shows the key's own definition, whatever the group overrides.
+
+## Storage engines
+
+Where the values of a store are kept is a property of the store, not of the class. The `engine` column of
+`classificationstore_stores` names it, and `NULL` - what every store has until it is changed - means the default
+engine.
+
+| engine | storage | tables per class |
+|---|---|---|
+| `eav` (default, also `NULL`) | one row per key and language | `object_classificationstore_data_<CLASS>`, `object_classificationstore_groups_<CLASS>` |
+| `document` | one JSON document per object, field and group | `object_classificationstore_doc_<CLASS>` |
+
+Selecting an engine is opt-in per store and is done from PHP:
+
+```php
+$store = \Pimcore\Model\DataObject\Classificationstore\StoreConfig::getByName('myStore');
+$store->setEngine('document');
+$store->save();
+```
+
+A store that already holds values is moved over with the four commands of the next section rather than with the
+setter: the setter writes the `engine` column alone, and the tables of the selected engine are created only the next
+time a class carrying a classification store field on that store is saved.
+
+The two engines behave the same way through the model API for the values they both hold: `getLocalizedKeyValue()`, the
+language fallback, the default-language fallback and inheritance are resolved in PHP at read time and do not depend on
+the storage. Deleting a group configuration destroys the stored values of that group on either engine, and deleting an
+object removes its values on either engine.
+
+What they do not share is **which key types a store can hold**: that is a property of the engine, and a structured key
+that a `document` store takes is refused on an `eav` one - see [Available Data Types](#available-data-types).
+
+There is one deliberate exception. `getGroupCollectionMappings()` lists, on an EAV store, every group holding a
+stored value - mapped to `null` when it has no collection - while on a document store it lists only the groups that
+have one. `getGroupCollectionMapping($groupId)` answers `null` either way. A `null` entry is not recordable on the
+document engine: an object's mappings and its inheritable parent's are merged as an array union, so a `null` on the
+child would shadow the parent's collection. Use `getActiveGroups()` to ask which groups hold values.
+
+While a store is being migrated, that difference also moves **within** one store: an object whose values the drain
+has not converted yet is still read from the EAV tables and answers the EAV shape, and the same object answers the
+document shape once it is converted. Code that reads the full array rather than `getActiveGroups()` therefore sees
+the documented difference appear at a moment it cannot predict.
+
+## Migrating a store to the document engine
+
+Four commands move the values a store already holds. They run in this order, and only in this order - there is
+**no reverse migration**.
+
+| command | scope | what it does |
+|---|---|---|
+| `pimcore:classificationstore:flip <store>...` | one store, or the stores sharing a field name | creates the document table of every class carrying a field on those stores, then sets their `engine` to `document` |
+| `pimcore:classificationstore:drain [--class=] [--max-divergences=] [--dry-run]` | the classes holding values | converts the EAV rows of one (object, field) pair at a time |
+| `pimcore:classificationstore:verify [--class=]` | one class, or every class | recomputes each document's checksum and asserts that no EAV row survived |
+| `pimcore:classificationstore:cleanup [--class=] [--dry-run]` | one class, or every class | drops the two EAV tables of a class once every store it uses is converted |
+
+```bash
+bin/console pimcore:classificationstore:flip myStore
+bin/console pimcore:classificationstore:drain --class=PRODUCT --dry-run
+bin/console pimcore:classificationstore:drain --class=PRODUCT
+bin/console pimcore:classificationstore:verify --class=PRODUCT
+bin/console pimcore:classificationstore:cleanup --class=PRODUCT --dry-run
+bin/console pimcore:classificationstore:cleanup --class=PRODUCT
+```
+
+`<store>` is a store id or a store name, resolved in that order, and the flip takes more than one of them;
+`--class=` is a class **id**. Rolling out per class, smallest class first, is what the drain's own ordering does
+when `--class=` is left out.
+
+**The flip takes no engine argument and there is nothing that undoes it.** Every value written to the store after
+the flip exists only as a document, so putting the store back on `eav` does not bring those values back - it hides
+them behind whatever EAV rows are left. The flip asks for confirmation; `--no-interaction` proceeds without asking.
+
+**The flip creates the document tables first and writes the `engine` column last.** Every other process reads that
+column, so a save that saw the switch before the table of its class existed would fail with table-not-found - and a
+`CREATE TABLE` that failed half way would otherwise leave the store pointing at tables that are not there. A table
+created for a store the command then refuses is an empty table and nothing else.
+
+**Stores sharing a classification store field name have to be flipped together.** A field name identifies a group
+of definitions rather than one - two allowed bricks of a class can define the same field on two different stores -
+and the value tables key their rows by (object, fieldname), so that group reads and writes one set of rows and
+cannot be split across two engines. The flip refuses before it writes anything if it would leave such a group
+split, and names the class, the field and the stores that have to come along; pass them all in one invocation:
+
+```bash
+bin/console pimcore:classificationstore:flip myStore myOtherStore
+```
+
+**Let the writers that predate the flip finish before draining.** Which engine a store resolves to is memoized for
+the length of a request or a messenger message, so a process that resolved `eav` before the flip keeps writing EAV
+rows until it reaches that boundary. Document reads do not see those rows, and the drain will not delete them: a
+pair that holds documents *and* EAV rows is reported as a divergence with its object id and field name, for a human
+to reconcile, rather than silently losing the newer values. Draining after the in-flight requests and messages have
+finished is what avoids that report.
+
+**Reads and writes keep working throughout.** Between the flip and the drain the values of a (object, field) pair
+are read through to the EAV tables, so nothing goes missing and nothing is merged: a pair that holds no document at
+all is answered from the EAV rows, a pair that holds at least one document from the document alone. The values are
+derived at read time; no column records which of the two answered. An ordinary save writes the pair's documents and
+deletes that pair's rows from both EAV tables in the same transaction, so an object a user saves while the drain is
+running is converted by that save. A drain the user save got to first writes nothing over it. An unchanged save
+still writes nothing at all - a pair whose documents are already what the save wants has no EAV rows left to take.
+Deleting an object's classification store values takes both sides in one transaction as well, so a pair the drain
+has not reached is not served again by the read-through afterwards. Which of the two sources answers a load, and
+what it answers with, are decided in one snapshot, so a load that runs while a pair is being converted sees the
+pair either wholly on EAV or wholly on documents and never between the two.
+
+**The drain is one transaction per (object, field) pair.** Per pair it reads the EAV side with inheritance off,
+writes the documents if the pair holds none, reads them back, compares the two and only then removes the pair's EAV
+rows. A pair that does not compare equal is a divergence: its document is rolled back, its EAV rows are left in
+place, it is reported with its object id and field name, and the class stops once `--max-divergences` (default: 1)
+is reached - while the next class carries on. **The command exits non-zero when any pair is left on EAV**, which a
+divergence and a stopped class both are. There is no cursor: a re-run reads its backlog from the EAV rows that are
+left.
+
+The pair the drain locks first is the object's row, which is the lock an ordinary save takes first as well, so a
+save and a drain of the same object queue on each other rather than deadlocking on opposite orders. What it reads
+up front is one pending-pair count per class - that is the order the run goes in, smallest class first - and the
+pairs of a class are then read from its value tables a bounded batch at a time, so the backlog of an installation
+is never held in the process at once. The objects it loads are not held either: converting a pair loads its object,
+and the runtime cache is cleared every hundred pairs so that a run does not grow by the objects behind it. A
+converted object is also dropped from the runtime cache and has its cache entry invalidated as its pair commits,
+the way a save of the same rows would: an entry written before the conversion carries the values of the side the
+pair has left, and a group mapped to no collection is the one thing the two sides do not read the same way - so a
+cached parent holding such a mapping would answer a child's inherited collection with it. The
+progress bar of `--processes` therefore has no total; the `n of m pair(s) converted` line the drain prints does,
+from those counts.
+
+While it runs the drain reports the pairs it converted, the time that took, the rate that works out to and how long
+the rest would take at that rate, so "how long for millions of values" is answered from the installation's own
+hardware rather than from a figure of ours. `--dry-run` reports the backlog of every class and converts nothing.
+Without `--processes` the drain runs in the main process, because the divergence threshold is per class and has to
+be counted in one place; `--processes` trades that for throughput and counts the threshold per worker. The totals
+of the run and its exit code do not depend on that choice: what a pair became is counted in the process that
+converted it, so the figures at the end are read back from the backlog the conversions emptied rather than from
+counters a worker holds. Batching, throttling and the run lock come from
+`Pimcore\Console\Traits\Parallelization`.
+
+**Every document row carries a `sha1` of its `values` column in `checksum`**, written by the drain and by an
+ordinary save alike. `migratedAt` is written by the drain alone, so a document with no `migratedAt` was created by a
+user save. `verify` recomputes each checksum and reports every row that does not match, plus every pair that still
+holds EAV rows, and exits non-zero if there is one; a row written before this release carries neither stamp and is
+reported as unproven rather than as corrupt. The `values` column holds everything one group of one object stores,
+so the check walks the document table along its primary key a batch at a time rather than reading it in one query -
+its memory is bounded by one batch however much the class holds, and `cleanup`, which re-runs the check inline, is
+bounded by the same. What it finds it writes as it finds it; the report it hands back carries the counts alone, so a
+store whose every row is unproven does not have to fit in the process either.
+
+**`cleanup` is per class while the flip is per store.** It drops the two EAV tables of a class only when every store
+used by any classification store field on that class resolves to `document` and the verification of that class
+holds. When it refuses, it names the stores that are in the way by id and by name - a class carrying a second field
+on a store nobody has flipped keeps its tables. The `DROP` waits for the read-throughs that are still in flight: a
+read-through holds the metadata locks of both EAV tables for the length of its transaction, so a load that has
+chosen those rows as its source reads them before they go rather than finding them gone mid-load. Read-throughs
+that start while that `DROP` is waiting queue behind it, which by then is a drop of two empty tables. A load whose
+tables did go first - because it had not reached them yet - answers from the documents, which is where a class
+whose tables are gone holds all of its values.
+
+#### What the document engine does and does not do
+
+* A save writes only the groups whose document changed. An unchanged save writes nothing, and changing a value in
+  one group does not rewrite the documents of the other groups.
+* Within a group, the document **is** the group: changing one value rewrites that group's whole document in one
+  statement. Fewer statements than the EAV engine, more bytes per statement - measure a store with large groups
+  before switching it.
+* A group that is active but holds no value is stored as the document `{}`. The presence of the row is what makes
+  the group active; there is no second table.
+* It offers every capability the EAV engine does not: `supports()` answers `true` for
+  `Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature::MultiValue`, `Variants`, `StructuredValues` and
+  `Relations`, and the EAV engine answers `false` for all four. Those capabilities are what widen the key types a store
+  can hold - see [Available Data Types](#available-data-types). It also answers `true` for `PerKeyLocalization`, but
+  that one both engines serve, as it is a property of the key configuration rather than of the storage. Nothing in the
+  object editor or Studio selects the engine yet.
+* Values are stored as the field definition's `normalize()` output. An `encryptedField` key is the one exception:
+  it keeps its classification store marshaller, which encrypts the value, so the cleartext is never in the
+  document. That encryption draws a fresh salt per call, so a value whose cleartext did not change keeps the
+  ciphertext the document already holds - otherwise every save would rewrite every group holding a secret. A value
+  that did change is encrypted anew.
+
+After changing an `engine` value by hand, run
+
+```bash
+bin/console pimcore:classificationstore:check-engines
+```
+
+which lists every store that does not resolve to a registered engine and exits non-zero if there is one.

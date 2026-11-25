@@ -18,6 +18,7 @@ use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\WysiwygPersistingScope;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
@@ -323,6 +324,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getFieldType(): string
     {
         return 'wysiwyg';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::FullText;
     }
 
     /**

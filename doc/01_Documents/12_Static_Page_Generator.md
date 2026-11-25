@@ -137,6 +137,31 @@ pimcore:
 | route_pattern  | Regular expression to match routes for static page rendering  |
 
 
+## Sites and pretty URLs
+A pretty URL is relative to the site its document belongs to, so two sites can use the same one. The static pages of
+documents with a pretty URL that belong to a site are therefore stored per site:
+
+| Document                                  | Storage path                                                                      |
+|-------------------------------------------|-----------------------------------------------------------------------------------|
+| Pretty URL, document belongs to a site    | `/%site_<site id>/<pretty URL>.html`, with `use_main_domain: true` `/<main domain of the site>/<pretty URL>.html` |
+| Pretty URL, document outside of any site  | `/<pretty URL>.html` (unchanged)                                                  |
+| No pretty URL                             | the full path of the document (unchanged)                                         |
+
+The web server rules above only look at the request URI, so they do not find the pages stored under a site prefix:
+Pimcore serves these requests. To let the web server deliver them directly, add the site prefix for the host, e.g. with
+NGINX (the `static_page_site` map is new, use it in `try_files` right after `$static_page_root`):
+```nginx
+map $host $static_page_site {
+    default                                 "";
+    www.site-a.example                      /%site_1;
+    www.site-b.example                      /%site_2;
+}
+```
+```nginx
+try_files $static_page_root$static_page_site$static_page_uri.html $uri /index.php$is_args$args;
+```
+With `use_main_domain: true` the host is part of the path already (see below).
+
 ## Use Static Page HTML files with mainDomain instead path
 Enable the main domain option to get the static pages with starting main domain instead of the keys from Pimcore documents.
 

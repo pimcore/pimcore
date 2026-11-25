@@ -15,6 +15,8 @@ namespace Pimcore\Model\Helper;
 
 use Carbon\Carbon;
 use Exception;
+use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
+use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 
 /**
  * @internal
@@ -28,10 +30,12 @@ class QueryParams
      *     fieldname?: string,
      *     groupId?: int,
      *     keyId?: int,
-     *     isFeature?: int
+     *     isFeature?: int,
+     *     groupIdentifier?: string,
+     *     keyIdentifier?: string
      * }
      */
-    public static function extractSortingSettings(array $params): array
+    public static function extractSortingSettings(array $params, ?int $storeId = null): array
     {
         $orderKey = null;
         $order = null;
@@ -56,19 +60,31 @@ class QueryParams
                     $orderKey = $sortParam['property'];
 
                     $parts = explode('~', $orderKey);
-                    if (count($parts) < 4) {
+                    // identifiers cannot contain '~', so only four (legacy) or five (identifier) segments are valid
+                    if (!in_array(count($parts), [4, 5], true)) {
                         return ['orderKey' => $orderKey, 'order' => $order];
                     }
 
                     $fieldname = $parts[2];
-                    $groupKeyId = $parts[3];
-                    $groupKeyIdParts = explode('-', $groupKeyId);
-                    if (count($groupKeyIdParts) < 2) {
+
+                    if (count($parts) === 5) {
+                        return self::extractIdentifierSortingSettings(
+                            $orderKey,
+                            $order,
+                            $fieldname,
+                            $parts[3],
+                            $parts[4],
+                            $storeId
+                        );
+                    }
+
+                    // legacy form: exactly two numeric halves, anything else is a plain order key
+                    if (preg_match('/^(\d+)-(\d+)$/', $parts[3], $legacyIds) !== 1) {
                         return ['orderKey' => $orderKey, 'order' => $order];
                     }
 
-                    $groupId = (int) $groupKeyIdParts[0];
-                    $keyid = (int) $groupKeyIdParts[1];
+                    $groupId = (int) $legacyIds[1];
+                    $keyid = (int) $legacyIds[2];
 
                     return [
                         'orderKey' => $sortParam['property'],
@@ -83,6 +99,44 @@ class QueryParams
         }
 
         return ['orderKey' => $orderKey, 'order' => $order];
+    }
+
+    /**
+     * The five segment token: with a store scope the identifiers are resolved to their ids, without one they are
+     * returned as they are and the result carries no isFeature.
+     */
+    private static function extractIdentifierSortingSettings(
+        string $orderKey,
+        ?string $order,
+        string $fieldname,
+        string $groupIdentifier,
+        string $keyIdentifier,
+        ?int $storeId
+    ): array {
+        if ($storeId === null) {
+            return [
+                'orderKey' => $orderKey,
+                'order' => $order,
+                'groupIdentifier' => $groupIdentifier,
+                'keyIdentifier' => $keyIdentifier,
+            ];
+        }
+
+        $groupConfig = GroupConfig::getByIdentifier($groupIdentifier, $storeId);
+        $keyConfig = KeyConfig::getByIdentifier($keyIdentifier, $storeId);
+
+        if ($groupConfig === null || $keyConfig === null) {
+            return ['orderKey' => $orderKey, 'order' => $order];
+        }
+
+        return [
+            'orderKey' => $orderKey,
+            'fieldname' => $fieldname,
+            'groupId' => $groupConfig->getId(),
+            'keyId' => $keyConfig->getId(),
+            'order' => $order,
+            'isFeature' => 1,
+        ];
     }
 
     public static function getRecordIdForGridRequest(string $param): int

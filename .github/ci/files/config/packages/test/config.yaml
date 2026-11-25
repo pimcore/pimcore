@@ -31,6 +31,9 @@ pimcore:
                 map:
                     # custom field type used by BlockTest::testCustomMarshallerValueObjectInsideBlock()
                     customValueObject: Pimcore\Tests\Support\Helper\DataType\CustomValueObjectField
+                    # declares mixed and returns an array: the classification store case where the
+                    # declared normalized type and the value disagree, which no shipped type has
+                    mixedNormalizingObject: Pimcore\Tests\Support\Helper\DataType\MixedNormalizingField
         block:
             unserialize_allowed_classes:
                 - Pimcore\Tests\Support\Helper\DataType\CustomValueObject
