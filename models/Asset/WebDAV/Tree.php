@@ -18,6 +18,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin;
+use Pimcore\Tool\Authentication;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
 
@@ -31,7 +32,8 @@ class Tree extends DAV\Tree
      * MOVE, ...). Anonymous requests never reach a node this way, so operations - like PROPFIND and
      * LOCK - that don't call any of the permission-gated Folder/File methods themselves can no longer
      * leak asset metadata or place locks without authentication. This is an authentication check
-     * only; it does not add per-asset "view" authorization to those operations.
+     * only; it does not add per-asset "view" authorization to those operations. Inactive or otherwise
+     * invalid users (see Authentication::isValidUser()) are rejected like anonymous requests.
      *
      * Operations that never resolve a node (UNLOCK only talks to the lock backend) are guarded by
      * AuthenticationPlugin, which rejects anonymous requests before Sabre dispatches any method.
@@ -42,15 +44,15 @@ class Tree extends DAV\Tree
      */
     public function getNodeForPath($path): DAV\INode
     {
-        if (Admin::getCurrentUser() === null) {
-            throw new Forbidden('No authenticated user available');
+        if (!Authentication::isValidUser(Admin::getCurrentUser())) {
+            throw new Forbidden('No valid authenticated user available');
         }
 
         return parent::getNodeForPath($path);
     }
 
     /**
-     * Moves a file/directory
+     * Moves a file/directory. Inactive or otherwise invalid users are rejected.
      *
      * @param string $sourcePath
      * @param string $destinationPath
@@ -58,8 +60,8 @@ class Tree extends DAV\Tree
     public function move($sourcePath, $destinationPath): void
     {
         $user = Admin::getCurrentUser();
-        if ($user === null) {
-            throw new Forbidden('No authenticated user available');
+        if (!Authentication::isValidUser($user)) {
+            throw new Forbidden('No valid authenticated user available');
         }
 
         $nameParts = explode('/', $sourcePath);
