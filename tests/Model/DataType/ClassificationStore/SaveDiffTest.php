@@ -43,6 +43,11 @@ class SaveDiffTest extends AbstractBatchedRelationTest
 
     private const BULK_LANGUAGES = [self::DEFAULT_LANGUAGE, 'en', 'de'];
 
+    /**
+     * The column part of the composite foreign key's name, {@see EavEngine::createUpdateTables()}.
+     */
+    private const COMPOSITE_FOREIGN_KEY = 'id__fieldname__groupId';
+
     private const VALUE_1 = 'one';
 
     private const VALUE_2 = 'two';
@@ -197,6 +202,39 @@ class SaveDiffTest extends AbstractBatchedRelationTest
             ],
             [$this->groupA->getId()]
         );
+    }
+
+    /**
+     * The same transition on a value table that carries no composite foreign key, which is a state
+     * a live installation can be in: `CREATE TABLE IF NOT EXISTS` never adds the key to a table
+     * that predates it, and the migration that backfilled it
+     * ({@see \Pimcore\Bundle\CoreBundle\Migrations\Version20221222181745}) skipped every table
+     * whose class id is not numeric. There is no cascade there to take the rows of a deactivated
+     * group, so the save removes them itself.
+     */
+    public function testDeactivatingAGroupRemovesItsValuesWithoutTheCascade(): void
+    {
+        $this->saveStore(function (Classificationstore $store): void {
+            $store->setLocalizedKeyValue($this->groupB->getId(), $this->key3->getId(), self::VALUE_3);
+        });
+
+        $this->dropCompositeForeignKey();
+
+        try {
+            $this->saveStore(function (Classificationstore $store): void {
+                $store->setActiveGroups([$this->groupA->getId() => true]);
+            });
+
+            $this->assertStoredRows(
+                [
+                    $this->dataRow($this->groupA->getId(), $this->key1->getId(), self::VALUE_1),
+                    $this->dataRow($this->groupA->getId(), $this->key2->getId(), self::VALUE_2),
+                ],
+                [$this->groupA->getId()]
+            );
+        } finally {
+            $this->restoreCompositeForeignKey();
+        }
     }
 
     public function testChangingTheCollectionMapping(): void
@@ -627,6 +665,28 @@ class SaveDiffTest extends AbstractBatchedRelationTest
         );
 
         return $value === false ? null : (string) $value;
+    }
+
+    private function getCompositeForeignKeyName(): string
+    {
+        return EavEngine::getForeignKeyName($this->getDataTableName(), self::COMPOSITE_FOREIGN_KEY);
+    }
+
+    private function dropCompositeForeignKey(): void
+    {
+        Db::get()->executeStatement(
+            'ALTER TABLE `' . $this->getDataTableName() . '` DROP FOREIGN KEY `'
+            . $this->getCompositeForeignKeyName() . '`'
+        );
+    }
+
+    private function restoreCompositeForeignKey(): void
+    {
+        Db::get()->executeStatement(
+            'ALTER TABLE `' . $this->getDataTableName() . '` ADD CONSTRAINT `'
+            . $this->getCompositeForeignKeyName() . '` FOREIGN KEY (`id`, `fieldname`, `groupId`) REFERENCES `'
+            . $this->getGroupsTableName() . '` (`id`, `fieldname`, `groupId`) ON DELETE CASCADE'
+        );
     }
 
     private function getDataTableName(): string

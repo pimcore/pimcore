@@ -749,7 +749,7 @@ final class EavEngine extends AbstractDao implements EngineInterface
 
         $dataRowsToDelete = [];
         foreach ($storedDataRows as $rowKey => $storedRow) {
-            // a deactivated group's rows go with it through the ON DELETE CASCADE
+            // a deactivated group's rows are taken in bulk below, not one by one
             if (!isset($dataRows[$rowKey]) && !isset($groupIdsToDeleteMap[(int) $storedRow['groupId']])) {
                 $dataRowsToDelete[] = $storedRow;
             }
@@ -769,6 +769,9 @@ final class EavEngine extends AbstractDao implements EngineInterface
         );
         $this->deleteDataRows($dataTable, $dataRowsToDelete, $objectId, $fieldname);
         $this->writeDataRows($dataTable, $dataRowsToWrite);
+        // explicitly, and before the group rows: a value table that the migration which backfilled
+        // the composite foreign key skipped has no cascade to take them
+        $this->deleteGroupRows($dataTable, $groupIdsToDelete, $objectId, $fieldname);
         $this->deleteGroupRows($groupsTable, $groupIdsToDelete, $objectId, $fieldname);
     }
 
@@ -1021,6 +1024,8 @@ final class EavEngine extends AbstractDao implements EngineInterface
     }
 
     /**
+     * The rows a set of groups owns in one of the two tables, in bulk rather than row by row.
+     *
      * @param int[] $groupIds
      *
      * @throws Exception
