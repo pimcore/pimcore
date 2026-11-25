@@ -86,14 +86,19 @@ final class TwigSandboxReentrancyTest extends TestCase
 
         $twig = $engine->getTwigEnvironment(true);
 
+        $caught = null;
+
         try {
             $template = $twig->createTemplate('{% set inner = probe.renderNested() %}{{ target.reveal() }}');
-
-            $this->expectException(SecurityError::class);
             $template->render(['probe' => $probe, 'target' => new SandboxProbeTarget()]);
+        } catch (SecurityError $e) {
+            $caught = $e;
         } finally {
             $engine->disableSandboxExtensionFromTwigEnvironment();
         }
+
+        $this->assertInstanceOf(SecurityError::class, $caught, 'Outer template must stay sandboxed');
+        $this->assertFalse($this->isSandboxed($engine), 'Sandbox must be disabled after the outermost render');
     }
 
     public function testLayoutMutatorsAreBlockedByDefaultPatterns(): void
