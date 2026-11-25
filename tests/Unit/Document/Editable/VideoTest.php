@@ -128,6 +128,17 @@ final class VideoTest extends TestCase
         );
     }
 
+    public function testVimeoEditmodeImagePreviewStillRendersNumericId(): void
+    {
+        $video = $this->buildVideo(Video::TYPE_VIMEO, '123456789');
+        $video->setConfig(['editmodeImagePreview' => true]);
+
+        $this->assertStringContainsString(
+            '<img src="https://vumbnail.com/123456789.jpg">',
+            $video->frontend(true)
+        );
+    }
+
     public function testSetDataFromEditmodeIgnoresNonStringPoster(): void
     {
         $video = new Video();
