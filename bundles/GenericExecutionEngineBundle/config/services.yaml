@@ -97,3 +97,7 @@ services:
     Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\StepConditionMiddleware:
         tags:
             - { name: "messenger.middleware" }
+
+    Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Middleware\CoauthorMiddleware:
+        tags:
+            - { name: "messenger.middleware" }

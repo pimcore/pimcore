@@ -283,6 +283,7 @@ pimcore:
                     manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
+                    multiValue: \Pimcore\Model\DataObject\ClassDefinition\Data\MultiValue
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
@@ -403,6 +404,7 @@ pimcore:
                     - pimcore_asset_version_preview
                     - pimcore_image_version_preview
                     - pimcore_dump
+                    - pimcore_website_config
                 hard_blocked_methods:
                     Pimcore\Model\User:
                         - getPassword
@@ -413,6 +415,7 @@ pimcore:
                         - getStream
                         - getLocalFile
                         - getTemporaryFile
+                        - getText
                         - delete
                         - save
                         - saveVersion
@@ -425,6 +428,15 @@ pimcore:
                         - delete
                         - save
                         - saveVersion
+                    # mail headers of an email document can carry data outside the viewer's
+                    # document workspace - keep them as unreachable as Asset content
+                    Pimcore\Model\Document\Email:
+                        - getSubject
+                        - getTo
+                        - getFrom
+                        - getReplyTo
+                        - getCc
+                        - getBcc
                 # Method families that cannot be enumerated by exact name: the dynamically
                 # generated `setXxx` setters and every other persistent mutator that writes
                 # without a later `save()` (e.g. saveIndex, deleteAutoSaveVersions, dumpClass,
@@ -445,9 +457,11 @@ pimcore:
                         # admin-UI (de)serialisation entry points: read-looking, but they take
                         # caller-supplied data and may persist (Consent writes Notes)
                         - '/editmode/i'
-                    # getDimensions($path, true) persists dimensions read from a caller-chosen path
+                    # getDimensions($path, true) persists dimensions read from a caller-chosen path;
+                    # getImageTransformInstance() hands back the global image adapter, which is not
+                    # itself a model and so is not covered by the other denylists once returned
                     Pimcore\Model\Asset\Image:
-                        - '/^getDimensions$/iD'
+                        - '/^(getDimensions|getImageTransformInstance)$/iD'
                     # persisted data values returned by generated getters that are not models;
                     # getAction() deletes the slug row when its field definition is gone
                     Pimcore\Model\DataObject\Data\UrlSlug:

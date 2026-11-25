@@ -877,10 +877,9 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $image = ltrim($image, '/');
-        $image = PIMCORE_WEB_ROOT . '/' . $image;
+        $image = $this->resolveConfinedPath($image, PIMCORE_WEB_ROOT);
 
-        if (is_file($image)) {
+        if ($image !== null && is_file($image)) {
             $newImage = new \Imagick();
 
             if ($mode == 'asTexture') {
@@ -934,12 +933,13 @@ class Imagick extends Adapter
                     'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
                 );
 
-                $image = ltrim($image, '/');
-                $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+                $image = $this->resolvePublicFilePath($image);
             }
 
-            $newImage = new \Imagick();
-            $newImage->readimage($image);
+            if ($image !== null) {
+                $newImage = new \Imagick();
+                $newImage->readimage($image);
+            }
         } elseif ($image instanceof \Imagick) {
             $newImage = $image;
         }
@@ -980,8 +980,11 @@ class Imagick extends Adapter
                 'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
             );
 
-            $image = ltrim($image, '/');
-            $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+            $image = $this->resolvePublicFilePath($image);
+
+            if ($image === null) {
+                return $this;
+            }
         }
 
         $newImage = new \Imagick();
@@ -996,10 +999,9 @@ class Imagick extends Adapter
     public function applyMask(string $image): static
     {
         $this->preModify();
-        $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $image = $this->resolvePublicFilePath($image);
 
-        if (is_file($image)) {
+        if ($image !== null && is_file($image)) {
             $this->resource->setImageMatte(true);
             $newImage = new \Imagick();
             $newImage->readimage($image);

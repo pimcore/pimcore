@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
@@ -592,6 +593,11 @@ class Multiselect extends Data implements
     public function getFieldType(): string
     {
         return 'multiselect';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Term;
     }
 
     protected function doGetDefaultValue(Concrete $object, array $context = []): mixed

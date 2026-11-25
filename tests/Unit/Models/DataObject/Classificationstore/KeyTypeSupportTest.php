@@ -1,0 +1,441 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Unit\Model\DataObject\Classificationstore;
+
+use Pimcore;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
+use Pimcore\Model\DataObject\Classificationstore\KeyTypeSupport;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Tests\Support\Test\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
+use RegexIterator;
+use SplFileInfo;
+
+/**
+ * Which field types a classification store key may be defined with, and what the two value columns
+ * of an EAV row can hold of them.
+ *
+ * The accepted set is enumerated from the shipped field types rather than written down here, so a
+ * type file added to core is accepted by this very test run without the predicate being edited.
+ * The exclusions are names, because they are the one part that cannot be derived.
+ */
+class KeyTypeSupportTest extends TestCase
+{
+    /**
+     * The seven types a key is never defined with because of what their value is.
+     * {@see KeyTypeSupport} carries the reason of each.
+     */
+    private const EXCLUDED_VALUE_TYPES = [
+        'block',
+        'objectbricks',
+        'fieldcollections',
+        'localizedfields',
+        'classificationstore',
+        'reverseObjectRelation',
+        'urlSlug',
+    ];
+
+    /**
+     * The type that is outside the accepted set only because it is outside the set this release
+     * unlocks, and that nothing refuses anywhere.
+     */
+    private const TYPES_OUTSIDE_THE_UNLOCKED_SET = [
+        'calculatedValue',
+    ];
+
+    /**
+     * The types the document engine unlocks: accepted, and held by no value column. The relation
+     * types are accepted and structured as well, and are a ticket of their own.
+     */
+    private const STRUCTURED_TYPES = [
+        self::CONSENT_TYPE, 'dateRange', 'externalImage', 'geobounds', 'geopoint', 'geopolygon', 'geopolyline',
+        'hotspotimage', 'imageGallery', 'link', 'numericRange', 'structuredTable', 'video',
+    ];
+
+    /**
+     * The types withdrawn as key types. Named here as they are named in the class under test: a
+     * withdrawal is a decision about names, so a test deriving it would assert nothing.
+     */
+    private const WITHDRAWN_KEY_TYPES = [
+        self::CONSENT_TYPE,
+        'permissionManyToManyRelation',
+        'permissionManyToOneRelation',
+    ];
+
+    /** The one withdrawn key type core ships itself. */
+    private const CONSENT_TYPE = 'consent';
+
+    private const ENCRYPTED_FIELD_TYPE = 'encryptedField';
+
+    private const MULTI_VALUE_TYPE = 'multiValue';
+
+    public function testEveryShippedFieldTypeIsAcceptedExceptTheEightExclusions(): void
+    {
+        $support = $this->support();
+        $excluded = $this->excludedTypes();
+        $seen = [];
+
+        foreach ($this->shippedFieldTypes() as $type) {
+            $seen[] = $type;
+            $this->assertSame(
+                !in_array($type, $excluded, true),
+                $support->isAcceptedType($type),
+                $type . ' is answered wrongly by the acceptance predicate'
+            );
+        }
+
+        // the walk has to have reached the exclusions, or the assertion above never ran for them
+        $this->assertSame([], array_diff($excluded, $seen));
+    }
+
+    /**
+     * An exclusion that is about the value is not borrowed around by wrapping the type in an
+     * `encryptedField`: encryption decides how a value is stored, not what the value is. A
+     * `urlSlug` delegate is the case that made the two questions worth separating - a store whose
+     * engine holds structured values holds the slug and the site id perfectly well, and holding
+     * them registers no route - so the key was definable and the slug it stored resolved to
+     * nothing.
+     *
+     * The exclusion that is not about the value refuses no delegate, exactly as it refuses nothing
+     * else: a `calculatedValue` is not a type this release unlocks, and the support core ships for
+     * it is untouched everywhere, including here.
+     */
+    public function testADelegateIsAcceptedExceptForTheExclusionsThatAreAboutTheValue(): void
+    {
+        $support = $this->support();
+
+        foreach (self::EXCLUDED_VALUE_TYPES as $type) {
+            $this->assertFalse(
+                $support->isAcceptedDelegateType($type),
+                $type . ' is no more a delegate of a key than it is a key type'
+            );
+        }
+
+        foreach (self::TYPES_OUTSIDE_THE_UNLOCKED_SET as $type) {
+            $this->assertTrue($support->isAcceptedDelegateType($type), $type . ' is refused nowhere');
+        }
+
+        foreach (['input', 'image', 'geopoint', 'manyToOneRelation'] as $type) {
+            $this->assertTrue($support->isAcceptedDelegateType($type), $type . ' is an eligible delegate');
+        }
+
+        // a misspelled delegate is answered by nothing here, which is what every release so far has
+        // done with one
+        $this->assertTrue($support->isAcceptedDelegateType('noSuchFieldType'));
+    }
+
+    /**
+     * Withdrawn and accepted are deliberately different answers, and deliberately not linked.
+     *
+     * A withdrawal is about the keys that may still be DEFINED, which is why
+     * {@see \Pimcore\Model\DataObject\Classificationstore\KeyConfig::save()} enforces it. Acceptance
+     * is about what a key holds, and a key that already carries a withdrawn type has to keep every
+     * answer it had: the engine check keeps governing it because `isAcceptedType()` still says yes,
+     * and data-hub-simple-rest keeps publishing it because `isAcceptedDelegateType()` still does.
+     * Reading these names into one of the two exclusion lists is what would have broken that.
+     */
+    public function testTheWithdrawnTypesAreRefusedAsKeyTypesWithoutLosingTheirOtherAnswers(): void
+    {
+        $support = $this->support();
+
+        foreach (self::WITHDRAWN_KEY_TYPES as $type) {
+            $this->assertTrue($support->isWithdrawnKeyType($type), $type . ' is withdrawn as a key type');
+            $this->assertTrue(
+                $support->isAcceptedDelegateType($type),
+                $type . ' stays accepted, so a key already carrying it keeps its answers'
+            );
+        }
+
+        // consent is the one of the three core ships itself, so the loader resolves it here
+        $this->assertTrue($support->isAcceptedType(self::CONSENT_TYPE));
+
+        foreach (['input', 'geopoint', 'manyToOneRelation', self::MULTI_VALUE_TYPE] as $type) {
+            $this->assertFalse($support->isWithdrawnKeyType($type), $type . ' is not withdrawn');
+        }
+    }
+
+    public function testATypeNoLoaderResolvesIsNotAccepted(): void
+    {
+        $this->assertFalse($this->support()->isAcceptedType('noSuchFieldType'));
+    }
+
+    public function testAScalarNormalisingTypeAndAMarshalledTypeAreHeldInTheValueColumns(): void
+    {
+        $support = $this->support();
+
+        // declares a scalar-compatible normalize() return type
+        foreach (['input', 'select', 'numeric', 'checkbox', 'date', 'datetime', 'time'] as $type) {
+            $this->assertTrue($support->isHeldInValueColumns($type), $type . ' normalizes to a scalar');
+        }
+
+        // a classificationstore marshaller packs the value into the two columns - the set
+        // bundles/CoreBundle/config/marshaller.yaml registers, which names one key no shipped type
+        // answers (inputQuantityValueRange) and is asserted as the marshaller list it is
+        foreach ([
+            'booleanSelect', 'countrymultiselect', 'image', 'inputQuantityValue', 'inputQuantityValueRange',
+            'languagemultiselect', 'multiselect', 'quantityValue', 'quantityValueRange', 'rgbaColor', 'table',
+        ] as $type) {
+            $this->assertTrue($support->isHeldInValueColumns($type), $type . ' has a classificationstore marshaller');
+        }
+    }
+
+    public function testTheThirteenUnlockedTypesAreAcceptedAndHeldByNoValueColumn(): void
+    {
+        $support = $this->support();
+
+        foreach (self::STRUCTURED_TYPES as $type) {
+            $this->assertTrue($support->isAcceptedType($type), $type . ' is part of the accepted set');
+            $this->assertFalse(
+                $support->isHeldInValueColumns($type),
+                $type . ' has no classificationstore marshaller and does not normalize to a scalar'
+            );
+        }
+    }
+
+    /**
+     * The check follows an encryptedField into its delegate instead of stopping at the marshaller
+     * the encryptedField itself has: that marshaller encrypts what the delegate's marshaller packed,
+     * so a delegate with no marshaller leaves it nothing to encrypt and stores null.
+     */
+    public function testAnEncryptedFieldIsHeldExactlyWhenItsDelegateIs(): void
+    {
+        $support = $this->support();
+
+        $this->assertTrue($support->isHeldInValueColumns(self::ENCRYPTED_FIELD_TYPE, 'input'));
+        $this->assertTrue($support->isHeldInValueColumns(self::ENCRYPTED_FIELD_TYPE, 'image'));
+        $this->assertFalse($support->isHeldInValueColumns(self::ENCRYPTED_FIELD_TYPE, 'geopoint'));
+
+        // no delegate configured normalizes the plain value unchanged, which the column takes
+        $this->assertTrue($support->isHeldInValueColumns(self::ENCRYPTED_FIELD_TYPE));
+    }
+
+    /**
+     * The same follow-through for the other wrapper, for the same reason: the
+     * `classificationstore_multiValue` marshaller packs what the inner type's marshaller packed, so
+     * a key wrapping a type the two value columns cannot hold cannot be held in them either -
+     * answering it on the strength of the wrapper's own marshaller would accept on an EAV store
+     * exactly the keys that store refuses unwrapped.
+     */
+    public function testAMultiValueKeyIsHeldExactlyWhenItsInnerTypeIs(): void
+    {
+        $support = $this->support();
+
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'input'));
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'image'));
+        $this->assertFalse($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'geopoint'));
+        $this->assertFalse($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'manyToManyObjectRelation'));
+
+        // no inner type configured normalizes the plain value unchanged, which the column takes
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE));
+    }
+
+    /**
+     * The declaration question, which is the other half and is deliberately not answered through
+     * the one above: a `multiValue` wrapping an `input` IS held in the value columns - each of its
+     * slots holds an input - and the thing an EAV row has no room for is the qualifier that says
+     * WHICH slot. So the two answers disagree about the same key, as they must.
+     */
+    public function testAMultiValueKeyNeedsTheMultiValueCapabilityWhateverItWraps(): void
+    {
+        $support = $this->support();
+
+        $this->assertSame([EngineFeature::MultiValue], $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE));
+        $this->assertSame(
+            [EngineFeature::MultiValue],
+            $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE, ['delegateDatatype' => 'input'])
+        );
+
+        // and the type is held in the value columns all the same, which is why one answer is not the other
+        $this->assertTrue($support->isHeldInValueColumns(self::MULTI_VALUE_TYPE, 'input'));
+    }
+
+    public function testADeclarationNamingVariantsNeedsTheVariantsCapabilityOnTop(): void
+    {
+        $support = $this->support();
+
+        $this->assertSame(
+            [EngineFeature::MultiValue, EngineFeature::Variants],
+            $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE, [
+                'delegateDatatype' => 'numeric',
+                'variants' => [['name' => 'Metric'], ['name' => 'Imperial']],
+            ])
+        );
+
+        // an empty list and an absent member are the same declaration: no variant is named
+        $this->assertSame(
+            [EngineFeature::MultiValue],
+            $support->requiredEngineFeatures(self::MULTI_VALUE_TYPE, ['variants' => []])
+        );
+    }
+
+    /**
+     * The control the refusal needs: a predicate that answered every type would refuse everything
+     * and pass a test that only ever asks about `multiValue`.
+     */
+    public function testEveryOtherTypeNeedsNoCapabilityForItsDeclaration(): void
+    {
+        $support = $this->support();
+
+        foreach (['input', 'numeric', 'image', 'geopoint', self::ENCRYPTED_FIELD_TYPE, self::CONSENT_TYPE] as $type) {
+            $this->assertSame(
+                [],
+                $support->requiredEngineFeatures($type, ['variants' => [['name' => 'Metric']]]),
+                $type . ' declares nothing an engine has to be able to address'
+            );
+        }
+    }
+
+    /**
+     * An exclusion that is about the VALUE holds through either wrapper: a key is never defined with
+     * one of these, and neither encrypting the value nor letting it carry qualifiers changes that.
+     */
+    public function testAnExclusionAboutTheValueIsRefusedAsTheInnerTypeOfEitherWrapper(): void
+    {
+        $support = $this->support();
+
+        foreach (['reverseObjectRelation', 'urlSlug', 'classificationstore', 'block'] as $type) {
+            $this->assertFalse(
+                $support->isAcceptedDelegateType($type),
+                $type . ' may not be the inner type of a wrapper key'
+            );
+        }
+    }
+
+    public function testEveryShippedFieldTypeAnswersItsFilterDeclaration(): void
+    {
+        foreach ($this->shippedFieldTypeDefinitions() as $type => $fieldDefinition) {
+            $this->assertInstanceOf(
+                KeyFilter::class,
+                $fieldDefinition->getClassificationStoreKeyFilter(),
+                $type . ' has to answer the filter declaration'
+            );
+        }
+    }
+
+    public function testATypeThatOverridesNothingDeclaresNoFilter(): void
+    {
+        $fieldDefinition = new class extends Data {
+            public function getDataForEditmode(mixed $data, ?Concrete $object = null, array $params = []): mixed
+            {
+                return $data;
+            }
+
+            public function getDataFromEditmode(mixed $data, ?Concrete $object = null, array $params = []): mixed
+            {
+                return $data;
+            }
+
+            public function getFieldType(): string
+            {
+                return 'thirdPartyType';
+            }
+
+            public function getParameterTypeDeclaration(): ?string
+            {
+                return null;
+            }
+
+            public function getReturnTypeDeclaration(): ?string
+            {
+                return null;
+            }
+
+            public function getPhpdocInputType(): ?string
+            {
+                return null;
+            }
+
+            public function getPhpdocReturnType(): ?string
+            {
+                return null;
+            }
+        };
+
+        $this->assertSame(KeyFilter::None, $fieldDefinition->getClassificationStoreKeyFilter());
+    }
+
+    /**
+     * The eight exclusions: the seven a key is never defined with, and the one that is outside the
+     * set this release unlocks.
+     *
+     * @return string[]
+     */
+    private function excludedTypes(): array
+    {
+        return array_merge(self::EXCLUDED_VALUE_TYPES, self::TYPES_OUTSIDE_THE_UNLOCKED_SET);
+    }
+
+    private function support(): KeyTypeSupport
+    {
+        return Pimcore::getContainer()->get(KeyTypeSupport::class);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function shippedFieldTypes(): array
+    {
+        return array_keys($this->shippedFieldTypeDefinitions());
+    }
+
+    /**
+     * Every concrete field type shipped under models/DataObject/ClassDefinition/Data, keyed by the
+     * field type name it answers.
+     *
+     * @return array<string, Data>
+     */
+    private function shippedFieldTypeDefinitions(): array
+    {
+        $directory = dirname((string) (new ReflectionClass(Data::class))->getFileName()) . '/Data';
+        $definitions = [];
+
+        /** @var SplFileInfo $file */
+        foreach ($this->phpFilesIn($directory) as $file) {
+            $relative = substr($file->getPathname(), strlen($directory) + 1, -strlen('.php'));
+            $class = Data::class . '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
+
+            if (!class_exists($class)) {
+                continue;
+            }
+
+            $reflection = new ReflectionClass($class);
+            if ($reflection->isAbstract() || !$reflection->isSubclassOf(Data::class)) {
+                continue;
+            }
+
+            $fieldDefinition = $reflection->newInstanceWithoutConstructor();
+            $this->assertInstanceOf(Data::class, $fieldDefinition);
+            $definitions[$fieldDefinition->getFieldType()] = $fieldDefinition;
+        }
+
+        $this->assertNotSame([], $definitions, 'the field type directory has to be readable');
+
+        return $definitions;
+    }
+
+    /**
+     * @return iterable<SplFileInfo>
+     */
+    private function phpFilesIn(string $directory): iterable
+    {
+        return new RegexIterator(
+            new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
+            '/\.php$/'
+        );
+    }
+}

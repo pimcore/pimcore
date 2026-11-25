@@ -461,6 +461,7 @@ CREATE TABLE `users` (
   `permissions` text,
   `roles` varchar(1000) DEFAULT NULL,
   `welcomescreen` tinyint(1) DEFAULT NULL,
+  `welcomeScreenTarget` varchar(255) DEFAULT NULL,
   `closeWarning` tinyint(1) DEFAULT NULL,
   `memorizeTabs` tinyint(1) DEFAULT NULL,
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
@@ -627,8 +628,11 @@ CREATE TABLE `classificationstore_stores` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
+	`engine` VARCHAR(32) NULL DEFAULT NULL,
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	INDEX `name` (`name`)
+	INDEX `name` (`name`),
+	UNIQUE INDEX `identifier` (`identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
@@ -640,9 +644,28 @@ CREATE TABLE `classificationstore_groups` (
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
+	`customMetadata` json NULL,
 	PRIMARY KEY (`id`),
 	INDEX `storeId` (`storeId`),
-	INDEX `name` (`name`)
+	INDEX `name` (`name`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+DROP TABLE IF EXISTS `classificationstore_subgroups`;
+CREATE TABLE `classificationstore_subgroups` (
+	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
+	`storeId` INT NULL DEFAULT NULL,
+	`name` VARCHAR(190) NOT NULL DEFAULT '',
+	`description` VARCHAR(255) NULL DEFAULT NULL,
+	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
+	`customMetadata` json NULL,
+	PRIMARY KEY (`id`),
+	INDEX `storeId` (`storeId`),
+	INDEX `name` (`name`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_keys`;
@@ -657,11 +680,15 @@ CREATE TABLE `classificationstore_keys` (
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`definition` json NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
+	`localized` TINYINT(1) NULL DEFAULT NULL,
+	`customMetadata` json NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `enabled` (`enabled`),
 	INDEX `type` (`type`),
-	INDEX `storeId` (`storeId`)
+	INDEX `storeId` (`storeId`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 CREATE TABLE `classificationstore_relations` (
@@ -669,9 +696,14 @@ CREATE TABLE `classificationstore_relations` (
 	`keyId` INT(11) unsigned NOT NULL,
 	`sorter` INT(11) NULL DEFAULT NULL,
 	`mandatory` TINYINT(1) NULL DEFAULT NULL,
+	`metadata` json NULL,
+	`definitionOverride` json NULL,
+	`subGroup` VARCHAR(190) NULL DEFAULT NULL,
+
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	INDEX `mandatory` (`mandatory`),
+	INDEX `subGroup` (`subGroup`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
@@ -684,8 +716,11 @@ CREATE TABLE `classificationstore_collections` (
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
+	`identifier` VARCHAR(190) NULL DEFAULT NULL,
+	`customMetadata` json NULL,
 	PRIMARY KEY (`id`),
-	INDEX `storeId` (`storeId`)
+	INDEX `storeId` (`storeId`),
+	UNIQUE INDEX `storeId_identifier` (`storeId`, `identifier`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
@@ -695,6 +730,16 @@ CREATE TABLE `classificationstore_collectionrelations` (
     `sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`colId`, `groupId`),
 	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+DROP TABLE IF EXISTS `classificationstore_labels`;
+CREATE TABLE `classificationstore_labels` (
+	`entityType` ENUM('store','collection','group','subgroup','key') NOT NULL,
+	`entityId` BIGINT(20) NOT NULL,
+	`language` VARCHAR(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+	`title` VARCHAR(255) NULL DEFAULT NULL,
+	`description` TEXT NULL,
+	PRIMARY KEY (`entityType`, `entityId`, `language`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `quantityvalue_units`;

@@ -14,9 +14,12 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore;
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Data\Consent;
+use Pimcore\Model\DataObject\Data\MultiValue;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -30,11 +33,47 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class ClassificationstoreTest extends ModelTestCase
 {
+    private const DOCUMENT_ENGINE = 'document';
+
+    private const MULTI_VALUE_GROUP = 'groupMultiValue';
+
+    private const MULTI_VALUE_KEY = 'mvHeight';
+
+    private const METRIC = 'metric';
+
+    private const IMPERIAL = 'imperial';
+
+    private bool $storeWasPutOnTheDocumentEngine = false;
+
+    private ?string $storeEngineBeforeTheTest = null;
+
     public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
         Pimcore::setAdminMode();
+    }
+
+    public function tearDown(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+
+        if ($store) {
+            Classificationstore\KeyConfig::getByName(self::MULTI_VALUE_KEY, $store->getId())?->delete();
+            Classificationstore\GroupConfig::getByName(self::MULTI_VALUE_GROUP, $store->getId())?->delete();
+        }
+
+        if ($this->storeWasPutOnTheDocumentEngine && $store) {
+            $store->setEngine($this->storeEngineBeforeTheTest);
+            $store->save();
+            $this->storeWasPutOnTheDocumentEngine = false;
+        }
+
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+
+        parent::tearDown();
     }
 
     protected function setUpTestClasses(): void
@@ -349,5 +388,281 @@ class ClassificationstoreTest extends ModelTestCase
                 'child mapping for a different group to the same collection must not be stripped'
             );
         });
+    }
+
+    /**
+     * Inheritance resolves per (language, variant): a child that holds no value for one variant
+     * takes the parent's value of that variant and never of another.
+     */
+    public function testAVariantIsInheritedOnItsOwn(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL]);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('variant-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.80 m', null, self::METRIC),
+                new MultiValue('5 ft 11 in', null, self::IMPERIAL),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('variant-child', (int) $parent->getId());
+            $child->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.90 m', null, self::METRIC),
+            ]);
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(
+                ['1.90 m'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::METRIC),
+                'the child answers its own metric value'
+            );
+            $this->assertSame(
+                ['5 ft 11 in'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL),
+                'and inherits the imperial one it holds nothing for'
+            );
+        });
+    }
+
+    /**
+     * A key whose field type refuses inheritance refuses it for its QUALIFIED slots as well.
+     *
+     * `consent` is the type in the unlocked set that answers no: a consent is the record of what one
+     * data subject agreed to, so a child reading its parent's grant - and the id of the audit note
+     * behind it - answers "has this one consented" with somebody else's answer. The per-key read and
+     * the whole-store read both ask
+     * {@see Classificationstore\Service::supportsInheritance()} about it, and the merge of an
+     * ancestor's qualified slots did not: a parent's named variant arrived in the child regardless,
+     * which also made it satisfy the child's mandatory check and reach the child's search index.
+     */
+    public function testAParentsQualifiedSlotsAreNotInheritedByAKeyThatRefusesInheritance(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey(
+            [self::METRIC, self::IMPERIAL],
+            new ClassDefinition\Data\Consent()
+        );
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('consent-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue(new Consent(true, 11), null, null, 0),
+                new MultiValue(new Consent(true, 13), null, self::IMPERIAL, 0),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('consent-child', (int) $parent->getId());
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(
+                [],
+                $childStore->getKeyValues($groupId, $keyId),
+                'the parent\'s value in the default variant is not the child\'s consent'
+            );
+            $this->assertSame(
+                [],
+                $childStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL),
+                'and neither is the parent\'s named variant'
+            );
+            $this->assertSame(
+                [],
+                $childStore->getQualifiedItems()[$groupId][$keyId] ?? [],
+                'nothing of the parent reached the qualified tree the validation snapshot, the save'
+                . ' and the search index are all read from'
+            );
+
+            // and the parent still answers both of its own, so the filter is about the
+            // ancestor's values rather than about the key
+            $parentStore = Inheritance::getById($parent->getId(), ['force' => true])->getTeststore();
+
+            $this->assertCount(1, $parentStore->getKeyValues($groupId, $keyId));
+            $this->assertCount(1, $parentStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL));
+        });
+    }
+
+    /**
+     * An inheritable key beside it, on the same fixture: the filter is per KEY, so a `multiValue`
+     * key of an inheriting type still hands its variants down. Without this the fix above would
+     * pass by inheriting nothing at all.
+     */
+    public function testAnInheritableKeysQualifiedSlotsAreStillInherited(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC, self::IMPERIAL]);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('inheritable-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.80 m', null, self::METRIC, 0),
+                new MultiValue('5 ft 11 in', null, self::IMPERIAL, 0),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('inheritable-child', (int) $parent->getId());
+            $child->save();
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            $this->assertSame(
+                ['1.80 m'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::METRIC)
+            );
+            $this->assertSame(
+                ['5 ft 11 in'],
+                $childStore->getKeyValues($groupId, $keyId, null, self::IMPERIAL)
+            );
+        });
+    }
+
+    /**
+     * The default slot of a child that holds only a value above position 0 reads as nothing, so the
+     * value resolved for it is the parent's. That value is the parent's to answer for: validating it
+     * against this key would reject the child for something it does not show.
+     */
+    public function testAParentsValueIsNotValidatedAgainstAChildHoldingOnlyAHigherPosition(): void
+    {
+        $this->putTheStoreOnTheDocumentEngine();
+        [$groupId, $keyId] = $this->createMultiValueKey([self::METRIC]);
+
+        DataObject\Service::useInheritedValues(true, function () use ($groupId, $keyId) {
+            $parent = $this->createObject('kept-parent', 1);
+            $parent->getTeststore()->setKeyValues($groupId, $keyId, [
+                new MultiValue('1.80 m', null, null, 0),
+            ]);
+            $parent->save();
+
+            $child = $this->createObject('kept-child', (int) $parent->getId());
+            $this->writeKeptPosition($child, $groupId, $keyId);
+
+            $childStore = Inheritance::getById($child->getId(), ['force' => true])->getTeststore();
+
+            // the child's own default slot reads as nothing, whatever the parent holds
+            $this->assertSame([], $childStore->getKeyValues($groupId, $keyId));
+
+            // and saving it again does not fail on the parent's value
+            $childStore->getObject()->save();
+        });
+    }
+
+    /**
+     * A value above position 0 the way an installation carries one written before the list went:
+     * setKeyValues() refuses it now, while setQualifiedKeyValue() still restores a stored position,
+     * which is how the document engine puts one back on the model.
+     */
+    private function writeKeptPosition(Inheritance $object, int $groupId, int $keyId): void
+    {
+        $object->getTeststore()->setQualifiedKeyValue($groupId, $keyId, '1.70 m', null, null, 1);
+        $object->save();
+    }
+
+    private function createObject(string $key, int $parentId): Inheritance
+    {
+        $object = new Inheritance();
+        $object->setKey($key);
+        $object->setParentId($parentId);
+        $object->setPublished(true);
+        $object->save();
+
+        return $object;
+    }
+
+    /**
+     * The qualifiers are a capability of the document engine, so the shared test store is put on it
+     * for the duration of the test and put back in tearDown - the other test classes of the suite
+     * assert against the engine their own fixture asked for.
+     */
+    private function putTheStoreOnTheDocumentEngine(): void
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+        $this->storeEngineBeforeTheTest = $store->getEngine();
+        $this->storeWasPutOnTheDocumentEngine = true;
+
+        $store->setEngine(self::DOCUMENT_ENGINE);
+        $store->save();
+
+        Pimcore::getContainer()->get(Classificationstore\Engine\EngineResolver::class)
+            ->resolveForStore($store->getId())
+            ->createUpdateTables(ClassDefinition::getByName('inheritance'), $store->getId());
+    }
+
+    /**
+     * $innerType is the type the key wraps, an `input` by default: whether a value may be read off
+     * an ancestor is the inner type's answer, so a test about that has to be able to choose it.
+     *
+     * @param string[] $variants
+     *
+     * @return array{int, int} the group id and the key id
+     */
+    private function createMultiValueKey(array $variants, ?ClassDefinition\Data $innerType = null): array
+    {
+        $store = Classificationstore\StoreConfig::getByName('teststore');
+
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName(self::MULTI_VALUE_GROUP);
+        $group->save();
+
+        $inner = $innerType ?? new ClassDefinition\Data\Input();
+        $inner->setName(self::MULTI_VALUE_KEY);
+
+        $definition = new ClassDefinition\Data\MultiValue();
+        $definition->setName(self::MULTI_VALUE_KEY);
+        $definition->setVariants(array_map(static fn (string $name): array => ['name' => $name], $variants));
+        $definition->setDelegateDatatype($inner->getFieldType());
+        $definition->setDelegate($inner);
+
+        // A withdrawn delegate can no longer be defined, so such a key is written the way an
+        // installation carries one it defined before the withdrawal: saved with a delegate the
+        // guard accepts, then given its real definition. That is the state this test is about.
+        $withdrawn = Pimcore::getContainer()
+            ->get(Classificationstore\KeyTypeSupport::class)
+            ->isWithdrawnKeyType((string) $inner->getFieldType());
+
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName(self::MULTI_VALUE_KEY);
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType($definition->getFieldType());
+        $keyConfig->setDefinition((string) json_encode($withdrawn ? $this->withInputDelegate($definition) : $definition));
+        $keyConfig->save();
+
+        if ($withdrawn) {
+            Db::get()->update(
+                Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS,
+                ['definition' => (string) json_encode($definition)],
+                ['id' => $keyConfig->getId()]
+            );
+        }
+
+        $relation = new Classificationstore\KeyGroupRelation();
+        $relation->setKeyId($keyConfig->getId());
+        $relation->setGroupId($group->getId());
+        $relation->setSorter(1);
+        $relation->save();
+
+        Classificationstore\DefinitionCache::clear(null);
+        Classificationstore\Service::clearDefinitionsCache();
+        Pimcore::getContainer()->get(Classificationstore\KeyGroupRelationCache::class)->reset();
+
+        return [(int) $group->getId(), (int) $keyConfig->getId()];
+    }
+
+    /** The same declaration with a delegate the definition-time guard accepts. */
+    private function withInputDelegate(ClassDefinition\Data\MultiValue $definition): ClassDefinition\Data\MultiValue
+    {
+        $placeholder = new ClassDefinition\Data\Input();
+        $placeholder->setName(self::MULTI_VALUE_KEY);
+
+        $accepted = clone $definition;
+        $accepted->setDelegateDatatype($placeholder->getFieldType());
+        $accepted->setDelegate($placeholder);
+
+        return $accepted;
     }
 }

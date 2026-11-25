@@ -21,7 +21,9 @@ use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementType;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,6 +61,8 @@ final class Redirect extends AbstractModel
     protected bool $passThroughParameters = false;
 
     protected ?string $target = null;
+
+    protected ?ElementType $targetType = null;
 
     protected ?int $targetSite = null;
 
@@ -143,21 +147,30 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * resolved target path with handling for document ids as `target`
-     *   - tries to resolve the target as document by id and take its full path
-     *   - if no document can be found the target is used as target path
+     * resolved target path with handling for element ids as `target`
+     *   - tries to resolve the target as a document (or, for an asset target, an asset) by id and
+     *     takes its frontend path - for documents exactly what this method returned before target
+     *     types existed
+     *   - a data object has no path of its own (its URL comes from the link generator of its
+     *     class, applied by the RedirectHandler), so it falls through to the plain target
+     *   - if no element can be found the target is used as target path
      *   - ensures a slash at the beginning of the target string
      */
     public function getTargetPath(): string
     {
         $redirectTarget = $this->target;
-        $targetDocumentPath = null;
+        $targetElementPath = null;
 
-        if (is_numeric($redirectTarget)) {
-            $targetDocumentPath = Document::getById((int)$redirectTarget)?->getFullPath();
+        // only an element reference needs resolving, so a plain URL target costs nothing
+        if (null !== $redirectTarget && is_numeric($redirectTarget)) {
+            $targetElementPath = match ($this->targetType ?? ElementType::Document) {
+                ElementType::Document => Document::getById((int) $redirectTarget)?->getFullPath(),
+                ElementType::Asset => Asset::getById((int) $redirectTarget)?->getFullPath(),
+                ElementType::Object => null,
+            };
         }
 
-        $resolvedPath = ($targetDocumentPath ?? $redirectTarget) ?? '';
+        $resolvedPath = ($targetElementPath ?? $redirectTarget) ?? '';
 
         if (!str_starts_with($resolvedPath, '/')) {
             return '/'.$resolvedPath;
@@ -323,6 +336,28 @@ final class Redirect extends AbstractModel
     public function getTargetSite(): ?int
     {
         return $this->targetSite;
+    }
+
+    public function getTargetType(): ?ElementType
+    {
+        return $this->targetType;
+    }
+
+    /**
+     * @throws InvalidArgumentException if the given target type is not a valid element type
+     */
+    public function setTargetType(ElementType|string|null $targetType): static
+    {
+        if ('' === $targetType) {
+            $targetType = null;
+        } elseif (is_string($targetType)) {
+            $targetType = ElementType::tryFrom($targetType)
+                ?? throw new InvalidArgumentException(sprintf('Invalid target type "%s"', $targetType));
+        }
+
+        $this->targetType = $targetType;
+
+        return $this;
     }
 
     public function setPassThroughParameters(bool $passThroughParameters): static

@@ -1147,6 +1147,7 @@ final class Configuration implements ConfigurationInterface
                             .'Defaults to false to preserve existing behavior; the permissive default is deprecated since '
                             .'2026.3 and will be removed in 2027.1. See Pimcore\Model\Document\Editable\Link\AttributeSanitizer.'
                         ))
+                        ->append($this->createEmbedSanitizerNode())
                     ->end()
                 ->end()
                 ->arrayNode('areas')
@@ -1263,6 +1264,39 @@ final class Configuration implements ConfigurationInterface
                         'Also reject script-executing data: URLs when "strict" is true (data:image/* other than '
                         .'data:image/svg+xml stays allowed, e.g. for a downloadable data-uri image). '
                         .'Has no effect while "strict" is false.'
+                    )
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    /**
+     * Builds the "embed_sanitizer" node (pimcore.documents.editables.embed_sanitizer) governing
+     * \Pimcore\Model\Document\Editable\Embed\UrlSanitizer.
+     */
+    private function createEmbedSanitizerNode(): ArrayNodeDefinition
+    {
+        $node = new ArrayNodeDefinition('embed_sanitizer');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('strict')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            $parsed = filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                            return $parsed ?? $v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                    ->info(
+                        'Require the Embed editable\'s URL to be a well-formed http(s) URL with a host, free of '
+                        .'characters that are significant in HTML, before handing it to Embera (which returns '
+                        .'anything no oEmbed provider recognizes unchanged). Defaults to false to preserve existing '
+                        .'behavior; the permissive default is deprecated since 2026.3 and will be removed in 2027.1. '
+                        .'See Pimcore\Model\Document\Editable\Embed\UrlSanitizer.'
                     )
                 ->end()
             ->end();
@@ -2322,7 +2356,8 @@ final class Configuration implements ConfigurationInterface
                                 functions that look up and return a live model instance by id/path, expose a
                                 filesystem/state oracle (e.g. `pimcore_file_exists`), read and delete an
                                 arbitrary file (`pimcore_asset_version_preview`,
-                                `pimcore_image_version_preview`) or dump arbitrary objects (`pimcore_dump`) - a
+                                `pimcore_image_version_preview`), dump arbitrary objects (`pimcore_dump`) or
+                                disclose private website settings (`pimcore_website_config`) - a
                                 site can append further function names on top of that default.')
                                 ->scalarPrototype()->end()
                             ->end()

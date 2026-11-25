@@ -18,7 +18,11 @@ namespace Pimcore\Contracts\ChangeControl;
  */
 enum ConflictPolicy: string
 {
-    /** the merge's check fails: the conflict is a `MergeProblem` of a refused merge */
+    /**
+     * the merge's check fails: the conflict is a `MergeProblem` of a refused merge. A conflict found
+     * only while writing, not in the check before it, may end the merge as partial with a problem of
+     * `WriteFailed` or `Other` that is no conflict
+     */
     case Stop = 'stop';
 
     /** the branch's value is written over the object's, as when a file being imported wins */

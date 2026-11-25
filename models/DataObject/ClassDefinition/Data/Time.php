@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
@@ -210,5 +211,10 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     public function getFieldType(): string
     {
         return 'time';
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Term;
     }
 }

@@ -7,6 +7,10 @@ services:
     # redirect handler used to handle redirects before/after routing
     Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler: ~
 
+    # translates between the element path a user works with and the element ID a redirect stores
+    Pimcore\Bundle\SeoBundle\Redirect\TargetResolver: ~
+    Pimcore\Bundle\SeoBundle\Redirect\TargetResolverInterface: '@Pimcore\Bundle\SeoBundle\Redirect\TargetResolver'
+
     #
     # REDIRECTS Export
     #

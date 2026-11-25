@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Classificationstore\KeyFilter;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\StructuredValidationException;
 use Pimcore\Model\Element\ValidationMessageKey;
@@ -249,5 +250,10 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function denormalize(mixed $value, array $params = []): ?bool
     {
         return $value === null ? null : (bool) $value;
+    }
+
+    public function getClassificationStoreKeyFilter(): KeyFilter
+    {
+        return KeyFilter::Boolean;
     }
 }

@@ -20,7 +20,7 @@ namespace Pimcore\Contracts\ChangeControl;
  */
 enum MergeProblemCode: string
 {
-    /** the object changed this value too, under `ConflictPolicy::Stop` */
+    /** the object changed this value too, under `ConflictPolicy::Stop`, found in the check before writing */
     case Conflict = 'conflict';
 
     /** the object no longer exists */

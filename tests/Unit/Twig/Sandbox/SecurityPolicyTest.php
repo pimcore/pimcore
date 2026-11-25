@@ -35,6 +35,7 @@ use Pimcore\Model\DataObject\Listing as DataObjectListing;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
+use Pimcore\Model\Document\Email;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\Element\Recyclebin;
 use Pimcore\Model\Element\Tag;
@@ -226,6 +227,7 @@ final class SecurityPolicyTest extends TestCase
         yield 'getStream' => ['getStream'];
         yield 'getLocalFile' => ['getLocalFile'];
         yield 'getTemporaryFile' => ['getTemporaryFile'];
+        yield 'getText' => ['getText'];
     }
 
     /**
@@ -235,10 +237,58 @@ final class SecurityPolicyTest extends TestCase
     {
         // GHSA-7gfm-v2fx-xrxm: Asset stays reachable (needed for filename/thumbnail access
         // in templates), but its content-returning methods must never be callable.
+        // GHSA-mq5g-844p-6p8j: Asset\Document::getText() returns extracted document text
+        // and must be blocked the same way as the other content-returning getters.
         $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new Asset(), $method);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function emailHeaderMethodsProvider(): iterable
+    {
+        yield 'getSubject' => ['getSubject'];
+        yield 'getTo' => ['getTo'];
+        yield 'getFrom' => ['getFrom'];
+        yield 'getReplyTo' => ['getReplyTo'];
+        yield 'getCc' => ['getCc'];
+        yield 'getBcc' => ['getBcc'];
+    }
+
+    /**
+     * @dataProvider emailHeaderMethodsProvider
+     */
+    public function testEmailHeaderMethodsAreHardBlockedByDefault(string $method): void
+    {
+        // GHSA-mq5g-844p-6p8j: a Document\Email's headers can carry data from outside
+        // the viewer's document workspace and must never be sandbox-reachable.
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Email(), $method);
+    }
+
+    public function testDocumentAssetTextIsHardBlockedByDefault(): void
+    {
+        // GHSA-mq5g-844p-6p8j: getText() only exists on Asset\Document; the block is declared
+        // for the Asset base class, so check that it reaches the subclass that is affected.
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Asset\Document(), 'getText');
+    }
+
+    public function testDocumentAssetIsOtherwiseReachableByDefault(): void
+    {
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
+
+        // no exception expected: page count and filename of a document asset stay usable in templates
+        $policy->checkMethodAllowed(new Asset\Document(), 'getPageCount');
+        $policy->checkMethodAllowed(new Asset\Document(), 'getFilename');
+        $this->addToAssertionCount(2);
     }
 
     public function testAssetIsOtherwiseReachableByDefault(): void
@@ -382,6 +432,32 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
+     * getImageTransformInstance() returns an object that is not a Pimcore model, so the other
+     * denylists do not apply to it once returned; the method itself has to be blocked.
+     */
+    public function testImageGetImageTransformInstanceIsHardBlockedByDefault(): void
+    {
+        $policy = new SecurityPolicy(
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Image(), 'getImageTransformInstance');
+    }
+
+    public function testImageGetImageTransformInstanceSurvivesAllowlistMode(): void
+    {
+        $policy = new SecurityPolicy(
+            allowedClasses: [Image::class],
+            hardBlockedMethodPatterns: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_method_patterns'],
+        );
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Image(), 'getImageTransformInstance');
+    }
+
+    /**
      * PHP method names are case-insensitive, so the exact-name hard blocks must be too.
      *
      * @return iterable<string, array{object, string}>
@@ -390,6 +466,8 @@ final class SecurityPolicyTest extends TestCase
     {
         yield 'Image::GETDIMENSIONS' => [new Image(), 'GETDIMENSIONS'];
         yield 'Image::getdimensions' => [new Image(), 'getdimensions'];
+        yield 'Image::GETIMAGETRANSFORMINSTANCE' => [new Image(), 'GETIMAGETRANSFORMINSTANCE'];
+        yield 'Image::getimagetransforminstance' => [new Image(), 'getimagetransforminstance'];
         yield 'Asset::GetData' => [new Asset(), 'GetData'];
         yield 'Asset::GETLOCALFILE' => [new Asset(), 'GETLOCALFILE'];
         yield 'User::GETPASSWORD' => [new User(), 'GETPASSWORD'];
@@ -670,8 +748,9 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
-     * The two `get*` methods that persist as a side effect must be blocked for consumers that
-     * build their own policy and pass nothing, in default and allowlist mode.
+     * The `get*` methods that persist as a side effect, or hand back a non-model object whose own
+     * methods are otherwise unrestricted, must be blocked for consumers that build their own
+     * policy and pass nothing, in default and allowlist mode.
      *
      * @return iterable<string, array{object, string}>
      */
@@ -679,6 +758,8 @@ final class SecurityPolicyTest extends TestCase
     {
         yield 'Image::getDimensions' => [new Image(), 'getDimensions'];
         yield 'Image::GETDIMENSIONS' => [new Image(), 'GETDIMENSIONS'];
+        yield 'Image::getImageTransformInstance' => [new Image(), 'getImageTransformInstance'];
+        yield 'Image::GETIMAGETRANSFORMINSTANCE' => [new Image(), 'GETIMAGETRANSFORMINSTANCE'];
         yield 'UrlSlug::getAction' => [new UrlSlug('x'), 'getAction'];
         yield 'UrlSlug::GETACTION' => [new UrlSlug('x'), 'GETACTION'];
     }
@@ -1037,10 +1118,24 @@ final class SecurityPolicyTest extends TestCase
 
     public function testBlockedFunctionsExtendsTheBuiltInDenylist(): void
     {
-        $policy = new SecurityPolicy(blockedFunctions: [
-            ...self::defaultSandboxSecurityPolicyConfig()['blocked_functions'],
-            'pimcore_website_config',
-        ]);
+        $defaultBlockedFunctions = self::defaultSandboxSecurityPolicyConfig()['blocked_functions'];
+        // a function the built-in denylist does not contain, so only the appended entry can block it
+        $this->assertNotContains('pimcore_url', $defaultBlockedFunctions);
+
+        $policy = new SecurityPolicy(blockedFunctions: [...$defaultBlockedFunctions, 'pimcore_url']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_url']);
+    }
+
+    public function testPimcoreWebsiteConfigIsNotAutoAllowedByDefault(): void
+    {
+        // GHSA-fq3q-7w2w-8q9f: WebsiteConfigExtension::getWebsiteConfig() returns the
+        // complete website configuration - including secrets such as the private
+        // reCAPTCHA key - for a null key, and a single secret value for an explicit key
+        // such as `recaptchaPrivate`. Neither call must be reachable from a sandboxed
+        // Email/Dynamic Text template.
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
 
         $this->expectException(SecurityNotAllowedFunctionError::class);
         $policy->checkSecurity([], [], ['pimcore_website_config']);

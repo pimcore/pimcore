@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -48,9 +49,53 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     public function setClassDefinitions(array $classDefinitions): static
     {
+        $this->validateClassDefinitions($classDefinitions, true);
+
         $this->classDefinitions = $classDefinitions;
 
         return $this;
+    }
+
+    /**
+     * The classname and fieldname of a class definition entry are used to build generated class files and the paths
+     * they are written to, so both have to be plain identifiers. Besides setClassDefinitions() (which also covers
+     * hydration from the definition file via setValues()), this is checked right before saving, because
+     * $classDefinitions is a public property. Empty values are tolerated while setting (like in
+     * ClassDefinition\Data::setName()), but not when saving, as such an entry cannot be resolved to a field.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function validateClassDefinitions(array $classDefinitions, bool $allowEmpty): void
+    {
+        $patterns = [
+            'classname' => '/^[a-zA-Z0-9_]+\z/',
+            'fieldname' => '/^[a-zA-Z_][a-zA-Z0-9_]{0,62}\z/',
+        ];
+
+        foreach ($classDefinitions as $cl) {
+            if (!is_array($cl)) {
+                throw new InvalidArgumentException('Invalid classDefinitions entry: expected array');
+            }
+
+            foreach ($patterns as $name => $pattern) {
+                if (!array_key_exists($name, $cl)) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Missing %s in Objectbrick classDefinitions entry',
+                        $name
+                    ));
+                }
+
+                $value = $cl[$name];
+
+                if (!is_string($value) || ($value === '' ? !$allowEmpty : !preg_match($pattern, $value))) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Invalid %s "%s" in Objectbrick classDefinitions',
+                        $name,
+                        is_scalar($value) ? (string) $value : gettype($value)
+                    ));
+                }
+            }
+        }
     }
 
     public function getClassDefinitions(): array
@@ -517,6 +562,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
                 $this->getParentClass()));
         }
+
+        $this->validateClassDefinitions($this->classDefinitions, false);
 
         $this->checkTablenames();
         $this->checkContainerRestrictions();
