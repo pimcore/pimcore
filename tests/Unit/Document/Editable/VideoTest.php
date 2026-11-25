@@ -83,6 +83,62 @@ final class VideoTest extends TestCase
         );
     }
 
+    public function testYoutubeEditmodeImagePreviewEscapesId(): void
+    {
+        $video = $this->buildVideo(Video::TYPE_YOUTUBE, self::XSS_PAYLOAD);
+        $video->setConfig(['editmodeImagePreview' => true]);
+
+        $rendered = $video->frontend(true);
+
+        $this->assertStringNotContainsString('onload="alert(document.domain)"', $rendered);
+        $this->assertStringContainsString(
+            'https://img.youtube.com/vi/' . htmlspecialchars(self::XSS_PAYLOAD, ENT_QUOTES, 'UTF-8') . '/0.jpg',
+            $rendered
+        );
+    }
+
+    public function testDailymotionEditmodeImagePreviewEscapesId(): void
+    {
+        $video = $this->buildVideo(Video::TYPE_DAILYMOTION, self::XSS_PAYLOAD);
+        $video->setConfig(['editmodeImagePreview' => true]);
+
+        $rendered = $video->frontend(true);
+
+        $this->assertStringNotContainsString('onload="alert(document.domain)"', $rendered);
+        $this->assertStringContainsString(
+            'https://www.dailymotion.com/thumbnail/video/' . htmlspecialchars(self::XSS_PAYLOAD, ENT_QUOTES, 'UTF-8'),
+            $rendered
+        );
+    }
+
+    public function testEditmodeImagePreviewStillRendersLegitimateIds(): void
+    {
+        $youtube = $this->buildVideo(Video::TYPE_YOUTUBE, 'dQw4w9WgXcQ');
+        $youtube->setConfig(['editmodeImagePreview' => true]);
+        $this->assertStringContainsString(
+            '<img src="https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg">',
+            $youtube->frontend(true)
+        );
+
+        $dailymotion = $this->buildVideo(Video::TYPE_DAILYMOTION, 'x7tgad0');
+        $dailymotion->setConfig(['editmodeImagePreview' => true]);
+        $this->assertStringContainsString(
+            '<img src="https://www.dailymotion.com/thumbnail/video/x7tgad0">',
+            $dailymotion->frontend(true)
+        );
+    }
+
+    public function testVimeoEditmodeImagePreviewStillRendersNumericId(): void
+    {
+        $video = $this->buildVideo(Video::TYPE_VIMEO, '123456789');
+        $video->setConfig(['editmodeImagePreview' => true]);
+
+        $this->assertStringContainsString(
+            '<img src="https://vumbnail.com/123456789.jpg">',
+            $video->frontend(true)
+        );
+    }
+
     public function testSetDataFromEditmodeIgnoresNonStringPoster(): void
     {
         $video = new Video();
