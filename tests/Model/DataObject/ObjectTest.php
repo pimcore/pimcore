@@ -692,4 +692,88 @@ class ObjectTest extends ModelTestCase
 
         $this->assertFalse($dirtyDetectionDisabled);
     }
+
+    /**
+     * The child checks of the object DAO filter by parentId, type and published. They are served by a composite index
+     * on these columns, which replaces the single-column parentId index.
+     */
+    public function testObjectsTableHasParentTypePublishedIndex(): void
+    {
+        $columnsByIndex = [];
+        foreach (Db::get()->fetchAllAssociative('SHOW INDEX FROM objects') as $index) {
+            $columnsByIndex[$index['Key_name']][(int) $index['Seq_in_index']] = $index['Column_name'];
+        }
+
+        $this->assertArrayHasKey('parentId_type_published', $columnsByIndex);
+        $this->assertSame([1 => 'parentId', 2 => 'type', 3 => 'published'], $columnsByIndex['parentId_type_published']);
+        // with it, MySQL 8 intersects parentId and published for hasChildren() and then scans the table
+        $this->assertArrayNotHasKey('parentId', $columnsByIndex);
+    }
+
+    /**
+     * Regression for a parent with many children in a table where nearly every object is published: MySQL 8 answered
+     * hasChildren() with an index-merge intersection of the parentId and published indexes, and because its row
+     * estimate exceeds LIMIT 1, re-planned it as a scan of the published index or of the whole table. The composite
+     * index alone did not prevent that; this data set gets a full table scan on MySQL 8.0 and 8.4 when the
+     * single-column parentId index is still there.
+     */
+    public function testChildChecksOfParentWithManyChildrenUseCompositeIndex(): void
+    {
+        $db = Db::get();
+        $parent = DataObjectService::createFolderByPath('/fan-out-index-test');
+        $parentId = $parent->getId();
+
+        try {
+            // 50,000 objects spread over 1,000 other (nonexistent) parents, then 2,000 children of $parentId
+            $db->executeStatement(
+                'INSERT INTO objects (parentId, `type`, `key`, path, published) SELECT 900000000 + n % 1000, \'folder\', CONCAT(\'other-\', n), CONCAT(\'/p\', n % 1000, \'/\'), 1 FROM ('
+                . $this->numbersBelow(100000) . ') numbers WHERE n < 50000'
+            );
+            $db->executeStatement(
+                'INSERT INTO objects (parentId, `type`, `key`, path, published) SELECT ?, \'folder\', CONCAT(\'child-\', n), ?, 1 FROM ('
+                . $this->numbersBelow(10000) . ') numbers WHERE n < 2000',
+                [$parentId, $parent->getRealFullPath() . '/']
+            );
+            // the plan depends on the index statistics, which InnoDB otherwise refreshes in the background
+            $db->fetchAllAssociative('ANALYZE TABLE objects');
+
+            $types = "AND `type` IN ('object','variant','folder')";
+            $queries = [
+                'hasChildren()' => "SELECT 1 FROM objects o WHERE parentId = $parentId AND published = 1 $types LIMIT 1",
+                'hasChildren() with unpublished' => "SELECT 1 FROM objects o WHERE parentId = $parentId $types LIMIT 1",
+                'hasSiblings()' => "SELECT 1 FROM objects WHERE parentId = $parentId AND id != 1 AND published = 1 $types LIMIT 1",
+                'getChildAmount()' => "SELECT COUNT(*) AS count FROM objects o WHERE parentId = $parentId $types",
+            ];
+            foreach ($queries as $name => $sql) {
+                $plan = $db->fetchAssociative('EXPLAIN ' . $sql);
+                $this->assertSame('parentId_type_published', $plan['key'], $name . ': ' . json_encode($plan));
+            }
+
+            $this->assertTrue($parent->hasChildren([DataObject::OBJECT_TYPE_FOLDER], false));
+            $this->assertSame(2000, $parent->getChildAmount([DataObject::OBJECT_TYPE_FOLDER]));
+        } finally {
+            $db->executeStatement(
+                'DELETE FROM objects WHERE parentId = ? OR parentId BETWEEN 900000000 AND 900000999',
+                [$parentId]
+            );
+        }
+    }
+
+    /**
+     * A derived table with one column n holding 0 to $limit - 1, for MySQL and MariaDB alike.
+     */
+    private function numbersBelow(int $limit): string
+    {
+        $digit = '(SELECT 0 d UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4'
+            . ' UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9)';
+        $digits = (int) ceil(log10($limit));
+        $sum = [];
+        $from = [];
+        for ($i = 0; $i < $digits; $i++) {
+            $sum[] = "d$i.d * " . (10 ** $i);
+            $from[] = "$digit d$i";
+        }
+
+        return 'SELECT ' . implode(' + ', $sum) . ' AS n FROM ' . implode(' CROSS JOIN ', $from);
+    }
 }
