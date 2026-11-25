@@ -45,7 +45,18 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
 
     public function frontend()
     {
-        return implode(',', $this->values);
+        $config = $this->getConfig();
+
+        $values = $this->values;
+        if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
+            $values = array_map(static fn (mixed $value): string => htmlspecialchars(
+                (string)$value,
+                ENT_QUOTES | ENT_SUBSTITUTE,
+                'UTF-8'
+            ), $values);
+        }
+
+        return implode(',', $values);
     }
 
     public function getDataEditmode(): array
