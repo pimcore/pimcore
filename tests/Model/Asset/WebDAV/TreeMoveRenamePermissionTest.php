@@ -91,6 +91,26 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
         );
     }
 
+    public function testSameDirectoryMoveIsForbiddenForInactiveUser(): void
+    {
+        $asset = $this->createAsset('rename-source-inactive.txt');
+        $this->loginAs($this->createUserWithWorkspace($asset, publish: true, rename: true, active: false));
+
+        try {
+            $this->createTree()->move($asset->getFilename(), 'rename-target-inactive.txt');
+            $this->fail('Expected a Forbidden exception because the user is not active.');
+        } catch (Forbidden $e) {
+            // expected
+        }
+
+        $reloaded = Asset::getById($asset->getId(), ['force' => true]);
+        $this->assertSame(
+            'rename-source-inactive.txt',
+            $reloaded->getFilename(),
+            'a user whose active flag is false must not be able to move the asset via WebDAV, whatever its workspace permissions'
+        );
+    }
+
     public function testSameDirectoryMoveSucceedsWithRenamePermission(): void
     {
         $asset = $this->createAsset('rename-source-allowed.txt');
@@ -213,7 +233,7 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
         return $asset;
     }
 
-    private function createUserWithWorkspace(Asset $asset, bool $publish, bool $rename, bool $delete = false): User
+    private function createUserWithWorkspace(Asset $asset, bool $publish, bool $rename, bool $delete = false, bool $active = true): User
     {
         $workspace = new AssetWorkspace();
         $workspace->setCid($asset->getId());
@@ -235,7 +255,7 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
         $user = new User();
         $user->setParentId(0);
         $user->setName('webdav_rename_user_' . uniqid());
-        $user->setActive(true);
+        $user->setActive($active);
         $user->setAdmin(false);
         $user->setPermissions(['assets']);
         $user->setRoles([$role->getId()]);

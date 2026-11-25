@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
-use Pimcore\Model\User;
 use Pimcore\Tool\Admin;
 use Sabre\DAV\Exception\NotAuthenticated;
 use Sabre\DAV\Server;
@@ -45,16 +44,11 @@ final class AuthenticationPlugin extends ServerPlugin
      */
     public function beforeMethod(RequestInterface $request, ResponseInterface $response): void
     {
-        if (!self::isActiveUser(Admin::getCurrentUser())) {
+        if (!Service::isActiveUser(Admin::getCurrentUser())) {
             $response->addHeader('WWW-Authenticate', 'Basic realm="Pimcore WebDAV", charset="UTF-8"');
 
             throw new NotAuthenticated('No valid authenticated user available');
         }
-    }
-
-    private static function isActiveUser(?User $user): bool
-    {
-        return $user instanceof User && $user->isActive();
     }
 
     public function getPluginName(): string

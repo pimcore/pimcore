@@ -17,7 +17,6 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
-use Pimcore\Model\User;
 use Pimcore\Tool\Admin;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
@@ -44,7 +43,7 @@ class Tree extends DAV\Tree
      */
     public function getNodeForPath($path): DAV\INode
     {
-        if (!self::isActiveUser(Admin::getCurrentUser())) {
+        if (!Service::isActiveUser(Admin::getCurrentUser())) {
             throw new Forbidden('No valid authenticated user available');
         }
 
@@ -60,7 +59,7 @@ class Tree extends DAV\Tree
     public function move($sourcePath, $destinationPath): void
     {
         $user = Admin::getCurrentUser();
-        if (!self::isActiveUser($user)) {
+        if (!Service::isActiveUser($user)) {
             throw new Forbidden('No valid authenticated user available');
         }
 
@@ -163,10 +162,5 @@ class Tree extends DAV\Tree
 
             throw $e;
         }
-    }
-
-    private static function isActiveUser(?User $user): bool
-    {
-        return $user instanceof User && $user->isActive();
     }
 }
