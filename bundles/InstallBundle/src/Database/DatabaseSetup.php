@@ -169,7 +169,7 @@ final readonly class DatabaseSetup
             'document_types', 'documents', 'emails', 'notes_events',
             'objects', 'predefined_properties', 'asset_metadata',
             'recyclebin', 'redirects', 'seemode', 'share_configurations',
-            'system_appearance_settings', 'system_settings',
+            'gdpr_data_extractor', 'system_appearance_settings', 'system_settings',
             'tags_configuration', 'tags_assignment',
             'tags_search', 'thumbnails', 'translations', 'users',
             'website_settings', 'workflow_details', 'notifications',
