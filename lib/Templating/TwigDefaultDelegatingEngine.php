@@ -32,6 +32,12 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     protected bool $delegate = false;
 
     /**
+     * Number of sandboxed renders in progress. A sandboxed template can start another sandboxed render,
+     * so the sandbox may only be disabled again once the outermost render has finished.
+     */
+    private int $sandboxDepth = 0;
+
+    /**
      * @param EngineInterface[] $engines
      */
     public function __construct(protected Environment $twig, protected Config $config, array $engines = [])
@@ -90,13 +96,26 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
             /** @var SandboxExtension $sandboxExtension */
             $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
             $sandboxExtension->enableSandbox();
+            $this->sandboxDepth++;
         }
 
         return $this->twig;
     }
 
+    /**
+     * Ends one sandboxed render started with getTwigEnvironment(true). The sandbox stays enabled while an
+     * outer sandboxed render is still in progress.
+     */
     public function disableSandboxExtensionFromTwigEnvironment(): void
     {
+        if ($this->sandboxDepth > 0) {
+            $this->sandboxDepth--;
+        }
+
+        if ($this->sandboxDepth > 0) {
+            return;
+        }
+
         /** @var SandboxExtension $sandboxExtension */
         $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
         $sandboxExtension->disableSandbox();
