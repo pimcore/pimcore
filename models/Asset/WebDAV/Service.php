@@ -17,6 +17,7 @@ use PDO;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
+use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 use Sabre\DAV\Browser\Plugin as BrowserPlugin;
 use Sabre\DAV\Locks\Backend\PDO as LocksPDO;
@@ -49,6 +50,19 @@ class Service
         $server->addPlugin(new BrowserPlugin());
 
         return $server;
+    }
+
+    /**
+     * The one rule both WebDAV authentication boundaries (AuthenticationPlugin and Tree) apply:
+     * a request needs an authenticated user whose active flag is true.
+     *
+     * @phpstan-assert-if-true User $user
+     *
+     * @psalm-assert-if-true User $user
+     */
+    public static function isActiveUser(?User $user): bool
+    {
+        return $user instanceof User && $user->isActive();
     }
 
     public static function getDeleteLogFile(): string

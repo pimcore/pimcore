@@ -104,6 +104,14 @@ class TreeGetNodeForPathAuthenticationTest extends ModelTestCase
         $this->assertInstanceOf(File::class, $node);
     }
 
+    public function testGetNodeForPathIsForbiddenForInactiveUser(): void
+    {
+        $this->loginAs($this->createAuthenticatedUser(false));
+
+        $this->expectException(Forbidden::class);
+        $this->createTree()->getNodeForPath('');
+    }
+
     private function createAsset(string $filename, string $data = 'some content'): Asset
     {
         $asset = new Asset();
@@ -115,12 +123,13 @@ class TreeGetNodeForPathAuthenticationTest extends ModelTestCase
         return $asset;
     }
 
-    private function createAuthenticatedUser(): User
+    private function createAuthenticatedUser(bool $active = true): User
     {
         $user = new User();
         $user->setParentId(0);
         $user->setName('webdav_auth_user_' . uniqid());
-        $user->setActive(true);
+        $user->setActive($active);
+        $user->setPassword('hashed-password-placeholder');
         $user->setAdmin(true);
         $user->save();
         $this->createdUser = $user;

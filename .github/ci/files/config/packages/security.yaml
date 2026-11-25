@@ -12,6 +12,7 @@ security:
         pimcore_webdav:
             pattern: ^/asset/webdav
             provider: pimcore_admin
+            user_checker: Pimcore\Security\User\UserChecker
             http_basic: ~
 
     access_control:

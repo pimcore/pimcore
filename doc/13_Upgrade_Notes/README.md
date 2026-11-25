@@ -20,6 +20,17 @@
 
   Before upgrading, review the thumbnail configurations of your project (Studio: *Asset Management > Image Thumbnails*; stored in `var/config/image_thumbnails/` or the settings store) for overlays, masks and background images that point outside of the web root.
 
+### [WebDAV]
+- [Security] Requests to `/asset/webdav` by a user whose active flag is false are now rejected. The WebDAV server answers `401` with an HTTP Basic challenge, node lookups and moves fail with `403`. Before, only requests without any authenticated user were rejected, so deactivating a user did not revoke its WebDAV access.
+- [Security] Add Pimcore's user checker to the `pimcore_webdav` firewall in your `config/packages/security.yaml`, so the active flag is also enforced during the HTTP Basic authentication itself (as the Studio firewall already does). With the user checker, WebDAV logins also update the user's last login date.
+  ```yaml
+  pimcore_webdav:
+      pattern: ^/asset/webdav
+      provider: pimcore_admin
+      user_checker: Pimcore\Security\User\UserChecker
+      http_basic: ~
+  ```
+
 ### [Documents]
 - [Security] [Static Page Generator] Static pages of documents with a pretty URL are now stored per site. Pretty URLs are relative to the site, so two sites can use the same one, and their static pages used to share one path: generating or removing the page of one site overwrote or deleted the page of the other. `StaticPageGenerator::getStoragePath()` now returns `/%site_<site id>/<pretty URL>.html` for a document with a pretty URL that belongs to a site, or `/<main domain of the site>/<pretty URL>.html` with `static_page_generator.use_main_domain: true` (before: the system main domain for every site). Documents without a pretty URL and documents outside of any site keep their path, so only installations with several sites, pretty URLs and static pages are affected. After the update, delete the old static pages (`public/var/tmp/pages`, or the configured `document_static` storage) and regenerate them (`bin/console pimcore:documents:generate-static-pages`): Pimcore no longer touches the old files, so a web server that delivers static pages directly keeps serving them. The web server rules do not find the new paths until the site prefix is added, Pimcore serves those pages meanwhile, see [Static Page Generator](../01_Documents/12_Static_Page_Generator.md#sites-and-pretty-urls).
 - [Security] [Multiselect editable] Printing the editable directly (`{{ pimcore_multiselect("name") }}`, `Multiselect::frontend()`) now HTML-escapes every selected value before joining the values with a comma; before, the stored values were output as raw HTML. Values containing `&`, `<`, `>`, `"` or `'` therefore render as text, and code that splits or compares this string (e.g. `pimcore_multiselect("name")|split(',')`) receives the encoded form (`R&amp;D` instead of `R&D`) - read the values with `getData()` there, which still returns them unchanged. Templates that follow the documented `getData()` loop are unaffected. To get the previous raw output for trusted values, set the editable option `htmlspecialchars` to `false` (the same option the Input and Textarea editables have), see [Multiselect](../01_Documents/02_Templates/03_Editables/22_Multiselect.md#configuration).
