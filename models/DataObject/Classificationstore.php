@@ -267,6 +267,16 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->getRelationResolver()->bindItemsToOwner($this->variantItems, $this);
     }
 
+    /**
+     * Replaces a value that is about to be persisted (e.g. by its hash) without marking the store dirty.
+     *
+     * @internal
+     */
+    public function replaceStoredValue(int $groupId, int $keyId, string $language, mixed $value): void
+    {
+        $this->items[$groupId][$keyId][$language] = $value;
+    }
+
     public function getItems(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();

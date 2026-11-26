@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 use Exception;
 use Pimcore;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineResolver;
@@ -63,6 +64,26 @@ class Dao extends Model\Dao\AbstractDao
         // the capability is asked again here - an engine that cannot address it must refuse the save
         // rather than write the rest and drop it
         $this->model->assertTheEngineCanHoldItsValues();
+
+        // Password values are stored as hash, and the hash is written back to the store
+        // (without marking it dirty) before the engine persists it
+        foreach ($this->model->getItems() as $groupId => $group) {
+            foreach ($group as $keyId => $keyData) {
+                $fd = Service::getFieldDefinitionFromKeyConfig(DefinitionCache::get($keyId));
+                if (!$fd instanceof Password) {
+                    continue;
+                }
+                foreach ($keyData as $language => $value) {
+                    if (!is_string($value)) {
+                        continue;
+                    }
+                    $hashed = $fd->hashIfNeeded($value);
+                    if ($hashed !== $value) {
+                        $this->model->replaceStoredValue((int) $groupId, (int) $keyId, (string) $language, $hashed);
+                    }
+                }
+            }
+        }
 
         $this->getEngine()->save($this->model);
     }

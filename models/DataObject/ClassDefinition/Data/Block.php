@@ -146,7 +146,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                         continue;
                     }
-                    $elementData = $blockElement->getData();
+                    $elementData = $this->hashPasswordData($fd, $blockElement);
 
                     // $encodedDataBC = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
 
@@ -180,6 +180,52 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $result = Serialize::serialize($result);
 
         return $result;
+    }
+
+    /**
+     * Password values are stored as hash. The hash is written back to the block element, so the in-memory
+     * object (and therefore versions and API responses) does not keep the plain value.
+     */
+    private function hashPasswordData(Data $fd, DataObject\Data\BlockElement $blockElement): mixed
+    {
+        $elementData = $blockElement->getData();
+
+        if ($fd instanceof Password && is_string($elementData)) {
+            $hashed = $fd->hashIfNeeded($elementData);
+            if ($hashed !== $elementData) {
+                $blockElement->setData($hashed);
+            }
+
+            return $hashed;
+        }
+
+        if (!$fd instanceof Localizedfields || !$elementData instanceof Localizedfield) {
+            return $elementData;
+        }
+
+        $items = $elementData->getItems();
+        $changed = false;
+        foreach ($items as $language => $languageData) {
+            if (!is_array($languageData)) {
+                continue;
+            }
+            foreach ($languageData as $name => $value) {
+                $childDefinition = $fd->getFieldDefinition((string) $name);
+                if (!$childDefinition instanceof Password || !is_string($value)) {
+                    continue;
+                }
+                $hashed = $childDefinition->hashIfNeeded($value);
+                if ($hashed !== $value) {
+                    $items[$language][$name] = $hashed;
+                    $changed = true;
+                }
+            }
+        }
+        if ($changed) {
+            $elementData->setItems($items);
+        }
+
+        return $elementData;
     }
 
     /**
