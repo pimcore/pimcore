@@ -59,7 +59,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $data;
         }
 
-        $hashed = $this->calculateHash($data);
+        $hashed = $this->hashIfNeeded($data);
 
         /** set the hashed password back to the object, to be sure that is not plain-text after the first save
          this is especially to avoid plaintext passwords in the search-index see: PIMCORE-1406 */
@@ -80,6 +80,25 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         return $hashed;
+    }
+
+    /**
+     * Returns the hash of a plain value. A value that already is a password hash is returned unchanged,
+     * an empty value is returned as null.
+     *
+     * @internal
+     */
+    public function hashIfNeeded(?string $data): ?string
+    {
+        if ($data === null || $data === '') {
+            return null;
+        }
+
+        if (password_get_info($data)['algo'] !== null) {
+            return $data;
+        }
+
+        return $this->calculateHash($data);
     }
 
     /**

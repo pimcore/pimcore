@@ -19,6 +19,7 @@ use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Normalizer\NormalizerInterface;
 
 /**
@@ -121,6 +122,14 @@ class Dao extends Model\Dao\AbstractDao
                     ];
 
                     $encodedData = [];
+
+                    if ($fd instanceof Password && is_string($value)) {
+                        $hashed = $fd->hashIfNeeded($value);
+                        if ($hashed !== $value) {
+                            $this->model->replaceStoredValue($groupId, $keyId, $language, $hashed);
+                            $value = $hashed;
+                        }
+                    }
 
                     if ($fd instanceof NormalizerInterface) {
                         $normalizedData = $fd->normalize($value, [
