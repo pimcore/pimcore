@@ -17,9 +17,15 @@ use Exception;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Recyclebin\Item;
+use Pimcore\Model\Element\Recyclebin\Item\Listing as ItemListing;
+use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Model\User;
+use Pimcore\Model\User\Role;
+use Pimcore\Model\User\Workspace\Asset as AssetWorkspace;
 use Pimcore\Model\User\Workspace\DataObject as DataObjectWorkspace;
+use Pimcore\Model\User\Workspace\Document as DocumentWorkspace;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -177,6 +183,263 @@ class RecyclebinTest extends ModelTestCase
         $this->restrictedUser = $user;
 
         return $user;
+    }
+
+    public function testRestoreKeepsObjectWorkspaces(): void
+    {
+        $parent = TestHelper::createEmptyObject('ws-parent-');
+        $child = TestHelper::createEmptyObject('ws-child-', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('object', $parent, $child);
+    }
+
+    public function testRestoreKeepsAssetWorkspaces(): void
+    {
+        $parent = TestHelper::createAssetFolder('ws-parent-');
+        $child = TestHelper::createImageAsset('ws-child-', null, false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('asset', $parent, $child);
+    }
+
+    public function testRestoreKeepsDocumentWorkspaces(): void
+    {
+        $parent = TestHelper::createDocumentFolder('ws-parent-');
+        $child = TestHelper::createEmptyDocumentPage('ws-child-', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('document', $parent, $child);
+    }
+
+    public function testRestoreKeepsWorkspacesBelowKeyWithBackslash(): void
+    {
+        $parent = TestHelper::createEmptyObject('ws\\back-');
+        $child = TestHelper::createEmptyObject('ws-child-', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->assertWorkspacesSurviveRecycleAndRestore('object', $parent, $child);
+    }
+
+    public function testRestoreKeepsDenyBelowRemainingGrant(): void
+    {
+        $parent = TestHelper::createEmptyObject('ws-parent-');
+        $secret = TestHelper::createEmptyObject('ws-secret-', false);
+        $secret->setParentId($parent->getId());
+        $secret->save();
+        $user = $this->createUserWithRole('object', $this->createRoleWithWorkspaces('object', [$parent, $secret]));
+        $path = $secret->getRealFullPath();
+
+        Item::create($secret, $this->user);
+        $secret->delete();
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertFalse(
+            DataObject::getById($secret->getId(), ['force' => true])?->isAllowed('view', $user),
+            'the explicit deny applies again although the parent grants view'
+        );
+    }
+
+    public function testRestoreKeepsWorkspacesOfUser(): void
+    {
+        $object = TestHelper::createEmptyObject('ws-user-');
+        $path = $object->getRealFullPath();
+        $user = $this->createUserWithObjectWorkspace($object);
+
+        $expected = $this->workspaceRows('object', $user->getId());
+        $this->assertCount(1, $expected);
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertEquals($expected, $this->workspaceRows('object', $user->getId()));
+    }
+
+    public function testRestoreToRenamedPathUpdatesWorkspacePaths(): void
+    {
+        $parent = TestHelper::createEmptyObject('ws-rename-');
+        $child = TestHelper::createEmptyObject('ws-child-', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+        $role = $this->createRoleWithWorkspaces('object', [$parent, $child]);
+        $path = $parent->getRealFullPath();
+
+        Item::create($parent, $this->user);
+        $parent->delete();
+
+        // an element at the old path makes the restore append "_restore" to the key
+        $blocker = TestHelper::createEmptyObject('', false);
+        $blocker->setKey($parent->getKey());
+        $blocker->save();
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertSame(
+            [$path . '_restore', $path . '_restore/' . $child->getKey()],
+            array_column($this->workspaceRows('object', $role->getId()), 'cpath')
+        );
+    }
+
+    public function testRestoreSkipsWorkspacesOfDeletedRole(): void
+    {
+        $object = TestHelper::createEmptyObject('ws-deleted-role-');
+        $objectId = $object->getId();
+        $path = $object->getRealFullPath();
+        $role = $this->createRoleWithWorkspaces('object', [$object]);
+        $user = $this->createUserWithObjectWorkspace($object);
+        $expected = $this->workspaceRows('object', $user->getId());
+        $this->assertCount(1, $expected);
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $roleId = $role->getId();
+        $role->delete();
+        $this->restrictedRole = null;
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertIsObject(DataObject::getById($objectId, ['force' => true]));
+        $this->assertSame([], $this->workspaceRows('object', $roleId));
+        $this->assertEquals(
+            $expected,
+            $this->workspaceRows('object', $user->getId()),
+            'the row of a deleted role must not stop the other rows of the element'
+        );
+    }
+
+    public function testDeletingItemRemovesWorkspaceSnapshot(): void
+    {
+        $object = TestHelper::createEmptyObject('ws-flush-');
+        $path = $object->getRealFullPath();
+        $this->createRoleWithWorkspaces('object', [$object]);
+
+        Item::create($object, $this->user);
+        $object->delete();
+
+        $item = $this->recycledItem($path);
+        $snapshot = 'object/' . $item->getId() . '_workspaces.json';
+        $storage = Storage::get('recycle_bin');
+        $this->assertTrue($storage->fileExists($snapshot));
+
+        $item->delete();
+
+        $this->assertFalse($storage->fileExists($snapshot));
+    }
+
+    private function assertWorkspacesSurviveRecycleAndRestore(
+        string $type,
+        ElementInterface $parent,
+        ElementInterface $child
+    ): void {
+        $role = $this->createRoleWithWorkspaces($type, [$parent, $child]);
+        $expected = $this->workspaceRows($type, $role->getId());
+        $this->assertCount(2, $expected);
+        $path = $parent->getRealFullPath();
+
+        Item::create($parent, $this->user);
+        $parent->delete();
+        $this->assertSame([], $this->workspaceRows($type, $role->getId()));
+
+        $this->recycledItem($path)->restore();
+
+        $this->assertEquals($expected, $this->workspaceRows($type, $role->getId()));
+
+        $user = $this->createUserWithRole($type, $role);
+        $restoredParent = ElementService::getElementById($type, $parent->getId(), ['force' => true]);
+        $restoredChild = ElementService::getElementById($type, $child->getId(), ['force' => true]);
+        $this->assertTrue($restoredParent?->isAllowed('view', $user), 'the parent keeps its grant');
+        $this->assertFalse($restoredChild?->isAllowed('view', $user), 'the child keeps its explicit deny');
+    }
+
+    /**
+     * The first element is allowed, every further one carries an explicit deny.
+     *
+     * @param ElementInterface[] $elements
+     */
+    private function createRoleWithWorkspaces(string $type, array $elements): Role
+    {
+        $workspaceClass = [
+            'asset' => AssetWorkspace::class,
+            'document' => DocumentWorkspace::class,
+            'object' => DataObjectWorkspace::class,
+        ][$type];
+
+        $workspaces = [];
+        foreach (array_values($elements) as $index => $element) {
+            $workspace = new $workspaceClass();
+            $workspace->setCid($element->getId());
+            $workspace->setCpath($element->getRealFullPath());
+            $workspace->setList($index === 0);
+            $workspace->setView($index === 0);
+            $workspaces[] = $workspace;
+        }
+
+        $role = new Role();
+        $role->setParentId(0);
+        $role->setName('recyclebin_ws_role_' . uniqid());
+        $role->{'setWorkspaces' . ucfirst($type)}($workspaces);
+        $role->save();
+        $this->restrictedRole = $role;
+
+        return $role;
+    }
+
+    private function createUserWithObjectWorkspace(ElementInterface $object): User
+    {
+        $workspace = new DataObjectWorkspace();
+        $workspace->setCid($object->getId());
+        $workspace->setCpath($object->getRealFullPath());
+        $workspace->setList(true);
+        $workspace->setView(true);
+
+        $user = new User();
+        $user->setParentId(0);
+        $user->setName('recyclebin_ws_user_' . uniqid());
+        $user->setWorkspacesObject([$workspace]);
+        $user->save();
+        $this->restrictedUser = $user;
+
+        return $user;
+    }
+
+    private function createUserWithRole(string $type, Role $role): User
+    {
+        $user = new User();
+        $user->setParentId(0);
+        $user->setName('recyclebin_ws_user_' . uniqid());
+        $user->setPermissions([$type . 's']);
+        $user->setRoles([$role->getId()]);
+        $user->save();
+        $this->restrictedUser = $user;
+
+        return $user;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function workspaceRows(string $type, int $userId): array
+    {
+        return Db::get()->fetchAllAssociative(
+            'SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ? ORDER BY cid',
+            [$userId]
+        );
+    }
+
+    private function recycledItem(string $path): Item
+    {
+        $recycledItems = new ItemListing();
+        $recycledItems->setCondition('`path` = ?', $path);
+
+        return $recycledItems->current();
     }
 
     private function loginAs(User $user): void

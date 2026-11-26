@@ -15,6 +15,7 @@ namespace Pimcore\Model\Element\Recyclebin;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Exception;
+use JsonException;
 use League\Flysystem\StorageAttributes;
 use Pimcore;
 use Pimcore\Cache;
@@ -29,6 +30,8 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\PermissionCache;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
@@ -56,6 +59,15 @@ class Item extends Model\AbstractModel
 
     protected string $deletedby = '';
 
+    /**
+     * @var array<int, list<array<string, mixed>>> keyed by element id
+     */
+    private array $pendingWorkspaces = [];
+
+    /**
+     * @throws JsonException
+     * @throws \Doctrine\DBAL\Exception
+     */
     public static function create(Element\ElementInterface $element, ?Model\User $user = null): void
     {
         $item = new self();
@@ -91,6 +103,8 @@ class Item extends Model\AbstractModel
             }
         }
 
+        $this->pendingWorkspaces = $this->loadWorkspaces();
+
         // check for element with the same name
         if ($element instanceof Document) {
             $indentElement = Document::getByPath($element->getRealFullPath());
@@ -122,6 +136,7 @@ class Item extends Model\AbstractModel
             }
             $dummy->save(['isRecycleBinRestore' => true]);
             Model\Version::enable();
+            $this->restoreWorkspacesOf($dummy);
         }
 
         try {
@@ -138,11 +153,18 @@ class Item extends Model\AbstractModel
             }
 
             throw $e;
+        } finally {
+            $this->pendingWorkspaces = [];
+            Pimcore::getContainer()->get(PermissionCache::class)->reset();
         }
 
         $this->delete();
     }
 
+    /**
+     * @throws JsonException
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function save(?Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
@@ -182,6 +204,55 @@ class Item extends Model\AbstractModel
         };
 
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
+
+        // the workspace rows are removed with the element (ON DELETE CASCADE on cid)
+        $workspaces = $this->getDao()->getWorkspaces();
+        if ($workspaces !== []) {
+            $storage->write($this->getStorageFileWorkspaces(), json_encode($workspaces, JSON_THROW_ON_ERROR));
+        }
+    }
+
+    /**
+     * @return array<int, list<array<string, mixed>>> keyed by element id
+     */
+    private function loadWorkspaces(): array
+    {
+        $storage = Storage::get('recycle_bin');
+        $file = $this->getStorageFileWorkspaces();
+
+        if (!$storage->fileExists($file)) {
+            return [];
+        }
+
+        try {
+            $rows = json_decode($storage->read($file), true, 512, JSON_THROW_ON_ERROR);
+
+            return is_array($rows) ? $this->getDao()->getRestorableWorkspaces($rows) : [];
+        } catch (Exception $e) {
+            Logger::error('Could not read workspace permissions of recycle bin item ' . $this->getId() . ': ' . $e);
+
+            return [];
+        }
+    }
+
+    private function restoreWorkspacesOf(ElementInterface $element): void
+    {
+        $elementId = (int) $element->getId();
+        $rows = $this->pendingWorkspaces[$elementId] ?? [];
+        if ($rows === []) {
+            return;
+        }
+
+        unset($this->pendingWorkspaces[$elementId]);
+
+        try {
+            $this->getDao()->insertWorkspaces($rows, $elementId, $element->getRealFullPath());
+        } catch (Exception $e) {
+            Logger::error(
+                'Could not restore workspace permissions of ' . $this->getType() . ' ' . $elementId
+                . ' from recycle bin item ' . $this->getId() . ': ' . $e
+            );
+        }
     }
 
     public function delete(): void
@@ -259,6 +330,7 @@ class Item extends Model\AbstractModel
             $element->setOmitMandatoryCheck(true);
         }
         $element->save(['isRecycleBinRestore' => true]);
+        $this->restoreWorkspacesOf($element);
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
@@ -359,6 +431,11 @@ class Item extends Model\AbstractModel
     public function getStoreageFile(): string
     {
         return $this->getStorageFile();
+    }
+
+    private function getStorageFileWorkspaces(): string
+    {
+        return sprintf('%s/%s_workspaces.json', $this->getType(), $this->getId());
     }
 
     protected function getStorageFileBinary(Element\ElementInterface $element): string
