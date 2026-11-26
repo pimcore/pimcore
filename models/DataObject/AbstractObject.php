@@ -540,16 +540,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     // get the old path from the database before the update is done
                     $oldPath = null;
                     if ($isUpdate) {
-                        // lock this object's and the new parent's row in a fixed order (ascending id) so that
-                        // two concurrent moves affecting the same pair of objects (e.g. A becomes a child of B
-                        // while B becomes a child of A) are serialized instead of racing past each other's check
-                        if ($parent && $this->getId() > $parent->getId()) {
-                            $parentFullPath = $parent->getDao()->getCurrentFullPathForUpdate();
-                            $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
-                        } else {
-                            $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
-                            $parentFullPath = $parent?->getDao()->getCurrentFullPathForUpdate();
-                        }
+                        // lock this object's row, so a concurrent move of this object is serialized. The parent's row is
+                        // only locked when the object is moved or renamed: that is the only case in which the
+                        // circular reference check needs the parent's path to stay stable. Locking it on every save would
+                        // serialize all concurrent saves of sibling objects.
+                        $oldPath = $this->getDao()->getCurrentFullPathForUpdate();
+                        $parentFullPath = $oldPath !== $this->getRealFullPath()
+                            ? $parent?->getDao()->getCurrentFullPathForUpdate()
+                            : null;
 
                         $this->assertParentIsNotOwnDescendant($oldPath, $parentFullPath);
 

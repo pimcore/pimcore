@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Error;
 use Exception;
 use Normalizer;
@@ -89,6 +92,113 @@ class ObjectTest extends ModelTestCase
 
         $grandParent->setParentId($child->getId());
         $grandParent->save();
+    }
+
+    /**
+     * Verifies that an ordinary save, which leaves the object where it is, does not lock the
+     * parent's row, so concurrent saves of sibling objects are not serialized.
+     */
+    public function testSaveWithUnchangedParentDoesNotLockParentRow(): void
+    {
+        $parent = TestHelper::createEmptyObject();
+        $child = TestHelper::createEmptyObject('', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $parentLock = $this->lockRowOnSecondConnection($parent->getId());
+        $restoreLockWaitTimeout = $this->shortenLockWaitTimeout();
+
+        try {
+            $child->setProperty('lock-test', 'text', 'changed', false, false);
+            $child->save();
+
+            $this->assertSame(
+                $child->getRealFullPath(),
+                $child->getDao()->getCurrentFullPath(),
+                'The object must be saved while its parent row is locked by another transaction'
+            );
+        } finally {
+            $restoreLockWaitTimeout();
+            $parentLock->rollBack();
+            $parentLock->close();
+        }
+    }
+
+    /**
+     * Verifies that moving an object still locks the new parent's row, which the circular
+     * reference check relies on to stay stable.
+     */
+    public function testMoveLocksNewParentRow(): void
+    {
+        $newParent = TestHelper::createEmptyObject();
+        $child = TestHelper::createEmptyObject();
+
+        $parentLock = $this->lockRowOnSecondConnection($newParent->getId());
+        $restoreLockWaitTimeout = $this->shortenLockWaitTimeout();
+
+        try {
+            $this->expectException(LockWaitTimeoutException::class);
+
+            $child->setParentId($newParent->getId());
+            $child->save();
+        } finally {
+            $restoreLockWaitTimeout();
+            $parentLock->rollBack();
+            $parentLock->close();
+        }
+    }
+
+    /**
+     * Verifies that renaming an object still locks its parent's row, because the path of the
+     * object changes just like in a move.
+     */
+    public function testRenameLocksParentRow(): void
+    {
+        $parent = TestHelper::createEmptyObject();
+        $child = TestHelper::createEmptyObject('', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $parentLock = $this->lockRowOnSecondConnection($parent->getId());
+        $restoreLockWaitTimeout = $this->shortenLockWaitTimeout();
+
+        try {
+            $this->expectException(LockWaitTimeoutException::class);
+
+            $child->setKey($child->getKey() . '-renamed');
+            $child->save();
+        } finally {
+            $restoreLockWaitTimeout();
+            $parentLock->rollBack();
+            $parentLock->close();
+        }
+    }
+
+    /**
+     * Opens a second database connection and locks the object's row in a transaction that stays open.
+     */
+    private function lockRowOnSecondConnection(int $objectId): Connection
+    {
+        $connection = DriverManager::getConnection(Db::get()->getParams());
+        $connection->beginTransaction();
+        $connection->fetchOne('SELECT id FROM objects WHERE id = ? FOR UPDATE', [$objectId]);
+
+        return $connection;
+    }
+
+    /**
+     * Makes the main connection give up waiting for a locked row after a second instead of the
+     * default 50 seconds, and returns a callback which restores the previous timeout.
+     */
+    private function shortenLockWaitTimeout(): callable
+    {
+        $db = Db::get();
+        $previous = (int) $db->fetchOne('SELECT @@SESSION.innodb_lock_wait_timeout');
+        $db->executeStatement('SET SESSION innodb_lock_wait_timeout = 1');
+
+        return static function () use ($db, $previous): void {
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = ' . $previous);
+        };
     }
 
     /**
