@@ -175,6 +175,31 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Verifies the outcome of two cross-moves (A into B, B into A) once the first one has committed, which is
+     * what the second one sees after InnoDB rolled it back on a deadlock and retryableFunction() re-ran it:
+     * the move is rejected as circular. Both objects are loaded before the first move, as in two concurrent requests.
+     *
+     * The deadlock itself (two transactions locking the same rows in opposite order) is not tested: it needs two
+     * saves paused inside their transactions at the same time, which a single-process Codeception test cannot
+     * do deterministically.
+     */
+    public function testCrossMoveIsRejectedOnceTheOtherMoveIsCommitted(): void
+    {
+        $objectA = TestHelper::createEmptyObject();
+        $objectB = TestHelper::createEmptyObject();
+        $staleObjectB = DataObject::getById($objectB->getId(), ['force' => true]);
+
+        $objectA->setParentId($objectB->getId());
+        $objectA->save();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+
+        $staleObjectB->setParentId($objectA->getId());
+        $staleObjectB->save();
+    }
+
+    /**
      * Opens a second database connection and locks the object's row in a transaction that stays open.
      */
     private function lockRowOnSecondConnection(int $objectId): Connection
