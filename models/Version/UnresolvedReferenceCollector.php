@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\Service;
+use Pimcore\Tool;
+use function array_fill_keys;
 use function in_array;
 use function is_array;
 
@@ -126,8 +128,12 @@ final class UnresolvedReferenceCollector
      * Only the languages in the dirty language map are saved, and both setItems() and the first
      * markLanguageAsDirty() replace that map. So the items are set once, and afterwards the map is set to the
      * languages that were dirty before plus every affected language, otherwise only the last affected language
-     * would be saved and the relation rows of the others would stay. A loaded version has all languages dirty
-     * (an empty map), and that state is kept as it is.
+     * would be saved and the relation rows of the others would stay.
+     *
+     * A loaded version has all languages dirty, which Localizedfield keeps as an empty map. That state can not be
+     * kept as it is: hasDirtyLanguages() reports no dirty language for it, so saving the object would skip the
+     * localized fields and leave the relation rows of the deleted elements. Every valid language is marked dirty
+     * explicitly instead, so no language is left out.
      *
      * @param list<int|string> $languages
      */
@@ -145,14 +151,13 @@ final class UnresolvedReferenceCollector
         }
 
         if ($dirtyLanguages === []) {
-            // an empty map means all languages are dirty, which already covers the affected languages
-            $localizedField->markAllLanguagesAsDirty();
-        } else {
-            $localizedField->resetLanguageDirtyMap();
-            $localizedField->markLanguagesAsDirty($dirtyLanguages ?? []);
-            foreach ($languages as $language) {
-                $localizedField->markLanguageAsDirty((string) $language);
-            }
+            $dirtyLanguages = array_fill_keys(Tool::getValidLanguages(), true);
+        }
+
+        $localizedField->resetLanguageDirtyMap();
+        $localizedField->markLanguagesAsDirty($dirtyLanguages ?? []);
+        foreach ($languages as $language) {
+            $localizedField->markLanguageAsDirty((string) $language);
         }
         $localizedField->markFieldDirty('_self');
 

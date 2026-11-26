@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\Version;
 use Pimcore\Model\Version\UnresolvedReference;
+use Pimcore\Tool;
 
 /**
  * A version keeps the relations of the moment it was saved. When a related element is deleted afterwards, the
@@ -182,9 +183,9 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
     }
 
     /**
-     * A loaded version has all languages dirty. Removing the deleted elements of one language must keep it that
-     * way, not narrow it down to that language. fr is used because it has no fallback language in the test
-     * setup: de falls back to en and would be marked dirty through en anyway.
+     * A loaded version has all languages dirty. Removing the deleted elements of one language must keep every
+     * language dirty, not narrow it down to that language. fr is used because it has no fallback language in the
+     * test setup: de falls back to en and would be marked dirty through en anyway.
      */
     public function testRestoringVersionKeepsLanguagesWithoutDeletedElements(): void
     {
@@ -223,10 +224,12 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
 
             $localizedFields = $versionData->getObjectVar('localizedfields');
             $this->assertInstanceOf(DataObject\Localizedfield::class, $localizedFields);
-            $this->assertTrue(
-                $localizedFields->allLanguagesAreDirty(),
-                'removing the deleted elements of en must keep all languages dirty'
-            );
+            foreach (Tool::getValidLanguages() as $language) {
+                $this->assertTrue(
+                    $localizedFields->isLanguageDirty($language),
+                    'removing the deleted elements of en must keep ' . $language . ' dirty'
+                );
+            }
 
             $versionData->save();
         } finally {
