@@ -126,7 +126,8 @@ final class UnresolvedReferenceCollector
      * Only the languages in the dirty language map are saved, and both setItems() and the first
      * markLanguageAsDirty() replace that map. So the items are set once, and afterwards the map is set to the
      * languages that were dirty before plus every affected language, otherwise only the last affected language
-     * would be saved and the relation rows of the others would stay.
+     * would be saved and the relation rows of the others would stay. A loaded version has all languages dirty
+     * (an empty map), and that state is kept as it is.
      *
      * @param list<int|string> $languages
      */
@@ -137,16 +138,21 @@ final class UnresolvedReferenceCollector
             return;
         }
 
-        $dirtyLanguages = $localizedField->getDirtyLanguages() ?? [];
+        $dirtyLanguages = $localizedField->getDirtyLanguages();
 
         if ($items !== null && $items !== $localizedField->getItems()) {
             $localizedField->setItems($items);
         }
 
-        $localizedField->resetLanguageDirtyMap();
-        $localizedField->markLanguagesAsDirty($dirtyLanguages);
-        foreach ($languages as $language) {
-            $localizedField->markLanguageAsDirty((string) $language);
+        if ($dirtyLanguages === []) {
+            // an empty map means all languages are dirty, which already covers the affected languages
+            $localizedField->markAllLanguagesAsDirty();
+        } else {
+            $localizedField->resetLanguageDirtyMap();
+            $localizedField->markLanguagesAsDirty($dirtyLanguages ?? []);
+            foreach ($languages as $language) {
+                $localizedField->markLanguageAsDirty((string) $language);
+            }
         }
         $localizedField->markFieldDirty('_self');
 

@@ -181,6 +181,70 @@ class VersionUnresolvedReferencesTest extends AbstractLazyLoadingTest
         $this->assertSame([$keptDe->getId()], $ids($restored->getLrelations('de')));
     }
 
+    /**
+     * A loaded version has all languages dirty. Removing the deleted elements of one language must keep it that
+     * way, not narrow it down to that language. fr is used because it has no fallback language in the test
+     * setup: de falls back to en and would be marked dirty through en anyway.
+     */
+    public function testRestoringVersionKeepsLanguagesWithoutDeletedElements(): void
+    {
+        [$keptEn, $deletedEn, $keptFr, $laterFr] = $this->loadRelations()->load();
+
+        $object = $this->createDataObject();
+        $object->setLrelations([$keptEn, $deletedEn], 'en');
+        $object->setLrelations([$keptFr], 'fr');
+        $object->save();
+
+        $versionId = $object->getLatestVersion(null, true)?->getId();
+        $this->assertNotNull($versionId, 'saving the object must create a version');
+
+        $object->setLrelations([$laterFr], 'fr');
+        $object->save();
+
+        $deletedEn->delete();
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+
+        $ids = static fn (array $relations) => array_map(static fn (RelationTest $relation) => $relation->getId(), $relations);
+        $current = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertSame([$laterFr->getId()], $ids($current->getLrelations('fr')));
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+
+        $hideUnpublished = DataObject::doHideUnpublished();
+        DataObject::setHideUnpublished(false);
+
+        try {
+            $version = Version::getById($versionId);
+            $versionData = $version->loadData();
+            $this->assertInstanceOf(LazyLoading::class, $versionData);
+
+            $localizedFields = $versionData->getObjectVar('localizedfields');
+            $this->assertInstanceOf(DataObject\Localizedfield::class, $localizedFields);
+            $this->assertTrue(
+                $localizedFields->allLanguagesAreDirty(),
+                'removing the deleted elements of en must keep all languages dirty'
+            );
+
+            $versionData->save();
+        } finally {
+            DataObject::setHideUnpublished($hideUnpublished);
+        }
+
+        Cache::clearAll();
+        Pimcore::collectGarbage();
+
+        $restored = LazyLoading::getById($object->getId(), ['force' => true]);
+        $this->assertSame([$keptEn->getId()], $ids($restored->getLrelations('en')));
+        $this->assertSame(
+            [$keptFr->getId()],
+            $ids($restored->getLrelations('fr')),
+            'restoring the version must also restore the languages without deleted elements'
+        );
+    }
+
     public function testVersionWithoutDeletedElementsHasNoUnresolvedReferences(): void
     {
         $object = $this->createDataObject();
