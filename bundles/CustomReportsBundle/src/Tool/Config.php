@@ -356,7 +356,8 @@ class Config extends Model\AbstractModel implements JsonSerializable
         $sharedUserIds = [];
         if ($this->sharedUserNames) {
             foreach ($this->sharedUserNames as $username) {
-                $user = Model\User::getByName($username);
+                // getByName() finds persons only; a report is shared with service users by name as well
+                $user = Model\User::getByName($username) ?? Model\User::getServiceUserByName($username);
                 if ($user) {
                     $sharedUserIds[] = $user->getId();
                 }

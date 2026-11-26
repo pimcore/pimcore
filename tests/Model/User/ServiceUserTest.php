@@ -15,6 +15,8 @@ namespace Pimcore\Tests\Model\User;
 
 use Exception;
 use Pimcore;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config as ReportConfig;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config\Listing\Dao as ReportListingDao;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Element\Editlock;
@@ -616,6 +618,34 @@ class ServiceUserTest extends ModelTestCase
         }
     }
 
+    public function testReportSharedByNameIsOpenToTheNamedServiceUserAndPerson(): void
+    {
+        $serviceUser = $this->createServiceUser('report-shared');
+        $human = $this->createHuman('report-shared-human');
+        $report = $this->createReportSharedWith(
+            [$serviceUser->getName(), $human->getName(), self::NAME_PREFIX . 'report-no-such-user']
+        );
+
+        $this->assertSame([$serviceUser->getId(), $human->getId()], $report->getSharedUserIds());
+        foreach ([$serviceUser, $human] as $user) {
+            $this->assertTrue($report->isUserAllowed($user));
+            $this->assertSame([$report], $this->reportsListedFor($user, $report));
+        }
+    }
+
+    public function testReportIsClosedToAServiceUserItDoesNotName(): void
+    {
+        $serviceUser = $this->createServiceUser('report-unnamed');
+        $human = $this->createHuman('report-unnamed-human');
+
+        foreach ([[], [$human->getName()]] as $sharedUserNames) {
+            $report = $this->createReportSharedWith($sharedUserNames);
+
+            $this->assertFalse($report->isUserAllowed($serviceUser));
+            $this->assertSame([], $this->reportsListedFor($serviceUser, $report));
+        }
+    }
+
     private function tokenStorage(): TokenStorageInterface
     {
         // security.token_storage is inlined out of the compiled container; Admin::getCurrentUser() reads the
@@ -710,6 +740,31 @@ class ServiceUserTest extends ModelTestCase
         $listing->setCondition('name LIKE ?', [self::NAME_PREFIX . '%']);
 
         return array_map(static fn (AbstractUser $user): ?int => $user->getId(), $listing->load());
+    }
+
+    /**
+     * @param string[] $sharedUserNames
+     */
+    private function createReportSharedWith(array $sharedUserNames): ReportConfig
+    {
+        $report = new ReportConfig();
+        $report->setShareGlobally(false);
+        $report->setSharedUserNames($sharedUserNames);
+
+        return $report;
+    }
+
+    /**
+     * The listing's sharing filter, applied to this one report without writing it to the config storage.
+     *
+     * @return ReportConfig[]
+     */
+    private function reportsListedFor(User $user, ReportConfig $report): array
+    {
+        $dao = $this->createPartialMock(ReportListingDao::class, ['loadList']);
+        $dao->method('loadList')->willReturn([$report]);
+
+        return $dao->loadForGivenUser($user);
     }
 
     private function clearUserCache(?int $id): void
