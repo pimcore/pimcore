@@ -14,16 +14,20 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\AbstractException as DriverException;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Error;
 use Exception;
 use Normalizer;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Db\Helper as DbHelper;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete\Dao as ConcreteDao;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\Element\DuplicateFullPathException;
@@ -181,7 +185,7 @@ class ObjectTest extends ModelTestCase
      *
      * The deadlock itself (two transactions locking the same rows in opposite order) is not tested: it needs two
      * saves paused inside their transactions at the same time, which a single-process Codeception test cannot
-     * do deterministically.
+     * do deterministically. See testCrossMoveDeadlockIsRetriedAndThenRejectedAsCircular() for the retry.
      */
     public function testCrossMoveIsRejectedOnceTheOtherMoveIsCommitted(): void
     {
@@ -197,6 +201,77 @@ class ObjectTest extends ModelTestCase
 
         $staleObjectB->setParentId($objectA->getId());
         $staleObjectB->save();
+    }
+
+    /**
+     * Verifies the retry of the losing cross-move: the save of B into A hits a deadlock while locking A's row,
+     * retryableFunction() rolls the transaction back and re-runs it, and the retry rejects the move as circular
+     * because A is already committed below B. The tree stays as the winning move left it.
+     *
+     * The deadlock is simulated, not provoked: A's DAO throws a DeadlockException from its first locking read, which
+     * is where the loser of two real opposite-order locks would receive it. A real deadlock needs two saves waiting on
+     * each other inside their transactions at the same time, which a single-process Codeception test cannot do
+     * without sleeps or a forked process. What this test does not prove is that InnoDB raises that deadlock for the
+     * two lock orders; it proves what save() does with it.
+     */
+    public function testCrossMoveDeadlockIsRetriedAndThenRejectedAsCircular(): void
+    {
+        $objectA = TestHelper::createEmptyObject();
+        $objectB = TestHelper::createEmptyObject();
+        $staleObjectB = DataObject::getById($objectB->getId(), ['force' => true]);
+
+        // the winning move: A into B
+        $objectA->setParentId($objectB->getId());
+        $objectA->save();
+
+        // save() loads the new parent of the loser through getById(), which hands out the registered instance
+        $deadlockingDao = new class () extends ConcreteDao {
+            public int $lockAttempts = 0;
+
+            public function getCurrentFullPathForUpdate(): ?string
+            {
+                if (++$this->lockAttempts === 1) {
+                    throw new DeadlockException(
+                        new class ('Deadlock found when trying to get lock; try restarting transaction', '40001', 1213) extends DriverException {
+                        },
+                        null
+                    );
+                }
+
+                return parent::getCurrentFullPathForUpdate();
+            }
+        };
+        $deadlockingDao->setModel($objectA);
+        $deadlockingDao->configure();
+        $objectA->setDao($deadlockingDao);
+        RuntimeCache::set(Service::getElementCacheTag('object', $objectA->getId()), $objectA);
+
+        $exception = null;
+
+        try {
+            $staleObjectB->setParentId($objectA->getId());
+            $staleObjectB->save();
+        } catch (Exception $e) {
+            $exception = $e;
+        }
+
+        $this->assertSame(
+            2,
+            $deadlockingDao->lockAttempts,
+            'The deadlocked save must be run a second time by retryableFunction()'
+        );
+        $this->assertNotNull($exception, 'The retry must reject the move');
+        $this->assertSame(
+            'Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.',
+            $exception->getMessage()
+        );
+
+        $objectA = DataObject::getById($objectA->getId(), ['force' => true]);
+        $objectB = DataObject::getById($objectB->getId(), ['force' => true]);
+        $this->assertSame($objectB->getId(), $objectA->getParentId(), 'The winning move must be persisted');
+        $this->assertSame(1, $objectB->getParentId(), 'The rejected move must not have been persisted');
+        $this->assertSame($objectB->getRealFullPath() . '/' . $objectA->getKey(), $objectA->getRealFullPath());
+        $this->assertSame($objectB->getRealFullPath(), $objectB->getDao()->getCurrentFullPath());
     }
 
     /**
