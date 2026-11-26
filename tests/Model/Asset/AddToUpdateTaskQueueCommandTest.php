@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Command\Asset\AddToUpdateTaskQueueCommand;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -116,6 +117,9 @@ final class AddToUpdateTaskQueueCommandTest extends ModelTestCase
         $dispatcher->addListener(AssetEvents::POST_LOAD, $listener);
 
         $this->clearQueue();
+
+        // Asset::getById() returns cached assets without dispatching POST_LOAD, so the listener above would never fire
+        RuntimeCache::clear();
 
         try {
             $tester = new CommandTester(new AddToUpdateTaskQueueCommand());
