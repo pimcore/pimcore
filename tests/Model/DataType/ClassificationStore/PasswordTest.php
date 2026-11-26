@@ -89,5 +89,25 @@ class PasswordTest extends AbstractClassificationStoreTest
         $this->assertTrue(password_verify($plain, $stored));
 
         $this->assertNotSame($plain, $cs->getLocalizedKeyValue($group->getId(), $keyConfig->getId()));
+
+        // reload from the database: the persisted value is a verifiable hash
+        Cache::clearAll();
+        $reloaded = Csstore::getById($o->getId(), ['force' => true]);
+        $reloadedValue = $reloaded->getCsstore()->getLocalizedKeyValue($group->getId(), $keyConfig->getId());
+        $this->assertIsString($reloadedValue);
+        $this->assertSame($stored, $reloadedValue);
+        $this->assertTrue(password_verify($plain, $reloadedValue));
+
+        // a second save keeps the very same hash
+        $reloaded->setKey('pwobject2');
+        $reloaded->getCsstore()->setLocalizedKeyValue($otherGroup->getId(), $inputKey->getId(), 'def');
+        $reloaded->save();
+
+        $storedAgain = Db::get()->fetchOne(
+            'SELECT `value` FROM ' . $table . ' WHERE id = :id AND keyId = :keyId',
+            ['id' => $o->getId(), 'keyId' => $keyConfig->getId()]
+        );
+        $this->assertSame($stored, $storedAgain);
+        $this->assertTrue(password_verify($plain, $storedAgain));
     }
 }
