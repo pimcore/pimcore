@@ -13,17 +13,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Closure;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\AbstractException as DriverException;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Error;
 use Exception;
 use Normalizer;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Db\Helper as DbHelper;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete\Dao as ConcreteDao;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\Element\DuplicateFullPathException;
@@ -181,7 +186,7 @@ class ObjectTest extends ModelTestCase
      *
      * The deadlock itself (two transactions locking the same rows in opposite order) is not tested: it needs two
      * saves paused inside their transactions at the same time, which a single-process Codeception test cannot
-     * do deterministically.
+     * do deterministically. See testCrossMoveDeadlockIsRetriedAndThenRejectedAsCircular() for the retry.
      */
     public function testCrossMoveIsRejectedOnceTheOtherMoveIsCommitted(): void
     {
@@ -197,6 +202,96 @@ class ObjectTest extends ModelTestCase
 
         $staleObjectB->setParentId($objectA->getId());
         $staleObjectB->save();
+    }
+
+    /**
+     * Verifies the retry of the losing cross-move: the save of B into A passes the circular reference check made before
+     * its transaction (A and B are still unrelated), then hits a deadlock while locking A's row, and the winning move
+     * of A into B is committed meanwhile. retryableFunction() rolls the transaction back and re-runs it, and the retry
+     * rejects the move as circular. The tree stays as the winning move left it.
+     *
+     * The deadlock is simulated, not provoked: A's DAO commits the winning move on a second connection and throws a
+     * DeadlockException from its first locking read, which is where the loser of two real opposite-order locks would
+     * receive it. A real deadlock needs two saves waiting on each other inside their transactions at the same time,
+     * which a single-process Codeception test cannot do without sleeps or a forked process. What this test does not
+     * prove is that InnoDB raises that deadlock for the two lock orders; it proves what save() does with it. The winning
+     * move is written with SQL, its own save() is covered by testCrossMoveIsRejectedOnceTheOtherMoveIsCommitted().
+     */
+    public function testCrossMoveDeadlockIsRetriedAndThenRejectedAsCircular(): void
+    {
+        $objectA = TestHelper::createEmptyObject();
+        $objectB = TestHelper::createEmptyObject();
+
+        // read before the save: its correctPath() moves the in-memory path of B below A
+        $pathOfB = $objectB->getRealFullPath();
+        $commitWinningMove = static function () use ($objectA, $objectB, $pathOfB): void {
+            $connection = DriverManager::getConnection(Db::get()->getParams());
+            $connection->executeStatement(
+                'UPDATE objects SET parentId = ?, path = ? WHERE id = ?',
+                [$objectB->getId(), $pathOfB . '/', $objectA->getId()]
+            );
+            $connection->close();
+        };
+
+        // save() loads the new parent of the loser through getById(), which hands out the registered instance
+        $deadlockingDao = new class ($commitWinningMove) extends ConcreteDao {
+            public int $lockAttempts = 0;
+
+            /** @var list<string|null> */
+            public array $returned = [];
+
+            public function __construct(private readonly Closure $onFirstLock)
+            {
+            }
+
+            public function getCurrentFullPathForUpdate(): ?string
+            {
+                if (++$this->lockAttempts === 1) {
+                    ($this->onFirstLock)();
+
+                    throw new DeadlockException(
+                        new class ('Deadlock found when trying to get lock; try restarting transaction', '40001', 1213) extends DriverException {
+                        },
+                        null
+                    );
+                }
+
+                return $this->returned[] = parent::getCurrentFullPathForUpdate();
+            }
+        };
+        $deadlockingDao->setModel($objectA);
+        $deadlockingDao->configure();
+        $objectA->setDao($deadlockingDao);
+        RuntimeCache::set(Service::getElementCacheTag('object', $objectA->getId()), $objectA);
+
+        $exception = null;
+
+        try {
+            $objectB->setParentId($objectA->getId());
+            $objectB->save();
+        } catch (Exception $e) {
+            $exception = $e;
+        }
+
+        $this->assertSame(
+            2,
+            $deadlockingDao->lockAttempts,
+            'The deadlocked save must be run a second time by retryableFunction()'
+        );
+        $this->assertNotNull($exception, 'The retry must reject the move. Parent lock returned ' . json_encode($deadlockingDao->returned) . ', B is ' . $objectB->getRealFullPath() . ', rows after the save: ' . json_encode(
+            Db::get()->fetchAllAssociative('SELECT id, parentId, path, `key` FROM objects WHERE id IN (?, ?)', [$objectA->getId(), $objectB->getId()])
+        ));
+        $this->assertSame(
+            'Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.',
+            $exception->getMessage()
+        );
+
+        $objectA = DataObject::getById($objectA->getId(), ['force' => true]);
+        $objectB = DataObject::getById($objectB->getId(), ['force' => true]);
+        $this->assertSame($objectB->getId(), $objectA->getParentId(), 'The winning move must be persisted');
+        $this->assertSame(1, $objectB->getParentId(), 'The rejected move must not have been persisted');
+        $this->assertSame($objectB->getRealFullPath() . '/' . $objectA->getKey(), $objectA->getRealFullPath());
+        $this->assertSame($objectB->getRealFullPath(), $objectB->getDao()->getCurrentFullPath());
     }
 
     /**
