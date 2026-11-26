@@ -144,6 +144,21 @@ class EstimatedDimensionsTest extends ImageThumbnailDimensionTestCase
         self::assertSame(0, $thumbnail->readDimensionsCalls);
     }
 
+    public function testImagickSubclassOverridingOverlaysUsesEstimate(): void
+    {
+        $this->installImageAdapter(new OverlayOverridingImagickAdapter());
+
+        $asset = $this->image(400, 300, 'source.png');
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        self::assertSame(['width' => 200, 'height' => 150], $config->getEstimatedDimensions($asset));
+
+        $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+        self::assertSame(['width' => 200, 'height' => 150], $thumbnail->getDimensions());
+        self::assertSame(0, $thumbnail->readDimensionsCalls);
+    }
+
     public function testCoreAdapterSubclassOverridingNonNeutralMethodsFailsClosedToFileInspection(): void
     {
         foreach ([
@@ -867,6 +882,19 @@ final class EncoderTunedImagickAdapter extends ImagickAdapter
     public function getEncoderSpeed(): string
     {
         return '8';
+    }
+}
+
+final class OverlayOverridingImagickAdapter extends ImagickAdapter
+{
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
+    {
+        return parent::addOverlay($image, $x, $y, $alpha, $composite, $origin);
+    }
+
+    public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
+    {
+        return parent::addOverlayFit($image, $composite);
     }
 }
 

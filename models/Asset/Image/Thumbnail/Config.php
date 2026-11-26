@@ -794,11 +794,17 @@ final class Config extends Model\AbstractModel
 
     /**
      * Core adapter methods a subclass may override without changing the size of the generated thumbnail.
+     * Overrides of these methods are trusted to keep that contract: save() must write the canvas at its
+     * current size, getContentOptimizedFormat() must return an encoder format (not "original", which makes
+     * Processor stream the untransformed source), and the overlay methods must composite onto the existing
+     * canvas, as the core implementations and DimensionAdapter do.
      *
      * @var list<string>
      */
     private const DIMENSION_NEUTRAL_ADAPTER_OVERRIDES = [
         'save',
+        'addOverlay',
+        'addOverlayFit',
         'getContentOptimizedFormat',
         'supportsFormat',
         'setPreserveColor',
