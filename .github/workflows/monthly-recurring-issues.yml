@@ -22,6 +22,6 @@ jobs:
                   title: PhpStan Version Upgrade ${{ env.MONTH }}
                   body: |-
                       Please check for a newer PhpStan version. 
-                      Create a PR with the latest version and fix all occurring issues :-)
+                      Create a PR with the latest version and fix all occurring issues. Make sure to include the LTS versions :-) 
                   project-v2-path: orgs/pimcore/projects/10
                   token: ${{ secrets.ISSUE_CREATION_TOKEN }}
