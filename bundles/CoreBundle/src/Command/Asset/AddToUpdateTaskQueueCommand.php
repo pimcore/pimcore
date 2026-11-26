@@ -119,9 +119,16 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
                 [...$conditionVariables, $lastId]
             );
 
-            $assets = $list->load();
-            foreach ($assets as $asset) {
-                $lastId = (int) $asset->getId();
+            // the page is advanced and continued based on the IDs, not on the loaded assets: load() silently drops
+            // assets that were deleted in the meantime, which would make a full page look like the last one
+            $ids = $list->loadIdList();
+            foreach ($ids as $id) {
+                $lastId = (int) $id;
+                $asset = Asset::getById($lastId);
+                if (!$asset) {
+                    continue;
+                }
+
                 if ($asset->triggerUpdateTask()) {
                     $this->output->writeln(
                         sprintf('Added asset %s (%s) to the update task queue', $asset->getId(), $asset->getRealFullPath()),
@@ -138,7 +145,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             }
 
             Pimcore::collectGarbage();
-        } while (count($assets) === self::ASSETS_PER_LOOP);
+        } while (count($ids) === self::ASSETS_PER_LOOP);
 
         $this->output->writeln(sprintf('Added %d asset(s) to the update task queue', $count));
         if ($skipped > 0) {

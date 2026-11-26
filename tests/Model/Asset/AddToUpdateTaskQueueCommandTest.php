@@ -16,6 +16,8 @@ namespace Pimcore\Tests\Model\Asset;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Command\Asset\AddToUpdateTaskQueueCommand;
 use Pimcore\Db;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -87,6 +89,47 @@ final class AddToUpdateTaskQueueCommandTest extends ModelTestCase
         $this->assertStringContainsString('Found 21 asset(s)', $display);
         $this->assertStringContainsString('Added 20 asset(s)', $display);
         $this->assertStringContainsString('Skipped 1 asset(s)', $display);
+    }
+
+    /**
+     * An asset that is deleted after the command fetched the IDs of a page, but before it loaded the assets, must not
+     * end the run early: a page with a missing asset is still a full page, so the next one has to be processed.
+     */
+    public function testAssetDeletedWhileAPageIsProcessedDoesNotStopTheRun(): void
+    {
+        $ids = [];
+        for ($i = 0; $i < 21; $i++) {
+            $ids[] = TestHelper::createImageAsset()->getId();
+        }
+
+        // while the first page is being loaded, the 6th asset of that page is deleted by someone else
+        $firstId = $ids[0];
+        $deletedId = $ids[5];
+        $deleted = false;
+        $listener = static function (AssetEvent $event) use ($firstId, $deletedId, &$deleted): void {
+            if (!$deleted && $event->getAsset()->getId() === $firstId) {
+                $deleted = true;
+                Asset::getById($deletedId)?->delete();
+            }
+        };
+        $dispatcher = Pimcore::getEventDispatcher();
+        $dispatcher->addListener(AssetEvents::POST_LOAD, $listener);
+
+        $this->clearQueue();
+
+        try {
+            $tester = new CommandTester(new AddToUpdateTaskQueueCommand());
+            $tester->execute(['--id' => $ids]);
+        } finally {
+            $dispatcher->removeListener(AssetEvents::POST_LOAD, $listener);
+        }
+
+        $this->assertTrue($deleted);
+        $tester->assertCommandIsSuccessful();
+        $queuedIds = $this->fetchQueuedAssetIds();
+        sort($queuedIds);
+        $this->assertSame(array_values(array_diff($ids, [$deletedId])), $queuedIds);
+        $this->assertStringContainsString('Added 20 asset(s)', $tester->getDisplay());
     }
 
     private function clearQueue(): void
