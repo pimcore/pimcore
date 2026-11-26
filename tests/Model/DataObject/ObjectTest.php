@@ -235,6 +235,9 @@ class ObjectTest extends ModelTestCase
         $deadlockingDao = new class ($commitWinningMove) extends ConcreteDao {
             public int $lockAttempts = 0;
 
+            /** @var list<string|null> */
+            public array $returned = [];
+
             public function __construct(private readonly Closure $onFirstLock)
             {
             }
@@ -251,7 +254,7 @@ class ObjectTest extends ModelTestCase
                     );
                 }
 
-                return parent::getCurrentFullPathForUpdate();
+                return $this->returned[] = parent::getCurrentFullPathForUpdate();
             }
         };
         $deadlockingDao->setModel($objectA);
@@ -273,7 +276,7 @@ class ObjectTest extends ModelTestCase
             $deadlockingDao->lockAttempts,
             'The deadlocked save must be run a second time by retryableFunction()'
         );
-        $this->assertNotNull($exception, 'The retry must reject the move. Rows after the save: ' . json_encode(
+        $this->assertNotNull($exception, 'The retry must reject the move. Parent lock returned ' . json_encode($deadlockingDao->returned) . ', B is ' . $objectB->getRealFullPath() . ', rows after the save: ' . json_encode(
             Db::get()->fetchAllAssociative('SELECT id, parentId, path, `key` FROM objects WHERE id IN (?, ?)', [$objectA->getId(), $objectB->getId()])
         ));
         $this->assertSame(
