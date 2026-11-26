@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 use Exception;
 use Pimcore;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineFeature;
 use Pimcore\Model\DataObject\Classificationstore\Engine\EngineInterface;
@@ -67,7 +68,9 @@ class Dao extends Model\Dao\AbstractDao
 
         // Password values are stored as hash, and the hash is written back to the store
         // (without marking it dirty) before the engine persists it
-        foreach ($this->model->getItems() as $groupId => $group) {
+        // a save the engine skips as nothing changed has nothing to hash, and must not read anything
+        $hashItems = DataObject::isDirtyDetectionDisabled() || $this->model->hasDirtyFields();
+        foreach ($hashItems ? $this->model->getItems() : [] as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
                 $fd = Service::getFieldDefinitionFromKeyConfig(DefinitionCache::get($keyId));
                 if (!$fd instanceof Password) {
