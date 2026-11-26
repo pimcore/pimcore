@@ -222,11 +222,13 @@ class ObjectTest extends ModelTestCase
         $objectA = TestHelper::createEmptyObject();
         $objectB = TestHelper::createEmptyObject();
 
-        $commitWinningMove = static function () use ($objectA, $objectB): void {
+        // read before the save: its correctPath() moves the in-memory path of B below A
+        $pathOfB = $objectB->getRealFullPath();
+        $commitWinningMove = static function () use ($objectA, $objectB, $pathOfB): void {
             $connection = DriverManager::getConnection(Db::get()->getParams());
             $connection->executeStatement(
                 'UPDATE objects SET parentId = ?, path = ? WHERE id = ?',
-                [$objectB->getId(), $objectB->getRealFullPath() . '/', $objectA->getId()]
+                [$objectB->getId(), $pathOfB . '/', $objectA->getId()]
             );
             $connection->close();
         };
