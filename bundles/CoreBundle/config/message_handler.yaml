@@ -17,6 +17,25 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+    Pimcore\Model\Asset\Image\Thumbnail\VariantResolver: ~
+
+    # public: fetched from the container by Asset::save()
+    Pimcore\Model\Asset\Image\Thumbnail\PreGenerationDispatcher:
+        public: true
+        arguments:
+            - '@messenger.bus.pimcore-core'
+            - '@logger'
+            - '%pimcore.assets.image.thumbnails.pre_generate.definitions%'
+
+    Pimcore\Messenger\Handler\GenerateImageThumbnailsHandler:
+        arguments:
+            - '@logger'
+            - '@Pimcore\Helper\LongRunningHelper'
+            - '@Pimcore\Model\Asset\Image\Thumbnail\VariantResolver'
+            - '%pimcore.assets.image.thumbnails.pre_generate.max_variants_per_config%'
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\AssetPreviewImageHandler:
         arguments:
             - '@logger'
