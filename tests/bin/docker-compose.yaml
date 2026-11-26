@@ -4,7 +4,7 @@ services:
         command: [ redis-server, --maxmemory 128mb, --maxmemory-policy volatile-lru, --save "" ]
 
     db:
-        image: mariadb:10.7
+        image: mariadb:10.11
         working_dir: /application
         command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_520_ci, --innodb-file-per-table=1]
         environment:
