@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\Block;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tool\Serialize;
@@ -76,6 +78,45 @@ class BlockPasswordTest extends ModelTestCase
         $second = $this->extractStored($block->getDataForResource([['secret' => $element]], null, $params), 'secret');
 
         $this->assertSame($first, $second);
+    }
+
+    public function testLocalizedPasswordInBlockIsHashedForEveryLanguage(): void
+    {
+        $password = new Password();
+        $password->setName('secret');
+        $localizedfields = new Localizedfields();
+        $localizedfields->setName('localizedfields');
+        $localizedfields->setChildren([$password]);
+
+        $block = new Block();
+        $block->setName('blockfield');
+        $block->setChildren([$localizedfields]);
+
+        $localizedfield = new Localizedfield([
+            'en' => ['secret' => 'Plain-En-123'],
+            'de' => ['secret' => 'Plain-De-456'],
+        ]);
+        $localizedfield->setContext(['containerType' => 'block', 'containerKey' => 'blockfield']);
+        $element = new BlockElement('localizedfields', 'localizedfields', $localizedfield);
+
+        $serialized = $block->getDataForResource([['localizedfields' => $element]], null, [
+            'owner' => $this->createStub(\Pimcore\Model\DataObject\Concrete::class),
+            'fieldname' => 'blockfield',
+        ]);
+
+        $stored = $this->extractStored($serialized, 'localizedfields');
+        $this->assertIsArray($stored);
+
+        foreach (['en' => 'Plain-En-123', 'de' => 'Plain-De-456'] as $language => $plain) {
+            $hash = $stored[$language]['secret'];
+            $this->assertIsString($hash);
+            $this->assertNotSame($plain, $hash);
+            $this->assertNotNull(password_get_info($hash)['algo']);
+            $this->assertTrue(password_verify($plain, $hash));
+
+            // in-memory localized value holds the hash too
+            $this->assertSame($hash, $localizedfield->getItems()[$language]['secret']);
+        }
     }
 
     public function testEmptyPasswordInBlockStaysEmpty(): void
