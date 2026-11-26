@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-use Exception;
 use Pimcore;
 use Pimcore\Console\Application;
+use Pimcore\Logger;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -24,6 +24,13 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 trait StopMessengerWorkersTrait
 {
+    /**
+     * Signals the running messenger workers to stop, so that they get restarted with the current state.
+     *
+     * The signal comes on top of the operation of the caller (a configuration was saved, a class
+     * definition was updated, ...). If it cannot be sent, the workers keep running until they are
+     * restarted: that is logged, but does not fail the caller.
+     */
     protected function stopMessengerWorkers(): void
     {
         $app = new Application(Pimcore::getKernel());
@@ -43,7 +50,10 @@ trait StopMessengerWorkersTrait
             // return the output, don't use if you used NullOutput()
             $content = $output->fetch();
 
-            throw new Exception('Running messenger:stop-workers failed, output was: ' . $content);
+            Logger::error(
+                'Running messenger:stop-workers failed, the messenger workers keep running until they are ' .
+                'restarted. Output was: ' . $content
+            );
         }
     }
 }
