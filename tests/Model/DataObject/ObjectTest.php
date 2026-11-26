@@ -273,7 +273,9 @@ class ObjectTest extends ModelTestCase
             $deadlockingDao->lockAttempts,
             'The deadlocked save must be run a second time by retryableFunction()'
         );
-        $this->assertNotNull($exception, 'The retry must reject the move');
+        $this->assertNotNull($exception, 'The retry must reject the move. Rows after the save: ' . json_encode(
+            Db::get()->fetchAllAssociative('SELECT id, parentId, path, `key` FROM objects WHERE id IN (?, ?)', [$objectA->getId(), $objectB->getId()])
+        ));
         $this->assertSame(
             'Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.',
             $exception->getMessage()
