@@ -16,8 +16,8 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Block;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
-use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Data\BlockElement;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tool\Serialize;
 
