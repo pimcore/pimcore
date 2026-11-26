@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Closure;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\AbstractException as DriverException;
 use Doctrine\DBAL\DriverManager;
@@ -204,33 +205,45 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
-     * Verifies the retry of the losing cross-move: the save of B into A hits a deadlock while locking A's row,
-     * retryableFunction() rolls the transaction back and re-runs it, and the retry rejects the move as circular
-     * because A is already committed below B. The tree stays as the winning move left it.
+     * Verifies the retry of the losing cross-move: the save of B into A passes the circular reference check made before
+     * its transaction (A and B are still unrelated), then hits a deadlock while locking A's row, and the winning move
+     * of A into B is committed meanwhile. retryableFunction() rolls the transaction back and re-runs it, and the retry
+     * rejects the move as circular. The tree stays as the winning move left it.
      *
-     * The deadlock is simulated, not provoked: A's DAO throws a DeadlockException from its first locking read, which
-     * is where the loser of two real opposite-order locks would receive it. A real deadlock needs two saves waiting on
-     * each other inside their transactions at the same time, which a single-process Codeception test cannot do
-     * without sleeps or a forked process. What this test does not prove is that InnoDB raises that deadlock for the
-     * two lock orders; it proves what save() does with it.
+     * The deadlock is simulated, not provoked: A's DAO commits the winning move on a second connection and throws a
+     * DeadlockException from its first locking read, which is where the loser of two real opposite-order locks would
+     * receive it. A real deadlock needs two saves waiting on each other inside their transactions at the same time,
+     * which a single-process Codeception test cannot do without sleeps or a forked process. What this test does not
+     * prove is that InnoDB raises that deadlock for the two lock orders; it proves what save() does with it. The winning
+     * move is written with SQL, its own save() is covered by testCrossMoveIsRejectedOnceTheOtherMoveIsCommitted().
      */
     public function testCrossMoveDeadlockIsRetriedAndThenRejectedAsCircular(): void
     {
         $objectA = TestHelper::createEmptyObject();
         $objectB = TestHelper::createEmptyObject();
-        $staleObjectB = DataObject::getById($objectB->getId(), ['force' => true]);
 
-        // the winning move: A into B
-        $objectA->setParentId($objectB->getId());
-        $objectA->save();
+        $commitWinningMove = static function () use ($objectA, $objectB): void {
+            $connection = DriverManager::getConnection(Db::get()->getParams());
+            $connection->executeStatement(
+                'UPDATE objects SET parentId = ?, path = ? WHERE id = ?',
+                [$objectB->getId(), $objectB->getRealFullPath() . '/', $objectA->getId()]
+            );
+            $connection->close();
+        };
 
         // save() loads the new parent of the loser through getById(), which hands out the registered instance
-        $deadlockingDao = new class () extends ConcreteDao {
+        $deadlockingDao = new class ($commitWinningMove) extends ConcreteDao {
             public int $lockAttempts = 0;
+
+            public function __construct(private readonly Closure $onFirstLock)
+            {
+            }
 
             public function getCurrentFullPathForUpdate(): ?string
             {
                 if (++$this->lockAttempts === 1) {
+                    ($this->onFirstLock)();
+
                     throw new DeadlockException(
                         new class ('Deadlock found when trying to get lock; try restarting transaction', '40001', 1213) extends DriverException {
                         },
@@ -249,8 +262,8 @@ class ObjectTest extends ModelTestCase
         $exception = null;
 
         try {
-            $staleObjectB->setParentId($objectA->getId());
-            $staleObjectB->save();
+            $objectB->setParentId($objectA->getId());
+            $objectB->save();
         } catch (Exception $e) {
             $exception = $e;
         }
