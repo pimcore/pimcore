@@ -14,5 +14,6 @@ doctrine_migrations:
     factories:
         Doctrine\Migrations\MigrationsRepository: 'Pimcore\Migrations\FilteredMigrationsRepository'
         Doctrine\Migrations\Metadata\Storage\MetadataStorage: 'Pimcore\Migrations\FilteredTableMetadataStorage'
+        Doctrine\Migrations\EventDispatcher: 'Pimcore\Migrations\EventDispatcherFactory'
     services:
         Doctrine\Migrations\Version\Comparator: 'Pimcore\Migrations\DirectoryAwareVersionComparator'
