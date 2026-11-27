@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Event\MigrationsVersionEventArgs;
 use Doctrine\Migrations\Metadata\MigrationPlan;
 use Doctrine\Migrations\Metadata\MigrationPlanList;
 use Doctrine\Migrations\MigratorConfiguration;
@@ -26,8 +27,12 @@ use Doctrine\Migrations\Version\Version;
 use PDO;
 use Pimcore;
 use Pimcore\Db;
+use Pimcore\Migrations\ImplicitCommitListener;
 use Pimcore\Tests\Support\Test\TestCase;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
+use Stringable;
 use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 use Throwable;
 
@@ -41,15 +46,16 @@ use Throwable;
  */
 class ImplicitCommitListenerTest extends TestCase
 {
-    protected function needsDb(): bool
-    {
-        return true;
-    }
     public const TABLE = 'test_migration_implicit_commit';
 
     private const CACHE_TABLE = 'test_migration_implicit_commit_cache';
 
     private Connection $db;
+
+    protected function needsDb(): bool
+    {
+        return true;
+    }
 
     protected function setUp(): void
     {
@@ -64,6 +70,13 @@ class ImplicitCommitListenerTest extends TestCase
     protected function tearDown(): void
     {
         // leave no (phantom) transaction behind for the following tests, whatever the outcome of this one
+        try {
+            // with auto-commit disabled every rollBack() would open the next transaction
+            $this->db->setAutoCommit(true);
+        } catch (Throwable) {
+            // committing a transaction the server does not have anymore, DBAL still decrements its level
+        }
+
         while ($this->db->isTransactionActive()) {
             try {
                 $this->db->rollBack();
@@ -118,6 +131,42 @@ class ImplicitCommitListenerTest extends TestCase
         $this->db->rollBack();
 
         $this->assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM `' . self::TABLE . '`'), 'the caller could still roll the migration back');
+    }
+
+    public function testWithAutoCommitDisabledTheNextTransactionIsOpenedWithoutAWarning(): void
+    {
+        $logger = new class() extends AbstractLogger {
+            /** @var list<string> */
+            public array $records = [];
+
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                $this->records[] = $level . ': ' . $message;
+            }
+        };
+
+        $this->db->setAutoCommit(false);
+        $this->db->beginTransaction();
+        $this->db->executeStatement('CREATE TABLE `' . self::TABLE . '` (`id` INT NOT NULL PRIMARY KEY)'); // implicit commit
+
+        $plan = new MigrationPlan(
+            new Version(TransactionalDdlMigration::class),
+            new TransactionalDdlMigration($this->db, new NullLogger()),
+            Direction::UP
+        );
+        (new ImplicitCommitListener($logger))->onMigrationsVersionExecuted(
+            new MigrationsVersionEventArgs($this->db, $plan, new MigratorConfiguration())
+        );
+
+        // without auto-commit DBAL always keeps a transaction open: rollBack() of level 1 starts the next one
+        $this->assertSame(1, $this->db->getTransactionNestingLevel());
+        $native = $this->db->getNativeConnection();
+        $this->assertInstanceOf(PDO::class, $native);
+        $this->assertTrue($native->inTransaction(), 'the transaction DBAL reports exists on the server');
+        $this->assertSame([], array_values(array_filter(
+            $logger->records,
+            static fn (string $record): bool => str_starts_with($record, LogLevel::WARNING)
+        )));
     }
 
     /**

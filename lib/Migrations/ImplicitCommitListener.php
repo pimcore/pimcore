@@ -44,9 +44,8 @@ final class ImplicitCommitListener
             return;
         }
 
-        // the same check doctrine/migrations uses to decide that a transaction was committed implicitly
         $nativeConnection = $connection->getNativeConnection();
-        if (!$nativeConnection instanceof PDO || $nativeConnection->inTransaction()) {
+        if (!$nativeConnection instanceof PDO || !$this->hasTransactionTheServerDoesNotHave($connection, $nativeConnection)) {
             return;
         }
 
@@ -55,7 +54,7 @@ final class ImplicitCommitListener
             ['version' => (string) $args->getPlan()->getVersion()]
         );
 
-        $this->resetTransactionNestingLevel($connection);
+        $this->resetTransactionNestingLevel($connection, $nativeConnection);
     }
 
     /**
@@ -63,10 +62,15 @@ final class ImplicitCommitListener
      * For a nested level commit() releases the (lost) savepoint and decrements the level in a finally block also when
      * that fails; rollBack() of a nested level would only decrement after its statement succeeded. For level 1
      * rollBack() sets the level to 0 before it calls the driver, whose "no active transaction" error is expected.
+     *
+     * This only runs while DBAL reports a transaction the server does not have: with DBAL's auto-commit disabled
+     * rollBack() of level 1 opens the next (real) transaction, as DBAL always keeps one open in that mode.
      */
-    private function resetTransactionNestingLevel(Connection $connection): void
+    private function resetTransactionNestingLevel(Connection $connection, PDO $nativeConnection): void
     {
-        while (($level = $connection->getTransactionNestingLevel()) > 0) {
+        while ($this->hasTransactionTheServerDoesNotHave($connection, $nativeConnection)) {
+            $level = $connection->getTransactionNestingLevel();
+
             try {
                 if ($level === 1) {
                     $connection->rollBack();
@@ -77,7 +81,9 @@ final class ImplicitCommitListener
                 // expected, the server has no transaction and no savepoint anymore
             }
 
-            if ($connection->getTransactionNestingLevel() >= $level) {
+            if ($this->hasTransactionTheServerDoesNotHave($connection, $nativeConnection)
+                && $connection->getTransactionNestingLevel() >= $level
+            ) {
                 // e.g. a nested level that is marked rollback-only: commit() throws before it decrements
                 $this->logger->warning(
                     'The transaction nesting level of the connection could not be reset ({level}) after an implicit commit.',
@@ -87,5 +93,14 @@ final class ImplicitCommitListener
                 return;
             }
         }
+    }
+
+    /**
+     * The same check doctrine/migrations uses to decide that a transaction was committed implicitly: DBAL reports a
+     * transaction, PDO (which asks the server) has none.
+     */
+    private function hasTransactionTheServerDoesNotHave(Connection $connection, PDO $nativeConnection): bool
+    {
+        return $connection->isTransactionActive() && !$nativeConnection->inTransaction();
     }
 }
