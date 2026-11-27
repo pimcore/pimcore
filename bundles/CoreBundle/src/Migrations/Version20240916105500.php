@@ -24,6 +24,11 @@ final class Version20240916105500 extends AbstractMigration
         return 'Set default value 0 for creationDate and modificationDate columns';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('UPDATE `assets` SET `creationDate` = 0 WHERE `creationDate` IS NULL');

@@ -24,6 +24,11 @@ final class Version20230913173812 extends AbstractMigration
         return 'Adds passwordRecoveryToken column to users table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('users')->hasColumn('passwordRecoveryToken')) {

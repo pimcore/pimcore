@@ -24,6 +24,11 @@ final class Version20220402104849 extends AbstractMigration
         return 'Change docTypes column of user table to text';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `users` CHANGE `docTypes` `docTypes` text DEFAULT NULL');

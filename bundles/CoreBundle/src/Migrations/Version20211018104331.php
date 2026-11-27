@@ -42,6 +42,11 @@ final class Version20211018104331 extends AbstractMigration
         $this->connection->executeQuery('SET foreign_key_checks = 1');
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $list = new DataObject\ClassDefinition\Listing();

@@ -23,6 +23,11 @@ use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
  */
 final class Version20201007000000 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $db = Db::get();
