@@ -30,6 +30,18 @@ in the class settings as follows:
 
 ![Image Configuration](../../../img/classes-datatypes-image2.jpg)
 
+#### Upload Path & Search Path
+
+Two optional asset folder paths can be configured in the class settings (available for the Image, Image Advanced and
+Image Gallery data types):
+
+- **Upload Path**: the target folder for images uploaded directly via the field (e.g. inline upload or drag & drop from
+  the file system).
+- **Search Path**: the asset folder the search dialog of the field is scoped to by default. The path is applied as a
+  pre-filled filter when the asset search is opened from the field, so users start off seeing only assets below the
+  configured folder. It is a convenience default, not a restriction — the filter is visible in the search dialog and can
+  be adjusted or removed there.
+
 
 #### Working with images in frontend
 To get a thumbnail of an image field, call `getThumbnail()` on the returned asset object.
