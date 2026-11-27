@@ -19,6 +19,7 @@ use Pimcore as PimcoreRuntime;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Image\Adapter;
 use Pimcore\Image\Adapter\GD;
+use Pimcore\Image\Adapter\Imagick as ImagickAdapter;
 use Pimcore\Image\AdapterInterface;
 use Pimcore\Model\Asset\Image\Thumbnail;
 use Pimcore\Tests\Unit\Models\Asset\Thumbnail\ImageThumbnailDimensionTestCase;
@@ -83,7 +84,7 @@ class EstimatedDimensionsTest extends ImageThumbnailDimensionTestCase
         }
     }
 
-    public function testGdSubclassFailsClosedToFileInspection(): void
+    public function testGdSubclassOverridingResizeFailsClosedToFileInspection(): void
     {
         $this->installImageAdapter(new ProjectSpecificGdAdapter());
 
@@ -96,6 +97,86 @@ class EstimatedDimensionsTest extends ImageThumbnailDimensionTestCase
         $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
         self::assertSame(['width' => 91, 'height' => 67], $thumbnail->getDimensions());
         self::assertSame(1, $thumbnail->readDimensionsCalls);
+    }
+
+    public function testCoreAdapterSubclassThatOnlyOverridesSaveUsesEstimate(): void
+    {
+        $this->installImageAdapter(new EncoderTunedGdAdapter());
+
+        $asset = $this->image(400, 300, 'source.png');
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        self::assertSame(['width' => 200, 'height' => 150], $config->getEstimatedDimensions($asset));
+
+        $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+        self::assertSame(['width' => 200, 'height' => 150], $thumbnail->getDimensions());
+        self::assertSame(0, $thumbnail->readDimensionsCalls);
+    }
+
+    public function testCoreAdapterSubclassOverridingLoadFailsClosedToFileInspection(): void
+    {
+        $this->installImageAdapter(new LoadOverridingGdAdapter());
+
+        $asset = $this->image(400, 300, 'source.png');
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        self::assertSame([], $config->getEstimatedDimensions($asset));
+
+        $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+        self::assertSame(['width' => 91, 'height' => 67], $thumbnail->getDimensions());
+        self::assertSame(1, $thumbnail->readDimensionsCalls);
+    }
+
+    public function testImagickSubclassThatOnlyOverridesSaveUsesEstimate(): void
+    {
+        $this->installImageAdapter(new EncoderTunedImagickAdapter());
+
+        $asset = $this->image(400, 300, 'source.png');
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        self::assertSame(['width' => 200, 'height' => 150], $config->getEstimatedDimensions($asset));
+
+        $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+        self::assertSame(['width' => 200, 'height' => 150], $thumbnail->getDimensions());
+        self::assertSame(0, $thumbnail->readDimensionsCalls);
+    }
+
+    public function testImagickSubclassOverridingOverlaysUsesEstimate(): void
+    {
+        $this->installImageAdapter(new OverlayOverridingImagickAdapter());
+
+        $asset = $this->image(400, 300, 'source.png');
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        self::assertSame(['width' => 200, 'height' => 150], $config->getEstimatedDimensions($asset));
+
+        $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+        self::assertSame(['width' => 200, 'height' => 150], $thumbnail->getDimensions());
+        self::assertSame(0, $thumbnail->readDimensionsCalls);
+    }
+
+    public function testCoreAdapterSubclassOverridingNonNeutralMethodsFailsClosedToFileInspection(): void
+    {
+        foreach ([
+            'Adapter-declared transformation' => new ScaleByWidthOverridingGdAdapter(),
+            'modification hook' => new PreModifyOverridingGdAdapter(),
+        ] as $name => $adapter) {
+            $this->installImageAdapter($adapter);
+
+            $asset = $this->image(400, 300, 'source.png');
+            $config = $this->config([
+                ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+            ]);
+            self::assertSame([], $config->getEstimatedDimensions($asset), $name);
+
+            $thumbnail = $this->probe($asset, $config, ['width' => 91, 'height' => 67]);
+            self::assertSame(['width' => 91, 'height' => 67], $thumbnail->getDimensions(), $name);
+            self::assertSame(1, $thumbnail->readDimensionsCalls, $name);
+        }
     }
 
     public function testScaleByWidthUsesStoredSourceDimensionsWithoutFileAccess(): void
@@ -772,5 +853,63 @@ final class ProjectSpecificGdAdapter extends GD
     public function resize(int $width, int $height): static
     {
         return $this;
+    }
+}
+
+final class EncoderTunedGdAdapter extends GD
+{
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
+    {
+        return parent::save($path, $format, $quality);
+    }
+}
+
+final class LoadOverridingGdAdapter extends GD
+{
+    public function load(string $imagePath, array $options = []): static|false
+    {
+        return parent::load($imagePath, $options);
+    }
+}
+
+final class EncoderTunedImagickAdapter extends ImagickAdapter
+{
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
+    {
+        return parent::save($path, $format, $quality);
+    }
+
+    public function getEncoderSpeed(): string
+    {
+        return '8';
+    }
+}
+
+final class OverlayOverridingImagickAdapter extends ImagickAdapter
+{
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
+    {
+        return parent::addOverlay($image, $x, $y, $alpha, $composite, $origin);
+    }
+
+    public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
+    {
+        return parent::addOverlayFit($image, $composite);
+    }
+}
+
+final class ScaleByWidthOverridingGdAdapter extends GD
+{
+    public function scaleByWidth(int $width, bool $forceResize = false): static
+    {
+        return parent::scaleByWidth($width, $forceResize);
+    }
+}
+
+final class PreModifyOverridingGdAdapter extends GD
+{
+    public function preModify(): void
+    {
+        parent::preModify();
     }
 }
