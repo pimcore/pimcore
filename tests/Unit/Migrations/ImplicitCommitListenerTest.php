@@ -41,6 +41,10 @@ use Throwable;
  */
 class ImplicitCommitListenerTest extends TestCase
 {
+    protected function needsDb(): bool
+    {
+        return true;
+    }
     public const TABLE = 'test_migration_implicit_commit';
 
     private const CACHE_TABLE = 'test_migration_implicit_commit_cache';
