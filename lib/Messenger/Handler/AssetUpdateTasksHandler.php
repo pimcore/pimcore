@@ -57,6 +57,8 @@ class AssetUpdateTasksHandler
                 $this->processDocument($asset, $hadProcessingFailure);
             } elseif ($asset instanceof Asset\Video) {
                 $this->processVideo($asset);
+            } elseif ($asset instanceof Asset\Font) {
+                $this->processFont($asset, $hadProcessingFailure);
             }
         } finally {
             // release the queue lock and clean up temporary files even if processing failed
@@ -112,6 +114,18 @@ class AssetUpdateTasksHandler
         }
 
         if ($save) {
+            $this->saveAsset($asset);
+        }
+    }
+
+    private function processFont(Asset\Font $asset, bool $hadProcessingFailure = false): void
+    {
+        if ($asset->isThumbnailsEnabled()) {
+            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        }
+
+        // nothing else is stored for fonts, a save is only needed to persist clearing a previous processing-failure marker
+        if ($hadProcessingFailure) {
             $this->saveAsset($asset);
         }
     }

@@ -41,6 +41,9 @@ class AssetHelperExtensions extends AbstractExtension
             new TwigTest('pimcore_asset_folder', static function ($object) {
                 return $object instanceof Asset\Folder;
             }),
+            new TwigTest('pimcore_asset_font', static function ($object) {
+                return $object instanceof Asset\Font;
+            }),
             new TwigTest('pimcore_asset_image', static function ($object) {
                 return $object instanceof Asset\Image;
             }),

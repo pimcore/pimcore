@@ -25,6 +25,8 @@ directly in Pimcore Studio:
   (see [FFmpeg formats](https://www.ffmpeg.org/general.html#File-Formats) for the full list)
 - **Documents** - Microsoft Office formats (DOCX, PPTX, XLSX), PDF, RTF, and others
   (see [LibreOffice documentation](https://wiki.documentfoundation.org/images/1/13/1_-_File_Formats.odt) for the full list)
+- **Fonts** - TTF, OTF, WOFF, WOFF2, and others; preview images show a rendered sample text
+  (see [Font Thumbnails](./01_Working_with_Thumbnails/05_Asset_Font_Thumbnails.md))
 
 ## Metadata
 

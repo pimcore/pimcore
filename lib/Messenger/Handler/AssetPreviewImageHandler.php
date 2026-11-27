@@ -53,6 +53,8 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
                     $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
                 } elseif ($asset instanceof Asset\Video) {
                     $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+                } elseif ($asset instanceof Asset\Font) {
+                    $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
                 } elseif ($asset instanceof Asset\Folder) {
                     $asset->getPreviewImage(true);
                 }

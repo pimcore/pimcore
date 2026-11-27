@@ -62,7 +62,7 @@ class Warming
     public static function assets(?array $types = null): void
     {
         if (empty($types)) {
-            $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
+            $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'font', 'unknown'];
         }
 
         $list = new Asset\Listing();
