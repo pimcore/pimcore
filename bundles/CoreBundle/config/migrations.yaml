@@ -9,6 +9,11 @@ services:
     Pimcore\Migrations\FilteredTableMetadataStorage:
         public: true
 
+    Pimcore\Migrations\EventDispatcherFactory:
+        public: true
+
+    Pimcore\Migrations\ImplicitCommitListener: ~
+
     Doctrine\Migrations\DependencyFactory:
         alias: doctrine.migrations.dependency_factory
 
