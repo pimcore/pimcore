@@ -37,6 +37,8 @@ use Pimcore\Model\Version\Adapter\ElementTypeAwareStorageTypeInterface;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
+use Pimcore\Model\Version\UnresolvedReference;
+use Pimcore\Model\Version\UnresolvedReferenceCollector;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Stringable;
@@ -104,6 +106,11 @@ final class Version extends AbstractModel
     protected VersionStorageAdapterInterface $storageAdapter;
 
     protected CoauthorContextInterface $coauthorContext;
+
+    /**
+     * @var list<UnresolvedReference>
+     */
+    private array $unresolvedReferences = [];
 
     public function __construct()
     {
@@ -529,7 +536,14 @@ final class Version extends AbstractModel
                 return null;
             }
 
+            $collector = new UnresolvedReferenceCollector();
+            $this->unresolvedReferences = $data instanceof Concrete ? $collector->collect($data) : [];
+
             $data = $this->unmarshalData($data);
+
+            if ($data instanceof Concrete && $this->unresolvedReferences !== []) {
+                $collector->removeUnresolved($data, $this->unresolvedReferences);
+            }
         }
 
         if ($data instanceof Concrete) {
@@ -651,6 +665,19 @@ final class Version extends AbstractModel
         }
 
         return $this->data;
+    }
+
+    /**
+     * Relations of the loaded version data whose related element does not exist anymore. They are missing in the
+     * data returned by getData(), as the element can not be loaded.
+     *
+     * @internal
+     *
+     * @return list<UnresolvedReference>
+     */
+    public function getUnresolvedReferences(): array
+    {
+        return $this->unresolvedReferences;
     }
 
     /**
