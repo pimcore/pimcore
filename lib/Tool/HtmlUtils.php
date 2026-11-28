@@ -38,7 +38,7 @@ class HtmlUtils
                     $parts[] = $key;
                 }
             } else {
-                $parts[] = sprintf('%s="%s"', $key, $value);
+                $parts[] = sprintf('%s="%s"', $key, htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
             }
         }
 

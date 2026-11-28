@@ -43,4 +43,17 @@ class HtmlUtilsTest extends TestCase
             HtmlUtils::assembleAttributeString($this->attributes, true)
         );
     }
+
+    public function testAssembleAttributeStringEscapesAttributeValues(): void
+    {
+        $result = HtmlUtils::assembleAttributeString([
+            'key' => '1"><img src=x onerror="alert(1)"><i x="',
+        ]);
+
+        $this->assertStringNotContainsString('<img', $result);
+        $this->assertEquals(
+            'key="1&quot;&gt;&lt;img src=x onerror=&quot;alert(1)&quot;&gt;&lt;i x=&quot;"',
+            $result
+        );
+    }
 }
