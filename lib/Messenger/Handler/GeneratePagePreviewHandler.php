@@ -31,7 +31,11 @@ class GeneratePagePreviewHandler
     public function __invoke(GeneratePagePreviewMessage $message): void
     {
         try {
-            Service::generatePagePreview($message->getPageId(), null, $message->getHostUrl());
+            // The host URL carried by the message is deliberately ignored: any producer (also ones outside of
+            // this repository, e.g. the classic admin UI) could have filled it from the inbound request Host,
+            // which must never select the network destination of the renderer. The origin is resolved from
+            // the trusted configuration instead.
+            Service::generatePagePreview($message->getPageId());
         } catch (Exception $e) {
             Logger::err(sprintf('Unable to generate preview of document: %s, reason: %s ', $message->getPageId(), $e->getMessage()));
         }

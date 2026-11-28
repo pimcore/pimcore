@@ -64,6 +64,9 @@
 ### [Twig sandbox]
 - [Security] `pimcore_website_config` is now on the default `blocked_functions` list of the Twig sandbox (`pimcore.templating_engine.twig.sandbox_security_policy`). Templates rendered in the sandbox - the subject and the body of emails and the Dynamic Text layout component of data objects - can no longer call it, with or without a key: rendering such an email fails with `Function "pimcore_website_config" is not allowed`, and the text layout shows the corresponding error message instead of its content. Regular templates are not affected. Pass the needed values as email parameters instead (`$mail->setParam()`), or, if the authors of these templates may read every website setting, allow the function again by adding `pimcore_website_config` to `pimcore.templating_engine.twig.sandbox_security_policy.functions`. See [Twig Sandbox Object & Function Access](../09_Development_Tools/03_Security_and_Authentication/07_Twig_Sandbox_Object_Access.md#function-access).
 
+### [Documents]
+- [Page previews] The tree preview image of a document page (Gotenberg) is no longer generated for the host of the HTTP request that saved the page. A request `Host` header could otherwise choose the network origin the renderer connects to (SSRF). The origin is now taken from `pimcore.documents.preview_url_prefix`, or else from the main domain of the system settings (`http://<domain>`), and the host URL carried by a `GeneratePagePreviewMessage` is ignored by its handler. If neither is configured, no preview is generated. Set `preview_url_prefix` (e.g. `https://example.com`) if the preview has to be rendered via HTTPS or on a port, or if no main domain is configured.
+
 ## Pimcore 2026.3.5
 
 ### [Documents]
@@ -117,7 +120,7 @@
 - [Security] Hotspot images and image galleries inside a block now have block marshallers, so hotspot/marker metadata is stored as plain arrays with a referenced asset/document/object reduced to its id - the format the editmode and Studio already write. A `MarkerHotspotItem` built through the PHP API with the element object as value is therefore stored by id as well; after reloading, `$item['value']` (array access) still resolves to the element, while `getValue()` returns the id, exactly as for metadata saved through the admin UI. Element objects that older versions serialized into existing block data are reduced to their id on load, so nothing needs re-saving.
 
 ### [Documents]
-- [Page previews] `documents.preview_url_prefix` is now honoured for the page previews shown in the document tree, as it already was for version previews. `Document\Page::save()` and `pimcore:documents:generate-page-previews` (without `--urlPrefix`) used the host of the current request / the main domain for the URL Gotenberg's Chromium loads, so the setting - made for setups where Chromium cannot reach the admin hostname - had no effect there. Precedence is now: explicit `--urlPrefix` (CLI), then `documents.preview_url_prefix`, then the request host / main domain.
+- [Page previews] `documents.preview_url_prefix` is now honoured for the page previews shown in the document tree, as it already was for version previews. `Document\Page::save()` and `pimcore:documents:generate-page-previews` (without `--urlPrefix`) used the host of the current request / the main domain for the URL Gotenberg's Chromium loads, so the setting - made for setups where Chromium cannot reach the admin hostname - had no effect there. Precedence is now: explicit `--urlPrefix` (CLI), then `documents.preview_url_prefix`, then the request host / main domain. The request host as a fallback was removed again in 2026.3.7, see the note under `## Pimcore 2026.3.7`.
 
 ## Pimcore 2026.3.3
 

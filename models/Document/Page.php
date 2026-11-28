@@ -116,12 +116,14 @@ class Page extends PageSnippet
         // Dispatch page preview message, if preview is enabled.
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
         if ($documentsConfig['generate_preview'] ?? false) {
-            // the configured preview URL prefix wins over the host of the current request, the
-            // same way version previews already resolve it (the worker has no request context)
-            $hostUrl = ($documentsConfig['preview_url_prefix'] ?? '') ?: \Pimcore\Tool::getHostUrl();
-            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                new GeneratePagePreviewMessage($this->getId(), $hostUrl)
-            );
+            // the preview origin must never be derived from the current request (an inbound Host
+            // header must not select the network destination the renderer navigates to)
+            $hostUrl = Service::resolveTrustedPreviewOrigin();
+            if ($hostUrl) {
+                Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new GeneratePagePreviewMessage($this->getId(), $hostUrl)
+                );
+            }
         }
 
         return $page;
