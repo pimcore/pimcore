@@ -16,10 +16,15 @@ namespace Pimcore\Model\Asset\WebDAV;
 use PDO;
 use Pimcore;
 use Pimcore\Db;
+use Pimcore\Db\Helper;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Model\Asset;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 use Sabre\DAV\Browser\Plugin as BrowserPlugin;
+use Sabre\DAV\Exception\Conflict;
+use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Locks\Backend\PDO as LocksPDO;
 use Sabre\DAV\Locks\Plugin as LocksPlugin;
 use Sabre\DAV\Server;
@@ -198,5 +203,91 @@ class Service
 
         $filesystem = new Filesystem();
         $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+    }
+
+    /**
+     * Deletes the asset together with its descendants, requiring the "delete" permission on every asset that
+     * is removed - the way the Studio API deletes elements.
+     *
+     * Asset::delete() removes a whole subtree recursively and never looks at the workspace permissions of the
+     * descendants, so a deeper, more specific denial would be bypassed by deleting an ancestor folder. The
+     * descendants are therefore deleted one by one, deepest first, each after its own permission check; the
+     * asset itself comes last. When an asset cannot be deleted, that asset and all of its ancestors are kept,
+     * while the assets that were processed before it (deeper in the tree) are already gone.
+     *
+     * Asset::delete() is only ever called for an asset without children, so its recursion has nothing to
+     * remove. Should it find a child nevertheless (one that appeared in the meantime), the deletion is
+     * refused and rolled back instead of removing an asset that was never checked.
+     *
+     * @throws Forbidden
+     * @throws Conflict
+     */
+    public static function deleteAsset(Asset $asset, ?User $user = null): void
+    {
+        // Asset::delete() refuses the root as well, but only after its descendants would have been deleted here
+        if ($asset->getId() === 1) {
+            throw new Forbidden('The root asset cannot be deleted');
+        }
+
+        // nothing is deleted at all when the asset itself cannot be deleted
+        if (!$asset->isAllowed('delete', $user)) {
+            throw new Forbidden('Missing "delete" permission');
+        }
+
+        // The asset that is deleted right now. Asset::delete() reloads the children of a folder itself, so a
+        // child that appeared after the checks below would be removed recursively, without a permission check:
+        // the guard refuses the deletion of any other asset below the root while one asset is being deleted.
+        $expectedId = null;
+        $rootPath = $asset->getRealFullPath() . '/';
+        $guard = static function (AssetEvent $event) use (&$expectedId, $rootPath): void {
+            $deleted = $event->getAsset();
+            if ($deleted->getId() !== $expectedId && str_starts_with($deleted->getRealFullPath(), $rootPath)) {
+                throw new Conflict(sprintf('Asset %d appeared while its parent was deleted and was not checked', $deleted->getId()));
+            }
+        };
+
+        $dispatcher = Pimcore::getEventDispatcher();
+        // runs before any other PRE_DELETE listener, so that those never see such a deletion
+        $dispatcher->addListener(AssetEvents::PRE_DELETE, $guard, PHP_INT_MAX);
+
+        try {
+            if ($asset->hasChildren()) {
+                $descendants = new Asset\Listing();
+                $descendants->setCondition('`path` LIKE ?', [Helper::escapeLike($asset->getRealFullPath()) . '/%']);
+                $descendants->setOrderKey('LENGTH(`path`)', false);
+                $descendants->setOrder('DESC');
+
+                foreach ($descendants->loadIdList() as $descendantId) {
+                    $descendant = Asset::getById($descendantId);
+                    if ($descendant instanceof Asset) {
+                        $expectedId = $descendant->getId();
+                        self::deleteChildlessAsset($descendant, $user);
+                    }
+                }
+            }
+
+            $expectedId = $asset->getId();
+            self::deleteChildlessAsset($asset, $user);
+        } finally {
+            $dispatcher->removeListener(AssetEvents::PRE_DELETE, $guard);
+        }
+    }
+
+    /**
+     * @throws Forbidden
+     * @throws Conflict
+     */
+    private static function deleteChildlessAsset(Asset $asset, ?User $user): void
+    {
+        if (!$asset->isAllowed('delete', $user)) {
+            throw new Forbidden('Missing "delete" permission');
+        }
+
+        // a folder that gained a child since it was listed is not deleted
+        if ($asset->hasChildren()) {
+            throw new Conflict(sprintf('Asset %d changed while it was deleted: it has children that were not checked', $asset->getId()));
+        }
+
+        $asset->delete();
     }
 }
